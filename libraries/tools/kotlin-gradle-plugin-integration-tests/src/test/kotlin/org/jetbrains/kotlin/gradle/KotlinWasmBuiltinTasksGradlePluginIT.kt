@@ -21,13 +21,8 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
     @TestMetadata("wasm-browser-simple-project")
     fun jsTargetDist(gradleVersion: GradleVersion) {
         project("wasm-browser-simple-project", gradleVersion) {
-            buildScriptInjection {
-                @OptIn(ExperimentalWasmDsl::class)
-                kotlinMultiplatform.wasmJs {
-                    browser {
-                        bundler.set(org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserBundler.NONE)
-                    }
-                }
+            buildGradleKts.modify {
+                it.replace("browser", "browser(useWebpack = false)")
             }
 
             build("build") {
@@ -48,13 +43,11 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
     @TestMetadata("wasm-browser-simple-project")
     fun jsTargetDistWithNpmDependencies(gradleVersion: GradleVersion) {
         project("wasm-browser-simple-project", gradleVersion) {
+            buildGradleKts.modify {
+                it.replace("browser", "browser(useWebpack = false)")
+            }
+
             buildScriptInjection {
-                @OptIn(ExperimentalWasmDsl::class)
-                kotlinMultiplatform.wasmJs {
-                    browser {
-                        bundler.set(org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserBundler.NONE)
-                    }
-                }
                 kotlinMultiplatform.sourceSets.getByName("wasmJsMain").dependencies {
                     implementation(npm("decamelize", "6.0.1"))
                 }

@@ -214,13 +214,9 @@ internal constructor(
         commonLazy
         addSubTarget(KotlinBrowserJsIr::class.java) {
             configureSubTarget()
-            bundler.convention(KotlinBrowserBundler.WEBPACK)
-            project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
-                bundler.finalizeValue()
-                subTargetConfigurators.add(SwcConfigurator(this@addSubTarget))
-                subTargetConfigurators.add(LibraryConfigurator(this@addSubTarget))
-                bundleConfigurator()
-            }
+            subTargetConfigurators.add(SwcConfigurator(this))
+            subTargetConfigurators.add(LibraryConfigurator(this))
+            bundleConfigurator()
         }
     }
 

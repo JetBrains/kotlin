@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.wasm
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
@@ -39,13 +38,9 @@ class WasmJsContinuousBuildIT : KGPDaemonsBaseTest() {
         gradleVersion: GradleVersion,
     ) {
         project("wasm-browser-simple-project", gradleVersion) {
-            buildScriptInjection {
-                @OptIn(ExperimentalWasmDsl::class)
-                kotlinMultiplatform.wasmJs {
-                    browser {
-                        bundler.set(org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserBundler.NONE)
-                    }
-                }
+
+            buildGradleKts.modify {
+                it.replace("browser", "browser(useWebpack = false)")
             }
 
             val compiledWasm =

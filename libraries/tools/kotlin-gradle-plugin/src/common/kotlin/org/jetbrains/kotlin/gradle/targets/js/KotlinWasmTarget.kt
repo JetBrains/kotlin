@@ -37,9 +37,13 @@ internal constructor(
     KotlinWasmJsTargetDsl,
     KotlinWasmWasiTargetDsl,
     KotlinWasmSubTargetContainerDsl {
+    // Specify if webpack should be used as a bundler.
+    // It is captured on the first access to [browserLazyDelegate] and can't be changed afterwards,
+    // because the corresponding configurator registers its tasks during configuration.
+    private var bundler: KotlinBrowserBundler? = null
 
     override fun KotlinBrowserJsIr.bundleConfigurator() {
-        val bundlerValue: KotlinBrowserBundler = bundler.get()
+        val bundlerValue = bundler ?: error("Bundler should be defined in ${this@KotlinWasmTarget.name}")
         when (bundlerValue) {
             KotlinBrowserBundler.WEBPACK -> {
                 subTargetConfigurators.add(WebpackConfigurator(this))
@@ -48,6 +52,20 @@ internal constructor(
                 subTargetConfigurators.add(NoBundleConfigurator(this))
             }
         }
+    }
+
+    override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
+        bundler = KotlinBrowserBundler.WEBPACK
+        browser.body()
+    }
+
+    override fun browser(bundler: KotlinBrowserBundler, body: KotlinWasmJsBrowserDsl.() -> Unit) {
+        if (this@KotlinWasmTarget.bundler == null) {
+            this@KotlinWasmTarget.bundler = bundler
+        } else if (this@KotlinWasmTarget.bundler != bundler) {
+            error("")
+        }
+        (browser as KotlinBrowserJsIr).body()
     }
 
     //region d8
