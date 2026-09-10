@@ -52,11 +52,10 @@ private suspend fun KotlinMultiplatformExtension.sourcesJarContent(): Map<String
         addAll(getCommonSourceSetsForMetadataCompilation(project))
         addAll(getHostSpecificMainSharedSourceSets(project))
         if (publishing.publicationFormat.get() == KotlinPublicationFormat.KOTLIN_ARCHIVE) {
-            val platformCompilationsInKotlinArchive = getPublishedPlatformCompilations(project).values
-                .filter {
-                    val target = it.target
-                    target is KotlinTargetWithKotlinArchiveSupport && target.isStoredInKotlinArchive.get()
-                }
+            val platformCompilationsInKotlinArchive = getPublishedPlatformCompilations(
+                project,
+                targetFilter = { it.isSourcesPublishable && it is KotlinTargetWithKotlinArchiveSupport && it.isStoredInKotlinArchive.get() }
+            ).values
             for (sourceSet in awaitSourceSets()) {
                 if (sourceSet.internal.awaitPlatformCompilations().any { it in platformCompilationsInKotlinArchive }) {
                     add(sourceSet)
@@ -134,15 +133,19 @@ private fun KotlinTarget.publishableSoftwareComponents(): List<SoftwareComponent
     return components.filter { it.name in targetPublishableComponentNames }
 }
 
+fun KotlinMultiplatformExtension.rootSourcesJarTask(): TaskProvider<Jar> {
+    return sourcesJarTaskNamed(
+        taskName = "sourcesJar",
+        componentName = rootSoftwareComponent.name,
+        project = project,
+        sourceSets = project.future { sourcesJarContent() },
+        artifactNameAppendix = rootSoftwareComponent.name.toLowerCaseAsciiOnly()
+    )
+}
+
 internal val SetupRootPublicationAction = KotlinProjectSetupCoroutine {
     val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
-    val sourcesJarTask: TaskProvider<Jar> = sourcesJarTaskNamed(
-        taskName = "sourcesJar",
-        componentName = multiplatformExtension.rootSoftwareComponent.name,
-        project = project,
-        sourceSets = project.future { multiplatformExtension.sourcesJarContent() },
-        artifactNameAppendix = multiplatformExtension.rootSoftwareComponent.name.toLowerCaseAsciiOnly()
-    )
+    val sourcesJarTask = multiplatformExtension.rootSourcesJarTask()
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
 
     val metadataVariants = multiplatformExtension.metadataVariantsSoftwareComponent(sourcesJarTask)
