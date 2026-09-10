@@ -164,6 +164,7 @@ internal class SymbolLightClassForFacade(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getImplementsList(): LightEmptyImplementsList = object : LightEmptyImplementsList(manager) {
         override fun getParent(): PsiElement = this@SymbolLightClassForFacade
+        override fun getContainingFile(): PsiFile = this@SymbolLightClassForFacade.containingFile
         override fun getElementIcon(flags: Int): Icon? = null
     }
 
