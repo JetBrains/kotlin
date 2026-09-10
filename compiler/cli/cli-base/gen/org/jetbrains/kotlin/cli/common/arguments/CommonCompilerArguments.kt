@@ -914,17 +914,6 @@ with bodies.""",
         }
 
     @Argument(
-        value = "-Xreturn-value-checker",
-        valueDescription = "{check|full|disable}",
-        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
-    )
-    var returnValueChecker: String = "disable"
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xseparate-kmp-compilation",
         description = "Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies",
     )
@@ -1099,6 +1088,18 @@ Code written in progressive mode is backward compatible; however, code written w
 progressive mode enabled may cause compilation errors in progressive mode.""",
     )
     var progressiveMode: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-return-value-checker",
+        deprecatedName = "-Xreturn-value-checker",
+        valueDescription = "{check|full|disable}",
+        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
+    )
+    var returnValueChecker: String = "disable"
         set(value) {
             checkFrozen()
             field = value
