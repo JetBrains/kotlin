@@ -10,10 +10,13 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.util.SwiftSymbol
+import org.jetbrains.kotlin.gradle.util.assertSwiftModuleSymbols
 import org.jetbrains.kotlin.gradle.util.getNestedList
 import org.jetbrains.kotlin.gradle.util.parseJsonToMap
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
@@ -354,11 +357,206 @@ class ExportDslIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("A hidden dependency is translated to empty stubs instead of a real Swift API")
+    @GradleTest
+    fun testHiddenDependencyIsTranslatedToStubs(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain {
+                        compileSource(
+                            """
+                            fun makeOne(): com.example.sub.One = com.example.sub.One()
+                            """.trimIndent()
+                        )
+                        dependencies {
+                            // Would be fully exported without the override.
+                            api(project(":sub"))
+                        }
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration {
+                        configure(
+                            project.dependencies.project(mapOf("path" to ":sub")),
+                            SwiftExportVisibility.HIDDEN,
+                        )
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileSource(
+                            """
+                            package com.example.sub
+                            class One {
+                                fun memberOfHiddenClass(): Int = 42
+                            }
+                            class UnreferencedFromShared
+                            """.trimIndent()
+                        )
+                    }
+                }
+            }
+
+            include(subproject, "sub")
+
+            build(
+                ":$EMBED_SWIFT_EXPORT_TASK_NAME",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertTasksExecuted(":iosArm64DebugSwiftExport")
+
+                // Hiding doesn't remove the module.
+                val builtProductsDir = projectPath.resolve("build/builtProductsDir")
+                assertDirectoriesExist(builtProductsDir.resolve("Sub.swiftmodule"))
+
+                // `One` is a stub without members; `UnreferencedFromShared` isn't there at all.
+                assertSwiftModuleSymbols(
+                    workingDir = projectPath.toFile(),
+                    moduleName = "Sub",
+                    target = "arm64-apple-ios$IOS_DEPLOYMENT_TARGET",
+                    searchPaths = listOf(builtProductsDir.toFile()),
+                    expectedSymbols = setOf(
+                        SwiftSymbol(
+                            demangledId = "(extension in Sub):ExportedKotlinPackages.com.example.sub.One",
+                            pathComponents = listOf("com", "example", "sub", "One")
+                        ),
+                    )
+                )
+
+                // The declaration referring to the hidden type is still exported.
+                assertSwiftModuleSymbols(
+                    workingDir = projectPath.toFile(),
+                    moduleName = "Shared",
+                    target = "arm64-apple-ios$IOS_DEPLOYMENT_TARGET",
+                    searchPaths = listOf(builtProductsDir.toFile()),
+                    expectedSymbols = setOf(
+                        SwiftSymbol(
+                            demangledId = "Shared.makeOne() -> (extension in Sub):ExportedKotlinPackages.com.example.sub.One",
+                            pathComponents = listOf("makeOne()")
+                        ),
+                    )
+                )
+            }
+        }
+    }
+
+    @DisplayName("An exposed transitive dependency is fully exported under its api-derived name")
+    @GradleTest
+    fun testExposedTransitiveDependencyIsFullyExported(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain {
+                        compileSource(
+                            """
+                            fun makeOne(): com.example.sub.One = com.example.sub.One()
+                            """.trimIndent()
+                        )
+                        dependencies {
+                            // Only transitively exported by default.
+                            implementation(project(":sub"))
+                        }
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration {
+                        configure(
+                            project.dependencies.project(mapOf("path" to ":sub")),
+                            SwiftExportVisibility.EXPOSED,
+                        )
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileSource(
+                            """
+                            package com.example.sub
+                            class One
+                            class TwoNeverReferenced
+                            """.trimIndent()
+                        )
+                    }
+                }
+            }
+
+            include(subproject, "sub")
+
+            build(
+                ":$EMBED_SWIFT_EXPORT_TASK_NAME",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertTasksExecuted(":iosArm64DebugSwiftExport")
+
+                // Named from the project path, as with `api(project(":sub"))`.
+                val builtProductsDir = projectPath.resolve("build/builtProductsDir")
+                assertDirectoriesExist(builtProductsDir.resolve("Sub.swiftmodule"))
+
+                // Full export, so the unreferenced class is there too.
+                assertSwiftModuleSymbols(
+                    workingDir = projectPath.toFile(),
+                    moduleName = "Sub",
+                    target = "arm64-apple-ios$IOS_DEPLOYMENT_TARGET",
+                    searchPaths = listOf(builtProductsDir.toFile()),
+                    expectedSymbols = setOf(
+                        SwiftSymbol(
+                            demangledId = "(extension in Sub):ExportedKotlinPackages.com.example.sub.One",
+                            pathComponents = listOf("com", "example", "sub", "One")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "(extension in Sub):ExportedKotlinPackages.com.example.sub.One.init() -> (extension in Sub):ExportedKotlinPackages.com.example.sub.One",
+                            pathComponents = listOf("com", "example", "sub", "One", "init()")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "(extension in Sub):ExportedKotlinPackages.com.example.sub.TwoNeverReferenced",
+                            pathComponents = listOf("com", "example", "sub", "TwoNeverReferenced")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "(extension in Sub):ExportedKotlinPackages.com.example.sub.TwoNeverReferenced.init() -> (extension in Sub):ExportedKotlinPackages.com.example.sub.TwoNeverReferenced",
+                            pathComponents = listOf("com", "example", "sub", "TwoNeverReferenced", "init()")
+                        ),
+                    )
+                )
+            }
+        }
+    }
+
     private fun TestProject.isEmbedSwiftExportTaskRegistered(): Boolean = buildScriptReturn {
         project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME) != null
     }.buildAndReturn()
 
     private companion object {
         const val EMBED_SWIFT_EXPORT_TASK_NAME = "embedSwiftExportForXcode"
+        const val IOS_DEPLOYMENT_TARGET = "18.0"
     }
 }
