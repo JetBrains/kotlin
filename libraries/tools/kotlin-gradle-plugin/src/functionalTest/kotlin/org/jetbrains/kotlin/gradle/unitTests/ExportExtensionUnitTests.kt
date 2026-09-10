@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftEx
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationDsl
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
@@ -408,6 +409,132 @@ class ExportExtensionXcodeIntegrationTests {
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
         assertNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
     }
+
+    @Test
+    fun `test visibility declared through the block is recorded`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure("org.example:lib:1.0") {
+                        visibility.set(SwiftExportVisibility.HIDDEN)
+                    }
+                }
+            }
+        }
+
+        assertEquals(
+            mapOf<SwiftExportDependencySelector, SwiftExportVisibility?>(
+                SwiftExportDependencySelector.Module("org.example", "lib") to SwiftExportVisibility.HIDDEN,
+            ),
+            project.declaredVisibilities(),
+        )
+    }
+
+    @Test
+    fun `test the shorthand records the same visibility as the block`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure("org.example:lib:1.0", SwiftExportVisibility.EXPOSED)
+                }
+            }
+        }
+
+        assertEquals(
+            mapOf<SwiftExportDependencySelector, SwiftExportVisibility?>(
+                SwiftExportDependencySelector.Module("org.example", "lib") to SwiftExportVisibility.EXPOSED,
+            ),
+            project.declaredVisibilities(),
+        )
+    }
+
+    @Test
+    fun `test a later call wins per property, so visibility and module name merge independently`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure("org.example:lib:1.0") {
+                        moduleName.set("Lib")
+                        visibility.set(SwiftExportVisibility.EXPOSED)
+                    }
+                    configure("org.example:lib:1.0") {
+                        visibility.set(SwiftExportVisibility.HIDDEN)
+                    }
+                }
+            }
+        }
+
+        val selector = SwiftExportDependencySelector.Module("org.example", "lib")
+        val options = assertNotNull(project.declaredOverrides()[selector])
+        assertEquals(SwiftExportVisibility.HIDDEN, options.visibility)
+        assertEquals("Lib", options.moduleName)
+    }
+
+    @Test
+    fun `test an override that declares no visibility records null`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure("org.example:lib:1.0") {
+                        moduleName.set("Lib")
+                    }
+                }
+            }
+        }
+
+        val selector = SwiftExportDependencySelector.Module("org.example", "lib")
+        assertNull(assertNotNull(project.declaredOverrides()[selector]).visibility)
+    }
+
+    @Test
+    fun `test the shorthand accepts a project dependency`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure(dependencies.project(mapOf("path" to ":")), SwiftExportVisibility.HIDDEN)
+                }
+            }
+        }
+
+        assertEquals(
+            mapOf<SwiftExportDependencySelector, SwiftExportVisibility?>(
+                SwiftExportDependencySelector.ProjectPath(":") to SwiftExportVisibility.HIDDEN,
+            ),
+            project.declaredVisibilities(),
+        )
+    }
+
+    @Test
+    fun `test the shorthand accepts a dependency provider, as a version catalog accessor is`() {
+        val project = exportDslProject {
+            // A version catalog accessor is a Provider<MinimalExternalModuleDependency>; this exercises the
+            // same lazy branch of the notation handling.
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure(
+                        provider { dependencies.create("org.example:lib:1.0") },
+                        SwiftExportVisibility.HIDDEN,
+                    )
+                }
+            }
+        }
+
+        assertEquals(
+            mapOf<SwiftExportDependencySelector, SwiftExportVisibility?>(
+                SwiftExportDependencySelector.Module("org.example", "lib") to SwiftExportVisibility.HIDDEN,
+            ),
+            project.declaredVisibilities(),
+        )
+    }
+
+    private fun Project.declaredOverrides(): Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions> =
+        assertNotNull(
+            exportExtension.swiftExportConfiguration.activatedXcodeIntegration,
+            "Expected the Xcode integration to have been activated"
+        ).dependencyOverrides.get()
+
+    private fun Project.declaredVisibilities(): Map<SwiftExportDependencySelector, SwiftExportVisibility?> =
+        declaredOverrides().mapValues { (_, options) -> options.visibility }
 }
 
 class LegacySwiftExportDslDiagnosticsTests {
