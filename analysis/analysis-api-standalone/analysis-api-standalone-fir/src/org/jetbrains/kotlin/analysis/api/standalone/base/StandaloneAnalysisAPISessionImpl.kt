@@ -9,13 +9,15 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 
 internal class StandaloneAnalysisAPISessionImpl(
     kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
-    modulesWithFilesProvider: () -> Map<KaSourceModule, List<PsiFile>>
+    override val allModules: List<KaModule>,
+    modulesWithFilesProvider: () -> Map<KaSourceModule, List<PsiFile>>,
 ) : StandaloneAnalysisAPISession {
     override val coreApplicationEnvironment: CoreApplicationEnvironment = kotlinCoreProjectEnvironment.environment
 

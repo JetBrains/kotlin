@@ -1,4 +1,5 @@
 public abstract interface class org/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalysisAPISession {
+	public abstract fun getAllModules ()Ljava/util/List;
 	public abstract fun getApplication ()Lcom/intellij/openapi/application/Application;
 	public abstract fun getCoreApplicationEnvironment ()Lcom/intellij/core/CoreApplicationEnvironment;
 	public abstract fun getModulesWithFiles ()Ljava/util/Map;
