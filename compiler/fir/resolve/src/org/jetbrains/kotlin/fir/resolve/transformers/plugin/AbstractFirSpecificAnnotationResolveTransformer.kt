@@ -223,7 +223,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     private fun resolveQualifierFromImports(receiver: FirPropertyAccessExpression): FirRegularClassSymbol? {
-        val segments = generateSequence(receiver.explicitReceiver) { (it as? FirQualifiedAccessExpression)?.explicitReceiver }
+        val segments = generateSequence(receiver.explicitReceiver) { (it as? FirPropertyAccessExpression)?.explicitReceiver }
             .mapNotNull { (it.toReference(session) as? FirSimpleNamedReference)?.name?.identifier }
             .toList()
 
