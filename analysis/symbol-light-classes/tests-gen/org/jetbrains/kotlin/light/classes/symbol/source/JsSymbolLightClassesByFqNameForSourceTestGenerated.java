@@ -1424,6 +1424,96 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("DefaultImplsWithInheritedHiddenJdkMembers.kt")
+    public void testDefaultImplsWithInheritedHiddenJdkMembers() {
+      run("DefaultImplsWithInheritedHiddenJdkMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementations.kt")
+    public void testDefaultImplsWithInheritedImplementations() {
+      run("DefaultImplsWithInheritedImplementations.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultDisable.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultDisable() {
+      run("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultDisable.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultEnable.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultEnable() {
+      run("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultEnable.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultNoCompatibility.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultNoCompatibility() {
+      run("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultNoCompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultDisable.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultDisable() {
+      run("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultDisable.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultEnable.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultEnable() {
+      run("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultEnable.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultNoCompatibility.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultNoCompatibility() {
+      run("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultNoCompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsThroughJavaInterface.kt")
+    public void testDefaultImplsWithInheritedImplementationsThroughJavaInterface() {
+      run("DefaultImplsWithInheritedImplementationsThroughJavaInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsThroughLibraries.kt")
+    public void testDefaultImplsWithInheritedImplementationsThroughLibraries() {
+      run("DefaultImplsWithInheritedImplementationsThroughLibraries.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedIntersectionOverrides.kt")
+    public void testDefaultImplsWithInheritedIntersectionOverrides() {
+      run("DefaultImplsWithInheritedIntersectionOverrides.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedMemberKinds.kt")
+    public void testDefaultImplsWithInheritedMemberKinds() {
+      run("DefaultImplsWithInheritedMemberKinds.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedPlatformDependentImplementations.kt")
+    public void testDefaultImplsWithInheritedPlatformDependentImplementations() {
+      run("DefaultImplsWithInheritedPlatformDependentImplementations.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithOnlyHiddenOrSyntheticInheritedImplementations.kt")
+    public void testDefaultImplsWithOnlyHiddenOrSyntheticInheritedImplementations() {
+      run("DefaultImplsWithOnlyHiddenOrSyntheticInheritedImplementations.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithOnlyInheritedImplementations.kt")
+    public void testDefaultImplsWithOnlyInheritedImplementations() {
+      run("DefaultImplsWithOnlyInheritedImplementations.kt");
+    }
+
+    @Test
     @TestMetadata("DefaultImplsWithTypeParameters.kt")
     public void testDefaultImplsWithTypeParameters() {
       run("DefaultImplsWithTypeParameters.kt");
