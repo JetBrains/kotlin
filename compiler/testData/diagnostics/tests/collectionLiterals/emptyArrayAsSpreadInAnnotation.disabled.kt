@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// LANGUAGE_FEATURE_TOGGLED: CollectionLiterals
+// LANGUAGE: -CollectionLiterals
+// LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
 
 enum class E { X }
 @Repeatable

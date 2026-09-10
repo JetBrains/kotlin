@@ -3,29 +3,29 @@
 // LANGUAGE: -CollectionLiterals
 
 fun testWithLambdas() {
-    val lam: Array<() -> Unit> = [{}]
-    val withParam: Array<(Int) -> Unit> = [{ it -> }]
-    val withParamOfSpecifiedType: Array<(Int) -> Unit> = [{ it: Any -> }]
-    val withReturn: Array<() -> Int> = [{ 42 }]
-    val withReturnAndParam: Array<(Int) -> Int> = [{ x -> x }]
+    val lam: Array<() -> Unit> = <!UNSUPPORTED_FEATURE!>[{}]<!>
+    val withParam: Array<(Int) -> Unit> = <!UNSUPPORTED_FEATURE!>[{ it -> }]<!>
+    val withParamOfSpecifiedType: Array<(Int) -> Unit> = <!UNSUPPORTED_FEATURE!>[{ it: Any -> }]<!>
+    val withReturn: Array<() -> Int> = <!UNSUPPORTED_FEATURE!>[{ 42 }]<!>
+    val withReturnAndParam: Array<(Int) -> Int> = <!UNSUPPORTED_FEATURE!>[{ x -> x }]<!>
 
-    [{}]
-    [{ it -> }]
-    [{ it: Any -> }]
-    [{ 42 }]
-    [{ x -> x }]
+    <!UNRESOLVED_REFERENCE, UNSUPPORTED_FEATURE!>[{}]<!>
+    <!UNRESOLVED_REFERENCE, UNSUPPORTED_FEATURE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> }]<!>
+    <!UNRESOLVED_REFERENCE, UNSUPPORTED_FEATURE!>[{ it: Any -> }]<!>
+    <!UNRESOLVED_REFERENCE, UNSUPPORTED_FEATURE!>[{ 42 }]<!>
+    <!UNRESOLVED_REFERENCE, UNSUPPORTED_FEATURE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> x }]<!>
 }
 
 fun testWithAnons() {
-    val anon: Array<() -> Unit> = [fun() {}]
-    val withParam: Array<(Int) -> Unit> = [fun(x: Int) {}]
-    val withReturn: Array<() -> Int> = [fun() = 42]
-    val withReturnAndParam: Array<(Int) -> Int> = [fun(x: Int) = x]
+    val anon: Array<() -> Unit> = <!UNSUPPORTED_FEATURE!>[fun() {}]<!>
+    val withParam: Array<(Int) -> Unit> = <!UNSUPPORTED_FEATURE!>[fun(x: Int) {}]<!>
+    val withReturn: Array<() -> Int> = <!UNSUPPORTED_FEATURE!>[fun() = 42]<!>
+    val withReturnAndParam: Array<(Int) -> Int> = <!UNSUPPORTED_FEATURE!>[fun(x: Int) = x]<!>
 
-    [fun() {}]
-    [fun(x: Int) {}]
-    [fun() = 42]
-    [fun(x: Int) = x]
+    <!UNRESOLVED_REFERENCE, UNSUPPORTED_FEATURE!>[fun() {}]<!>
+    <!UNRESOLVED_REFERENCE, UNSUPPORTED_FEATURE!>[fun(x: Int) {}]<!>
+    <!UNRESOLVED_REFERENCE, UNSUPPORTED_FEATURE!>[fun() = 42]<!>
+    <!UNRESOLVED_REFERENCE, UNSUPPORTED_FEATURE!>[fun(x: Int) = x]<!>
 }
 
 fun skip() {}
@@ -34,8 +34,11 @@ fun const42() = 42
 fun <T> consume(it: T) {}
 
 fun testWithCallables() {
-    val callable: Array<() -> Unit> = [::skip]
-    val withParam: Array<(Int) -> Unit> = [::consume]
-    val withReturn: Array<() -> Int> = [::const42]
-    val withReturnAndParam: Array<(Int) -> Int> = [::id]
+    val callable: Array<() -> Unit> = <!UNSUPPORTED_FEATURE!>[::skip]<!>
+    val withParam: Array<(Int) -> Unit> = <!UNSUPPORTED_FEATURE!>[::consume]<!>
+    val withReturn: Array<() -> Int> = <!UNSUPPORTED_FEATURE!>[::const42]<!>
+    val withReturnAndParam: Array<(Int) -> Int> = <!UNSUPPORTED_FEATURE!>[::id]<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, callableReference, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */
