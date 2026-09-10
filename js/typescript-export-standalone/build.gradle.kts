@@ -14,8 +14,8 @@ kotlin {
 dependencies {
     compileOnly(kotlinStdlib())
 
-    implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-standalone"))
+    implementation(project(":core:compiler.common"))
     implementation(project(":core:compiler.common.js"))
     implementation(project(":core:util.runtime"))
     implementation(project(":js:js.ast"))
@@ -24,7 +24,6 @@ dependencies {
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
 
     api(project(":kotlin-util-klib-metadata"))
-    api(project(":core:compiler.common"))
     api(project(":js:js.config"))
 }
 
