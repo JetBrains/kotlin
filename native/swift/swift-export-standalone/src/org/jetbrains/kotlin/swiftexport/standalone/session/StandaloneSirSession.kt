@@ -69,7 +69,7 @@ internal class StandaloneSirSession(
         unsupportedTypeStrategy = unsupportedTypeStrategy,
         collectionsV2 = collectionsV2,
     )
-    override val customTypeTranslator: SirCustomTypeTranslator = SirCustomTypeTranslatorImpl(sirSession)
+    override val customTypeTranslator: SirCustomTypeTranslator = SirCustomTypeTranslatorImpl(sirSession, collectionsV2)
     override val visibilityChecker = SirVisibilityCheckerImpl(
         sirSession,
         unsupportedDeclarationReporter = unsupportedDeclarationReporter,

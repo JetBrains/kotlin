@@ -82,8 +82,7 @@ public class SirTypeProviderImpl(
                         kaType.classId == KaStandardTypeClassIds.ANY -> ctx.anyRepresentativeType()
 
                         else -> {
-                            val isCollectionV2Type = kaType.isCollectionV2Type
-                            if (!isCollectionV2Type && sirSession.isClassIdSupported(kaType.classId)) {
+                            if (sirSession.isClassIdSupported(kaType.classId)) {
                                 val bridgeWrapper = kaType.toSirTypeBridge(ctx)
                                 if (bridgeWrapper != null) return@withSessions bridgeWrapper.bridge.swiftType.optionalIfNeeded(kaType)
                                 if (kaType.classId in COLLECTION_CLASS_IDS) return@withSessions SirUnsupportedType
@@ -126,7 +125,7 @@ public class SirTypeProviderImpl(
                                 }
                             }
 
-                            if (isCollectionV2Type) {
+                            if (kaType.isCollectionV2Type) {
                                 val protocol = kaType.symbol.toSir().primaryDeclaration as SirProtocol
                                 val elementArg = kaType.typeArguments.singleOrNull()
                                 if (elementArg is KaTypeArgumentWithVariance) {
