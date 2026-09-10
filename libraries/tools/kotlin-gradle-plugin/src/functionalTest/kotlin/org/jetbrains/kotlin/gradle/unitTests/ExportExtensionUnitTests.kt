@@ -507,8 +507,7 @@ class ExportExtensionXcodeIntegrationTests {
     @Test
     fun `test the shorthand accepts a dependency provider, as a version catalog accessor is`() {
         val project = exportDslProject {
-            // A version catalog accessor is a Provider<MinimalExternalModuleDependency>; this exercises the
-            // same lazy branch of the notation handling.
+            // Same lazy path a version catalog accessor (a Provider<MinimalExternalModuleDependency>) takes.
             exportExtension.swift {
                 xcodeIntegration {
                     configure(
@@ -1790,7 +1789,7 @@ class ExportExtensionSwiftExportTests {
                 xcodeIntegration {
                     configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
                         visibility.set(SwiftExportVisibility.HIDDEN)
-                        // Collides with the exported module itself: the name still names the analysis input.
+                        // Collides with the exported module itself.
                         moduleName.set("Shared")
                     }
                 }
@@ -1800,6 +1799,156 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
 
         project.assertRealizingSwiftModulesFailsWith(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
+    }
+
+    @Test
+    fun `promoting a transitive project dependency derives the same name as an api dependency would`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure(projectDependency, SwiftExportVisibility.EXPOSED)
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    // Same name as with `api(projectDependency)`, not the coordinate-derived `SharedSubproject`.
+                    moduleName = "Subproject",
+                    artifactName = "subproject",
+                    exportMode = SwiftExportedModuleMode.FULL,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `an explicit module name still wins over the re-derived one`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure(projectDependency) {
+                        visibility.set(SwiftExportVisibility.EXPOSED)
+                        moduleName.set("Renamed")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "Renamed",
+                    artifactName = "subproject",
+                    exportMode = SwiftExportedModuleMode.FULL,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `hiding a project dependency names its stub module the same regardless of the gradle scope`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure(projectDependency, SwiftExportVisibility.HIDDEN)
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    // `Subproject` as with `api(...)`, not `SharedSubproject` as for a plain implementation dependency.
+                    moduleName = "Subproject",
+                    artifactName = "subproject",
+                    exportMode = SwiftExportedModuleMode.HIDDEN,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `promoting an external dependency keeps its derived name`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0", SwiftExportVisibility.EXPOSED)
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    // External names come from the coordinates either way.
+                    moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.FULL,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
     }
 
     /** The export graph diagnostics are reported when the `swiftModules` provider is realized, not during configuration. */
