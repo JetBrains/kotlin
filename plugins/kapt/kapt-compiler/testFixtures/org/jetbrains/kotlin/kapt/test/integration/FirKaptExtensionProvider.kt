@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.kapt.base.ProcessorLoader
 import org.jetbrains.kotlin.kapt.base.StubGenerationScheme
 import org.jetbrains.kotlin.kapt.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
-import org.jetbrains.kotlin.kapt.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt.test.handlers.KaptStubConverterHandler.Companion.FILE_SEPARATOR
 import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
@@ -73,8 +72,6 @@ class FirKaptExtensionForTests(
     val started: Boolean
         get() = _started
     var savedStubs: String? = null
-        private set
-    var savedBindings: Map<String, KaptJavaFileObject>? = null
         private set
 
     private val processor = object : Processor {
@@ -138,19 +135,6 @@ class FirKaptExtensionForTests(
             .joinToString(FILE_SEPARATOR)
 
         super.saveStubs(kaptContext, stubs)
-    }
-
-    override fun saveIncrementalData(
-        kaptContext: KaptContextForStubGeneration,
-        converter: KaptStubConverter
-    ) {
-        if (this.savedBindings != null) {
-            error("Bindings are already saved")
-        }
-
-        this.savedBindings = converter.bindings
-
-        super.saveIncrementalData(kaptContext, converter)
     }
 
     private class TestProcessorLoader(
