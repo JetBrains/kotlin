@@ -70,12 +70,14 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     /**
      * Unlike the interface itself, `DefaultImpls` doesn't get the `@JvmStatic` members of the companion object:
      * the JVM backend emits their static methods in the interface class only, see [SymbolLightClassForInterface.getOwnMethods].
+     * On the other hand, it has bridges for the implementations inherited from super-interfaces, see [inheritedDefaultImplsCallables].
      */
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol { classSymbol ->
             val result = mutableListOf<PsiMethod>()
-            val implementations = classSymbol.combinedDeclaredMemberScope.callables.filter { acceptCallableSymbol(it) }
-            createMethods(this@SymbolLightClassForInterfaceDefaultImpls, implementations, result)
+            val declaredImplementations = classSymbol.combinedDeclaredMemberScope.callables.filter { acceptCallableSymbol(it) }
+            val inheritedImplementations = inheritedDefaultImplsCallables(classSymbol, ktModule)
+            createMethods(this@SymbolLightClassForInterfaceDefaultImpls, declaredImplementations + inheritedImplementations, result)
 
             result
         }

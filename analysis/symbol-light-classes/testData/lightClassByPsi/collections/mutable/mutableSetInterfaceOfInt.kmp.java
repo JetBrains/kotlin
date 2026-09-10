@@ -110,4 +110,21 @@ public class CMutableSet3 /* test.CMutableSet3*/ implements test.IMutableSet {
 }
 
 public abstract interface IMutableSet /* test.IMutableSet*/ extends java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableSet {
+  public static final class DefaultImpls /* test.IMutableSet.DefaultImpls*/ {
+    @java.lang.Override()
+    @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
+    @kotlin.js.ExperimentalJsCollectionsApi()
+    @kotlin.js.ExperimentalJsExport()
+    @kotlin.js.JsDontExportDefaultImplementation()
+    @org.jetbrains.annotations.NotNull()
+    public static @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlySet<@org.jetbrains.annotations.NotNull() java.lang.Integer> asJsReadonlySetView(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableSet);//  asJsReadonlySetView(@org.jetbrains.annotations.NotNull() test.IMutableSet)
+
+    @java.lang.Override()
+    @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
+    @kotlin.js.ExperimentalJsCollectionsApi()
+    @kotlin.js.ExperimentalJsExport()
+    @kotlin.js.JsDontExportDefaultImplementation()
+    @org.jetbrains.annotations.NotNull()
+    public static @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsSet<@org.jetbrains.annotations.NotNull() java.lang.Integer> asJsSetView(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableSet);//  asJsSetView(@org.jetbrains.annotations.NotNull() test.IMutableSet)
+  }
 }

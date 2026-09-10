@@ -124,4 +124,21 @@ public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements test.
 }
 
 public abstract interface IMutableMap /* test.IMutableMap*/<KElem, VElem>  extends java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+  public static final class DefaultImpls /* test.IMutableMap.DefaultImpls*/ {
+    @java.lang.Override()
+    @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
+    @kotlin.js.ExperimentalJsCollectionsApi()
+    @kotlin.js.ExperimentalJsExport()
+    @kotlin.js.JsDontExportDefaultImplementation()
+    @org.jetbrains.annotations.NotNull()
+    public static <KElem, VElem> @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsMap<KElem, VElem> asJsMapView(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableMap<KElem, VElem>);// <KElem, VElem>  asJsMapView(@org.jetbrains.annotations.NotNull() test.IMutableMap<KElem, VElem>)
+
+    @java.lang.Override()
+    @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
+    @kotlin.js.ExperimentalJsCollectionsApi()
+    @kotlin.js.ExperimentalJsExport()
+    @kotlin.js.JsDontExportDefaultImplementation()
+    @org.jetbrains.annotations.NotNull()
+    public static <KElem, VElem> @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<KElem, VElem> asJsReadonlyMapView(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableMap<KElem, VElem>);// <KElem, VElem>  asJsReadonlyMapView(@org.jetbrains.annotations.NotNull() test.IMutableMap<KElem, VElem>)
+  }
 }

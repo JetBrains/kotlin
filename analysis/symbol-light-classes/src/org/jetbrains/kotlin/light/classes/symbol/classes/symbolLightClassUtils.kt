@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getIntroducedAtVersionFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.isHiddenOrSynthetic
 import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
@@ -631,10 +633,7 @@ internal fun createInnerClasses(
         }
     }
 
-    if (containingClass is SymbolLightClassForInterface &&
-        classOrObject?.hasInterfaceDefaultImpls == true &&
-        containingClass.ktModule.jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY
-    ) {
+    if (containingClass is SymbolLightClassForInterface && hasDefaultImpls(containingClass, declarationContainer, classOrObject)) {
         result.add(SymbolLightClassForInterfaceDefaultImpls(containingClass))
     }
 
@@ -647,6 +646,67 @@ internal fun createInnerClasses(
     }
 
     return result
+}
+
+/**
+ * Whether the JVM backend generates the `DefaultImpls` class for the interface [classSymbol] of [lightClass]: the class holds the
+ * implementations declared in the interface and bridges to the inherited ones, see [inheritedDefaultImplsCallables].
+ * With `-jvm-default=no-compatibility`, no `DefaultImpls` is generated at all.
+ */
+context(_: KaSession)
+private fun hasDefaultImpls(
+    lightClass: SymbolLightClassForInterface,
+    classSymbol: KaDeclarationContainerSymbol,
+    classOrObject: KtClassOrObject?,
+): Boolean {
+    val module = lightClass.ktModule
+    if (module.jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY) return false
+
+    // The PSI check is cheap, while the member scope is required only for the inherited implementations
+    if (classOrObject?.hasInterfaceDefaultImpls == true) return true
+    return classSymbol is KaNamedClassSymbol && inheritedDefaultImplsCallables(classSymbol, module).any()
+}
+
+/**
+ * Members which the interface [classSymbol] inherits from Kotlin super-interfaces and for which the `DefaultImpls` class of
+ * [classSymbol] has a static method, in addition to the implementations declared in [classSymbol] itself.
+ *
+ * Mirrors the handling of fake overrides in `org.jetbrains.kotlin.backend.jvm.lower.InterfaceLowering`: the JVM backend generates
+ * a bridge to `DefaultImpls` of the super-interface for every inherited implementation which is not compiled to a JVM `default`
+ * method and, in the compatibility mode of `-jvm-default=enable`, a delegate for every inherited `default` method. Private
+ * implementations, implementations from `Any`, Java default methods, and `@PlatformDependent` members, whose implementation
+ * comes from the JDK, are never bridged. Hidden and synthetic members are excluded as well, as they have no light methods.
+ *
+ * @param module the module of the interface light class, which defines the `-jvm-default` mode
+ */
+context(_: KaSession)
+internal fun inheritedDefaultImplsCallables(classSymbol: KaNamedClassSymbol, module: KaModule): Sequence<KaCallableSymbol> {
+    val jvmDefaultMode = module.jvmDefaultMode
+    if (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY) return emptySequence()
+
+    return classSymbol.memberScope.callables.filter { symbol ->
+        if (symbol !is KaNamedFunctionSymbol && symbol !is KaPropertySymbol) return@filter false
+        if (symbol.modality == KaSymbolModality.ABSTRACT || symbol.visibility == KaSymbolVisibility.PRIVATE || symbol.isCompanion) {
+            return@filter false
+        }
+
+        if (isHiddenOrSynthetic(symbol)) return@filter false
+
+        val original = symbol.fakeOverrideOriginal
+        val declaringClass = original.containingDeclaration as? KaClassSymbol ?: return@filter false
+        when {
+            // Declared implementations are handled on their own
+            declaringClass == classSymbol -> false
+            // Excludes the members of `Any`
+            declaringClass.classKind != KaClassKind.INTERFACE -> false
+            // A Java default method stays in the Java interface
+            original.origin == KaSymbolOrigin.JAVA_SOURCE || original.origin == KaSymbolOrigin.JAVA_LIBRARY -> false
+            // The JDK provides the implementation, e.g., for `kotlin.collections.Map.getOrDefault`
+            StandardNames.FqNames.platformDependentClassId in original.annotations -> false
+            // Without the compatibility mode, only implementations moved to `DefaultImpls` of the super-interface are bridged
+            else -> jvmDefaultMode == JvmDefaultMode.ENABLE || !original.containingModule.jvmDefaultMode.isEnabled
+        }
+    }
 }
 
 context(session: KaSession)
