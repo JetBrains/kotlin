@@ -490,8 +490,9 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
             checkIsMutable()
             checkForComodification()
             val n = elements.size
+            if (n == 0) return false
             addAllInternal(offset + length, elements, n)
-            return n > 0
+            return true
         }
 
         override fun addAll(index: Int, elements: Collection<E>): Boolean {
@@ -499,8 +500,9 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
             checkForComodification()
             AbstractList.checkPositionIndex(index, length)
             val n = elements.size
+            if (n == 0) return false
             addAllInternal(offset + index, elements, n)
-            return n > 0
+            return true
         }
 
         override fun clear() {
