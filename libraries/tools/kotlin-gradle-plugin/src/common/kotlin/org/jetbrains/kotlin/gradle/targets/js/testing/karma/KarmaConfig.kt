@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+import org.jetbrains.kotlin.gradle.internal.json.AnyAsJsonElementSerializer
 
 @ExternalKotlinTargetApi
 /**
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
  * @see org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
  */
 // https://karma-runner.github.io/6.4/config/configuration-file.html
+@Serializable
 data class KarmaConfig(
     /**
      * Continuous Integration mode
@@ -50,7 +53,7 @@ data class KarmaConfig(
     /**
      * See https://karma-runner.github.io/6.4/config/configuration-file.html#files
      */
-    val files: MutableList<Any> = mutableListOf(),
+    val files: MutableList<@Serializable(AnyAsJsonElementSerializer::class) Any> = mutableListOf(),
 
     /**
      * See https://karma-runner.github.io/6.4/config/configuration-file.html#frameworks
@@ -138,6 +141,7 @@ data class KarmaConfig(
  *
  * @see KarmaConfig
  */
+@Serializable
 data class KarmaClient(
     /**
      * See https://karma-runner.github.io/6.4/config/configuration-file.html#clientargs
@@ -155,6 +159,7 @@ data class KarmaClient(
  *
  * @see KarmaConfig.customLaunchers
  */
+@Serializable
 data class CustomLauncher(var base: String) {
     val flags = mutableListOf<String>()
     var debug: Boolean? = null
