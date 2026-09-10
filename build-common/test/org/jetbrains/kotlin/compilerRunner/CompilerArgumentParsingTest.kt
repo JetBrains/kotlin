@@ -140,7 +140,7 @@ private fun assertEqualArguments(expected: CommonToolArguments, actual: CommonTo
     expected::class.memberProperties
         .filter { it.javaField?.getAnnotation(Argument::class.java) != null }
         .ifEmpty { fail("No members with ${Argument::class} annotation") }
-        .map { property ->
+        .forEach { property ->
             @Suppress("UNCHECKED_CAST")
             property as KProperty1<Any, Any?>
             val expectedValue = property.get(expected)
