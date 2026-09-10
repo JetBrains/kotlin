@@ -40,14 +40,16 @@ class IntBaseline : SkipWhenBaseOnly() {
         bh.consume(list)
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun allocateArray(bh: Blackhole) {
         skipWhenBaseOnly()
         val list = IntArray(BENCHMARK_SIZE)
         bh.consume(list)
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun allocateListAndFill(bh: Blackhole) {
         skipWhenBaseOnly()
         val list = ArrayList<Int>(BENCHMARK_SIZE)

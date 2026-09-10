@@ -1019,7 +1019,8 @@ private var singletonInitializeNestedRun = false
 // These benchmarks should not be repeated within a single process.
 @Measurement(time = 1, timeUnit = BenchmarkTimeUnit.NANOSECONDS)
 class Singleton {
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun initialize(bh: Blackhole) {
         if (singletonInitializeRun) {
             error("Function singletonInitialize can be called only once.")
@@ -1532,7 +1533,8 @@ class Singleton {
         bh.consume(total)
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun initializeNested(bh: Blackhole) {
         if (singletonInitializeNestedRun) {
             error("Function singletonInitializeNested can be called only once.")

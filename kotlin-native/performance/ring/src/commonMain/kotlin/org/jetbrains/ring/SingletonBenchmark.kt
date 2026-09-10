@@ -26,7 +26,8 @@ class Singleton {
         A.a
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun access(bh: Blackhole) {
         var result = 0
         for (i in 0 until BENCHMARK_SIZE) {

@@ -44,7 +44,8 @@ class Loop : SkipWhenBaseOnly() {
         bh.consume(result)
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun arrayIndexLoop(bh: Blackhole) {
         skipWhenBaseOnly()
         var result = 0
@@ -73,7 +74,8 @@ class Loop : SkipWhenBaseOnly() {
         bh.consume(result)
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun arrayWhileLoop(bh: Blackhole) {
         var result = 0
         var i = 0

@@ -106,7 +106,8 @@ class LinkedListWithAtomicsBenchmarkHideName {
         }
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun LinkedListWithAtomicsBenchmark(bh: Blackhole) {
         bh.consume(ensureNext())
     }
