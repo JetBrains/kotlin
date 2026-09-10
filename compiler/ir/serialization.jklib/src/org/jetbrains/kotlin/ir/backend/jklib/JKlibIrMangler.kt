@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredByPredicateAnnotations
 import org.jetbrains.kotlin.idea.MainFunctionDetector
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -219,13 +221,31 @@ private fun IrDeclaration.isDeclaredInJava(): Boolean {
     return ownerClass?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
 }
 
+// Fake overrides of mapped built-in collections (e.g. spliterator() on a Kotlin class implementing
+// Iterable) must use standard Kotlin mangling signatures rather than JVM descriptor signatures to
+// match signature during IR linking.
+private fun IrDeclaration.isJavaPlatformClassOrKotlinPackage(): Boolean {
+    // During the Fir2Ir conversion (K2), JDK platform methods present in common Kotlin stdlib
+    // built-in declarations (e.g. kotlin.collections.Iterable.iterator()) belong to "kotlin.*"
+    // packages but are still flagged as IR_EXTERNAL_JAVA_DECLARATION_STUB.
+    if (getPackageFragment().packageFqName.asString().isKotlinPackage()) return true
+
+    // JDK platform methods *not* present in common Kotlin stdlib (e.g. spliterator()) are resolved
+    // against their Java platform declaration stubs (e.g. java.lang.Iterable.spliterator(), with
+    // package "java.lang" and origin IR_EXTERNAL_JAVA_DECLARATION_STUB). For these methods,
+    // getPackageFragment().packageFqName is "java.lang" (so isKotlinPackage() is false), but
+    // JavaToKotlinClassMap.isJavaPlatformClass(ownerClass.kotlinFqName) returns true.
+    val ownerClass = (this as? IrClass) ?: parentClassOrNull ?: return false
+    return JavaToKotlinClassMap.isJavaPlatformClass(ownerClass.kotlinFqName)
+}
+
 @OptIn(UnsafeDuringIrConstructionAPI::class)
 private fun IrDeclaration.isJavaBackedCallable(): Boolean {
     if (isDeclaredInJava()) return true
 
     val functions = when (this) {
         is IrSimpleFunction -> {
-            // Check if the function a fake override of a Java declaration.
+            // Check if the function is a fake override of a Java declaration.
             listOf(this)
         }
         is IrProperty -> {
@@ -241,7 +261,13 @@ private fun IrDeclaration.isJavaBackedCallable(): Boolean {
             { current ->
                 if (current.isFakeOverride) current.overriddenSymbols.map { it.owner } else emptyList()
             },
-            { current -> current.isDeclaredInJava() },
+            { current ->
+                // Fake overrides of Java declarations must use JVM signatures, *except* when the overridden
+                // Java declaration is a platform class mapped to a Kotlin built-in collection (e.g.
+                // java.lang.Iterable). In that case, standard Kotlin signatures on the
+                // inheriting Kotlin class should be used.
+                current.isDeclaredInJava() && !current.isJavaPlatformClassOrKotlinPackage()
+            },
         )
     }
     return false
