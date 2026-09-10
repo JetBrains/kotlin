@@ -5,22 +5,25 @@
 
 package org.jetbrains.kotlin.light.classes.symbol
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiClassType
-import com.intellij.psi.PsiEnumConstant
-import com.intellij.psi.PsiLiteralExpression
-import com.intellij.psi.PsiMethod
+import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.findClass
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.findFacadeClass
+import org.jetbrains.kotlin.asJava.renderClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightNoArgConstructor
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -116,7 +119,7 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
                 ?: error("'JavaImpl' parameter type not resolved")
 
             val psiJavaImplClass = javaImplSymbol.psi as PsiClass
-            val psiFooMethod = psiJavaImplClass.findMethodsByName("foo", /* checkBases = */ false).single()
+            val psiFooMethod = psiJavaImplClass.findMethodsByName("foo", false).single()
 
             val psiFooMethodSupers = PsiSuperMethodImplUtil.findSuperMethods(psiFooMethod)
 
@@ -124,6 +127,73 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
 
             val psiJavaBaseClass = psiFooMethodSupers[0].parent as PsiClass
             assertEquals("lib.JavaBase", psiJavaBaseClass.qualifiedName)
+        }
+    }
+
+    /**
+     * A constructor is a default one only if the class declares no constructor at all, so the light class has to synthesize one.
+     *
+     * A deserialized `object` is such a case: the metadata stub of an object carries no primary constructor, so the object symbol has no
+     * constructors either.
+     *
+     * Everything that does declare a constructor gets a regular light constructor. This includes the no-arg overload of a primary
+     * constructor with default parameter values, even though it is represented by the very same
+     * [SymbolLightNoArgConstructor][org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightNoArgConstructor] as the synthesized one.
+     *
+     * A regression test for KT-84373.
+     */
+    @Test
+    fun isDefaultConstructor(file: KtFile, testServices: TestServices) {
+        val project = file.project
+
+        fun lightClassOf(name: String): PsiClass {
+            val declaration = analyze(file) {
+                val classId = ClassId(FqName("lib"), Name.identifier(name))
+                val classSymbol = findClass(classId) ?: error("'$classId' symbol was not found")
+                classSymbol.realPsi as? KtClassOrObject
+                    ?: error("'$classId' is expected to have a decompiled PSI, but '${classSymbol.realPsi}' was found")
+            }
+
+            // Light classes for non-JVM declarations are only available with the multiplatform support enabled
+            @OptIn(KaNonPublicApi::class)
+            return withMultiplatformLightClassSupport(project) {
+                declaration.toLightClass()
+            } ?: error("Light class for '$name' was not found")
+        }
+
+        val libraryObjectLightClass = lightClassOf("LibraryObject")
+        val synthesizedConstructor = libraryObjectLightClass.constructors.single()
+        testServices.assertions.assertTrue(synthesizedConstructor.isDefaultConstructor) {
+            "'LibraryObject' declares no constructor, so the synthesized '$synthesizedConstructor' is expected to be a default one"
+        }
+
+        testServices.assertions.assertEquals(
+            expected = """
+                public final class LibraryObject /* lib.LibraryObject*/ {
+                  @org.jetbrains.annotations.NotNull()
+                  public static final @org.jetbrains.annotations.NotNull() lib.LibraryObject INSTANCE;
+    
+                  private /* default ctor */  LibraryObject();//  .ctor()
+                }
+            """.trimIndent(),
+            actual = libraryObjectLightClass.renderClass(),
+        )
+
+        val classesWithDeclaredConstructor = listOf(lightClassOf("LibraryClass")) +
+                file.declarations.filterIsInstance<KtClassOrObject>().map { declaration ->
+                    declaration.toLightClass() ?: error("Light class for '${declaration.name}' was not found")
+                }
+
+        val declaredConstructors = classesWithDeclaredConstructor.flatMap { it.constructors.asList() }
+        for (constructor in declaredConstructors) {
+            testServices.assertions.assertFalse(constructor.isDefaultConstructor) {
+                "'${constructor.containingClass?.name}' declares a constructor, so '$constructor' is not expected to be a default one"
+            }
+        }
+
+        // Otherwise the check above misses the no-arg overload of 'ClassWithDefaultParameterValues'
+        testServices.assertions.assertTrue(declaredConstructors.any { it is SymbolLightNoArgConstructor }) {
+            "A no-arg constructor overload is expected among $declaredConstructors"
         }
     }
 }

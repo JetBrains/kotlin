@@ -9,6 +9,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
+import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_DEFAULT_CTOR
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
@@ -37,6 +38,15 @@ internal class SymbolLightNoArgConstructor(
     override fun getName(): String = containingClass.name ?: ""
 
     override fun isConstructor(): Boolean = true
+
+    /**
+     * The constructor is a default one only if it is synthesized for a class without any constructor declaration
+     * ([METHOD_INDEX_FOR_DEFAULT_CTOR]).
+     *
+     * The other kind of no-arg constructor represented by this class is an overload of a primary constructor with default parameter
+     * values, so the class does declare a constructor, and the overload is not a default one.
+     */
+    override fun isDefaultConstructor(): Boolean = methodIndex == METHOD_INDEX_FOR_DEFAULT_CTOR
 
     override fun hasTypeParameters(): Boolean = false
     override fun isVarArgs(): Boolean = false
