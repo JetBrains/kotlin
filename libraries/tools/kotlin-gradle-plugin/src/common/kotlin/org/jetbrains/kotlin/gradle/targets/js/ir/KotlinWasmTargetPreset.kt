@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget.Companion.buildNpmProjectName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -20,11 +21,11 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 internal class KotlinWasmTargetPreset(
     project: Project,
     private val targetType: KotlinWasmTargetType,
-) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(project) {
+) : KotlinOnlyTargetPreset<KotlinWasmTarget, KotlinJsIrCompilation>(project) {
     override val platformType: KotlinPlatformType = KotlinPlatformType.wasm
 
-    override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        val irTarget = project.objects.KotlinJsIrTarget(project, KotlinPlatformType.wasm)
+    override fun instantiateTarget(name: String): KotlinWasmTarget {
+        val irTarget = project.objects.KotlinWasmTarget(project, KotlinPlatformType.wasm)
         irTarget.outputModuleName.convention(
             buildNpmProjectName(
                 project,
@@ -41,13 +42,13 @@ internal class KotlinWasmTargetPreset(
         return irTarget
     }
 
-    override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinJsIrTarget> =
-        KotlinJsIrTargetConfigurator()
+    override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinWasmTarget> =
+        KotlinWasmTargetConfigurator()
 
     override val name: String = WASM_PRESET_NAME + targetType.name.toLowerCaseAsciiOnly().capitalizeAsciiOnly()
 
     override fun createCompilationFactory(
-        forTarget: KotlinJsIrTarget
+        forTarget: KotlinWasmTarget,
     ): KotlinCompilationFactory<KotlinJsIrCompilation> =
         KotlinJsIrCompilationFactory(forTarget)
 
