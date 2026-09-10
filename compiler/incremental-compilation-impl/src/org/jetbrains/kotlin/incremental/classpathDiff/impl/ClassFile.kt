@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff.impl
 
+import org.jetbrains.kotlin.incremental.KotlinClassInfo
+import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 
@@ -43,5 +45,9 @@ internal class ClassFileWithContents(
 
     val classInfo: BasicClassInfo by lazy {
         BasicClassInfo.compute(classReader)
+    }
+
+    val classProto: ProtoData? by lazy {
+        classInfo.kotlinClassHeader?.let { KotlinClassInfo.readProtoData(classInfo.classId, it) }
     }
 }

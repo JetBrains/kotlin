@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.BasicClassInfo
+import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
+import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFileWithContents
 import org.jetbrains.kotlin.incremental.impl.ExtraClassInfoGenerator
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
@@ -30,6 +32,28 @@ import kotlin.test.*
 
 @OptIn(K1Deprecation::class)
 class KotlinClassInfoReuseTest {
+
+    @Test
+    fun `class file shares decoded proto with Kotlin class info`() {
+        for (name in listOf("MetadataReuseFixture.class", "KotlinClassInfoReuseTestKt.class")) {
+            val fixture = compiledFixture(name)
+            val classFile = ClassFileWithContents(ClassFile(File("."), name), fixture.bytes)
+            val proto = assertNotNull(classFile.classProto)
+            val info = KotlinClassInfo.createFrom(
+                classFile.classInfo.classId,
+                classFile.classInfo.kotlinClassHeader!!,
+                classFile.classReader,
+                classProto = proto
+            )
+            assertSame(proto, classFile.classProto)
+            assertSame(proto, info.classProto)
+            assertSame(proto, info.protoData)
+            val expected = fixture.oldInfo()
+            assertContentEquals(KotlinClassInfoExternalizer.toByteArray(expected), KotlinClassInfoExternalizer.toByteArray(info))
+            val restored = KotlinClassInfoExternalizer.fromByteArray(KotlinClassInfoExternalizer.toByteArray(info))
+            assertProtoEquals(proto, restored.protoData, info.classHeaderStrings.size)
+        }
+    }
 
     @Test
     fun `class and companion snapshots retain constants and non-private inline members`() {

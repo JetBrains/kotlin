@@ -63,6 +63,7 @@ internal class PlainClassListSnapshotter(
                         clazz.classInfo.classId,
                         clazz.classInfo.kotlinClassHeader!!,
                         clazz.classReader,
+                        classProto = clazz.classProto,
                     )
                     snapshotKotlinClass(clazz, settings, kotlinClassInfo)
                 }
@@ -176,7 +177,8 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
                     classFileWithContents.classReader,
                     extraInfoGenerator = ExtraInfoGeneratorWithInlinedClassSnapshotting(
                         classMultiHashProvider = inlinedClassSnapshotter as ClassMultiHashProvider,
-                    )
+                    ),
+                    classProto = classFileWithContents.classProto,
                 )
                 snapshotKotlinClass(classFileWithContents, settings, kotlinClassInfo)
             }

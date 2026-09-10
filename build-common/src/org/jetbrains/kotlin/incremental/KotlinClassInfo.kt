@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.incremental.impl.ExtraClassInfoGenerator
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
-import org.jetbrains.kotlin.inline.inlineFunctions
-import org.jetbrains.kotlin.inline.inlinePropertyAccessors
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -32,7 +30,8 @@ class KotlinClassInfo(
     val classHeaderData: Array<String>, // Can be empty
     val classHeaderStrings: Array<String>, // Can be empty
     val multifileClassName: String?, // Not null iff classKind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
-    val extraInfo: ExtraInfo
+    val extraInfo: ExtraInfo,
+    val classProto: ProtoData? = null
 ) {
 
     /** Extra information about a Kotlin class that is not captured in the Kotlin class metadata. */
@@ -77,8 +76,6 @@ class KotlinClassInfo(
         )
     }
 
-    // Set only by the factory, before publication, when inline member discovery has already decoded the metadata.
-    private var protoDataForReuse: ProtoData? = null
 
     /**
      * The [ProtoData] of this class.
@@ -90,7 +87,7 @@ class KotlinClassInfo(
         check(classKind != KotlinClassHeader.Kind.MULTIFILE_CLASS) {
             "Proto data is not available for KotlinClassHeader.Kind.MULTIFILE_CLASS: $classId"
         }
-        protoDataForReuse ?: protoMapValue.toProtoData(classId.packageFqName)
+        classProto ?: protoMapValue.toProtoData(classId.packageFqName)
     }
 
     /** Name of the companion object of this class (default is "Companion") iff this class HAS a companion object, or null otherwise. */
@@ -134,11 +131,21 @@ class KotlinClassInfo(
             classId: ClassId,
             classHeader: KotlinClassHeader,
             classReader: ClassReader,
-            extraInfoGenerator: ExtraClassInfoGenerator = ExtraClassInfoGenerator()
+            extraInfoGenerator: ExtraClassInfoGenerator = ExtraClassInfoGenerator(),
+            classProto: ProtoData? = readProtoData(classId, classHeader)
         ): KotlinClassInfo {
+            return createFrom(
+                classId,
+                classHeader,
+                extraInfo = extraInfoGenerator.getExtraInfo(classHeader, classReader, classProto),
+                classProto = classProto
+            )
+        }
+
+        fun readProtoData(classId: ClassId, classHeader: KotlinClassHeader): ProtoData? {
             val data = classHeader.data
             val strings = classHeader.strings
-            val protoData = if (data != null && strings != null) {
+            return if (data != null && strings != null) {
                 when (classHeader.kind) {
                     KotlinClassHeader.Kind.CLASS -> {
                         val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(data, strings)
@@ -151,36 +158,25 @@ class KotlinClassInfo(
                     else -> null
                 }
             } else null
-
-            val inlineMembers = when (protoData) {
-                is ClassProtoData ->
-                    inlineFunctions(protoData.proto.functionList, protoData.nameResolver, protoData.proto.typeTable, excludePrivateFunctions = true) +
-                            inlinePropertyAccessors(protoData.proto.propertyList, protoData.nameResolver, excludePrivateAccessors = true)
-                is PackagePartProtoData ->
-                    inlineFunctions(protoData.proto.functionList, protoData.nameResolver, protoData.proto.typeTable, excludePrivateFunctions = true) +
-                            inlinePropertyAccessors(protoData.proto.propertyList, protoData.nameResolver, excludePrivateAccessors = true)
-                null -> emptyList()
-            }
-            return createFrom(
-                classId,
-                classHeader,
-                extraInfo = extraInfoGenerator.getExtraInfo(classHeader, classReader, inlineMembers),
-            ).apply {
-                protoDataForReuse = protoData
-            }
         }
 
         /**
          * Allows callers to customize [ExtraInfo] computation.
          */
-        fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, extraInfo: ExtraInfo): KotlinClassInfo {
+        fun createFrom(
+            classId: ClassId,
+            classHeader: KotlinClassHeader,
+            extraInfo: ExtraInfo,
+            classProto: ProtoData? = null
+        ): KotlinClassInfo {
             return KotlinClassInfo(
                 classId,
                 classHeader.kind,
                 classHeader.data ?: classHeader.incompatibleData ?: emptyArray(),
                 classHeader.strings ?: emptyArray(),
                 classHeader.multifileClassName,
-                extraInfo = extraInfo
+                extraInfo = extraInfo,
+                classProto = classProto
             )
         }
     }

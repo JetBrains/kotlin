@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.incremental.impl
 
 import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.incremental.ClassProtoData
 import org.jetbrains.kotlin.incremental.KotlinClassInfo.ExtraInfo
+import org.jetbrains.kotlin.incremental.PackagePartProtoData
+import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotClassExcludingMembers
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotMethod
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.sortClassMembers
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
+import org.jetbrains.kotlin.inline.inlineFunctions
 import org.jetbrains.kotlin.inline.inlineFunctionsAndAccessors
+import org.jetbrains.kotlin.inline.inlinePropertyAccessors
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -40,6 +45,19 @@ open class ExtraClassInfoGenerator() {
 
     fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArray): ExtraInfo {
         return getExtraInfo(classHeader, ClassReader(classContents), inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true))
+    }
+
+    fun getExtraInfo(classHeader: KotlinClassHeader, classReader: ClassReader, classProto: ProtoData?): ExtraInfo {
+        val inlineMembers = when (classProto) {
+            is ClassProtoData ->
+                inlineFunctions(classProto.proto.functionList, classProto.nameResolver, classProto.proto.typeTable, excludePrivateFunctions = true) +
+                        inlinePropertyAccessors(classProto.proto.propertyList, classProto.nameResolver, excludePrivateAccessors = true)
+            is PackagePartProtoData ->
+                inlineFunctions(classProto.proto.functionList, classProto.nameResolver, classProto.proto.typeTable, excludePrivateFunctions = true) +
+                        inlinePropertyAccessors(classProto.proto.propertyList, classProto.nameResolver, excludePrivateAccessors = true)
+            null -> emptyList()
+        }
+        return getExtraInfo(classHeader, classReader, inlineMembers)
     }
 
     /** Allows reusing already discovered non-private inline functions and accessors. */
