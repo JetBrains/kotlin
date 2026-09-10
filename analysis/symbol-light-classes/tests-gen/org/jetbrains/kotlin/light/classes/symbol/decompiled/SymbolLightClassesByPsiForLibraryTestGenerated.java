@@ -113,15 +113,15 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
   }
 
   @Test
-  @TestMetadata("defaultMethodInKotlinWithSettingAll.kt")
-  public void testDefaultMethodInKotlinWithSettingAll() {
-    run("defaultMethodInKotlinWithSettingAll.kt");
+  @TestMetadata("defaultMethodInKotlinWithSettingEnable.kt")
+  public void testDefaultMethodInKotlinWithSettingEnable() {
+    run("defaultMethodInKotlinWithSettingEnable.kt");
   }
 
   @Test
-  @TestMetadata("defaultMethodInKotlinWithSettingAllCompatibility.kt")
-  public void testDefaultMethodInKotlinWithSettingAllCompatibility() {
-    run("defaultMethodInKotlinWithSettingAllCompatibility.kt");
+  @TestMetadata("defaultMethodInKotlinWithSettingNoCompatibility.kt")
+  public void testDefaultMethodInKotlinWithSettingNoCompatibility() {
+    run("defaultMethodInKotlinWithSettingNoCompatibility.kt");
   }
 
   @Test
