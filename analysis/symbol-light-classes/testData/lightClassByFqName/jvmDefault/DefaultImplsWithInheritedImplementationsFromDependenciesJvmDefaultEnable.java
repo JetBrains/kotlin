@@ -1,0 +1,8 @@
+public abstract interface B /* B*/ extends Disabled, Enabled, SameModule {
+  public default void declared();//  declared()
+
+  public static final class DefaultImpls /* B.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    public static void declared(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  declared(@org.jetbrains.annotations.NotNull() B)
+  }
+}
