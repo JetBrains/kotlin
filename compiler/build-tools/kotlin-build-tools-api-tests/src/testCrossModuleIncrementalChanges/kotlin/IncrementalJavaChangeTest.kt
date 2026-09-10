@@ -23,8 +23,6 @@ import org.junit.jupiter.api.DisplayName
 class IncrementalJavaChangeTest : BaseCompilationTest() {
     private val javaClassFile = "src/main/java/bar/JavaClass.java"
 
-    // shared between tests, so that modules with the same configuration are compiled only once, see `Scenario.module`
-
     // Pinned explicitly: precise Java tracking is K1-only (KT-57147) and force-disabled on K2,
     // so only the non-precise behavior is covered here.
     private val disablePreciseJavaTracking: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit = {
