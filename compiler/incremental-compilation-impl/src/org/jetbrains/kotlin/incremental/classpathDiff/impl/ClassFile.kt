@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff.impl
 
+import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 
 /** Information about the location of a .class file. */
@@ -38,7 +39,9 @@ internal class ClassFileWithContents(
     @Suppress("unused") val classFile: ClassFile,
     val contents: ByteArray
 ) {
+    val classReader: ClassReader by lazy { ClassReader(contents) }
+
     val classInfo: BasicClassInfo by lazy {
-        BasicClassInfo.compute(contents)
+        BasicClassInfo.compute(classReader)
     }
 }

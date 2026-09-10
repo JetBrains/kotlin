@@ -62,7 +62,7 @@ internal class PlainClassListSnapshotter(
                     val kotlinClassInfo = KotlinClassInfo.createFrom(
                         clazz.classInfo.classId,
                         clazz.classInfo.kotlinClassHeader!!,
-                        clazz.contents,
+                        clazz.classReader,
                     )
                     snapshotKotlinClass(clazz, settings, kotlinClassInfo)
                 }
@@ -170,17 +170,13 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
                  * This part is sensitive: extra info computation might require inlinedSnapshots,
                  * so inlinedSnapshots calculation must not directly call regular snapshotting to prevent infinite loops
                  */
-                val extraInfo = ExtraInfoGeneratorWithInlinedClassSnapshotting(
-                    classMultiHashProvider = inlinedClassSnapshotter as ClassMultiHashProvider,
-                ).getExtraInfo(
-                    classFileWithContents.classInfo.kotlinClassHeader!!,
-                    classFileWithContents.contents,
-                )
-
                 val kotlinClassInfo = KotlinClassInfo.createFrom(
                     classFileWithContents.classInfo.classId,
                     classFileWithContents.classInfo.kotlinClassHeader!!,
-                    extraInfo = extraInfo
+                    classFileWithContents.classReader,
+                    extraInfoGenerator = ExtraInfoGeneratorWithInlinedClassSnapshotting(
+                        classMultiHashProvider = inlinedClassSnapshotter as ClassMultiHashProvider,
+                    )
                 )
                 snapshotKotlinClass(classFileWithContents, settings, kotlinClassInfo)
             }

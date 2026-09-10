@@ -39,8 +39,17 @@ open class ExtraClassInfoGenerator() {
     }
 
     fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArray): ExtraInfo {
+        return getExtraInfo(classHeader, ClassReader(classContents), inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true))
+    }
+
+    /** Allows reusing already discovered non-private inline functions and accessors. */
+    fun getExtraInfo(
+        classHeader: KotlinClassHeader,
+        classReader: ClassReader,
+        inlineMembers: List<InlineFunctionOrAccessor>
+    ): ExtraInfo {
         val inlineFunctionsAndAccessors: Map<JvmMemberSignature.Method, InlineFunctionOrAccessor> =
-            inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true).associateBy { it.jvmMethodSignature }
+            inlineMembers.associateBy { it.jvmMethodSignature }
 
         // 1. Create a ClassNode that will contain only required info
         val classNode = ClassNode()
@@ -51,7 +60,6 @@ open class ExtraClassInfoGenerator() {
         //        + Do not filter out private methods because a *non-private* inline function/accessor may have a *private* corresponding method
         //          in the bytecode (see `InlineOnlyKt.isInlineOnlyPrivateInBytecode`)
         //        + Do not filter out method bodies
-        val classReader = ClassReader(classContents)
         val selectiveClassVisitor = SelectiveClassVisitor(
             cv = makeClassVisitor(classNode),
             shouldVisitField = { _: JvmMemberSignature.Field, isPrivate: Boolean, isConstant: Boolean ->

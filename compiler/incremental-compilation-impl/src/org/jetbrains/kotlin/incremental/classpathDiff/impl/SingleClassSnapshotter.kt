@@ -89,7 +89,7 @@ internal object SingleClassSnapshotter {
         // Note the `parsingOptions` passed to `classReader`:
         //     - Pass SKIP_CODE as we want to remove method bodies
         //     - Do not pass SKIP_DEBUG as debug info (e.g., method parameter names) may be important
-        val classReader = ClassReader(classFile.contents)
+        val classReader = classFile.classReader
         val selectiveClassVisitor = SelectiveClassVisitor(
             classNode,
             shouldVisitField = { _: JvmMemberSignature.Field, isPrivate: Boolean, _: Boolean -> !isPrivate },
