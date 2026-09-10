@@ -250,8 +250,6 @@ internal object DevirtualizationAnalysis {
 
             is DataFlowIR.Node.ItableCall ->
                 itable[callSite.interfaceId]!![callSite.calleeItableIndex]
-
-            else -> error("Unreachable")
         }
 
         fun logPathToType(reversedEdges: IntArray, node: Node, type: Int) {
@@ -1104,6 +1102,21 @@ internal object DevirtualizationAnalysis {
         private class ConstraintGraphVirtualCall(val caller: Function, val virtualCall: DataFlowIR.Node.VirtualCall,
                                                  val arguments: List<Node>, val returnsNode: Node)
 
+        // A virtual dispatch slot: all call sites with the same key (even from different function) resolve to
+        // the same set of possible callees (which depends only on the receiver's static type, the slot in the vtable
+        // and the set of instantiated classes), so they can share one fan-out to those callees.
+        private data class VirtualDispatchKey(val receiverTypeIndex: Int, val interfaceId: Int, val slot: Int) {
+            companion object {
+                fun create(node: DataFlowIR.Node.VirtualCall) = when (node) {
+                    is DataFlowIR.Node.VtableCall ->
+                        VirtualDispatchKey(node.receiverType.index, 0 /* Invalid value */, node.calleeVtableIndex)
+
+                    is DataFlowIR.Node.ItableCall ->
+                        VirtualDispatchKey(node.receiverType.index, node.interfaceId, node.calleeItableIndex)
+                }
+            }
+        }
+
         private inner class ConstraintGraphBuilder(val functionNodesMap: MutableMap<DataFlowIR.Node, Node>,
                                                    val functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
                                                    val rootSet: List<DataFlowIR.FunctionSymbol>,
@@ -1291,6 +1304,34 @@ internal object DevirtualizationAnalysis {
                 )
             }
 
+            private val virtualDispatchHubs = mutableMapOf<VirtualDispatchKey, Function>()
+
+            // Returns the hub for the given call site's virtual slot, building the fan-out
+            // to all possible callees on the first request.
+            private fun virtualDispatchHub(
+                    node: DataFlowIR.Node.VirtualCall
+            ) = virtualDispatchHubs.getOrPut(VirtualDispatchKey.create(node)) {
+                val callee = node.callee
+                Function(
+                        symbol = callee,
+                        parameters = Array(node.arguments.size) { ordinaryNode { "VirtualSlotParam#$it\$$callee" } },
+                        returns = ordinaryNode { "VirtualSlotReturns\$$callee" },
+                        throws = ordinaryNode { "VirtualSlotThrows\$$callee" },
+                ).also { hub ->
+                    val hubArguments = hub.parameters.asList()
+                    // Register the hub before expanding it: if the expansion instantiates a new class
+                    // (an external callee with a final return type), [checkSupertypes] brings this very
+                    // hub up to date through [processVirtualCall].
+                    typesVirtualCallSites[node.receiverType.index].add(
+                            ConstraintGraphVirtualCall(hub, node, hubArguments, hub.returns)
+                    )
+                    forEachBitInBoth(typeHierarchy.inheritorsOf(node.receiverType), instantiatingClasses) {
+                        val actualCallee = allTypes[it].calleeAt(node)
+                        addEdge(doCall(hub, actualCallee, hubArguments, actualCallee.returnParameter.type), hub.returns)
+                    }
+                }
+            }
+
             private fun checkSupertypes(type: DataFlowIR.Type,
                                         inheritor: DataFlowIR.Type,
                                         seenTypes: CustomBitSet) {
@@ -1470,12 +1511,13 @@ internal object DevirtualizationAnalysis {
                             }
 
                             val returnsNode = ordinaryNode { "VirtualCallReturns\$${function.symbol}" }
-                            if (receiverType != DataFlowIR.Type.Virtual)
-                                typesVirtualCallSites[receiverType.index].add(
-                                        ConstraintGraphVirtualCall(function, node, arguments, returnsNode))
-                            forEachBitInBoth(typeHierarchy.inheritorsOf(receiverType), instantiatingClasses) {
-                                val actualCallee = allTypes[it].calleeAt(node)
-                                addEdge(doCall(actualCallee, arguments, actualCallee.returnParameter.type), returnsNode)
+                            if (receiverType != DataFlowIR.Type.Virtual) {
+                                val hub = virtualDispatchHub(node)
+                                arguments.forEachIndexed { index, argument ->
+                                    addEdge(argument, hub.parameters[index])
+                                }
+                                addEdge(hub.returns, returnsNode)
+                                addEdge(hub.throws, function.throws)
                             }
                             if (entryPoint == null) {
                                 // Add cast to [Virtual] edge from receiver to returns, if return type is not final.
