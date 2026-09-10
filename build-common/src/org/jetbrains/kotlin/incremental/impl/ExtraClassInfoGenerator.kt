@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotClassExcludingMembers
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotMethod
-import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.sortClassMembers
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
 import org.jetbrains.kotlin.inline.inlineFunctions
@@ -25,10 +24,8 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 
-open class ExtraClassInfoGenerator() {
-    protected open fun makeClassVisitor(classNode: ClassNode): ClassVisitor {
-        return classNode
-    }
+open class ExtraClassInfoGenerator {
+    protected open fun makeClassVisitor(): ClassVisitor? = null
 
     /**
      * @param methodSignature well-typed method signature. doesn't include the containing class' internal name
@@ -48,6 +45,10 @@ open class ExtraClassInfoGenerator() {
     }
 
     fun getExtraInfo(classHeader: KotlinClassHeader, classReader: ClassReader, classProto: ProtoData?): ExtraInfo {
+        return getExtraInfo(classHeader, classNode(classReader), classProto)
+    }
+
+    fun getExtraInfo(classHeader: KotlinClassHeader, classNode: ClassNode, classProto: ProtoData?): ExtraInfo {
         val inlineMembers = when (classProto) {
             is ClassProtoData ->
                 inlineFunctions(classProto.proto.functionList, classProto.nameResolver, classProto.proto.typeTable, excludePrivateFunctions = true) +
@@ -57,7 +58,7 @@ open class ExtraClassInfoGenerator() {
                         inlinePropertyAccessors(classProto.proto.propertyList, classProto.nameResolver, excludePrivateAccessors = true)
             null -> emptyList()
         }
-        return getExtraInfo(classHeader, classReader, inlineMembers)
+        return getExtraInfo(classHeader, classNode, inlineMembers)
     }
 
     /** Allows reusing already discovered non-private inline functions and accessors. */
@@ -66,57 +67,35 @@ open class ExtraClassInfoGenerator() {
         classReader: ClassReader,
         inlineMembers: List<InlineFunctionOrAccessor>
     ): ExtraInfo {
+        return getExtraInfo(classHeader, classNode(classReader), inlineMembers)
+    }
+
+    private fun getExtraInfo(
+        classHeader: KotlinClassHeader,
+        classNode: ClassNode,
+        inlineMembers: List<InlineFunctionOrAccessor>
+    ): ExtraInfo {
         val inlineFunctionsAndAccessors: Map<JvmMemberSignature.Method, InlineFunctionOrAccessor> =
             inlineMembers.associateBy { it.jvmMethodSignature }
 
-        // 1. Create a ClassNode that will contain only required info
-        val classNode = ClassNode()
+        // Do not filter private bytecode methods: non-private inline members may have private implementations.
+        val inlineMethods = classNode.methods
+            .filter { JvmMemberSignature.Method(it.name, it.desc) in inlineFunctionsAndAccessors }
+            .sortedWith(compareBy({ it.name }, { it.desc }))
+        makeClassVisitor()?.let { visitor -> inlineMethods.forEach { it.accept(visitor) } }
 
-        // 2. Load the class's contents into the ClassNode, keeping only info that is required to compute `ExtraInfo`:
-        //     - Keep only fields that are non-private constants
-        //     - Keep only methods that are non-private inline functions/accessors
-        //        + Do not filter out private methods because a *non-private* inline function/accessor may have a *private* corresponding method
-        //          in the bytecode (see `InlineOnlyKt.isInlineOnlyPrivateInBytecode`)
-        //        + Do not filter out method bodies
-        val selectiveClassVisitor = SelectiveClassVisitor(
-            cv = makeClassVisitor(classNode),
-            shouldVisitField = { _: JvmMemberSignature.Field, isPrivate: Boolean, isConstant: Boolean ->
-                !isPrivate && isConstant
-            },
-            shouldVisitMethod = { method: JvmMemberSignature.Method, _: Boolean ->
-                // Do not filter out private methods (see above comment)
-                method in inlineFunctionsAndAccessors.keys
-            }
-        )
-        val parsingOptions = if (inlineFunctionsAndAccessors.isNotEmpty()) {
-            // Do not pass (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info (e.g., line numbers) are important for inline
-            // functions/accessors
-            0
-        } else {
-            // Pass (SKIP_CODE, SKIP_DEBUG) to improve performance as method bodies and debug info are not important when we're not analyzing
-            // inline functions/accessors
-            ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG
-        }
-        classReader.accept(selectiveClassVisitor, parsingOptions)
-
-        // 3. Sort fields and methods as their order is not important
-        sortClassMembers(classNode)
-
-        // 4. Snapshot the class
-
-        val inlineFunctionOrAccessorSnapshots: Map<InlineFunctionOrAccessor, Long> = classNode.methods.associate { methodNode ->
+        val inlineFunctionOrAccessorSnapshots: Map<InlineFunctionOrAccessor, Long> = inlineMethods.associate { methodNode ->
             // Note:
-            //   - Each of `classNode.methods` (`methodNode`) is an inline function/accessor because we kept only methods that are (non-private)
-            //     inline functions/accessors in `classNode`.
+            //   - Each method in `inlineMethods` is a non-private inline function/accessor.
             //   - Not all inline functions/accessors have a corresponding method in the bytecode (i.e., it's possible that
-            //     `classNode.methods.size < inlineFunctionsAndAccessors.size`). Specifically, internal/private inline functions/accessors may
+            //     `inlineMethods.size < inlineFunctionsAndAccessors.size`). Specifically, internal/private inline functions/accessors may
             //     be removed from the bytecode if code shrinker is used. For example, `kotlin-reflect-1.7.20.jar` contains
             //     `/kotlin/reflect/jvm/internal/UtilKt.class` in which the internal inline function `reflectionCall` appears in the Kotlin
             //     class metadata (also in the source file), but not in the bytecode. However, we can safely ignore those
             //     inline functions/accessors because they are not declared in the bytecode and therefore can't be referenced.
             val methodSignature = JvmMemberSignature.Method(name = methodNode.name, desc = methodNode.desc)
             val innerClassPrefix = "${classNode.name}\$${methodNode.name}"
-            var methodHash = snapshotMethod(methodNode, classNode.version)
+            val methodHash = snapshotMethod(methodNode, classNode.version)
             inlineFunctionsAndAccessors[methodSignature]!! to calculateInlineMethodHash(methodSignature, innerClassPrefix, methodHash)
         }
 
@@ -129,10 +108,12 @@ open class ExtraClassInfoGenerator() {
             )
         } else null
 
-        val constantSnapshots: Map<String, Long> = classNode.fields.associate { fieldNode ->
-            // Note: `fieldNode` is a constant because we kept only fields that are (non-private) constants in `classNode`
-            fieldNode.name to ConstantValueExternalizer.toByteArray(fieldNode.value!!).hashToLong()
-        }
+        val constantSnapshots: Map<String, Long> = classNode.fields
+            .filter { !it.isPrivate() && it.isConstant() }
+            .sortedWith(compareBy({ it.name }, { it.desc }))
+            .associate { fieldNode ->
+                fieldNode.name to ConstantValueExternalizer.toByteArray(fieldNode.value!!).hashToLong()
+            }
 
         return ExtraInfo(classSnapshotExcludingMembers, constantSnapshots, inlineFunctionOrAccessorSnapshots)
     }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.BasicClassInfo
+import org.jetbrains.kotlin.incremental.impl.classNode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.compileJavaFiles
@@ -23,7 +24,7 @@ class BasicClassInfoTest {
     @Test
     fun `compute BasicClassInfo`() {
         val compiledClasses = compileJava(className, sourceCode)
-        val classIds = compiledClasses.map { BasicClassInfo.compute(it).classId }
+        val classIds = compiledClasses.map { BasicClassInfo.compute(classNode(it)).classId }
 
         assertEquals(
             listOf(

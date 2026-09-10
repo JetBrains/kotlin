@@ -10,6 +10,7 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.FieldNode
 
 /**
  * [ClassVisitor] which visits only members satisfying the given criteria (`[shouldVisitField] == true` or `[shouldVisitMethod] == true`).
@@ -35,8 +36,16 @@ class SelectiveClassVisitor(
             cv.visitMethod(access, name, desc, signature, exceptions)
         } else null
     }
+}
 
-    private fun Int.isPrivate() = (this and Opcodes.ACC_PRIVATE) != 0
+private fun Int.isPrivate() = (this and Opcodes.ACC_PRIVATE) != 0
 
-    private fun Int.isStaticFinal() = (this and (Opcodes.ACC_STATIC or Opcodes.ACC_FINAL)) == (Opcodes.ACC_STATIC or Opcodes.ACC_FINAL)
+private fun Int.isStaticFinal() = (this and (Opcodes.ACC_STATIC or Opcodes.ACC_FINAL)) == (Opcodes.ACC_STATIC or Opcodes.ACC_FINAL)
+
+fun FieldNode.isConstant(): Boolean {
+    return access.isStaticFinal() && value != null
+}
+
+fun FieldNode.isPrivate(): Boolean {
+    return access.isPrivate()
 }

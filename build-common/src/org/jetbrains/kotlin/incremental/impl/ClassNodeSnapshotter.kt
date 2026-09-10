@@ -28,6 +28,8 @@ object ClassNodeSnapshotter {
         val originalMethods = classNode.methods
         val originalVisibleAnnotations = classNode.visibleAnnotations
         val originalInvisibleAnnotations = classNode.invisibleAnnotations
+        val originalSourceFile = classNode.sourceFile
+        val originalSourceDebug = classNode.sourceDebug
 
         classNode.fields = emptyList()
         classNode.methods = emptyList()
@@ -37,16 +39,22 @@ object ClassNodeSnapshotter {
             }
         }
         if (alsoExcludeDebugInfo) {
+            classNode.sourceFile = null
+            classNode.sourceDebug = null
             classNode.invisibleAnnotations = originalInvisibleAnnotations?.filterNot {
                 it.desc == "Lkotlin/jvm/internal/SourceDebugExtension;"
             }
         }
 
-        return snapshotClass(classNode).also {
+        return try {
+            snapshotClass(classNode)
+        } finally {
             classNode.fields = originalFields
             classNode.methods = originalMethods
             classNode.visibleAnnotations = originalVisibleAnnotations
             classNode.invisibleAnnotations = originalInvisibleAnnotations
+            classNode.sourceFile = originalSourceFile
+            classNode.sourceDebug = originalSourceDebug
         }
     }
 
