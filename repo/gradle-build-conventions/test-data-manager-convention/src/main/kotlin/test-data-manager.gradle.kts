@@ -39,7 +39,6 @@
  * Both tasks inherit `mustRunAfter` from the module's `test` task, ensuring proper execution
  * order when running across modules (e.g., golden modules first).
  */
-
 tasks.register<CheckTestDataModuleTask>(checkTestDataTaskName) {
     wireOptions(checkTestDataTaskName)
 }
@@ -47,7 +46,6 @@ tasks.register<CheckTestDataModuleTask>(checkTestDataTaskName) {
 tasks.register<UpdateTestDataModuleTask>(updateTestDataTaskName) {
     wireOptions(updateTestDataTaskName)
 }
-
 /**
  * Wires a test-data manager-style [JavaExec] task to mirror the module's regular `test` task
  * so tests run the same way under the manager as they do normally.

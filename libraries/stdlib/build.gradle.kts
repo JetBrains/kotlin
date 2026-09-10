@@ -262,7 +262,7 @@ kotlin {
             }
         }
     }
-    js {
+    /*js {
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             browser {}
         }
@@ -296,7 +296,7 @@ kotlin {
                 }
             }
         }
-    }
+    }*/
 
     fun <T> T.commonWasmTargetConfiguration()
             where T : KotlinTargetWithNodeJsDsl,
@@ -306,7 +306,7 @@ kotlin {
         // KT-85971
         this as KotlinJsTargetDsl
         if (this.wasmTargetType == KotlinWasmTargetType.JS) {
-            nodejs()
+            //nodejs()
         } else {
             this as KotlinWasmWasiTargetDsl
             @OptIn(ExperimentalWasmDsl::class)
@@ -332,7 +332,7 @@ kotlin {
             }
         }
     }
-
+/*
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         commonWasmTargetConfiguration()
@@ -341,7 +341,7 @@ kotlin {
     wasmWasi {
         commonWasmTargetConfiguration()
     }
-
+*/
     // FIXME: KT-85818 Avoid using isInIdeaSync in stdlib/build.gradle.kts in kotlin.git
     if (kotlinBuildProperties.isInIdeaSync.get()) {
         val hostOs = System.getProperty("os.name")
@@ -452,7 +452,7 @@ kotlin {
                 srcDir("common-js-wasmjs/src")
             }
         }
-
+/*
         val jsMain = getByName("jsMain") {
             dependsOn(webMain)
             dependsOn(commonNonJvmMain)
@@ -490,7 +490,7 @@ kotlin {
         val jsTest = getByName("jsTest") {
             kotlin.srcDir("${jsDir}/test")
         }
-
+*/
         val nativeWasmMain = create("nativeWasmMain") {
             dependsOn(commonNonJvmMain)
             kotlin.srcDir("native-wasm/src")
@@ -547,7 +547,7 @@ kotlin {
                 srcDir("wasm/test")
             }
         }
-
+/*
         val wasmJsMain = getByName("wasmJsMain") {
             dependsOn(webMain)
             dependsOn(wasmCommonMain)
@@ -582,7 +582,7 @@ kotlin {
                 srcDir("wasm/wasi/test")
             }
         }
-
+*/
         if (kotlinBuildProperties.isInIdeaSync.get()) {
             val nativeKotlinTestCommon = create("nativeKotlinTestCommon") {
                 dependsOn(commonMain.get())
@@ -743,6 +743,7 @@ tasks {
         ownPackages.set(listOf("kotlin"))
     }
 
+/*
     val jsJar = named("jsJar", Jar::class) {
         manifestAttributes(manifest, "Main")
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
@@ -788,7 +789,7 @@ tasks {
                 into("runtime")
             }
             from("$jsDir/src") {
-                include("**/*.kt")
+                include("** / *.kt")
             }
         }
     }
@@ -809,7 +810,7 @@ tasks {
         manifestAttributes(manifest, "Main")
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-wasi"))
     }
-
+*/
     artifacts {
         val distJsJar = configurations.create("distJsJar")
         val distJsSourcesJar = configurations.create("distJsSourcesJar")
@@ -819,10 +820,10 @@ tasks {
         val commonMainMetadataElements = configurations.create("commonMainMetadataElements")
         val webMainMetadataElements = configurations.create("webMainMetadataElements")
 
-        add(distJsSourcesJar.name, jsSourcesJar)
+        /*add(distJsSourcesJar.name, jsSourcesJar)
         add(distJsKlib.name, jsJar)
         add(distWasmJsKlib.name, wasmJsJar)
-        add(distWasmWasiKlib.name, wasmWasiJar)
+        add(distWasmWasiKlib.name, wasmWasiJar)*/
         add(webMainMetadataElements.name, webMetadataJar)
         add(commonMainMetadataElements.name, commonMetadataJar)
     }
@@ -853,13 +854,13 @@ tasks {
     if (project.hasProperty("kotlin.stdlib.test.long.running")) {
         check.configure { dependsOn(jvmLongRunningTest) }
     }
-
+/*
     listOf("Js", "Wasi").forEach { wasmTarget ->
         named("compileTestKotlinWasm$wasmTarget", AbstractKotlinCompile::class) {
             // TODO: fix all warnings, enable -Werror
             compilerOptions.suppressWarnings = true
             // exclusions due to KT-51647
-            exclude("generated/minmax/*")
+            exclude("generated/minmax/ *")
             exclude("collections/MapTest.kt")
         }
         named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
@@ -869,6 +870,7 @@ tasks {
             enabled = false  // Causes out-of-memory in CI: KTI-2150
         }
     }
+*/
 
     /*
     We are using a custom 'kotlin-project-structure-metadata' to ensure 'nativeApiElements' lists 'commonMain' as source set
@@ -999,11 +1001,7 @@ publishing {
         val wasmJs = module("wasmJsModule") {
             mavenPublication {
                 artifactId = "$artifactBaseName-wasm-js"
-                configureKotlinPomAttributes(
-                    project,
-                    "Kotlin Standard Library for experimental WebAssembly JS platform",
-                    packaging = "klib"
-                )
+                configureKotlinPomAttributes(project, "Kotlin Standard Library for experimental WebAssembly JS platform", packaging = "klib")
             }
             variant("wasmJsApiElements")
             variant("wasmJsRuntimeElements")
@@ -1012,11 +1010,7 @@ publishing {
         val wasmWasi = module("wasmWasiModule") {
             mavenPublication {
                 artifactId = "$artifactBaseName-wasm-wasi"
-                configureKotlinPomAttributes(
-                    project,
-                    "Kotlin Standard Library for experimental WebAssembly WASI platform",
-                    packaging = "klib"
-                )
+                configureKotlinPomAttributes(project, "Kotlin Standard Library for experimental WebAssembly WASI platform", packaging = "klib")
             }
             variant("wasmWasiApiElements")
             variant("wasmWasiRuntimeElements")
@@ -1031,7 +1025,7 @@ publishing {
         val rootModule = named("rootModule", MavenPublication::class)
         val jsModule = named("jsModule", MavenPublication::class)
         configureSbom("Main", "kotlin-stdlib", setOf("jvmRuntimeClasspath"), rootModule)
-        configureSbom("Js", "kotlin-stdlib-js", setOf("jsRuntimeClasspath"), jsModule)
+        //configureSbom("Js", "kotlin-stdlib-js", setOf("jsRuntimeClasspath"), jsModule)
 
         val wasmJsModule = named("wasmJsModule", MavenPublication::class)
         val wasmWasiModule = named("wasmWasiModule", MavenPublication::class)
