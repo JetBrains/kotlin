@@ -293,6 +293,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   }
 
   @Test
+  @TestMetadata("jvmStaticInInterfaceCompanion.kt")
+  public void testJvmStaticInInterfaceCompanion() {
+    run("jvmStaticInInterfaceCompanion.kt");
+  }
+
+  @Test
   @TestMetadata("jvmStaticOnPropertySetter.kt")
   public void testJvmStaticOnPropertySetter() {
     run("jvmStaticOnPropertySetter.kt");
