@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmExposeBoxedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -39,6 +41,23 @@ internal fun isImplementationWithoutJvmDefault(symbol: KaCallableSymbol, contain
 
     // A `@JvmStatic` member of the companion object is materialized in the interface, but it belongs to the companion object
     return (symbol.containingDeclaration as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE
+}
+
+/**
+ * Whether the static method of [defaultImpls] for [symbol] is a compatibility bridge to a JVM `default` method.
+ *
+ * In the compatibility mode of `-jvm-default=enable`, the implementation of an interface member is compiled to a `default` method,
+ * and `DefaultImpls` only keeps a bridge to it for the clients compiled without JVM default methods. The JVM backend annotates
+ * such a bridge with `java.lang.Deprecated`, see `org.jetbrains.kotlin.backend.jvm.JvmCachedDeclarations.getDefaultImplsFunction`.
+ * Otherwise, the method of `DefaultImpls` is the implementation itself or a bridge to the implementation in `DefaultImpls` of
+ * the super-interface.
+ */
+context(_: KaSession)
+internal fun isJvmDefaultCompatibilityBridge(symbol: KaCallableSymbol, defaultImpls: SymbolLightClassForInterfaceDefaultImpls): Boolean {
+    if (defaultImpls.ktModule.jvmDefaultMode != JvmDefaultMode.ENABLE) return false
+
+    // An implementation inherited from an interface compiled without JVM default methods is bridged as is
+    return symbol.fakeOverrideOriginal.containingModule.jvmDefaultMode.isEnabled
 }
 
 /**

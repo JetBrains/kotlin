@@ -45,6 +45,13 @@ internal abstract class SymbolLightMethodBase(
      */
     val isJvmExposeBoxed: Boolean get() = generationMode is MethodGenerationMode.Boxed
 
+    /**
+     * Whether the method is a compatibility bridge in `DefaultImpls`, which is deprecated on the JVM.
+     *
+     * @see isJvmDefaultCompatibilityBridge
+     */
+    internal open val isCompatibilityBridge: Boolean get() = false
+
     override fun getBody(): PsiCodeBlock? = null
 
     override fun getReturnTypeElement(): PsiTypeElement? = null

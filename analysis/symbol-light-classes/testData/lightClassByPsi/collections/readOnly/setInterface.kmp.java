@@ -56,6 +56,7 @@ public class CSet3 /* test.CSet3*/<Elem>  implements test.ISet<Elem> {
 
 public abstract interface ISet /* test.ISet*/<Elem>  extends java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   public static final class DefaultImpls /* test.ISet.DefaultImpls*/ {
+    @java.lang.Deprecated()
     @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
     @kotlin.js.ExperimentalJsCollectionsApi()
     @kotlin.js.ExperimentalJsExport()

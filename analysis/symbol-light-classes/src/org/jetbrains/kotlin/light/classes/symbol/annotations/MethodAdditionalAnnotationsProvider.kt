@@ -17,8 +17,13 @@ internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvi
         foundQualifiers: MutableSet<String>,
         owner: PsiElement,
     ) {
-        if (owner.parent.isMethodWithOverride()) {
+        val method = owner.parent
+        if (method.isMethodWithOverride()) {
             addSimpleAnnotationIfMissing(JvmAnnotationNames.OVERRIDE_ANNOTATION.asString(), currentRawAnnotations, foundQualifiers, owner)
+        }
+
+        if (method.isCompatibilityBridge()) {
+            addSimpleAnnotationIfMissing(JvmAnnotationNames.DEPRECATED_ANNOTATION.asString(), currentRawAnnotations, foundQualifiers, owner)
         }
     }
 
@@ -26,14 +31,24 @@ internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvi
         annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
         owner: PsiElement,
-    ): PsiAnnotation? = if (owner.parent.isMethodWithOverride())
-        createSimpleAnnotationIfMatches(
-            qualifier = qualifiedName,
-            expectedQualifier = JvmAnnotationNames.OVERRIDE_ANNOTATION.asString(),
-            owner = owner,
-        )
-    else
-        null
+    ): PsiAnnotation? {
+        val method = owner.parent
+        return when {
+            method.isMethodWithOverride() -> createSimpleAnnotationIfMatches(
+                qualifier = qualifiedName,
+                expectedQualifier = JvmAnnotationNames.OVERRIDE_ANNOTATION.asString(),
+                owner = owner,
+            )
+
+            method.isCompatibilityBridge() -> createSimpleAnnotationIfMatches(
+                qualifier = qualifiedName,
+                expectedQualifier = JvmAnnotationNames.DEPRECATED_ANNOTATION.asString(),
+                owner = owner,
+            )
+
+            else -> null
+        }
+    }
 
     override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
@@ -43,3 +58,8 @@ internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvi
  */
 private fun PsiElement.isMethodWithOverride(): Boolean =
     this is SymbolLightMethodBase && (isDelegated || isOverride()) && !hasModifierProperty(PsiModifier.STATIC)
+
+/**
+ * The JVM backend annotates a compatibility bridge in `DefaultImpls` with `java.lang.Deprecated`.
+ */
+private fun PsiElement.isCompatibilityBridge(): Boolean = this is SymbolLightMethodBase && isCompatibilityBridge

@@ -125,6 +125,7 @@ public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
 
 public abstract interface IMutableMap /* test.IMutableMap*/ extends java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableMap {
   public static final class DefaultImpls /* test.IMutableMap.DefaultImpls*/ {
+    @java.lang.Deprecated()
     @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
     @kotlin.js.ExperimentalJsCollectionsApi()
     @kotlin.js.ExperimentalJsExport()
@@ -132,6 +133,7 @@ public abstract interface IMutableMap /* test.IMutableMap*/ extends java.util.Ma
     @org.jetbrains.annotations.NotNull()
     public static @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> asJsMapView(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableMap);//  asJsMapView(@org.jetbrains.annotations.NotNull() test.IMutableMap)
 
+    @java.lang.Deprecated()
     @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
     @kotlin.js.ExperimentalJsCollectionsApi()
     @kotlin.js.ExperimentalJsExport()
