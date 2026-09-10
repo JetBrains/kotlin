@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 
-@SmokeTest
+@MustRunAlways
 abstract class AbstractDirectivesValidatorTest : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         globalDefaults {

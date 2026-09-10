@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArguments
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-@SmokeTest
+@MustRunAlways
 internal class CompilerOptionsIT : KGPBaseTest() {
 
     @DisplayName("Allow to suppress kotlinOptions.freeCompilerArgs on task execution modification warning")

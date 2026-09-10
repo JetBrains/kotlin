@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -19,7 +19,7 @@ import kotlin.io.path.invariantSeparatorsPathString
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
-@SmokeTest
+@MustRunAlways
 class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @GradleTest

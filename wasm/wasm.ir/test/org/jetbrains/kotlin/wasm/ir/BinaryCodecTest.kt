@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class BinaryCodecTest {
-    @SmokeTest
+    @MustRunAlways
     @Test
     fun core() {
         runSpecTests("core", wasmTestSuitePath, emptyList())

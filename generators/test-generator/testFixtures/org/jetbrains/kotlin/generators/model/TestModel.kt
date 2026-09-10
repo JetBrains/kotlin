@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.jupiter.api.Tag
 import com.intellij.testFramework.TestDataPath
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 
 /**
  * Base class for test entities of the test generator, which are either test classes or test methods.
@@ -36,7 +36,7 @@ sealed class TestEntityModel {
  * @property annotations is a list of annotations, which will be added to the generated test
  *   class in addition to the default set of annotations.
  *
- * @property isSmokeTest is a flag indicating whether the test class is used as 'SmokeTest'
+ * @property isSmokeTest is a flag indicating whether the test class uses the [MustRunAlways] annotation.
  *   See 'repo/TEST_FEDERATION.md' for additional details.
  *
  * @property smokeTestLimit limits the number of 'SmokeTets' within a given test class.
@@ -63,7 +63,7 @@ abstract class TestClassModel : TestEntityModel() {
                 methods.flatMapTo(allImports) { it.imports() }
                 innerTestClasses.flatMapTo(allImports) { it.imports }
                 if (isSmokeTest) {
-                    allImports.add(SmokeTest::class.java)
+                    allImports.add(MustRunAlways::class.java)
                 }
             }
         }

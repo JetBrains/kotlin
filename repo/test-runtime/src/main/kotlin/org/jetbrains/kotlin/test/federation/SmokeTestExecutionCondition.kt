@@ -20,14 +20,14 @@ class SmokeTestExecutionCondition : ExecutionCondition {
         if (testFederationMode == TestFederationMode.Full) return enabled("'TestFederationMode.Full' is set")
 
         if (isAutoSmokeTest(context)) return enabled("Auto smoke test selected")
-        if (isSmokeTest(context)) return enabled("@${SmokeTest::class.java.simpleName}")
+        if (isMustRunAlways(context)) return enabled("@${MustRunAlways::class.java.simpleName}")
 
         /* Check contract */
         val changedDomains = testFederationChangedDomains
             ?: return disabled("Missing '${TEST_FEDERATION_CHANGED_DOMAINS_KEY}'")
         val contracts = changedDomains.filter { domain -> isContract(domain, context) }
         if (contracts.isNotEmpty()) return enabled("Contracts: ${contracts.joinToString(", ")}")
-        return disabled("Not a smoke test / Not a contract test")
+        return disabled("Not selected automatically / Not @MustRunAlways / Not a contract test")
     }
 }
 
@@ -43,7 +43,7 @@ private fun isAutoSmokeTest(context: ExtensionContext): Boolean {
     return (hashCode % 100).absoluteValue < autoSmokeTestPercentage
 }
 
-private fun isSmokeTest(context: ExtensionContext): Boolean =
+private fun isMustRunAlways(context: ExtensionContext): Boolean =
     "smoke" in context.tags
 
 private fun isContract(domain: Domain, context: ExtensionContext) =

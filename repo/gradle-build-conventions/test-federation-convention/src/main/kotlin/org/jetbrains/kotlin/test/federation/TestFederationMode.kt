@@ -12,7 +12,7 @@ package org.jetbrains.kotlin.testFederation
  *
  * ## [Smoke]
  * Not all tests are executed.
- * All tests marked as '@SmokeTest' will be executed.
+ * All tests marked as '@MustRunAlways' will be executed.
  * All contracts to affected [Domain]s will be executed.
  * For example,
  * If the current domain is [Domain.Gradle], but changes identified the [Domain.Compiler] as 'affected', then all tests marked as

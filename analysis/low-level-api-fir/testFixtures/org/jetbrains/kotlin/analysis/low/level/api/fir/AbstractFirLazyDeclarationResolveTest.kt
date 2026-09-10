@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 
 abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveOverAllPhasesTest() {
     override val additionalDirectives: List<DirectivesContainer>
@@ -157,7 +157,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
     }
 }
 
-@SmokeTest
+@MustRunAlways
 abstract class AbstractFirSourceLikeLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
     override val configurator = LLSourceLikeTestConfigurator()
 }

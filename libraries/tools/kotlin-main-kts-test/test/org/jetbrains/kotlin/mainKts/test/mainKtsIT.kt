@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.scripting.test.runAndCheckResults
 import org.jetbrains.kotlin.scripting.test.runWithK2JVMCompiler
 import org.jetbrains.kotlin.scripting.test.runWithKotlinLauncherScript
 import org.jetbrains.kotlin.scripting.test.runWithKotlinc
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.jupiter.api.Assertions
@@ -26,7 +26,7 @@ import kotlin.io.path.createTempDirectory
 import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
 
-@SmokeTest
+@MustRunAlways
 class MainKtsIT {
 
     @Test

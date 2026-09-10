@@ -8,7 +8,7 @@ package androidx.compose.compiler.test
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.mock.*
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import kotlin.test.Test
 
 // This class is on top of the file to avoid handling order when loading generated classes
@@ -19,7 +19,7 @@ private interface FunctionRefInterface {
     }
 }
 
-@SmokeTest
+@MustRunAlways
 class FunctionReferenceTests {
     @Test
     fun functionReference() = compositionTest {

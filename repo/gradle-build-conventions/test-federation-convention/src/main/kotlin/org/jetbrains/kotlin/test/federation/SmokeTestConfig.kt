@@ -19,7 +19,7 @@ sealed class SmokeTestConfig : Serializable {
 
     /**
      * This test task is enabled in 'Smoke Test Mode'.
-     * When executed in this mode, all tests, marked as `@SmokeTest` are guaranteed to be executed, alongside all tests
+     * When executed in this mode, all tests, marked as `@MustRunAlways` are guaranteed to be executed, alongside all tests
      * marked as `@MustRunOnChangesIn{XYZ}` (where `XYZ` would be a domain containing changed files within the branch.)
      *
      * @param autoSmokeTestPercentage The percentage of tests to run automatically in smoke test mode.
@@ -37,7 +37,7 @@ sealed class SmokeTestConfig : Serializable {
 
     companion object {
         /**
-         * Enabled by default, only tests marked up with `@SmokeTest` (and @MustRunOnChangesIn{XYZ}) are executed ([Enabled.autoSmokeTestPercentage] is set to 0)
+         * Enabled by default, only tests marked up with `@MustRunAlways` (and @MustRunOnChangesIn{XYZ}) are executed ([Enabled.autoSmokeTestPercentage] is set to 0)
          */
         val Default = Enabled(0)
 

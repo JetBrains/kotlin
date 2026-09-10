@@ -21,7 +21,7 @@ class PseudoTest {
         }
     }
 
-    @SmokeTest
+    @MustRunAlways
     @Test
     fun `smoke test`() {
 

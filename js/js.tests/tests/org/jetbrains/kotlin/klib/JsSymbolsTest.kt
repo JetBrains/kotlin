@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.test.klib.AbstractSymbolsValidationTest
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 
-@SmokeTest
+@MustRunAlways
 @Suppress("JUnitTestCaseWithNoTests")
 class JsSymbolsTest : AbstractSymbolsValidationTest(
     TargetBackend.JS_IR,

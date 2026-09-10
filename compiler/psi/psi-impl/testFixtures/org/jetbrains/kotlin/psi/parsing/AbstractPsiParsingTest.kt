@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import java.lang.reflect.Modifier
 
 /**
@@ -85,7 +85,7 @@ abstract class AbstractPsiParsingTestBase : AbstractPsiBasedTest() {
     }
 }
 
-@SmokeTest
+@MustRunAlways
 abstract class AbstractPsiParsingTest : AbstractPsiParsingTestBase()
 
 abstract class AbstractExpressionCodeFragmentParsingTest : AbstractPsiParsingTestBase() {
