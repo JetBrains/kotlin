@@ -82,4 +82,13 @@ public class CMap3 /* test.CMap3*/ implements test.IMap {
 }
 
 public abstract interface IMap /* test.IMap*/ extends java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
+  public static final class DefaultImpls /* test.IMap.DefaultImpls*/ {
+    @java.lang.Override()
+    @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
+    @kotlin.js.ExperimentalJsCollectionsApi()
+    @kotlin.js.ExperimentalJsExport()
+    @kotlin.js.JsDontExportDefaultImplementation()
+    @org.jetbrains.annotations.NotNull()
+    public static @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> asJsReadonlyMapView(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMap);//  asJsReadonlyMapView(@org.jetbrains.annotations.NotNull() test.IMap)
+  }
 }

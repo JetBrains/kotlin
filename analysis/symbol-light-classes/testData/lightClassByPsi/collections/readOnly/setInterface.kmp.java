@@ -55,4 +55,13 @@ public class CSet3 /* test.CSet3*/<Elem>  implements test.ISet<Elem> {
 }
 
 public abstract interface ISet /* test.ISet*/<Elem>  extends java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+  public static final class DefaultImpls /* test.ISet.DefaultImpls*/ {
+    @java.lang.Override()
+    @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
+    @kotlin.js.ExperimentalJsCollectionsApi()
+    @kotlin.js.ExperimentalJsExport()
+    @kotlin.js.JsDontExportDefaultImplementation()
+    @org.jetbrains.annotations.NotNull()
+    public static <Elem> @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlySet<Elem> asJsReadonlySetView(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.ISet<Elem>);// <Elem>  asJsReadonlySetView(@org.jetbrains.annotations.NotNull() test.ISet<Elem>)
+  }
 }

@@ -82,4 +82,13 @@ public class CMap3 /* test.CMap3*/<KElem, VElem>  implements test.IMap<KElem, VE
 }
 
 public abstract interface IMap /* test.IMap*/<KElem, VElem>  extends java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+  public static final class DefaultImpls /* test.IMap.DefaultImpls*/ {
+    @java.lang.Override()
+    @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
+    @kotlin.js.ExperimentalJsCollectionsApi()
+    @kotlin.js.ExperimentalJsExport()
+    @kotlin.js.JsDontExportDefaultImplementation()
+    @org.jetbrains.annotations.NotNull()
+    public static <KElem, VElem> @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<KElem, VElem> asJsReadonlyMapView(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMap<KElem, VElem>);// <KElem, VElem>  asJsReadonlyMapView(@org.jetbrains.annotations.NotNull() test.IMap<KElem, VElem>)
+  }
 }

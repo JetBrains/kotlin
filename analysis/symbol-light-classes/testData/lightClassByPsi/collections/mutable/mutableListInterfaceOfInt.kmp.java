@@ -194,4 +194,21 @@ public class CMutableList3 /* test.CMutableList3*/ implements test.IMutableList 
 }
 
 public abstract interface IMutableList /* test.IMutableList*/ extends java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableList {
+  public static final class DefaultImpls /* test.IMutableList.DefaultImpls*/ {
+    @java.lang.Override()
+    @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
+    @kotlin.js.ExperimentalJsCollectionsApi()
+    @kotlin.js.ExperimentalJsExport()
+    @kotlin.js.JsDontExportDefaultImplementation()
+    @org.jetbrains.annotations.NotNull()
+    public static @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsArray<@org.jetbrains.annotations.NotNull() java.lang.Integer> asJsArrayView(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableList);//  asJsArrayView(@org.jetbrains.annotations.NotNull() test.IMutableList)
+
+    @java.lang.Override()
+    @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
+    @kotlin.js.ExperimentalJsCollectionsApi()
+    @kotlin.js.ExperimentalJsExport()
+    @kotlin.js.JsDontExportDefaultImplementation()
+    @org.jetbrains.annotations.NotNull()
+    public static @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyArray<@org.jetbrains.annotations.NotNull() java.lang.Integer> asJsReadonlyArrayView(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableList);//  asJsReadonlyArrayView(@org.jetbrains.annotations.NotNull() test.IMutableList)
+  }
 }
