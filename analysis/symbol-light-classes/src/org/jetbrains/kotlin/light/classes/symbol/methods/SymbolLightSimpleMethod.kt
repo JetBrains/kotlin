@@ -87,7 +87,13 @@ internal open class SymbolLightSimpleMethod protected constructor(
                 containingClass is SymbolLightClassForInterfaceDefaultImpls -> null
                 this is SymbolLightMethodForMappedKotlinCollectionMethod -> if (this.isFinal) PsiModifier.FINAL else null
                 else -> withFunctionSymbol { functionSymbol ->
-                    functionSymbol.computeSimpleModality()?.takeUnless { isSuppressedFinalModifier(it, containingClass, functionSymbol) }
+                    when {
+                        // The implementation is moved to `DefaultImpls`, and the method in the interface itself is abstract
+                        isImplementationWithoutJvmDefault(functionSymbol, containingClass) -> PsiModifier.ABSTRACT
+                        else -> functionSymbol.computeSimpleModality()?.takeUnless {
+                            isSuppressedFinalModifier(it, containingClass, functionSymbol)
+                        }
+                    }
                 }
             }
 

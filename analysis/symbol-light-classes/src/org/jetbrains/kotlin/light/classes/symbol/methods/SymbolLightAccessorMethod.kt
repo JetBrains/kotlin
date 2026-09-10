@@ -152,11 +152,17 @@ internal class SymbolLightAccessorMethod private constructor(
         )
 
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
-            val modality = if (containingClass.isInterface) {
-                PsiModifier.ABSTRACT
-            } else {
-                withPropertySymbol { propertySymbol ->
-                    propertySymbol.computeSimpleModality()?.takeUnless { isSuppressedFinalModifier(it, containingClass, propertySymbol) }
+            val modality = when {
+                // Annotation class members are abstract on the JVM regardless of their Kotlin modality
+                containingClass.isAnnotationType -> PsiModifier.ABSTRACT
+                else -> withPropertySymbol { propertySymbol ->
+                    when {
+                        // The implementation is moved to `DefaultImpls`, and the accessor in the interface itself is abstract
+                        isImplementationWithoutJvmDefault(propertySymbol, containingClass) -> PsiModifier.ABSTRACT
+                        else -> propertySymbol.computeSimpleModality()?.takeUnless {
+                            isSuppressedFinalModifier(it, containingClass, propertySymbol)
+                        }
+                    }
                 }
             }
 

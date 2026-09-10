@@ -13,10 +13,32 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmExposeBoxedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.jvmDefaultMode
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 internal fun isSuppressedFinalModifier(string: String, containingClass: SymbolLightClassBase, symbol: KaCallableSymbol): Boolean {
     return string == PsiModifier.FINAL && (containingClass.isEnum && symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED || containingClass.isInterface)
+}
+
+/**
+ * Whether [symbol] is an implementation in the interface light class [containingClass] which is not compiled to a JVM `default` method.
+ *
+ * With `-jvm-default=disable`, the JVM backend moves such an implementation to the `DefaultImpls` class and leaves an abstract method
+ * in the interface, the same way as for a member without a body. Otherwise, the implementation is compiled to a `default` method,
+ * see [SymbolLightMemberModifierList]. Mirrors `org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault`.
+ *
+ * Static members of an interface (`@JvmStatic` members of its companion object and members of its companion block) keep their
+ * implementation in the interface class in any mode, so they are not affected.
+ */
+context(_: KaSession)
+internal fun isImplementationWithoutJvmDefault(symbol: KaCallableSymbol, containingClass: SymbolLightClassBase): Boolean {
+    // The light class of `DefaultImpls` is not an interface, although its members are the members of the interface
+    if (!containingClass.isInterface || containingClass.ktModule.jvmDefaultMode.isEnabled) return false
+    if (symbol.modality == KaSymbolModality.ABSTRACT || symbol.isCompanion) return false
+
+    // A `@JvmStatic` member of the companion object is materialized in the interface, but it belongs to the companion object
+    return (symbol.containingDeclaration as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE
 }
 
 /**

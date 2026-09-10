@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
-import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
@@ -34,9 +33,7 @@ import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.MavenComparableVersion
-import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getIntroducedAtVersionFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
@@ -46,6 +43,7 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
 import org.jetbrains.kotlin.light.classes.symbol.isJvmField
+import org.jetbrains.kotlin.light.classes.symbol.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
@@ -633,12 +631,9 @@ internal fun createInnerClasses(
         }
     }
 
-    val languageVersionSettings = classOrObject?.let { it.kaModule as? KaSourceModule }?.languageVersionSettings
-        ?: LanguageVersionSettingsImpl.DEFAULT
-
     if (containingClass is SymbolLightClassForInterface &&
         classOrObject?.hasInterfaceDefaultImpls == true &&
-        languageVersionSettings.jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY
+        containingClass.ktModule.jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY
     ) {
         result.add(SymbolLightClassForInterfaceDefaultImpls(containingClass))
     }

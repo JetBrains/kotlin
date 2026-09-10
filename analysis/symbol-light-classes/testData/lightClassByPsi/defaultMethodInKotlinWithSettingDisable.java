@@ -5,15 +5,15 @@ public abstract interface KtInterface /* KtInterface*/ {
   @kotlin.jvm.JvmStatic()
   public static void staticFun();//  staticFun()
 
+  public abstract int getDefaultProperty();//  getDefaultProperty()
+
   public abstract int getPropertyWithoutBody();//  getPropertyWithoutBody()
 
+  public abstract void defaultFun();//  defaultFun()
+
+  public abstract void expressionBodyFun();//  expressionBodyFun()
+
   public abstract void withoutBody();//  withoutBody()
-
-  public default int getDefaultProperty();//  getDefaultProperty()
-
-  public default void defaultFun();//  defaultFun()
-
-  public default void expressionBodyFun();//  expressionBodyFun()
 
   public static int getStaticProperty();//  getStaticProperty()
 
