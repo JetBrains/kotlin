@@ -30,8 +30,8 @@ class TestMetadataTest {
 
     private val testMetadataAnnotationDesc = "Lorg/jetbrains/kotlin/test/TestMetadata;"
     private val smokeTestAnnotationDesc = Type.getDescriptor(SmokeTest::class.java)
-    private val affectedByAnnotationDesc = Domain.entries.associateWith { domain ->
-        Type.getDescriptor(affectedByAnnotationOf(domain).java)
+    private val mustRunOnChangesInAnnotationDesc = Domain.entries.associateWith { domain ->
+        Type.getDescriptor(mustRunOnChangesInAnnotationOf(domain).java)
     }
 
     /**
@@ -47,7 +47,7 @@ class TestMetadataTest {
      * A test marked by the `@TestMetadata` annotation must meet one of the following conditions:
      * - the metadata is living in the same domains as the test
      * - the metadata is living in any of the 'fullyAffectedBy' dependencies of the test
-     * - the test is marked as '@AffectedBy' any of metadata domains
+     * - the test is marked as '@MustRunOnChangesIn' any of metadata domains
      * - the test is marked as '@SmokeTest' (so it always runs)
      */
     @Test
@@ -87,10 +87,10 @@ class TestMetadataTest {
                         /* Check if the test is marked as SmokeTest and therefore always runs */
                         if (classNode.visibleAnnotations.any { it.desc == smokeTestAnnotationDesc }) return@forEach
 
-                        /* Check if the test is marked as '@AffectedBy' any of metadata domains*/
+                        /* Check if the test is marked as '@MustRunOnChangesIn' any of metadata domains*/
                         if (classNode.visibleAnnotations.any { annotation ->
                                 metadataDomains.any { metadataDomain ->
-                                    annotation.desc == affectedByAnnotationDesc[metadataDomain.domain]
+                                    annotation.desc == mustRunOnChangesInAnnotationDesc[metadataDomain.domain]
                                 }
                             }) return@forEach
 
@@ -100,7 +100,7 @@ class TestMetadataTest {
                             appendLine("""   The test class uses metadata from a different domain, without declaring a dependency on it.""")
                             appendLine("""   Solutions:""")
                             metadataDomains.forEach { metadataDomain ->
-                                appendLine("""       - Add @${affectedByAnnotationOf(metadataDomain.domain).simpleName} (recommended)""")
+                                appendLine("""       - Add @${mustRunOnChangesInAnnotationOf(metadataDomain.domain).simpleName} (recommended)""")
                                 appendLine("""       - Declare fullyAffectedBy: ${metadataDomain.domain.name} (if absolutely necessary)""")
                             }
                             appendLine("""       - Add @${SmokeTest::class.simpleName} (mark this test as SmokeTest)""")

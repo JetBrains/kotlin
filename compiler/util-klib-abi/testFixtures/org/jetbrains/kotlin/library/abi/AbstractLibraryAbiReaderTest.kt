@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.runners.UnspecifiedTargetBackend
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
-import org.jetbrains.kotlin.testFederation.AffectedByJs
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
 import kotlin.test.assertNotNull
 import kotlin.test.fail
 
@@ -87,7 +87,7 @@ abstract class AbstractLibraryAbiReaderTest(
     }
 }
 
-@AffectedByJs
+@MustRunOnChangesInJs
 abstract class AbstractJsLibraryAbiReaderTest : AbstractLibraryAbiReaderTest(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
     final override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirCliWebFacade

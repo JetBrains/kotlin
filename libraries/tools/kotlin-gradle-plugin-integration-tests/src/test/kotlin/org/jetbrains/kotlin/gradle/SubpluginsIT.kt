@@ -9,11 +9,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
-import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Other plugins tests")
-@AffectedByCompilerPlugins
+@MustRunOnChangesInCompilerPlugins
 class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests

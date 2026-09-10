@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
-import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 
 fun main(args: Array<String>) {
     val generatedTestRoot = args[0]
@@ -58,13 +58,13 @@ fun main(args: Array<String>) {
                 }
 
                 testClass<AbstractLLScriptWithCustomDefDiagnosticsTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(provider<MustRunOnChangesInCompilerPlugins>())
                 ) {
                     scriptDiagnosticsInit()
                 }
 
                 testClass<AbstractLLReversedScriptWithCustomDefDiagnosticsTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(provider<MustRunOnChangesInCompilerPlugins>())
                 ) {
                     scriptDiagnosticsInit()
                 }
@@ -80,13 +80,13 @@ fun main(args: Array<String>) {
                 }
 
                 testClass<AbstractLLReplDiagnosticsTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(provider<MustRunOnChangesInCompilerPlugins>())
                 ) {
                     replDiagnosticsInit()
                 }
 
                 testClass<AbstractLLReversedReplDiagnosticsTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(provider<MustRunOnChangesInCompilerPlugins>())
                 ) {
                     replDiagnosticsInit()
                 }
@@ -103,13 +103,13 @@ fun main(args: Array<String>) {
                 }
 
                 testClass<AbstractLLScriptWithCustomDefBlackBoxTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(provider<MustRunOnChangesInCompilerPlugins>())
                 ) {
                     scriptCustomDefBackBoxInit()
                 }
 
                 testClass<AbstractLLReversedScriptWithCustomDefBlackBoxTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(provider<MustRunOnChangesInCompilerPlugins>())
                 ) {
                     scriptCustomDefBackBoxInit()
                 }

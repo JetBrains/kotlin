@@ -47,4 +47,4 @@ private fun isSmokeTest(context: ExtensionContext): Boolean =
     "smoke" in context.tags
 
 private fun isContract(domain: Domain, context: ExtensionContext) =
-    "affectedBy:${domain.name}" in context.tags
+    "contract:${domain.name}" in context.tags

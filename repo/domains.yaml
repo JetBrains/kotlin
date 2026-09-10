@@ -186,7 +186,7 @@ SwiftExport:
     - "libraries/tools/analysis-api-based-klib-reader"
   fullyAffectedBy:
     - CoreLibs
-    - AnalysisApi # todo: Replace this dependency with a reviewed set of @AffectedByAnalysisApi tests
+    - AnalysisApi # todo: Replace this dependency with a reviewed set of @MustRunOnChangesInAnalysisApi tests
 
 CompilerPlugins:
   include:

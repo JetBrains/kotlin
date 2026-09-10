@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.project
-import org.jetbrains.kotlin.testFederation.AffectedByBuildToolsApi
-import org.jetbrains.kotlin.testFederation.AffectedByCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
 import kotlin.io.path.appendText
 
-@AffectedByCompilerInfrastructure
-@AffectedByBuildToolsApi
+@MustRunOnChangesInCompilerInfrastructure
+@MustRunOnChangesInBuildToolsApi
 abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
 
     protected abstract val defaultProjectName: String

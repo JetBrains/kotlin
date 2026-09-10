@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompil
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.FileDependency
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
-import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.junit.jupiter.api.DisplayName
 
-@AffectedByCompilerPlugins
+@MustRunOnChangesInCompilerPlugins
 class SerializationPluginICTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("KT-50901: recompiling a serializable class with a @SerialInfo annotation with default arguments from a separate file does not fail codegen")

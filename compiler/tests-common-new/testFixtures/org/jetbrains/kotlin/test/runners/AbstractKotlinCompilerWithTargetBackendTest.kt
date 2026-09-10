@@ -39,11 +39,11 @@ abstract class AbstractKotlinCompilerWithTargetBackendTest @UnspecifiedTargetBac
 
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByJvm
+@MustRunOnChangesInJvm
 abstract class AbstractKotlinCompilerJvmTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByJs
+@MustRunOnChangesInJs
 abstract class AbstractKotlinCompilerJsTest(targetBackend: TargetBackend) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     init {
         require(targetBackend == JS_IR || targetBackend == JS_IR_ES6)
@@ -51,7 +51,7 @@ abstract class AbstractKotlinCompilerJsTest(targetBackend: TargetBackend) : Abst
 }
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByWasm
+@MustRunOnChangesInWasm
 abstract class AbstractKotlinCompilerWasmTest(targetBackend: TargetBackend) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     init {
         require(targetBackend == WASM || targetBackend == WASM_JS || targetBackend == WASM_WASI)
@@ -59,9 +59,9 @@ abstract class AbstractKotlinCompilerWasmTest(targetBackend: TargetBackend) : Ab
 }
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByNative
+@MustRunOnChangesInNative
 abstract class AbstractKotlinCompilerNativeTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE)
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByCommonBackend
+@MustRunOnChangesInCommonBackend
 abstract class AbstractKotlinCompilerJKlibTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JKLIB)

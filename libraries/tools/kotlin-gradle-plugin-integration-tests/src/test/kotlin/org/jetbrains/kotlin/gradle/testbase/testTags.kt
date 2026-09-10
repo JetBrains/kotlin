@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.jetbrains.kotlin.testFederation.AffectedByJs
-import org.jetbrains.kotlin.testFederation.AffectedByNative
-import org.jetbrains.kotlin.testFederation.AffectedBySwiftExport
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInSwiftExport
 import org.junit.jupiter.api.Tag
 
 /**
@@ -44,7 +44,7 @@ annotation class JvmGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("JsKGP")
-@AffectedByJs
+@MustRunOnChangesInJs
 annotation class JsGradlePluginTests
 
 /**
@@ -57,7 +57,7 @@ annotation class JsGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("JsBrowserKGP")
-@AffectedByJs
+@MustRunOnChangesInJs
 annotation class JsBrowserGradlePluginTests
 
 /**
@@ -70,7 +70,7 @@ annotation class JsBrowserGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("NativeKGP")
-@AffectedByNative
+@MustRunOnChangesInNative
 annotation class NativeGradlePluginTests
 
 /**
@@ -95,7 +95,7 @@ annotation class SwiftPMImportGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("SwiftExportKGP")
-@AffectedBySwiftExport
+@MustRunOnChangesInSwiftExport
 annotation class SwiftExportGradlePluginTests
 
 /**
@@ -135,4 +135,3 @@ annotation class AndroidGradlePluginTests
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("OtherKGP")
 annotation class OtherGradlePluginTests
-

@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
-import org.jetbrains.kotlin.testFederation.AffectedByCommonBackend
-import org.jetbrains.kotlin.testFederation.AffectedByFrontend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
 
-@AffectedByFrontend
-@AffectedByCommonBackend
+@MustRunOnChangesInFrontend
+@MustRunOnChangesInCommonBackend
 abstract class AbstractJsDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {

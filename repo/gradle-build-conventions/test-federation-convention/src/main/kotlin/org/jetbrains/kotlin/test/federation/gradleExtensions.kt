@@ -147,7 +147,7 @@ val Project.testFederationChangedDomains: Provider<Set<Domain>> by extensionProp
 /**
  * Configures this test task's behavior in smoke mode.
  *
- * The default is [SmokeTestConfig.Default], which runs all tests annotated with `@SmokeTest` or `@AffectedBy`.
+ * The default is [SmokeTestConfig.Default], which runs all tests annotated with `@SmokeTest` or `@MustRunOnChangesInXYZ` for a changed domain.
  *
  * **Disable this test task in smoke mode:**
  * ```kotlin

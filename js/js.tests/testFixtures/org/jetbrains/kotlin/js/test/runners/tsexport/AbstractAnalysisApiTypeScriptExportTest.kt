@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ANALYSI
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 
-@AffectedByAnalysisApi
+@MustRunOnChangesInAnalysisApi
 abstract class AbstractJsAnalysisApiTypeScriptExportTest(
     testGroupOutputDirPrefix: String = "typescript-export-aa/es5",
     private val isWholeFileJsExport: Boolean = false,
@@ -41,7 +41,7 @@ abstract class AbstractJsAnalysisApiTypeScriptWholeFileExportTest : AbstractJsAn
     isWholeFileJsExport = true,
 )
 
-@AffectedByAnalysisApi
+@MustRunOnChangesInAnalysisApi
 abstract class AbstractJsES6AnalysisApiTypeScriptExportTest(
     testGroupOutputDirPrefix: String = "typescript-export-aa/es6",
     private val isWholeFileJsExport: Boolean = false

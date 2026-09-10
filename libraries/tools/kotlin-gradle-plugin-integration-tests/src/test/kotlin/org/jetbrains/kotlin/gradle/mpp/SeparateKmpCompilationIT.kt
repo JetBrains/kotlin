@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import org.jetbrains.kotlin.testFederation.AffectedByFrontend
-import org.junit.jupiter.api.Disabled
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -685,7 +684,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     @DisplayName("JVM metadata serialization for IC enabled with separate compilation")
     @GradleTest
-    @AffectedByFrontend
+    @MustRunOnChangesInFrontend
     fun jvmIcEnabledWithSeparateCompilation(gradleVersion: GradleVersion) {
         defaultProject(
             gradleVersion,
