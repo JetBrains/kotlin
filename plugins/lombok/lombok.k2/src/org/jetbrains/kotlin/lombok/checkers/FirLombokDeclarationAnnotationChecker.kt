@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 
 /**
  * Validates the Lombok annotations written on a declaration.
@@ -25,6 +26,7 @@ object FirLombokDeclarationAnnotationChecker : FirBasicDeclarationChecker(MppChe
             declaration.annotations,
             getActualTargetList(declaration).defaultTargets,
             isValueClass = (declaration as? FirRegularClass)?.isInlineOrValue == true,
+            isInnerClass = (declaration as? FirRegularClass)?.isInner == true,
         )
     }
 }
