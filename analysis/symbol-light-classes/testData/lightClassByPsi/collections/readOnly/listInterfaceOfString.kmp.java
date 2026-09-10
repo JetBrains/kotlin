@@ -106,7 +106,6 @@ public class CList3 /* test.CList3*/ implements test.IList {
 
 public abstract interface IList /* test.IList*/ extends java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   public static final class DefaultImpls /* test.IList.DefaultImpls*/ {
-    @java.lang.Override()
     @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
     @kotlin.js.ExperimentalJsCollectionsApi()
     @kotlin.js.ExperimentalJsExport()
