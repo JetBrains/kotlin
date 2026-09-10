@@ -32,7 +32,7 @@ A Domain is a **CI ownership and impact unit**, not an architecture concept.
 Think of a Domain as a **change-radius boundary**:
 
 - Inside the boundary: changes mark this Domain as changed and, therefore, affected.
-- Outside the boundary: this Domain is not changed, although it can still become affected through `fullyAffectedBy`. Contracts can make
+- Outside the boundary: this Domain is not changed, although it can still become affected through `mustRunAllTestsOnChangesIn`. Contracts can make
   individual tests run without making their entire Domain affected.
 
 In other words, Domains model **test impact**, not **code structure purity**. A single subsystem can span multiple Domains, and one Domain
@@ -43,7 +43,7 @@ can include files from multiple places if that gives better CI behavior.
 Test Federation computes two related sets for every change:
 
 1. **Changed Domains** are inferred from changed files.
-2. **Affected Domains** are the Domains whose full test suites must run. Changed Domains are expanded according to `fullyAffectedBy`
+2. **Affected Domains** are the Domains whose full test suites must run. Changed Domains are expanded according to `mustRunAllTestsOnChangesIn`
    relationships, then any Domains named in an `^affects` commit command are added to the result.
 
 Thus, **changed Domains are always affected, but affected Domains are not necessarily changed**. The distinction matters for Contracts:
@@ -51,7 +51,7 @@ Thus, **changed Domains are always affected, but affected Domains are not necess
 - All affected Domains run their full test suites.
 - Only changed Domains activate their `@MustRunOnChangesInXYZ` Contract tests in smoke-mode test tasks.
 
-For example, if `Native` is `fullyAffectedBy: Compiler` and `Compiler` is changed, both Domains are affected and run their full test suites.
+For example, if `Native` declares `mustRunAllTestsOnChangesIn: [Compiler]` and `Compiler` is changed, both Domains are affected and run their full test suites.
 Only `Compiler` is changed, however, so `@MustRunOnChangesInCompiler` Contracts run while `@MustRunOnChangesInNative` Contracts do not.
 
 ## Defining Domains
@@ -63,7 +63,7 @@ Native:
   include:
     - "native"
     - "kotlin-native"
-  fullyAffectedBy:
+  mustRunAllTestsOnChangesIn:
     - Compiler
 ```
 
@@ -76,7 +76,7 @@ the domain is changed.
 
 If a commit is known to impact a Domain beyond those inferred from its changed files, the commit command `^affects:` can declare additional
 affected Domains. Their full test suites run, but they are not added to the changed Domains and therefore do not activate their Contracts.
-They also do not cause other Domains to become affected through `fullyAffectedBy`; command-listed Domains are added after that expansion.
+They also do not cause other Domains to become affected through `mustRunAllTestsOnChangesIn`; command-listed Domains are added after that expansion.
 
 ```
 ^affects: Gradle, AnalysisApi
@@ -86,16 +86,16 @@ They also do not cause other Domains to become affected through `fullyAffectedBy
 ^affects: *
 ```
 
-### Domains fully affecting other Domains
+### Running all tests on changes in other Domains
 
-Some Domains might form a 'Domain/Subdomain' relationship, which can be expressed using `fullyAffectedBy`. A Domain that is `fullyAffectedBy`
-another Domain will be marked as affected when that other Domain is changed. This does not mark the dependent Domain as changed. Domains
+Some Domains might form a 'Domain/Subdomain' relationship, which can be expressed using `mustRunAllTestsOnChangesIn`. A Domain that lists
+another Domain in this declaration will run all its tests when that other Domain is changed. This does not mark the dependent Domain as changed. Domains
 listed using `^affects` do not participate in this expansion. In the example above:
 
 A change which marks the 'larger Compiler domain' as changed will also mark the 'Native' domain as affected, while a change isolated within
 the 'Native' domain will not affect the 'Compiler' domain.
 
-Note: 'fullyAffectedBy' is **not** transitive. All dependencies have to be listed explicitly. This allows for some modules acting as 'API'
+Note: `mustRunAllTestsOnChangesIn` is **not** transitive. All dependencies have to be listed explicitly. This allows for some modules acting as 'API'
 boundaries.
 
 ### Local testing
@@ -242,8 +242,8 @@ Some Domains might rely on the behavior or API of another Domain. Such requireme
 Any test can be promoted to a 'Contract Test' using the relevant `@MustRunOnChangesInXYZ` annotation. e.g., a test that defines a contract to the
 'Js' compiler might be marked as `@MustRunOnChangesInJs`. These annotations use JUnit tags of the form `contract:XYZ`.
 
-A set of well-maintained contracts is always preferable to marking a domain as 'fullyAffectedBy' another domain, as 'ContractTests' will
-enable actually building efficient pipelines for verifying commits, whereas 'fullyAffectedBy' will require a full build of the affected
+A set of well-maintained contracts is always preferable to listing another domain in `mustRunAllTestsOnChangesIn`, as 'ContractTests' will
+enable actually building efficient pipelines for verifying commits, whereas `mustRunAllTestsOnChangesIn` will require a full build of the affected
 domains.
 
 ```kotlin
@@ -254,7 +254,7 @@ class MyImportantJsTests {
 ```
 
 Any commit that marks the `Js` Domain as changed will verify all Contracts associated with `Js`. A Domain added through `^affects` or affected
-only through `fullyAffectedBy` still runs its full test suites, but does not activate its Contracts in smoke-mode test tasks.
+only through `mustRunAllTestsOnChangesIn` still runs its full test suites, but does not activate its Contracts in smoke-mode test tasks.
 
 The full flow from changed files to the tests selected by Test Federation can be seen below.
 
@@ -262,7 +262,7 @@ It works like this:
 * we collect **changed files** and find their home domains -> this gives us **changed domains**
 * we go through changed domains:
     * every changed domain is marked as **affected**
-    * all domains `fullyAffectedBy` the changed domain are marked as **affected**
+    * all domains listing the changed domain in `mustRunAllTestsOnChangesIn` are marked as **affected**
     * all contracts annotated with `@MustRunOnChangesInXYZ` for the changed domain are marked as **affected**
 * additionally, we take every domain from the `^affects:` commit command and mark them as **affected**
 
@@ -281,7 +281,7 @@ flowchart TD
 
     ChangedFiles --> ChangedDomains
     ChangedDomains -->|activates| ContractTests
-    ChangedDomains -->|plus 'fullyAffectedBy' | AffectedDomains
+    ChangedDomains -->|plus 'mustRunAllTestsOnChangesIn' | AffectedDomains
     AffectsCommand --->|added directly| AffectedDomains
     AffectedDomains -->|run| FullTestSuites
 ```

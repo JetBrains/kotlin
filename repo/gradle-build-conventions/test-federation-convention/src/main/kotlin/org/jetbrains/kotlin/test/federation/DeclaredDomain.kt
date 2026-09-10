@@ -36,10 +36,10 @@ internal data class DeclaredDomain(
     val excludes: List<String>,
 
     /**
-     * List of [Domain] names which this domain declares as dependency (fully affected by)
-     * Domains are marked as affected if any of its dependencies (even transitively) are marked as affected.
+     * List of [Domain] names whose changes require all tests in this domain to run.
+     * This relationship is not transitive: only changes in the listed domains trigger it.
      * e.g., a backend like 'Wasm' will be affected if anything in the larger 'Compiler' domain was changed, but
      * the larger 'Compiler' domain is not affected if changes are only located within wasm
      */
-    val fullyAffectedBy: List<String>,
+    val mustRunAllTestsOnChangesIn: List<String>,
 )

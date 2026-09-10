@@ -46,7 +46,7 @@ class TestMetadataTest {
      *
      * A test marked by the `@TestMetadata` annotation must meet one of the following conditions:
      * - the metadata is living in the same domains as the test
-     * - the metadata is living in any of the 'fullyAffectedBy' dependencies of the test
+     * - the metadata is living in any of the 'mustRunAllTestsOnChangesIn' dependencies of the test
      * - the test is marked as '@MustRunOnChangesIn' any of metadata domains
      * - the test is marked as '@SmokeTest' (so it always runs)
      */
@@ -80,8 +80,8 @@ class TestMetadataTest {
                         /* Check if the metadata is living in the same domains as the test */
                         if (metadataDomains.intersect(testDomains.toSet()).isNotEmpty()) return@forEach
 
-                        /* Check if the metadata is living in any of the 'fullyAffectedBy' dependencies of the test */
-                        if (metadataDomains.intersect(testDomains.flatMap { it.fullyAffectedBy }.toSet()).isNotEmpty())
+                        /* Check if the metadata is living in any of the 'mustRunAllTestsOnChangesIn' dependencies of the test */
+                        if (metadataDomains.intersect(testDomains.flatMap { it.mustRunAllTestsOnChangesIn }.toSet()).isNotEmpty())
                             return@forEach
 
                         /* Check if the test is marked as SmokeTest and therefore always runs */
@@ -101,7 +101,7 @@ class TestMetadataTest {
                             appendLine("""   Solutions:""")
                             metadataDomains.forEach { metadataDomain ->
                                 appendLine("""       - Add @${mustRunOnChangesInAnnotationOf(metadataDomain.domain).simpleName} (recommended)""")
-                                appendLine("""       - Declare fullyAffectedBy: ${metadataDomain.domain.name} (if absolutely necessary)""")
+                                appendLine("""       - Declare mustRunAllTestsOnChangesIn: ${metadataDomain.domain.name} (if absolutely necessary)""")
                             }
                             appendLine("""       - Add @${SmokeTest::class.simpleName} (mark this test as SmokeTest)""")
                         })
