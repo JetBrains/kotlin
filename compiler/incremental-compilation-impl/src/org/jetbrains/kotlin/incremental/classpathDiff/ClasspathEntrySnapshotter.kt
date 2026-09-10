@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.*
+import org.jetbrains.kotlin.incremental.util.readBytesWithExpectedSize
 import java.io.Closeable
 import java.io.File
 import java.util.zip.ZipFile
@@ -130,12 +131,12 @@ private class JarReader(jar: File) : DirectoryOrJarReader {
     }
 
     override fun readBytes(unixStyleRelativePath: String): ByteArray {
-        return zipFile.getInputStream(zipFile.getEntry(unixStyleRelativePath)).use {
-            it.readBytes()
-        }
+        val entry = zipFile.getEntry(unixStyleRelativePath)
+        return zipFile.getInputStream(entry).readBytesWithExpectedSize(entry.size)
     }
 
     override fun close() {
         zipFile.close()
     }
 }
+
