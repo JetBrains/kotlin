@@ -510,6 +510,7 @@ tasks {
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
         dependsOn(":kotlin-scripting-jsr223-test:test")
+        dependsOn(":examples:scripting-jsr223-daemon:test")
     }
 
     val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest", QualityGate.Master) {
