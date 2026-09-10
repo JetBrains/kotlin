@@ -215,8 +215,6 @@ internal class CallGraphBuilder(
 
                             is DataFlowIR.Node.ItableCall ->
                                 receiverType.itable[call.interfaceId]!![call.calleeItableIndex]
-
-                            else -> error("Unreachable")
                         }
                         allPossibleCallees.add(actualCallee)
                     }
