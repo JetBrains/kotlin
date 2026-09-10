@@ -10,6 +10,8 @@ import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 
 public interface StandaloneAnalysisAPISession {
@@ -18,6 +20,11 @@ public interface StandaloneAnalysisAPISession {
     public val project: Project
 
     public val modulesWithFiles: Map<KaSourceModule, List<PsiFile>>
+
+    /**
+     * All [KaModule]s registered by the user, excluding [KaNotUnderContentRootModule]s and the built-ins module.
+     */
+    public val allModules: List<KaModule>
 
     @KaImplementationDetail
     public val coreApplicationEnvironment: CoreApplicationEnvironment

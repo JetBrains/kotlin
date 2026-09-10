@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
 import org.jetbrains.kotlin.tooling.core.withClosureSequence
 
 /**
@@ -30,14 +26,8 @@ import org.jetbrains.kotlin.tooling.core.withClosureSequence
  *  }
  * ```
  */
-@OptIn(KaPlatformInterface::class, KaImplementationDetail::class)
 public fun StandaloneAnalysisAPISession.getAllLibraryModules(): Sequence<KaLibraryModule> {
-    val projectStructureProvider = KotlinProjectStructureProvider.getInstance(project)
-    if (projectStructureProvider !is KotlinStaticProjectStructureProvider) {
-        error("Expected implementation of ${KotlinStaticProjectStructureProvider::class.java} but found ${projectStructureProvider.javaClass}")
-    }
-
-    return projectStructureProvider.allModules
+    return allModules
         .withClosureSequence<KaModule> { module -> module.allDirectDependencies().asIterable() }
         .filterIsInstance<KaLibraryModule>()
 }
