@@ -18,6 +18,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.internal.IMPLEMENTATIONS
 import kotlin.internal.MISSING_VALUE
+import kotlin.internal.apiVersionIsAtLeast
 
 /**
  * Returns a new read-only map, mapping only the specified key to the
@@ -106,13 +107,26 @@ public inline fun <K, V> ConcurrentMap<K, V>.getOrElseIfMissing(key: K, defaultV
  * This method guarantees not to put the value into the map if the key is already there,
  * but the [defaultValue] function may be invoked even if the key is already in the map.
  *
+ * This function relies on [ConcurrentMap.computeIfAbsent]. Therefore, `ConcurrentMap` implementations
+ * that support `null` values must override the default `computeIfAbsent` implementation, so that
+ * the result of the `mappingFunction` is put into the map both when there is no existing value for the key
+ * and when the key is associated with a `null` value.
+ *
+ * @throws NullPointerException if the specified [key] or the result of [defaultValue] is `null`,
+ *   and this concurrent map does not support `null` keys or values.
+ *
  * @sample samples.collections.Maps.Usage.getOrPut
  */
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
-    // Do not use computeIfAbsent on JVM8 as it would change locking behavior
-    return this.get(key)
+    if (apiVersionIsAtLeast(2, 4, 0)) {
+        // same implementation as in getOrPutIfNull, but allowing undesirable non-local returns from defaultValue
+        @OptIn(ExperimentalStdlibApi::class)
+        return this.get(key) ?: this.getOrPutIfNullImpl(key, newValue = defaultValue())
+    } else {
+        // Do not use computeIfAbsent on JVM8 as it would change locking behavior
+        return this.get(key)
             ?: defaultValue().let { default -> this.putIfAbsent(key, default) ?: default }
-
+    }
 }
 
 /**

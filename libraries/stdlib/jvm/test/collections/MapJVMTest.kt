@@ -126,8 +126,8 @@ class MapJVMTest {
         assertEquals(null, map.getOrPut("k2") { null })
         assertTrue(map.containsKey("k2"))
         assertEquals("v2", map.getOrPut("k2") { "v2" }) // replace null value
-        assertEquals(null, map["k2"]) // incorrect, see KT-67339
-        assertEquals(null, map.getOrPut("k2") { null }) // incorrect
+        assertEquals("v2", map["k2"])
+        assertEquals("v2", map.getOrPut("k2") { null })
 
         assertEquals("v3", map.getOrPut(null) { "v3" })
         assertEquals("v3", map.getOrPut(null) { "newV3" })
@@ -135,10 +135,17 @@ class MapJVMTest {
 
         val expected = listOf(
             "k1" to "v1",
-            "k2" to null, // incorrect, see KT-67339
+            "k2" to "v2",
             null to "v3"
         )
         assertContentEquals(expected, map.entries.map { it.toPair() })
+
+        fun nonLocalDefaultValueReturn(): String? {
+            return map.getOrPut("k4") { return "v4" }
+        }
+        val v4 = nonLocalDefaultValueReturn()
+        assertEquals("v4", v4)
+        assertTrue("k4" !in map)
     }
 
     @Test
