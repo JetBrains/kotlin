@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.ElementBase
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -210,7 +211,8 @@ private fun createLightElementsVisitor(
         }
 
         override fun visitMethod(method: PsiMethod) {
-            if (method is SyntheticElement) return
+            // Only synthetic methods of SLC (e.g., stubs for mapped Java collections) are expected to be attached to the light class
+            if (method is SyntheticElement && method !is SymbolLightMethodBase) return
 
             checkParentAndVisitChildren(method) { visitor ->
                 annotations.forEach { it.accept(visitor) }

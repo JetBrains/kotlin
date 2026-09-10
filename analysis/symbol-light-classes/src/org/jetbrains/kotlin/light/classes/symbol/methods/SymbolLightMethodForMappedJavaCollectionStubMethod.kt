@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightIdentifier
-import com.intellij.psi.impl.light.LightParameter
-import com.intellij.psi.impl.light.LightParameterListBuilder
+import com.intellij.psi.impl.light.LightReferenceListBuilder
 import com.intellij.psi.javadoc.PsiDocComment
+import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
-import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.MethodAdditionalAnnotationsProvider
@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
+import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForMappedJavaCollectionStubMethod
+import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
+import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterListForMappedJavaCollectionStubMethod
 import javax.swing.Icon
 
 internal data class MethodSignature(val parameterTypes: List<PsiType>, val returnType: PsiType)
@@ -47,7 +50,14 @@ internal data class MethodSignature(val parameterTypes: List<PsiType>, val retur
 internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
     containingClass: SymbolLightClassForClassOrObject,
     private val javaMethod: PsiMethod,
-    private val substitutor: PsiSubstitutor,
+    /**
+     * Maps the type parameters of the Java collection class declaring [javaMethod] to the type arguments
+     * of the corresponding Kotlin collection supertype of [containingClass].
+     *
+     * For example, for `class StringList : List<String>`, it maps `E` of `java.util.List` to `String`.
+     * Type parameters of [javaMethod] itself are handled by [methodSubstitutor].
+     */
+    private val classSubstitutor: PsiSubstitutor,
     private val name: String,
     private val isFinal: Boolean,
     private val hasImplementation: Boolean,
@@ -66,8 +76,8 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
     override fun getNavigationElement(): PsiElement = javaMethod.navigationElement
     override fun getIcon(flags: Int): Icon? = javaMethod.getIcon(flags)
 
-    override fun getParameterList(): PsiParameterList = cachedValue {
-        LightParameterListBuilder(manager, KotlinLanguage.INSTANCE).apply {
+    private val _parameterList by lazyPub {
+        SymbolLightParameterList(parent = this) { builder ->
             javaMethod.parameterList.parameters.forEachIndexed { index, paramFromJava ->
                 val typeFromJava = paramFromJava.type
                 val providedType = providedSignature?.parameterTypes?.get(index)
@@ -77,18 +87,18 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
                         typeFromJava.isTypeParameter()
                 val type = if (shouldTryToUnbox) candidateType.unboxedOrSelf() else candidateType
 
-                addParameter(
-                    LightParameter(
-                        paramFromJava.name,
-                        type,
-                        this@SymbolLightMethodForMappedJavaCollectionStubMethod,
-                        KotlinLanguage.INSTANCE,
-                        paramFromJava.isVarArgs
+                builder.addParameter(
+                    SymbolLightParameterForMappedJavaCollectionStubMethod(
+                        javaParameter = paramFromJava,
+                        type = type,
+                        containingMethod = this,
                     )
                 )
             }
         }
     }
+
+    override fun getParameterList(): PsiParameterList = _parameterList
 
     private fun PsiType.isJavaLangObject(): Boolean =
         this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
@@ -96,8 +106,23 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
     private fun PsiType.unboxedOrSelf(): PsiType =
         PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
 
+    /**
+     * [classSubstitutor] extended with the mapping from the type parameters of [javaMethod] to the own type parameters of this method,
+     * so substituted types refer to the type parameters owned by the stub rather than by the Java declaration.
+     */
+    internal val methodSubstitutor: PsiSubstitutor by lazyPub {
+        val ownTypeParameters = typeParameters
+        if (ownTypeParameters.isEmpty()) {
+            classSubstitutor
+        } else {
+            javaMethod.typeParameters.zip(ownTypeParameters).fold(classSubstitutor) { acc, [javaTypeParameter, ownTypeParameter] ->
+                acc.put(javaTypeParameter, PsiTypesUtil.getClassType(ownTypeParameter))
+            }
+        }
+    }
+
     private fun substituteType(psiType: PsiType): PsiType {
-        val substituted = substitutor.substitute(psiType) ?: psiType
+        val substituted = methodSubstitutor.substitute(psiType) ?: psiType
         return if (substituted.isJavaLangObject() && substituteObjectWith != null) {
             substituteObjectWith
         } else {
@@ -110,15 +135,28 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
     override fun getReturnType(): PsiType? =
         providedSignature?.returnType ?: javaMethod.returnType?.let { substituteType(it) }
 
-    override fun getTypeParameters(): Array<PsiTypeParameter> = javaMethod.typeParameters
-
-    override fun getTypeParameterList(): PsiTypeParameterList? = javaMethod.typeParameterList
-
-    override fun getThrowsList(): PsiReferenceList = javaMethod.throwsList
-
-    override fun isOverride(): Boolean = true
+    private val _typeParameterList: PsiTypeParameterList? by lazyPub {
+        val javaTypeParameters = javaMethod.typeParameters
+        if (javaTypeParameters.isEmpty()) {
+            null
+        } else {
+            SymbolLightTypeParameterListForMappedJavaCollectionStubMethod(owner = this, javaTypeParameters = javaTypeParameters)
+        }
+    }
 
     override fun hasTypeParameters(): Boolean = javaMethod.hasTypeParameters()
+
+    override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
+
+    override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
+
+    override fun computeThrowsList(builder: LightReferenceListBuilder) {
+        for (thrownType in javaMethod.throwsList.referencedTypes) {
+            builder.addReference(methodSubstitutor.substitute(thrownType) as? PsiClassType ?: thrownType)
+        }
+    }
+
+    override fun isOverride(): Boolean = true
 
     override fun isVarArgs(): Boolean = javaMethod.isVarArgs
 

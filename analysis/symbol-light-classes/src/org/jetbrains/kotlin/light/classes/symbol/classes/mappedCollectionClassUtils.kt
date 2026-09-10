@@ -472,7 +472,7 @@ private fun PsiMethod.wrap(
 ) = SymbolLightMethodForMappedJavaCollectionStubMethod(
     containingClass = containingClass,
     javaMethod = this,
-    substitutor = substitutor,
+    classSubstitutor = substitutor,
     name = name,
     isFinal = makeFinal,
     hasImplementation = hasImplementation,

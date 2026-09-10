@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol
 
+import com.intellij.psi.PsiArrayType
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiEnumConstant
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedJavaCollectionStubMethod
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -124,6 +126,37 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
 
             val psiJavaBaseClass = psiFooMethodSupers[0].parent as PsiClass
             assertEquals("lib.JavaBase", psiJavaBaseClass.qualifiedName)
+        }
+    }
+
+    /**
+     * A regression test for KT-89322 to ensure that the signature of a stub method generated for a mapped Java collection
+     * refers to the type parameters of the stub itself rather than to the ones of the overridden Java method.
+     * The parent chain of stub methods is covered by the parenting check of the regular light classes tests.
+     */
+    @Test
+    fun mappedJavaCollectionStubMethodTypeParameters(file: KtFile, testServices: TestServices) {
+        val ktClass = file.declarations.filterIsInstance<KtClass>().single()
+        val lightClass = ktClass.toLightClass() ?: error("Light class was not found")
+
+        // `<T> T[] toArray(T[])`
+        val toArray = lightClass.methods
+            .filterIsInstance<SymbolLightMethodForMappedJavaCollectionStubMethod>()
+            .single { it.name == "toArray" && it.hasTypeParameters() }
+
+        val typeParameter = toArray.typeParameters.single()
+        testServices.assertions.assertEquals(toArray, typeParameter.owner) {
+            "Unexpected owner of $typeParameter in $toArray"
+        }
+
+        val parameterType = toArray.parameterList.parameters.single().type as PsiArrayType
+        testServices.assertions.assertEquals(typeParameter, (parameterType.componentType as PsiClassType).resolve()) {
+            "Unexpected type parameter in the parameter type of $toArray"
+        }
+
+        val returnType = toArray.returnType as PsiArrayType
+        testServices.assertions.assertEquals(typeParameter, (returnType.componentType as PsiClassType).resolve()) {
+            "Unexpected type parameter in the return type of $toArray"
         }
     }
 }
