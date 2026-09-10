@@ -20,6 +20,16 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.getValue
 import kotlin.io.path.pathString
 
+/**
+ * The representation of a DAG of [KotlinLibrary] dependencies computed without the involvement of IR linker.
+ * Constructed by [KlibDAGBuilder], which reads [KotlinLibrary] raw data from the file system and deduces
+ * the dependencies between libraries.
+ *
+ * Note: The primary purpose of this class is to be used in the Kotlin/Native static caches machinery,
+ * where we need to have the correct information about library dependencies even before the first launch
+ * of IR linker. This class may not be needed in the future if we decide to move the caches orchestration
+ * from the compiler to the BTA.
+ */
 class KlibDAG(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
     val libraries: Set<KotlinLibrary>
         get() = dag.keys
@@ -28,14 +38,25 @@ class KlibDAG(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
         dag[library] ?: error("No such library in Klib DAG: $library")
 }
 
+/**
+ * An individual node inside [KlibDAG].
+ */
 interface KlibDAGNode {
     val library: KotlinLibrary
     val directDependencies: Set<KotlinLibrary>
     val allDependencies: Set<KotlinLibrary>
 }
 
-class KlibDAGCyclicDependencyException : Exception("Recursive dependency detected while computing DAG of KLIB dependencies")
+class KlibDAGCyclicDependencyException : Exception("Cyclic dependency detected while computing DAG of KLIB dependencies")
 
+/**
+ * The component constructs [KlibDAG] by reading [KotlinLibrary] raw data. It works without involvement of IR linker.
+ *
+ * Note: The primary purpose of this class is to be used in the Kotlin/Native static caches machinery,
+ * where we need to have the correct information about library dependencies even before the first launch
+ * of IR linker. This class may not be needed in the future if we decide to move the caches orchestration
+ * from the compiler to the BTA.
+ */
 class KlibDAGBuilder(libraries: Collection<KotlinLibrary>, isRoot: (KotlinLibrary) -> Boolean) {
     private val worker = KlibDAGBuilderImpl(libraries, isRoot)
 
