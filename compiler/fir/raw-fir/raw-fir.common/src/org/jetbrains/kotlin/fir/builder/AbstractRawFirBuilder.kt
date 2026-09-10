@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     val baseSession: FirSession,
     val context: Context<Node> = Context(),
-) : NodeTypeAnalyzer<Node, Type> {
+) : NodeTypeAnalyzer<Node, Type>() {
     companion object {
         fun firScriptName(fileName: String): Name = Name.special("<script-$fileName>")
         fun firSnippetName(fileName: String): Name = Name.special("<snippet-$fileName>")
@@ -87,7 +87,6 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     abstract fun Node.getAnnotatedExpression(): Node?
     abstract fun Node.getLabeledExpression(): Node?
     abstract val Node?.arrayExpression: Node?
-    abstract val Node?.indexExpressions: List<Node>?
     abstract val Node.isVararg: Boolean
 
     override fun registerSelfType(selfType: FirResolvedTypeRef) {
@@ -495,7 +494,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         return sourceElement.isChildInParentheses()
     }
 
-    open fun KtSourceElement.isChildInParentheses(): Boolean =
+    override fun KtSourceElement.isChildInParentheses(): Boolean =
         treeStructure.getParent(lighterASTNode)?.tokenType == org.jetbrains.kotlin.KtNodeTypes.PARENTHESIZED
 
     /**
@@ -1108,7 +1107,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    protected abstract fun convertScript(
+    abstract fun convertScript(
         script: Node,
         scriptSource: KtSourceElement,
         fileName: String,
