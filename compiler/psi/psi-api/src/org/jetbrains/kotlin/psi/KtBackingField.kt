@@ -73,6 +73,9 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
 
     /**
      * The property this backing field belongs to.
+     *
+     * Note: in broken code a backing field can be attached to a [KtDestructuringDeclaration],
+     * so the accessor throws for such a field, exactly as [KtPropertyAccessor.property] does (KT-74793).
      */
     val property: KtProperty
         get() = parent as KtProperty

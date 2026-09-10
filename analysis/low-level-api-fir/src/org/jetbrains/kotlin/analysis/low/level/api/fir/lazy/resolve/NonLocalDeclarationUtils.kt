@@ -49,8 +49,11 @@ internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (el
         }
     }
 
-    is KtPropertyAccessor -> elementCanBeLazilyResolved(element.property)
-    is KtBackingField -> elementCanBeLazilyResolved(element.property)
+    // A property component is normally owned by a 'KtProperty', but in broken code it can be attached
+    // to a 'KtDestructuringDeclaration', so the owner has to be checked instead of using 'property'
+    // TODO(KT-74793): return back to `property` once the issue is fixed in the parser
+    is KtPropertyAccessor -> elementCanBeLazilyResolved(element.parent as? KtProperty)
+    is KtBackingField -> elementCanBeLazilyResolved(element.parent as? KtProperty)
     is KtClassOrObject -> element.isTopLevel() || element.getClassId() != null
     is KtTypeAlias -> element.isTopLevel() || element.getClassId() != null
     is KtModifierList -> element.isNonLocalDanglingModifierList()

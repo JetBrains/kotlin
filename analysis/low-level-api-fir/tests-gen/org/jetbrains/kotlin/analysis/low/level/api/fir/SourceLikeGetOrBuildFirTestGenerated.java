@@ -2487,6 +2487,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("accessorInDestructuringDeclaration.kt")
+    public void testAccessorInDestructuringDeclaration() {
+      run("accessorInDestructuringDeclaration.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInInvalidCode() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
@@ -2567,6 +2573,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("expectAndActualInTheSameFile.kt")
     public void testExpectAndActualInTheSameFile() {
       run("expectAndActualInTheSameFile.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitBackingFieldInDestructuringDeclaration.kt")
+    public void testExplicitBackingFieldInDestructuringDeclaration() {
+      run("explicitBackingFieldInDestructuringDeclaration.kt");
     }
 
     @Test
