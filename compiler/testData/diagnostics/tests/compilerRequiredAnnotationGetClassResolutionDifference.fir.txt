@@ -31,6 +31,13 @@ FILE: compilerRequiredAnnotationGetClassResolutionDifference.kt
 
         }
 
+        public final class Other : R|kotlin/Any| {
+            public constructor(): R|kotlin/Base.Other| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
     }
     public final class Derived : R|kotlin/Base| {
         public constructor(): R|kotlin/Derived| {
@@ -46,6 +53,13 @@ FILE: compilerRequiredAnnotationGetClassResolutionDifference.kt
 
         @R|kotlin/SymbolicClass|(actualizations = vararg(<getClass>(Q|kotlin/Base.Int|)) [evaluated = vararg(<getClass>(Q|kotlin/Base.Int|))]) public final class B : R|kotlin/Any| {
             public constructor(): R|kotlin/Derived.B| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        @R|kotlin/NumericClass|(actualizations = vararg(<getClass>(Q|kotlin/Base.Other|)) [evaluated = vararg(<getClass>(Q|kotlin/Base.Other|))]) public final class C : R|kotlin/Any| {
+            public constructor(): R|kotlin/Derived.C| {
                 super<R|kotlin/Any|>()
             }
 

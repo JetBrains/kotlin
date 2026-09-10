@@ -1783,11 +1783,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
-        // In the case of compiler-required annotation `FirGetClassCall` arguments, the result type has already been resolved.
-        // Keep the type from `COMPILER_REQUIRED_ANNOTATIONS` so that we could later report ambiguity.
-        if (!transformedGetClassCall.hasResolvedType) {
-            transformedGetClassCall.resultType = StandardClassIds.KClass.constructClassLikeType(arrayOf(typeOfExpression), false)
-        }
+        transformedGetClassCall.resultType = StandardClassIds.KClass.constructClassLikeType(arrayOf(typeOfExpression), false)
         dataFlowAnalyzer.exitGetClassCall(transformedGetClassCall)
         return transformedGetClassCall
     }
@@ -1961,8 +1957,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val symbolFromArgumentsPhase = receiver.qualifierSymbol ?: return
 
         val typeFromCompilerPhase =
-            (guessedArgument as? FirGetClassCall)?.resolvedType?.typeArguments?.firstOrNull() as? ConeKotlinType ?: return
-        val symbolFromCompilerPhase = typeFromCompilerPhase.toSymbol() ?: return
+            (guessedArgument as? FirGetClassCall)?.resolvedType?.typeArguments?.firstOrNull() as? ConeKotlinType
+        val symbolFromCompilerPhase = typeFromCompilerPhase?.toSymbol()
 
         if (symbolFromCompilerPhase != symbolFromArgumentsPhase) {
             val newArgumentList = buildArgumentList {

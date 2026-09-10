@@ -16,6 +16,7 @@ annotation class SymbolicClass(vararg val actualizations: KClass<*>)
 
 open class Base {
     class Int
+    class Other
 }
 
 class Derived : Base() {
@@ -24,6 +25,9 @@ class Derived : Base() {
 
     @SymbolicClass(Int::class)
     class B
+
+    @NumericClass(<!AMBIGUOUS_ANNOTATION_ARGUMENT!>Other<!>::class)
+    class C
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, nestedClass, outProjection,

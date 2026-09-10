@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildGetClassCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
@@ -195,8 +196,13 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         val typeArguments = qualifierExpression.typeArguments.map { it.toConeTypeProjection() }.toTypedArray()
         val targetType = symbol.classId.constructClassLikeType(typeArguments)
         val kclassType = StandardClassIds.KClass.constructClassLikeType(typeArguments = [targetType])
-        getClassCall.replaceConeTypeOrNull(kclassType)
-        return getClassCall
+
+        // We deliberately omit receivers here; our goal is just to put some
+        // resolved value to the mapping. Expressions from argument mappings should
+        // never be asked for their structure, but rather for values they represent.
+        return buildGetClassCallCopy(getClassCall) {
+            coneTypeOrNull = kclassType
+        }
     }
 
     private fun resolveEnumEntrySymbolFromImports(
