@@ -12,11 +12,6 @@ public abstract interface KtInterface /* KtInterface*/ {
   class Companion ...
 
   public static final class DefaultImpls /* KtInterface.DefaultImpls*/ {
-    @kotlin.jvm.JvmStatic()
-    public static void staticFun(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() KtInterface);//  staticFun(@org.jetbrains.annotations.NotNull() KtInterface)
-
-    public static final int getStaticProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() KtInterface);//  getStaticProperty(@org.jetbrains.annotations.NotNull() KtInterface)
-
     public static void defaultFun(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() KtInterface);//  defaultFun(@org.jetbrains.annotations.NotNull() KtInterface)
   }
 }

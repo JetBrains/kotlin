@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -64,6 +66,20 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun getContainingClass() = containingClass
 
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
+
+    /**
+     * Unlike the interface itself, `DefaultImpls` doesn't get the `@JvmStatic` members of the companion object:
+     * the JVM backend emits their static methods in the interface class only, see [SymbolLightClassForInterface.getOwnMethods].
+     */
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
+        withClassSymbol { classSymbol ->
+            val result = mutableListOf<PsiMethod>()
+            val implementations = classSymbol.combinedDeclaredMemberScope.callables.filter { acceptCallableSymbol(it) }
+            createMethods(this@SymbolLightClassForInterfaceDefaultImpls, implementations, result)
+
+            result
+        }
+    }
 
     /**
      * Excludes abstract members, which have no implementation, and companion block members, whose static methods are emitted on the
