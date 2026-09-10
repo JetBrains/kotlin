@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ
 import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
@@ -240,6 +241,9 @@ class ClassCodegen private constructor(
             fieldClass?.isKotlinValhallaValueClass(languageVersionSettings) == true -> true
             // A value class defined in Java (`value class`, resolved from source or a binary/jar dependency).
             fieldClass?.isJavaValueClass == true -> true
+            // A class annotated with `@WillBecomeValue` is going to become a value class, which is exactly the promise
+            // `@jdk.internal.ValueBased` makes for the JDK classes below, so its fields are listed just the same.
+            fieldClass?.hasAnnotation(WILL_BECOME_VALUE_ANNOTATION_FQ_NAME) == true -> true
             // A field of a JDK value-based class (JEP 401 migrates all of them to value classes) is loadable, exactly like javac.
             // The set covers the whole value-based list (wrappers, java.time, Optional, …), not just boxed primitives.
             descriptor in JDK_VALUE_BASED_FIELD_DESCRIPTORS -> true
@@ -628,6 +632,9 @@ class ClassCodegen private constructor(
             name.splitToSequence('/').any { identifier -> identifier.any { it in JvmConstants.INVALID_CHARS } }
     }
 }
+
+// The Kotlin counterpart of `@jdk.internal.ValueBased`: the class is going to become a value class.
+private val WILL_BECOME_VALUE_ANNOTATION_FQ_NAME = StandardClassIds.Annotations.WillBecomeValue.asSingleFqName()
 
 // The JDK value-based classes (marked `@jdk.internal.ValueBased`). JEP 401 migrates all of them to value classes, so a field of
 // such a type must be listed in `LoadableDescriptors` exactly like a field of a user value class (this mirrors javac's output).
