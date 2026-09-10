@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createHiddenSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import java.io.File
 
@@ -44,14 +46,25 @@ internal fun Project.applySwiftExportConsumerOverrides(
     val exported = modules.get().map { module ->
         val component = componentByArtifact[module.artifact] ?: return@map module to null
         val declaredName = sources.declaredModuleName(component)?.also { validateSwiftExportModuleName(it) }
-        val adjusted = when {
-            module.exportMode == SwiftExportedModuleMode.FULL -> createFullyExportedSwiftExportedModule(
+        // A declared visibility overrides what the module's position in the graph implied.
+        val mode = when (sources.declaredVisibility(component)) {
+            SwiftExportVisibility.EXPOSED -> SwiftExportedModuleMode.FULL
+            SwiftExportVisibility.HIDDEN -> SwiftExportedModuleMode.HIDDEN
+            null -> module.exportMode
+        }
+        val adjusted = when (mode) {
+            SwiftExportedModuleMode.FULL -> createFullyExportedSwiftExportedModule(
                 moduleName = declaredName ?: module.moduleName,
                 flattenPackage = sources.declaredRootPackage(component) ?: module.flattenPackage,
                 artifact = module.artifact,
             )
             // A transitively exported module has no root package, so a declared one has no effect here.
-            else -> createTransitiveSwiftExportedModule(
+            SwiftExportedModuleMode.TRANSITIVE -> createTransitiveSwiftExportedModule(
+                moduleName = declaredName ?: module.moduleName,
+                artifact = module.artifact,
+            )
+            // A hidden module is still analyzed under this name, so the name is honored; nothing else is.
+            SwiftExportedModuleMode.HIDDEN -> createHiddenSwiftExportedModule(
                 moduleName = declaredName ?: module.moduleName,
                 artifact = module.artifact,
             )
