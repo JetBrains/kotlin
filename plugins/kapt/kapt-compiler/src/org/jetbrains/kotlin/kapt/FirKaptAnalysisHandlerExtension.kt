@@ -208,7 +208,7 @@ open class FirKaptAnalysisHandlerExtension(
         val [saveStubsTime] = measureTimeMillis { saveStubs(kaptContext, kaptStubs) }
         logger.info { "Java stub saving took $saveStubsTime ms" }
 
-        val [saveIncrementalDataTime] = measureTimeMillis { saveIncrementalData(kaptContext, converter) }
+        val [saveIncrementalDataTime] = measureTimeMillis { saveIncrementalData(kaptContext) }
         logger.info { "Incremental data saving took $saveIncrementalDataTime ms" }
     }
 
@@ -274,10 +274,7 @@ open class FirKaptAnalysisHandlerExtension(
         logger.info { "Source files: ${sourceFiles}" }
     }
 
-    protected open fun saveIncrementalData(
-        kaptContext: KaptContextForStubGeneration,
-        converter: KaptStubConverter,
-    ) {
+    protected open fun saveIncrementalData(kaptContext: KaptContextForStubGeneration) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
         val reportOutputFiles = kaptContext.configuration.reportOutputFiles
