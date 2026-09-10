@@ -13,6 +13,8 @@ dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:incremental-compilation-impl"))
+    testImplementation(libs.intellij.asm)
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.benchmark.runtime)
 
@@ -46,6 +48,14 @@ benchmark {
         // Drop it and register each suite explicitly, so every benchmark belongs to exactly one
         // task and neither suite needs to exclude the other.
         remove(getByName("main"))
+
+        register("classpathSnapshot") {
+            include(".*ClasspathEntrySnapshotBenchmark.*")
+            iterationTime = 1
+            iterationTimeUnit = "sec"
+            warmups = 20
+            iterations = 60
+        }
 
         // The compiler frontend benchmarks: `org.jetbrains.kotlin.benchmarks.jmh.compilation.*`.
         register("compilation") {
@@ -101,6 +111,10 @@ fun JavaExec.addJarPathProperty(systemProperty: String, projectPath: String) {
 // looked up from a later one. Each task declares just the jars it uses, so running the compilation
 // benchmarks does not build kotlin-reflect, and vice versa.
 afterEvaluate {
+    tasks.named<JavaExec>("testClasspathSnapshotBenchmark") {
+        addJarPathProperty("classpathSnapshot.stdlib", ":kotlin-stdlib")
+    }
+
     tasks.named<JavaExec>("testCompilationBenchmark") {
         val ideaHomeForTests = project.configurations
             .detachedConfiguration(project.dependencies.project(":", configuration = "ideaHomeForTests"))
