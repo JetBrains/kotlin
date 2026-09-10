@@ -2,31 +2,16 @@
  * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
-import org.gradle.api.attributes.Bundling.BUNDLING_ATTRIBUTE
-import org.gradle.api.attributes.Bundling.EXTERNAL
 import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
 import org.gradle.api.attributes.Category.DOCUMENTATION
-import org.gradle.api.attributes.Category.LIBRARY
 import org.gradle.api.attributes.DocsType.DOCS_TYPE_ATTRIBUTE
 import org.gradle.api.attributes.DocsType.SOURCES
-import org.gradle.api.attributes.LibraryElements.JAR
-import org.gradle.api.attributes.LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
-import org.gradle.api.attributes.java.TargetJvmEnvironment.STANDARD_JVM
-import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
 import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.Directory
-import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.api.tasks.Sync
-import org.gradle.api.tasks.TaskInputFilePropertyBuilder
-import org.gradle.api.tasks.TaskOutputFilePropertyBuilder
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import javax.inject.Inject
 
 plugins {
     id("common-configuration")
@@ -117,7 +102,7 @@ dependencies {
 // documentation generated for the standard library.
 val kotlinStdlibSourcesDir = downloadLatestKotlinStdlibJvmSources(project)
 tasks.withType<Test>().configureEach {
-    systemProperty.inputDirectory("kotlinStdlibSourcesDir", kotlinStdlibSourcesDir).withPathSensitivity(RELATIVE)
+    addDirectoryProperty(kotlinStdlibSourcesDir.get(), "kotlinStdlibSourcesDir")
 }
 //endregion
 
@@ -210,14 +195,6 @@ private fun Configuration.resolvable(visible: Boolean = false) {
     isVisible = visible
 }
 
-private fun AttributeContainer.jvmJar(objects: ObjectFactory) {
-    attribute(USAGE_ATTRIBUTE, objects.named(JAVA_RUNTIME))
-    attribute(CATEGORY_ATTRIBUTE, objects.named(LIBRARY))
-    attribute(BUNDLING_ATTRIBUTE, objects.named(EXTERNAL))
-    attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named(STANDARD_JVM))
-    attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(JAR))
-}
-
 /**
  * Download and unpack the latest Kotlin stdlib JVM source code.
  *
@@ -258,96 +235,3 @@ private fun downloadLatestKotlinStdlibJvmSources(project: Project): Provider<Fil
 
     return downloadKotlinStdlibSources.map { it.destinationDir }
 }
-
-/**
- * Utility for adding a System Property command line arguments to this [Test] task,
- * and correctly registering the values as task inputs (for Gradle up-to-date checks).
- */
-// https://github.com/gradle/gradle/issues/11534
-// https://github.com/gradle/gradle/issues/12247
-private val Test.systemProperty: SystemPropertyAdder
-    get() {
-        val spa = extensions.findByType<SystemPropertyAdder>()
-            ?: extensions.create<SystemPropertyAdder>("SystemPropertyAdder", this)
-        return spa
-    }
-
-internal abstract class SystemPropertyAdder @Inject internal constructor(
-    private val task: Test,
-) {
-    private val objects: ObjectFactory = task.project.objects
-
-    @JvmName("inputDirectoryProvider")
-    fun inputDirectory(
-        key: String,
-        value: Provider<out Directory>,
-    ): TaskInputFilePropertyBuilder {
-        task.jvmArgumentProviders.add(
-            SystemPropertyArgumentProvider(key, value) {
-                it.get().asFile.invariantSeparatorsPath
-            }
-        )
-        return task.inputs.dir(value)
-            .withPropertyName("SystemProperty input directory $key")
-    }
-
-    @JvmName("inputDirectoryFile")
-    fun inputDirectory(
-        key: String,
-        value: Provider<File>,
-    ): TaskInputFilePropertyBuilder =
-        inputDirectory(key, objects.directoryProperty().fileProvider(value))
-
-    @JvmName("outputDirectoryProvider")
-    fun outputDirectory(
-        key: String,
-        value: Provider<out Directory>,
-    ): TaskOutputFilePropertyBuilder {
-        task.jvmArgumentProviders.add(
-            SystemPropertyArgumentProvider(key, value) {
-                it.get().asFile.invariantSeparatorsPath
-            }
-        )
-        return task.outputs.dir(value)
-            .withPropertyName("SystemProperty input directory $key")
-    }
-
-    @JvmName("outputDirectoryFile")
-    fun outputDirectory(
-        key: String,
-        value: Provider<File>,
-    ): TaskOutputFilePropertyBuilder =
-        outputDirectory(key, objects.directoryProperty().fileProvider(value))
-
-    fun outputDirectory(
-        key: String,
-        value: File,
-    ): TaskOutputFilePropertyBuilder =
-        outputDirectory(key, objects.directoryProperty().fileValue(value))
-
-    fun outputDirectory(
-        key: String,
-        value: Directory,
-    ): TaskOutputFilePropertyBuilder =
-        outputDirectory(key, objects.directoryProperty().apply { set(value) })
-}
-
-/**
- * Provide a Java system property.
- *
- * [value] is not registered as a Gradle Task input.
- * The value must be registered as a task input, using the [SystemPropertyAdder] utils.
- */
-private class SystemPropertyArgumentProvider<T : Any>(
-    @get:Input
-    val key: String,
-    private val value: T,
-    private val transformer: (value: T) -> String?,
-) : CommandLineArgumentProvider {
-    override fun asArguments(): Iterable<String> {
-        val value = transformer(value) ?: return emptyList()
-        return listOf("-D$key=$value")
-    }
-}
-
-//endregion
