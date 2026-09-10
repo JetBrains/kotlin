@@ -20,18 +20,18 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.getValue
 import kotlin.io.path.pathString
 
-interface KlibDAGNode {
-    val library: KotlinLibrary
-    val directDependencies: Set<KotlinLibrary>
-    val allDependencies: Set<KotlinLibrary>
-}
-
 class KlibDAG(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
     val libraries: Set<KotlinLibrary>
         get() = dag.keys
 
     operator fun get(library: KotlinLibrary): KlibDAGNode =
         dag[library] ?: error("No such library in Klib DAG: $library")
+}
+
+interface KlibDAGNode {
+    val library: KotlinLibrary
+    val directDependencies: Set<KotlinLibrary>
+    val allDependencies: Set<KotlinLibrary>
 }
 
 class KlibDAGCyclicDependencyException : Exception("Recursive dependency detected while computing DAG of KLIB dependencies")
