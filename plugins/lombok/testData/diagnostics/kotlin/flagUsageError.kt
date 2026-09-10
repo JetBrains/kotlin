@@ -67,7 +67,7 @@ class SuperBuilderExampleError
 // `lombok.anyConstructor.flagUsage` covers every `@XArgsConstructor`, and its `error` outranks the `warning` of
 // the annotation's own key: Lombok takes `error` from either key first and only then `warning`, preferring the
 // specific key when the two are equal.
-@NoArgsConstructor
+<!FLAG_USAGE_ERROR!>@NoArgsConstructor<!>
 class NoArgsConstructorExampleError
 
 class NotAnnotated
