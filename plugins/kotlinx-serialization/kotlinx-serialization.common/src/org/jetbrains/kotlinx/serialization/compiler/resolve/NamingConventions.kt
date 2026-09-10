@@ -48,6 +48,8 @@ object SerializationAnnotations {
 
     val protoNumberAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoNumber")
     val protoOneOfAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoOneOf")
+    val protoPackedAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoPacked")
+    val protoTypeAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoType")
 
     val serializableAnnotationClassId = ClassId.topLevel(serializableAnnotationFqName)
     val serializerAnnotationClassId = ClassId.topLevel(serializerAnnotationFqName)
@@ -68,6 +70,8 @@ object SerializationAnnotations {
 
     val protoNumberAnnotationClassId = ClassId.topLevel(protoNumberAnnotationFqName)
     val protoOneOfAnnotationClassId = ClassId.topLevel(protoOneOfAnnotationFqName)
+    val protoPackedAnnotationClassId = ClassId.topLevel(protoPackedAnnotationFqName)
+    val protoTypeAnnotationClassId = ClassId.topLevel(protoTypeAnnotationFqName)
 }
 
 object SerialEntityNames {
