@@ -16,8 +16,9 @@ builds.
     - [Verifying domains](#verifying-domains)
     - [Updating the dump](#updating-the-dump)
     - [Checking domain dependencies](#checking-domain-dependencies)
-- [Smoke Tests: Verifying commits on the federal level](#smoke-tests-verifying-commits-on-the-federal-level)
-- [Running a small subset of tests, as smoke tests, automatically](#running-a-small-subset-of-tests-as-smoke-tests-automatically)
+- [Always running tests](#always-running-tests)
+    - [Extra: Smoke tests](#extra-smoke-tests)
+        - [Running a small subset of tests automatically](#running-a-small-subset-of-tests-automatically)
 - [Contracts between Domains](#contracts-between-domains--single-tests--test-suites-affected-by-other-domains)
     - [Contracts require approval from the target team](#contracts-require-approval-from-the-target-team)
 - [Nightly Tests](#nightly-tests)
@@ -151,15 +152,15 @@ run in smoke mode. When only `test.federation.affected.domains` is specified, th
 For other properties and their values, see
 [runtimeEnvironment.kt](test-runtime/src/main/kotlin/org.jetbrains.kotlin.testFederation/runtimeEnvironment.kt).
 
-### Smoke Tests: Verifying commits on the federal level
+### Always running tests
 
-All tests of affected 'Domains' will be executed on CI. Running tests of a domain that is not affected can be done by marking a test as a
-'SmokeTest'. Using JUnit 5 (or higher) allows using the `@SmokeTest` annotation.
+Use `@MustRunAlways` to run a test regardless of which domains contain changes. Other test filters, such as `@NightlyTest`, still apply.
+With JUnit 5 (or higher), the annotation can be placed:
 
 - on the test method directly
 
 ```kotlin
-@SmokeTest
+@MustRunAlways
 @Test
 fun `my important test`() {
     // ...
@@ -169,7 +170,7 @@ fun `my important test`() {
 - on the test class
 
 ```kotlin
-@SmokeTest
+@MustRunAlways
 class MyImportantTest {
     @Test
     fun `my important test`() {
@@ -181,7 +182,7 @@ class MyImportantTest {
 - on any abstract test class
 
 ```kotlin
-@SmokeTest
+@MustRunAlways
 abstract class AbstractImportantTests {
     // ...
 }
@@ -190,7 +191,7 @@ abstract class AbstractImportantTests {
 - as a meta-annotation on another annotation
 
 ```kotlin
-@SmokeTest
+@MustRunAlways
 annotation class MyImportantTest
 
 @MyImportantTest
@@ -199,15 +200,14 @@ fun `my important test`() {
 }
 ```
 
-Smoke tests are always executed on CI, no matter the affected domains. Checking in a smoke test requires the test to fulfill the following
-criteria:
+Tests marked with `@MustRunAlways` must be fast and stable, because they run for unrelated changes too.
 
-- The test is very stable
-- The test is fast
+#### Extra: Smoke tests
 
-Because unstable/flaky smoke tests affect the entire team, fixing them is a high priority.
+A smoke test is a quick check of core functionality. `@MustRunAlways` can be used for smoke tests that should run for every change,
+but not every smoke test needs to run for unrelated changes.
 
-### Running a small subset of tests, as smoke tests, automatically
+##### Running a small subset of tests automatically
 
 Some test tasks do not have a clear candidate that stands out as a 'Smoke Test'. However, if all tests are quick and stable, running a
 percentage of those tests in 'smoke test mode' might be a good strategy for gaining confidence when testing unrelated changes. Any test

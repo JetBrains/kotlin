@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
@@ -32,7 +32,7 @@ private const val RUNTIME_TEST_ROOT = "plugins/compose/compiler-hosted/runtime-t
 /**
  * Takes Compose tests from runtime-tests module and runs them on compiler + plugin built from source.
  */
-@SmokeTest
+@MustRunAlways
 class RuntimeTestsK2 {
     @TestFactory
     fun runtimeTests(): List<DynamicNode> = createRuntimeTestClasses().map { variant ->
@@ -161,7 +161,7 @@ private class RuntimeTestCompiler(
                 Classpath.jarFor(kotlin.test.asserter::class.java.canonicalName), // kotlin-test metadata
                 Classpath.jarFor<kotlin.test.Asserter>(), // kotlin-test
                 Classpath.jarFor<Test>(), // junit
-                Classpath.jarFor<SmokeTest>() // test-runtime
+                Classpath.jarFor<MustRunAlways>() // test-runtime
             )
         )
 

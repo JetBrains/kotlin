@@ -10,18 +10,13 @@ import org.junit.jupiter.api.Tag
 /**
  * See [Test Federation](repo/TEST-FEDERATION.md)
  *
- * Smoke tests are always executed on CI, regardless of the affected domains.
- * Any commit pushed to the master branch must pass all smoke tests.
+ * The annotated tests run regardless of which domains contain changes.
+ * Other test filters, such as [NightlyTest], still apply.
  *
- * Smoke tests are intended to cover the core functionality of a domain to catch regressions
- * caused by changes in unrelated domains.
- *
- * Requirements:
- * - Smoke tests must be very stable.
- * - Smoke test (suites) must be fast.
+ * These tests should be fast and stable because they run for unrelated changes too.
  */
 @Tag("smoke")
-annotation class SmokeTest
+annotation class MustRunAlways
 
 /**
  * Will mark a given test as 'Nightly':

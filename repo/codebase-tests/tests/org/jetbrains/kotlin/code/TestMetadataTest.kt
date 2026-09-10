@@ -29,7 +29,7 @@ class TestMetadataTest {
     private val absoluteRoot = Path("").absolute()
 
     private val testMetadataAnnotationDesc = "Lorg/jetbrains/kotlin/test/TestMetadata;"
-    private val smokeTestAnnotationDesc = Type.getDescriptor(SmokeTest::class.java)
+    private val mustRunAlwaysAnnotationDesc = Type.getDescriptor(MustRunAlways::class.java)
     private val mustRunOnChangesInAnnotationDesc = Domain.entries.associateWith { domain ->
         Type.getDescriptor(mustRunOnChangesInAnnotationOf(domain).java)
     }
@@ -48,7 +48,7 @@ class TestMetadataTest {
      * - the metadata is living in the same domains as the test
      * - the metadata is living in any of the 'mustRunAllTestsOnChangesIn' dependencies of the test
      * - the test is marked as '@MustRunOnChangesIn' any of metadata domains
-     * - the test is marked as '@SmokeTest' (so it always runs)
+     * - the test is marked as '@MustRunAlways' (so it always runs)
      */
     @Test
     fun `test-federation dependencies`() {
@@ -84,8 +84,8 @@ class TestMetadataTest {
                         if (metadataDomains.intersect(testDomains.flatMap { it.mustRunAllTestsOnChangesIn }.toSet()).isNotEmpty())
                             return@forEach
 
-                        /* Check if the test is marked as SmokeTest and therefore always runs */
-                        if (classNode.visibleAnnotations.any { it.desc == smokeTestAnnotationDesc }) return@forEach
+                        /* Check if the test is marked as MustRunAlways and therefore always runs */
+                        if (classNode.visibleAnnotations.any { it.desc == mustRunAlwaysAnnotationDesc }) return@forEach
 
                         /* Check if the test is marked as '@MustRunOnChangesIn' any of metadata domains*/
                         if (classNode.visibleAnnotations.any { annotation ->
@@ -103,7 +103,7 @@ class TestMetadataTest {
                                 appendLine("""       - Add @${mustRunOnChangesInAnnotationOf(metadataDomain.domain).simpleName} (recommended)""")
                                 appendLine("""       - Declare mustRunAllTestsOnChangesIn: ${metadataDomain.domain.name} (if absolutely necessary)""")
                             }
-                            appendLine("""       - Add @${SmokeTest::class.simpleName} (mark this test as SmokeTest)""")
+                            appendLine("""       - Add @${MustRunAlways::class.simpleName} (run this test regardless of changed domains)""")
                         })
                     }
                 }

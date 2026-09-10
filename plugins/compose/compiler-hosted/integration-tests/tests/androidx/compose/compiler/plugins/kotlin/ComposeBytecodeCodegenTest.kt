@@ -16,14 +16,14 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /* ktlint-disable max-line-length */
-@SmokeTest
+@MustRunAlways
 class ComposeBytecodeCodegenTest : AbstractCodegenTest() {
 
     @Test

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.scripting.test.host
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.test.getBaseCompilerArgumentsFromProperty
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMembers
@@ -17,7 +17,7 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.*
 
-@SmokeTest
+@MustRunAlways
 class ScriptCompilerTest {
     @Test
     fun testCompilationWithRefinementError() {
