@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
@@ -18,8 +19,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 
 /**
  * The `DefaultImpls` nested class of an interface, which holds the implementations of the interface members that are not compiled
- * to JVM `default` methods (`-jvm-default=disable`), or compatibility delegates to the JVM `default` methods (`-jvm-default=enable`).
- * It has no symbol of its own and is backed by the interface symbol.
+ * to JVM `default` methods (`-jvm-default=disable`), or compatibility delegates to the JVM `default` methods (`-jvm-default=enable`),
+ * as well as bridges for the inherited implementations. It has no symbol of its own and is backed by the interface symbol.
  */
 internal class SymbolLightClassForInterfaceDefaultImpls(private val containingClass: SymbolLightClassForInterface) :
     SymbolLightClassForNamedClassLike(
@@ -81,18 +82,28 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
      * only, so unlike [SymbolLightClassForInterface.getOwnMethods], this override doesn't add them.
      *
      * With `-jvm-default=enable`, private members are excluded as well: they are compiled to private JVM `default` methods, which
-     * have no compatibility delegates.
+     * have no compatibility delegates. With `-jvm-default=no-compatibility`, there are no compatibility delegates at all, so all
+     * declared members are excluded.
+     *
+     * In addition to the declared implementations, `DefaultImpls` has bridges for the implementations inherited from
+     * super-interfaces, see [inheritedDefaultImplsCallables].
      */
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol { classSymbol ->
             val result = mutableListOf<PsiMethod>()
-            val includePrivateMembers = !jvmDefaultMode.isEnabled
-            val methods = classSymbol.combinedDeclaredMemberScope.callables.filter {
-                !it.isCompanion &&
-                        it.modality != KaSymbolModality.ABSTRACT &&
-                        (includePrivateMembers || it.visibility != KaSymbolVisibility.PRIVATE)
+            val declaredImplementations = if (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY) {
+                emptySequence()
+            } else {
+                val includePrivateMembers = !jvmDefaultMode.isEnabled
+                classSymbol.combinedDeclaredMemberScope.callables.filter {
+                    !it.isCompanion &&
+                            it.modality != KaSymbolModality.ABSTRACT &&
+                            (includePrivateMembers || it.visibility != KaSymbolVisibility.PRIVATE)
+                }
             }
-            createMethods(this@SymbolLightClassForInterfaceDefaultImpls, methods, result)
+
+            val inheritedImplementations = inheritedDefaultImplsCallables(classSymbol, jvmDefaultMode)
+            createMethods(this@SymbolLightClassForInterfaceDefaultImpls, declaredImplementations + inheritedImplementations, result)
 
             result
         }

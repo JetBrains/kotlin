@@ -18,6 +18,8 @@ public abstract interface B /* B*/ extends A {
 
     public static void setMutable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B, int);//  setMutable(@org.jetbrains.annotations.NotNull() B, int)
 
+    public static void synthetic(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  synthetic(@org.jetbrains.annotations.NotNull() B)
+
     public static void withDefaultArgument(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B, int);//  withDefaultArgument(@org.jetbrains.annotations.NotNull() B, int)
   }
 }

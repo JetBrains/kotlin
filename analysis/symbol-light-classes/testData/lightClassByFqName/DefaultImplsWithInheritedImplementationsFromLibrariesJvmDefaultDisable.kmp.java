@@ -20,5 +20,9 @@ public abstract interface B /* B*/ extends Disabled, Enabled, NoCompatibility, k
     public static void declared(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  declared(@org.jetbrains.annotations.NotNull() B)
 
     public static void fromDisabled(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  fromDisabled(@org.jetbrains.annotations.NotNull() B)
+
+    public static void fromEnabled(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  fromEnabled(@org.jetbrains.annotations.NotNull() B)
+
+    public static void fromNoCompatibility(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  fromNoCompatibility(@org.jetbrains.annotations.NotNull() B)
   }
 }
