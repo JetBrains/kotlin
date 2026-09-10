@@ -480,7 +480,7 @@ internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependen
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
     val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
 
-    runLowerings(loweringList, allModulesToLower)
+    runLowerings(loweringList, allModulesToLower, PhaseType.IrLowering)
 }
 
 internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(
@@ -555,6 +555,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
                     ::InlineClassPropertyAccessorsLowering.takeIf { optimize },
             ),
             module,
+            PhaseType.Backend,
     )
     val moduleDFG = runAndMeasurePhase(BuildDFGPhase, module, disable = !runGlobalOptimizations)
     runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = !enablePreCodegenInliner)
@@ -569,6 +570,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
                     ::UnboxInlineLowering.takeIf { optimize },
             ),
             module,
+            PhaseType.Backend,
     )
     runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
     val dceResult = runAndMeasurePhase(DCEPhase, DCEInput(module, moduleDFG), disable = !runGlobalOptimizations)
@@ -577,6 +579,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
                     ::CoroutinesVarSpillingLowering,
             ),
             module,
+            PhaseType.Backend,
     )
     runAndMeasurePhase(CreateLLVMDeclarationsPhase, module)
     runAndMeasurePhase(GHAPhase, module, disable = !runGlobalOptimizations || context.config.produce.isCache)
