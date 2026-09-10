@@ -52,6 +52,11 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
             return
         }
 
+        if (calleeVariableSymbol.isVal) {
+            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL)
+            return
+        }
+
         // property must be declared in one of the outer lexical scopes
         val containingSymbol = calleeVariableSymbol.containingClassOrFile()
         if (context.containingDeclarations.none { it == containingSymbol }) {

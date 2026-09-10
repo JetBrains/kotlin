@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.resolve.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -130,7 +131,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkValReassignment(expression: FirVariableAssignment) {
         val variable = expression.calleeReference?.toResolvedVariableSymbol() ?: return
-        if (variable.isVar) return
+        if (variable.isVar || variable.isLateInit) return
         when (variable) {
             is FirPropertySymbol -> {
                 /**
