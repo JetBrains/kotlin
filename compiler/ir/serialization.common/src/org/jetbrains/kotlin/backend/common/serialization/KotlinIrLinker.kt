@@ -199,7 +199,6 @@ abstract class KotlinIrLinker(
     }
 
     protected open fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
-    protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
         deserializeOrResolveDeclaration(symbol)

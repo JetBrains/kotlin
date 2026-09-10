@@ -62,15 +62,11 @@ class JKlibIrLinker(
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
         // TODO KT-89344 check if this condition is needed
-        if (!symbol.isPublicApi && symbol.hasDescriptor && !platformSpecificSymbol(symbol) &&
+        if (!symbol.isPublicApi && symbol.hasDescriptor && !symbol.descriptor.isJavaDescriptor() &&
             symbol.descriptor.module !== module
         ) return null
 
         return super.getDeclaration(symbol)
-    }
-
-    override fun platformSpecificSymbol(symbol: IrSymbol): Boolean {
-        return symbol.descriptor.isJavaDescriptor()
     }
 
     override val irMangler: KotlinMangler.IrMangler = JKlibIrMangler()
