@@ -90,6 +90,23 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
     }
 
     @DisplayName(
+        "moduleName override via config(...) takes precedence over moduleName override via metadata"
+    )
+    @GradleTest
+    fun directPublishedDependencyWithConfigModuleNameOverride(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = true,
+            configModuleNameOverride = "Bar",
+            moduleNameOverride = "Foo",
+        )
+    }
+
+    @DisplayName(
         "Swift Export metadata consumed from a transitive published dependency with moduleName and rootPackage overrides"
     )
     @GradleTest
@@ -112,6 +129,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         testBuildDir: Path,
         published: Boolean,
+        configModuleNameOverride: String? = null,
         moduleNameOverride: String? = null,
         rootPackageOverride: String? = null,
         transitivePublished: Boolean = published,
@@ -234,19 +252,28 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                 with(project) {
                     applyMultiplatform {
                         iosArm64()
+
+                        val subprojectDependency = if (publishedSubproject != null) {
+                            publishedSubproject.rootCoordinate
+                        } else {
+                            project(":subproject")
+                        }
+
                         export.swift {
-                            xcodeIntegration()
+                            xcodeIntegration {
+                                if (configModuleNameOverride != null) {
+                                    configure(subprojectDependency) {
+                                        moduleName.set(configModuleNameOverride)
+                                    }
+                                }
+                            }
                         }
 
                         sourceSets.commonMain {
                             compileStubSourceWithSourceSetName()
 
                             dependencies {
-                                if (publishedSubproject != null) {
-                                    api(publishedSubproject.rootCoordinate)
-                                } else {
-                                    api(project(":subproject"))
-                                }
+                                api(subprojectDependency)
                             }
                         }
                     }
@@ -271,6 +298,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                 )
 
                 val expectedDirectDependencyModuleName = when {
+                    configModuleNameOverride != null -> configModuleNameOverride
                     moduleNameOverride != null -> moduleNameOverride
                     published -> "ComFooBarEmpty"
                     else -> "Subproject"
