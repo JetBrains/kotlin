@@ -6,5 +6,4 @@ fun f() {
     }
 }
 
-// IGNORE_LOOKUP_LOCALLY
 // LOOK_UP_FOR_ELEMENT_OF_TYPE: KtNameReferenceExpression
