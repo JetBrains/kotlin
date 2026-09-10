@@ -719,6 +719,9 @@ tasks {
             "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}",
             "-Dlocal-bootstrap-url=file://${rootProject.projectDir.resolve("build/repo")}",
         )
+        inputs.files(publishedMarkElements.get().incoming.artifactView { lenient(true) }.files)
+            .withPathSensitivity(PathSensitivity.NONE)
+            .withPropertyName("publishedMarks")
 
         val jdkToolchain1_8 = getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
         doFirst {

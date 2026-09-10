@@ -294,8 +294,12 @@ fun Project.configureArtifacts() {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
-    tasks.withType<Jar>().matching { it.name == "kotlinSourcesJar" }.configureEach {
-        enabled = false
+    tasks.withType<AbstractArchiveTask>().configureEach {
+        if (name == "kotlinSourcesJar") {
+            enabled = false
+            archiveClassifier.set("unused-kotlin-sources")
+            archiveFileName.set("unused-kotlin-sources.jar")
+        }
     }
 
     tasks.withType<Javadoc>().configureEach {

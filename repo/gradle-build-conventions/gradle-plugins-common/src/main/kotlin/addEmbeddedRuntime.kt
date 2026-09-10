@@ -81,27 +81,7 @@ fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
 }
 
 fun Jar.addEmbeddedProjectSourcesJars(configurationName: String) {
-    project.configurations.findByName(configurationName)?.let { configuration ->
-        val archiveOperations = project.serviceOf<ArchiveOperations>()
-        val sourcesJars = configuration.incoming.artifactView {
-            isLenient = true
-            attributes {
-                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category::class.java, Category.DOCUMENTATION))
-                attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType::class.java, DocsType.SOURCES))
-                attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements::class.java, LibraryElements.JAR))
-            }
-            withVariantReselection()
-        }.files
-
-        dependsOn(sourcesJars)
-        from({ sourcesJars.map { archiveOperations.zipTree(it) } })
-        eachFile {
-            if (path.startsWith("main/")) {
-                path = path.removePrefix("main/")
-            }
-        }
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
+    addEmbeddedSources(configurationName)
 }
 
 @JvmOverloads
