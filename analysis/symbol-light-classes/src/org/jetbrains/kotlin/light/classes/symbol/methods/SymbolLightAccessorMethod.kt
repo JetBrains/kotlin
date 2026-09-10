@@ -231,7 +231,12 @@ internal class SymbolLightAccessorMethod private constructor(
         }
     }
 
-    override fun isDeprecated(): Boolean = _isDeprecated
+    override fun isDeprecated(): Boolean = _isDeprecated || isCompatibilityBridge
+
+    override val isCompatibilityBridge: Boolean by lazyPub {
+        val defaultImpls = containingClass as? SymbolLightClassForInterfaceDefaultImpls ?: return@lazyPub false
+        withPropertySymbol { isJvmDefaultCompatibilityBridge(it, defaultImpls) }
+    }
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, containingPropertyDeclaration)
 

@@ -37,6 +37,13 @@ internal abstract class SymbolLightMethodBase(
     protected val methodIndex: Int,
     val isJvmExposedBoxed: Boolean,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
+    /**
+     * Whether the method is a compatibility bridge in `DefaultImpls`, which is deprecated on the JVM.
+     *
+     * @see isJvmDefaultCompatibilityBridge
+     */
+    internal open val isCompatibilityBridge: Boolean get() = false
+
     override fun getBody(): PsiCodeBlock? = null
 
     override fun getReturnTypeElement(): PsiTypeElement? = null

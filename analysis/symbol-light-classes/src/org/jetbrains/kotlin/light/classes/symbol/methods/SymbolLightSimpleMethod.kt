@@ -199,6 +199,13 @@ internal open class SymbolLightSimpleMethod protected constructor(
         withFunctionSymbol { it.isOverride }
     }
 
+    override val isCompatibilityBridge: Boolean by lazyPub {
+        val defaultImpls = containingClass as? SymbolLightClassForInterfaceDefaultImpls ?: return@lazyPub false
+        withFunctionSymbol { isJvmDefaultCompatibilityBridge(it, defaultImpls) }
+    }
+
+    override fun isDeprecated(): Boolean = super.isDeprecated() || isCompatibilityBridge
+
     context(session: KaSession)
     private fun isVoidType(type: KaType): Boolean {
         val expandedType = type.fullyExpandedType
