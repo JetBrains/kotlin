@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// LANGUAGE: -CollectionLiterals
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Retention(AnnotationRetention.SOURCE)
@@ -20,7 +20,7 @@ fun test_fun(s: String, arr: Array<String>) {
 }
 
 fun test_ann(s: String, arr: Array<String>) {
-    @Ann(<!ARGUMENT_TYPE_MISMATCH!>[""]<!>, x = 1)
+    @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL, UNSUPPORTED_FEATURE!>[""]<!>, x = 1)
     foo()
     @Ann(*[""], x = 1)
     foo()

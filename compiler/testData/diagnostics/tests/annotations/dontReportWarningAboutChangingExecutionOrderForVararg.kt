@@ -1,12 +1,13 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// LANGUAGE: -CollectionLiterals
+
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Anno(vararg val x: String, val y: String)
 
-@Anno(x = <!ARGUMENT_TYPE_MISMATCH!>[["a", "b"], ["a", "b"]]<!>, y = "a")
+@Anno(x = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL, UNSUPPORTED_FEATURE!>["a", "b"]<!>, <!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL, UNSUPPORTED_FEATURE!>["a", "b"]<!>]<!>, y = "a")
 fun foo1() {}
 
-@Anno(x = <!ARGUMENT_TYPE_MISMATCH!>[[["a"]]]<!>, y = "b")
+@Anno(x = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL, UNSUPPORTED_FEATURE!>[<!UNRESOLVED_REFERENCE, UNSUPPORTED_FEATURE!>["a"]<!>]<!>]<!>, y = "b")
 fun foo11() {}
 
 @Anno(x = ["a", "b"], y = "a")

@@ -567,6 +567,7 @@ enum class LanguageFeature(
     ForbidNonLiteralStringArgumentsForCompilerRequiredAnnotationParameters(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, issue = "KT-87072"),
     JsAllowExportTypealiases(sinceVersion = KOTLIN_2_5, "KT-49795"),
     IntrinsicConstEvaluation(sinceVersion = KOTLIN_2_5, issue = "KT-49303"),
+    CollectionLiteralsBasedAnnotationResolution(sinceVersion = KOTLIN_2_5, issue = "KT-85535"),
 
     // 2.6
 
@@ -664,7 +665,6 @@ enum class LanguageFeature(
     // K1 support only. We keep it, as it's currently unclear what to do with this feature in K2
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276", enabledInLatestLVTests = false),
 
-    CollectionLiteralsBasedAnnotationResolution(sinceVersion = null, issue = "KT-85535", enabledInLatestLVTests = true),
     CollectionLiterals(sinceVersion = null, issue = "KT-80489", enabledInLatestLVTests = true) {
         context(context: CrossFeatureChecksResultsCollector)
         override fun crossFeatureChecks() {

@@ -21,9 +21,9 @@ public abstract @interface A {
 ////////////////////
 
 
-@A(value = {"ok"})
+@A(value = null)
 /**
- * @A(value = ["ok"])
+ * @A(value = [])
  * public final class Test : kotlin/Any {
  *
  *   // signature: <init>()V
