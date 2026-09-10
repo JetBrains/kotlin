@@ -24,7 +24,7 @@ public abstract class MemoryAllocator {
     /**
      * Allocates a block of uninitialized linear memory of the given [size] in bytes.
      *
-     * [size] must be >= 0. Zero-size allocations are allowed, but the resulting pointer may not be dereferenced.
+     * [size] must be >= 0. Zero-size allocations are allowed, and the resulting pointer will be 8-byte aligned, but may not be dereferenced.
      *
      * @return an address pointing to [size] allocated bytes. It is guaranteed to be a multiple of 8. It is not meaningful to compare these addresses or perform pointer arithmetic.
      */
