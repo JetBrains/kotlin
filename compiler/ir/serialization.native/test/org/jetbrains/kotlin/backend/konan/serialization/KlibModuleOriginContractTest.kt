@@ -23,7 +23,8 @@ import org.junit.jupiter.api.assertThrows
 /**
  * KT-62984: under the K2 frontend, `FirModuleDescriptor.getCapability` returns null for every capability,
  * so a module descriptor without [KlibModuleOrigin] must be survivable for nullable callers
- * (e.g. `ModuleDescriptor.konanLibrary`, which treats a null origin as "part of the current module").
+ * (e.g. `ModuleDescriptor.deserializedKlib` in `linkKlibs.kt`, which yields `null` for such modules; downstream,
+ * `LlvmModuleSpecificationBase` treats a module fragment without `kotlinLibrary` as "part of the current module").
  */
 class KlibModuleOriginContractTest {
     @Test

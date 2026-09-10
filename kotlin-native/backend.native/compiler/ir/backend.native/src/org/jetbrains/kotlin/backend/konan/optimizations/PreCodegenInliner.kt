@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnbox
 import org.jetbrains.kotlin.backend.konan.ir.isInlineClass
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
@@ -95,7 +95,7 @@ internal class PreCodegenInliner(
                     val irFunction = functionSymbol.irFunction ?: continue
                     val irBody = irFunction.body ?: continue
                     if (irFunction.bridgeTarget != null
-                            || irFunction.konanLibrary?.isCInteropLibrary() == true
+                            || irFunction.moduleFragment.kotlinLibrary?.isCInteropLibrary() == true
                             || irFunction.originalConstructor?.let { constructor ->
                                 // To support IR pattern recognition in IrToBitcode.kt on IrConstantObject generation.
                                 constructor.parameters.isEmpty()
@@ -127,7 +127,7 @@ internal class PreCodegenInliner(
                                 && !calleeIrFunction.isBoxOrUnbox()
                                 && !calleeIrFunction.isLazyStaticInitializer
                                 && !calleeIrFunction.isEagerStaticInitializer
-                                && calleeIrFunction.konanLibrary?.isCInteropLibrary() != true
+                                && calleeIrFunction.moduleFragment.kotlinLibrary?.isCInteropLibrary() != true
                                 && !calleeIrFunction.hasAnnotation(noInline)
                                 && calleeIrFunction.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
                                 && !calleeIrFunction.overrides(invokeSuspendFunction.owner)
