@@ -57,11 +57,6 @@ open class FirKaptAnalysisHandlerExtension(
             configuration,
         )
 
-        if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
-            logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
-            return false
-        }
-
         optionsBuilder.apply {
             projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
             val contentRoots = configuration.contentRoots

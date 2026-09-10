@@ -52,6 +52,12 @@ public class ArgumentParsingTestGenerated extends AbstractArgumentParsingTest {
   }
 
   @Test
+  @TestMetadata("oldLanguageVersion.txt")
+  public void testOldLanguageVersion() {
+    run("oldLanguageVersion.txt");
+  }
+
+  @Test
   @TestMetadata("simple.txt")
   public void testSimple() {
     run("simple.txt");
