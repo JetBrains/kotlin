@@ -61,14 +61,15 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.jetbrains.markdown)
 
-    // This must be explicit so the full `java-psi` API takes precedence over
-    // stripped copies that may be present in compiler-related artifacts.
-    implementation("com.jetbrains.intellij.java:java-psi-impl:$intellijVersion") {
-        exclude("org.jetbrains.intellij.deps", "log4j")
-    }
+    runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+    runtimeOnly(libs.intellij.fastutil)
+    runtimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    runtimeOnly(commonDependency("one.util:streamex"))
+    runtimeOnly("com.jetbrains.intellij.platform:util-jdom:$intellijVersion") { isTransitive = false }
+    runtimeOnly(libs.kotlinx.serialization.core) { isTransitive = false }
 
-    api(project(":analysis:analysis-api"))
-    api(project(":analysis:analysis-api-standalone"))
+    implementation(project(":analysis:analysis-api"))
+    implementation(project(":analysis:analysis-api-standalone"))
     runtimeOnly(project(":analysis:analysis-api-platform-interface"))
     runtimeOnly(project(":analysis:analysis-api-fir"))
     runtimeOnly(project(":analysis:low-level-api-fir"))
@@ -82,17 +83,7 @@ dependencies {
     implementation(project(":native:native.config"))
     implementation(project(":wasm:wasm.config"))
 
-    // `com.intellij.util.xml.dom.StaxFactory` (used by plugin.xml parsing during Analysis API standalone
-    // session setup) needs an actual StAX implementation on the runtime classpath, or its static initializer
-    // fails with `NoClassDefFoundError: Could not initialize class com.intellij.util.xml.dom.StaxFactory`.
-    // Same pattern as compiler/fir/analysis-tests/build.gradle.kts.
-    runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
-    // `com.intellij.util.xml.dom.XmlElement` is `@Serializable` and needs `kotlinx-serialization-core`'s
-    // `KSerializer` on the runtime classpath, or its static initializer fails with
-    // `NoClassDefFoundError: Could not initialize class com.intellij.util.xml.dom.XmlElement`.
-    // Same pattern as native/swift/swift-export-embeddable/build.gradle.kts.
-    runtimeOnly(libs.kotlinx.serialization.core)
-
+    testFixturesImplementation(kotlinStdlib())
     testImplementation(kotlinTest("junit5"))
     testImplementation(libs.junit.jupiter.params)
 }
