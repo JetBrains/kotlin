@@ -1593,6 +1593,215 @@ class ExportExtensionSwiftExportTests {
         project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
     }
 
+    @Test
+    fun `hidden visibility beats a direct api dependency`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0", SwiftExportVisibility.HIDDEN)
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.HIDDEN,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `hidden visibility applies to a transitive dependency`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0", SwiftExportVisibility.HIDDEN)
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.HIDDEN,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `exposed visibility promotes a transitive dependency and its root package now applies`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        visibility.set(SwiftExportVisibility.EXPOSED)
+                        rootPackage.set("kotlinx.io.bytestring")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.FULL,
+                    flattenPackage = "kotlinx.io.bytestring",
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `visibility and module name can be declared in the same block`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        visibility.set(SwiftExportVisibility.EXPOSED)
+                        moduleName.set("ByteString")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "ByteString",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.FULL,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `a hidden dependency keeps its root package unset`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        visibility.set(SwiftExportVisibility.HIDDEN)
+                        rootPackage.set("kotlinx.io.bytestring")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.HIDDEN,
+                    flattenPackage = null,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `a visibility override for a dependency absent from the graph is reported`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.example:not-in-the-graph:1.0", SwiftExportVisibility.EXPOSED)
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.realizeSwiftModules()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportModuleResolutionError)
+    }
+
+    @Test
+    fun `a hidden module still participates in duplicate module name detection`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                moduleName.set("Shared")
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        visibility.set(SwiftExportVisibility.HIDDEN)
+                        // Collides with the exported module itself: the name still names the analysis input.
+                        moduleName.set("Shared")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.assertRealizingSwiftModulesFailsWith(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
+    }
+
     /** The export graph diagnostics are reported when the `swiftModules` provider is realized, not during configuration. */
     private fun Project.realizeSwiftModules(): List<SwiftExportedModule> =
         tasks.withType(SwiftExportTask::class.java).single().parameters.swiftModules.get()

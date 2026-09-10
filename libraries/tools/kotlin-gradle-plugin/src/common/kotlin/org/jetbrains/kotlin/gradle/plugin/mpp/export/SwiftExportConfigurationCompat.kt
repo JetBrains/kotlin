@@ -104,7 +104,9 @@ internal interface SwiftExportConfigurationCompat {
                     get() = providers.provider { kotlinNativeCompilation.internal.configurations.compileDependencyConfiguration }
 
                 override val exportedModules: Provider<Set<SwiftExportedDependency>>
-                    get() = providers.provider { emptySet() } // TODO: KT-85687
+                    // The `export { }` DSL has no `export(...)`. Direct `api` dependencies are exported by the
+                    // collector, `configure(dependency, EXPOSED)` is applied on top in `adjustSwiftModules`.
+                    get() = providers.provider { emptySet() }
 
                 override fun adjustSwiftModules(
                     modules: Provider<List<SwiftExportedModule>>,
