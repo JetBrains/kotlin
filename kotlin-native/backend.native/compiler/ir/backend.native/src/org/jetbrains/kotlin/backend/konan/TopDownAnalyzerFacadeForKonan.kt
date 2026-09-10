@@ -30,9 +30,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 
 @OptIn(K1Deprecation::class)
 internal object TopDownAnalyzerFacadeForKonan {
-
-    private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
-
     fun analyzeFiles(files: Collection<KtFile>, context: FrontendContext): AnalysisResult {
         val config = context.config
         val moduleName = Name.special("<${config.moduleId}>")
@@ -54,7 +51,8 @@ internal object TopDownAnalyzerFacadeForKonan {
         builtIns.builtInsModule = module
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
-        val resolvedModuleDescriptors = KlibResolvedModuleDescriptorsFactoryImpl(nativeFactories.DefaultDeserializedDescriptorFactory).createResolved2(
+        val moduleDescriptorFactory = K1KlibMetadataModuleDescriptorFactoryImpl()
+        val resolvedModuleDescriptors = KlibResolvedModuleDescriptorsFactoryImpl(moduleDescriptorFactory).createResolved2(
                 // Note: The order of libraries is not important except for stdlib, which should go the first.
                 libraries = config.resolvedLibraries.getFullList(),
                 storageManager = projectContext.storageManager,

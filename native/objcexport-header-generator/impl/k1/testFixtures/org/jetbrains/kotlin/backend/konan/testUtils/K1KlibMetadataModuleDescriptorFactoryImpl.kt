@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.backend.konan.testUtils
 
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
-import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -34,15 +35,13 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-class K1KlibMetadataModuleDescriptorFactoryImpl(
-    override val createBuiltIns: (StorageManager) -> KotlinBuiltIns,
-    @OptIn(K1Deprecation::class)
-    override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
-    val fictitiousClassDescriptorFactories: List<ClassDescriptorFactory> = emptyList(),
-) : KlibMetadataModuleDescriptorFactory {
+@K1Deprecation
+class K1KlibMetadataModuleDescriptorFactoryImpl {
+    private val createBuiltIns: (StorageManager) -> KotlinBuiltIns = ::KonanBuiltIns
 
-    override fun createDescriptorOptionalBuiltIns(
+    private val flexibleTypeDeserializer: FlexibleTypeDeserializer = DynamicTypeDeserializer
+
+    private fun createDescriptorOptionalBuiltIns(
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
@@ -160,10 +159,10 @@ class K1KlibMetadataModuleDescriptorFactoryImpl(
             ErrorReporter.DO_NOTHING,
             lookupTracker,
             flexibleTypeDeserializer,
-            fictitiousClassDescriptorFactories,
+            emptyList(),
             notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),
-            additionalClassPartsProvider = additionalClassPartsProvider,
+            additionalClassPartsProvider = AdditionalClassPartsProvider.None,
             extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
             samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
             enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,
@@ -181,6 +180,14 @@ class K1KlibMetadataModuleDescriptorFactoryImpl(
             )
         } ?: provider
     }
+
+    fun createDescriptorAndNewBuiltIns(
+        library: KotlinLibrary,
+        languageVersionSettings: LanguageVersionSettings,
+        storageManager: StorageManager,
+    ): ModuleDescriptorImpl = createDescriptorOptionalBuiltIns(
+        library, languageVersionSettings, storageManager, null, LookupTracker.DO_NOTHING
+    )
 }
 
 

@@ -34,15 +34,15 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@K1Deprecation
 class K1KlibMetadataModuleDescriptorFactoryImpl(
-    override val createBuiltIns: (StorageManager) -> KotlinBuiltIns,
-    @OptIn(K1Deprecation::class)
-    override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    private val createBuiltIns: (StorageManager) -> KotlinBuiltIns,
+    private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
     val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
     val fictitiousClassDescriptorFactories: List<ClassDescriptorFactory> = emptyList(),
-) : KlibMetadataModuleDescriptorFactory {
+) {
 
-    override fun createDescriptorOptionalBuiltIns(
+    fun createDescriptorOptionalBuiltIns(
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
