@@ -13,6 +13,11 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 
+/**
+ * Standalone Analysis API environment.
+ *
+ * Can be constructed using [buildStandaloneAnalysisAPISession].
+ */
 public interface StandaloneAnalysisAPISession {
     public val coreApplicationEnvironment: CoreApplicationEnvironment
 
@@ -20,6 +25,9 @@ public interface StandaloneAnalysisAPISession {
 
     public val project: Project
 
+    /**
+     * Maps [KaSourceModule] subset of [allModules] to the represented [PsiFile]s.
+     */
     public val modulesWithFiles: Map<KaSourceModule, List<PsiFile>>
 
     /**
