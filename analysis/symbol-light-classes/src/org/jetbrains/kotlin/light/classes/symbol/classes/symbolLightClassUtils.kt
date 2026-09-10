@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
-import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
@@ -626,12 +626,9 @@ internal fun createInnerClasses(
         symbol.asPsiClass() as? SymbolLightClassBase
     }
 
-    val languageVersionSettings = classOrObject?.let { it.kaModule as? KaSourceModule }?.languageVersionSettings
-        ?: LanguageVersionSettingsImpl.DEFAULT
-
     if (containingClass is SymbolLightClassForInterface &&
         classOrObject?.hasInterfaceDefaultImpls == true &&
-        languageVersionSettings.jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY
+        containingClass.jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY
     ) {
         result.add(SymbolLightClassForInterfaceDefaultImpls(containingClass))
     }
@@ -956,3 +953,18 @@ internal inline fun <reified T : KaClassSymbol> KtClassOrObject.createSymbolPoin
 
 internal inline val SymbolLightClassBase.isKotlinValueClass: Boolean
     get() = this is SymbolLightClassForClassOrObject && isKotlinValueClass
+
+/**
+ * The `-jvm-default` mode the module of the light class is compiled with, or the default mode if the module has no
+ * language settings (e.g., a library).
+ */
+internal val SymbolLightClassBase.jvmDefaultMode: JvmDefaultMode
+    get() {
+        val languageVersionSettings = when (val module = useSiteModule) {
+            is KaSourceModule -> module.languageVersionSettings
+            is KaScriptModule -> module.languageVersionSettings
+            else -> LanguageVersionSettingsImpl.DEFAULT
+        }
+
+        return languageVersionSettings.jvmDefaultMode
+    }
