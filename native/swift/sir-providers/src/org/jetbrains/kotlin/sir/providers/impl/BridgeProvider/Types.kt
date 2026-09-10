@@ -53,21 +53,6 @@ internal sealed class CType {
     class NSSet(elem: CType) : Generic("NSSet", elem)
     class NSDictionary(key: CType, value: CType) : Generic("NSDictionary", key, value)
 
-    class BlockPointer(val parameters: List<CType>, val returnType: CType) : CType() {
-        override fun render(name: String): String = returnType.render(buildString {
-            append("(")
-            append("^$name")
-            append(")(")
-            append(parameters.printCParametersForBlock())
-            append(')')
-        })
-
-        private fun List<CType>.printCParametersForBlock(): String = if (isEmpty()) {
-            "void" // A block declaration without a prototype is deprecated
-        } else {
-            joinToString { it.render("") }
-        }
-    }
 }
 
 internal enum class KotlinType(val repr: String) {
@@ -144,11 +129,5 @@ internal fun CType.toSwiftTypeName(): String = when (this) {
     CType.NSObject -> "Any"
     CType.NSNumber -> "Foundation.NSNumber"
     is CType.NullabilityAnnotated -> wrapped.toSwiftTypeName() + if (nullability == CType.Nullability.NONNULL) "" else "?"
-    is CType.BlockPointer -> toSwiftTypeName()
     else -> "Any"
-}
-
-internal fun CType.BlockPointer.toSwiftTypeName(): String {
-    val params = parameters.joinToString(", ") { it.toSwiftTypeName() }
-    return "($params) -> ${returnType.toSwiftTypeName()}"
 }

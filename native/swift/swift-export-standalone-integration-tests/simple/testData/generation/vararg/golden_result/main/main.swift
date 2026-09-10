@@ -100,13 +100,7 @@ public func simple(
 public func varargsWithClosure(
     inp: () -> Swift.Void...
 ) -> Swift.Void {
-    return { __root___varargsWithClosure__TypesOfArguments__Swift_Array_U2829202D_U20Swift_Void__Vararg___(inp.map { it in { () -> Swift.Int in let __block: @convention(block) () -> Swift.Bool = {
-        let originalBlock: () -> Swift.Void = it
-        return {
-            let _result = originalBlock()
-            return { _result; return true }()
-        }
-    }(); return Int(bitPattern: Unmanaged.passRetained(__block as AnyObject).toOpaque()) }() }); return () }()
+    return { __root___varargsWithClosure__TypesOfArguments__Swift_Array_U2829202D_U20Swift_Void__Vararg___(inp.map { it in Swift.Int(bitPattern: Unmanaged.passRetained((it as () -> Swift.Void) as AnyObject).toOpaque()) }); return () }()
 }
 public func withDefault(
     a: Swift.String...,
@@ -121,4 +115,9 @@ extension main.Accessor {
         let receiver = self
         return { __root___extension__TypesOfArgumentsE__main_Accessor_Swift_Array_Swift_Double__Vararg___(receiver.__externalRCRef(), d.map { it in NSNumber(value: it) }); return () }()
     }
+}
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> Swift.Void)()
+    return { _result; return true }()
 }

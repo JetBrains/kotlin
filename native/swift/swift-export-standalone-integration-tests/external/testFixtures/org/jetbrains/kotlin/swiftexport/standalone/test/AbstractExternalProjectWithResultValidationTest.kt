@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
+import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataSupport
+import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
 
+@ExtendWith(UpdateTestDataSupport::class)
 abstract class AbstractExternalProjectWithResultValidationTest : AbstractExternalProjectTest(), SwiftExportValidator {
     override fun runTest(
         modules: Set<TestModule.Given>,

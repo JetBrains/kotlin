@@ -3,7 +3,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("kotlinx_atomicfu_locks_SynchronizedObject_init_allocate")
 public fun kotlinx_atomicfu_locks_SynchronizedObject_init_allocate(): kotlin.native.internal.NativePtr {

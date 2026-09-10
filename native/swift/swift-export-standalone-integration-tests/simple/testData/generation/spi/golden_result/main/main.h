@@ -19,6 +19,12 @@ NSString * MyInterface_optInProp_get__reverse_swift(void * self);
 
 _Bool MyInterface_optInProp_set__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * newValue);
 
+_Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20lib_InternalLibInterface__(void * pointerToClosure, void * _1);
+
+_Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_MyOptInClass__(void * pointerToClosure, void * _1);
+
+void * main_internal_functional_type_callee_mainU2EMyOptInClass__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
 _Bool MyImplementation_bar(void * self);
 
 _Bool MyImplementation_experimentalFun(void * self);
@@ -75,15 +81,15 @@ void * __root___MySubInterface_init_allocate();
 
 _Bool __root___MySubInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-_Bool __root___callbackFunction__TypesOfArguments__U2829202D_U20main_MyOptInClass__(void * (^action)(void));
+_Bool __root___callbackFunction__TypesOfArguments__U2829202D_U20main_MyOptInClass__(void * action);
 
 void * __root___functionalTypePropertyA_get();
 
-_Bool __root___functionalTypePropertyA_set__TypesOfArguments__U28main_MyOptInClassU29202D_U20Swift_Void__(_Bool (^newValue)(void *));
+_Bool __root___functionalTypePropertyA_set__TypesOfArguments__U28main_MyOptInClassU29202D_U20Swift_Void__(void * newValue);
 
 void * __root___functionalTypePropertyB_get();
 
-_Bool __root___functionalTypePropertyB_set__TypesOfArguments__U28anyU20lib_InternalLibInterfaceU29202D_U20Swift_Void__(_Bool (^newValue)(void *));
+_Bool __root___functionalTypePropertyB_set__TypesOfArguments__U28anyU20lib_InternalLibInterfaceU29202D_U20Swift_Void__(void * newValue);
 
 _Bool __root___optInFunctionA();
 

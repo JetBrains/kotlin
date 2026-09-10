@@ -78,14 +78,7 @@ extension ExportedKotlinPackages.datetime {
             public func Format(
                 block: @escaping (any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate) -> Swift.Void
             ) -> any ExportedKotlinPackages.datetime.DateTimeFormat {
-                return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: datetime_LocalDate_Companion_Format__TypesOfArguments__U28anyU20dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDateU29202D_U20Swift_Void__(self.__externalRCRef(), {
-                    let originalBlock: (any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate) -> Swift.Void = block
-                    return { (arg0: Swift.UnsafeMutableRawPointer) in
-                        let _arg0: any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate.Type.self) as! any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }()), conformsTo: ExportedKotlinPackages.datetime.DateTimeFormat.Type.self) as! any ExportedKotlinPackages.datetime.DateTimeFormat
+                return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: datetime_LocalDate_Companion_Format__TypesOfArguments__U28anyU20dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDateU29202D_U20Swift_Void__(self.__externalRCRef(), Unmanaged.passRetained((block as (any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.datetime.DateTimeFormat.Type.self) as! any ExportedKotlinPackages.datetime.DateTimeFormat
             }
         }
         public init() {
@@ -100,4 +93,9 @@ extension ExportedKotlinPackages.datetime {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
+}
+@_cdecl("dependency_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate__")
+package func dependency_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate) -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate.Type.self) as! any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate)
+    return { _result; return true }()
 }

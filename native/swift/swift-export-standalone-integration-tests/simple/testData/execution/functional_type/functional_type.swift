@@ -207,3 +207,19 @@ func testConsumeConsuming() throws {
     #expect(range!.contains(2))
     #expect(!range!.contains(11))
 }
+
+@Test
+func testListOfClosuresSentToKotlin() throws {
+    saveBlockList(blocks: [{ 1 }, { 2 }, { 39 }])
+    try #require(callSavedBlocks() == 42)
+    // Still callable after the array that carried them is long gone.
+    try #require(callSavedBlocks() == 42)
+}
+
+@Test
+func testListOfClosuresProducedByKotlin() throws {
+    let blocks = produceBlockList()
+    try #require(blocks.count == 2)
+    try #require(blocks[0]() == 1)
+    try #require(blocks[1]() == 2)
+}

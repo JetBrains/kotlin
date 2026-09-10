@@ -2,7 +2,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("__root___accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___")
 public fun __root___accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(range: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

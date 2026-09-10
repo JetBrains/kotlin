@@ -168,17 +168,7 @@ public func complexContextFunction(
 public func contextBlockA(
     block: @escaping ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void
 ) -> Swift.Void {
-    return { __root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_ContextBU29_U20Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__({
-        let originalBlock: ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void = block
-        return { (ctx0: Swift.UnsafeMutableRawPointer, ctx1: Swift.UnsafeMutableRawPointer, arg0: Swift.Int32, arg1: Swift.String) in
-            let _ctx0: main.ContextA = main.ContextA.__createClassWrapper(externalRCRef: ctx0)
-            let _ctx1: main.ContextB = main.ContextB.__createClassWrapper(externalRCRef: ctx1)
-            let _arg0: Swift.Int32 = arg0
-            let _arg1: Swift.String = arg1
-            let _result = originalBlock((_ctx0,_ctx1), _arg0, _arg1)
-            return { _result; return true }()
-        }
-    }()); return () }()
+    return { __root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_ContextBU29_U20Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__(Unmanaged.passRetained((block as ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
 public func contextBlockB() -> ((main.ContextB, main.ContextA), Swift.String, Swift.Int32) -> Swift.Void {
     return {
@@ -189,15 +179,7 @@ public func contextBlockB() -> ((main.ContextB, main.ContextA), Swift.String, Sw
 public func contextBlockC(
     block: @escaping (main.Context, Swift.String) -> Swift.Void
 ) -> Swift.Void {
-    return { __root___contextBlockC__TypesOfArguments__U28main_Context_U20Swift_StringU29202D_U20Swift_Void__({
-        let originalBlock: (main.Context, Swift.String) -> Swift.Void = block
-        return { (ctx0: Swift.UnsafeMutableRawPointer, arg0: Swift.String) in
-            let _ctx0: main.Context = main.Context.__createClassWrapper(externalRCRef: ctx0)
-            let _arg0: Swift.String = arg0
-            let _result = originalBlock((_ctx0), _arg0)
-            return { _result; return true }()
-        }
-    }()); return () }()
+    return { __root___contextBlockC__TypesOfArguments__U28main_Context_U20Swift_StringU29202D_U20Swift_Void__(Unmanaged.passRetained((block as (main.Context, Swift.String) -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
 public func contextBlockD() -> (main.Context, Swift.Int32) -> Swift.Void {
     return {
@@ -284,4 +266,15 @@ extension Swift.String {
         let receiver = self
         return main.complexContextFunction(context, receiver, yes: yes)
     }
+}
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ ctx0: Swift.UnsafeMutableRawPointer, _ ctx1: Swift.UnsafeMutableRawPointer, _ _3: Swift.Int32, _ _4: Swift.String) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void)((main.ContextA.__createClassWrapper(externalRCRef: ctx0), main.ContextB.__createClassWrapper(externalRCRef: ctx1)), _3, _4)
+    return { _result; return true }()
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ ctx0: Swift.UnsafeMutableRawPointer, _ _2: Swift.String) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (main.Context, Swift.String) -> Swift.Void)((main.Context.__createClassWrapper(externalRCRef: ctx0)), _2)
+    return { _result; return true }()
 }

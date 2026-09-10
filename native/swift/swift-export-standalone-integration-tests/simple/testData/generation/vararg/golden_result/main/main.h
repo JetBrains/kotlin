@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
 void * Accessor_Inner_init_allocate();
 
 _Bool Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double_Swift_Array_Swift_Bool__Vararg__main_Accessor__(void * __kt, double y, NSArray<NSNumber *> * z, void * outer__);
@@ -36,7 +38,5 @@ NSString * __root___simple__TypesOfArguments__Swift_Array_Swift_String__Vararg__
 _Bool __root___varargsWithClosure__TypesOfArguments__Swift_Array_U2829202D_U20Swift_Void__Vararg___(NSArray<id> * inp);
 
 _Bool __root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__(NSArray<NSString *> * a, int32_t b);
-
-_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock);
 
 NS_ASSUME_NONNULL_END

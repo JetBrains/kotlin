@@ -10,7 +10,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ImportedBridge("MyInterface_bar__reverse_swift")
 internal external fun MyInterface_bar__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
@@ -94,6 +93,15 @@ public fun MyInterface_optInProp_set__TypesOfArguments__Swift_String____reverse(
     val _result = MyInterface_optInProp_set__TypesOfArguments__Swift_String____reverse_swift(__self, __newValue)
     return run<Unit> { _result }
 }
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20lib_InternalLibInterface__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20lib_InternalLibInterface__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_MyOptInClass__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_MyOptInClass__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_mainU2EMyOptInClass__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun main_internal_functional_type_callee_mainU2EMyOptInClass__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
 @ExportedBridge("MyImplementation_bar")
 @OptIn(InternalLibApi::class)
@@ -325,9 +333,10 @@ public fun __root___MySubInterface_init_initialize__TypesOfArguments__Swift_Unsa
 @OptIn(MyOptInApi::class)
 public fun __root___callbackFunction__TypesOfArguments__U2829202D_U20main_MyOptInClass__(action: kotlin.native.internal.NativePtr): Boolean {
     val __action = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->kotlin.native.internal.NativePtr>(action);
+        val closurePtr = action;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = main_internal_functional_type_callee_mainU2EMyOptInClass__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as MyOptInClass
         }
     }
@@ -346,10 +355,11 @@ public fun __root___functionalTypePropertyA_get(): kotlin.native.internal.Native
 @OptIn(MyOptInApi::class)
 public fun __root___functionalTypePropertyA_set__TypesOfArguments__U28main_MyOptInClassU29202D_U20Swift_Void__(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(newValue);
+        val closurePtr = newValue;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: MyOptInClass ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_MyOptInClass__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -368,10 +378,11 @@ public fun __root___functionalTypePropertyB_get(): kotlin.native.internal.Native
 @OptIn(InternalLibApi::class)
 public fun __root___functionalTypePropertyB_set__TypesOfArguments__U28anyU20lib_InternalLibInterfaceU29202D_U20Swift_Void__(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(newValue);
+        val closurePtr = newValue;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: InternalLibInterface ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20lib_InternalLibInterface__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }

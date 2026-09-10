@@ -48,7 +48,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ImportedBridge("intersection_overrides_AbstractFooBar_baz_get__reverse_swift")
 internal external fun intersection_overrides_AbstractFooBar_baz_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
