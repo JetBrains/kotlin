@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildNumericClassConversion
 import org.jetbrains.kotlin.fir.expressions.unwrapAndFlattenArgument
-import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
@@ -54,11 +54,7 @@ fun FirBasedSymbol<*>.getSupportedNumericClassConversions(session: FirSession): 
         ?.unwrapAndFlattenArgument(flattenArrays = true)
         ?: return null
 
-    return arguments.eachIsInstanceOrNull<FirPropertyAccessExpression>()
-        ?.mapNotNull { enumExpression ->
-            StandardClassIds.allIntegerTypes.firstOrNull { it.shortClassName == enumExpression.calleeReference.name }
-                ?.defaultType(emptyList())
-        }
+    return arguments.eachIsInstanceOrNull<FirGetClassCall>()?.mapNotNull { it.getTargetType() }
 }
 
 private fun ConeKotlinType.fitsInto(other: ConeKotlinType): Boolean {

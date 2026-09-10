@@ -11,18 +11,21 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildGetClassCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationArgumentMappingImpl
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedArgumentDuringCompilerRequiredAnnotations
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.withClassDeclarationCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
+import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -35,7 +38,9 @@ import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.PrivateForInline
 
@@ -58,6 +63,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             val value = when (val type = parameter.kind) {
                 is FirCraParameterKind.EnumParameter -> resolveEnumArguments(arguments, type)
                 is FirCraParameterKind.LiteralParameter -> resolveLiteralArgument(arguments, type.constKind)
+                is FirCraParameterKind.GetClassParameter -> resolveGetClassArguments(arguments, type)
             }
             if (value != null) {
                 mapping[parameter.name] = value
@@ -81,9 +87,8 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
         if (namedArgument != null) return [namedArgument]
 
-        val kind = parameter.kind
         // We rely here on the fact that currently vararg compiler-required parameters are always the only ones
-        if (kind is FirCraParameterKind.EnumParameter && kind.isVararg) {
+        if (parameter.kind.isVararg) {
             return arguments
         }
 
@@ -98,7 +103,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
         val entries = arguments.flatMap { it.unwrapAndFlattenArgument(flattenArrays = true) }.map { argument ->
             val symbol = (argument as? FirPropertyAccessExpression)?.let {
-                resolvePropertyAccessExpressionFromImports(it, it.calleeReference.name, parameter.enumClassId)
+                resolveEnumEntrySymbolFromImports(it, it.calleeReference.name, parameter.enumClassId)
             }
 
             when (symbol) {
@@ -133,6 +138,35 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         return buildLiteralExpression(literal.source, literal.kind, literal.value, setType = true)
     }
 
+    private fun resolveGetClassArguments(
+        arguments: List<FirExpression>,
+        parameter: FirCraParameterKind.GetClassParameter,
+    ): FirExpression? {
+        if (arguments.isEmpty()) return null
+
+        val entries = arguments.flatMap { it.unwrapAndFlattenArgument(flattenArrays = true) }.map { argument ->
+            val qualifier = (argument as? FirGetClassCall)?.argument as? FirPropertyAccessExpression
+            val symbol = qualifier?.let { resolveQualifierFromImports(it) }
+
+            when (symbol) {
+                null -> buildUnresolvedArgumentDuringCompilerRequiredAnnotations(argument.source)
+                else -> buildResolvedGetClassCall(argument, qualifier, symbol)
+            }
+        }
+
+        if (!parameter.isVararg) {
+            return entries.firstOrNull() ?: buildUnresolvedArgumentDuringCompilerRequiredAnnotations(arguments.first().source)
+        }
+
+        val elementType = ConeClassLikeTypeImpl(StandardClassIds.KClass.toLookupTag(), typeArguments = [ConeStarProjection], isMarkedNullable = false)
+        return buildVarargArgumentsExpression {
+            this.arguments += entries
+            coneElementTypeOrNull = elementType
+            coneTypeOrNull = elementType.createOutArrayType()
+            source = arguments.first().source
+        }
+    }
+
     private fun buildResolvedEnumEntryAccess(
         propertyAccess: FirPropertyAccessExpression,
         symbol: FirEnumEntrySymbol,
@@ -154,7 +188,24 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         }
     }
 
-    private fun resolvePropertyAccessExpressionFromImports(
+    private fun buildResolvedGetClassCall(
+        getClassCall: FirGetClassCall,
+        qualifierExpression: FirPropertyAccessExpression,
+        symbol: FirRegularClassSymbol,
+    ): FirExpression {
+        val typeArguments = qualifierExpression.typeArguments.map { it.toConeTypeProjection() }.toTypedArray()
+        val targetType = symbol.classId.constructClassLikeType(typeArguments)
+        val kclassType = StandardClassIds.KClass.constructClassLikeType(typeArguments = [targetType])
+
+        // We deliberately omit receivers here; our goal is just to put some
+        // resolved value to the mapping. Expressions from argument mappings should
+        // never be asked for their structure, but rather for values they represent.
+        return buildGetClassCallCopy(getClassCall) {
+            coneTypeOrNull = kclassType
+        }
+    }
+
+    private fun resolveEnumEntrySymbolFromImports(
         propertyAccess: FirPropertyAccessExpression,
         name: Name,
         expectedEnumClassId: ClassId,
@@ -175,6 +226,20 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         }
 
         return fromImports ?: guessEnumEntryByName()
+    }
+
+    private fun resolveQualifierFromImports(receiver: FirPropertyAccessExpression): FirRegularClassSymbol? {
+        val segments = generateSequence(receiver.explicitReceiver) { (it as? FirPropertyAccessExpression)?.explicitReceiver }
+            .mapNotNull { (it.toReference(session) as? FirSimpleNamedReference)?.name?.identifier }
+            .toList()
+
+        // We could, hypothetically, try "continuing" some existing imported paths further by looking up
+        // the first segment as a classifier or by appending the pre-imported paths as package segments,
+        // but it's non-trivial and we don't have enough motivation for it.
+        return when {
+            segments.isEmpty() -> scopes.firstNotNullOfOrNull { it.getSingleClassifier(receiver.calleeReference.name) as? FirRegularClassSymbol }
+            else -> ClassId(FqName.fromSegments(segments.asReversed()), receiver.calleeReference.name).toSymbol() as? FirRegularClassSymbol
+        }
     }
 
     private fun buildUnresolvedArgumentDuringCompilerRequiredAnnotations(source: KtSourceElement?): FirErrorExpression =

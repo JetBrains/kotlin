@@ -1,0 +1,68 @@
+FILE: compilerRequiredAnnotationGetClassResolutionDifference.kt
+    package kotlin
+
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|]) public final annotation class NumericClass : R|kotlin/Annotation| {
+        public constructor(vararg actualizations: R|kotlin/Array<out kotlin/reflect/KClass<*>>|): R|kotlin/NumericClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val actualizations: R|kotlin/Array<out kotlin/reflect/KClass<*>>| = R|<local>/actualizations|
+            public get(): R|kotlin/Array<out kotlin/reflect/KClass<*>>|
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|]) public final annotation class SymbolicClass : R|kotlin/Annotation| {
+        public constructor(vararg actualizations: R|kotlin/Array<out kotlin/reflect/KClass<*>>|): R|kotlin/SymbolicClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val actualizations: R|kotlin/Array<out kotlin/reflect/KClass<*>>| = R|<local>/actualizations|
+            public get(): R|kotlin/Array<out kotlin/reflect/KClass<*>>|
+
+    }
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|kotlin/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class Int : R|kotlin/Any| {
+            public constructor(): R|kotlin/Base.Int| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final class Other : R|kotlin/Any| {
+            public constructor(): R|kotlin/Base.Other| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Derived : R|kotlin/Base| {
+        public constructor(): R|kotlin/Derived| {
+            super<R|kotlin/Base|>()
+        }
+
+        @R|kotlin/NumericClass|(actualizations = vararg(<getClass>(Q|kotlin/Base.Int|)) [evaluated = vararg(<getClass>(Q|kotlin/Base.Int|))]) public final class A : R|kotlin/Any| {
+            public constructor(): R|kotlin/Derived.A| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        @R|kotlin/SymbolicClass|(actualizations = vararg(<getClass>(Q|kotlin/Base.Int|)) [evaluated = vararg(<getClass>(Q|kotlin/Base.Int|))]) public final class B : R|kotlin/Any| {
+            public constructor(): R|kotlin/Derived.B| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        @R|kotlin/NumericClass|(actualizations = vararg(<getClass>(Q|kotlin/Base.Other|)) [evaluated = vararg(<getClass>(Q|kotlin/Base.Other|))]) public final class C : R|kotlin/Any| {
+            public constructor(): R|kotlin/Derived.C| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
