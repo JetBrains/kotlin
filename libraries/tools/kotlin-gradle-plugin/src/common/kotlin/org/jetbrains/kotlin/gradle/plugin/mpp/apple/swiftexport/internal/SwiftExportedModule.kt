@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleVersionIdentifier
+import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
@@ -121,13 +122,23 @@ private class ResolvedArtifactWithVersionIdentifier(
     }
 
     fun defaultExportedModuleName(): String {
-        return when (val componentId = artifact.id.componentIdentifier) {
-            is ProjectComponentIdentifier -> componentId.projectPath
-            is ModuleComponentIdentifier -> moduleVersion.inheritedName
-            else -> error("Unexpected component identifier type: ${componentId::class}")
-        }
+        val componentId = artifact.id.componentIdentifier
+        return defaultSwiftExportModuleName(componentId, moduleVersion)
+            ?: error("Unexpected component identifier type: ${componentId::class}")
     }
 }
+
+/**
+ * Default name of a fully exported module, before normalization: the project path for a project, the coordinates
+ * for an external module, `null` for anything else. Also used by the consumer overrides, so a promoted dependency
+ * is named like an `api` one.
+ */
+internal fun defaultSwiftExportModuleName(id: ComponentIdentifier, moduleVersion: ModuleVersionIdentifier?): String? =
+    when (id) {
+        is ProjectComponentIdentifier -> id.projectPath
+        is ModuleComponentIdentifier -> moduleVersion?.inheritedName
+        else -> null
+    }
 
 private fun Project.swiftExportedModules(
     exportConfiguration: LazyResolvedConfigurationWithArtifacts,

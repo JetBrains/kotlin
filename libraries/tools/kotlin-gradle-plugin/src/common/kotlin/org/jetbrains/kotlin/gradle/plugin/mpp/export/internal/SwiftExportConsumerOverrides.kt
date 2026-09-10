@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftEx
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createHiddenSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.defaultSwiftExportModuleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
@@ -46,26 +48,30 @@ internal fun Project.applySwiftExportConsumerOverrides(
     val exported = modules.get().map { module ->
         val component = componentByArtifact[module.artifact] ?: return@map module to null
         val declaredName = sources.declaredModuleName(component)?.also { validateSwiftExportModuleName(it) }
-        // A declared visibility overrides what the module's position in the graph implied.
-        val mode = when (sources.declaredVisibility(component)) {
+        val visibility = sources.declaredVisibility(component)
+        val mode = when (visibility) {
             SwiftExportVisibility.EXPOSED -> SwiftExportedModuleMode.FULL
             SwiftExportVisibility.HIDDEN -> SwiftExportedModuleMode.HIDDEN
             null -> module.exportMode
         }
+        // The collector names transitive modules from coordinates and fully exported ones from the component.
+        // With a declared visibility use the latter, so the name matches `api(project(...))` regardless of scope.
+        val derivedName =
+            if (visibility == null) module.moduleName else (component.defaultModuleName() ?: module.moduleName)
         val adjusted = when (mode) {
             SwiftExportedModuleMode.FULL -> createFullyExportedSwiftExportedModule(
-                moduleName = declaredName ?: module.moduleName,
+                moduleName = declaredName ?: derivedName,
                 flattenPackage = sources.declaredRootPackage(component) ?: module.flattenPackage,
                 artifact = module.artifact,
             )
             // A transitively exported module has no root package, so a declared one has no effect here.
             SwiftExportedModuleMode.TRANSITIVE -> createTransitiveSwiftExportedModule(
-                moduleName = declaredName ?: module.moduleName,
+                moduleName = declaredName ?: derivedName,
                 artifact = module.artifact,
             )
-            // A hidden module is still analyzed under this name, so the name is honored; nothing else is.
+            // The stub module is emitted under this name. A root package makes no sense for it, as for transitive.
             SwiftExportedModuleMode.HIDDEN -> createHiddenSwiftExportedModule(
-                moduleName = declaredName ?: module.moduleName,
+                moduleName = declaredName ?: derivedName,
                 artifact = module.artifact,
             )
         }
@@ -122,3 +128,7 @@ private fun componentByArtifact(
     }
     return result
 }
+
+/** What the collector would name this component if it were fully exported, `null` if that can't be derived. */
+private fun SwiftExportResolvedComponent.defaultModuleName(): String? =
+    defaultSwiftExportModuleName(id, moduleVersion)?.normalizedSwiftExportModuleName
