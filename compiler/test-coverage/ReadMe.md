@@ -11,6 +11,10 @@ This module aggregates [JaCoCo](https://www.jacoco.org/jacoco/) test coverage fo
 - `:compiler:fir:raw-fir:psi2fir:test`
 - `:compiler:fir:raw-fir:light-tree2fir:test`
 
+> This list is a snapshot for orientation — the authoritative list is the `jacocoAggregation(...)`
+> dependencies in [`build.gradle.kts`](build.gradle.kts), which may grow to include more test
+> tasks or additional FIR production modules over time.
+
 Coverage collection is **disabled by default** and is a strict no-op for regular builds.
 It is enabled with the Gradle property `kotlin.build.coverage.enabled` (also settable in
 `local.properties`). The property must be passed to *every* coverage-related invocation —
@@ -34,6 +38,9 @@ report alone is enough:
 ```bash
 ./gradlew :compiler:test-coverage:firCoverageReport -Pkotlin.build.coverage.enabled=true
 ```
+
+Or, in IDEA, run the checked-in **FIR Coverage Report** run configuration (`Tests` folder), which
+runs the same task with the property already set.
 
 Outputs:
 
