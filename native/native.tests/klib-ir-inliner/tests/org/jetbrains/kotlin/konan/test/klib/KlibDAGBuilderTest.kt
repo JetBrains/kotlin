@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.backend.common.LegacyKlibDependencies
+import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGCyclicDependencyException
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGNode
+import org.jetbrains.kotlin.backend.konan.library.deserialize
 import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
+import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.filterToSetOrEmpty
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -36,7 +40,9 @@ import org.junit.jupiter.api.fail
 import java.io.File
 import java.nio.file.Path
 import kotlin.collections.set
+import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.name
 import kotlin.io.path.pathString
 
 @Tag("klib")
@@ -57,6 +63,9 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         assertEquals(stdlib, stdlibNode.library)
         assertTrue(stdlibNode.directDependencies.isEmpty())
         assertTrue(stdlibNode.allDependencies.isEmpty())
+
+        // Check serialization/deserialization.
+        assertLosslessDeserialization(dag)
     }
 
     @Test
@@ -108,6 +117,9 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
             denseDependenciesSet = allDependenciesByManifest,
             looseDependenciesSet = allDependenciesByDAGBuilder
         )
+
+        // Check serialization/deserialization.
+        assertLosslessDeserialization(dag)
     }
 
     @Test
@@ -175,6 +187,10 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
             // All libraries should be present in the DAG.
             assertEquals(allLibraries.size, dag.libraries.size)
         }
+
+        // Check serialization/deserialization.
+        assertLosslessDeserialization(dag, libraries = dag.libraries)
+        assertLosslessDeserialization(dag, libraries = allLibraries)
 
         val userLibraries: Map</* name of test module */ String, /* use library */ KotlinLibrary> = allLibraries.mapNotNull { library ->
             val moduleName = userLibraryPathToModuleName[library.path] ?: return@mapNotNull null
@@ -312,6 +328,57 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         }
     }
 
+    @Test
+    fun `SerializedKlibDAG creation sanity test`() {
+        val properDag: Map<Path, Set<Path>> = buildMap {
+            this[Path("/foo")] = setOf(Path("/bar"))
+            this[Path("/bar")] = setOf(Path("/baz"))
+            this[Path("/baz")] = setOf()
+        }
+
+        val improperDag: Map<Path, Set<Path>> = buildMap {
+            this[Path("/foo")] = setOf(Path("/bar"))
+            this[Path("/bar")] = setOf(Path("/baz"))
+            //this[Path("/baz")] = setOf()
+        }
+
+        SerializedKlibDAG(properDag)
+
+        try {
+            SerializedKlibDAG(improperDag)
+            fail { "Normally unreachable" }
+        } catch (e: Exception) {
+            val message = e.message.orEmpty()
+            assertTrue(message.startsWith("There is a direct dependency ") && message.endsWith(" that is not in DAG"))
+        }
+    }
+
+    @Test
+    fun `deserialization skips excessive libraries`() {
+        val libraries: List<KotlinLibrary> = loadLibraries(platformLibs = true)
+
+        val dag: KlibDAG = KlibDAGBuilder(libraries) { true }.build()
+        assertEquals(libraries.size, dag.libraries.size)
+
+        val serializedOriginal: SerializedKlibDAG = dag.serialize()
+        assertEquals(libraries.size, serializedOriginal.dag.size)
+
+        fun Path.isStdlibOrPosix(): Boolean =
+            name == "stdlib" || name.endsWith(".posix")
+
+        val serializedDagWithOnlyStdlibAndPosix = SerializedKlibDAG(
+            serializedOriginal.dag
+                .filterKeys { it.isStdlibOrPosix() }
+                .mapValues { [_, dependencyPaths] -> dependencyPaths.filterToSetOrEmpty { it.isStdlibOrPosix() } }
+        )
+        assertEquals(2, serializedDagWithOnlyStdlibAndPosix.dag.size)
+
+        // Pass more libraries as the input that there are actually required:
+        val deserializedDag: KlibDAG = serializedDagWithOnlyStdlibAndPosix.deserialize(libraries)
+        assertEquals(2, deserializedDag.libraries.size)
+        assertTrue(deserializedDag.libraries.all { it.canonicalPath.isStdlibOrPosix() })
+    }
+
     /**
      * A helper to avoid boilerplate code for loading KLIBs.
      */
@@ -411,5 +478,12 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
                 }
             }
         }
+    }
+
+    private fun assertLosslessDeserialization(dag: KlibDAG, libraries: Collection<KotlinLibrary> = dag.libraries) {
+        val serializedOnce = dag.serialize()
+        val serializedTwice = serializedOnce.deserialize(libraries).serialize()
+
+        assertEquals(serializedOnce, serializedTwice)
     }
 }
