@@ -9,6 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -60,10 +62,17 @@ internal constructor(
     }
 
     override fun browser(bundler: KotlinBrowserBundler, body: KotlinWasmJsBrowserDsl.() -> Unit) {
-        if (this@KotlinWasmTarget.bundler == null) {
+        val definedBundler = this@KotlinWasmTarget.bundler
+        if (definedBundler == null) {
             this@KotlinWasmTarget.bundler = bundler
-        } else if (this@KotlinWasmTarget.bundler != bundler) {
-            error("")
+        } else if (definedBundler != bundler) {
+            project.reportDiagnostic(
+                KotlinToolingDiagnostics.BrowserBundlerAlreadyDefined(
+                    targetName = name,
+                    definedBundler = definedBundler,
+                    requestedBundler = bundler,
+                )
+            )
         }
         (browser as KotlinBrowserJsIr).body()
     }
