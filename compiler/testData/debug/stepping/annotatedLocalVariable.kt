@@ -41,7 +41,6 @@ fun box() {
 // test.kt:13 box
 // test.kt:16 box
 // test.kt:17 box
-// test.kt:17 box
 // test.kt:18 box
 
 // EXPECTATIONS WASM
