@@ -102,7 +102,7 @@ internal fun Iterable<Domain>.withAffectedDependencies(): Set<Domain> {
 }
 
 internal fun resolveAffectedDomainsFromCommitMessages(commitMessages: List<String>): Set<Domain> {
-    val commandRegex = Regex("""\^affects:\v*(?<domains>.*)$""")
+    val commandRegex = Regex("""\^(?:test|affects):\v*(?<domains>.*)$""")
     val splitRegex = Regex("""([\h,;])""")
 
     return buildSet {
