@@ -7,7 +7,6 @@ org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.application
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.build()
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.buildKtModuleProvider(KaModuleContainerBuilder.() -> Unit)
-org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.buildKtModuleProviderByCompilerConfiguration(CompilerConfiguration)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.project
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerApplicationService(Class<T>)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerApplicationService(Class<T>, T)
