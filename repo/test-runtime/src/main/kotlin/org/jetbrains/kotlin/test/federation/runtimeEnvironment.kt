@@ -17,14 +17,15 @@ const val TEST_FEDERATION_NIGHTLY_KEY = "test.federation.nightly"
 const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
 
 /**
- * @return true: If the test federation is enabled (typically only on CI environments)
- * false: Locally: All tests will be executed.
+ * Reports whether Test Federation is enabled in the runtime configuration. Defaults to `false`.
+ * The execution condition uses [testFederationMode] to select tests, not this flag directly.
  */
 val testFederationEnabled: Boolean =
     resolve(TEST_FEDERATION_ENABLED_KEY, TEST_FEDERATION_ENABLED_ENV_KEY)?.toBoolean() ?: false
 
 /**
- * @return the current [TestFederationMode]. Only relevant if the [testFederationEnabled] returns true
+ * Provides the configured test selection mode, or `null` when no mode is configured.
+ * With no mode, the execution condition does not restrict test selection. Other test filters still apply.
  */
 val testFederationMode: TestFederationMode? = run {
     val raw = resolve(TEST_FEDERATION_MODE_KEY, TEST_FEDERATION_MODE_ENV_KEY) ?: return@run null
@@ -32,8 +33,8 @@ val testFederationMode: TestFederationMode? = run {
 }
 
 /**
- * @return only domains changed by the current set of changes.
- * Only relevant if the [testFederationEnabled] returns true
+ * Provides the configured domains containing changed files, or `null` when the value is absent or blank.
+ * Used to select tests marked to run for changes in those domains when no full run is selected.
  */
 val testFederationChangedDomains: Set<Domain>? = run {
     val raw = resolve(TEST_FEDERATION_CHANGED_DOMAINS_KEY, TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY) ?: return@run null
@@ -43,10 +44,9 @@ val testFederationChangedDomains: Set<Domain>? = run {
 
 
 /**
- * Tests marked with `@NightlyTest` are considered 'nightly tests'. Those tests shall not be executed
- * during the master aggregate, but only on nightly CI runs. Nightlies are typically enabled for local
- * development flows.
- * @return 'true' if nightly tests are enabled, 'false' if nightly tests shall be skipped.
+ * Reports whether nightly tests are enabled in the runtime configuration. Defaults to `false` when not configured.
+ * The Gradle convention supplies this value and separately excludes nightly tags when nightly tests are disabled.
+ * Local Gradle runs enable nightly tests by default; other test filters still apply.
  */
 val testFederationNightly: Boolean = run {
     resolve(TEST_FEDERATION_NIGHTLY_KEY, TEST_FEDERATION_NIGHTLY_ENV_KEY)?.toBoolean() ?: false
