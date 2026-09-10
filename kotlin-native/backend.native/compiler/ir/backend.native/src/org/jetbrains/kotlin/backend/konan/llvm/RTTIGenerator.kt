@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.lower.hasSyntheticNameToBeHiddenInReflection
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -141,7 +142,11 @@ internal class RTTIGenerator(
     private fun kotlinStringLiteral(string: String?): ConstPointer = if (string == null) {
         llvm.nullPointer
     } else {
-        staticData.kotlinStringLiteral(string)
+        if (context.config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
+            constPointer(LLVMConstAddrSpaceCast(staticData.kotlinStringLiteral(string).llvm, llvm.pointerType)!!)
+        } else {
+            staticData.kotlinStringLiteral(string)
+        }
     }
 
     private fun exportTypeInfoIfRequired(irClass: IrClass, typeInfoGlobal: LLVMValueRef?) {
@@ -155,7 +160,7 @@ internal class RTTIGenerator(
     }
 
     private val arrayClasses = mapOf(
-            IdSignatureValues.array to llvm.pointerType,
+            IdSignatureValues.array to llvm.kotlinObjectPtrType,
             primitiveArrayTypesSignatures[PrimitiveType.BYTE] to llvm.int8Type,
             primitiveArrayTypesSignatures[PrimitiveType.CHAR] to llvm.int16Type,
             primitiveArrayTypesSignatures[PrimitiveType.SHORT] to llvm.int16Type,
@@ -380,7 +385,7 @@ internal class RTTIGenerator(
 
     private fun mapRuntimeType(type: LLVMTypeRef, isObjectType: Boolean): Int {
         if (isObjectType) {
-            require(type == llvm.pointerType) { "Expected object type, got ${type.toTypeString()}" }
+            require(type == llvm.kotlinObjectPtrType) { "Expected object type, got ${type.toTypeString()}" }
             return RT_OBJECT
         }
 

@@ -96,13 +96,13 @@ internal val RuntimeAware.kTypeInfo: LLVMTypeRef
 internal val RuntimeAware.kObjHeader: LLVMTypeRef
     get() = runtime.objHeaderType
 internal val RuntimeAware.kObjHeaderPtrReturnType: LlvmRetType
-    get() = LlvmRetType(runtime.pointerType, isObjectType = true)
+    get() = LlvmRetType(runtime.kotlinObjectPtrType, isObjectType = true)
 internal val RuntimeAware.kArrayHeader: LLVMTypeRef
     get() = runtime.arrayHeaderType
 
 // Nothing type has no values, but we do generate unreachable code and thus need some fake value:
 internal val RuntimeAware.kNothingFakeValue: LLVMValueRef
-    get() = LLVMGetUndef(runtime.pointerType)!!
+    get() = LLVMGetUndef(runtime.kotlinObjectPtrType)!!
 
 fun extractConstUnsignedInt(value: LLVMValueRef): Long {
     assert(LLVMIsConstant(value) != 0)
@@ -133,16 +133,16 @@ internal fun getGlobalType(ptrToGlobal: LLVMValueRef): LLVMTypeRef {
     return LLVMGlobalGetValueType(ptrToGlobal)!!
 }
 
-internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported: Boolean): LLVMValueRef {
+internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported: Boolean, addrSpace: Int = 0): LLVMValueRef {
     if (isExported)
         assert(LLVMGetNamedGlobal(llvm.module, name) == null)
-    return LLVMAddGlobal(llvm.module, type, name)!!
+    return LLVMAddGlobalInAddressSpace(llvm.module, type, name, addrSpace)!!
 }
 
-private fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef): LLVMValueRef {
+private fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, addrSpace: Int = 0): LLVMValueRef {
     val found = LLVMGetNamedGlobal(llvm.module, name)
     return if (found == null)
-        addGlobal(name, type, isExported = false)
+        addGlobal(name, type, isExported = false, addrSpace)
     else {
         require(getGlobalType(found) == type)
         require(LLVMGetInitializer(found) == null) { "$name is already declared in the current module" }
@@ -150,8 +150,8 @@ private fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef): LLVMValu
     }
 }
 
-internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, declaration: IrDeclaration) =
-        importGlobal(name, type).also { generationState.dependenciesTracker.add(declaration) }
+internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, declaration: IrDeclaration, addrSpace: Int = 0) =
+        importGlobal(name, type, addrSpace).also { generationState.dependenciesTracker.add(declaration) }
 
 internal fun ContextUtils.importObjCGlobal(name: String, type: LLVMTypeRef) = importGlobal(name, type)
 
@@ -229,8 +229,8 @@ internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef, 
     }
 }
 
-internal fun ContextUtils.addKotlinGlobal(name: String, type: LLVMTypeRef, alignment: Int, isExported: Boolean): AddressAccess {
-    return GlobalAddressAccess(LLVMAddGlobal(llvm.module, type, name)!!.also {
+internal fun ContextUtils.addKotlinGlobal(name: String, type: LLVMTypeRef, alignment: Int, isExported: Boolean, isObjectType: Boolean): AddressAccess {
+    return GlobalAddressAccess(LLVMAddGlobalInAddressSpace(llvm.module, type, name, if (isObjectType) runtime.kotlinObjectAddressSpace else 0)!!.also {
         if (!isExported)
             LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
         LLVMSetAlignment(it, alignment)

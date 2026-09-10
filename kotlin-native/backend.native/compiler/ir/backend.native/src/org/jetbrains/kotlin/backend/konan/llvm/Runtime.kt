@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
@@ -20,6 +21,7 @@ internal class Runtime(
         private val llvmContext: LLVMContextRef,
         bitcodeFile: String
 ) {
+    val config = phaseContext.config
     val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.diagnosticReporter, llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmFunction> = HashMap()
@@ -40,7 +42,9 @@ internal class Runtime(
     private fun createOpaqueStructType(name: String): LLVMTypeRef =
             LLVMStructCreateNamed(llvmContext, name) ?: error("failed to create struct $name")
 
+    val kotlinObjectAddressSpace = if (config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) 1 else 0
     val pointerType = LLVMPointerTypeInContext(llvmContext, 0)!!
+    val kotlinObjectPtrType = LLVMPointerTypeInContext(llvmContext, kotlinObjectAddressSpace)!!
     val typeInfoType = getStructType("TypeInfo")
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
     val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")

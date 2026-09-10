@@ -263,7 +263,7 @@ internal object VirtualTablesLookup {
     }
 
     fun FunctionGenerationContext.getVirtualImpl(receiver: LLVMValueRef, irFunction: IrSimpleFunction): LlvmCallable {
-        assert(LLVMTypeOf(receiver) == llvm.pointerType)
+        assert(LLVMTypeOf(receiver) == llvm.kotlinObjectPtrType)
 
         val typeInfoPtr: LLVMValueRef = if (irFunction.getObjCMethodInfo() != null)
             call(llvm.getObjCKotlinTypeInfo, listOf(receiver))
@@ -419,7 +419,7 @@ internal class StackLocalsManagerImpl(
         val classInfo = llvmDeclarations.forClass(irClass)
         val type = classInfo.bodyType.llvmBodyType
         val stackLocal = appendingTo(bbInitStackLocals) {
-            val stackSlot = LLVMBuildAlloca(builder, type, "")!!
+            val stackSlot = LLVMBuildAllocaInAddrspace(builder, type, "", runtime.kotlinObjectAddressSpace)!!
             LLVMSetAlignment(stackSlot, classInfo.alignment)
 
             memset(stackSlot, 0, LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8)
@@ -477,7 +477,7 @@ internal class StackLocalsManagerImpl(
             val constCount = extractConstUnsignedInt(count).toInt()
             val arrayType = localArrayType(irClass, constCount)
             val typeInfo = codegen.typeInfoValue(irClass)
-            val arraySlot = LLVMBuildAlloca(builder, arrayType, "")!!
+            val arraySlot = LLVMBuildAllocaInAddrspace(builder, arrayType, "", runtime.kotlinObjectAddressSpace)!!
             // Set array size in ArrayHeader.
             val arrayHeaderSlot = structGep(arrayType, arraySlot, 0, "arrayHeader")
             setTypeInfoForStackObject(runtime.arrayHeaderType, arrayHeaderSlot, typeInfo)
@@ -524,23 +524,22 @@ internal class StackLocalsManagerImpl(
                 if (fieldSymbol.owner.type.binaryTypeIsReference()) {
                     val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
                     if (refsOnly)
-                        storeHeapRef(llvm.kNull, fieldPtr)
+                        storeHeapRef(llvm.kObjectNull, fieldPtr)
                     else
                         call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
                 }
             }
 
             if (!refsOnly) {
-                val bodyPtr = ptrToInt(stackLocal.stackAllocationPtr, codegen.intPtrType)
                 val bodySize = LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8
                 val serviceInfoSize = runtime.pointerSize
                 val serviceInfoSizeLlvm = LLVMConstInt(codegen.intPtrType, serviceInfoSize.toLong(), 1)!!
-                val bodyWithSkippedServiceInfoPtr = intToPtr(add(bodyPtr, serviceInfoSizeLlvm), llvm.pointerType)
+                val bodyWithSkippedServiceInfoPtr = gep(llvm.int8Type, stackLocal.stackAllocationPtr, serviceInfoSizeLlvm)
                 memset(bodyWithSkippedServiceInfoPtr, 0, bodySize - serviceInfoSize)
             }
         }
         if (stackLocal.gcRootSetSlot != null) {
-            storeStackRef(llvm.kNull, stackLocal.gcRootSetSlot)
+            storeStackRef(llvm.kObjectNull, stackLocal.gcRootSetSlot)
         }
     }
 
@@ -764,6 +763,7 @@ internal abstract class FunctionGenerationContext(
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
                           isVolatile: Boolean = false, alignment: Int? = null) {
         require(alignment == null || alignment % runtime.pointerAlignment == 0)
+
         if (onStack) {
             require(!isVolatile) { "Stack ref update can't be volatile"}
             call(llvm.updateStackRefFunction, listOf(address, value))
@@ -774,6 +774,13 @@ internal abstract class FunctionGenerationContext(
                 call(llvm.updateHeapRefFunction, listOf(address, value))
             }
         }
+    }
+
+    internal fun castToAddressSpace0(value: LLVMValueRef): LLVMValueRef {
+        val type = LLVMTypeOf(value)
+        return if (LLVMGetPointerAddressSpace(type) != 0)
+            LLVMBuildAddrSpaceCast(builder, value, llvm.pointerType, "")!!
+        else value
     }
 
     //-------------------------------------------------------------------------//
@@ -814,7 +821,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun memset(pointer: LLVMValueRef, value: Byte, size: Int, isVolatile: Boolean = false) =
-            call(llvm.memsetFunction,
+            call(llvm.memsetFunction.getValue(LLVMGetPointerAddressSpace(LLVMTypeOf(pointer))),
                     listOf(pointer,
                             llvm.int8(value),
                             llvm.int32(size),

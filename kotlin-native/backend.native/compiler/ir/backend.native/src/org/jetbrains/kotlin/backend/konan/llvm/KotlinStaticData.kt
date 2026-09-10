@@ -36,7 +36,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     }
 
     private fun createConstant(value: ConstValue): ConstPointer {
-        val global = placeGlobal("", value)
+        val global = placeGlobal("", value, addrSpace = runtime.kotlinObjectAddressSpace)
         global.setUnnamedAddr(true)
         global.setConstant(true)
         // value should be of struct type with first element having the object/array header layout
@@ -97,7 +97,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
             UniqueKind.UNIT -> objHeader(typeInfo)
             UniqueKind.EMPTY_ARRAY -> arrayHeader(typeInfo, 0)
         }
-        val global = this.placeGlobal(kind.llvmName, objHeader, isExported = true)
+        val global = this.placeGlobal(kind.llvmName, objHeader, isExported = true, addrSpace = runtime.kotlinObjectAddressSpace)
         global.setConstant(true)
         return global.pointer
     }
@@ -108,7 +108,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
             UniqueKind.EMPTY_ARRAY -> context.irBuiltIns.arrayClass.owner
         }
         return if (isExternal(descriptor)) {
-            constPointer(importGlobal(kind.llvmName, runtime.objHeaderType, descriptor))
+            constPointer(importGlobal(kind.llvmName, runtime.objHeaderType, descriptor, runtime.kotlinObjectAddressSpace))
         } else {
             generationState.llvmDeclarations.forUnique(kind).pointer
         }

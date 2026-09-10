@@ -21,7 +21,8 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Code
             private fun createLlvmGlobal(module: LLVMModuleRef,
                                          type: LLVMTypeRef,
                                          name: String,
-                                         isExported: Boolean
+                                         isExported: Boolean,
+                                         addrSpace: Int
             ): LLVMValueRef {
 
                 if (isExported && LLVMGetNamedGlobal(module, name) != null) {
@@ -29,7 +30,7 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Code
                 }
 
                 // Globals created with this API are *not* thread local.
-                val llvmGlobal = LLVMAddGlobal(module, type, name)!!
+                val llvmGlobal = LLVMAddGlobalInAddressSpace(module, type, name, addrSpace)!!
 
                 if (!isExported) {
                     LLVMSetLinkage(llvmGlobal, LLVMLinkage.LLVMInternalLinkage)
@@ -38,13 +39,13 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Code
                 return llvmGlobal
             }
 
-            fun create(staticData: StaticData, type: LLVMTypeRef, name: String, isExported: Boolean): Global {
+            fun create(staticData: StaticData, type: LLVMTypeRef, name: String, isExported: Boolean, addrSpace: Int): Global {
                 val isUnnamed = (name == "") // LLVM will select the unique index and represent the global as `@idx`.
                 if (isUnnamed && isExported) {
                     throw IllegalArgumentException("unnamed global can't be exported")
                 }
 
-                val llvmGlobal = createLlvmGlobal(staticData.module, type, name, isExported)
+                val llvmGlobal = createLlvmGlobal(staticData.module, type, name, isExported, addrSpace)
                 return Global(llvmGlobal)
             }
 
@@ -106,15 +107,15 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Code
      *
      * It is external until explicitly initialized with [Global.setInitializer].
      */
-    fun createGlobal(type: LLVMTypeRef, name: String, isExported: Boolean = false): Global {
-        return Global.create(this, type, name, isExported)
+    fun createGlobal(type: LLVMTypeRef, name: String, isExported: Boolean = false, addrSpace: Int = 0): Global {
+        return Global.create(this, type, name, isExported, addrSpace)
     }
 
     /**
      * Creates [Global] with given name and value.
      */
-    fun placeGlobal(name: String, initializer: ConstValue, isExported: Boolean = false): Global {
-        val global = createGlobal(initializer.llvmType, name, isExported)
+    fun placeGlobal(name: String, initializer: ConstValue, isExported: Boolean = false, addrSpace: Int = 0): Global {
+        val global = createGlobal(initializer.llvmType, name, isExported, addrSpace)
         global.setInitializer(initializer)
         return global
     }
@@ -126,9 +127,9 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Code
     /**
      * Creates array-typed global with given name and value.
      */
-    fun placeGlobalArray(name: String, elemType: LLVMTypeRef?, elements: List<ConstValue>, isExported: Boolean = false): Global {
+    fun placeGlobalArray(name: String, elemType: LLVMTypeRef?, elements: List<ConstValue>, isExported: Boolean = false, addrSpace: Int = 0): Global {
         val initializer = ConstArray(elemType, elements)
-        val global = placeGlobal(name, initializer, isExported)
+        val global = placeGlobal(name, initializer, isExported, addrSpace)
 
         return global
     }
