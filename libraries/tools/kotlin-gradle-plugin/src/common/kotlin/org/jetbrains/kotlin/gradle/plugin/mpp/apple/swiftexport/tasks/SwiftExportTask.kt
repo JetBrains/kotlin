@@ -97,8 +97,8 @@ internal abstract class SwiftExportTask @Inject constructor(
                 if (cinteropModuleName.isPresent) {
                     add(
                         createTransitiveSwiftExportedModule(
-                            cinteropModuleName.get(),
-                            cinteropModuleArtifact.getFile()
+                            moduleName = cinteropModuleName.get(),
+                            artifact = cinteropModuleArtifact.getFile()
                         )
                     )
                 }

@@ -18,6 +18,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
  */
 internal data class SwiftExportResolvedComponent(
     val id: ComponentIdentifier,
+    /**
+     * The component that owns this artifact as seen from the requesting dependency edge, i.e. before KMP
+     * `available-at` redirection to the platform component. Useful for accessing Swift Export metadata,
+     * which is published on the root component.
+     */
+    val rootComponentId: ComponentIdentifier,
     /** `null` when Gradle resolved the component without module coordinates. */
     val moduleVersion: ModuleVersionIdentifier?,
 ) {

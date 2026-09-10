@@ -2058,7 +2058,7 @@ private fun List<SwiftExportedModule>.toModulesForAssertion() = mapToSetOrEmpty 
         moduleName = module.moduleName,
         artifactName = module.artifact.name,
         exportMode = module.exportMode,
-        flattenPackage = module.flattenPackage,
+        flattenPackage = module.rootPackage,
     )
 }
 
