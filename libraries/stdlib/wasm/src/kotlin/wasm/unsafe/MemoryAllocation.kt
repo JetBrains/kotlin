@@ -167,7 +167,7 @@ private object FreeListAllocator {
         )
 
         /**
-         * TODO(REVIEW) can we get rid of this / make it test only? Should we keep it even in production?
+         * TODO(REVIEW) can we get rid of this / make it test only? If our compiler + binaryen optimize correctly, it should be dead code in production (where assert is thrown away)
          *
          * Make sure to not call call free / alloc from anywhere inside free / alloc
          */
@@ -177,7 +177,7 @@ private object FreeListAllocator {
          * Allocates a slot in the free list.
          */
         fun allocate(size: UInt): MemorySlot? {
-            check(!isAlreadyOperating) { "Cannot call allocate from within the allocator" }
+            assert(!isAlreadyOperating) { "Cannot call allocate from within the allocator" }
             isAlreadyOperating = true
             try {
                 check(size > 0u) { "Cannot allocate zero-size slot" }
@@ -213,7 +213,7 @@ private object FreeListAllocator {
          * Frees an allocated slot. May only be passed memory slots that originate from [allocate].
          */
         fun free(allocatedSlot: MemorySlot) {
-            check(!isAlreadyOperating) { "Cannot call free from within the allocator" }
+            assert(!isAlreadyOperating) { "Cannot call free from within the allocator" }
             isAlreadyOperating = true
             try {
                 check(allocatedSlot.size > 0u) { "Slot to free clearly does not originate from free-list allocation: allocated slot size is zero" }
