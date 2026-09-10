@@ -864,6 +864,7 @@ tasks {
         }
         named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
             compilerOptions.freeCompilerArgs.add("-Xwasm-enable-array-range-checks")
+            compilerOptions.freeCompilerArgs.add("-Xwasm-enable-asserts")
         }
         named("compileTestProductionExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
             enabled = false  // Causes out-of-memory in CI: KTI-2150
