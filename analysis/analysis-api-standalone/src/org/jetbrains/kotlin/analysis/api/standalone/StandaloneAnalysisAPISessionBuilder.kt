@@ -13,15 +13,24 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+/**
+ * Builder for [StandaloneAnalysisAPISession].
+ *
+ * @see buildStandaloneAnalysisAPISession
+ */
 public interface StandaloneAnalysisAPISessionBuilder {
     public val application: Application
     public val project: Project
 
+    /**
+     * Allows building and registering [KaModule]s through [KaModuleContainerBuilder].
+     */
     public fun buildKtModuleProvider(init: KaModuleContainerBuilder.() -> Unit)
 
     public fun build(): StandaloneAnalysisAPISession
@@ -46,7 +55,9 @@ public interface StandaloneAnalysisAPISessionBuilder {
     public fun enableCacheCleaner()
 }
 
-
+/**
+ * Builds [StandaloneAnalysisAPISession].
+ */
 @OptIn(ExperimentalContracts::class)
 public inline fun buildStandaloneAnalysisAPISession(
     projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
