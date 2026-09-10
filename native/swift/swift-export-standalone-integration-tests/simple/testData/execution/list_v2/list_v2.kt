@@ -5,6 +5,10 @@
 
 class Box(val x: Int)
 
+fun listOf(vararg elements: Int): List<Int> = elements.asList()
+
+fun returnListInt() = listOf(4, 8, 5, 16, 23, 42)
+
 fun reverseListInt(l: List<Int>) = l.reversed()
 fun reverseListShort(l: List<Short>) = l.reversed()
 fun reverseListChar(l: List<Char>) = l.reversed()
