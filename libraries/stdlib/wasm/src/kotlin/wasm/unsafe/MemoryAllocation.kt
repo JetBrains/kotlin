@@ -8,8 +8,6 @@ package kotlin.wasm.unsafe
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.internal.DoNotInlineOnFirstStage
-import kotlin.text.clear
-import kotlin.text.iterator
 import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.internal.wasm_memory_copy
 import kotlin.wasm.internal.wasm_memory_grow
@@ -85,6 +83,10 @@ internal fun createAllocatorInTheNewScope(): ScopedMemoryAllocator {
 @UnsafeWasmMemoryApi
 @ExperimentalWasmInterop
 private data class MemorySlot(val ptr: Pointer, val size: UInt) {
+    init {
+        assert(ptr.address.toULong() + size.toULong() <= globalFirstInvalidAddress) { "Memory slot must not exceed the maximum address" }
+    }
+
     companion object {
         /**
          * Returns true if the two slots can be merged into one slot, by being exactly adjacent. As allocated memory slots cannot overlap, overlap isn't allowed for the purposes of merging either.
@@ -137,7 +139,10 @@ private fun realAllocationSize(size: UInt): UInt {
 }
 
 /// Reserve 0 and don't give it out as a valid address
-private val firstValidAddress = alignment
+private val globalFirstValidAddress = alignment
+
+// we only give out positive Int addresses, i.e. only around max 2GiB
+private val globalFirstInvalidAddress = Int.MAX_VALUE.toUInt()
 
 
 @UnsafeWasmMemoryApi
@@ -163,7 +168,7 @@ private object FreeListAllocator {
     private object FreeList {
         // NOTE: this uses an array list. That's not really optimal, because it requires copying around stuff when the number of free slots change
         val list = mutableListOf<MemorySlot>(
-            MemorySlot(Pointer(firstValidAddress), ((1u shl 31) - 1u))
+            MemorySlot(Pointer(globalFirstValidAddress), globalFirstInvalidAddress - globalFirstValidAddress)
         )
 
         /**
@@ -277,7 +282,7 @@ private object FreeListAllocator {
 
         // the free list does not know about zero-size allocations
         if (size == 0)
-            return MemorySlot(Pointer(firstValidAddress), 0u)
+            return MemorySlot(Pointer(globalFirstValidAddress), 0u)
 
         val result = FreeList.allocate(size.toUInt())
             ?: throw OutOfMemoryError("Out of linear memory. All available address space (2gb) is used.")
