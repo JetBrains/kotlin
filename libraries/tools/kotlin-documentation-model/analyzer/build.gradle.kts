@@ -112,7 +112,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
 }
 
-// TODO use sources directly from
+// TODO use sources directly
 //region Download and unpack the latest kotlin-stdlib JVM sources, needed by tests that verify
 // documentation generated for the standard library.
 val kotlinStdlibSourcesDir = downloadLatestKotlinStdlibJvmSources(project)
@@ -121,37 +121,23 @@ tasks.withType<Test>().configureEach {
 }
 //endregion
 
-//region Custom test targets that run subsets of tests filtered by JUnit tags (K2 symbols-based
-// Java analysis vs. PSI-based Java analysis).
-val symbolsTestImplementation: Configuration = configurations.create("symbolsTestImplementation") {
-    description = "Dependencies for symbols tests (K2)"
-    declarable()
-}
-
-val symbolsTestImplementationResolver: Configuration = configurations.create("symbolsTestImplementationResolver") {
-    description = "Resolve dependencies for symbols tests (K2)"
-    resolvable()
-    extendsFrom(symbolsTestImplementation)
-    attributes { jvmJar(objects) }
-}
 
 projectTests {
     // Test code reads these resources directly by file path (not via the classpath), so they must be
     // declared explicitly or `test-inputs-check` flags them as undeclared inputs.
     testData(project.isolated, "src/test/resources")
-}
 
-testing {
-    suites {
-        named<JvmTestSuite>("test").configure {
+    testing {
+        suites {
+            named<JvmTestSuite>("test").configure {
 
-            // JUnit tags for Java analysis (PSI vs symbols) are defined with annotations in test classes.
-            val onlyJavaPsiTags = listOf("onlyJavaPsi")
-            val onlyJavaSymbolsTags = listOf("onlyJavaSymbols")
+                // JUnit tags for Java analysis (PSI vs symbols) are defined with annotations in test classes.
+                val onlyJavaPsiTags = listOf("onlyJavaPsi")
+                val onlyJavaSymbolsTags = listOf("onlyJavaSymbols")
 
-            // Create a new target for _only_ running test compatible with symbols-analysis (K2).
-            val testSymbolsTarget = targets.register("testSymbols") {
-                projectTests {
+                // Create a new target for _only_ running test compatible with symbols-analysis (K2).
+                val testSymbolsTarget = targets.register("testSymbols") {
+
                     testTask(
                         taskName = testTask.name,
                         javaLauncher = JdkMajorVersion.JDK_1_8,
@@ -163,16 +149,12 @@ testing {
                         useJUnitPlatform {
                             excludeTags.addAll(excludedTags)
                         }
-                        // Analysis dependencies from `symbolsTestImplementation` should precede all other dependencies
-                        // in order to use the shadowed stdlib from the analysis dependencies
-                        classpath = symbolsTestImplementationResolver.incoming.files + classpath
                     }
                 }
-            }
 
-            // Create a new target for running tests with enabled experimental symbols java analysis.
-            val testJavaSymbolsTarget = targets.register("testJavaSymbols") {
-                projectTests {
+
+                // Create a new target for running tests with enabled experimental symbols java analysis.
+                val testJavaSymbolsTarget = targets.register("testJavaSymbols") {
                     testTask(
                         taskName = testTask.name,
                         javaLauncher = JdkMajorVersion.JDK_1_8,
@@ -184,28 +166,24 @@ testing {
                         useJUnitPlatform {
                             excludeTags.addAll(excludedTags)
                         }
-                        // Analysis dependencies from `symbolsTestImplementation` should precede all other dependencies
-                        // in order to use the shadowed stdlib from the analysis dependencies
-                        classpath = symbolsTestImplementationResolver.incoming.files + classpath
-
                         // Enable experimental symbols java analysis
                         systemProperty("org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis", "true")
                     }
                 }
-            }
 
-            // Run all test targets when running :test;
-            // don't run the task itself, as it's just an aggregate for the test targets.
-            targets.named("test") {
-                projectTests {
-                    testTask(
-                        taskName = testTask.name,
-                        javaLauncher = JdkMajorVersion.JDK_1_8,
-                        skipInLocalBuild = false,
-                    ) {
-                        onlyIf { false }
-                        dependsOn(testSymbolsTarget.map { it.testTask })
-                        dependsOn(testJavaSymbolsTarget.map { it.testTask })
+                // Run all test targets when running :test;
+                // don't run the task itself, as it's just an aggregate for the test targets.
+                targets.named("test") {
+                    projectTests {
+                        testTask(
+                            taskName = testTask.name,
+                            javaLauncher = JdkMajorVersion.JDK_1_8,
+                            skipInLocalBuild = false,
+                        ) {
+                            onlyIf { false }
+                            dependsOn(testSymbolsTarget.map { it.testTask })
+                            dependsOn(testJavaSymbolsTarget.map { it.testTask })
+                        }
                     }
                 }
             }
