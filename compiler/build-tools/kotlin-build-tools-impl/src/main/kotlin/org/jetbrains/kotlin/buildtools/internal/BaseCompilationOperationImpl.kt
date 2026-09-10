@@ -10,26 +10,17 @@ import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.DAEMON_RUN_DIR_PATH
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.JVM_ARGUMENTS
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_COUNT_LIMIT
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_SIZE_LIMIT
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_PATH
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY_MILLIS
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
-import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
 import org.jetbrains.kotlin.buildtools.internal.trackers.ImportTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
-import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
@@ -41,10 +32,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
-import java.net.URLClassLoader
-import java.nio.file.Files
 import java.nio.file.Path
-import java.rmi.RemoteException
 
 internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments>(
     override val compilerArguments: BtaCompilerArgs,
@@ -75,7 +63,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
@@ -157,57 +145,15 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         executionContext: ExecutionContext,
     ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
-        val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
 
-        val daemonLogOptions = DaemonLogOptions(
-            logsPath = executionPolicy[LOGS_PATH].absolutePathStringOrThrow(),
-            logsFileSizeLimit = executionPolicy[LOGS_FILE_SIZE_LIMIT] ?: 0,
-            logsFileCountLimit = executionPolicy[LOGS_FILE_COUNT_LIMIT] ?: Int.MAX_VALUE,
-        )
-        Files.createDirectories(executionPolicy[LOGS_PATH])
+        (val daemon = compileService, val sessionId) = executionContext.daemonConnectionRegistry.getCompileService(
+            executionPolicy,
+            loggerAdapter,
+            executionContext.sessionIsAliveFlagFile
+        ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
 
-        val additionalJvmArguments = mutableListOf<String>()
-        val daemonOptions = configureDaemonOptions(
-            DaemonOptions().apply {
-                executionPolicy[SHUTDOWN_DELAY_MILLIS]?.let { shutdownDelay ->
-                    shutdownDelayMilliseconds = shutdownDelay
-                }
-
-                runFilesPath = executionPolicy[DAEMON_RUN_DIR_PATH].absolutePathStringOrThrow()
-                additionalJvmArguments += "D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=$runFilesPath"
-            })
-
-        val jvmOptions = configureDaemonJVMOptions(
-            inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true
-        ).also { opts ->
-            val effectiveJvmArguments = additionalJvmArguments + (executionPolicy[JVM_ARGUMENTS] ?: emptyList())
-            if (effectiveJvmArguments.isNotEmpty()) {
-                opts.jvmParams.addAll(
-                    effectiveJvmArguments.filterExtractProps(opts.mappers, "", opts.restMapper)
-                )
-            }
-        }
-
-        (
-            val daemon = compileService, val sessionId
-        ) =
-            KotlinCompilerRunnerUtils.newDaemonConnection(
-                compilerId,
-                clientIsAliveFile,
-                executionContext.sessionIsAliveFlagFile.value,
-                loggerAdapter,
-                loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
-                daemonJVMOptions = jvmOptions,
-                daemonOptions = daemonOptions,
-                daemonLogOptions = daemonLogOptions,
-            ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
         onCancel {
             daemon.cancelCompilation(sessionId, compilationId)
-        }
-        if (loggerAdapter.kotlinLogger.isDebugEnabled) {
-            daemon.getDaemonJVMOptions().takeIf { it.isGood }?.let { jvmOpts ->
-                loggerAdapter.kotlinLogger.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
-            }
         }
 
         val arguments = createAndPrepareCompilerArguments()
@@ -230,12 +176,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             compilationId
         ).get()
 
-        try {
-            daemon.releaseCompileSession(sessionId)
-        } catch (e: RemoteException) {
-            loggerAdapter.kotlinLogger.warn("Unable to release compile session, maybe daemon is already down: $e")
-        }
-
         return (ExitCode.entries.find { it.code == exitCode } ?: if (exitCode == 0) {
             ExitCode.OK
         } else {
@@ -257,12 +197,12 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     abstract fun createAndPrepareCompilerArguments(): CompilerArgs
 
-    private fun getCurrentClasspath() =
-        (JvmCompilationOperationImpl::class.java.classLoader as URLClassLoader).urLs.map { transformUrlToFile(it) }
-
     abstract fun shouldCompileIncrementally(): Boolean
 
-    protected open fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter, executionContext: ExecutionContext): CompilationResult {
+    protected open fun compileInProcess(
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext,
+    ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         val arguments = createAndPrepareCompilerArguments()
 
