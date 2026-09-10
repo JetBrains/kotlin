@@ -1,0 +1,163 @@
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: <local>/C.D
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: C
+      symbol: KaNamedClassSymbol(<local>/C)
+      typeArguments: [
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: AA1
+          symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
+            annotations: []
+            isActual: false
+            isExpect: false
+            isExternal: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: AA1
+            origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: AA2
+          symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
+            annotations: []
+            isActual: false
+            isExpect: false
+            isExternal: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: AA2
+            origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+      ]
+    KaResolvedClassTypeQualifier:
+      name: D
+      symbol: KaNamedClassSymbol(<local>/D)
+      typeArguments: [
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: BB1
+          symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
+            annotations: []
+            isActual: false
+            isExpect: false
+            isExternal: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: BB1
+            origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: BB2
+          symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
+            annotations: []
+            isActual: false
+            isExpect: false
+            isExternal: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: BB2
+            origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(<local>/D)
+  typeArguments: [
+    KaTypeParameterType:
+      abbreviation: null
+      annotations: []
+      name: BB1
+      symbol: KaTypeParameterSymbol:
+        anchorPsi: KtTypeParameter
+        annotations: []
+        isActual: false
+        isExpect: false
+        isExternal: false
+        isReified: false
+        location: CLASS
+        modality: FINAL
+        name: BB1
+        origin: SOURCE
+        psi: KtTypeParameter
+        realPsi: KtTypeParameter
+        upperBounds: []
+        variance: INVARIANT
+        visibility: LOCAL
+      isMarkedNullable: false
+      isNullable: true
+      hasFlexibleNullability: false
+    KaTypeParameterType:
+      abbreviation: null
+      annotations: []
+      name: BB2
+      symbol: KaTypeParameterSymbol:
+        anchorPsi: KtTypeParameter
+        annotations: []
+        isActual: false
+        isExpect: false
+        isExternal: false
+        isReified: false
+        location: CLASS
+        modality: FINAL
+        name: BB2
+        origin: SOURCE
+        psi: KtTypeParameter
+        realPsi: KtTypeParameter
+        upperBounds: []
+        variance: INVARIANT
+        visibility: LOCAL
+      isMarkedNullable: false
+      isNullable: true
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+C<AA1, AA2>.D<BB1, BB2>?

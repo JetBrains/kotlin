@@ -1,0 +1,18 @@
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: <anonymous>
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: <anonymous>
+      symbol: KaAnonymousObjectSymbol(<local>/<no name provided>)
+      typeArguments: []
+  ]
+  symbol: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+`<anonymous>`
