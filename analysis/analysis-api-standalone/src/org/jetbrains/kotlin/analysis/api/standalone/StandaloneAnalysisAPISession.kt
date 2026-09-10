@@ -14,11 +14,25 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 
+/**
+ * Standalone Analysis API environment.
+ *
+ * [StandaloneAnalysisAPISession] is the main entity of the standalone Analysis API.
+ * Users are expected to set it up through [buildStandaloneAnalysisAPISession] and
+ * then use [modulesWithFiles] or [allModules] as anchors for calling the
+ * [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] entrypoint.
+ *
+ * Each analyzed project is supposed to have a single [StandaloneAnalysisAPISession] instance
+ * that represents the given project structure.
+ */
 public interface StandaloneAnalysisAPISession {
     public val application: Application
 
     public val project: Project
 
+    /**
+     * Maps [KaSourceModule] subset of [allModules] to the represented [PsiFile]s.
+     */
     public val modulesWithFiles: Map<KaSourceModule, List<PsiFile>>
 
     /**
