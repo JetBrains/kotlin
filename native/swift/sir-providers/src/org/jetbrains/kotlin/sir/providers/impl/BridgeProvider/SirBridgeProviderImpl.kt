@@ -105,6 +105,8 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
 
 context(ka: KaSession, sir: SirSession)
 internal fun isSupported(type: SirType): Boolean = when (type) {
+    is SirTypedType -> isSupported(type.untypedType.kotlinType)
+    is SirUntypedType -> isSupported(type.kotlinType)
     is SirNominalType -> {
         val declarationSupported = when (val declaration = type.typeDeclaration) {
             is SirTypealias -> isSupported(declaration.type)
@@ -113,7 +115,6 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
         declarationSupported && type.typeArguments.all { isSupported(it) }
     }
     is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all { isSupported(it) }
-    is SirTypedFlowType -> isSupported(type.elementType)
     is SirExistentialType -> type.protocols.all { [protocol, typeArguments] ->
         val protocolSupported = protocol == KotlinRuntimeSupportModule.kotlinBridgeable ||
                 protocol.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available
