@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.NodeTypeAnalyzer
 import org.jetbrains.kotlin.fir.analysis.firstFunctionCallInBlockHasLambdaArgumentWithLabel
 import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -622,7 +621,7 @@ open class PsiRawFirBuilder(
                         this@PsiRawFirBuilder.context.firFunctionTargets += accessorTarget
                         symbol = FirPropertyAccessorSymbol()
                         extractValueParametersTo(
-                            this, symbol, NodeTypeAnalyzer.ValueParameterDeclaration.SETTER, propertyTypeRefToUse, parameterAnnotationsFromProperty
+                            this, symbol, ValueParameterDeclaration.SETTER, propertyTypeRefToUse, parameterAnnotationsFromProperty
                         )
                         if (!isGetter && valueParameters.isEmpty()) {
                             valueParameters += buildDefaultSetterValueParameter {
@@ -754,7 +753,7 @@ open class PsiRawFirBuilder(
         private fun KtParameter.toFirValueParameter(
             defaultTypeRef: FirTypeRef?,
             containingDeclarationSymbol: FirBasedSymbol<*>,
-            valueParameterDeclaration: NodeTypeAnalyzer.ValueParameterDeclaration,
+            valueParameterDeclaration: ValueParameterDeclaration,
             additionalAnnotations: List<FirAnnotation> = emptyList(),
         ): FirValueParameter {
             val name = convertValueParameterName(nameAsSafeName, valueParameterDeclaration) { nameIdentifier?.node?.text }
@@ -782,12 +781,12 @@ open class PsiRawFirBuilder(
 
                     addAnnotationsFrom(
                         this@toFirValueParameter,
-                        isFromPrimaryConstructor = valueParameterDeclaration == NodeTypeAnalyzer.ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
+                        isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
                     )
                 }
 
                 defaultValue = if (hasDefaultValue()) {
-                    if (valueParameterDeclaration == NodeTypeAnalyzer.ValueParameterDeclaration.CONTEXT_PARAMETER) {
+                    if (valueParameterDeclaration == ValueParameterDeclaration.CONTEXT_PARAMETER) {
                         buildErrorExpression {
                             source = this@toFirValueParameter.toFirSourceElement(KtFakeSourceElementKind.ContextParameterDefaultValue)
                             diagnostic = ConeContextParameterWithDefaultValue
@@ -803,7 +802,7 @@ open class PsiRawFirBuilder(
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
-                valueParameterKind = if (valueParameterDeclaration == NodeTypeAnalyzer.ValueParameterDeclaration.CONTEXT_PARAMETER) {
+                valueParameterKind = if (valueParameterDeclaration == ValueParameterDeclaration.CONTEXT_PARAMETER) {
                     FirValueParameterKind.ContextParameter
                 } else {
                     FirValueParameterKind.Regular
@@ -1037,7 +1036,7 @@ open class PsiRawFirBuilder(
         private fun KtDeclarationWithBody.extractValueParametersTo(
             container: FirFunctionBuilder,
             functionSymbol: FirFunctionSymbol<*>,
-            valueParameterDeclaration: NodeTypeAnalyzer.ValueParameterDeclaration,
+            valueParameterDeclaration: ValueParameterDeclaration,
             defaultTypeRef: FirTypeRef? = null,
             additionalAnnotations: List<FirAnnotation> = emptyList(),
         ) {
@@ -1306,7 +1305,7 @@ open class PsiRawFirBuilder(
                     }
 
                     this@toFirConstructor?.extractAnnotationsTo(this)
-                    this@toFirConstructor?.extractValueParametersTo(this, symbol, NodeTypeAnalyzer.ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
+                    this@toFirConstructor?.extractValueParametersTo(this, symbol, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
                     this.body = null
                 }
 
@@ -1950,7 +1949,7 @@ open class PsiRawFirBuilder(
                     contextParameterElement.toFirValueParameter(
                         defaultTypeRef = null,
                         containingDeclarationSymbol = containingDeclarationSymbol,
-                        valueParameterDeclaration = NodeTypeAnalyzer.ValueParameterDeclaration.CONTEXT_PARAMETER,
+                        valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER,
                     )
                 }
 
@@ -2367,7 +2366,7 @@ open class PsiRawFirBuilder(
                         valueParameters += valueParameter.toFirValueParameter(
                             null,
                             functionSymbol,
-                            if (isAnonymousFunction) NodeTypeAnalyzer.ValueParameterDeclaration.LAMBDA else NodeTypeAnalyzer.ValueParameterDeclaration.FUNCTION,
+                            if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION,
                         )
                     }
 
@@ -2468,7 +2467,7 @@ open class PsiRawFirBuilder(
                         multiParameter
                     } else {
                         val typeRef = valueParameter.typeReference.toFirOrImplicitType()
-                        valueParameter.toFirValueParameter(typeRef, symbol, NodeTypeAnalyzer.ValueParameterDeclaration.LAMBDA)
+                        valueParameter.toFirValueParameter(typeRef, symbol, ValueParameterDeclaration.LAMBDA)
                     }
                 }
                 val expressionSource = expression.toFirSourceElement()
@@ -2562,7 +2561,7 @@ open class PsiRawFirBuilder(
                     this@PsiRawFirBuilder.context.firFunctionTargets += target
                     extractAnnotationsTo(this)
                     typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
-                    extractValueParametersTo(this, symbol, NodeTypeAnalyzer.ValueParameterDeclaration.FUNCTION)
+                    extractValueParametersTo(this, symbol, ValueParameterDeclaration.FUNCTION)
 
                     val [body, contractDescription] = this@PsiRawFirBuilder.context.withForcedLocalContext {
                         buildFirBody()
@@ -3137,7 +3136,7 @@ open class PsiRawFirBuilder(
                     val parameter = clause.catchParameter?.let { ktParameter ->
                         val name = convertValueParameterName(
                             ktParameter.nameAsSafeName,
-                            NodeTypeAnalyzer.ValueParameterDeclaration.CATCH
+                            ValueParameterDeclaration.CATCH
                         ) { ktParameter.nameIdentifier?.node?.text }
 
                         buildProperty {
