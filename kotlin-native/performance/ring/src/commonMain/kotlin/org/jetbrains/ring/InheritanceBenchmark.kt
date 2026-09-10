@@ -495,7 +495,8 @@ class Inheritance {
     val f = F()
     val g = G()
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun baseCalls(bh: Blackhole) {
         var x = 0
         for (i in 0 until RUNS) {

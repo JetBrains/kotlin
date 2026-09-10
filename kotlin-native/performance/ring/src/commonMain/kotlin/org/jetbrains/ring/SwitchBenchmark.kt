@@ -484,7 +484,8 @@ class Switch : SkipWhenBaseOnly() {
 
 
 
-    @Benchmark 
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun testSparseIntSwitch(bh: Blackhole) {
         skipWhenBaseOnly()
         var result = 0
@@ -524,7 +525,8 @@ class Switch : SkipWhenBaseOnly() {
         bh.consume(result)
     }
 
-    @Benchmark 
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun testVarSwitch(bh: Blackhole) {
         skipWhenBaseOnly()
         var result = 0
@@ -693,7 +695,8 @@ class Switch : SkipWhenBaseOnly() {
         }
 
 
-    @Benchmark 
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun testSealedWhenSwitch(bh: Blackhole) {
         val n = sealedClassData.size -1
         var result = 0

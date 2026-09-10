@@ -117,7 +117,8 @@ class IntBenchmarkHideName : SkipWhenBaseOnly() {
     val size = 20
     val array = Array<Int>(size, { (0 until size).random() })
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun int(bh: Blackhole) {
         skipWhenBaseOnly()
         var result = 0.0
@@ -143,7 +144,8 @@ class BoxedIntBenchmarkHideName : SkipWhenBaseOnly() {
         }
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun boxedInt(bh: Blackhole) {
         skipWhenBaseOnly()
         var result = 0.0
