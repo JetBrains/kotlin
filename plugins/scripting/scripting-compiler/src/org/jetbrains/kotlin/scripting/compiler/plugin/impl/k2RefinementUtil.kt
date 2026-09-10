@@ -44,29 +44,5 @@ fun ScriptCompilationConfiguration.refineAllForK2(
             else it.with {
                 resolvedImportScripts(resolvedScripts)
             }.asSuccess()
-        }.onSuccess {
-            it.checkDependenciesResolved(script)
         }
 
-// `toClassPathOrEmpty` drops non-JvmDependency entries, so leftovers would compile with an empty classpath.
-private fun ScriptCompilationConfiguration.checkDependenciesResolved(
-    script: SourceCode,
-): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val unresolved = get(ScriptCompilationConfiguration.dependencies)
-        ?.filterIsInstance<UnresolvedExternalArtifacts>()
-        ?.takeIf { it.isNotEmpty() }
-        ?: return asSuccess()
-
-    return ResultWithDiagnostics.Failure(
-        unresolved.map {
-            ScriptDiagnostic(
-                ScriptDiagnostic.unspecifiedError,
-                "External artifacts are not resolved: ${it.artifacts.joinToString()}. " +
-                        "The scripting host turned off artifacts resolution in the script definition " +
-                        "(see ScriptingHostConfiguration.resolveExternalArtifacts) but did not resolve them itself",
-                sourcePath = script.locationId,
-                location = it.sourceCodeLocation?.locationInText
-            )
-        }
-    )
-}

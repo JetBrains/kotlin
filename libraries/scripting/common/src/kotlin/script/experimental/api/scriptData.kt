@@ -97,7 +97,7 @@ data class ScriptSourceNamedFragment(val name: String?, val range: SourceCode.Ra
  */
 interface ScriptDependency : Serializable
 
-data class ExternalArtifactsRepository(
+data class DependencyRepository(
     val coordinates: String,
     val options: Map<String, String> = emptyMap(),
     val sourceCodeLocation: SourceCode.LocationWithId? = null,
@@ -107,7 +107,7 @@ data class ExternalArtifactsRepository(
     }
 }
 
-data class UnresolvedExternalArtifacts(
+data class DependencyCoordinates(
     val artifacts: List<String>,
     val options: Map<String, String> = emptyMap(),
     val sourceCodeLocation: SourceCode.LocationWithId? = null,

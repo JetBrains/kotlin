@@ -36,20 +36,20 @@ annotation class Repository(vararg val repositoriesCoordinates: String, val opti
 suspend fun ExternalDependenciesResolver.resolveFromScriptSourceAnnotations(
     annotations: Iterable<ScriptSourceAnnotation<*>>
 ): ResultWithDiagnostics<List<File>> =
-    externalArtifactsFromScriptSourceAnnotations(annotations).onSuccess {
-        resolveExternalArtifacts(it.artifactsDependencies, it.artifactsRepositories)
+    externalDependenciesFromScriptAnnotations(annotations).onSuccess {
+        resolveDependencies(it.dependencyCoordinates, it.dependencyRepositories)
     }
 
-data class ExternalArtifactsDeclarations(
-    val artifactsDependencies: List<UnresolvedExternalArtifacts>,
-    val artifactsRepositories: List<ExternalArtifactsRepository>,
+data class DependencyResolutionData(
+    val dependencyCoordinates: List<DependencyCoordinates>,
+    val dependencyRepositories: List<DependencyRepository>,
 )
 
-fun externalArtifactsFromScriptSourceAnnotations(
+fun externalDependenciesFromScriptAnnotations(
     annotations: Iterable<ScriptSourceAnnotation<*>>
-): ResultWithDiagnostics<ExternalArtifactsDeclarations> {
-    val repositories = mutableListOf<ExternalArtifactsRepository>()
-    val dependencies = mutableListOf<UnresolvedExternalArtifacts>()
+): ResultWithDiagnostics<DependencyResolutionData> {
+    val repositories = mutableListOf<DependencyRepository>()
+    val dependencies = mutableListOf<DependencyCoordinates>()
 
     annotations.forEach { (val annotation, val locationWithId = location) ->
         when (annotation) {
@@ -59,7 +59,7 @@ fun externalArtifactsFromScriptSourceAnnotations(
                     .valueOr { return it }
 
                 annotation.repositoriesCoordinates.mapTo(repositories) {
-                    ExternalArtifactsRepository(it, options, locationWithId)
+                    DependencyRepository(it, options, locationWithId)
                 }
             }
             is DependsOn -> {
@@ -68,19 +68,19 @@ fun externalArtifactsFromScriptSourceAnnotations(
                     .valueOr { return it }
 
                 dependencies.add(
-                    UnresolvedExternalArtifacts(annotation.artifactsCoordinates.toList(), options, sourceCodeLocation = locationWithId)
+                    DependencyCoordinates(annotation.artifactsCoordinates.toList(), options, sourceCodeLocation = locationWithId)
                 )
             }
             else -> return makeFailureResult("Unknown annotation ${annotation.javaClass}", locationWithId = locationWithId)
         }
     }
 
-    return ExternalArtifactsDeclarations(dependencies, repositories).asSuccess()
+    return DependencyResolutionData(dependencies, repositories).asSuccess()
 }
 
-suspend fun ExternalDependenciesResolver.resolveExternalArtifacts(
-    dependencies: Iterable<UnresolvedExternalArtifacts>,
-    repositories: Iterable<ExternalArtifactsRepository>,
+suspend fun ExternalDependenciesResolver.resolveDependencies(
+    dependencies: Iterable<DependencyCoordinates>,
+    repositories: Iterable<DependencyRepository>,
 ): ResultWithDiagnostics<List<File>> {
     val reports = mutableListOf<ScriptDiagnostic>()
 

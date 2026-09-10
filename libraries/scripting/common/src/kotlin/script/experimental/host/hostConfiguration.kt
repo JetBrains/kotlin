@@ -6,10 +6,10 @@
 package kotlin.script.experimental.host
 
 import kotlin.reflect.KClass
+import kotlin.script.experimental.api.DependencyCoordinates
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptDependency
 import kotlin.script.experimental.api.ScriptEvaluationContextData
-import kotlin.script.experimental.api.UnresolvedExternalArtifacts
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptingHostConfigurationKeys
@@ -71,10 +71,10 @@ val ScriptingHostConfigurationKeys.getScriptingClass by PropertiesCollection.key
 val ScriptingHostConfigurationKeys.getEvaluationContext by PropertiesCollection.key<GetEvaluationContext>(isTransient = true)
 
 /**
- * Whether script definitions should resolve [UnresolvedExternalArtifacts] entries themselves; if not, the entries
+ * Whether script definitions should resolve [DependencyCoordinates] entries themselves; if not, the entries
  * are left in the compilation configuration for the host to resolve
  */
-val ScriptingHostConfigurationKeys.resolveExternalArtifacts by PropertiesCollection.key(true)
+val ScriptingHostConfigurationKeys.resolveDependencies by PropertiesCollection.key(true)
 
 /**
  * The interface to the generic "class loader" for the types used in the script configurations
