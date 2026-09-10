@@ -57,6 +57,8 @@ fun main(args: Array<String>) {
                     extension = null,
                     excludeParentDirs = true,
                 )
+                modelForDirectoryBasedTest("incremental", "sealed", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("incremental", "resolution", extension = null, excludeParentDirs = true)
             }
 
             testClass<AbstractIncrementalJvmJpsTest>(
