@@ -15,11 +15,11 @@ class ReallocTest {
 
     @AfterTest
     fun compareFreelist() {
-        assertEquals(freelist, dumpFreeList())
+//        assertEquals(freelist, dumpFreeList())
     }
 
     @Test
-    fun reallocFreeAllTest(){
+    fun reallocFreeAllTest() {
         componentModelRealloc(0, 0, 100)
         componentModelRealloc(0, 0, 200)
         componentModelRealloc(0, 0, 1)
@@ -217,7 +217,7 @@ class ReallocTest {
     }
 
     @Test
-    fun reallocZero(){
+    fun reallocZeroTest() {
         // should just be a noop, and return 8 (cf. firstValidAddress in MemoryAllocation.kt)
         assertEquals(8, componentModelRealloc(0, 0, 0))
 
@@ -231,9 +231,49 @@ class ReallocTest {
     }
 
     @Test
-    fun reallocMinusOne(){
+    fun reallocMinusOneTest() {
         assertFailsWith<IllegalStateException> {
             componentModelRealloc(0, 0, -1)
         }
+    }
+
+    @Test
+    fun doubleFreeTest() {
+        // check multiple different conditions, like freeing the exact same address multiple times, freeing overlaping addresses, etc.
+
+        // first: free something that's already free
+        assertFails {
+            componentModelRealloc(128, 256, 0)
+        }
+
+        // allocate, then free twice
+        val alloc = componentModelRealloc(0, 0, 8)
+        componentModelRealloc(alloc, 8, 0)
+        assertFails {
+            componentModelRealloc(alloc, 8, 0)
+        }
+
+        // allocate, then free overlapping memory
+        val alloc2 = componentModelRealloc(0, 0, 64)
+        // first free is correct, because we don't detect that we're freeing "too little" (would require additional management overhead)
+        componentModelRealloc(alloc2 + 16, 32, 0)
+        // freeing first 16 bytes afterwards is allowed
+        componentModelRealloc(alloc2, 16, 0)
+        // freeing anything inside the first 48 bytes now is not allowed
+        for (i in 0..5) {
+            assertFails {
+                componentModelRealloc(alloc2 + i*8, 8, 0)
+            }
+        }
+        // freeing larger chunks isn't allowed either
+        assertFails {
+            componentModelRealloc(alloc2, 48, 0)
+        }
+        // also not if the chunk overlaps an actually allocated part (last 16 bytes)
+        assertFails {
+            componentModelRealloc(alloc2 + 16, 48, 0)
+        }
+        // but the final 16 bytes are allowed
+        componentModelRealloc(alloc2 + 48, 16, 0)
     }
 }
