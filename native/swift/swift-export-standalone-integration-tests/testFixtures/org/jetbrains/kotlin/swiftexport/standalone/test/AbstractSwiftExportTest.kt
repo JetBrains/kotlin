@@ -183,6 +183,9 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         exportMode: SwiftModuleExportMode,
     ): InputModule {
         val config = (testModule as? TestModule.Exclusive)?.swiftExportConfigMap()
+        val experimentalFeatures = config?.filterKeys {
+            it == SwiftModuleConfig.COLLECTIONS_V2
+        } ?: emptyMap()
         // Whether a module is a cinterop re-export container is detected by Swift Export from the klib
         // manifest (interop=true), so nothing has to be flagged here.
         return testModule.constructSwiftInput(
@@ -190,6 +193,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             SwiftModuleConfig(
                 rootPackage = config?.get(SwiftModuleConfig.ROOT_PACKAGE),
                 unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(config),
+                experimentalFeatures = experimentalFeatures,
                 exportMode = exportMode,
             )
         )

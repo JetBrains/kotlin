@@ -34,6 +34,7 @@ internal class StandaloneSirSession(
     val hiddenModules: List<KaModule>,
     val targetPackageFqName: FqName? = null,
     val referencedTypeHandler: SirKaClassReferenceHandler? = null,
+    collectionsV2: Boolean = false,
 ) : SirSession {
 
     override val declarationNamer = SirDeclarationNamerImpl()
@@ -65,7 +66,8 @@ internal class StandaloneSirSession(
     override val typeProvider = SirTypeProviderImpl(
         sirSession,
         errorTypeStrategy = errorTypeStrategy,
-        unsupportedTypeStrategy = unsupportedTypeStrategy
+        unsupportedTypeStrategy = unsupportedTypeStrategy,
+        collectionsV2 = collectionsV2,
     )
     override val customTypeTranslator: SirCustomTypeTranslator = SirCustomTypeTranslatorImpl(sirSession)
     override val visibilityChecker = SirVisibilityCheckerImpl(

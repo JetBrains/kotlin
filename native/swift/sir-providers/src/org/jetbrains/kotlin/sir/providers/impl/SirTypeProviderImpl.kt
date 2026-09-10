@@ -30,6 +30,7 @@ public class SirTypeProviderImpl(
     private val sirSession: SirSession,
     override val errorTypeStrategy: ErrorTypeStrategy,
     override val unsupportedTypeStrategy: ErrorTypeStrategy,
+    private val collectionsV2: Boolean = false,
 ) : SirTypeProvider {
 
     @ConsistentCopyVisibility

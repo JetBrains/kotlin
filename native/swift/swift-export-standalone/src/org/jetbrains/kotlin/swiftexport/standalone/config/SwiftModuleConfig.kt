@@ -49,5 +49,6 @@ public data class SwiftModuleConfig(
         public const val ROOT_PACKAGE: String = "packageRoot"
         public const val DEFAULT_BRIDGE_MODULE_NAME: String = "KotlinBridges"
         public const val UNSUPPORTED_DECLARATIONS_REPORTER_KIND: String = "unsupportedDeclarationsReporterKind"
+        public const val COLLECTIONS_V2: String = "collectionsV2"
     }
 }
