@@ -27,7 +27,7 @@ class PseudoTest {
 
     }
 
-    @AffectedByJs
+    @MustRunOnChangesInJs
     @Test
     fun `js contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
@@ -35,7 +35,7 @@ class PseudoTest {
         if (Domain.Js !in changed && autoSmokeTestPercentage == 0) error("Expected 'Js' in affected domains, but was: $changed")
     }
 
-    @AffectedByWasm
+    @MustRunOnChangesInWasm
     @Test
     fun `wasm contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
@@ -43,7 +43,7 @@ class PseudoTest {
         if (Domain.Wasm !in changed && autoSmokeTestPercentage == 0) error("Expected 'Wasm' in affected domains, but was: $changed")
     }
 
-    @AffectedByGradle
+    @MustRunOnChangesInGradle
     @Test
     fun `gradle contract test`() {
         if (testFederationMode == TestFederationMode.Full) return

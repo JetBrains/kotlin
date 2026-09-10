@@ -13,7 +13,7 @@ import kotlin.io.path.createParentDirectories
 import kotlin.io.path.writeText
 
 /**
- * Generates code available at runtime for tests (e.g. all contract annotations such as '@CompilerContract', ...)
+ * Generates code available at runtime for tests (e.g. all contract annotations such as '@MustRunOnChangesInFrontend', ...)
  */
 
 @Suppress("unused")
@@ -39,18 +39,17 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 for (domain in domains) {
                     this += """
                         |/**
-                        |* Will mark tests as 'affected by' the given domain [Domain.${domain.name}].
-                        |* Such tests will run, additionally, for all commits affecting the ${domain.name} domain.
+                        |* Tests must additionally run when the given domain [Domain.${domain.name}] contains changed files.
                         |*/
                     """.trimMargin()
-                    this += "|@Tag(\"affectedBy:${domain.name}\")"
-                    this += "|annotation class AffectedBy${domain.name}"
+                    this += "|@Tag(\"contract:${domain.name}\")"
+                    this += "|annotation class MustRunOnChangesIn${domain.name}"
                     this += "|"
                 }
 
-                this += "|fun affectedByAnnotationOf(domain: Domain) = when (domain) {"
+                this += "|fun mustRunOnChangesInAnnotationOf(domain: Domain) = when (domain) {"
                 for (domain in domains) {
-                    this += "|    Domain.${domain.name} -> AffectedBy${domain.name}::class"
+                    this += "|    Domain.${domain.name} -> MustRunOnChangesIn${domain.name}::class"
                 }
                 this += "|}"
             }.trimMargin()

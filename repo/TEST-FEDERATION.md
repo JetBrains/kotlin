@@ -49,10 +49,10 @@ Test Federation computes two related sets for every change:
 Thus, **changed Domains are always affected, but affected Domains are not necessarily changed**. The distinction matters for Contracts:
 
 - All affected Domains run their full test suites.
-- Only changed Domains activate their `@AffectedByXYZ` Contract tests in smoke-mode test tasks.
+- Only changed Domains activate their `@MustRunOnChangesInXYZ` Contract tests in smoke-mode test tasks.
 
 For example, if `Native` is `fullyAffectedBy: Compiler` and `Compiler` is changed, both Domains are affected and run their full test suites.
-Only `Compiler` is changed, however, so `@AffectedByCompiler` Contracts run while `@AffectedByNative` Contracts do not.
+Only `Compiler` is changed, however, so `@MustRunOnChangesInCompiler` Contracts run while `@MustRunOnChangesInNative` Contracts do not.
 
 ## Defining Domains
 
@@ -239,15 +239,15 @@ This will ensure that the test task is always executed and all tests are verifie
 ### Contracts between Domains | Single Tests / Test Suites affected by other domains
 
 Some Domains might rely on the behavior or API of another Domain. Such requirements can be expressed as a 'Contract' between two Domains.
-Any test can be promoted to a 'Contract Test' using the relevant `@AffectedByXYZ` annotation. e.g., a test that defines a contract to the
-'Js' compiler might be marked as `@AffectedByJs`.
+Any test can be promoted to a 'Contract Test' using the relevant `@MustRunOnChangesInXYZ` annotation. e.g., a test that defines a contract to the
+'Js' compiler might be marked as `@MustRunOnChangesInJs`. These annotations use JUnit tags of the form `contract:XYZ`.
 
 A set of well-maintained contracts is always preferable to marking a domain as 'fullyAffectedBy' another domain, as 'ContractTests' will
 enable actually building efficient pipelines for verifying commits, whereas 'fullyAffectedBy' will require a full build of the affected
 domains.
 
 ```kotlin
-@AffectedByJs
+@MustRunOnChangesInJs
 class MyImportantJsTests {
     // ...
 }
@@ -263,7 +263,7 @@ It works like this:
 * we go through changed domains:
     * every changed domain is marked as **affected**
     * all domains `fullyAffectedBy` the changed domain are marked as **affected**
-    * all contracts `@AffectedBy` the changed domain are marked as **affected**
+    * all contracts annotated with `@MustRunOnChangesInXYZ` for the changed domain are marked as **affected**
 * additionally, we take every domain from the `^affects:` commit command and mark them as **affected**
 
 Everything that is affected must be verified:

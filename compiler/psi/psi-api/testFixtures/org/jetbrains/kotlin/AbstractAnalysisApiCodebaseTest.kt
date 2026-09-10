@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import java.io.File
 
 /**
@@ -30,7 +30,7 @@ import java.io.File
  *
  * See [AbstractAnalysisApiCodebaseDumpFileComparisonTest] and [AbstractAnalysisApiCodebaseValidationTest]
  */
-@AffectedByAnalysisApi
+@MustRunOnChangesInAnalysisApi
 abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDisposable() {
     protected fun doTest() {
         val environment = JvmFrontendPipelinePhase.createProjectEnvironment(

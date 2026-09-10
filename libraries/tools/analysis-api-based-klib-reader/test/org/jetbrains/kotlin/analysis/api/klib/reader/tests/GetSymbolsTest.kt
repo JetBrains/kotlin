@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.io.path.nameWithoutExtension
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.fail
 
-@AffectedByAnalysisApi
+@MustRunOnChangesInAnalysisApi
 class GetSymbolsTest {
     @Test
     fun `test - getClassOrObjectSymbol - RootPkgClass`() {

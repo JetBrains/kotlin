@@ -9,13 +9,13 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
-import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 @DisplayName("Kapt with compiler plugins")
 @OtherGradlePluginTests
-@AffectedByCompilerPlugins
+@MustRunOnChangesInCompilerPlugins
 class KaptCompilerPluginsIT : KaptBaseIT() {
     override val defaultBuildOptions: BuildOptions =
         super.defaultBuildOptions.copyEnsuringK2()

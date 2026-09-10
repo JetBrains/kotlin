@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
-import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.bind
@@ -78,7 +78,7 @@ import kotlin.io.path.nameWithoutExtension
  * @see doTestByMainModuleAndOptionalMainFile
  * @see doTest
  */
-@AffectedByAnalysisApi
+@MustRunOnChangesInAnalysisApi
 abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest {
     abstract val configurator: AnalysisApiTestConfigurator
 

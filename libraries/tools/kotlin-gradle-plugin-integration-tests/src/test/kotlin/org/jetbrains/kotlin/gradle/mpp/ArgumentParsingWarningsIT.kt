@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
-import org.jetbrains.kotlin.testFederation.AffectedByBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
-@AffectedByBuildToolsApi
+@MustRunOnChangesInBuildToolsApi
 @DisplayName("Argument-parsing warnings are reported by the Kotlin Gradle plugin")
 class ArgumentParsingWarningsIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
