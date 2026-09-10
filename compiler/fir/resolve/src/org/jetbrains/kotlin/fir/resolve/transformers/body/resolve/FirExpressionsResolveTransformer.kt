@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedT
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1784,7 +1783,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
-        transformedGetClassCall.resultType = StandardClassIds.KClass.constructClassLikeType(arrayOf(typeOfExpression), false)
+        // In the case of compiler-required annotation `FirGetClassCall` arguments, the result type has already been resolved.
+        // Keep the type from `COMPILER_REQUIRED_ANNOTATIONS` so that we could later report ambiguity.
+        if (!transformedGetClassCall.hasResolvedType) {
+            transformedGetClassCall.resultType = StandardClassIds.KClass.constructClassLikeType(arrayOf(typeOfExpression), false)
+        }
         dataFlowAnalyzer.exitGetClassCall(transformedGetClassCall)
         return transformedGetClassCall
     }
@@ -1912,7 +1915,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         for ((name, kind) in parameters) {
             // non-literal arguments are reported in the checker
-            if (kind !is FirCraParameterKind.EnumParameter) continue
+            if (kind is FirCraParameterKind.LiteralParameter) continue
 
             val fromCompilerRequiredPhase = mappingFromCompilerRequiredPhase[name] ?: continue
             val fromArgumentsPhase = annotationCall.argumentMapping.mapping[name] ?: continue
@@ -1924,28 +1927,73 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             for ([guessedArgument, resolvedArgument] in guessedArguments.zip(resolvedArguments)) {
                 // Something else should be reported
-                if (resolvedArgument !is FirPropertyAccessExpression) continue
-                val calleeReference = resolvedArgument.calleeReference
-                if (calleeReference.isError()) continue
-                val symbolFromArgumentsPhase = calleeReference.toResolvedBaseSymbol() ?: continue
-
-                val symbolFromCompilerPhase =
-                    (guessedArgument as? FirPropertyAccessExpression)?.calleeReference?.toResolvedEnumEntrySymbol()
-
-                if (symbolFromCompilerPhase != symbolFromArgumentsPhase) {
-                    resolvedArgument.replaceCalleeReference(
-                        buildResolvedErrorReference {
-                            resolvedSymbol = symbolFromArgumentsPhase
-                            resolvedSymbolOrigin = calleeReference.resolvedSymbolOrigin
-                            source = calleeReference.source
-                            this.name = calleeReference.name
-                            diagnostic = ConeAmbiguouslyResolvedAnnotationArgument(symbolFromCompilerPhase, symbolFromArgumentsPhase)
-                        }
-                    )
+                when (resolvedArgument) {
+                    is FirPropertyAccessExpression -> handlePropertyAccessExpression(resolvedArgument, guessedArgument)
+                    is FirGetClassCall -> handleGetClassCall(resolvedArgument, guessedArgument)
                 }
             }
         }
     }
+
+    private fun handlePropertyAccessExpression(resolvedArgument: FirPropertyAccessExpression, guessedArgument: FirExpression) {
+        val calleeReference = resolvedArgument.calleeReference
+        if (calleeReference.isError()) return
+        val symbolFromArgumentsPhase = calleeReference.toResolvedBaseSymbol() ?: return
+
+        val symbolFromCompilerPhase =
+            (guessedArgument as? FirPropertyAccessExpression)?.calleeReference?.toResolvedEnumEntrySymbol()
+
+        if (symbolFromCompilerPhase != symbolFromArgumentsPhase) {
+            resolvedArgument.replaceCalleeReference(
+                buildResolvedErrorReference {
+                    resolvedSymbol = symbolFromArgumentsPhase
+                    resolvedSymbolOrigin = calleeReference.resolvedSymbolOrigin
+                    source = calleeReference.source
+                    this.name = calleeReference.name
+                    diagnostic = ConeAmbiguouslyResolvedAnnotationArgument(symbolFromCompilerPhase, symbolFromArgumentsPhase)
+                }
+            )
+        }
+    }
+
+    private fun handleGetClassCall(resolvedArgument: FirGetClassCall, guessedArgument: FirExpression) {
+        val receiver = resolvedArgument.argument as? FirResolvedQualifier ?: return
+        val symbolFromArgumentsPhase = receiver.qualifierSymbol ?: return
+
+        val typeFromCompilerPhase =
+            (guessedArgument as? FirGetClassCall)?.resolvedType?.typeArguments?.firstOrNull() as? ConeKotlinType ?: return
+        val symbolFromCompilerPhase = typeFromCompilerPhase.toSymbol() ?: return
+
+        if (symbolFromCompilerPhase != symbolFromArgumentsPhase) {
+            val newArgumentList = buildArgumentList {
+                arguments += receiver.toError(
+                    diagnostic = ConeAmbiguouslyResolvedAnnotationArgument(symbolFromCompilerPhase, symbolFromArgumentsPhase)
+                )
+            }
+            resolvedArgument.replaceArgumentList(newArgumentList)
+        }
+    }
+
+    private fun FirResolvedQualifier.toError(diagnostic: ConeDiagnostic): FirErrorResolvedQualifier =
+        buildErrorResolvedQualifier {
+            source = this@toError.source
+            contextSensitiveAlternative = @OptIn(FirIdeOnly::class) this@toError.contextSensitiveAlternative
+            coneTypeOrNull = @OptIn(UnresolvedExpressionTypeAccess::class) this@toError.coneTypeOrNull
+            annotations += this@toError.annotations
+            packageFqName = this@toError.packageFqName
+            relativeClassFqName = this@toError.relativeClassFqName
+            qualifierSymbol = this@toError.qualifierSymbol
+            accessedObjectSymbol = this@toError.accessedObjectSymbol
+            explicitParent = this@toError.explicitParent
+            isNullableLhsForCallableReference = this@toError.isNullableLhsForCallableReference
+            resolvedLhsTypeForCallableReferenceOrNull = this@toError.resolvedLhsTypeForCallableReferenceOrNull
+            resolvedToCompanionObject = this@toError.resolvedToCompanionObject
+            nonFatalDiagnostics += this@toError.nonFatalDiagnostics
+            resolvedSymbolOrigin = this@toError.resolvedSymbolOrigin
+            typeArguments += this@toError.typeArguments
+
+            this.diagnostic = diagnostic
+        }
 
     private fun evaluateAndReplaceArgumentMapping(annotationCall: FirAnnotationCall) {
         val evaluationResult = FirExpressionEvaluator.evaluateAnnotationArguments(annotationCall, session, file)
