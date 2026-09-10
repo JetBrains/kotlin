@@ -186,8 +186,9 @@ internal class StandaloneAnalysisAPISessionBuilderImpl(
         val createPackagePartProvider = StandaloneProjectFactory.createPackagePartsProvider(libraryRoots)
         registerProjectServices(sourceKtFiles, libraryRoots.map { it.file }, createPackagePartProvider)
 
-        return StandaloneAnalysisAPISessionImpl(kotlinCoreProjectEnvironment) {
-            projectStructureProvider.allModules.mapNotNull { ktModule ->
+        val allModules = projectStructureProvider.allModules
+        return StandaloneAnalysisAPISessionImpl(kotlinCoreProjectEnvironment, allModules) {
+            allModules.mapNotNull { ktModule ->
                 if (ktModule !is KaSourceModule) return@mapNotNull null
                 ktModule to ktModule.psiRoots.filterIsInstance<PsiFile>()
             }.toMap()
