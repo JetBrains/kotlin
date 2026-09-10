@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaField
@@ -51,15 +50,10 @@ import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.lombokService
-import org.jetbrains.kotlin.lombok.generators.kotlin.createConstructorIfGeneratedCompanion
-import org.jetbrains.kotlin.lombok.generators.kotlin.initializeCompanionObjectIfNeeded
-import org.jetbrains.kotlin.lombok.generators.kotlin.needsConstructorIfGeneratedCompanion
 import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCallOrError
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class LoggerGeneratorKey(val logAnnotation: FirAnnotation) : LombokDeclarationKey()
@@ -74,7 +68,7 @@ fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation): Boolean {
     } == true
 }
 
-class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(session), LombokCompanionObjectContributor {
     companion object {
         private val JAVA_PROPERTY_NAME = Name.identifier("java")
         private val JAVA_GET_NAME = Name.identifier("getName")
@@ -99,54 +93,23 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         register(PREDICATE)
     }
 
-    private val companionObjectsCache: FirCache<FirClassSymbol<*>, FirRegularClassSymbol?, NestedClassGenerationContext> =
-        session.firCachesFactory.createCache { owner: FirClassSymbol<*>, context: NestedClassGenerationContext ->
-            initializeCompanionObjectIfNeeded(owner, context) {
-                // Don't generate the companion if the `owner` isn't marked with `@Log`, `@Slf4j` or another annotation
-                // or if config specifies the logger mustn't be static
-                val firstLog = session.lombokService.getLogs(owner).firstOrNull()
-                if (firstLog == null || !session.lombokService.config.logFieldIsStatic) {
-                    return@initializeCompanionObjectIfNeeded null
-                }
+    /**
+     * A static logger goes into the companion object, so a class that gets one needs a companion object to hold
+     * it. A non-static one goes into the class itself, and needs nothing.
+     */
+    override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean {
+        if (!session.lombokService.config.logFieldIsStatic) return false
+        if (session.lombokService.getLogs(owner).isEmpty()) return false
 
-                // Nothing would go into the companion object anyway, so don't leave an empty one behind
-                if (owner.declaresConflictingLogProperty()) {
-                    return@initializeCompanionObjectIfNeeded null
-                }
-
-                return@initializeCompanionObjectIfNeeded LoggerGeneratorKey(firstLog.annotation)
-            }
-        }
+        // Nothing would go into the companion object anyway, so don't ask for an empty one
+        return !owner.declaresConflictingLogProperty()
+    }
 
     private val logFieldAndPropertyCache: FirCache<FirClassSymbol<*>, FirVariableSymbol<*>?, MemberGenerationContext> =
         session.firCachesFactory.createCache(::initializeLogFieldOrPropertyIfNeeded)
 
-    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        if (companionObjectsCache.getValue(classSymbol, context) != null) {
-            return setOf(DEFAULT_NAME_FOR_COMPANION_OBJECT)
-        }
-        return emptySet()
-    }
-
-    override fun generateNestedClassLikeDeclaration(
-        owner: FirClassSymbol<*>,
-        name: Name,
-        context: NestedClassGenerationContext
-    ): FirClassLikeSymbol<*>? {
-        return companionObjectsCache.getValue(owner, context)
-    }
-
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        return buildSet {
-            if (classSymbol.needsConstructorIfGeneratedCompanion<LoggerGeneratorKey>()) {
-                add(SpecialNames.INIT)
-            }
-            addIfNotNull(logFieldAndPropertyCache.getValue(classSymbol, context)?.name)
-        }
-    }
-
-    override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        return listOfNotNull(createConstructorIfGeneratedCompanion<LoggerGeneratorKey>(context.owner))
+        return setOfNotNull(logFieldAndPropertyCache.getValue(classSymbol, context)?.name)
     }
 
     @UnsafePluginApi
