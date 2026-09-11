@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -70,12 +69,6 @@ sealed class FirPropertySymbol : FirVariableSymbol<FirProperty>(), PropertySymbo
 
     val initializerSource: KtSourceElement?
         get() = fir.initializer?.source
-
-    val controlFlowGraphReference: FirControlFlowGraphReference?
-        get() {
-            lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-            return fir.controlFlowGraphReference
-        }
 
     override fun deprecationsAreDefinitelyEmpty(): Boolean {
         return currentDeclarationDeprecationsAreDefinitelyEmpty()

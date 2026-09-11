@@ -90,6 +90,20 @@ fun init() {
     <!VAL_REASSIGNMENT!>top<!> = 1
 }
 
+// A local property declared inside a member of a local class. The class graph is a sub-graph of the 'localClassMember' graph, and the
+// class is not analyzed on its own because of that, so 'q' is only reachable by traversing into the class.
+fun localClassMember() {
+    class D {
+        val p: Int
+        init {
+            val q: Int
+            q = 1
+            <!VAL_REASSIGNMENT!>q<!> = 2
+            p = q
+        }
+    }
+}
+
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, ifExpression, init,
 integerLiteral, localClass, localFunction, localProperty, primaryConstructor, propertyDeclaration, secondaryConstructor,
 stringLiteral */

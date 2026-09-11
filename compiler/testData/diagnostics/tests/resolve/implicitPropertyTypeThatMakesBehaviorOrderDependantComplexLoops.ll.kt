@@ -1,3 +1,9 @@
+// LL_FIR_DIVERGENCE
+// The test is about implicit property types whose inference result depends on the order in which the declarations are resolved. LL FIR
+// resolves the declarations of a file lazily and bottom-up, the deepest and innermost one first, while the compiler goes through them in
+// the document order. So a different set of `TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM` diagnostics is reported, which is exactly the
+// order dependency KT-76240 is about.
+// LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76240
 // IGNORE_PARTIAL_BODY_ANALYSIS
@@ -12,12 +18,12 @@ fun Int.f(): String = "ext func f"
 class Foo(val b1: Boolean, val b2: Boolean) {
     fun g() = f()
     fun f() = if (b1) 42.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>f<!>() else true
-    val f = if (b2) <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f()<!> else false
+    val f = if (b2) f() else false
 }
 
 class Bar(val b1: Boolean, val b2: Boolean) {
     fun g() = f()
-    val f = if (b2) <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f()<!> else false
+    val f = if (b2) f() else false
     fun f() = if (b1) 42.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>f<!>() else true
 }
 
@@ -30,10 +36,10 @@ fun Int.g(): String = "ext func g"
 
 class Foo(val b1: Boolean, val b2: Boolean) {
     fun f() = if (b1) 12.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>f<!>() else 34.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>g<!>()
-    val f = if (b2) <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f()<!> else g()
+    val f = if (b2) f() else g()
 
     fun g() = if (b1) 56.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>g<!>() else 78.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>f<!>()
-    val g = if (b2) <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>g()<!> else <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f()<!>
+    val g = if (b2) g() else <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f()<!>
 }
 
 // FILE: localFunction.kt

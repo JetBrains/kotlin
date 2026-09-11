@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
@@ -380,12 +381,10 @@ internal class KaFirDataFlowProvider(
 
         val parentDeclarations = anchor.parentsOfType<KtDeclaration>(withSelf = true)
         for (parentDeclaration in parentDeclarations) {
-            val parentFirDeclaration = parentDeclaration.resolveToFirSymbol(resolutionFacade, FirResolvePhase.BODY_RESOLVE).fir
-            if (parentFirDeclaration is FirControlFlowGraphOwner) {
-                val graph = parentFirDeclaration.controlFlowGraphReference?.controlFlowGraph
-                if (graph != null && graph.contains(firCandidates)) {
-                    return graph
-                }
+            val parentSymbol = parentDeclaration.resolveToFirSymbol(resolutionFacade)
+            val graph = parentSymbol.resolvedControlFlowGraphReference?.controlFlowGraph
+            if (graph != null && graph.contains(firCandidates)) {
+                return graph
             }
         }
 

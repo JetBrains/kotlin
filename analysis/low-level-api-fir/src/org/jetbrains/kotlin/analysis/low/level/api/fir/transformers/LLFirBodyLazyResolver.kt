@@ -1132,5 +1132,4 @@ private val FirDeclaration.isUsedInScriptControlFlowGraphBuilder: Boolean
     get() = this is FirControlFlowGraphOwner && isUsedInControlFlowGraphBuilderForScript
 
 private val FirDeclaration.isUsedInClassControlFlowGraphBuilder: Boolean
-    get() = this is FirControlFlowGraphOwner &&
-            (isUsedInControlFlowGraphBuilderForClass || isUsedInControlFlowGraphBuilderForStatic)
+    get() = this is FirControlFlowGraphOwner && isUsedInControlFlowGraphBuilderForClassOrStatic

@@ -16,19 +16,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.resolve.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.visibilityChecker
 
@@ -169,20 +169,26 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
 
     context(context: CheckerContext)
     private fun isInFileGraph(property: FirPropertySymbol): Boolean {
-        val declarations = context.containingDeclarations.dropWhile { it !is FirFileSymbol }
+        // The containers come outermost first, so the file, if the assignment is inside one at all, is the first of them.
+        val declarations = context.containingDeclarations
         val file = declarations.firstOrNull() as? FirFileSymbol ?: return false
         if (file != property.getContainingSymbol(context.session)) return false
 
-        // Starting with the CFG for the containing FirFile, check if all following declarations are contained as sub-CFGs.
-        // If there is a break in the chain, then the variable assignment is not part of the file CFG, and VAL_REASSIGNMENT should be
-        // reported by this checker.
-        val containingGraph = declarations
-            .map {
-                @OptIn(SymbolInternals::class)
-                (it.fir as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph
-            }
-            .reduceOrNull { acc, graph -> graph?.takeIf { acc != null && it in acc.subGraphs } }
-        return containingGraph != null
+        // The file graph is built out of its top-level properties, which is a syntactic property of them, so the first link of the
+        // chain is answered without resolving the file. Every following declaration has to be contained as a sub-CFG of the one before
+        // it, which is only known from the graphs. A break in the chain means the variable assignment is not part of the file CFG, so
+        // VAL_REASSIGNMENT has to be reported by this checker; the walk stops there, leaving the rest of the chain unresolved.
+        val topLevelDeclaration = declarations.getOrNull(1) ?: return true
+        if (!topLevelDeclaration.isUsedInControlFlowGraphBuilderForFile) return false
+
+        var containingGraph = topLevelDeclaration.resolvedControlFlowGraphReference?.controlFlowGraph ?: return false
+        for (index in 2..declarations.lastIndex) {
+            val graph = declarations[index].resolvedControlFlowGraphReference?.controlFlowGraph ?: return false
+            if (graph !in containingGraph.subGraphs) return false
+            containingGraph = graph
+        }
+
+        return true
     }
 
     context(context: CheckerContext)
