@@ -12,9 +12,4 @@ val publishedVersion by extra("2.6.1-2")
 allprojects {
     group = "org.jetbrains.kotlin"
     version = publishedVersion
-
-    tasks.withType<AbstractArchiveTask>().configureEach {
-        isPreserveFileTimestamps = false
-        isReproducibleFileOrder = true
-    }
 }
