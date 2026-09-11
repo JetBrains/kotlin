@@ -24,7 +24,7 @@ internal object TrackedCompilerArguments {
         forArguments<CommonCompilerArguments> {
             stringMetric(StringMetrics.KOTLIN_LANGUAGE_VERSION, CommonCompilerArguments::languageVersion)
             stringMetric(StringMetrics.KOTLIN_API_VERSION, CommonCompilerArguments::apiVersion)
-            booleanMetric(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, CommonCompilerArguments::progressiveMode)
+            booleanMetric(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, CommonCompilerArguments::progressiveMode, allowImplicit = true)
             booleanMetric(BooleanMetrics.KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED, CommonCompilerArguments::separateKmpCompilationScheme)
         }
 
@@ -43,8 +43,8 @@ internal object TrackedCompilerArguments {
                 stringListMetric(StringListMetrics.JS_PROPERTY_LAZY_INITIALIZATION, K2JSCompilerArguments::irPropertyLazyInitialization, allowImplicit = true)
                 stringMetric(StringMetrics.JS_ES_TARGET, K2JSCompilerArguments::target, default = DEFAULT_VALUE)
                 stringMetric(StringMetrics.JS_MODULE_SYSTEM, K2JSCompilerArguments::moduleKind, default = DEFAULT_VALUE)
-                stringMetric(StringMetrics.JS_OUTPUT_GRANULARITY, K2JSCompilerArguments::irPerModule) { perModule ->
-                    val granularity = when (perModule){
+                stringMetric(StringMetrics.JS_OUTPUT_GRANULARITY, K2JSCompilerArguments::irPerModule, allowImplicit = true) { perModule ->
+                    val granularity = when (perModule) {
                         true -> KotlinJsIrOutputGranularity.PER_MODULE
                         false -> KotlinJsIrOutputGranularity.WHOLE_PROGRAM
                     }
