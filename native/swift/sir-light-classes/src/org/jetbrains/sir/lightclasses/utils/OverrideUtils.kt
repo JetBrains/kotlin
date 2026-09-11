@@ -92,9 +92,8 @@ internal fun SirVariable.computeIsOverride(): OverrideStatus<SirVariable>? = bes
         it,
         isOverride = !it.isUnsuitablyDeprecatedToOverride
                 && !it.isConstant
-                && (it.setter == null) == (this.setter == null)
                 && (this.type != SirType.never || it.type == SirType.never)
-                && (it.setter == null && this.type.isSubtypeOf(it.type) || this.type == it.type)
+                && (it.setter == null && this.type.isSubtypeOf(it.type) || it.setter != null && this.setter != null && this.type == it.type)
                 && ((this.getter?.errorType ?: SirType.never).isSubtypeOf(it.getter?.errorType ?: SirType.never))
     )
 }

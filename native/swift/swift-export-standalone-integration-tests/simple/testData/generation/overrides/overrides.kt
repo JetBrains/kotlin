@@ -25,6 +25,9 @@ open class Parent(val value: String) {
     open val subtypeObjectVar: Parent get() = this
     open val subtypeOptionalPrimitiveVar: Int? get() = null
     open val subtypeOptionalObjectVar: Parent? get() = null
+    open val valToVar: Int get() = 42
+    open val subtypeValToVar: Parent get() = this
+    open var varToVar: Int = 42
 //    open fun subtypeFunctionTypeFunc(arg: (Child) -> Parent): (Child) -> Parent = { TODO() }
 
     open fun hopFunc() = Unit
@@ -59,6 +62,11 @@ open class Child(value: Int) : Parent("$value") {
     override val subtypeObjectVar: Child get() = this
     override val subtypeOptionalPrimitiveVar: Int get() = 42
     override val subtypeOptionalObjectVar: Child get() = this
+    override var valToVar: Int = 43
+    override var subtypeValToVar: Child
+        get() = this
+        set(value) {}
+    override var varToVar: Int = 43
 //    override fun subtypeFunctionTypeFunc(arg: (Parent) -> Child): (Parent) -> Child = { TODO() }
 
     final override fun finalOverrideFunc() {}
