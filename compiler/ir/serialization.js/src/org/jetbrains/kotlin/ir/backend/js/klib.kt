@@ -276,7 +276,7 @@ fun serializeModuleIntoKlib(
             },
             metadataSerializer = metadataSerializer,
             processCompiledFileData = incrementalResultsConsumer?.let { icConsumer ->
-                { ioFile, compiledFile ->
+                { ioFile, compiledFile, inlineIds ->
                     icConsumer.processPackagePart(ioFile, compiledFile.metadata)
                     with(compiledFile.irData!!) {
                         icConsumer.processIrFile(
@@ -306,6 +306,7 @@ fun serializeModuleIntoKlib(
                             backendSpecificMetadata ?: byteArrayOf(),
                             debugInfo,
                             fileEntries,
+                            inlineIds,
                         )
                     }
                 }

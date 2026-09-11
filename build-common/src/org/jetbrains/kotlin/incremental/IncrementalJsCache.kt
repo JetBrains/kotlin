@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -96,16 +97,16 @@ open class IncrementalJsCache(
         }
 
         for ([srcFile, irData] in incrementalResults.irFileData) {
-            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val fileMetadata, val debugInfos = debugInfo, val fileEntries) = irData
+            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos = debugInfo, fileEntries, ids) = irData
             irTranslationResults.put(
-                srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
+                srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries, ids
             )
         }
 
         for ([srcFile, irData] in incrementalResults.irInlineFileData) {
-            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val fileMetadata, val debugInfos = debugInfo, val fileEntries) = irData
+            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos = debugInfo, fileEntries, ids) = irData
             irInlineTranslationResults.put(
-                srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
+                srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries, ids
             )
         }
     }
@@ -217,6 +218,7 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.fileMetadata)
         output.writeOptionalArray(value.debugInfo)
         output.writeOptionalArray(value.fileEntries)
+        ListExternalizer(CallableIdExternalizer).save(output, value.ids)
     }
 
     private fun DataOutput.writeArray(array: ByteArray) {
@@ -261,9 +263,10 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         val fileMetadata = input.readArray()
         val debugInfos = input.readOptionalArray()
         val fileEntries = input.readOptionalArray()
+        val ids = ListExternalizer(CallableIdExternalizer).read(input)
 
         return IrTranslationResultValue(
-            fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
+            fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries, ids
         )
     }
 }
@@ -300,10 +303,11 @@ private class IrTranslationResultMap(
         newFileMetadata: ByteArray,
         debugInfos: ByteArray?,
         fileEntries: ByteArray?,
+        ids: List<CallableId>,
     ) {
         this[sourceFile] =
             IrTranslationResultValue(
-                newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, newFileMetadata, debugInfos, fileEntries
+                newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, newFileMetadata, debugInfos, fileEntries, ids
             )
     }
 }
