@@ -329,27 +329,40 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun `SerializedKlibDAG creation sanity test`() {
-        val properDag: Map<Path, Set<Path>> = buildMap {
-            this[Path("/foo")] = setOf(Path("/bar"))
-            this[Path("/bar")] = setOf(Path("/baz"))
-            this[Path("/baz")] = setOf()
+    fun `SerializedKlibDAG creation sanity test (positive)`() {
+        val foo = Path("__foo__")
+        val bar = Path("__bar__")
+        val baz = Path("__baz__")
+
+        val dag: Map<Path, Set<Path>> = buildMap {
+            this[foo] = setOf(bar)
+            this[bar] = setOf(baz)
+            this[baz] = setOf()
         }
 
-        val improperDag: Map<Path, Set<Path>> = buildMap {
-            this[Path("/foo")] = setOf(Path("/bar"))
-            this[Path("/bar")] = setOf(Path("/baz"))
-            //this[Path("/baz")] = setOf()
-        }
+        SerializedKlibDAG(dag)
+    }
 
-        SerializedKlibDAG(properDag)
+    @Test
+    fun `SerializedKlibDAG creation sanity test (negative)`() {
+        val foo = Path("__foo__")
+        val bar = Path("__bar__")
+        val baz = Path("__baz__")
+
+        val dag: Map<Path, Set<Path>> = buildMap {
+            this[foo] = setOf(bar)
+            this[bar] = setOf(baz)
+            // baz is missing in the graph
+        }
 
         try {
-            SerializedKlibDAG(improperDag)
+            SerializedKlibDAG(dag)
             fail { "Normally unreachable" }
         } catch (e: Exception) {
-            val message = e.message.orEmpty()
-            assertTrue(message.startsWith("There is a direct dependency ") && message.endsWith(" that is not in DAG"))
+            assertEquals(
+                "There is a direct dependency __baz__ of library __bar__ that is not in DAG",
+                e.message
+            )
         }
     }
 
