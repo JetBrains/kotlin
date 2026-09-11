@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
+import org.jetbrains.kotlin.ir.backend.js.dce.buildRoots
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.JsStaticContext
@@ -23,15 +24,20 @@ fun optimizeProgramByIr(
     context: JsIrBackendContext,
     moduleKind: ModuleKind
 ) {
+    val allRoots = buildRoots(modules, context, moduleKind)
     val dceDumpNameCache = DceDumpNameCache() // in JS mode only DCE Graph could be dumped
-    eliminateDeadDeclarations(modules, context, moduleKind, dceDumpNameCache)
+    eliminateDeadDeclarations(allRoots, modules, context, dceDumpNameCache)
 
     val phaserState = PhaserState()
+    val optimizationContext = JsIrOptimizationContext(context, allRoots)
     optimizationLoweringList.forEachIndexed { _, lowering ->
         modules.forEach { module ->
-            lowering.invoke(context.phaseConfig, phaserState, context, module)
+            lowering.invoke(context.phaseConfig, phaserState, optimizationContext, module)
         }
     }
+
+    // The optimizations may have rendered more declarations unreachable, run a second DCE pass to eliminate those.
+    eliminateDeadDeclarations(optimizationContext.dceRoots, modules, context, dceDumpNameCache)
 }
 
 fun optimizeFragmentByJsAst(fragment: JsIrProgramFragment, context: JsStaticContext) {
