@@ -7,8 +7,8 @@ abstract class RichError
 // FILE: test.kt
 class MyNonError : NonError
 
-<!WRONG_MODIFIER_TARGET!>error<!> class MyError
-<!WRONG_MODIFIER_TARGET!>error<!> object MyErrorObject : RichError()
+error class MyError
+error object MyErrorObject : RichError()
 
 fun <T : NonError> bounded() { }
 fun <T : NonError?> boundedNullable() { }

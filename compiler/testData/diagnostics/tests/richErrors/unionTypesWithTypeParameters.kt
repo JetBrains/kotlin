@@ -6,7 +6,7 @@ package kotlin
 
 abstract class RichError
 // FILE: test.kt
-<!WRONG_MODIFIER_TARGET!>error<!> class Foo
+error class Foo
 
 typealias TA = RichError
 

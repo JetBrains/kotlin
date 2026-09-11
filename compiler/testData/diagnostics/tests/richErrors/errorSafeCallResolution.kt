@@ -6,8 +6,8 @@ package kotlin
 
 abstract class RichError
 // FILE: test.kt
-<!WRONG_MODIFIER_TARGET!>error<!> class Foo
-<!WRONG_MODIFIER_TARGET!>error<!> class Bar
+error class Foo
+error class Bar
 
 abstract class C {
     abstract fun memberFun(): String | Bar
