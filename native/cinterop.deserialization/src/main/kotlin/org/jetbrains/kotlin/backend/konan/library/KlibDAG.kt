@@ -62,33 +62,44 @@ class KlibDAG(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
 }
 
 /**
- * Deserialize DAG to [KlibDAG]:
+ * Deserialize [SerializedKlibDAG] to [KlibDAG]:
  * - [this] is used as the source of information about dependencies (via paths).
- * - [libraries] is used as the source of [KotlinLibrary] instances.
+ * - [librariesUsedInCurrentCompilation] is the list of [KotlinLibrary]s used in the current compilation.
  *
- * Note: If some library is represented in [libraries] but nbot represented in [this], it will
- * not be included into the resulting [KlibDAG].
+ * Note: The returned [KlibDAG] must include all libraries from [librariesUsedInCurrentCompilation].
+ * Which means that all libraries from [librariesUsedInCurrentCompilation] should be represented in
+ * the deserialized [SerializedKlibDAG].
  */
-fun SerializedKlibDAG.deserialize(libraries: Collection<KotlinLibrary>): KlibDAG {
-    val pathToLibrary: Map<Path, KotlinLibrary> = libraries.associateByCanonicalPathPreventingDuplicates()
+fun SerializedKlibDAG.deserialize(librariesUsedInCurrentCompilation: Collection<KotlinLibrary>): KlibDAG {
+    val pathToLibrary: Map<Path, KotlinLibrary> = librariesUsedInCurrentCompilation.associateByCanonicalPathPreventingDuplicates()
 
-    fun findLibrary(libraryPath: Path): KotlinLibrary =
-        pathToLibrary[libraryPath]
-            ?: error("Library $libraryPath from the serialized DAG is not in the list of the available libraries: ${libraries.joinToString { it.canonicalPath.pathString }}")
+    val librariesMissingInSerializedDag = pathToLibrary.keys - dag.keys
+    check(librariesMissingInSerializedDag.isEmpty()) {
+        "There are libraries that are used in the current compilation but are missing in the deserialized DAG: ${librariesMissingInSerializedDag.joinToString()}"
+    }
 
-    val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = libraries.associateWith(::KlibDAGNodeImpl)
-    val usedNodes = hashSetOf<KlibDAGNodeImpl>()
+    val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = librariesUsedInCurrentCompilation.associateWith(::KlibDAGNodeImpl)
 
-    dag.entries.forEach { [libraryPath: Path, directDependencyPaths: Set<Path>] ->
-        val node = dagUnderConstruction.getValue(findLibrary(libraryPath))
-        usedNodes += node
+    for ([libraryPath: Path, directDependencyPaths: Set<Path>] in dag.entries) {
+        val library = pathToLibrary[libraryPath] ?: run {
+            // The library in serialized DAG is not present among libraries used in the current compilation.
+            // So, we can skip it. It won't appear in the resulting DAG for the current compilation, and that's OK.
+            continue
+        }
 
-        for (directDependency in directDependencyPaths) {
-            node.targets += dagUnderConstruction.getValue(findLibrary(directDependency))
+        val node = dagUnderConstruction.getValue(library)
+
+        for (directDependencyPath in directDependencyPaths) {
+            val directDependencyLibrary = pathToLibrary[directDependencyPath] ?: error(
+                "Library $libraryPath has a dependency $directDependencyPath in the deserialized DAG " +
+                        "that is not in the list of the libraries used in the current compilation: " +
+                        librariesUsedInCurrentCompilation.joinToString { it.canonicalPath.pathString }
+            )
+            node.targets += dagUnderConstruction.getValue(directDependencyLibrary)
         }
     }
 
-    return KlibDAG(dagUnderConstruction.filterValues { it in usedNodes })
+    return KlibDAG(dagUnderConstruction)
 }
 
 /**

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.filterToSetOrEmpty
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -189,8 +188,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         }
 
         // Check serialization/deserialization.
-        assertLosslessDeserialization(dag, libraries = dag.libraries)
-        assertLosslessDeserialization(dag, libraries = allLibraries)
+        assertLosslessDeserialization(dag)
 
         val userLibraries: Map</* name of test module */ String, /* use library */ KotlinLibrary> = allLibraries.mapNotNull { library ->
             val moduleName = userLibraryPathToModuleName[library.path] ?: return@mapNotNull null
@@ -367,7 +365,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun `deserialization skips excessive libraries`() {
+    fun `DAG deserialization fails if there are libraries in current compilation that are missing in SerializedKlibDAG`() {
         val libraries: List<KotlinLibrary> = loadLibraries(platformLibs = true)
 
         val dag: KlibDAG = KlibDAGBuilder(libraries) { true }.build()
@@ -380,16 +378,27 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
             name == "stdlib" || name.endsWith(".posix")
 
         val serializedDagWithOnlyStdlibAndPosix = SerializedKlibDAG(
-            serializedOriginal.dag
-                .filterKeys { it.isStdlibOrPosix() }
-                .mapValues { [_, dependencyPaths] -> dependencyPaths.filterToSetOrEmpty { it.isStdlibOrPosix() } }
+            serializedOriginal.dag.filterKeys { it.isStdlibOrPosix() }
         )
         assertEquals(2, serializedDagWithOnlyStdlibAndPosix.dag.size)
 
-        // Pass more libraries as the input that there are actually required:
-        val deserializedDag: KlibDAG = serializedDagWithOnlyStdlibAndPosix.deserialize(libraries)
+        // Pass the exact number of libraries:
+        val deserializedDag: KlibDAG = serializedDagWithOnlyStdlibAndPosix.deserialize(libraries.filter { it.path.isStdlibOrPosix() })
         assertEquals(2, deserializedDag.libraries.size)
         assertTrue(deserializedDag.libraries.all { it.canonicalPath.isStdlibOrPosix() })
+
+        // Pass more libraries as the input that there are actually required:
+        try {
+            serializedDagWithOnlyStdlibAndPosix.deserialize(libraries)
+            fail { "Normally unreachable" }
+        } catch (e: Exception) {
+            val message = e.message.orEmpty()
+            assertTrue(message.startsWith("There are libraries that are used in the current compilation but are missing in the deserialized DAG:"))
+
+            val libraryPaths = message.substringAfter(':').split(',').mapToSet { Path(it.trim()) }
+            assertTrue(libraryPaths.none { it.isStdlibOrPosix() })
+            assertEquals(libraries.size - 2, libraryPaths.size)
+        }
     }
 
     /**
@@ -493,9 +502,9 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         }
     }
 
-    private fun assertLosslessDeserialization(dag: KlibDAG, libraries: Collection<KotlinLibrary> = dag.libraries) {
+    private fun assertLosslessDeserialization(dag: KlibDAG) {
         val serializedOnce = dag.serialize()
-        val serializedTwice = serializedOnce.deserialize(libraries).serialize()
+        val serializedTwice = serializedOnce.deserialize(dag.libraries).serialize()
 
         assertEquals(serializedOnce, serializedTwice)
     }
