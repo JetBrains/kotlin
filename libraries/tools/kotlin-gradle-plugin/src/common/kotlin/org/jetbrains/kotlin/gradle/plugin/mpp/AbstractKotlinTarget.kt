@@ -131,7 +131,7 @@ abstract class AbstractKotlinTarget(
             }
         ).mapTo(mutableSetOf()) { (mavenScope, dependenciesConfigurationName) ->
             project.defaultKotlinUsageContextMaybeReplacedWithKar(
-                isStoredInKotlinArchive = if (this is KotlinTargetWithKotlinArchiveSupport) isStoredInKotlinArchive else null,
+                isStoredInKotlinArchive = isStoredInKotlinArchive,
                 compilation = producingCompilation,
                 mavenScope = mavenScope,
                 dependencyConfigurationName = dependenciesConfigurationName,
@@ -164,11 +164,7 @@ abstract class AbstractKotlinTarget(
         val rootSourcesJarTask = project.multiplatformExtensionOrNull?.rootSourcesJarTask()
 
         return defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask(
-            replacementTaskProvider = if (this is KotlinTargetWithKotlinArchiveSupport) {
-                isStoredInKotlinArchive.map { rootSourcesJarTask }
-            } else {
-                null
-            },
+            replacementTaskProvider = isStoredInKotlinArchive.map { if (it) rootSourcesJarTask else null },
             movedToSoftwareComponent = project.multiplatformExtensionOrNull?.rootSoftwareComponent,
             compilation = producingCompilation,
             mavenScope = mavenScope,
