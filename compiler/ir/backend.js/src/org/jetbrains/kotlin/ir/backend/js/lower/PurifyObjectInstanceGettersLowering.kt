@@ -92,6 +92,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  * `_getInstance` call with `_instance` field access when applicable.
  */
 open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
+    internal constructor(context: JsIrOptimizationContext) : this(context.backendContext)
+
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         when (declaration) {
             is IrFunction if declaration.isObjectConstructor() -> declaration.removeInstanceFieldInitializationIfPossible()
