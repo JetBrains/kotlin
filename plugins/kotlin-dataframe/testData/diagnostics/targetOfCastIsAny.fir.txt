@@ -1,0 +1,6 @@
+FILE: targetOfCastIsAny.kt
+    public final fun box(): R|kotlin/String| {
+        lval df: R|{org/jetbrains/kotlinx/dataframe/AnyFrame=} org/jetbrains/kotlinx/dataframe/DataFrame<*>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion.Empty|
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|kotlin/Any|>()
+        ^box String(OK)
+    }

@@ -202,7 +202,10 @@ private class Checker(
         val targetType = targetProjection.typeRef.coneType as? ConeClassLikeType ?: return null
         val targetSymbol = targetType.toSymbol()
         if (targetSymbol != null && !sessionHolder.session.predicateBasedProvider.matches(VALID_CAST_TARGET_PREDICATE, targetSymbol)) {
-            reporter.reportOn(source, CAST_TARGET_WARNING, targetType.renderReadable(), context)
+            // Avoiding diagnostic when intention of cast is to "erase" schema
+            if (!targetType.isAnyOrNullableAny) {
+                reporter.reportOn(source, CAST_TARGET_WARNING, targetType.renderReadable(), context)
+            }
         }
         return targetType
     }
