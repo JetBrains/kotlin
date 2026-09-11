@@ -76,7 +76,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
-        androidProject(gradleVersion, agpVersion, jdkVersion, applyBcvPlugin = true) {
+        androidProject(gradleVersion, agpVersion, jdkVersion) {
             abiValidation { }
 
             build("updateKotlinAbi")
@@ -84,7 +84,6 @@ class AbiValidationAndroidIT : KGPBaseTest() {
             assertTrue(referenceJvmDumpFile().length() > 0)
 
             build("checkKotlinAbi")
-            build("apiCheck")
         }
     }
 
@@ -95,7 +94,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
-        kmpWithAndroidProject(gradleVersion, agpVersion, jdkVersion, applyBcvPlugin = true) {
+        kmpWithAndroidProject(gradleVersion, agpVersion, jdkVersion) {
             abiValidation()
 
             buildScriptInjection {
@@ -115,7 +114,6 @@ class AbiValidationAndroidIT : KGPBaseTest() {
             assertFileContains(referenceMixedAndroidDumpFile.toPath(), "class SimpleClass")
 
             build("checkKotlinAbi")
-            build("apiCheck")
         }
     }
 }

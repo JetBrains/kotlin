@@ -315,7 +315,7 @@ class FusStatisticsIT : KGPBaseTest() {
             ) { fusFiles ->
                 assertFilesCombinedContains(
                     fusFiles,
-                    "KSP_GRADLE_PLUGIN_VERSION=1.9.22"
+                    "KSP_GRADLE_PLUGIN_VERSION=2.3.12"
                 )
             }
         }
