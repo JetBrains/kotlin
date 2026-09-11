@@ -156,6 +156,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::ObjectDeclarationLowering, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
     ::WasmStaticInitializersDeclarationLowering,
     ::WasmStaticInitializersUsageLowering,
+    ::WasmStaticInitializersGetFieldUsageLowering,
 
     ::EnumUsageLowering,
     ::EnumClassRemoveEntriesLowering,
