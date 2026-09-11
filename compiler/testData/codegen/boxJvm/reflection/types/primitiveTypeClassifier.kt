@@ -13,6 +13,7 @@ import kotlin.test.assertEquals
 class A(
     val primitive: Boolean,
     val wrapper: Boolean?,
+    val wrapperJavaLang: java.lang.Boolean,
 )
 
 fun primitive(): Byte = 0.toByte()
@@ -38,7 +39,7 @@ fun box(): String {
     )
 
     assertEquals(
-        listOfNotNull(Boolean::class.javaPrimitiveType, Boolean::class.javaObjectType),
+        listOfNotNull(Boolean::class.javaPrimitiveType, Boolean::class.javaObjectType, Boolean::class.javaObjectType),
         A::class.constructors.single().parameters.map { it.type.javaClass() },
     )
 
