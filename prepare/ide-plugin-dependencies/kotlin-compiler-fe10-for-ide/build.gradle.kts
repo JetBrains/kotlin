@@ -8,6 +8,8 @@ val fe10CompilerModules: Array<String> = CompilerModules.fe10CompilerModules
 
 val excludedCompilerModules = listOf(
     ":compiler:incremental-compilation-impl",
+    ":core:deserialization",
+    ":core:descriptors.jvm",
 )
 
 val extraCompilerModules = listOf(
