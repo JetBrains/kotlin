@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.base.service
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.SyntaxTraverser
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.javaInterop.*
 import org.jetbrains.kotlin.analysis.api.session.analyze
@@ -37,6 +35,33 @@ internal fun KtElement.getLightElements(): List<PsiNamedElement> {
     }
 }
 
+context(_: KaSession)
+internal fun PsiNamedElement.getLightElementsForJavaDeclaration(): List<PsiNamedElement> {
+    fun PsiMember.symbol() = when (this) {
+        is PsiClass -> namedClassSymbol
+        else -> callableSymbol
+    }
+
+    val symbol = when (this) {
+        is PsiTypeParameter -> {
+            val containingDeclaration = parent?.parent as? PsiMember
+            containingDeclaration?.symbol()?.typeParameters?.find {
+                it.anchorPsi == this
+            }
+        }
+
+        is PsiParameter -> {
+            val containingDeclaration = parent?.parent as? PsiMember
+            (containingDeclaration?.symbol() as? KaFunctionSymbol)?.valueParameters?.find {
+                it.anchorPsi == this
+            }
+        }
+
+        is PsiMember -> symbol()
+        else -> null
+    }
+    return symbol?.getLightElementsFromDeclaration().orEmpty()
+}
 
 context(_: KaSession)
 internal fun KaSymbol.getLightElementsFromDeclaration(): List<PsiNamedElement> {
