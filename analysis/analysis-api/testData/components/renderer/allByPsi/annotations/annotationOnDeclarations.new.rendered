@@ -1,0 +1,23 @@
+@Target(allowedTargets = [AnnotationTarget.ANNOTATION_CLASS])
+annotation class base
+
+@base
+annotation class derived
+
+@base
+class correct(@property:base val x: Int) {
+  @base
+  constructor()
+}
+
+@base
+enum class My {
+  @base FIRST,
+  @base SECOND
+}
+
+@base
+fun foo(@base y: @base Int): Int
+
+@base
+val z: Int
