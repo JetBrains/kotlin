@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash128
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
+import org.jetbrains.kotlin.backend.wasm.wasmInitializeExportName
+import org.jetbrains.kotlin.backend.wasm.wasmWasiPreview2StartExportName
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.ir.*
@@ -70,8 +72,11 @@ class WasmCompiledModuleFragment(
 
         createAssociatedObjectGetter(definedDeclarations = definedDeclarations, wasmElements = wasmElements)
 
+        val wasiPreview2 = !isWasmJsTarget
         val mainFunctionsExportName = if (wasmCommandModuleInitialization)
             wasmInitializeExportName
+        else if (wasiPreview2)
+            wasmWasiPreview2StartExportName
         else
             wasmStartExportName
 
