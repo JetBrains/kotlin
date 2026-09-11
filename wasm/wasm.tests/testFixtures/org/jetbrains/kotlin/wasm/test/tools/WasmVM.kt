@@ -249,22 +249,43 @@ internal class BoundedOutputCapture(
         renderedOutput?.let { return it }
         val output = prefix?.let { outputPrefix ->
             val hash = checkNotNull(digest).digest().joinToString("") { byte -> "%02x".format(byte) }
-            buildString(outputPrefix.length + suffixSize + 128) {
-                append(outputPrefix)
-                append('\n')
+            val retainedPrefix = outputPrefix.throughLastLineBreak()
+            val retainedSuffix = buildString(suffixSize) {
+                for (index in 0 until suffixSize) {
+                    append(suffix[(suffixStart + index) % suffix.size])
+                }
+            }.afterFirstLineBreak()
+            buildString(retainedPrefix.length + retainedSuffix.length + 128) {
+                append(retainedPrefix)
                 append(GroupedTestsResultProtocol.LINE_PREFIX)
                 append(GroupedTestsResultProtocol.SEP)
                 append(GroupedTestsResultProtocol.OUTPUT_TRUNCATED)
                 append(GroupedTestsResultProtocol.SEP)
                 append("original length=").append(totalLength).append(" chars; SHA-256=").append(hash)
                 append('\n')
-                for (index in 0 until suffixSize) {
-                    append(suffix[(suffixStart + index) % suffix.size])
-                }
+                append(retainedSuffix)
             }
         } ?: fullOutput.toString()
         renderedOutput = output
         return output
+    }
+
+    /** Drops the partial line at the end of retained head output. */
+    private fun String.throughLastLineBreak(): String {
+        val lineBreakIndex = indexOfLast { it == '\n' || it == '\r' }
+        return substring(0, lineBreakIndex + 1)
+    }
+
+    /** Drops the partial line at the start of retained tail output. */
+    private fun String.afterFirstLineBreak(): String {
+        val lineBreakIndex = indexOfFirst { it == '\n' || it == '\r' }
+        if (lineBreakIndex < 0) return ""
+        val firstRetainedIndex = if (this[lineBreakIndex] == '\r' && getOrNull(lineBreakIndex + 1) == '\n') {
+            lineBreakIndex + 2
+        } else {
+            lineBreakIndex + 1
+        }
+        return substring(firstRetainedIndex)
     }
 }
 

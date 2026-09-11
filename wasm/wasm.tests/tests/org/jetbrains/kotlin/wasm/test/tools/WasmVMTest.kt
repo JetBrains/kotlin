@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.wasm.test.tools
 
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.security.MessageDigest
@@ -46,5 +47,40 @@ class WasmVMTest {
         assertTrue(GroupedTestsResultProtocol.OUTPUT_TRUNCATED in output, output.takeLast(256))
         assertTrue("original length=" in output, output.takeLast(256))
         assertTrue("SHA-256=" in output, output.takeLast(256))
+    }
+
+    @Test
+    fun `given protocol-looking fragments across capture boundaries then only the truncation marker is parsed`() {
+        val retainedHalfLength = 2 * 1024 * 1024
+        val prefixRecord = "${GroupedTestsResultProtocol.LINE_PREFIX}|prefix|${GroupedTestsResultProtocol.STARTED}||"
+        val prefixFragment = prefixRecord.take(prefixRecord.length / 2)
+        val prefix = buildString(retainedHalfLength) {
+            append(GroupedTestsResultProtocol.BEGIN).append('\n')
+            append("x".repeat(retainedHalfLength - length - prefixFragment.length - 1))
+            append('\n')
+            append(prefixFragment)
+        }
+        val suffixRecord = "${GroupedTestsResultProtocol.LINE_PREFIX}|suffix|${GroupedTestsResultProtocol.STARTED}||"
+        val middle = prefixRecord.drop(prefixFragment.length) + "\nnoise"
+        val suffix = suffixRecord + "\n" + "y".repeat(retainedHalfLength - suffixRecord.length - 1)
+        val capture = BoundedOutputCapture()
+
+        for (part in listOf(prefix, middle, suffix)) {
+            capture.append(part.toCharArray(), part.length)
+        }
+
+        val output = capture.toString()
+        val (crashedIds, malformedLines) = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertFalse(prefixFragment in output, output.takeLast(256))
+        assertFalse(suffixRecord in output, output.takeLast(256))
+        assertEquals(1, malformedLines.size, malformedLines.toString())
+        assertTrue(
+            malformedLines.single().startsWith(
+                "${GroupedTestsResultProtocol.LINE_PREFIX}|${GroupedTestsResultProtocol.OUTPUT_TRUNCATED}|"
+            ),
+            malformedLines.toString(),
+        )
+        assertTrue(crashedIds.isEmpty(), crashedIds.toString())
     }
 }
