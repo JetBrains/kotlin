@@ -85,17 +85,16 @@ internal fun getBooleanHashCode(value: Boolean): Int {
 @UsedFromCompilerGeneratedCode
 internal fun getBigIntHashCode(value: BigInt): Int {
     val shiftNumber = BigInt(32)
-
     // In Kotlin the 0xffffffff literal has the Long type, which is boxed, so we use a Double literal instead
     val mask = BigInt(4294967295.0)
 
-    val endValue = if (value.isNegative) -1L else 0L
     var hashCode = 0
     var bigNumber = value
+    val endValue = if (value.isNegative) BigInt(-1) else BigInt(0)
 
     while (!jsEqeqeq(bigNumber, endValue)) {
         val chunk = (bigNumber and mask).toNumber().unsafeCast<Int>()
-        hashCode = 31 * hashCode + chunk
+        hashCode = hashCode xor chunk
         bigNumber = bigNumber shr shiftNumber
     }
 
