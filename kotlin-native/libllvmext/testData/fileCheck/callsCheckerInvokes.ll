@@ -1,17 +1,17 @@
 ; OPT: --passes=kotlin-calls-checker
 
-; CHECK: @0 = internal constant [23 x i8] c"invokeExternalFunction\00"
-; CHECK: @1 = internal constant [17 x i8] c"externalFunction\00"
-; CHECK: @2 = internal constant [20 x i8] c"invokeLLVMIntrinsic\00"
-; CHECK: @3 = internal constant [15 x i8] c"llvm.donothing\00"
-; CHECK: @4 = internal constant [23 x i8] c"invokeFunctionFromLoad\00"
-; CHECK: @5 = internal constant [22 x i8] c"invokeFunctionFromArg\00"
-; CHECK: @6 = internal constant [22 x i8] c"invokeFunctionFromPhi\00"
-; CHECK: @7 = internal constant [25 x i8] c"invokeFunctionFromSelect\00"
-; CHECK: @8 = internal constant [23 x i8] c"invokeFunctionFromCall\00"
-; CHECK: @9 = internal constant [22 x i8] c"invokeFunctionFromVec\00"
-; CHECK: @10 = internal constant [32 x i8] c"invokeExternalFunctionWithCasts\00"
-; CHECK: @11 = internal constant [31 x i8] c"invokeFunctionFromArgWithCasts\00"
+; CHECK: @0 = private constant [23 x i8] c"invokeExternalFunction\00"
+; CHECK: @1 = private constant [17 x i8] c"externalFunction\00"
+; CHECK: @2 = private constant [20 x i8] c"invokeLLVMIntrinsic\00"
+; CHECK: @3 = private constant [15 x i8] c"llvm.donothing\00"
+; CHECK: @4 = private constant [23 x i8] c"invokeFunctionFromLoad\00"
+; CHECK: @5 = private constant [22 x i8] c"invokeFunctionFromArg\00"
+; CHECK: @6 = private constant [22 x i8] c"invokeFunctionFromPhi\00"
+; CHECK: @7 = private constant [25 x i8] c"invokeFunctionFromSelect\00"
+; CHECK: @8 = private constant [23 x i8] c"invokeFunctionFromCall\00"
+; CHECK: @9 = private constant [22 x i8] c"invokeFunctionFromVec\00"
+; CHECK: @10 = private constant [32 x i8] c"invokeExternalFunctionWithCasts\00"
+; CHECK: @11 = private constant [31 x i8] c"invokeFunctionFromArgWithCasts\00"
 
 declare ptr @personality()
 
@@ -79,7 +79,7 @@ exit:
 
 ; CHECK: define void @invokeExternalFunction() personality ptr @personality {
 define void @invokeExternalFunction() personality ptr @personality {
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @0, ptr @1, ptr @externalFunction)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @0, ptr @1, ptr @externalFunction)
 ; CHECK-NEXT: invoke void @externalFunction()
 ; CHECK-NEXT:         to label %exit unwind label %unwind
   invoke void @externalFunction()
@@ -105,7 +105,7 @@ exit:
 
 ; CHECK: define void @invokeLLVMIntrinsic() personality ptr @personality {
 define void @invokeLLVMIntrinsic() personality ptr @personality {
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @2, ptr @3, ptr inttoptr (i64 -2 to ptr))
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @2, ptr @3, ptr null)
 ; CHECK-NEXT: invoke void @llvm.donothing()
 ; CHECK-NEXT:         to label %exit unwind label %unwind
   invoke void @llvm.donothing()
@@ -158,7 +158,7 @@ exit:
 define void @invokeFunctionFromLoad(ptr %0) personality ptr @personality {
 ; CHECK-NEXT: %2 = load ptr, ptr %0
   %2 = load ptr, ptr %0
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @4, ptr null, ptr %2)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @4, ptr null, ptr %2)
 ; CHECK-NEXT: invoke void %2()
 ; CHECK-NEXT:         to label %exit unwind label %unwind
   invoke void %2()
@@ -184,7 +184,7 @@ exit:
 
 ; CHECK: define void @invokeFunctionFromArg(ptr %0) personality ptr @personality {
 define void @invokeFunctionFromArg(ptr %0) personality ptr @personality {
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @5, ptr null, ptr %0)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @5, ptr null, ptr %0)
 ; CHECK-NEXT: invoke void %0()
 ; CHECK-NEXT:         to label %exit unwind label %unwind
   invoke void %0()
@@ -232,7 +232,7 @@ f:
 next:
 ; CHECK-NEXT: %1 = phi ptr [ @knownFunction, %t ], [ @externalFunction, %f ]
   %1 = phi ptr [ @knownFunction, %t ], [ @externalFunction, %f ]
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @6, ptr null, ptr %1)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @6, ptr null, ptr %1)
 ; CHECK-NEXT: invoke void %1()
 ; CHECK-NEXT:         to label %exit unwind label %unwind
   invoke void %1()
@@ -260,7 +260,7 @@ exit:
 define void @invokeFunctionFromSelect(i1 %0) personality ptr @personality {
 ; CHECK-NEXT: %2 = select i1 %0, ptr @knownFunction, ptr @externalFunction
   %2 = select i1 %0, ptr @knownFunction, ptr @externalFunction
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @7, ptr null, ptr %2)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @7, ptr null, ptr %2)
 ; CHECK-NEXT: invoke void %2()
 ; CHECK-NEXT:         to label %exit unwind label %unwind
   invoke void %2()
@@ -288,7 +288,7 @@ exit:
 define void @invokeFunctionFromCall() personality ptr @personality {
 ; CHECK-NEXT: %1 = call ptr @knownFunctionCallback()
   %1 = call ptr @knownFunctionCallback()
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @8, ptr null, ptr %1)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @8, ptr null, ptr %1)
 ; CHECK-NEXT: invoke void %1()
 ; CHECK-NEXT:         to label %exit unwind label %unwind
   invoke void %1()
@@ -316,7 +316,7 @@ exit:
 define void @invokeFunctionFromVec(<2 x ptr> %0) personality ptr @personality {
 ; CHECK-NEXT: %2 = extractelement <2 x ptr> %0, i64 0
   %2 = extractelement <2 x ptr> %0, i64 0
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @9, ptr null, ptr %2)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @9, ptr null, ptr %2)
 ; CHECK-NEXT: invoke void %2()
 ; CHECK-NEXT:         to label %exit unwind label %unwind
   invoke void %2()
@@ -375,7 +375,7 @@ define void @invokeExternalFunctionWithCasts() personality ptr @personality {
   %1 = ptrtoint ptr @externalFunction to i64
 ; CHECK-NEXT: %2 = inttoptr i64 %1 to ptr
   %2 = inttoptr i64 %1 to ptr
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @10, ptr @1, ptr @externalFunction)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @10, ptr @1, ptr @externalFunction)
 ; CHECK-NEXT: invoke void %2()
 ; CHECK-NEXT:         to label %exit unwind label %unwind
   invoke void %2()
@@ -405,7 +405,7 @@ define void @invokeFunctionFromArgWithCasts(ptr %0) personality ptr @personality
   %2 = ptrtoint ptr %0 to i64
 ; CHECK-NEXT: %3 = inttoptr i64 %2 to ptr
   %3 = inttoptr i64 %2 to ptr
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @11, ptr null, ptr %0)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @11, ptr null, ptr %0)
 ; CHECK-NEXT: invoke void %3()
 ; CHECK-NEXT:         to label %exit unwind label %unwind
   invoke void %3()
@@ -429,4 +429,4 @@ exit:
 ; CHECK-NEXT: }{{$}}
 }
 
-; CHECK: declare void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr, ptr, ptr)
+; CHECK: declare void @Kotlin_callsChecker_check(ptr, ptr, ptr)
