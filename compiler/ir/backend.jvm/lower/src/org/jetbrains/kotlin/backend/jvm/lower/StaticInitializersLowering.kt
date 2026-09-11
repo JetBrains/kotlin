@@ -34,8 +34,7 @@ internal class StaticInitializersLowering(override val context: JvmBackendContex
                     IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY -> 2
                     IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES -> 3
                     IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRIES -> 4
-                    IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE -> 5
-                    else -> 6
+                    else -> 5
                 }
             }
             irClass.addFunction {

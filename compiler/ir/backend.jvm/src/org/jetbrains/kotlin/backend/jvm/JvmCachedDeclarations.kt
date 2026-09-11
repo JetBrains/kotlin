@@ -35,6 +35,7 @@ private var IrSimpleFunction.staticCompanionDeclarations: Pair<IrSimpleFunction,
 
 private var IrSimpleFunction.defaultImplsMethod: IrSimpleFunction? by irAttribute(copyByDefault = false)
 private var IrClass.defaultImplsClass: IrClass? by irAttribute(copyByDefault = false)
+private var IrClass.interfacePrivateFieldsClass: IrClass? by irAttribute(copyByDefault = false)
 private var IrSimpleFunction.classFakeOverrideReplacement: ClassFakeOverrideReplacement? by irAttribute(copyByDefault = false)
 var IrSimpleFunction.originalFunctionForDefaultImpl: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
@@ -244,6 +245,20 @@ class JvmCachedDeclarations(
                 // it also should not be protected or internal as a nested class of an interface. So,
                 // the safest option is to make it public.
                 visibility = DescriptorVisibilities.PUBLIC
+            }.apply {
+                parent = interfaceClass
+                createThisReceiverParameter()
+            }
+        }
+
+    fun getInterfacePrivateFieldsClass(interfaceClass: IrClass): IrClass =
+        interfaceClass::interfacePrivateFieldsClass.getOrSetIfNull {
+            context.irFactory.buildClass {
+                startOffset = interfaceClass.startOffset
+                endOffset = interfaceClass.endOffset
+                origin = JvmLoweredDeclarationOrigin.INTERFACE_PRIVATE_FIELDS_CLASS
+                name = Name.identifier(JvmAbi.INTERFACE_PRIVATE_FIELDS_CLASS_NAME)
+                visibility = DescriptorVisibilities.PRIVATE
             }.apply {
                 parent = interfaceClass
                 createThisReceiverParameter()

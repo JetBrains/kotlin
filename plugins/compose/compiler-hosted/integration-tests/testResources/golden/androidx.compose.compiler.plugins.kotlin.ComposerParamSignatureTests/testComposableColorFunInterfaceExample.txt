@@ -56,8 +56,8 @@ public final class Color {
   public final static synthetic access%getRed%cp()J
   public final static synthetic access%getBlue%cp()J
   static <clinit>()V
-  public final static LColor%Companion; Companion
   private final J value
+  public final static LColor%Companion; Companion
   private final static J Red
   private final static J Blue
   public final static INNERCLASS Color%Companion Color Companion

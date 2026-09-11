@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 object JvmLoweredDeclarationOrigin {
     val CLASS_STATIC_INITIALIZER by IrDeclarationOriginImpl.Regular
     val DEFAULT_IMPLS by IrDeclarationOriginImpl.Regular
+    val INTERFACE_PRIVATE_FIELDS_CLASS by IrDeclarationOriginImpl.Synthetic
     val SUPER_INTERFACE_METHOD_BRIDGE by IrDeclarationOriginImpl.Regular
     val FIELD_FOR_OUTER_THIS by IrDeclarationOriginImpl.Regular
     val LAMBDA_IMPL by IrDeclarationOriginImpl.Regular

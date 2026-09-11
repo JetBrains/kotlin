@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
 import org.jetbrains.kotlin.backend.jvm.JvmSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.jvm.isExposedByMakingPublic
@@ -97,6 +98,9 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
             val scopeClassOrPackage = inlineScopeResolver.findContainer(currentScope!!.irElement) ?: return false
             val samePackage = ownerClass.getPackageFragment().packageFqName == scopeClassOrPackage.getPackageFragment()?.packageFqName
             return when {
+                // Prevent direct access to interface's PrivateFields from places other than the interface itself
+                ownerClass.origin == JvmLoweredDeclarationOrigin.INTERFACE_PRIVATE_FIELDS_CLASS
+                    -> scopeClassOrPackage == ownerClass.parentAsClass
                 jvmVisibility == Opcodes.ACC_PRIVATE -> ownerClass == scopeClassOrPackage
                 !withSuper && samePackage && jvmVisibility == 0 /* package only */ -> true
                 !withSuper && samePackage && !fromOtherClassLoader -> true
