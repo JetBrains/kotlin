@@ -294,7 +294,7 @@ kotlin {
             }
         }
 
-        val latestTargetRunRegistering: KotlinJsSubTargetDsl.() -> KotlinJsPlatformTestRun = {
+        fun KotlinJsSubTargetDsl.latestTargetRunRegistering(): KotlinJsPlatformTestRun {
             testRuns.create("latestTarget") {
                 setExecutionSourceFrom(latestJsCompilation)
                 executionTask.configure {
