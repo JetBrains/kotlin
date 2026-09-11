@@ -200,8 +200,10 @@ private const val CAPTURED_PROCESS_OUTPUT_SUFFIX_LENGTH =
     MAX_CAPTURED_PROCESS_OUTPUT_LENGTH - CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH
 
 /** Keeps enough head and tail context for diagnostics while bounding output retained from an external VM. */
-internal class BoundedOutputCapture {
-    private val digest = MessageDigest.getInstance("SHA-256")
+internal class BoundedOutputCapture(
+    private val createDigest: () -> MessageDigest = { MessageDigest.getInstance("SHA-256") },
+) {
+    private var digest: MessageDigest? = null
     private var totalLength = 0L
     private var fullOutput = StringBuilder()
     private var prefix: String? = null
@@ -211,20 +213,23 @@ internal class BoundedOutputCapture {
     private var renderedOutput: String? = null
 
     fun append(buffer: CharArray, length: Int) {
-        val chunk = String(buffer, 0, length)
-        totalLength += chunk.length
-        digest.update(chunk.toByteArray(Charsets.UTF_8))
+        totalLength += length
 
         if (prefix == null) {
-            if (fullOutput.length + chunk.length <= MAX_CAPTURED_PROCESS_OUTPUT_LENGTH) {
-                fullOutput.append(chunk)
+            if (fullOutput.length + length <= MAX_CAPTURED_PROCESS_OUTPUT_LENGTH) {
+                fullOutput.appendRange(buffer, 0, length)
                 return
             }
 
+            digest = createDigest().apply {
+                update(fullOutput.toString().toByteArray(Charsets.UTF_8))
+            }
             prefix = fullOutput.substring(0, CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH)
             appendToSuffix(fullOutput.substring(CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH))
             fullOutput = StringBuilder()
         }
+        val chunk = String(buffer, 0, length)
+        checkNotNull(digest).update(chunk.toByteArray(Charsets.UTF_8))
         appendToSuffix(chunk)
     }
 
@@ -243,7 +248,7 @@ internal class BoundedOutputCapture {
     override fun toString(): String {
         renderedOutput?.let { return it }
         val output = prefix?.let { outputPrefix ->
-            val hash = digest.digest().joinToString("") { byte -> "%02x".format(byte) }
+            val hash = checkNotNull(digest).digest().joinToString("") { byte -> "%02x".format(byte) }
             buildString(outputPrefix.length + suffixSize + 128) {
                 append(outputPrefix)
                 append('\n')
