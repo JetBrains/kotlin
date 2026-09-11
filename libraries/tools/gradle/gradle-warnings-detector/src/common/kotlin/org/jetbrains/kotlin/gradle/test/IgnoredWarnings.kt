@@ -37,6 +37,24 @@ internal val KNOWN_THIRD_PARTY_WARNINGS: List<IgnoredWarning> = listOf(
         pattern = """Retrieving attribute with a null key\.""".toRegex(),
         fromClass = """\bcom\.android\.""".toRegex(),
     ),
+    IgnoredWarning(
+        reason = "AGP calls deprecated Configuration.setVisible(boolean): " +
+                "https://issuetracker.google.com/issues/560282299",
+        pattern = """The Configuration\.setVisible\(boolean\) method has been deprecated\.""".toRegex(),
+        fromClass = """\bcom\.android\.""".toRegex(),
+    ),
+    IgnoredWarning(
+        reason = "KSP calls deprecated Configuration.setVisible(boolean): " +
+                "https://github.com/google/ksp/issues/3234",
+        pattern = """The Configuration\.setVisible\(boolean\) method has been deprecated\.""".toRegex(),
+        fromClass = """\bcom\.google\.devtools\.ksp\.""".toRegex(),
+    ),
+    IgnoredWarning(
+        reason = "Dokka calls deprecated Configuration.setVisible(boolean): " +
+                "https://github.com/Kotlin/dokka/issues/4600",
+        pattern = """The Configuration\.setVisible\(boolean\) method has been deprecated\.""".toRegex(),
+        fromClass = """\borg\.jetbrains\.dokka\.""".toRegex(),
+    ),
 )
 
 internal fun List<IgnoredWarning>.firstMatching(
