@@ -1,0 +1,8 @@
+class Outer {
+  class Nested
+}
+
+fun accept(outer: Outer, nested: Nested, string: String)
+
+val nullableNested: Nested?
+  get()

@@ -1,0 +1,11 @@
+class Compact {
+  fun first()
+  fun second()
+  val x: Int
+}
+
+enum class Entries {
+  A,
+  B;
+  fun member()
+}

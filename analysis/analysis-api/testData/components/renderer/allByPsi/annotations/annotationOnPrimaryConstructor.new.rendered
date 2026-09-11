@@ -1,0 +1,8 @@
+@Target(allowedTargets = [AnnotationTarget.CONSTRUCTOR])
+annotation class Ctor
+
+class WithAnnotatedConstructor @Ctor constructor(val x: Int)
+
+class WithAnnotatedPrivateConstructor @Ctor private constructor
+
+class NoParameters @Ctor constructor

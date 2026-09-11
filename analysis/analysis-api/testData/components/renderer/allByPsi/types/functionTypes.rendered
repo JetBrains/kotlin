@@ -8,3 +8,10 @@ fun <T> simpleWith(t: T, f: T.() -> Unit)
 
 fun <T> simpleWith1(t: T, f: (T & Any).() -> Unit)
 
+fun String?.nullableReceiver()
+
+fun <T> T?.nullableTypeParameterReceiver()
+
+fun <T> nullableFunctionTypeReceiver(f: ((() -> Unit)?).(T) -> Unit)
+
+fun <T> simpleWithNullable(t: T, f: T?.() -> Unit)

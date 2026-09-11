@@ -1,0 +1,5 @@
+fun annotatedString(j: JavaDeclaration): @Ann String?
+
+fun annotatedList(j: JavaDeclaration): List<@Ann String?>?
+
+fun annotatedMutableList(j: JavaDeclaration): @Ann List<@Ann String?>?

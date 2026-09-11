@@ -46,4 +46,8 @@ internal object RendererDirectives : SimpleDirectivesContainer() {
     val NO_EXTRA_LINE_BETWEEN_MEMBERS by directive(
         description = "Renders consecutive members within a class body without a separating blank line.",
     )
+
+    val RENDER_CLASS_INITIALIZERS by directive(
+        description = "Renders `init` blocks as class body members.",
+    )
 }

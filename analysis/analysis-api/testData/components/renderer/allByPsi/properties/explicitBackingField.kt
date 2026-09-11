@@ -1,0 +1,14 @@
+// LANGUAGE: +ExplicitBackingFields
+
+@Target(AnnotationTarget.FIELD)
+annotation class Anno
+
+interface Base
+
+class Derived : Base
+
+val inferred: Base
+    field = Derived()
+
+val names: List<String>
+    @Anno field: MutableList<String> = mutableListOf()
