@@ -8,7 +8,6 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.CacheableTransfor
 import com.github.jengelman.gradle.plugins.shadow.transformers.ResourceTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import kotlin.metadata.jvm.JvmMetadataVersion
-import kotlin.metadata.jvm.KotlinModuleMetadata
 import kotlin.metadata.jvm.UnstableMetadataApi
 import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
@@ -16,6 +15,7 @@ import org.gradle.api.file.FileTreeElement
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.Input
 import java.io.Serializable
+import kotlin.metadata.jvm.KotlinModuleMetadata
 
 data class KotlinMetadataPivotVersion(val major: Int, val minor: Int, val patch: Int) : Serializable {
     override fun toString(): String = "$major.$minor.$patch"
@@ -47,8 +47,7 @@ class KotlinModuleMetadataVersionBasedSkippingTransformer : ResourceTransformer 
     @OptIn(UnstableMetadataApi::class)
     override fun transform(context: TransformerContext) {
         val metadataBytes = context.inputStream.readBytes()
-        @Suppress("DEPRECATION") // KT-88445
-        val version = KotlinModuleMetadata.read(metadataBytes).version
+        val version = KotlinModuleMetadata.readStrict(metadataBytes).version
         if (version >= pivotVersionAsMetadataVersion) {
             logger.info("Skipping ${context.path}, because its version $version is >= than $pivotVersionAsMetadataVersion")
             return
