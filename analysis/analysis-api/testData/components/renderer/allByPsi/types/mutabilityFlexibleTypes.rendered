@@ -1,0 +1,15 @@
+fun list(j: JavaDeclaration): List<String?>?
+
+fun map(j: JavaDeclaration): Map<String?, Int?>?
+
+fun entry(j: JavaDeclaration): Map.Entry<String?, Int?>?
+
+fun rawList(j: JavaDeclaration): List<*>?
+
+fun collection(j: JavaDeclaration): Collection<CharSequence?>?
+
+fun notNullList(j: JavaDeclaration): List<String?>
+
+fun nullableList(j: JavaDeclaration): List<String?>?
+
+fun iterator(j: JavaDeclaration): Iterator<String?>?

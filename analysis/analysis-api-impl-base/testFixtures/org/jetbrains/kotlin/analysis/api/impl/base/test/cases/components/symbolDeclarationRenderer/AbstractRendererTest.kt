@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.rendering.KaRendererBuilder
 import org.jetbrains.kotlin.analysis.api.rendering.KaRenderingOption
 import org.jetbrains.kotlin.analysis.api.rendering.KaRenderingOutput
 import org.jetbrains.kotlin.analysis.api.rendering.render
+import org.jetbrains.kotlin.analysis.api.rendering.reset
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
@@ -18,7 +19,11 @@ import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.psi.KtClassInitializer
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -55,7 +60,7 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
                         }
                     }
 
-                    contextFile.declarations.forEach { declaration ->
+                    renderedDeclarations(contextFile).forEach { declaration ->
                         val output = KaRenderingOutput.plainString(indentationUnit = "  ")
                         renderer.render(declaration.symbol, output)
                         append(output.toString())
@@ -80,6 +85,16 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
             set(KaRenderingOption.ExtraLineBetweenMembers, false)
         }
 
+        if (RendererDirectives.RENDER_CLASS_INITIALIZERS in directives) {
+            reset(KaRenderingOption.ClassMembers) { previousMembers ->
+                { classSymbol ->
+                    val initializers = (classSymbol.psi as? KtClassOrObject)?.getAnonymousInitializers().orEmpty()
+                        .filterIsInstance<KtClassInitializer>()
+                    previousMembers(classSymbol) + initializers.map { it.symbol }
+                }
+            }
+        }
+
         directives.singleOrZeroValue(RendererDirectives.CLASS_TYPE_QUALIFICATION)?.let {
             set(KaRenderingOption.ClassTypeQualification, it)
         }
@@ -95,5 +110,11 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
         if (RendererDirectives.MULTILINE_VALUE_PARAMETER_LISTS in directives) {
             set(KaRenderingOption.MultilineValueParameterLists, true)
         }
+    }
+}
+
+internal fun renderedDeclarations(file: KtFile): List<KtDeclaration> {
+    return file.declarations.flatMap { declaration ->
+        if (declaration is KtScript) listOf(declaration) + declaration.declarations else listOf(declaration)
     }
 }

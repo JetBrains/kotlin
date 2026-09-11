@@ -1,0 +1,7 @@
+val greeting: String
+
+fun compute(x: Int): Int
+
+class Person(name: String) {
+  val name: String
+}

@@ -1,0 +1,11 @@
+interface A
+interface B
+
+fun <T> constrainedFunction(value: T) where T : A, T : B {}
+
+val <T> T.constrainedProperty: T where T : A, T : B
+    get() = this
+
+class Container {
+    fun <U> constrainedMember(value: U) where U : A, U : B {}
+}

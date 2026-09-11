@@ -1,0 +1,8 @@
+class Outer {
+  class Nested
+}
+
+fun accept(outer: test.pkg.Outer, nested: test.pkg.Outer.Nested, string: kotlin.String)
+
+val nullableNested: test.pkg.Outer.Nested?
+  get()

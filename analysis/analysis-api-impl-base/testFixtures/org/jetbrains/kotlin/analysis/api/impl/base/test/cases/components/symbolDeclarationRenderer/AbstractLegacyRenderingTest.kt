@@ -52,7 +52,7 @@ abstract class AbstractLegacyRenderingTest : AbstractAnalysisApiBasedTest() {
                     mainFile,
                     danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
                 ) { contextFile ->
-                    contextFile.declarations.forEach { declaration ->
+                    renderedDeclarations(contextFile).forEach { declaration ->
                         append(declaration.symbol.render(renderer))
                         appendLine()
                         appendLine()

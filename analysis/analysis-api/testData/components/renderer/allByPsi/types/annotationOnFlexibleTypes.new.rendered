@@ -1,0 +1,13 @@
+fun annotatedString(j: JavaDeclaration): @Ann String!
+
+fun annotated(j: JavaDeclaration): String!
+
+fun annotatedList(j: JavaDeclaration): (Mutable)List<@Ann String!>!
+
+fun annotatedMutableList(j: JavaDeclaration): @Ann (Mutable)List<@Ann String!>!
+
+fun annotatedTypeParameter(j: JavaDeclaration): String!
+
+fun annotatedDefinitelyNotNull(j: JavaDeclaration): @Ann @NotNull String
+
+fun <T> annotatedDefinitelyNotNullTypeParameter(j: JavaDeclaration, value: T): @Ann @NotNull T & Any
