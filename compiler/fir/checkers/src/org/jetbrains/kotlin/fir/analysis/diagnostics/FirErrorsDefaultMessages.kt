@@ -1545,7 +1545,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED,
-            "Ignorability-related annotations are experimental and cannot be used with -Xreturn-value-checker in disabled state.",
+            "Ignorability-related annotations are experimental and cannot be used with -return-value-checker in disabled state.",
         )
         map.put(
             DSL_MARKER_PROPAGATES_TO_MANY,

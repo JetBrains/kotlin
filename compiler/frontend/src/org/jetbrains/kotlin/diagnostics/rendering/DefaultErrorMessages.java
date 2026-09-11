@@ -225,7 +225,7 @@ public class DefaultErrorMessages {
         MAP.put(ANNOTATION_IN_WHERE_CLAUSE_WARNING, "Type parameter annotations will not be allowed inside where clauses in future releases. You should probably move annotations to the type parameter declaration");
         MAP.put(
                 IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED,
-                "Ignorability-related annotations are experimental and cannot be used with -Xreturn-value-checker in disabled state."
+                "Ignorability-related annotations are experimental and cannot be used with -return-value-checker in disabled state."
         );
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
