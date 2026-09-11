@@ -36,17 +36,19 @@ internal typealias ModuleLowering = NamedCompilerPhase<NativeGenerationState, Ir
 internal fun PhaseEngine<NativeGenerationState>.runLowerings(
         lowerings: LoweringList,
         module: IrModuleFragment,
-) = runLowerings(lowerings, listOf(module))
+        parentPhaseType: PhaseType,
+) = runLowerings(lowerings, listOf(module), parentPhaseType)
 
 internal fun PhaseEngine<NativeGenerationState>.runLowerings(
         lowerings: LoweringList,
         modules: List<IrModuleFragment>,
+        parentPhaseType: PhaseType = PhaseType.IrLowering,
 ) {
     for (module in modules) {
         for (file in module.files) {
             context.fileLowerState = FileLowerState()
             lowerings.fold(file) { loweredFile, lowering ->
-                context.performanceManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrLowering) {
+                context.performanceManager.tryMeasureDynamicPhaseTime(lowering.name, parentPhaseType) {
                     try {
                         runPhase(lowering, loweredFile)
                     } catch (e: CompilationException) {
