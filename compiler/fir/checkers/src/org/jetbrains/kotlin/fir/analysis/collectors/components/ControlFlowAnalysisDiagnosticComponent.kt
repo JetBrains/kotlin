@@ -19,9 +19,15 @@ import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClassOrStatic
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForScript
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
 class ControlFlowAnalysisDiagnosticComponent(
@@ -48,6 +54,7 @@ class ControlFlowAnalysisDiagnosticComponent(
     private fun analyze(declaration: FirElement, graph: ControlFlowGraph?, context: CheckerContext) {
         if (graph == null) return
         if (graph.isSubGraph) return
+        if (declaration is FirControlFlowGraphOwner && declaration.isAnalyzedWithContainerGraph(context)) return
 
         context(context, reporter) {
             cfaCheckers.forEach { it.analyze(graph) }
@@ -58,6 +65,24 @@ class ControlFlowAnalysisDiagnosticComponent(
                 val data = PropertyInitializationInfoData(properties, collector.conditionallyInitializedProperties, receiver = null, graph)
                 variableAssignmentCheckers.forEach { it.analyze(data) }
             }
+        }
+    }
+
+    /**
+     * Whether the graph of this declaration is analyzed as a part of its container graph, so it must not be analyzed on its own.
+     *
+     * [ControlFlowGraph.isSubGraph] answers the same question, but only once the container graph is built – it is building the container
+     * graph that links a member graph into it. In the Analysis API a member is resolved and checked on its own, which may happen before its
+     * container is resolved, so the flag alone would make the answer depend on the order in which declarations are checked. The
+     * `isUsedInControlFlowGraphBuilderFor*` predicates are the resolution-independent form of it, and are the same ones the container graph
+     * is built from.
+     */
+    private fun FirControlFlowGraphOwner.isAnalyzedWithContainerGraph(context: CheckerContext): Boolean {
+        return when (context.containingDeclarations.lastOrNull()) {
+            is FirFileSymbol -> isUsedInControlFlowGraphBuilderForFile
+            is FirScriptSymbol -> isUsedInControlFlowGraphBuilderForScript
+            is FirClassSymbol<*> -> isUsedInControlFlowGraphBuilderForClassOrStatic
+            else -> false
         }
     }
 
