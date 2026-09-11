@@ -14,6 +14,7 @@ extension ExportedKotlinPackages.weird {
                 }
             }
         }
+        @_nonoverride
         public init() throws {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == ExportedKotlinPackages.weird.A.self {
@@ -27,7 +28,7 @@ extension ExportedKotlinPackages.weird {
             try KotlinRuntimeSupport.raiseKotlinError(__error)
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -64,7 +65,7 @@ extension ExportedKotlinPackages.weird {
             { weird_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -80,14 +81,14 @@ extension ExportedKotlinPackages.weird {
 }
 @_cdecl("weird_A_bar_get__reverse_swift")
 package func weird_A_bar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = ExportedKotlinPackages.weird.A.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.weird.A.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.bar
     return _result
 }
 
 @_cdecl("weird_A_throws__reverse_swift")
 package func weird_A_throws__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ _out_error: Swift.UnsafeMutablePointer<Swift.UnsafeMutableRawPointer?>) -> Swift.Bool {
-    let _self = ExportedKotlinPackages.weird.A.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.weird.A.__createClassWrapper(externalRCRef: `self`)
     do {
         let _result: Swift.Void = try _self.throws()
         return { _result; return true }()

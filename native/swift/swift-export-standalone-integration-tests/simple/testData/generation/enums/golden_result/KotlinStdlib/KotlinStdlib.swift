@@ -39,7 +39,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -82,11 +82,11 @@ extension ExportedKotlinPackages.kotlin {
                     return ExportedKotlinPackages.kotlin.Enum.Companion.__createClassWrapper(externalRCRef: kotlin_Enum_Companion_get())
                 }
             }
-            private init() {
+            private override init() {
                 fatalError()
             }
             package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -103,7 +103,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -162,7 +162,7 @@ extension ExportedKotlinPackages.kotlin {
 }
 @_cdecl("kotlin_Enum_toString__reverse_swift")
 package func kotlin_Enum_toString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = ExportedKotlinPackages.kotlin.Enum.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.Enum.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.toString()
     return _result
 }

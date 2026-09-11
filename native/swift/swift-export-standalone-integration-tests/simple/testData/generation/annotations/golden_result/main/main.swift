@@ -82,20 +82,20 @@ public final class Bar: main.Foo {
         { __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class ClassWithDeprecatedMembersFromInterface: KotlinRuntime.KotlinBase, main.InterfaceWithDeprecatedMembers, main.__InterfaceWithDeprecatedMembers {
-    public init() {
+    public override init() {
         let __kt = __root___ClassWithDeprecatedMembersFromInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ClassWithDeprecatedMembersFromInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -126,7 +126,7 @@ public final class DeprecatedInterfaceWrapper: KotlinRuntime.KotlinBase {
         fatalError()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -135,7 +135,7 @@ public final class DeprecatedInterfaceWrapper: KotlinRuntime.KotlinBase {
 @_spi(Foonnotation)
 open class Foo: KotlinRuntime.KotlinBase {
     @_spi(Foonnotation)
-    public init() {
+    public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.Foo.self {
              __kt = __root___Foo_init_allocate()
@@ -146,7 +146,7 @@ open class Foo: KotlinRuntime.KotlinBase {
         { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -168,11 +168,11 @@ public final class FooObject: KotlinRuntime.KotlinBase {
             return main.FooObject.__createClassWrapper(externalRCRef: __root___FooObject_get())
         }
     }
-    private init() {
+    private override init() {
         fatalError()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -196,7 +196,7 @@ public final class HiddenInterfaceWrapper: KotlinRuntime.KotlinBase {
         fatalError()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -208,11 +208,11 @@ public final class ObjCObjectB: KotlinRuntime.KotlinBase {
             return main.ObjCObjectB.__createClassWrapper(externalRCRef: __root___KotlinObjectB_get())
         }
     }
-    private init() {
+    private override init() {
         fatalError()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -234,7 +234,7 @@ public final class OptInConstructor: KotlinRuntime.KotlinBase {
             return OptInConstructor_name_get(self.__externalRCRef())
         }
     }
-    public init() {
+    public override init() {
         let __kt = __root___OptInConstructor_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -247,20 +247,20 @@ public final class OptInConstructor: KotlinRuntime.KotlinBase {
         { __root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, name); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class PublicClassImplDeprecatedInterface: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         let __kt = __root___PublicClassImplDeprecatedInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___PublicClassImplDeprecatedInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -270,7 +270,7 @@ public final class PublicClassImplDeprecatedInterface: KotlinRuntime.KotlinBase 
     }
 }
 open class PublicClassImplHiddenInterface: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.PublicClassImplHiddenInterface.self {
              __kt = __root___PublicClassImplHiddenInterface_init_allocate()
@@ -281,7 +281,7 @@ open class PublicClassImplHiddenInterface: KotlinRuntime.KotlinBase {
         { __root___PublicClassImplHiddenInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -303,13 +303,13 @@ open class PublicClassImplHiddenInterface: KotlinRuntime.KotlinBase {
 }
 @available(*, unavailable, message: "Obsoleted")
 public final class PublicDeprecatedClassImplDeprecatedInterface: KotlinRuntime.KotlinBase, main.DeprecatedInterface, main.__DeprecatedInterface {
-    public init() {
+    public override init() {
         let __kt = __root___PublicDeprecatedClassImplDeprecatedInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___PublicDeprecatedClassImplDeprecatedInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -325,7 +325,7 @@ public final class PublicSubClassImplHiddenInterface: main.PublicClassImplHidden
         { __root___PublicSubClassImplHiddenInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -336,52 +336,52 @@ public final class PublicSubClassImplHiddenInterface: main.PublicClassImplHidden
 }
 public final class SwiftClassA: KotlinRuntime.KotlinBase {
     public final class ObjCSubClassC: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             let __kt = KotlinClassA_KotlinSubClassC_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { KotlinClassA_KotlinSubClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class SwiftSubClassA: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             let __kt = KotlinClassA_KotlinSubClassA_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { KotlinClassA_KotlinSubClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class SwiftSubClassB: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             let __kt = KotlinClassA_KotlinSubClassB_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { KotlinClassA_KotlinSubClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class SwiftSubClassD: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             let __kt = KotlinClassA_KotlinSubClassD_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { KotlinClassA_KotlinSubClassD_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -400,13 +400,13 @@ public final class SwiftClassA: KotlinRuntime.KotlinBase {
             return { KotlinClassA_kotlinPropB_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
         }
     }
-    public init() {
+    public override init() {
         let __kt = __root___KotlinClassA_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___KotlinClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -427,11 +427,11 @@ public final class WithCompanion: KotlinRuntime.KotlinBase {
                 return main.WithCompanion.Companion.__createClassWrapper(externalRCRef: WithCompanion_Companion_get())
             }
         }
-        private init() {
+        private override init() {
             fatalError()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -441,13 +441,13 @@ public final class WithCompanion: KotlinRuntime.KotlinBase {
             return { WithCompanion_Companion_companionMethod(self.__externalRCRef()); return () }()
         }
     }
-    public init() {
+    public override init() {
         let __kt = __root___WithCompanion_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___WithCompanion_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -475,7 +475,7 @@ public final class deprecatedChildT: main.deprecatedT {
         { __root___deprecatedChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -493,7 +493,7 @@ public final class deprecatedChildT: main.deprecatedT {
 @available(*, deprecated, message: "Deprecated")
 open class deprecatedT: KotlinRuntime.KotlinBase {
     open class deprecationInheritedT: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == main.deprecatedT.deprecationInheritedT.self {
                  __kt = deprecatedT_deprecationInheritedT_init_allocate()
@@ -504,7 +504,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
             { deprecatedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -512,7 +512,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
     }
     @available(*, unavailable, message: "Obsoleted")
     open class deprecationReinforcedT: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == main.deprecatedT.deprecationReinforcedT.self {
                  __kt = deprecatedT_deprecationReinforcedT_init_allocate()
@@ -523,7 +523,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
             { deprecatedT_deprecationReinforcedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -531,7 +531,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
     }
     @available(*, deprecated, message: "Deprecated")
     open class deprecationRestatedT: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == main.deprecatedT.deprecationRestatedT.self {
                  __kt = deprecatedT_deprecationRestatedT_init_allocate()
@@ -542,7 +542,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
             { deprecatedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -574,7 +574,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
         }
     }
     @available(*, deprecated, message: "Deprecated")
-    public init() {
+    public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.deprecatedT.self {
              __kt = __root___deprecatedT_init_allocate()
@@ -585,7 +585,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
         { __root___deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -696,7 +696,7 @@ public final class normalChildT: main.normalT {
         { __root___normalChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -744,14 +744,14 @@ open class normalT: KotlinRuntime.KotlinBase {
             { normalT_deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, deprecated); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class normalT: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == main.normalT.normalT.self {
                  __kt = normalT_normalT_init_allocate()
@@ -762,7 +762,7 @@ open class normalT: KotlinRuntime.KotlinBase {
             { normalT_normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -777,7 +777,7 @@ open class normalT: KotlinRuntime.KotlinBase {
             fatalError()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -927,7 +927,7 @@ open class normalT: KotlinRuntime.KotlinBase {
             }
         }
     }
-    public init() {
+    public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.normalT.self {
              __kt = __root___normalT_init_allocate()
@@ -938,7 +938,7 @@ open class normalT: KotlinRuntime.KotlinBase {
         { __root___normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -1025,7 +1025,7 @@ open class obsoletedChildT: main.obsoletedT {
         { __root___obsoletedChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -1043,7 +1043,7 @@ open class obsoletedChildT: main.obsoletedT {
 @available(*, unavailable, message: "Obsoleted")
 open class obsoletedT: KotlinRuntime.KotlinBase {
     open class deprecationInheritedT: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == main.obsoletedT.deprecationInheritedT.self {
                  __kt = obsoletedT_deprecationInheritedT_init_allocate()
@@ -1054,7 +1054,7 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
             { obsoletedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -1062,7 +1062,7 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
     }
     @available(*, deprecated, message: "Deprecated")
     open class deprecationRelaxedT: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == main.obsoletedT.deprecationRelaxedT.self {
                  __kt = obsoletedT_deprecationRelaxedT_init_allocate()
@@ -1073,7 +1073,7 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
             { obsoletedT_deprecationRelaxedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -1081,7 +1081,7 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
     }
     @available(*, unavailable, message: "Obsoleted")
     open class deprecationRestatedT: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == main.obsoletedT.deprecationRestatedT.self {
                  __kt = obsoletedT_deprecationRestatedT_init_allocate()
@@ -1092,7 +1092,7 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
             { obsoletedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -1116,11 +1116,11 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
         }
     }
     @available(*, unavailable, message: "Deprecated")
-    public init() {
+    public override init() {
         fatalError()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -1139,13 +1139,13 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
 }
 @available(*, deprecated, message: "Deprecated. Replacement: renamed")
 public final class renamedT: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         let __kt = __root___renamedT_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___renamedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -1580,14 +1580,14 @@ package func NonDeprecatedInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMut
 
 @_cdecl("PublicClassImplHiddenInterface_bar__reverse_swift")
 package func PublicClassImplHiddenInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.PublicClassImplHiddenInterface.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.PublicClassImplHiddenInterface.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.bar()
     return { _result; return true }()
 }
 
 @_cdecl("PublicClassImplHiddenInterface_foo__reverse_swift")
 package func PublicClassImplHiddenInterface_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.PublicClassImplHiddenInterface.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.PublicClassImplHiddenInterface.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.foo()
     return { _result; return true }()
 }
@@ -1616,7 +1616,7 @@ package func SomeInterface_fooB__reverse_swift(_ `self`: Swift.UnsafeMutableRawP
 @available(*, deprecated, message: "Deprecated")
 @_cdecl("deprecatedT_deprecationInheritedF__reverse_swift")
 package func deprecatedT_deprecationInheritedF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.deprecatedT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.deprecatedT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.deprecationInheritedF()
     return { _result; return true }()
 }
@@ -1624,7 +1624,7 @@ package func deprecatedT_deprecationInheritedF__reverse_swift(_ `self`: Swift.Un
 @available(*, deprecated, message: "Deprecated")
 @_cdecl("deprecatedT_deprecationInheritedV_get__reverse_swift")
 package func deprecatedT_deprecationInheritedV_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.deprecatedT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.deprecatedT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.deprecationInheritedV
     return { _result; return true }()
 }
@@ -1632,7 +1632,7 @@ package func deprecatedT_deprecationInheritedV_get__reverse_swift(_ `self`: Swif
 @available(*, deprecated, message: "Deprecated")
 @_cdecl("deprecatedT_deprecationRestatedF__reverse_swift")
 package func deprecatedT_deprecationRestatedF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.deprecatedT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.deprecatedT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.deprecationRestatedF()
     return { _result; return true }()
 }
@@ -1640,7 +1640,7 @@ package func deprecatedT_deprecationRestatedF__reverse_swift(_ `self`: Swift.Uns
 @available(*, deprecated, message: "Deprecated")
 @_cdecl("deprecatedT_deprecationRestatedV_get__reverse_swift")
 package func deprecatedT_deprecationRestatedV_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.deprecatedT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.deprecatedT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.deprecationRestatedV
     return { _result; return true }()
 }
@@ -1648,49 +1648,49 @@ package func deprecatedT_deprecationRestatedV_get__reverse_swift(_ `self`: Swift
 @available(*, deprecated, message: "Deprecated")
 @_cdecl("normalT_deprecatedF__reverse_swift")
 package func normalT_deprecatedF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.deprecatedF()
     return { _result; return true }()
 }
 
 @_cdecl("normalT_deprecatedInFutureF__reverse_swift")
 package func normalT_deprecatedInFutureF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.deprecatedInFutureF()
     return { _result; return true }()
 }
 
 @_cdecl("normalT_deprecatedInFutureP_get__reverse_swift")
 package func normalT_deprecatedInFutureP_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.deprecatedInFutureP
     return _result
 }
 
 @_cdecl("normalT_deprecatedInFutureP_set__TypesOfArguments__Swift_Int32____reverse_swift")
 package func normalT_deprecatedInFutureP_set__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.Int32) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = { _self.deprecatedInFutureP = newValue }()
     return { _result; return true }()
 }
 
 @_cdecl("normalT_deprecatedInFutureV_get__reverse_swift")
 package func normalT_deprecatedInFutureV_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.deprecatedInFutureV
     return { _result; return true }()
 }
 
 @_cdecl("normalT_deprecatedP_get__reverse_swift")
 package func normalT_deprecatedP_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.deprecatedP
     return _result
 }
 
 @_cdecl("normalT_deprecatedP_set__TypesOfArguments__Swift_Int32____reverse_swift")
 package func normalT_deprecatedP_set__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.Int32) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = { _self.deprecatedP = newValue }()
     return { _result; return true }()
 }
@@ -1698,91 +1698,91 @@ package func normalT_deprecatedP_set__TypesOfArguments__Swift_Int32____reverse_s
 @available(*, deprecated, message: "Deprecated")
 @_cdecl("normalT_deprecatedV_get__reverse_swift")
 package func normalT_deprecatedV_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.deprecatedV
     return { _result; return true }()
 }
 
 @_cdecl("normalT_normalF__reverse_swift")
 package func normalT_normalF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.normalF()
     return { _result; return true }()
 }
 
 @_cdecl("normalT_normalP_get__reverse_swift")
 package func normalT_normalP_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.normalP
     return _result
 }
 
 @_cdecl("normalT_normalP_set__TypesOfArguments__Swift_Int32____reverse_swift")
 package func normalT_normalP_set__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.Int32) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = { _self.normalP = newValue }()
     return { _result; return true }()
 }
 
 @_cdecl("normalT_normalV_get__reverse_swift")
 package func normalT_normalV_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.normalV
     return { _result; return true }()
 }
 
 @_cdecl("normalT_obsoletedInFutureF__reverse_swift")
 package func normalT_obsoletedInFutureF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.obsoletedInFutureF()
     return { _result; return true }()
 }
 
 @_cdecl("normalT_obsoletedInFutureP_get__reverse_swift")
 package func normalT_obsoletedInFutureP_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.obsoletedInFutureP
     return _result
 }
 
 @_cdecl("normalT_obsoletedInFutureP_set__TypesOfArguments__Swift_Int32____reverse_swift")
 package func normalT_obsoletedInFutureP_set__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.Int32) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = { _self.obsoletedInFutureP = newValue }()
     return { _result; return true }()
 }
 
 @_cdecl("normalT_obsoletedInFutureV_get__reverse_swift")
 package func normalT_obsoletedInFutureV_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.obsoletedInFutureV
     return { _result; return true }()
 }
 
 @_cdecl("normalT_removedInFutureF__reverse_swift")
 package func normalT_removedInFutureF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.removedInFutureF()
     return { _result; return true }()
 }
 
 @_cdecl("normalT_removedInFutureP_get__reverse_swift")
 package func normalT_removedInFutureP_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.removedInFutureP
     return _result
 }
 
 @_cdecl("normalT_removedInFutureP_set__TypesOfArguments__Swift_Int32____reverse_swift")
 package func normalT_removedInFutureP_set__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.Int32) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = { _self.removedInFutureP = newValue }()
     return { _result; return true }()
 }
 
 @_cdecl("normalT_removedInFutureV_get__reverse_swift")
 package func normalT_removedInFutureV_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = _self.removedInFutureV
     return { _result; return true }()
 }
