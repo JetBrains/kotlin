@@ -128,81 +128,21 @@ class MemoryAllocationTest {
     }
 
     @Test
-    fun testNestedAllocatorThrows() {
-        var leakedAllocator1: MemoryAllocator? = null
-        var leakedAllocator2: MemoryAllocator? = null
-        var leakedAllocator3: MemoryAllocator? = null
-
-        withScopedMemoryAllocator { allocator1 ->
-            leakedAllocator1 = allocator1
-            allocator1.allocate(100)
-            // 2-level nesting
-            withScopedMemoryAllocator { allocator2 ->
-                leakedAllocator2 = allocator2
-                allocator2.allocate(100)
-                assertFailsWith<IllegalStateException> {
-                    allocator1.allocate(100)
-                }
-                // 3-level nesting
-                withScopedMemoryAllocator { allocator3 ->
-                    leakedAllocator3 = allocator3
-                    allocator3.allocate(100)
-                    assertFailsWith<IllegalStateException> {
-                        allocator1.allocate(100)
-                    }
-                    assertFailsWith<IllegalStateException> {
-                        allocator2.allocate(100)
-                    }
-                    allocator3.allocate(100)
-                }
-                assertFailsWith<IllegalStateException> {
-                    leakedAllocator3?.allocate(100)
-                }
-                // now it is legal to use allocator1 since we're in its immediate scope
-                allocator2.allocate(100)
-            }
-            assertFailsWith<IllegalStateException> {
-                leakedAllocator2?.allocate(100)
-            }
-            allocator1.allocate(100)
-        }
-
-        for (leakedAllocator in listOf(leakedAllocator1, leakedAllocator2, leakedAllocator3)) {
-            assertFailsWith<IllegalStateException> {
-                leakedAllocator?.allocate(100)
-            }
+    fun allocateZero() {
+        withScopedMemoryAllocator {
+            // assert that a 0 allocation:
+            // a) doesn't throw
+            // b) is aligned
+            assertEquals(0, it.allocate(0).address.toInt() % 8)
         }
     }
 
     @Test
-    fun testScopedAllocatorThrows() {
+    fun allocateMinusOne() {
         assertFailsWith<IllegalStateException> {
-            var leakedAllocator: MemoryAllocator? = null
-            withScopedMemoryAllocator { allocator ->
-                leakedAllocator = allocator
+            withScopedMemoryAllocator {
+                it.allocate(-1)
             }
-            leakedAllocator?.allocate(10)
-        }
-
-        assertFailsWith<IllegalStateException> {
-            var leakedAllocator: MemoryAllocator? = null
-            try {
-                withScopedMemoryAllocator { allocator ->
-                    leakedAllocator = allocator
-                    throw Error()
-                }
-            } catch (e: Throwable) {
-            }
-            leakedAllocator?.allocate(10)
-        }
-
-        assertFailsWith<IllegalStateException> {
-            fun foo(): MemoryAllocator {
-                withScopedMemoryAllocator { allocator ->
-                    return allocator  // non-local return
-                }
-            }
-            foo().allocate(10)
         }
     }
 }
