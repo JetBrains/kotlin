@@ -625,7 +625,7 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
         ?: nullableReceiverExpression.resolvedType)
         .fullyExpandedType(session)
 
-    val safeReceiverKind = when (kind) {
+    val safeReceiverType = when (kind) {
         FirSafeCallKind.NullSafe -> receiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
         FirSafeCallKind.ErrorSafe -> if (receiverType is ConeUnionType) {
             receiverType.primaryType ?: session.builtinTypes.nothingType.coneType
@@ -634,8 +634,8 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
         }
     }
 
-    replaceConeTypeOrNull(safeReceiverKind)
-    session.lookupTracker?.recordTypeResolveAsLookup(safeReceiverKind, source, file.source)
+    replaceConeTypeOrNull(safeReceiverType)
+    session.lookupTracker?.recordTypeResolveAsLookup(safeReceiverType, source, file.source)
 }
 
 fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
