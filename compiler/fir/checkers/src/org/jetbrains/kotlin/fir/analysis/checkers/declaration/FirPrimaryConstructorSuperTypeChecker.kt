@@ -57,7 +57,6 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
         }
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
     /**
      *  SUPERTYPE_NOT_INITIALIZED is reported on code like the following. It's skipped if `A` has `()` after it, in which case any
      *  diagnostics for that constructor call will be reported, if applicable.
@@ -67,6 +66,7 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
      *  class B : <!SUPERTYPE_NOT_INITIALIZED>A<!>
      *  ```
      */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkSuperTypeNotInitialized(
         primaryConstructorSymbol: FirConstructorSymbol,
         regularClass: FirClass,
@@ -116,7 +116,6 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
         }
     }
 
-    context(reporter: DiagnosticReporter, context: CheckerContext)
     /**
      * SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR is reported on code like the following, where `B` does not have a primary
      * constructor, in which case, one can not call the delegated constructor of `A` in the super type list. `B` doesn't have a primary
@@ -130,6 +129,7 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
      * }
      * ```
      */
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkSupertypeInitializedWithoutPrimaryConstructor(
         regularClass: FirClass,
     ) {
