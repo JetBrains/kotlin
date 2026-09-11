@@ -24,6 +24,24 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
 
 /**
+ * The dependency overrides of every activated integration, merged per property. The integrations share the
+ * Swift Export tasks, so they have to share the overrides too.
+ *
+ * The Swift package integration is applied on top of the Xcode integration, whatever the order of the DSL calls.
+ */
+internal fun SwiftExportConfiguration.effectiveDependencyOverrides(
+    providers: ProviderFactory,
+): Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>> = providers.provider {
+    val merged = LinkedHashMap<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>()
+    for (integration in listOfNotNull(activatedXcodeIntegration, activatedSwiftPackageIntegration)) {
+        for ((selector, options) in integration.dependencyOverrides.get()) {
+            merged[selector] = merged[selector].overriddenBy(options)
+        }
+    }
+    merged
+}
+
+/**
  * A common interface for [SwiftExportConfiguration] and [SwiftExportExtension] used during the migration from the latter to the former.
  * Will be removed once the legacy [SwiftExportExtension] is fully deprecated.
  */
@@ -105,7 +123,7 @@ internal interface SwiftExportConfigurationCompat {
                     get() = providers.provider { emptySet() }
 
                 override val dependencyOptionsOverrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>
-                    get() = configuration.activatedXcodeIntegration?.dependencyOverrides ?: providers.provider { emptyMap() }
+                    get() = configuration.effectiveDependencyOverrides(providers)
 
                 override val settings: MapProperty<String, String>
                     get() = objects.mapProperty(String::class.java, String::class.java) // TODO: KT-87890

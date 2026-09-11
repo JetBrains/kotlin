@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.effectiveDependencyOverrides
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
@@ -2098,3 +2099,46 @@ private data class ExportedSwiftModuleForAssertion(
     val exportMode: SwiftExportedModuleMode,
     val flattenPackage: String? = null,
 )
+
+class ExportExtensionSwiftPackageIntegrationTests {
+
+    @BeforeTest
+    fun runOnMacOSOnly() {
+        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+    }
+
+    /**
+     * The package integration wins where both integrations set the same property of the same dependency.
+     */
+    @Test
+    fun `test overrides of both integrations are merged`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                xcodeIntegration {
+                    configure("org.example:only-xcode:1.0") { moduleName.set("OnlyXcode") }
+                    configure("org.example:both:1.0") { moduleName.set("OverriddenByXcode") }
+                    configure("org.example:both:1.0") { rootPackage.set("org.example.both") }
+                }
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                    configure("org.example:only-package:1.0") { moduleName.set("OnlyPackage") }
+                    configure("org.example:both:1.0") { moduleName.set("OverriddenByPackage") }
+                }
+            }
+        }
+
+        val overrides = project.exportExtension.swiftExportConfiguration
+            .effectiveDependencyOverrides(project.providers).get()
+            .mapKeys { (selector, _) -> selector.toString() }
+
+        assertEquals(
+            listOf("OnlyXcode", "OverriddenByPackage", "OnlyPackage"),
+            overrides.values.map { it.moduleName },
+        )
+        assertEquals(
+            listOf("org.example.both"),
+            overrides.values.mapNotNull { it.rootPackage },
+        )
+    }
+}
