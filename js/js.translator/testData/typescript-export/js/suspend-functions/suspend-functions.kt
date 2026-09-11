@@ -242,8 +242,15 @@ suspend fun acceptTest(test: Test) {
     assert(test.genericWithMultipleConstraints(error) == error)
 }
 
+// This check is needed for the kotlinx.coroutines Flow export
+@Suppress("INVISIBLE_REFERENCE")
+@JsImplicitExport(true)
+interface IntermediateImplicitExportInterface {
+    suspend fun withDefaultImpl() = "OK"
+}
+
 @JsExport
-interface HolderOfParentSuspendFun1<T> {
+interface HolderOfParentSuspendFun1<T> : IntermediateImplicitExportInterface {
     suspend fun parentSuspendFun1(someValue: String = "1"): T
 }
 
