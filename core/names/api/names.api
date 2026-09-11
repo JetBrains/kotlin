@@ -274,6 +274,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds {
 	public final fun getMutableMap ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMutableMapEntry ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMutableSet ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getNonError ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNothing ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNumber ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getPrimitiveArrayTypeByElementType ()Ljava/util/Map;
