@@ -134,6 +134,7 @@ enum class KotlinVersion(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
             stabilizedVersion = KotlinReleaseVersion.v2_0_0,
             deprecatedVersion = KotlinReleaseVersion.v2_3_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     ),
 
@@ -144,6 +145,7 @@ enum class KotlinVersion(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
             stabilizedVersion = KotlinReleaseVersion.v2_1_0,
             deprecatedVersion = KotlinReleaseVersion.v2_4_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     ),
 

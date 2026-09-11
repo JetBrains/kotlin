@@ -1,3 +1,2 @@
-warning: argument '-language-version' is passed multiple times: '2.1', '2.2'. The last value will be used.
-warning: language version 2.2 is deprecated and its support will be removed in a future version of Kotlin. Update the version to 2.3.
+warning: argument '-language-version' is passed multiple times: '2.0', '2.5'. The last value will be used.
 OK

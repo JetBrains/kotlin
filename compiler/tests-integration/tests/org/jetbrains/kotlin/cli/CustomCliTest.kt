@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -23,7 +24,7 @@ private const val EMPTY_MAIN_FUN = "fun main() {}"
 class CustomCliTest : TestCaseWithTmpdir() {
     @Test
     fun testArgfileWithNonTrivialWhitespaces() {
-        val text = "-include-runtime\r\n\t\t-language-version\n\t2.0\r\n-version"
+        val text = "-include-runtime\r\n\t\t-language-version\n\t${LanguageVersion.LATEST_STABLE.versionString}\r\n-version"
         val argfile = File(tmpdir, "argfile").apply { writeText(text, Charsets.UTF_8) }
         CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("@" + argfile.absolutePath))
     }

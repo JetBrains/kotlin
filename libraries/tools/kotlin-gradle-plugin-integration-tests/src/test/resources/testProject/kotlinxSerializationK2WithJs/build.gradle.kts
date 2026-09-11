@@ -23,12 +23,4 @@ kotlin {
         binaries.executable()
         browser {}
     }
-
-    sourceSets {
-        all {
-            languageSettings.apply {
-                languageVersion = "2.0"
-            }
-        }
-    }
 }

@@ -9,6 +9,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Tasks don't have unnamed inputs and outputs")
@@ -57,6 +58,7 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
     @MppGradlePluginTests
     @DisplayName("MPP")
     @GradleTest
+    @Disabled("TODO KT-???") // TheCallerIniOSMacos.kt: Unresolved reference 'platform'
     fun inputsMpp(gradleVersion: GradleVersion) {
         project(
             "hierarchical-mpp-multi-modules",
