@@ -1,13 +1,30 @@
-expression: consumer::accept
-expected type: KaFunctionType:
-  annotations: []
-  typeArguments: [
-    KaTypeParameterType:
-      annotations: []
-      type: T
-    KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Unit
-  ]
-  type: (T) -> kotlin/Unit
+expression:
+  consumer::accept
+
+expectedType:
+  KaFunctionType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: T
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Unit
+    ]
+    type: (T) -> kotlin/Unit
+
+inferredExpectedType:
+  KaFunctionType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: T
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Unit
+    ]
+    type: (T) -> kotlin/Unit
