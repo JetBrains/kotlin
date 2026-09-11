@@ -9,6 +9,7 @@ package kotlin.wasm.internal
 
 import kotlin.coroutines.*
 import kotlin.internal.DoNotInlineOnFirstStage
+import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @ExcludedFromCodegen
@@ -79,6 +80,7 @@ internal val EmptyContinuation: Continuation<Any?> = Continuation(EmptyCoroutine
 internal fun <T> interceptedIntrinsic(cont: Continuation<T>): Continuation<T> =
     implementedAsIntrinsic
 
+@InlineOnly
 @PublishedApi
 @DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
