@@ -9,12 +9,8 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.hasPureInitialization
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.isLeftoverAfterObjectPurification
-import org.jetbrains.kotlin.ir.backend.js.objectInstanceField
-import org.jetbrains.kotlin.ir.backend.js.staticInitFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceField
 import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceGetter
 import org.jetbrains.kotlin.ir.backend.js.utils.primaryConstructorReplacement
@@ -81,10 +77,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  * - Static initializers coming from `companion` blocks are not compatible
  *
  * In case `companion object`'s `static_init` is compatible with purification, it's declaration is marked
- * using `isLeftoverAfterObjectPurification` attribute and later, depending on the backend:
- * - in JS, specialized [JsCleanupPurifiedLeftoverDeclarationsLowering] runs a dumb declaration removal phase. DCE has been already run
- *   at that moment, so we can't rely on it
- * - in Wasm, the declaration is removed by the regular DCE
+ * using [isLeftoverAfterObjectPurification] attribute and later removed by DCE.
  *
  * Leftover usages of such `static_init` for both backends are removed by [CleanupPurifiedLeftoverUsagesLowering].
  *
@@ -92,6 +85,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  * `_getInstance` call with `_instance` field access when applicable.
  */
 open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
+    internal constructor(context: JsIrOptimizationContext) : this(context.backendContext)
+
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         when (declaration) {
             is IrFunction if declaration.isObjectConstructor() -> declaration.removeInstanceFieldInitializationIfPossible()
