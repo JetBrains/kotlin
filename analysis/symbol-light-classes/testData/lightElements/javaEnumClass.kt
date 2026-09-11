@@ -1,4 +1,4 @@
-// EXPECTED: org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject(MyClass)
+// EXPECTED: com.intellij.psi.impl.source.PsiClassImpl(MyClass)
 // FILE: MyClass.java
 enum MyC<caret>lass {
     AA,

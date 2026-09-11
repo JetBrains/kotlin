@@ -5,39 +5,13 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.utils
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiParameter
-import com.intellij.psi.PsiTypeParameter
-import com.intellij.psi.PsiTypeParameterListOwner
-import com.intellij.psi.PsiTypes
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiMethods
-import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
-import org.jetbrains.kotlin.analysis.api.symbols.containingFile
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.symbol
-import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightMethodForDecompiledDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.KaElementJavaView
@@ -55,6 +29,8 @@ internal object LightClassMemberUtils {
     fun getLightClassParameters(
         parameterSymbol: KaParameterSymbol,
     ): List<PsiParameter> {
+        parameterSymbol.anchorPsiIfNotKotlin()?.let { return listOfNotNull(it as? PsiParameter) }
+
         val enclosingDeclaration = parameterSymbol.containingDeclaration as? KaFunctionSymbol ?: return emptyList()
 
         val methods = enclosingDeclaration.asPsiMethods()
@@ -72,6 +48,8 @@ internal object LightClassMemberUtils {
     fun getLightClassTypeParameter(
         typeParameterSymbol: KaTypeParameterSymbol,
     ): List<PsiTypeParameter> {
+        typeParameterSymbol.anchorPsiIfNotKotlin()?.let { return listOfNotNull(it as? PsiTypeParameter) }
+
         val enclosingDeclaration = typeParameterSymbol.containingDeclaration ?: return emptyList()
         val paramIndex = enclosingDeclaration.typeParameters.indexOf(typeParameterSymbol)
 
@@ -94,6 +72,7 @@ internal object LightClassMemberUtils {
         declarationSymbol: KaSymbol,
     ): PsiField? {
         if (declarationSymbol !is KaClassSymbol && declarationSymbol !is KaEnumEntrySymbol && declarationSymbol !is KaBackingFieldSymbol) return null
+        declarationSymbol.anchorPsiIfNotKotlin()?.let { return it as? PsiField }
 
         val psiClass: PsiClass = getWrappingClass(declarationSymbol)?.let { wrapper ->
             (wrapper.parent as? PsiClass).takeIf { wrapper.isCreatedFromCompanion() } ?: wrapper
@@ -111,6 +90,8 @@ internal object LightClassMemberUtils {
     fun getLightClassMethods(
         functionSymbol: KaFunctionSymbol,
     ): List<PsiMethod> {
+        functionSymbol.anchorPsiIfNotKotlin()?.let { return listOfNotNull(it as? PsiMethod) }
+
         val functionSymbolPointer = functionSymbol.createPointer()
         val functionSymbolPsi = functionSymbol.getPsiForMatching()
 
