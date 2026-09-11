@@ -21,11 +21,10 @@ import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 fun optimizeProgramByIr(
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
-    moduleKind: ModuleKind,
-    removeUnusedAssociatedObjects: Boolean
+    moduleKind: ModuleKind
 ) {
     val dceDumpNameCache = DceDumpNameCache() // in JS mode only DCE Graph could be dumped
-    eliminateDeadDeclarations(modules, context, moduleKind, removeUnusedAssociatedObjects, dceDumpNameCache)
+    eliminateDeadDeclarations(modules, context, moduleKind, dceDumpNameCache)
 
     val phaserState = PhaserState()
     optimizationLoweringList.forEachIndexed { _, lowering ->
