@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/genericWithClassUpperBound.kt
       annotations:
         Deprecated(message = "This synthesized declaration should not be used directly", replaceWith = <null>, level = DeprecationLevel.HIDDEN)
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Box.$serializer<T of <root>.Box.$serializer>
-      TYPE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      TYPE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:T index:0 variance: superTypes:[<root>.Base] reified:false
       PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
         overridden:
           public abstract descriptor: kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
