@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.library.uniqueName
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectories
-import kotlin.io.path.deleteExisting
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.name
 import kotlin.io.path.pathString
@@ -56,7 +55,7 @@ internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOu
                 if (context.config.target.family == Family.ANDROID) {
                     val configuration = context.config.configuration
                     val androidProgramType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
-                    when (androidProgramType) {
+                    return@run when (androidProgramType) {
                         AndroidProgramType.Standalone -> LinkerOutputKind.EXECUTABLE
                         AndroidProgramType.NativeActivity -> LinkerOutputKind.DYNAMIC_LIBRARY
                     }

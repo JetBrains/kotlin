@@ -214,7 +214,7 @@ class StubIrDriver(
             return
         }
 
-        val out = { it: String -> cFile.appendLine(it) }
+        val out: (String) -> Unit = { cFile.appendLine(it) }
 
         context.libraryForCStubs.preambleLines.forEach {
             out(it)
