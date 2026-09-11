@@ -79,6 +79,9 @@ class KaptOptions(
         var processorsStatsReportFile: File? = null
         var fileReadHistoryReportFile: File? = null
 
+        var processingClassLoader: ClassLoader? = null
+        val separateClassloaderForProcessors: MutableSet<String> = mutableSetOf()
+
         fun build(): KaptOptions {
             val sourcesOutputDir = this.sourcesOutputDir ?: error("'sourcesOutputDir' must be set")
             val classesOutputDir = this.classesOutputDir ?: error("'classesOutputDir' must be set")
@@ -90,8 +93,8 @@ class KaptOptions(
                 sourcesOutputDir, classesOutputDir, stubsOutputDir, incrementalDataOutputDir,
                 processingClasspath, processors, processingOptions, javacOptions, KaptFlags.fromSet(flags),
                 mode, detectMemoryLeaks, stubGenerationScheme,
-                processingClassLoader = null,
-                separateClassloaderForProcessors = emptySet(),
+                processingClassLoader = processingClassLoader,
+                separateClassloaderForProcessors = separateClassloaderForProcessors.toSet(),
                 processorsStatsReportFile = processorsStatsReportFile,
                 fileReadHistoryReportFile = fileReadHistoryReportFile
             )
