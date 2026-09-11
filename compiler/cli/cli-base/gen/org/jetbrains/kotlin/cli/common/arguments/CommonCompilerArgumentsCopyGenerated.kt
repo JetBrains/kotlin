@@ -70,11 +70,13 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.manuallyConfiguredFeatures = from.manuallyConfiguredFeatures.copyOf()
     to.metadataKlib = from.metadataKlib
     to.metadataVersion = from.metadataVersion
+    @Suppress("DEPRECATION")
     to.multiDollarInterpolation = from.multiDollarInterpolation
     to.multiPlatform = from.multiPlatform
     to.nameBasedDestructuring = from.nameBasedDestructuring
     to.nestedTypeAliases = from.nestedTypeAliases
     to.noInline = from.noInline
+    @Suppress("DEPRECATION")
     to.nonLocalBreakContinue = from.nonLocalBreakContinue
     to.optIn = from.optIn.copyOf()
     to.phasesToDump = from.phasesToDump.copyOf()
@@ -110,6 +112,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.verbosePhases = from.verbosePhases.copyOf()
     to.verifyIr = from.verifyIr
     to.warningLevels = from.warningLevels.copyOf()
+    @Suppress("DEPRECATION")
     to.whenGuards = from.whenGuards
 
     return to

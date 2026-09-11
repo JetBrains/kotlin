@@ -174,6 +174,10 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
         if (!explicitArgument.changesLanguageFeatures) continue@propertiesLoop
         val effectivePropertyValue = values.lastOrNull() ?: continue@propertiesLoop
 
+        // Ignore deprecated/removed arguments to avoid extra reporting
+        // They are already reported by `checkArgumentsLifecycle`
+        if (explicitArgument.status >= ArgumentLifecycleStatus.DEPRECATED) continue@propertiesLoop
+
         fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
             // At first, check if the annotation is relevant. Only Boolean and String types are allowed
             when {
