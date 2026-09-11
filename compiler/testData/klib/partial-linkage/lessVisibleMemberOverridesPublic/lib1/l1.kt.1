@@ -1,0 +1,14 @@
+open class ClassWithAddedFinal {
+    fun foo(): Int = 2
+    fun test() = foo()
+}
+
+open class ClassWithAddedOpen {
+    open fun foo(): Int = 2
+    fun test() = foo()
+}
+
+abstract class ClassWithAddedAbstract {
+    abstract fun foo(): Int
+    fun test() = foo()
+}

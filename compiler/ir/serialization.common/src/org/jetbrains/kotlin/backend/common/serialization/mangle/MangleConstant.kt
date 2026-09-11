@@ -22,6 +22,7 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val STATIC_MEMBER_MARK = "#static"
         const val COMPANION_EXTENSION_MARK = "#companion"
         const val SUSPEND_FUNCTION_MARK = "#suspend"
+        const val FAKE_OVERRIDE_DISAMBIGUATING_MARK = "#FO"
         const val TYPE_PARAMETER_MARKER_NAME = "<TP>"
         const val TYPE_PARAMETER_MARKER_NAME_SETTER = "<STP>"
         const val BACKING_FIELD_NAME = "<BF>"

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -60,11 +61,24 @@ abstract class FakeOverrideBuilderStrategy {
     open val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean = false
 
     /**
+     * Normally, when a member from super is invisible from a subclass, we don't consider it for overriding, or
+     * create a fake override. But if there is an abstract member, then in Klib backends we have to ensure
+     * it has an override, either real or fake, in every subclass, regardless of visibility or potential clashes
+     * with existing members. That way the PL engine is able to report and create a stub implementation for all
+     * non-abstract classes where the actual implementation is missing.
+     */
+    open val createFakeOverridesForInvisibleAbstractMembers: Boolean get() = false
+
+    /**
      * Creates a fake override for [member] from [superType] to be added to the class [clazz] or returns null,
      * if no fake override should be created for this member
      */
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
-        return runIf(isVisibleForOverrideInClass(member, clazz)) {
+        val createFakeOverride = when {
+            createFakeOverridesForInvisibleAbstractMembers && member.modality == Modality.ABSTRACT -> true
+            else -> isVisibleForOverride(member, clazz)
+        }
+        return runIf(createFakeOverride) {
             buildFakeOverrideMember(superType, member, clazz)
         }
     }
@@ -89,26 +103,27 @@ abstract class FakeOverrideBuilderStrategy {
 
     protected abstract fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean
 
-    private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
+    fun isVisibleForOverride(target: IrOverridableMember, visibleFrom: IrClass, checkFriendshipInOppositeDirection: Boolean = false) : Boolean {
         return when {
-            DescriptorVisibilities.isPrivate(original.visibility) -> false
-            original.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
-            original.visibility == DescriptorVisibilities.INTERNAL -> {
-                val thisModule = clazz.getPackageFragment().moduleDescriptor
-                val memberModule = original.getPackageFragment().moduleDescriptor
+            DescriptorVisibilities.isPrivate(target.visibility) -> false
+            target.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
+            target.visibility == DescriptorVisibilities.INTERNAL -> {
+                val visibleFromModule = visibleFrom.getPackageFragment().moduleDescriptor
+                val targetModule = target.getPackageFragment().moduleDescriptor
 
                 when {
-                    thisModule == memberModule -> true
-                    shouldSeeInternals(thisModule, memberModule) -> true
+                    visibleFromModule == targetModule -> true
+                    !checkFriendshipInOppositeDirection && shouldSeeInternals(visibleFromModule, targetModule) -> true
+                    checkFriendshipInOppositeDirection && shouldSeeInternals(targetModule, visibleFromModule) -> true
                     !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
-                            original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
+                            target.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
                     else -> false
                 }
             }
             else -> {
-                original.visibility.visibleFromPackage(
-                    clazz.getPackageFragment().packageFqName,
-                    original.getPackageFragment().packageFqName
+                target.visibility.visibleFromPackage(
+                    visibleFrom.getPackageFragment().packageFqName,
+                    target.getPackageFragment().packageFqName
                 )
             }
         }
