@@ -1,7 +1,10 @@
+// COMPILATION_ERRORS
+// WITH_STDLIB
+
 @Target(AnnotationTarget.TYPE)
 annotation class Anno
 
 @Target(AnnotationTarget.TYPE)
 annotation class AnnoWithArgs(val x: String)
 
-fun test(value: <expr>@Anno @AnnoWithArgs("") List<@Anno @AnnoWithArgs("") String></expr>) {}
+fun test(foo: <expr>List<@Anno @AnnoWithArgs("") Foo></expr>) {}

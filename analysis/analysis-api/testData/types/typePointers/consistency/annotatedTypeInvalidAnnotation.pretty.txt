@@ -1,0 +1,3 @@
+Restored type is the same as the original one
+
+@ERROR_ANNOTATION @`<error>` @`<error>` kotlin.collections.List<@ERROR_ANNOTATION @`<error>` @`<error>` kotlin.String>

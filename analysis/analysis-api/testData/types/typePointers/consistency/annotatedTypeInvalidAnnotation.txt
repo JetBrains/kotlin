@@ -3,9 +3,11 @@ Restored type is the same as the original one
 KaUsualClassType:
   abbreviation: null
   annotations: [
-    Anno()
+    null()
       psi: KtAnnotationEntry
-    AnnoWithArgs(x = "")
+    <error>()
+      psi: KtAnnotationEntry
+    <error>()
       psi: KtAnnotationEntry
   ]
   classId: kotlin/collections/List
@@ -17,9 +19,11 @@ KaUsualClassType:
         KaUsualClassType:
           abbreviation: null
           annotations: [
-            Anno()
+            null()
               psi: KtAnnotationEntry
-            AnnoWithArgs(x = "")
+            <error>()
+              psi: KtAnnotationEntry
+            <error>()
               psi: KtAnnotationEntry
           ]
           classId: kotlin/String
@@ -41,9 +45,11 @@ KaUsualClassType:
     KaUsualClassType:
       abbreviation: null
       annotations: [
-        Anno()
+        null()
           psi: KtAnnotationEntry
-        AnnoWithArgs(x = "")
+        <error>()
+          psi: KtAnnotationEntry
+        <error>()
           psi: KtAnnotationEntry
       ]
       classId: kotlin/String

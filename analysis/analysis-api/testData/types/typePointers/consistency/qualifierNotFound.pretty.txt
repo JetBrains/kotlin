@@ -1,0 +1,3 @@
+Restored type is the same as the original one
+
+Foo.Bar<kotlin.String>

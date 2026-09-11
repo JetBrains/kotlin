@@ -1,0 +1,3 @@
+Restored type is the same as the original one
+
+java.util.function.Function<kotlin.String!, (T & kotlin.Any..T?)>!
