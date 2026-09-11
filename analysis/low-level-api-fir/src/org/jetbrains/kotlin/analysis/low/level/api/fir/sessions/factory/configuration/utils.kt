@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.AnalysisApiOnly
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirValueSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -41,7 +43,10 @@ internal fun createSymbolProvidersWithOptionalAnnotationClassesProvider(
     }
 }
 
-internal fun createCloneableSymbolProvider(session: LLFirBuiltinsAndCloneableSession): FirSymbolProvider {
-    val cloneableProvider = FirCloneableSymbolProvider(session, session.moduleData, session.kotlinScopeProvider)
-    return cloneableProvider
+@OptIn(AnalysisApiOnly::class)
+internal fun createSyntheticSymbolProviders(session: LLFirBuiltinsAndCloneableSession): List<FirSymbolProvider> {
+    return listOf(
+        FirCloneableSymbolProvider(session, session.moduleData, session.kotlinScopeProvider),
+        FirValueSymbolProvider.create(session, session.moduleData, session.kotlinScopeProvider),
+    )
 }
