@@ -258,8 +258,8 @@ class BackendWasmSymbols(
         val createCoroutineUninterceptedIntrinsic0StackSwitching by CallableIds.createCoroutineUninterceptedIntrinsic0StackSwitching.functionSymbol()
         val createCoroutineUninterceptedIntrinsic1StackSwitching by CallableIds.createCoroutineUninterceptedIntrinsic1StackSwitching.functionSymbol()
 
-        val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching by
-        CallableIds.suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching.functionSymbol()
+        val suspendCoroutineUninterceptedOrReturnStackSwitching by
+        CallableIds.suspendCoroutineUninterceptedOrReturnStackSwitching.functionSymbol()
 
         val intercepted by
         CallableIds.coroutineImplStackSwitchingIntercepted.functionSymbol()
@@ -268,6 +268,9 @@ class BackendWasmSymbols(
     }
 
     inner class CoroutinesStateMachineIntrinsics {
+
+        val suspendCoroutineUninterceptedOrReturnStateMachine by
+        CallableIds.suspendCoroutineUninterceptedOrReturnStateMachine.functionSymbol()
 
         val intercepted by
         CallableIds.coroutineImplIntercepted.functionSymbol()
@@ -278,9 +281,7 @@ class BackendWasmSymbols(
 
     val createCoroutineUninterceptedIntrinsic0 by CallableIds.createCoroutineUninterceptedIntrinsic0.functionSymbol()
     val createCoroutineUninterceptedIntrinsic1 by CallableIds.createCoroutineUninterceptedIntrinsic1.functionSymbol()
-
-    val suspendCoroutineUninterceptedOrReturnIntrinsic by
-    CallableIds.suspendCoroutineUninterceptedOrReturnIntrinsic.functionSymbol()
+    val getCoroutineContextImpl by CallableIds.getCoroutineContextImpl.functionSymbol()
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = ClassIds.KLocalDelegatedPropertyImpl.classSymbol()
@@ -631,8 +632,10 @@ private object CallableIds {
 
     val interceptedIntrinsic = "interceptedIntrinsic".wasmCallableId
 
-    val suspendCoroutineUninterceptedOrReturnIntrinsic = "suspendCoroutineUninterceptedOrReturnIntrinsic".wasmCallableId
-    val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching = "suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching".wasmCallableId
+    val suspendCoroutineUninterceptedOrReturnStateMachine = "suspendCoroutineUninterceptedOrReturnStateMachine".wasmCallableId
+    val suspendCoroutineUninterceptedOrReturnStackSwitching = "suspendCoroutineUninterceptedOrReturnStackSwitching".wasmCallableId
+
+    val getCoroutineContextImpl = "getCoroutineContextImpl".wasmCallableId
 
     val suspendFunction0ToContref = "suspendFunction0ToContref".wasmCallableId
     val suspendFunction1ToContref = "suspendFunction1ToContref".wasmCallableId
