@@ -24,14 +24,8 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toMutableList
 import kotlin.collections.toMutableSet
+import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.HELP
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.NOWARN
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.VERSION
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.WERROR
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.WEXTRA
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.X
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments
@@ -48,6 +42,27 @@ internal abstract class CommonToolArgumentsImpl(
   protected val internalArguments: MutableSet<String> = mutableSetOf()
 
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  @SerialName("WERROR")
+  protected var Werror: Boolean
+
+  @SerialName("WEXTRA")
+  protected var Wextra: Boolean
+
+  @SerialName("X")
+  protected var X: Boolean
+
+  @SerialName("HELP")
+  protected var help: Boolean
+
+  @SerialName("NOWARN")
+  protected var nowarn: Boolean
+
+  @SerialName("VERBOSE")
+  protected var verbose: Boolean
+
+  @SerialName("VERSION")
+  protected var version: Boolean
 
   protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> =
       restrictedArgViolations.toMutableList()
@@ -105,32 +120,32 @@ internal abstract class CommonToolArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (WERROR in this) { arguments.allWarningsAsErrors = get(WERROR)}
-    if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)}
-    if (X in this) { arguments.extraHelp = get(X)}
-    if (HELP in this) { arguments.help = get(HELP)}
-    if (NOWARN in this) { arguments.suppressWarnings = get(NOWARN)}
-    if (VERBOSE in this) { arguments.verbose = get(VERBOSE)}
-    if (VERSION in this) { arguments.version = get(VERSION)}
+    arguments.allWarningsAsErrors = Werror
+    arguments.extraWarnings = Wextra
+    arguments.extraHelp = X
+    arguments.help = help
+    arguments.suppressWarnings = nowarn
+    arguments.verbose = verbose
+    arguments.version = version
     return arguments
   }
 
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: CommonToolArguments) {
-    try { this[WERROR] = arguments.allWarningsAsErrors } catch (_: NoSuchMethodError) {  }
-    try { this[WEXTRA] = arguments.extraWarnings } catch (_: NoSuchMethodError) {  }
-    try { this[X] = arguments.extraHelp } catch (_: NoSuchMethodError) {  }
-    try { this[HELP] = arguments.help } catch (_: NoSuchMethodError) {  }
-    try { this[NOWARN] = arguments.suppressWarnings } catch (_: NoSuchMethodError) {  }
-    try { this[VERBOSE] = arguments.verbose } catch (_: NoSuchMethodError) {  }
-    try { this[VERSION] = arguments.version } catch (_: NoSuchMethodError) {  }
+    try { Werror = arguments.allWarningsAsErrors } catch (_: NoSuchMethodError) {  }
+    try { Wextra = arguments.extraWarnings } catch (_: NoSuchMethodError) {  }
+    try { X = arguments.extraHelp } catch (_: NoSuchMethodError) {  }
+    try { help = arguments.help } catch (_: NoSuchMethodError) {  }
+    try { nowarn = arguments.suppressWarnings } catch (_: NoSuchMethodError) {  }
+    try { verbose = arguments.verbose } catch (_: NoSuchMethodError) {  }
+    try { version = arguments.version } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: CommonToolArguments): CommonToolArguments {
-    if (WERROR in this) { arguments.allWarningsAsErrors = get(WERROR)}
-    if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)}
+    arguments.allWarningsAsErrors = Werror
+    arguments.extraWarnings = Wextra
     return arguments
   }
 

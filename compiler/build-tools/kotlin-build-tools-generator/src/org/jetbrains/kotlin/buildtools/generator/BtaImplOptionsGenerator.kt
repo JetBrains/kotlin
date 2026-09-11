@@ -124,8 +124,7 @@ internal class BtaImplOptionsGenerator(
                         generateGetPutFunctions(argumentTypeName, level)
                     }
                 }
-                var mirroredEnums: Set<KClass<*>> = emptySet()
-                addType(TypeSpec.companionObjectBuilder().apply {
+                val companionSpec = TypeSpec.companionObjectBuilder().apply {
                     property(
                         "knownArguments",
                         ClassName("kotlin.collections", "MutableSet").parameterizedBy(ClassName("kotlin", "String")),
@@ -133,16 +132,19 @@ internal class BtaImplOptionsGenerator(
                     ) {
                         initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
                     }
-                    mirroredEnums = generateOptions(
-                        arguments = level.transformImplArguments(),
-                        implClassName = implClassName,
-                        argumentTypeName = argumentImplTypeName,
-                        applyCompilerArgumentsFun = applyCompilerArgumentsFun,
-                        toCompilerConverterFun = toCompilerConverterFun,
-                        toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFun,
-                        level = level
-                    )
-                }.build())
+                }
+                val mirroredEnums = generateOptions(
+                    companion = companionSpec,
+                    arguments = level.transformImplArguments(),
+                    implClassName = implClassName,
+                    argumentTypeName = argumentImplTypeName,
+                    applyCompilerArgumentsFun = applyCompilerArgumentsFun,
+                    toCompilerConverterFun = toCompilerConverterFun,
+                    toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFun,
+                    level = level
+                )
+
+                addType(companionSpec.build())
 
                 outputs += generateValueAdapterFile(adapterClassName, mirroredEnums)
 
@@ -300,6 +302,7 @@ internal class BtaImplOptionsGenerator(
     }
 
     private fun TypeSpec.Builder.generateOptions(
+        companion: TypeSpec.Builder,
         arguments: Collection<BtaCompilerArgument<*>>,
         implClassName: String,
         argumentTypeName: ClassName,
@@ -365,9 +368,16 @@ internal class BtaImplOptionsGenerator(
                 is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
             }.copy(nullable = argument.valueType.isNullable)
 
-            property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
+            companion.property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
                 initializer("%T(%S)", argumentTypeName, name)
             }
+            val argumentProperty = property(argument.name, argumentTypeParameter, KModifier.PROTECTED) {
+                mutable(true)
+                annotation(ClassName("kotlinx.serialization", "SerialName")) {
+                    addMember("%S", name)
+                }
+            }
+
             when (argument) {
                 is BtaCompilerArgument.SSoTCompilerArgument -> {
                     generateAutomaticArgumentsPropagators(
@@ -381,7 +391,8 @@ internal class BtaImplOptionsGenerator(
                         toCompilerArgumentsAffectingOutcomeFun,
                         wasIntroducedRecently,
                         applyCompilerArgumentsFun,
-                        argumentTypeParameter
+                        argumentTypeParameter,
+                        argumentProperty
                     )
                 }
 
@@ -473,16 +484,13 @@ internal class BtaImplOptionsGenerator(
         wasIntroducedRecently: Boolean,
         applyCompilerArgumentsFun: FunSpec.Builder,
         argumentTypeParameter: TypeName,
+        argumentProperty: PropertySpec,
     ) {
-        val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
-
         // BTA → Compiler conversion
         CodeBlock.builder().apply {
-            add("if (%M in this) { ", member)
-            val valueToAssign = buildBtaToCompilerValueTransform(member, type, argument)
+            val valueToAssign = buildBtaToCompilerValueTransform(argumentProperty, type, argument)
             val assignment = buildCompilerAssignment(effectiveCompilerName, wasRemoved, valueToAssign)
             add("%L", assignment)
-            add("}")
         }.build().also { setStatement ->
             toCompilerConverterFun.addSafeSetStatement(
                 wasIntroducedRecently,
@@ -506,7 +514,7 @@ internal class BtaImplOptionsGenerator(
 
         // Compiler → BTA conversion
         val compilerToBtaStatement = buildCompilerToBtaValueTransform(
-            member, type, argument, effectiveCompilerName, wasRemoved, argumentTypeParameter
+            type, argument, effectiveCompilerName, wasRemoved, argumentTypeParameter, argumentProperty
         )
         applyCompilerArgumentsFun.addSafeMethodAccessStatement(
             compilerToBtaStatement,
@@ -523,11 +531,11 @@ internal class BtaImplOptionsGenerator(
      * Builds the value transformation from BTA to compiler (e.g., enum.stringValue, int.toString(), path.absolutePathStringOrThrow())
      */
     private fun buildBtaToCompilerValueTransform(
-        member: MemberName,
+        argumentProperty: PropertySpec,
         type: TypeName,
         argument: BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>,
     ): CodeBlock = CodeBlock.builder().apply {
-        add("get(%M)", member)
+        add("%N", argumentProperty)
         when {
             type.isGeneratedEnum -> {
                 add(maybeGetNullabilitySign(argument) + ".stringValue")
@@ -612,14 +620,14 @@ internal class BtaImplOptionsGenerator(
      * Builds the value transformation from compiler to BTA (e.g., string to enum, string.toInt(), path parsing)
      */
     private fun buildCompilerToBtaValueTransform(
-        member: MemberName,
         type: TypeName,
         argument: BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>,
         effectiveCompilerName: String,
         wasRemoved: Boolean,
         argumentTypeParameter: TypeName,
+        argumentProperty: PropertySpec,
     ): CodeBlock = CodeBlock.builder().apply {
-        add("this[%M] = ", member)
+        add("%N = ", argumentProperty)
         if (wasRemoved) {
             add(
                 "arguments.%M<%T>(%S)",

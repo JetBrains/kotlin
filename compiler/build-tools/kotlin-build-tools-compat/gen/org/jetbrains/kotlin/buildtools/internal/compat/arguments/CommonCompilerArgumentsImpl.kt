@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.`internal`.compat.arguments
 
 import java.lang.IllegalStateException
+import java.nio.`file`.Path
 import kotlin.Any
 import kotlin.Array
 import kotlin.Boolean
@@ -21,91 +22,8 @@ import kotlin.collections.emptyList
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
-import kotlin.io.path.Path
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.API_VERSION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.KOTLIN_HOME
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.OPT_IN
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.P
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.PROGRESSIVE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.SCRIPT
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.XX_DEBUG_LEVEL_COMPILER_CHECKS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.XX_EXPLICIT_RETURN_TYPES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.XX_LENIENT_MODE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_HOLDSIN_CONTRACT
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_KOTLIN_PACKAGE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_REIFIED_TYPE_IN_CATCH
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ANNOTATION_DEFAULT_TARGET
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ANNOTATION_TARGET_ALL
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_CHECK_PHASE_CONDITIONS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_COMMON_SOURCES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_COMPILER_PLUGIN
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_CONTEXT_PARAMETERS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_CONTEXT_RECEIVERS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_CONTEXT_SENSITIVE_RESOLUTION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_DATA_FLOW_BASED_EXHAUSTIVENESS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_DIRECT_JAVA_ACTUALIZATION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_DISABLE_DEFAULT_SCRIPTING_PLUGIN
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_DISABLE_PHASES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_DONT_WARN_ON_ERROR_SUPPRESSION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_DUMP_DIRECTORY
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_DUMP_FQNAME
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_DUMP_PERF
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ENABLE_INCREMENTAL_COMPILATION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPECT_ACTUAL_CLASSES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPLICIT_API
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENTS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_DEPENDENCY
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_REFINES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_SOURCES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_IGNORE_CONST_OPTIMIZATION_ERRORS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_INLINE_CLASSES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_INTELLIJ_PLUGIN_ROOT
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_LIST_PHASES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_METADATA_KLIB
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_METADATA_VERSION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_MULTI_DOLLAR_INTERPOLATION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_MULTI_PLATFORM
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_NESTED_TYPE_ALIASES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_NEW_INFERENCE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_NON_LOCAL_BREAK_CONTINUE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_NO_CHECK_ACTUAL
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_NO_INLINE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_PHASES_TO_DUMP
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_PHASES_TO_DUMP_AFTER
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_PHASES_TO_DUMP_BEFORE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_PHASES_TO_VALIDATE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_PHASES_TO_VALIDATE_AFTER
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_PHASES_TO_VALIDATE_BEFORE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_PLUGIN
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_PROFILE_PHASES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_RENDER_INTERNAL_DIAGNOSTIC_NAMES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_REPL
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_REPORT_ALL_WARNINGS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_REPORT_OUTPUT_FILES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_REPORT_PERF
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_RETURN_VALUE_CHECKER
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_SEPARATE_KMP_COMPILATION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_SKIP_METADATA_VERSION_CHECK
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_SKIP_PRERELEASE_CHECK
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_STDLIB_COMPILATION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_SUPPRESS_VERSION_WARNINGS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_SUPPRESS_WARNING
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_UNRESTRICTED_BUILDER_INFERENCE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_EXPERIMENTAL_CHECKERS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_LT
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_K2
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_VERBOSE_PHASES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_VERIFY_IR
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_VERIFY_IR_VISIBILITY
+import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_WARNING_LEVEL
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_WHEN_GUARDS
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.ExplicitApiMode
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.KotlinVersion
@@ -124,6 +42,258 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(),
     ArgumentsCommonCompilerArguments, ArgumentsCommonCompilerArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  @SerialName("P")
+  protected var P: Array<String>?
+
+  @SerialName("XX_DEBUG_LEVEL_COMPILER_CHECKS")
+  protected var `XXdebug-level-compiler-checks`: Boolean
+
+  @SerialName("XX_EXPLICIT_RETURN_TYPES")
+  protected var `XXexplicit-return-types`: ExplicitApiMode
+
+  @SerialName("XX_LENIENT_MODE")
+  protected var `XXlenient-mode`: Boolean
+
+  @SerialName("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS")
+  protected var `Xallow-any-scripts-in-source-roots`: Boolean
+
+  @SerialName("X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS")
+  protected var `Xallow-condition-implies-returns-contracts`: Boolean
+
+  @SerialName("X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS")
+  protected var `Xallow-contracts-on-more-functions`: Boolean
+
+  @SerialName("X_ALLOW_HOLDSIN_CONTRACT")
+  protected var `Xallow-holdsin-contract`: Boolean
+
+  @SerialName("X_ALLOW_KOTLIN_PACKAGE")
+  protected var `Xallow-kotlin-package`: Boolean
+
+  @SerialName("X_ALLOW_REIFIED_TYPE_IN_CATCH")
+  protected var `Xallow-reified-type-in-catch`: Boolean
+
+  @SerialName("X_ANNOTATION_DEFAULT_TARGET")
+  protected var `Xannotation-default-target`: AnnotationDefaultTargetMode?
+
+  @SerialName("X_ANNOTATION_TARGET_ALL")
+  protected var `Xannotation-target-all`: Boolean
+
+  @SerialName("X_CHECK_PHASE_CONDITIONS")
+  protected var `Xcheck-phase-conditions`: Boolean
+
+  @SerialName("X_COMMON_SOURCES")
+  protected var `Xcommon-sources`: Array<String>?
+
+  @SerialName("X_COMPILER_PLUGIN")
+  protected var `Xcompiler-plugin`: Array<String>?
+
+  @SerialName("X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY")
+  protected var `Xconsistent-data-class-copy-visibility`: Boolean
+
+  @SerialName("X_CONTEXT_PARAMETERS")
+  protected var `Xcontext-parameters`: Boolean
+
+  @SerialName("X_CONTEXT_RECEIVERS")
+  protected var `Xcontext-receivers`: Boolean
+
+  @SerialName("X_CONTEXT_SENSITIVE_RESOLUTION")
+  protected var `Xcontext-sensitive-resolution`: Boolean
+
+  @SerialName("X_DATA_FLOW_BASED_EXHAUSTIVENESS")
+  protected var `Xdata-flow-based-exhaustiveness`: Boolean
+
+  @SerialName("X_DIRECT_JAVA_ACTUALIZATION")
+  protected var `Xdirect-java-actualization`: Boolean
+
+  @SerialName("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN")
+  protected var `Xdisable-default-scripting-plugin`: Boolean
+
+  @SerialName("X_DISABLE_PHASES")
+  protected var `Xdisable-phases`: List<String>
+
+  @SerialName("X_DONT_WARN_ON_ERROR_SUPPRESSION")
+  protected var `Xdont-warn-on-error-suppression`: Boolean
+
+  @SerialName("X_DUMP_DIRECTORY")
+  protected var `Xdump-directory`: Path?
+
+  @SerialName("X_DUMP_FQNAME")
+  protected var `Xdump-fqname`: String?
+
+  @SerialName("X_DUMP_PERF")
+  protected var `Xdump-perf`: Path?
+
+  @SerialName("X_ENABLE_INCREMENTAL_COMPILATION")
+  protected var `Xenable-incremental-compilation`: Boolean?
+
+  @SerialName("X_EXPECT_ACTUAL_CLASSES")
+  protected var `Xexpect-actual-classes`: Boolean
+
+  @SerialName("X_EXPLICIT_API")
+  protected var `Xexplicit-api`: ExplicitApiMode
+
+  @SerialName("X_FRAGMENT_DEPENDENCY")
+  protected var `Xfragment-dependency`: Array<String>?
+
+  @SerialName("X_FRAGMENT_REFINES")
+  protected var `Xfragment-refines`: Array<String>?
+
+  @SerialName("X_FRAGMENT_SOURCES")
+  protected var `Xfragment-sources`: Array<String>?
+
+  @SerialName("X_FRAGMENTS")
+  protected var Xfragments: Array<String>?
+
+  @SerialName("X_IGNORE_CONST_OPTIMIZATION_ERRORS")
+  protected var `Xignore-const-optimization-errors`: Boolean
+
+  @SerialName("X_INLINE_CLASSES")
+  protected var `Xinline-classes`: Boolean
+
+  @SerialName("X_INTELLIJ_PLUGIN_ROOT")
+  protected var `Xintellij-plugin-root`: String?
+
+  @SerialName("X_LIST_PHASES")
+  protected var `Xlist-phases`: Boolean
+
+  @SerialName("X_METADATA_KLIB")
+  protected var `Xmetadata-klib`: Boolean
+
+  @SerialName("X_METADATA_VERSION")
+  protected var `Xmetadata-version`: String?
+
+  @SerialName("X_MULTI_DOLLAR_INTERPOLATION")
+  protected var `Xmulti-dollar-interpolation`: Boolean
+
+  @SerialName("X_MULTI_PLATFORM")
+  protected var `Xmulti-platform`: Boolean
+
+  @SerialName("X_NESTED_TYPE_ALIASES")
+  protected var `Xnested-type-aliases`: Boolean
+
+  @SerialName("X_NEW_INFERENCE")
+  protected var `Xnew-inference`: Boolean
+
+  @SerialName("X_NO_CHECK_ACTUAL")
+  protected var `Xno-check-actual`: Boolean
+
+  @SerialName("X_NO_INLINE")
+  protected var `Xno-inline`: Boolean
+
+  @SerialName("X_NON_LOCAL_BREAK_CONTINUE")
+  protected var `Xnon-local-break-continue`: Boolean
+
+  @SerialName("X_PHASES_TO_DUMP")
+  protected var `Xphases-to-dump`: List<String>
+
+  @SerialName("X_PHASES_TO_DUMP_AFTER")
+  protected var `Xphases-to-dump-after`: List<String>
+
+  @SerialName("X_PHASES_TO_DUMP_BEFORE")
+  protected var `Xphases-to-dump-before`: List<String>
+
+  @SerialName("X_PHASES_TO_VALIDATE")
+  protected var `Xphases-to-validate`: List<String>
+
+  @SerialName("X_PHASES_TO_VALIDATE_AFTER")
+  protected var `Xphases-to-validate-after`: List<String>
+
+  @SerialName("X_PHASES_TO_VALIDATE_BEFORE")
+  protected var `Xphases-to-validate-before`: List<String>
+
+  @SerialName("X_PLUGIN")
+  protected var Xplugin: Array<String>?
+
+  @SerialName("X_PROFILE_PHASES")
+  protected var `Xprofile-phases`: Boolean
+
+  @SerialName("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES")
+  protected var `Xrender-internal-diagnostic-names`: Boolean
+
+  @SerialName("X_REPL")
+  protected var Xrepl: Boolean
+
+  @SerialName("X_REPORT_ALL_WARNINGS")
+  protected var `Xreport-all-warnings`: Boolean
+
+  @SerialName("X_REPORT_OUTPUT_FILES")
+  protected var `Xreport-output-files`: Boolean
+
+  @SerialName("X_REPORT_PERF")
+  protected var `Xreport-perf`: Boolean
+
+  @SerialName("X_RETURN_VALUE_CHECKER")
+  protected var `Xreturn-value-checker`: ReturnValueCheckerMode
+
+  @SerialName("X_SEPARATE_KMP_COMPILATION")
+  protected var `Xseparate-kmp-compilation`: Boolean
+
+  @SerialName("X_SKIP_METADATA_VERSION_CHECK")
+  protected var `Xskip-metadata-version-check`: Boolean
+
+  @SerialName("X_SKIP_PRERELEASE_CHECK")
+  protected var `Xskip-prerelease-check`: Boolean
+
+  @SerialName("X_STDLIB_COMPILATION")
+  protected var `Xstdlib-compilation`: Boolean
+
+  @SerialName("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR")
+  protected var `Xsuppress-api-version-greater-than-language-version-error`: Boolean
+
+  @SerialName("X_SUPPRESS_VERSION_WARNINGS")
+  protected var `Xsuppress-version-warnings`: Boolean
+
+  @SerialName("X_SUPPRESS_WARNING")
+  protected var `Xsuppress-warning`: List<String>
+
+  @SerialName("X_UNRESTRICTED_BUILDER_INFERENCE")
+  protected var `Xunrestricted-builder-inference`: Boolean
+
+  @SerialName("X_USE_FIR_EXPERIMENTAL_CHECKERS")
+  protected var `Xuse-fir-experimental-checkers`: Boolean
+
+  @SerialName("X_USE_FIR_IC")
+  protected var `Xuse-fir-ic`: Boolean
+
+  @SerialName("X_USE_FIR_LT")
+  protected var `Xuse-fir-lt`: Boolean
+
+  @SerialName("X_USE_K2")
+  protected var `Xuse-k2`: Boolean
+
+  @SerialName("X_VERBOSE_PHASES")
+  protected var `Xverbose-phases`: List<String>
+
+  @SerialName("X_VERIFY_IR")
+  protected var `Xverify-ir`: VerifyIrMode?
+
+  @SerialName("X_VERIFY_IR_VISIBILITY")
+  protected var `Xverify-ir-visibility`: Boolean
+
+  @SerialName("X_WHEN_GUARDS")
+  protected var `Xwhen-guards`: Boolean
+
+  @SerialName("API_VERSION")
+  protected var `api-version`: KotlinVersion?
+
+  @SerialName("KOTLIN_HOME")
+  protected var `kotlin-home`: Path?
+
+  @SerialName("LANGUAGE_VERSION")
+  protected var `language-version`: KotlinVersion?
+
+  @SerialName("OPT_IN")
+  protected var `opt-in`: List<String>
+
+  @SerialName("PROGRESSIVE")
+  protected var progressive: Boolean
+
+  @SerialName("SCRIPT")
+  protected var script: Boolean
+
+  @SerialName("X_WARNING_LEVEL")
+  protected var `Xwarning-level`: List<WarningLevel>
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonCompilerArgument<V>): V = optionsMap[key.id] as V
@@ -169,89 +339,89 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (P in this) { arguments.pluginOptions = get(P) ?: emptyArray()}
-    try { if (XX_DEBUG_LEVEL_COMPILER_CHECKS in this) { arguments.debugLevelCompilerChecks = get(XX_DEBUG_LEVEL_COMPILER_CHECKS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: XX_DEBUG_LEVEL_COMPILER_CHECKS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
-    try { if (XX_EXPLICIT_RETURN_TYPES in this) { arguments.explicitReturnTypes = get(XX_EXPLICIT_RETURN_TYPES).stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: XX_EXPLICIT_RETURN_TYPES. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
-    try { if (XX_LENIENT_MODE in this) { arguments.lenientMode = get(XX_LENIENT_MODE)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: XX_LENIENT_MODE. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
-    if (X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS in this) { arguments.allowAnyScriptsInSourceRoots = get(X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)}
-    try { if (X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS in this) { arguments.allowConditionImpliesReturnsContracts = get(X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
-    try { if (X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS in this) { arguments.allowContractsOnMoreFunctions = get(X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
-    try { if (X_ALLOW_HOLDSIN_CONTRACT in this) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ALLOW_HOLDSIN_CONTRACT. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
-    if (X_ALLOW_KOTLIN_PACKAGE in this) { arguments.allowKotlinPackage = get(X_ALLOW_KOTLIN_PACKAGE)}
-    try { if (X_ALLOW_REIFIED_TYPE_IN_CATCH in this) { arguments.allowReifiedTypeInCatch = get(X_ALLOW_REIFIED_TYPE_IN_CATCH)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ALLOW_REIFIED_TYPE_IN_CATCH. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
-    try { if (X_ANNOTATION_DEFAULT_TARGET in this) { arguments.annotationDefaultTarget = get(X_ANNOTATION_DEFAULT_TARGET)?.stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ANNOTATION_DEFAULT_TARGET. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
-    try { if (X_ANNOTATION_TARGET_ALL in this) { arguments.annotationTargetAll = get(X_ANNOTATION_TARGET_ALL)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ANNOTATION_TARGET_ALL. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
-    if (X_CHECK_PHASE_CONDITIONS in this) { arguments.checkPhaseConditions = get(X_CHECK_PHASE_CONDITIONS)}
-    if (X_COMMON_SOURCES in this) { arguments.commonSources = get(X_COMMON_SOURCES) ?: emptyArray()}
-    if (X_COMPILER_PLUGIN in this) { arguments.pluginConfigurations = get(X_COMPILER_PLUGIN) ?: emptyArray()}
-    try { if (X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY in this) { arguments.consistentDataClassCopyVisibility = get(X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
-    try { if (X_CONTEXT_PARAMETERS in this) { arguments.contextParameters = get(X_CONTEXT_PARAMETERS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_PARAMETERS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
-    try { if (X_CONTEXT_RECEIVERS in this) { arguments.setUsingReflection("contextReceivers", get(X_CONTEXT_RECEIVERS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_RECEIVERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { if (X_CONTEXT_SENSITIVE_RESOLUTION in this) { arguments.contextSensitiveResolution = get(X_CONTEXT_SENSITIVE_RESOLUTION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_SENSITIVE_RESOLUTION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
-    try { if (X_DATA_FLOW_BASED_EXHAUSTIVENESS in this) { arguments.dataFlowBasedExhaustiveness = get(X_DATA_FLOW_BASED_EXHAUSTIVENESS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DATA_FLOW_BASED_EXHAUSTIVENESS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
-    try { if (X_DIRECT_JAVA_ACTUALIZATION in this) { arguments.setUsingReflection("directJavaActualization", get(X_DIRECT_JAVA_ACTUALIZATION))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DIRECT_JAVA_ACTUALIZATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0 and removed in 2.5.0""").initCause(e) }
-    if (X_DISABLE_DEFAULT_SCRIPTING_PLUGIN in this) { arguments.disableDefaultScriptingPlugin = get(X_DISABLE_DEFAULT_SCRIPTING_PLUGIN)}
-    if (X_DISABLE_PHASES in this) { arguments.disablePhases = get(X_DISABLE_PHASES).toTypedArray()}
-    try { if (X_DONT_WARN_ON_ERROR_SUPPRESSION in this) { arguments.dontWarnOnErrorSuppression = get(X_DONT_WARN_ON_ERROR_SUPPRESSION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DONT_WARN_ON_ERROR_SUPPRESSION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
-    if (X_DUMP_DIRECTORY in this) { arguments.dumpDirectory = get(X_DUMP_DIRECTORY)?.absolutePathStringOrThrow()}
-    if (X_DUMP_FQNAME in this) { arguments.dumpOnlyFqName = get(X_DUMP_FQNAME)}
-    if (X_DUMP_PERF in this) { arguments.dumpPerf = get(X_DUMP_PERF)?.absolutePathStringOrThrow()}
-    if (X_ENABLE_INCREMENTAL_COMPILATION in this) { arguments.incrementalCompilation = get(X_ENABLE_INCREMENTAL_COMPILATION)}
-    try { if (X_EXPECT_ACTUAL_CLASSES in this) { arguments.expectActualClasses = get(X_EXPECT_ACTUAL_CLASSES)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_EXPECT_ACTUAL_CLASSES. Current compiler version is: $KC_VERSION, but the argument was introduced in 1.9.20""").initCause(e) }
-    if (X_EXPLICIT_API in this) { arguments.explicitApi = get(X_EXPLICIT_API).stringValue}
-    try { if (X_FRAGMENT_DEPENDENCY in this) { arguments.fragmentDependencies = get(X_FRAGMENT_DEPENDENCY) ?: emptyArray()} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_FRAGMENT_DEPENDENCY. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
-    if (X_FRAGMENT_REFINES in this) { arguments.fragmentRefines = get(X_FRAGMENT_REFINES) ?: emptyArray()}
-    if (X_FRAGMENT_SOURCES in this) { arguments.fragmentSources = get(X_FRAGMENT_SOURCES) ?: emptyArray()}
-    if (X_FRAGMENTS in this) { arguments.fragments = get(X_FRAGMENTS) ?: emptyArray()}
-    try { if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.setUsingReflection("ignoreConstOptimizationErrors", get(X_IGNORE_CONST_OPTIMIZATION_ERRORS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IGNORE_CONST_OPTIMIZATION_ERRORS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { if (X_INLINE_CLASSES in this) { arguments.setUsingReflection("inlineClasses", get(X_INLINE_CLASSES))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INLINE_CLASSES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { if (X_INTELLIJ_PLUGIN_ROOT in this) { arguments.setUsingReflection("intellijPluginRoot", get(X_INTELLIJ_PLUGIN_ROOT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INTELLIJ_PLUGIN_ROOT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    if (X_LIST_PHASES in this) { arguments.listPhases = get(X_LIST_PHASES)}
-    try { if (X_METADATA_KLIB in this) { arguments.metadataKlib = get(X_METADATA_KLIB)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_METADATA_KLIB. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
-    if (X_METADATA_VERSION in this) { arguments.metadataVersion = get(X_METADATA_VERSION)}
-    try { if (X_MULTI_DOLLAR_INTERPOLATION in this) { arguments.multiDollarInterpolation = get(X_MULTI_DOLLAR_INTERPOLATION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_MULTI_DOLLAR_INTERPOLATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
-    if (X_MULTI_PLATFORM in this) { arguments.multiPlatform = get(X_MULTI_PLATFORM)}
-    try { if (X_NESTED_TYPE_ALIASES in this) { arguments.nestedTypeAliases = get(X_NESTED_TYPE_ALIASES)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NESTED_TYPE_ALIASES. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
-    try { if (X_NEW_INFERENCE in this) { arguments.setUsingReflection("newInference", get(X_NEW_INFERENCE))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NEW_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { if (X_NO_CHECK_ACTUAL in this) { arguments.setUsingReflection("noCheckActual", get(X_NO_CHECK_ACTUAL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NO_CHECK_ACTUAL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    if (X_NO_INLINE in this) { arguments.noInline = get(X_NO_INLINE)}
-    try { if (X_NON_LOCAL_BREAK_CONTINUE in this) { arguments.nonLocalBreakContinue = get(X_NON_LOCAL_BREAK_CONTINUE)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NON_LOCAL_BREAK_CONTINUE. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0""").initCause(e) }
-    if (X_PHASES_TO_DUMP in this) { arguments.phasesToDump = get(X_PHASES_TO_DUMP).toTypedArray()}
-    if (X_PHASES_TO_DUMP_AFTER in this) { arguments.phasesToDumpAfter = get(X_PHASES_TO_DUMP_AFTER).toTypedArray()}
-    if (X_PHASES_TO_DUMP_BEFORE in this) { arguments.phasesToDumpBefore = get(X_PHASES_TO_DUMP_BEFORE).toTypedArray()}
-    if (X_PHASES_TO_VALIDATE in this) { arguments.phasesToValidate = get(X_PHASES_TO_VALIDATE).toTypedArray()}
-    if (X_PHASES_TO_VALIDATE_AFTER in this) { arguments.phasesToValidateAfter = get(X_PHASES_TO_VALIDATE_AFTER).toTypedArray()}
-    if (X_PHASES_TO_VALIDATE_BEFORE in this) { arguments.phasesToValidateBefore = get(X_PHASES_TO_VALIDATE_BEFORE).toTypedArray()}
-    if (X_PLUGIN in this) { arguments.pluginClasspaths = get(X_PLUGIN) ?: emptyArray()}
-    if (X_PROFILE_PHASES in this) { arguments.profilePhases = get(X_PROFILE_PHASES)}
-    if (X_RENDER_INTERNAL_DIAGNOSTIC_NAMES in this) { arguments.renderInternalDiagnosticNames = get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES)}
-    try { if (X_REPL in this) { arguments.repl = get(X_REPL)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPL. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
-    try { if (X_REPORT_ALL_WARNINGS in this) { arguments.reportAllWarnings = get(X_REPORT_ALL_WARNINGS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPORT_ALL_WARNINGS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
-    if (X_REPORT_OUTPUT_FILES in this) { arguments.reportOutputFiles = get(X_REPORT_OUTPUT_FILES)}
-    if (X_REPORT_PERF in this) { arguments.reportPerf = get(X_REPORT_PERF)}
-    try { if (X_RETURN_VALUE_CHECKER in this) { arguments.returnValueChecker = get(X_RETURN_VALUE_CHECKER).stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_RETURN_VALUE_CHECKER. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
-    try { if (X_SEPARATE_KMP_COMPILATION in this) { arguments.separateKmpCompilationScheme = get(X_SEPARATE_KMP_COMPILATION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SEPARATE_KMP_COMPILATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
-    if (X_SKIP_METADATA_VERSION_CHECK in this) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK)}
-    if (X_SKIP_PRERELEASE_CHECK in this) { arguments.skipPrereleaseCheck = get(X_SKIP_PRERELEASE_CHECK)}
-    try { if (X_STDLIB_COMPILATION in this) { arguments.stdlibCompilation = get(X_STDLIB_COMPILATION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_STDLIB_COMPILATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
-    try { if (X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR in this) { arguments.setUsingReflection("suppressApiVersionGreaterThanLanguageVersionError", get(X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0 and removed in 2.5.0""").initCause(e) }
-    if (X_SUPPRESS_VERSION_WARNINGS in this) { arguments.suppressVersionWarnings = get(X_SUPPRESS_VERSION_WARNINGS)}
-    try { if (X_SUPPRESS_WARNING in this) { arguments.setUsingReflection("suppressedDiagnostics", get(X_SUPPRESS_WARNING).toTypedArray())} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_WARNING. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0 and removed in 2.5.0""").initCause(e) }
-    try { if (X_UNRESTRICTED_BUILDER_INFERENCE in this) { arguments.setUsingReflection("unrestrictedBuilderInference", get(X_UNRESTRICTED_BUILDER_INFERENCE))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_UNRESTRICTED_BUILDER_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { if (X_USE_FIR_EXPERIMENTAL_CHECKERS in this) { arguments.setUsingReflection("useFirExperimentalCheckers", get(X_USE_FIR_EXPERIMENTAL_CHECKERS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_FIR_EXPERIMENTAL_CHECKERS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0 and removed in 2.5.0""").initCause(e) }
-    if (X_USE_FIR_IC in this) { arguments.useFirIC = get(X_USE_FIR_IC)}
-    if (X_USE_FIR_LT in this) { arguments.useFirLT = get(X_USE_FIR_LT)}
-    try { if (X_USE_K2 in this) { arguments.setUsingReflection("useK2", get(X_USE_K2))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_K2. Current compiler version is: $KC_VERSION, but the argument was removed in 2.2.0""").initCause(e) }
-    if (X_VERBOSE_PHASES in this) { arguments.verbosePhases = get(X_VERBOSE_PHASES).toTypedArray()}
-    try { if (X_VERIFY_IR in this) { arguments.verifyIr = get(X_VERIFY_IR)?.stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
-    try { if (X_VERIFY_IR_VISIBILITY in this) { arguments.setUsingReflection("verifyIrVisibility", get(X_VERIFY_IR_VISIBILITY))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR_VISIBILITY. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20 and removed in 2.4.20""").initCause(e) }
-    try { if (X_WHEN_GUARDS in this) { arguments.whenGuards = get(X_WHEN_GUARDS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_WHEN_GUARDS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
-    if (API_VERSION in this) { arguments.apiVersion = get(API_VERSION)?.stringValue}
-    if (KOTLIN_HOME in this) { arguments.kotlinHome = get(KOTLIN_HOME)?.absolutePathStringOrThrow()}
-    if (LANGUAGE_VERSION in this) { arguments.languageVersion = get(LANGUAGE_VERSION)?.stringValue}
-    if (OPT_IN in this) { arguments.optIn = get(OPT_IN).toTypedArray()}
-    if (PROGRESSIVE in this) { arguments.progressiveMode = get(PROGRESSIVE)}
-    if (SCRIPT in this) { arguments.script = get(SCRIPT)}
+    arguments.pluginOptions = P ?: emptyArray()
+    try { arguments.debugLevelCompilerChecks = `XXdebug-level-compiler-checks` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: XX_DEBUG_LEVEL_COMPILER_CHECKS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
+    try { arguments.explicitReturnTypes = `XXexplicit-return-types`.stringValue } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: XX_EXPLICIT_RETURN_TYPES. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
+    try { arguments.lenientMode = `XXlenient-mode` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: XX_LENIENT_MODE. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
+    arguments.allowAnyScriptsInSourceRoots = `Xallow-any-scripts-in-source-roots`
+    try { arguments.allowConditionImpliesReturnsContracts = `Xallow-condition-implies-returns-contracts` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
+    try { arguments.allowContractsOnMoreFunctions = `Xallow-contracts-on-more-functions` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
+    try { arguments.allowHoldsinContract = `Xallow-holdsin-contract` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ALLOW_HOLDSIN_CONTRACT. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
+    arguments.allowKotlinPackage = `Xallow-kotlin-package`
+    try { arguments.allowReifiedTypeInCatch = `Xallow-reified-type-in-catch` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ALLOW_REIFIED_TYPE_IN_CATCH. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
+    try { arguments.annotationDefaultTarget = `Xannotation-default-target`?.stringValue } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ANNOTATION_DEFAULT_TARGET. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
+    try { arguments.annotationTargetAll = `Xannotation-target-all` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ANNOTATION_TARGET_ALL. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
+    arguments.checkPhaseConditions = `Xcheck-phase-conditions`
+    arguments.commonSources = `Xcommon-sources` ?: emptyArray()
+    arguments.pluginConfigurations = `Xcompiler-plugin` ?: emptyArray()
+    try { arguments.consistentDataClassCopyVisibility = `Xconsistent-data-class-copy-visibility` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
+    try { arguments.contextParameters = `Xcontext-parameters` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_PARAMETERS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
+    try { arguments.setUsingReflection("contextReceivers", `Xcontext-receivers`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_RECEIVERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    try { arguments.contextSensitiveResolution = `Xcontext-sensitive-resolution` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_SENSITIVE_RESOLUTION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
+    try { arguments.dataFlowBasedExhaustiveness = `Xdata-flow-based-exhaustiveness` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DATA_FLOW_BASED_EXHAUSTIVENESS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
+    try { arguments.setUsingReflection("directJavaActualization", `Xdirect-java-actualization`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DIRECT_JAVA_ACTUALIZATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0 and removed in 2.5.0""").initCause(e) }
+    arguments.disableDefaultScriptingPlugin = `Xdisable-default-scripting-plugin`
+    arguments.disablePhases = `Xdisable-phases`.toTypedArray()
+    try { arguments.dontWarnOnErrorSuppression = `Xdont-warn-on-error-suppression` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DONT_WARN_ON_ERROR_SUPPRESSION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
+    arguments.dumpDirectory = `Xdump-directory`?.absolutePathStringOrThrow()
+    arguments.dumpOnlyFqName = `Xdump-fqname`
+    arguments.dumpPerf = `Xdump-perf`?.absolutePathStringOrThrow()
+    arguments.incrementalCompilation = `Xenable-incremental-compilation`
+    try { arguments.expectActualClasses = `Xexpect-actual-classes` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_EXPECT_ACTUAL_CLASSES. Current compiler version is: $KC_VERSION, but the argument was introduced in 1.9.20""").initCause(e) }
+    arguments.explicitApi = `Xexplicit-api`.stringValue
+    try { arguments.fragmentDependencies = `Xfragment-dependency` ?: emptyArray() } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_FRAGMENT_DEPENDENCY. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
+    arguments.fragmentRefines = `Xfragment-refines` ?: emptyArray()
+    arguments.fragmentSources = `Xfragment-sources` ?: emptyArray()
+    arguments.fragments = Xfragments ?: emptyArray()
+    try { arguments.setUsingReflection("ignoreConstOptimizationErrors", `Xignore-const-optimization-errors`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IGNORE_CONST_OPTIMIZATION_ERRORS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    try { arguments.setUsingReflection("inlineClasses", `Xinline-classes`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INLINE_CLASSES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    try { arguments.setUsingReflection("intellijPluginRoot", `Xintellij-plugin-root`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INTELLIJ_PLUGIN_ROOT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    arguments.listPhases = `Xlist-phases`
+    try { arguments.metadataKlib = `Xmetadata-klib` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_METADATA_KLIB. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
+    arguments.metadataVersion = `Xmetadata-version`
+    try { arguments.multiDollarInterpolation = `Xmulti-dollar-interpolation` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_MULTI_DOLLAR_INTERPOLATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
+    arguments.multiPlatform = `Xmulti-platform`
+    try { arguments.nestedTypeAliases = `Xnested-type-aliases` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NESTED_TYPE_ALIASES. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
+    try { arguments.setUsingReflection("newInference", `Xnew-inference`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NEW_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    try { arguments.setUsingReflection("noCheckActual", `Xno-check-actual`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NO_CHECK_ACTUAL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    arguments.noInline = `Xno-inline`
+    try { arguments.nonLocalBreakContinue = `Xnon-local-break-continue` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NON_LOCAL_BREAK_CONTINUE. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0""").initCause(e) }
+    arguments.phasesToDump = `Xphases-to-dump`.toTypedArray()
+    arguments.phasesToDumpAfter = `Xphases-to-dump-after`.toTypedArray()
+    arguments.phasesToDumpBefore = `Xphases-to-dump-before`.toTypedArray()
+    arguments.phasesToValidate = `Xphases-to-validate`.toTypedArray()
+    arguments.phasesToValidateAfter = `Xphases-to-validate-after`.toTypedArray()
+    arguments.phasesToValidateBefore = `Xphases-to-validate-before`.toTypedArray()
+    arguments.pluginClasspaths = Xplugin ?: emptyArray()
+    arguments.profilePhases = `Xprofile-phases`
+    arguments.renderInternalDiagnosticNames = `Xrender-internal-diagnostic-names`
+    try { arguments.repl = Xrepl } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPL. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
+    try { arguments.reportAllWarnings = `Xreport-all-warnings` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPORT_ALL_WARNINGS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
+    arguments.reportOutputFiles = `Xreport-output-files`
+    arguments.reportPerf = `Xreport-perf`
+    try { arguments.returnValueChecker = `Xreturn-value-checker`.stringValue } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_RETURN_VALUE_CHECKER. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
+    try { arguments.separateKmpCompilationScheme = `Xseparate-kmp-compilation` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SEPARATE_KMP_COMPILATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
+    arguments.skipMetadataVersionCheck = `Xskip-metadata-version-check`
+    arguments.skipPrereleaseCheck = `Xskip-prerelease-check`
+    try { arguments.stdlibCompilation = `Xstdlib-compilation` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_STDLIB_COMPILATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
+    try { arguments.setUsingReflection("suppressApiVersionGreaterThanLanguageVersionError", `Xsuppress-api-version-greater-than-language-version-error`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0 and removed in 2.5.0""").initCause(e) }
+    arguments.suppressVersionWarnings = `Xsuppress-version-warnings`
+    try { arguments.setUsingReflection("suppressedDiagnostics", `Xsuppress-warning`.toTypedArray()) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_WARNING. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0 and removed in 2.5.0""").initCause(e) }
+    try { arguments.setUsingReflection("unrestrictedBuilderInference", `Xunrestricted-builder-inference`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_UNRESTRICTED_BUILDER_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    try { arguments.setUsingReflection("useFirExperimentalCheckers", `Xuse-fir-experimental-checkers`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_FIR_EXPERIMENTAL_CHECKERS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0 and removed in 2.5.0""").initCause(e) }
+    arguments.useFirIC = `Xuse-fir-ic`
+    arguments.useFirLT = `Xuse-fir-lt`
+    try { arguments.setUsingReflection("useK2", `Xuse-k2`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_K2. Current compiler version is: $KC_VERSION, but the argument was removed in 2.2.0""").initCause(e) }
+    arguments.verbosePhases = `Xverbose-phases`.toTypedArray()
+    try { arguments.verifyIr = `Xverify-ir`?.stringValue } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
+    try { arguments.setUsingReflection("verifyIrVisibility", `Xverify-ir-visibility`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR_VISIBILITY. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20 and removed in 2.4.20""").initCause(e) }
+    try { arguments.whenGuards = `Xwhen-guards` } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_WHEN_GUARDS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
+    arguments.apiVersion = `api-version`?.stringValue
+    arguments.kotlinHome = `kotlin-home`?.absolutePathStringOrThrow()
+    arguments.languageVersion = `language-version`?.stringValue
+    arguments.optIn = `opt-in`.toTypedArray()
+    arguments.progressiveMode = progressive
+    arguments.script = script
     try { if (X_WARNING_LEVEL in this) { arguments.applyWarningLevels(get(X_WARNING_LEVEL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_WARNING_LEVEL. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     return arguments
   }
@@ -259,89 +429,89 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: CommonCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[P] = arguments.pluginOptions } catch (_: NoSuchMethodError) {  }
-    try { this[XX_DEBUG_LEVEL_COMPILER_CHECKS] = arguments.debugLevelCompilerChecks } catch (_: NoSuchMethodError) {  }
-    try { this[XX_EXPLICIT_RETURN_TYPES] = arguments.explicitReturnTypes.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -XXexplicit-return-types value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[XX_LENIENT_MODE] = arguments.lenientMode } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = arguments.allowAnyScriptsInSourceRoots } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS] = arguments.allowConditionImpliesReturnsContracts } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS] = arguments.allowContractsOnMoreFunctions } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_HOLDSIN_CONTRACT] = arguments.allowHoldsinContract } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_KOTLIN_PACKAGE] = arguments.allowKotlinPackage } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_REIFIED_TYPE_IN_CATCH] = arguments.allowReifiedTypeInCatch } catch (_: NoSuchMethodError) {  }
-    try { this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[X_ANNOTATION_TARGET_ALL] = arguments.annotationTargetAll } catch (_: NoSuchMethodError) {  }
-    try { this[X_CHECK_PHASE_CONDITIONS] = arguments.checkPhaseConditions } catch (_: NoSuchMethodError) {  }
-    try { this[X_COMMON_SOURCES] = arguments.commonSources } catch (_: NoSuchMethodError) {  }
-    try { this[X_COMPILER_PLUGIN] = arguments.pluginConfigurations } catch (_: NoSuchMethodError) {  }
-    try { this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = arguments.consistentDataClassCopyVisibility } catch (_: NoSuchMethodError) {  }
-    try { this[X_CONTEXT_PARAMETERS] = arguments.contextParameters } catch (_: NoSuchMethodError) {  }
-    try { this[X_CONTEXT_RECEIVERS] = arguments.getUsingReflection<Boolean>("contextReceivers") } catch (_: NoSuchMethodError) {  }
-    try { this[X_CONTEXT_SENSITIVE_RESOLUTION] = arguments.contextSensitiveResolution } catch (_: NoSuchMethodError) {  }
-    try { this[X_DATA_FLOW_BASED_EXHAUSTIVENESS] = arguments.dataFlowBasedExhaustiveness } catch (_: NoSuchMethodError) {  }
-    try { this[X_DIRECT_JAVA_ACTUALIZATION] = arguments.getUsingReflection<Boolean>("directJavaActualization") } catch (_: NoSuchMethodError) {  }
-    try { this[X_DISABLE_DEFAULT_SCRIPTING_PLUGIN] = arguments.disableDefaultScriptingPlugin } catch (_: NoSuchMethodError) {  }
-    try { this[X_DISABLE_PHASES] = arguments.disablePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_DONT_WARN_ON_ERROR_SUPPRESSION] = arguments.dontWarnOnErrorSuppression } catch (_: NoSuchMethodError) {  }
-    try { this[X_DUMP_DIRECTORY] = arguments.dumpDirectory?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_DUMP_FQNAME] = arguments.dumpOnlyFqName } catch (_: NoSuchMethodError) {  }
-    try { this[X_DUMP_PERF] = arguments.dumpPerf?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENABLE_INCREMENTAL_COMPILATION] = arguments.incrementalCompilation } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPECT_ACTUAL_CLASSES] = arguments.expectActualClasses } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPLICIT_API] = arguments.explicitApi.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRAGMENT_DEPENDENCY] = arguments.fragmentDependencies } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRAGMENT_REFINES] = arguments.fragmentRefines } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRAGMENT_SOURCES] = arguments.fragmentSources } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRAGMENTS] = arguments.fragments } catch (_: NoSuchMethodError) {  }
-    try { this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.getUsingReflection<Boolean>("ignoreConstOptimizationErrors") } catch (_: NoSuchMethodError) {  }
-    try { this[X_INLINE_CLASSES] = arguments.getUsingReflection<Boolean>("inlineClasses") } catch (_: NoSuchMethodError) {  }
-    try { this[X_INTELLIJ_PLUGIN_ROOT] = arguments.getUsingReflection<String?>("intellijPluginRoot") } catch (_: NoSuchMethodError) {  }
-    try { this[X_LIST_PHASES] = arguments.listPhases } catch (_: NoSuchMethodError) {  }
-    try { this[X_METADATA_KLIB] = arguments.metadataKlib } catch (_: NoSuchMethodError) {  }
-    try { this[X_METADATA_VERSION] = arguments.metadataVersion } catch (_: NoSuchMethodError) {  }
-    try { this[X_MULTI_DOLLAR_INTERPOLATION] = arguments.multiDollarInterpolation } catch (_: NoSuchMethodError) {  }
-    try { this[X_MULTI_PLATFORM] = arguments.multiPlatform } catch (_: NoSuchMethodError) {  }
-    try { this[X_NESTED_TYPE_ALIASES] = arguments.nestedTypeAliases } catch (_: NoSuchMethodError) {  }
-    try { this[X_NEW_INFERENCE] = arguments.getUsingReflection<Boolean>("newInference") } catch (_: NoSuchMethodError) {  }
-    try { this[X_NO_CHECK_ACTUAL] = arguments.getUsingReflection<Boolean>("noCheckActual") } catch (_: NoSuchMethodError) {  }
-    try { this[X_NO_INLINE] = arguments.noInline } catch (_: NoSuchMethodError) {  }
-    try { this[X_NON_LOCAL_BREAK_CONTINUE] = arguments.nonLocalBreakContinue } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_DUMP] = arguments.phasesToDump.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_DUMP_AFTER] = arguments.phasesToDumpAfter.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_DUMP_BEFORE] = arguments.phasesToDumpBefore.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_VALIDATE] = arguments.phasesToValidate.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_VALIDATE_AFTER] = arguments.phasesToValidateAfter.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_VALIDATE_BEFORE] = arguments.phasesToValidateBefore.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PLUGIN] = arguments.pluginClasspaths } catch (_: NoSuchMethodError) {  }
-    try { this[X_PROFILE_PHASES] = arguments.profilePhases } catch (_: NoSuchMethodError) {  }
-    try { this[X_RENDER_INTERNAL_DIAGNOSTIC_NAMES] = arguments.renderInternalDiagnosticNames } catch (_: NoSuchMethodError) {  }
-    try { this[X_REPL] = arguments.repl } catch (_: NoSuchMethodError) {  }
-    try { this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings } catch (_: NoSuchMethodError) {  }
-    try { this[X_REPORT_OUTPUT_FILES] = arguments.reportOutputFiles } catch (_: NoSuchMethodError) {  }
-    try { this[X_REPORT_PERF] = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
-    try { this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[X_SEPARATE_KMP_COMPILATION] = arguments.separateKmpCompilationScheme } catch (_: NoSuchMethodError) {  }
-    try { this[X_SKIP_METADATA_VERSION_CHECK] = arguments.skipMetadataVersionCheck } catch (_: NoSuchMethodError) {  }
-    try { this[X_SKIP_PRERELEASE_CHECK] = arguments.skipPrereleaseCheck } catch (_: NoSuchMethodError) {  }
-    try { this[X_STDLIB_COMPILATION] = arguments.stdlibCompilation } catch (_: NoSuchMethodError) {  }
-    try { this[X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR] = arguments.getUsingReflection<Boolean>("suppressApiVersionGreaterThanLanguageVersionError") } catch (_: NoSuchMethodError) {  }
-    try { this[X_SUPPRESS_VERSION_WARNINGS] = arguments.suppressVersionWarnings } catch (_: NoSuchMethodError) {  }
-    try { this[X_SUPPRESS_WARNING] = arguments.getUsingReflection<Array<String>>("suppressedDiagnostics").toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_UNRESTRICTED_BUILDER_INFERENCE] = arguments.getUsingReflection<Boolean>("unrestrictedBuilderInference") } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_FIR_EXPERIMENTAL_CHECKERS] = arguments.getUsingReflection<Boolean>("useFirExperimentalCheckers") } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_FIR_IC] = arguments.useFirIC } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_FIR_LT] = arguments.useFirLT } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_K2] = arguments.getUsingReflection<Boolean>("useK2") } catch (_: NoSuchMethodError) {  }
-    try { this[X_VERBOSE_PHASES] = arguments.verbosePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_VERIFY_IR] = arguments.verifyIr?.let { VerifyIrMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[X_VERIFY_IR_VISIBILITY] = arguments.getUsingReflection<Boolean>("verifyIrVisibility") } catch (_: NoSuchMethodError) {  }
-    try { this[X_WHEN_GUARDS] = arguments.whenGuards } catch (_: NoSuchMethodError) {  }
-    try { this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[KOTLIN_HOME] = arguments.kotlinHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[OPT_IN] = arguments.optIn.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[PROGRESSIVE] = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
-    try { this[SCRIPT] = arguments.script } catch (_: NoSuchMethodError) {  }
+    try { P = arguments.pluginOptions } catch (_: NoSuchMethodError) {  }
+    try { `XXdebug-level-compiler-checks` = arguments.debugLevelCompilerChecks } catch (_: NoSuchMethodError) {  }
+    try { `XXexplicit-return-types` = arguments.explicitReturnTypes.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -XXexplicit-return-types value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { `XXlenient-mode` = arguments.lenientMode } catch (_: NoSuchMethodError) {  }
+    try { `Xallow-any-scripts-in-source-roots` = arguments.allowAnyScriptsInSourceRoots } catch (_: NoSuchMethodError) {  }
+    try { `Xallow-condition-implies-returns-contracts` = arguments.allowConditionImpliesReturnsContracts } catch (_: NoSuchMethodError) {  }
+    try { `Xallow-contracts-on-more-functions` = arguments.allowContractsOnMoreFunctions } catch (_: NoSuchMethodError) {  }
+    try { `Xallow-holdsin-contract` = arguments.allowHoldsinContract } catch (_: NoSuchMethodError) {  }
+    try { `Xallow-kotlin-package` = arguments.allowKotlinPackage } catch (_: NoSuchMethodError) {  }
+    try { `Xallow-reified-type-in-catch` = arguments.allowReifiedTypeInCatch } catch (_: NoSuchMethodError) {  }
+    try { `Xannotation-default-target` = arguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { `Xannotation-target-all` = arguments.annotationTargetAll } catch (_: NoSuchMethodError) {  }
+    try { `Xcheck-phase-conditions` = arguments.checkPhaseConditions } catch (_: NoSuchMethodError) {  }
+    try { `Xcommon-sources` = arguments.commonSources } catch (_: NoSuchMethodError) {  }
+    try { `Xcompiler-plugin` = arguments.pluginConfigurations } catch (_: NoSuchMethodError) {  }
+    try { `Xconsistent-data-class-copy-visibility` = arguments.consistentDataClassCopyVisibility } catch (_: NoSuchMethodError) {  }
+    try { `Xcontext-parameters` = arguments.contextParameters } catch (_: NoSuchMethodError) {  }
+    try { `Xcontext-receivers` = arguments.getUsingReflection<Boolean>("contextReceivers") } catch (_: NoSuchMethodError) {  }
+    try { `Xcontext-sensitive-resolution` = arguments.contextSensitiveResolution } catch (_: NoSuchMethodError) {  }
+    try { `Xdata-flow-based-exhaustiveness` = arguments.dataFlowBasedExhaustiveness } catch (_: NoSuchMethodError) {  }
+    try { `Xdirect-java-actualization` = arguments.getUsingReflection<Boolean>("directJavaActualization") } catch (_: NoSuchMethodError) {  }
+    try { `Xdisable-default-scripting-plugin` = arguments.disableDefaultScriptingPlugin } catch (_: NoSuchMethodError) {  }
+    try { `Xdisable-phases` = arguments.disablePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { `Xdont-warn-on-error-suppression` = arguments.dontWarnOnErrorSuppression } catch (_: NoSuchMethodError) {  }
+    try { `Xdump-directory` = arguments.dumpDirectory?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { `Xdump-fqname` = arguments.dumpOnlyFqName } catch (_: NoSuchMethodError) {  }
+    try { `Xdump-perf` = arguments.dumpPerf?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { `Xenable-incremental-compilation` = arguments.incrementalCompilation } catch (_: NoSuchMethodError) {  }
+    try { `Xexpect-actual-classes` = arguments.expectActualClasses } catch (_: NoSuchMethodError) {  }
+    try { `Xexplicit-api` = arguments.explicitApi.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { `Xfragment-dependency` = arguments.fragmentDependencies } catch (_: NoSuchMethodError) {  }
+    try { `Xfragment-refines` = arguments.fragmentRefines } catch (_: NoSuchMethodError) {  }
+    try { `Xfragment-sources` = arguments.fragmentSources } catch (_: NoSuchMethodError) {  }
+    try { Xfragments = arguments.fragments } catch (_: NoSuchMethodError) {  }
+    try { `Xignore-const-optimization-errors` = arguments.getUsingReflection<Boolean>("ignoreConstOptimizationErrors") } catch (_: NoSuchMethodError) {  }
+    try { `Xinline-classes` = arguments.getUsingReflection<Boolean>("inlineClasses") } catch (_: NoSuchMethodError) {  }
+    try { `Xintellij-plugin-root` = arguments.getUsingReflection<String?>("intellijPluginRoot") } catch (_: NoSuchMethodError) {  }
+    try { `Xlist-phases` = arguments.listPhases } catch (_: NoSuchMethodError) {  }
+    try { `Xmetadata-klib` = arguments.metadataKlib } catch (_: NoSuchMethodError) {  }
+    try { `Xmetadata-version` = arguments.metadataVersion } catch (_: NoSuchMethodError) {  }
+    try { `Xmulti-dollar-interpolation` = arguments.multiDollarInterpolation } catch (_: NoSuchMethodError) {  }
+    try { `Xmulti-platform` = arguments.multiPlatform } catch (_: NoSuchMethodError) {  }
+    try { `Xnested-type-aliases` = arguments.nestedTypeAliases } catch (_: NoSuchMethodError) {  }
+    try { `Xnew-inference` = arguments.getUsingReflection<Boolean>("newInference") } catch (_: NoSuchMethodError) {  }
+    try { `Xno-check-actual` = arguments.getUsingReflection<Boolean>("noCheckActual") } catch (_: NoSuchMethodError) {  }
+    try { `Xno-inline` = arguments.noInline } catch (_: NoSuchMethodError) {  }
+    try { `Xnon-local-break-continue` = arguments.nonLocalBreakContinue } catch (_: NoSuchMethodError) {  }
+    try { `Xphases-to-dump` = arguments.phasesToDump.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { `Xphases-to-dump-after` = arguments.phasesToDumpAfter.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { `Xphases-to-dump-before` = arguments.phasesToDumpBefore.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { `Xphases-to-validate` = arguments.phasesToValidate.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { `Xphases-to-validate-after` = arguments.phasesToValidateAfter.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { `Xphases-to-validate-before` = arguments.phasesToValidateBefore.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { Xplugin = arguments.pluginClasspaths } catch (_: NoSuchMethodError) {  }
+    try { `Xprofile-phases` = arguments.profilePhases } catch (_: NoSuchMethodError) {  }
+    try { `Xrender-internal-diagnostic-names` = arguments.renderInternalDiagnosticNames } catch (_: NoSuchMethodError) {  }
+    try { Xrepl = arguments.repl } catch (_: NoSuchMethodError) {  }
+    try { `Xreport-all-warnings` = arguments.reportAllWarnings } catch (_: NoSuchMethodError) {  }
+    try { `Xreport-output-files` = arguments.reportOutputFiles } catch (_: NoSuchMethodError) {  }
+    try { `Xreport-perf` = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
+    try { `Xreturn-value-checker` = arguments.returnValueChecker.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { `Xseparate-kmp-compilation` = arguments.separateKmpCompilationScheme } catch (_: NoSuchMethodError) {  }
+    try { `Xskip-metadata-version-check` = arguments.skipMetadataVersionCheck } catch (_: NoSuchMethodError) {  }
+    try { `Xskip-prerelease-check` = arguments.skipPrereleaseCheck } catch (_: NoSuchMethodError) {  }
+    try { `Xstdlib-compilation` = arguments.stdlibCompilation } catch (_: NoSuchMethodError) {  }
+    try { `Xsuppress-api-version-greater-than-language-version-error` = arguments.getUsingReflection<Boolean>("suppressApiVersionGreaterThanLanguageVersionError") } catch (_: NoSuchMethodError) {  }
+    try { `Xsuppress-version-warnings` = arguments.suppressVersionWarnings } catch (_: NoSuchMethodError) {  }
+    try { `Xsuppress-warning` = arguments.getUsingReflection<Array<String>>("suppressedDiagnostics").toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { `Xunrestricted-builder-inference` = arguments.getUsingReflection<Boolean>("unrestrictedBuilderInference") } catch (_: NoSuchMethodError) {  }
+    try { `Xuse-fir-experimental-checkers` = arguments.getUsingReflection<Boolean>("useFirExperimentalCheckers") } catch (_: NoSuchMethodError) {  }
+    try { `Xuse-fir-ic` = arguments.useFirIC } catch (_: NoSuchMethodError) {  }
+    try { `Xuse-fir-lt` = arguments.useFirLT } catch (_: NoSuchMethodError) {  }
+    try { `Xuse-k2` = arguments.getUsingReflection<Boolean>("useK2") } catch (_: NoSuchMethodError) {  }
+    try { `Xverbose-phases` = arguments.verbosePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { `Xverify-ir` = arguments.verifyIr?.let { VerifyIrMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { `Xverify-ir-visibility` = arguments.getUsingReflection<Boolean>("verifyIrVisibility") } catch (_: NoSuchMethodError) {  }
+    try { `Xwhen-guards` = arguments.whenGuards } catch (_: NoSuchMethodError) {  }
+    try { `api-version` = arguments.apiVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { `kotlin-home` = arguments.kotlinHome?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { `language-version` = arguments.languageVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { `opt-in` = arguments.optIn.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { progressive = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
+    try { script = arguments.script } catch (_: NoSuchMethodError) {  }
     try { this[X_WARNING_LEVEL] = applyWarningLevels(if(X_WARNING_LEVEL in this) this[X_WARNING_LEVEL] else emptyList<WarningLevel>(), arguments) } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
@@ -427,14 +597,13 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val X_DONT_WARN_ON_ERROR_SUPPRESSION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_DONT_WARN_ON_ERROR_SUPPRESSION")
 
-    public val X_DUMP_DIRECTORY: CommonCompilerArgument<java.nio.`file`.Path?> =
+    public val X_DUMP_DIRECTORY: CommonCompilerArgument<Path?> =
         CommonCompilerArgument("X_DUMP_DIRECTORY")
 
     public val X_DUMP_FQNAME: CommonCompilerArgument<String?> =
         CommonCompilerArgument("X_DUMP_FQNAME")
 
-    public val X_DUMP_PERF: CommonCompilerArgument<java.nio.`file`.Path?> =
-        CommonCompilerArgument("X_DUMP_PERF")
+    public val X_DUMP_PERF: CommonCompilerArgument<Path?> = CommonCompilerArgument("X_DUMP_PERF")
 
     public val X_ENABLE_INCREMENTAL_COMPILATION: CommonCompilerArgument<Boolean?> =
         CommonCompilerArgument("X_ENABLE_INCREMENTAL_COMPILATION")
@@ -586,8 +755,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val API_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("API_VERSION")
 
-    public val KOTLIN_HOME: CommonCompilerArgument<java.nio.`file`.Path?> =
-        CommonCompilerArgument("KOTLIN_HOME")
+    public val KOTLIN_HOME: CommonCompilerArgument<Path?> = CommonCompilerArgument("KOTLIN_HOME")
 
     public val LANGUAGE_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("LANGUAGE_VERSION")

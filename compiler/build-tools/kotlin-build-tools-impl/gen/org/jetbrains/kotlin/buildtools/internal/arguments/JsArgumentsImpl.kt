@@ -21,33 +21,9 @@ import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.MODULE_KIND
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.TARGET
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_DTS_USE_UNKNOWN_INSTEAD_ANY
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ENABLE_SUSPEND_FUNCTION_EXPORTING
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_ARROW_FUNCTIONS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_CLASSES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_GENERATORS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_LONG_AS_BIGINT
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_EXPORT_KDOC
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_GENERATE_POLYFILLS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_INTEGER_DIVISION_CHECK
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_BUILD_CACHE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_KEEP
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_MINIMIZED_MEMBER_NAMES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_PER_FILE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_PER_MODULE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_SAFE_EXTERNAL_BOOLEAN
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_OPTIMIZE_GENERATED_JS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_SUSPEND_LAMBDA_EXPORTING
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_TYPED_ARRAYS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsModuleKind
@@ -77,6 +53,81 @@ internal class JsArgumentsImpl(
     JsCompilerLinkingArguments.Builder,
     DeepCopyable<JsArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  @SerialName("X_DTS_USE_UNKNOWN_INSTEAD_ANY")
+  protected var `Xdts-use-unknown-instead-any`: Boolean
+
+  @SerialName("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS")
+  protected var `Xenable-extension-functions-in-externals`: Boolean
+
+  @SerialName("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT")
+  protected var `Xenable-implementing-interfaces-from-typescript`: Boolean
+
+  @SerialName("X_ENABLE_SUSPEND_FUNCTION_EXPORTING")
+  protected var `Xenable-suspend-function-exporting`: Boolean
+
+  @SerialName("X_ES_ARROW_FUNCTIONS")
+  protected var `Xes-arrow-functions`: Boolean?
+
+  @SerialName("X_ES_CLASSES")
+  protected var `Xes-classes`: Boolean?
+
+  @SerialName("X_ES_GENERATORS")
+  protected var `Xes-generators`: Boolean?
+
+  @SerialName("X_ES_LONG_AS_BIGINT")
+  protected var `Xes-long-as-bigint`: Boolean?
+
+  @SerialName("X_EXPORT_KDOC")
+  protected var `Xexport-kdoc`: Boolean
+
+  @SerialName("X_GENERATE_POLYFILLS")
+  protected var `Xgenerate-polyfills`: Boolean
+
+  @SerialName("X_INTEGER_DIVISION_CHECK")
+  protected var `Xinteger-division-check`: Boolean
+
+  @SerialName("X_IR_BUILD_CACHE")
+  protected var `Xir-build-cache`: Boolean
+
+  @SerialName("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS")
+  protected var `Xir-generate-inline-anonymous-functions`: Boolean
+
+  @SerialName("X_IR_KEEP")
+  protected var `Xir-keep`: String?
+
+  @SerialName("X_IR_MINIMIZED_MEMBER_NAMES")
+  protected var `Xir-minimized-member-names`: Boolean
+
+  @SerialName("X_IR_PER_FILE")
+  protected var `Xir-per-file`: Boolean
+
+  @SerialName("X_IR_PER_MODULE")
+  protected var `Xir-per-module`: Boolean
+
+  @SerialName("X_IR_SAFE_EXTERNAL_BOOLEAN")
+  protected var `Xir-safe-external-boolean`: Boolean
+
+  @SerialName("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
+  protected var `Xir-safe-external-boolean-diagnostic`: JsIrDiagnosticMode?
+
+  @SerialName("X_OPTIMIZE_GENERATED_JS")
+  protected var `Xoptimize-generated-js`: Boolean
+
+  @SerialName("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION")
+  protected var `Xplatform-arguments-in-main-function`: String?
+
+  @SerialName("X_SUSPEND_LAMBDA_EXPORTING")
+  protected var `Xsuspend-lambda-exporting`: Boolean
+
+  @SerialName("X_TYPED_ARRAYS")
+  protected var `Xtyped-arrays`: Boolean
+
+  @SerialName("MODULE_KIND")
+  protected var `module-kind`: JsModuleKind?
+
+  @SerialName("TARGET")
+  protected var target: JsEcmaVersion?
   init {
     applyCompilerArguments(K2JSCompilerArguments())
   }
@@ -153,31 +204,31 @@ internal class JsArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (X_DTS_USE_UNKNOWN_INSTEAD_ANY in this) { arguments.useUnknownInsteadAny = get(X_DTS_USE_UNKNOWN_INSTEAD_ANY)}
-    if (X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS in this) { arguments.extensionFunctionsInExternals = get(X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS)}
-    if (X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT in this) { arguments.allowImplementableInterfacesExporting = get(X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT)}
-    if (X_ENABLE_SUSPEND_FUNCTION_EXPORTING in this) { arguments.allowExportingSuspendFunctions = get(X_ENABLE_SUSPEND_FUNCTION_EXPORTING)}
-    if (X_ES_ARROW_FUNCTIONS in this) { arguments.useEsArrowFunctions = get(X_ES_ARROW_FUNCTIONS)}
-    if (X_ES_CLASSES in this) { arguments.useEsClasses = get(X_ES_CLASSES)}
-    if (X_ES_GENERATORS in this) { arguments.useEsGenerators = get(X_ES_GENERATORS)}
-    if (X_ES_LONG_AS_BIGINT in this) { arguments.compileLongAsBigInt = get(X_ES_LONG_AS_BIGINT)}
-    if (X_EXPORT_KDOC in this) { arguments.exportKDoc = get(X_EXPORT_KDOC)}
-    if (X_GENERATE_POLYFILLS in this) { arguments.generatePolyfills = get(X_GENERATE_POLYFILLS)}
-    if (X_INTEGER_DIVISION_CHECK in this) { arguments.integerDivisionCheck = get(X_INTEGER_DIVISION_CHECK)}
-    if (X_IR_BUILD_CACHE in this) { arguments.irBuildCache = get(X_IR_BUILD_CACHE)}
-    if (X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS in this) { arguments.irGenerateInlineAnonymousFunctions = get(X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS)}
-    if (X_IR_KEEP in this) { arguments.irKeep = get(X_IR_KEEP)}
-    if (X_IR_MINIMIZED_MEMBER_NAMES in this) { arguments.irMinimizedMemberNames = get(X_IR_MINIMIZED_MEMBER_NAMES)}
-    if (X_IR_PER_FILE in this) { arguments.irPerFile = get(X_IR_PER_FILE)}
-    if (X_IR_PER_MODULE in this) { arguments.irPerModule = get(X_IR_PER_MODULE)}
-    if (X_IR_SAFE_EXTERNAL_BOOLEAN in this) { arguments.irSafeExternalBoolean = get(X_IR_SAFE_EXTERNAL_BOOLEAN)}
-    if (X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC in this) { arguments.irSafeExternalBooleanDiagnostic = get(X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)?.stringValue}
-    if (X_OPTIMIZE_GENERATED_JS in this) { arguments.optimizeGeneratedJs = get(X_OPTIMIZE_GENERATED_JS)}
-    if (X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION in this) { arguments.platformArgumentsProviderJsExpression = get(X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION)}
-    if (X_SUSPEND_LAMBDA_EXPORTING in this) { arguments.allowExportingSuspendLambdas = get(X_SUSPEND_LAMBDA_EXPORTING)}
-    try { if (X_TYPED_ARRAYS in this) { arguments.setUsingReflection("typedArrays", get(X_TYPED_ARRAYS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
-    if (MODULE_KIND in this) { arguments.moduleKind = get(MODULE_KIND)?.stringValue}
-    if (TARGET in this) { arguments.target = get(TARGET)?.stringValue}
+    arguments.useUnknownInsteadAny = `Xdts-use-unknown-instead-any`
+    arguments.extensionFunctionsInExternals = `Xenable-extension-functions-in-externals`
+    arguments.allowImplementableInterfacesExporting = `Xenable-implementing-interfaces-from-typescript`
+    arguments.allowExportingSuspendFunctions = `Xenable-suspend-function-exporting`
+    arguments.useEsArrowFunctions = `Xes-arrow-functions`
+    arguments.useEsClasses = `Xes-classes`
+    arguments.useEsGenerators = `Xes-generators`
+    arguments.compileLongAsBigInt = `Xes-long-as-bigint`
+    arguments.exportKDoc = `Xexport-kdoc`
+    arguments.generatePolyfills = `Xgenerate-polyfills`
+    arguments.integerDivisionCheck = `Xinteger-division-check`
+    arguments.irBuildCache = `Xir-build-cache`
+    arguments.irGenerateInlineAnonymousFunctions = `Xir-generate-inline-anonymous-functions`
+    arguments.irKeep = `Xir-keep`
+    arguments.irMinimizedMemberNames = `Xir-minimized-member-names`
+    arguments.irPerFile = `Xir-per-file`
+    arguments.irPerModule = `Xir-per-module`
+    arguments.irSafeExternalBoolean = `Xir-safe-external-boolean`
+    arguments.irSafeExternalBooleanDiagnostic = `Xir-safe-external-boolean-diagnostic`?.stringValue
+    arguments.optimizeGeneratedJs = `Xoptimize-generated-js`
+    arguments.platformArgumentsProviderJsExpression = `Xplatform-arguments-in-main-function`
+    arguments.allowExportingSuspendLambdas = `Xsuspend-lambda-exporting`
+    try { arguments.setUsingReflection("typedArrays", `Xtyped-arrays`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
+    arguments.moduleKind = `module-kind`?.stringValue
+    arguments.target = target?.stringValue
     arguments.internalArguments = parseCommandLineArguments<K2JSCompilerArguments>(internalArguments.toList()).internalArguments
     populateExplicitArguments(arguments)
     return arguments
@@ -186,62 +237,62 @@ internal class JsArgumentsImpl(
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: K2JSCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_DTS_USE_UNKNOWN_INSTEAD_ANY] = arguments.useUnknownInsteadAny } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS] = arguments.extensionFunctionsInExternals } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] = arguments.allowImplementableInterfacesExporting } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENABLE_SUSPEND_FUNCTION_EXPORTING] = arguments.allowExportingSuspendFunctions } catch (_: NoSuchMethodError) {  }
-    try { this[X_ES_ARROW_FUNCTIONS] = arguments.useEsArrowFunctions } catch (_: NoSuchMethodError) {  }
-    try { this[X_ES_CLASSES] = arguments.useEsClasses } catch (_: NoSuchMethodError) {  }
-    try { this[X_ES_GENERATORS] = arguments.useEsGenerators } catch (_: NoSuchMethodError) {  }
-    try { this[X_ES_LONG_AS_BIGINT] = arguments.compileLongAsBigInt } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPORT_KDOC] = arguments.exportKDoc } catch (_: NoSuchMethodError) {  }
-    try { this[X_GENERATE_POLYFILLS] = arguments.generatePolyfills } catch (_: NoSuchMethodError) {  }
-    try { this[X_INTEGER_DIVISION_CHECK] = arguments.integerDivisionCheck } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_BUILD_CACHE] = arguments.irBuildCache } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS] = arguments.irGenerateInlineAnonymousFunctions } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_KEEP] = arguments.irKeep } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_MINIMIZED_MEMBER_NAMES] = arguments.irMinimizedMemberNames } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_PER_FILE] = arguments.irPerFile } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_PER_MODULE] = arguments.irPerModule } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_SAFE_EXTERNAL_BOOLEAN] = arguments.irSafeExternalBoolean } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] = arguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_OPTIMIZE_GENERATED_JS] = arguments.optimizeGeneratedJs } catch (_: NoSuchMethodError) {  }
-    try { this[X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION] = arguments.platformArgumentsProviderJsExpression } catch (_: NoSuchMethodError) {  }
-    try { this[X_SUSPEND_LAMBDA_EXPORTING] = arguments.allowExportingSuspendLambdas } catch (_: NoSuchMethodError) {  }
-    try { this[X_TYPED_ARRAYS] = arguments.getUsingReflection<Boolean>("typedArrays") } catch (_: NoSuchMethodError) {  }
-    try { this[MODULE_KIND] = arguments.moduleKind?.let { JsModuleKind.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[TARGET] = arguments.target?.let { JsEcmaVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { `Xdts-use-unknown-instead-any` = arguments.useUnknownInsteadAny } catch (_: NoSuchMethodError) {  }
+    try { `Xenable-extension-functions-in-externals` = arguments.extensionFunctionsInExternals } catch (_: NoSuchMethodError) {  }
+    try { `Xenable-implementing-interfaces-from-typescript` = arguments.allowImplementableInterfacesExporting } catch (_: NoSuchMethodError) {  }
+    try { `Xenable-suspend-function-exporting` = arguments.allowExportingSuspendFunctions } catch (_: NoSuchMethodError) {  }
+    try { `Xes-arrow-functions` = arguments.useEsArrowFunctions } catch (_: NoSuchMethodError) {  }
+    try { `Xes-classes` = arguments.useEsClasses } catch (_: NoSuchMethodError) {  }
+    try { `Xes-generators` = arguments.useEsGenerators } catch (_: NoSuchMethodError) {  }
+    try { `Xes-long-as-bigint` = arguments.compileLongAsBigInt } catch (_: NoSuchMethodError) {  }
+    try { `Xexport-kdoc` = arguments.exportKDoc } catch (_: NoSuchMethodError) {  }
+    try { `Xgenerate-polyfills` = arguments.generatePolyfills } catch (_: NoSuchMethodError) {  }
+    try { `Xinteger-division-check` = arguments.integerDivisionCheck } catch (_: NoSuchMethodError) {  }
+    try { `Xir-build-cache` = arguments.irBuildCache } catch (_: NoSuchMethodError) {  }
+    try { `Xir-generate-inline-anonymous-functions` = arguments.irGenerateInlineAnonymousFunctions } catch (_: NoSuchMethodError) {  }
+    try { `Xir-keep` = arguments.irKeep } catch (_: NoSuchMethodError) {  }
+    try { `Xir-minimized-member-names` = arguments.irMinimizedMemberNames } catch (_: NoSuchMethodError) {  }
+    try { `Xir-per-file` = arguments.irPerFile } catch (_: NoSuchMethodError) {  }
+    try { `Xir-per-module` = arguments.irPerModule } catch (_: NoSuchMethodError) {  }
+    try { `Xir-safe-external-boolean` = arguments.irSafeExternalBoolean } catch (_: NoSuchMethodError) {  }
+    try { `Xir-safe-external-boolean-diagnostic` = arguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { `Xoptimize-generated-js` = arguments.optimizeGeneratedJs } catch (_: NoSuchMethodError) {  }
+    try { `Xplatform-arguments-in-main-function` = arguments.platformArgumentsProviderJsExpression } catch (_: NoSuchMethodError) {  }
+    try { `Xsuspend-lambda-exporting` = arguments.allowExportingSuspendLambdas } catch (_: NoSuchMethodError) {  }
+    try { `Xtyped-arrays` = arguments.getUsingReflection<Boolean>("typedArrays") } catch (_: NoSuchMethodError) {  }
+    try { `module-kind` = arguments.moduleKind?.let { JsModuleKind.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { target = arguments.target?.let { JsEcmaVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: K2JSCompilerArguments = K2JSCompilerArguments()): K2JSCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
-    if (X_DTS_USE_UNKNOWN_INSTEAD_ANY in this) { arguments.useUnknownInsteadAny = get(X_DTS_USE_UNKNOWN_INSTEAD_ANY)}
-    if (X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS in this) { arguments.extensionFunctionsInExternals = get(X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS)}
-    if (X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT in this) { arguments.allowImplementableInterfacesExporting = get(X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT)}
-    if (X_ENABLE_SUSPEND_FUNCTION_EXPORTING in this) { arguments.allowExportingSuspendFunctions = get(X_ENABLE_SUSPEND_FUNCTION_EXPORTING)}
-    if (X_ES_ARROW_FUNCTIONS in this) { arguments.useEsArrowFunctions = get(X_ES_ARROW_FUNCTIONS)}
-    if (X_ES_CLASSES in this) { arguments.useEsClasses = get(X_ES_CLASSES)}
-    if (X_ES_GENERATORS in this) { arguments.useEsGenerators = get(X_ES_GENERATORS)}
-    if (X_ES_LONG_AS_BIGINT in this) { arguments.compileLongAsBigInt = get(X_ES_LONG_AS_BIGINT)}
-    if (X_EXPORT_KDOC in this) { arguments.exportKDoc = get(X_EXPORT_KDOC)}
-    if (X_GENERATE_POLYFILLS in this) { arguments.generatePolyfills = get(X_GENERATE_POLYFILLS)}
-    if (X_INTEGER_DIVISION_CHECK in this) { arguments.integerDivisionCheck = get(X_INTEGER_DIVISION_CHECK)}
-    if (X_IR_BUILD_CACHE in this) { arguments.irBuildCache = get(X_IR_BUILD_CACHE)}
-    if (X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS in this) { arguments.irGenerateInlineAnonymousFunctions = get(X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS)}
-    if (X_IR_KEEP in this) { arguments.irKeep = get(X_IR_KEEP)}
-    if (X_IR_MINIMIZED_MEMBER_NAMES in this) { arguments.irMinimizedMemberNames = get(X_IR_MINIMIZED_MEMBER_NAMES)}
-    if (X_IR_PER_FILE in this) { arguments.irPerFile = get(X_IR_PER_FILE)}
-    if (X_IR_PER_MODULE in this) { arguments.irPerModule = get(X_IR_PER_MODULE)}
-    if (X_IR_SAFE_EXTERNAL_BOOLEAN in this) { arguments.irSafeExternalBoolean = get(X_IR_SAFE_EXTERNAL_BOOLEAN)}
-    if (X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC in this) { arguments.irSafeExternalBooleanDiagnostic = get(X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)?.stringValue}
-    if (X_OPTIMIZE_GENERATED_JS in this) { arguments.optimizeGeneratedJs = get(X_OPTIMIZE_GENERATED_JS)}
-    if (X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION in this) { arguments.platformArgumentsProviderJsExpression = get(X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION)}
-    if (X_SUSPEND_LAMBDA_EXPORTING in this) { arguments.allowExportingSuspendLambdas = get(X_SUSPEND_LAMBDA_EXPORTING)}
-    try { if (X_TYPED_ARRAYS in this) { arguments.setUsingReflection("typedArrays", get(X_TYPED_ARRAYS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
-    if (MODULE_KIND in this) { arguments.moduleKind = get(MODULE_KIND)?.stringValue}
-    if (TARGET in this) { arguments.target = get(TARGET)?.stringValue}
+    arguments.useUnknownInsteadAny = `Xdts-use-unknown-instead-any`
+    arguments.extensionFunctionsInExternals = `Xenable-extension-functions-in-externals`
+    arguments.allowImplementableInterfacesExporting = `Xenable-implementing-interfaces-from-typescript`
+    arguments.allowExportingSuspendFunctions = `Xenable-suspend-function-exporting`
+    arguments.useEsArrowFunctions = `Xes-arrow-functions`
+    arguments.useEsClasses = `Xes-classes`
+    arguments.useEsGenerators = `Xes-generators`
+    arguments.compileLongAsBigInt = `Xes-long-as-bigint`
+    arguments.exportKDoc = `Xexport-kdoc`
+    arguments.generatePolyfills = `Xgenerate-polyfills`
+    arguments.integerDivisionCheck = `Xinteger-division-check`
+    arguments.irBuildCache = `Xir-build-cache`
+    arguments.irGenerateInlineAnonymousFunctions = `Xir-generate-inline-anonymous-functions`
+    arguments.irKeep = `Xir-keep`
+    arguments.irMinimizedMemberNames = `Xir-minimized-member-names`
+    arguments.irPerFile = `Xir-per-file`
+    arguments.irPerModule = `Xir-per-module`
+    arguments.irSafeExternalBoolean = `Xir-safe-external-boolean`
+    arguments.irSafeExternalBooleanDiagnostic = `Xir-safe-external-boolean-diagnostic`?.stringValue
+    arguments.optimizeGeneratedJs = `Xoptimize-generated-js`
+    arguments.platformArgumentsProviderJsExpression = `Xplatform-arguments-in-main-function`
+    arguments.allowExportingSuspendLambdas = `Xsuspend-lambda-exporting`
+    try { arguments.setUsingReflection("typedArrays", `Xtyped-arrays`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
+    arguments.moduleKind = `module-kind`?.stringValue
+    arguments.target = target?.stringValue
     return arguments
   }
 

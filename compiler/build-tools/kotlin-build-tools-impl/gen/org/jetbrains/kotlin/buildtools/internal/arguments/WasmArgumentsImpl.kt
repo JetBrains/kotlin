@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import java.lang.IllegalStateException
+import java.nio.`file`.Path
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Deprecated
@@ -21,32 +22,9 @@ import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
-import kotlin.io.path.Path
+import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_DEBUGGER_CUSTOM_FORMATTERS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_DEBUG_FRIENDLY
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_DEBUG_INFO
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_ENABLE_ARRAY_RANGE_CHECKS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_ENABLE_ASSERTS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_ENABLE_TAIL_CALLS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_DWARF
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_WAT
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_IC_GENERATE_UNCHANGED_MODULES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_INCLUDED_MODULE_ONLY
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_KCLASS_FQN
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_NO_JSTAG
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_TARGET
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_NEW_EXCEPTION_PROPOSAL
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_STACK_SWITCHING_PROPOSAL
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
@@ -74,6 +52,75 @@ internal class WasmArgumentsImpl(
     WasmCompilerLinkingArguments.Builder,
     DeepCopyable<WasmArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  @SerialName("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE")
+  protected var `Xir-dce-dump-reachability-info-to-file`: Path?
+
+  @SerialName("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE")
+  protected var `Xir-dump-declaration-ir-sizes-to-file`: Path?
+
+  @SerialName("X_WASM")
+  protected var Xwasm: Boolean
+
+  @SerialName("X_WASM_IC_GENERATE_UNCHANGED_MODULES")
+  protected var `Xwasm-IC-generate-unchanged-modules`: Boolean
+
+  @SerialName("X_WASM_DEBUG_FRIENDLY")
+  protected var `Xwasm-debug-friendly`: Boolean
+
+  @SerialName("X_WASM_DEBUG_INFO")
+  protected var `Xwasm-debug-info`: Boolean
+
+  @SerialName("X_WASM_DEBUGGER_CUSTOM_FORMATTERS")
+  protected var `Xwasm-debugger-custom-formatters`: Boolean
+
+  @SerialName("X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION")
+  protected var `Xwasm-disable-array-range-checks-safe-elimination`: Boolean
+
+  @SerialName("X_WASM_ENABLE_ARRAY_RANGE_CHECKS")
+  protected var `Xwasm-enable-array-range-checks`: Boolean
+
+  @SerialName("X_WASM_ENABLE_ASSERTS")
+  protected var `Xwasm-enable-asserts`: Boolean
+
+  @SerialName("X_WASM_ENABLE_TAIL_CALLS")
+  protected var `Xwasm-enable-tail-calls`: Boolean
+
+  @SerialName("X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE")
+  protected var `Xwasm-generate-closed-world-multimodule`: Boolean
+
+  @SerialName("X_WASM_GENERATE_DWARF")
+  protected var `Xwasm-generate-dwarf`: Boolean
+
+  @SerialName("X_WASM_GENERATE_WAT")
+  protected var `Xwasm-generate-wat`: Boolean
+
+  @SerialName("X_WASM_INCLUDED_MODULE_ONLY")
+  protected var `Xwasm-included-module-only`: Boolean
+
+  @SerialName("X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX")
+  protected var `Xwasm-internal-local-variable-prefix`: String
+
+  @SerialName("X_WASM_KCLASS_FQN")
+  protected var `Xwasm-kclass-fqn`: Boolean
+
+  @SerialName("X_WASM_NO_JSTAG")
+  protected var `Xwasm-no-jstag`: Boolean
+
+  @SerialName("X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES")
+  protected var `Xwasm-source-map-include-mappings-from-unavailable-sources`: Boolean
+
+  @SerialName("X_WASM_TARGET")
+  protected var `Xwasm-target`: WasmTarget?
+
+  @SerialName("X_WASM_USE_NEW_EXCEPTION_PROPOSAL")
+  protected var `Xwasm-use-new-exception-proposal`: Boolean?
+
+  @SerialName("X_WASM_USE_STACK_SWITCHING_PROPOSAL")
+  protected var `Xwasm-use-stack-switching-proposal`: Boolean
+
+  @SerialName("X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS")
+  protected var `Xwasm-use-traps-instead-of-exceptions`: Boolean
   init {
     applyCompilerArguments(KotlinWasmCompilerArguments())
   }
@@ -150,29 +197,29 @@ internal class WasmArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)?.absolutePathStringOrThrow()}
-    if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)?.absolutePathStringOrThrow()}
-    if (X_WASM in this) { arguments.wasm = get(X_WASM)}
-    if (X_WASM_IC_GENERATE_UNCHANGED_MODULES in this) { arguments.regenerateUnchangedModules = get(X_WASM_IC_GENERATE_UNCHANGED_MODULES)}
-    if (X_WASM_DEBUG_FRIENDLY in this) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY)}
-    if (X_WASM_DEBUG_INFO in this) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)}
-    if (X_WASM_DEBUGGER_CUSTOM_FORMATTERS in this) { arguments.debuggerCustomFormatters = get(X_WASM_DEBUGGER_CUSTOM_FORMATTERS)}
-    if (X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION in this) { arguments.wasmDisableArrayRangeChecksSafeElimination = get(X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION)}
-    if (X_WASM_ENABLE_ARRAY_RANGE_CHECKS in this) { arguments.wasmEnableArrayRangeChecks = get(X_WASM_ENABLE_ARRAY_RANGE_CHECKS)}
-    if (X_WASM_ENABLE_ASSERTS in this) { arguments.wasmEnableAsserts = get(X_WASM_ENABLE_ASSERTS)}
-    if (X_WASM_ENABLE_TAIL_CALLS in this) { arguments.wasmEnableTailCalls = get(X_WASM_ENABLE_TAIL_CALLS)}
-    if (X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE in this) { arguments.wasmGenerateClosedWorldMultimodule = get(X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)}
-    if (X_WASM_GENERATE_DWARF in this) { arguments.generateDwarf = get(X_WASM_GENERATE_DWARF)}
-    if (X_WASM_GENERATE_WAT in this) { arguments.wasmGenerateWat = get(X_WASM_GENERATE_WAT)}
-    if (X_WASM_INCLUDED_MODULE_ONLY in this) { arguments.wasmIncludedModuleOnly = get(X_WASM_INCLUDED_MODULE_ONLY)}
-    if (X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX in this) { arguments.wasmInternalLocalVariablePrefix = get(X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX)}
-    if (X_WASM_KCLASS_FQN in this) { arguments.wasmKClassFqn = get(X_WASM_KCLASS_FQN)}
-    if (X_WASM_NO_JSTAG in this) { arguments.wasmNoJsTag = get(X_WASM_NO_JSTAG)}
-    if (X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES in this) { arguments.includeUnavailableSourcesIntoSourceMap = get(X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES)}
-    if (X_WASM_TARGET in this) { arguments.wasmTarget = get(X_WASM_TARGET)?.stringValue}
-    if (X_WASM_USE_NEW_EXCEPTION_PROPOSAL in this) { arguments.wasmUseNewExceptionProposal = get(X_WASM_USE_NEW_EXCEPTION_PROPOSAL)}
-    if (X_WASM_USE_STACK_SWITCHING_PROPOSAL in this) { arguments.wasmUseStackSwitchingProposal = get(X_WASM_USE_STACK_SWITCHING_PROPOSAL)}
-    if (X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS in this) { arguments.wasmUseTrapsInsteadOfExceptions = get(X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)}
+    arguments.irDceDumpReachabilityInfoToFile = `Xir-dce-dump-reachability-info-to-file`?.absolutePathStringOrThrow()
+    arguments.irDceDumpDeclarationIrSizesToFile = `Xir-dump-declaration-ir-sizes-to-file`?.absolutePathStringOrThrow()
+    arguments.wasm = Xwasm
+    arguments.regenerateUnchangedModules = `Xwasm-IC-generate-unchanged-modules`
+    arguments.forceDebugFriendlyCompilation = `Xwasm-debug-friendly`
+    arguments.wasmDebug = `Xwasm-debug-info`
+    arguments.debuggerCustomFormatters = `Xwasm-debugger-custom-formatters`
+    arguments.wasmDisableArrayRangeChecksSafeElimination = `Xwasm-disable-array-range-checks-safe-elimination`
+    arguments.wasmEnableArrayRangeChecks = `Xwasm-enable-array-range-checks`
+    arguments.wasmEnableAsserts = `Xwasm-enable-asserts`
+    arguments.wasmEnableTailCalls = `Xwasm-enable-tail-calls`
+    arguments.wasmGenerateClosedWorldMultimodule = `Xwasm-generate-closed-world-multimodule`
+    arguments.generateDwarf = `Xwasm-generate-dwarf`
+    arguments.wasmGenerateWat = `Xwasm-generate-wat`
+    arguments.wasmIncludedModuleOnly = `Xwasm-included-module-only`
+    arguments.wasmInternalLocalVariablePrefix = `Xwasm-internal-local-variable-prefix`
+    arguments.wasmKClassFqn = `Xwasm-kclass-fqn`
+    arguments.wasmNoJsTag = `Xwasm-no-jstag`
+    arguments.includeUnavailableSourcesIntoSourceMap = `Xwasm-source-map-include-mappings-from-unavailable-sources`
+    arguments.wasmTarget = `Xwasm-target`?.stringValue
+    arguments.wasmUseNewExceptionProposal = `Xwasm-use-new-exception-proposal`
+    arguments.wasmUseStackSwitchingProposal = `Xwasm-use-stack-switching-proposal`
+    arguments.wasmUseTrapsInsteadOfExceptions = `Xwasm-use-traps-instead-of-exceptions`
     arguments.internalArguments = parseCommandLineArguments<KotlinWasmCompilerArguments>(internalArguments.toList()).internalArguments
     populateExplicitArguments(arguments)
     return arguments
@@ -181,58 +228,58 @@ internal class WasmArgumentsImpl(
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: KotlinWasmCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = arguments.irDceDumpReachabilityInfoToFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = arguments.irDceDumpDeclarationIrSizesToFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM] = arguments.wasm } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_IC_GENERATE_UNCHANGED_MODULES] = arguments.regenerateUnchangedModules } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_DEBUG_FRIENDLY] = arguments.forceDebugFriendlyCompilation } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_DEBUG_INFO] = arguments.wasmDebug } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_DEBUGGER_CUSTOM_FORMATTERS] = arguments.debuggerCustomFormatters } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION] = arguments.wasmDisableArrayRangeChecksSafeElimination } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_ENABLE_ARRAY_RANGE_CHECKS] = arguments.wasmEnableArrayRangeChecks } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_ENABLE_ASSERTS] = arguments.wasmEnableAsserts } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_ENABLE_TAIL_CALLS] = arguments.wasmEnableTailCalls } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE] = arguments.wasmGenerateClosedWorldMultimodule } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_GENERATE_DWARF] = arguments.generateDwarf } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_GENERATE_WAT] = arguments.wasmGenerateWat } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_INCLUDED_MODULE_ONLY] = arguments.wasmIncludedModuleOnly } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX] = arguments.wasmInternalLocalVariablePrefix } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_KCLASS_FQN] = arguments.wasmKClassFqn } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_NO_JSTAG] = arguments.wasmNoJsTag } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES] = arguments.includeUnavailableSourcesIntoSourceMap } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_TARGET] = arguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_USE_NEW_EXCEPTION_PROPOSAL] = arguments.wasmUseNewExceptionProposal } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_USE_STACK_SWITCHING_PROPOSAL] = arguments.wasmUseStackSwitchingProposal } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS] = arguments.wasmUseTrapsInsteadOfExceptions } catch (_: NoSuchMethodError) {  }
+    try { `Xir-dce-dump-reachability-info-to-file` = arguments.irDceDumpReachabilityInfoToFile?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { `Xir-dump-declaration-ir-sizes-to-file` = arguments.irDceDumpDeclarationIrSizesToFile?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { Xwasm = arguments.wasm } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-IC-generate-unchanged-modules` = arguments.regenerateUnchangedModules } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-debug-friendly` = arguments.forceDebugFriendlyCompilation } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-debug-info` = arguments.wasmDebug } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-debugger-custom-formatters` = arguments.debuggerCustomFormatters } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-disable-array-range-checks-safe-elimination` = arguments.wasmDisableArrayRangeChecksSafeElimination } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-enable-array-range-checks` = arguments.wasmEnableArrayRangeChecks } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-enable-asserts` = arguments.wasmEnableAsserts } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-enable-tail-calls` = arguments.wasmEnableTailCalls } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-generate-closed-world-multimodule` = arguments.wasmGenerateClosedWorldMultimodule } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-generate-dwarf` = arguments.generateDwarf } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-generate-wat` = arguments.wasmGenerateWat } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-included-module-only` = arguments.wasmIncludedModuleOnly } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-internal-local-variable-prefix` = arguments.wasmInternalLocalVariablePrefix } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-kclass-fqn` = arguments.wasmKClassFqn } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-no-jstag` = arguments.wasmNoJsTag } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-source-map-include-mappings-from-unavailable-sources` = arguments.includeUnavailableSourcesIntoSourceMap } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-target` = arguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-use-new-exception-proposal` = arguments.wasmUseNewExceptionProposal } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-use-stack-switching-proposal` = arguments.wasmUseStackSwitchingProposal } catch (_: NoSuchMethodError) {  }
+    try { `Xwasm-use-traps-instead-of-exceptions` = arguments.wasmUseTrapsInsteadOfExceptions } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: KotlinWasmCompilerArguments = KotlinWasmCompilerArguments()): KotlinWasmCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
-    if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)?.absolutePathStringOrThrow()}
-    if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)?.absolutePathStringOrThrow()}
-    if (X_WASM in this) { arguments.wasm = get(X_WASM)}
-    if (X_WASM_IC_GENERATE_UNCHANGED_MODULES in this) { arguments.regenerateUnchangedModules = get(X_WASM_IC_GENERATE_UNCHANGED_MODULES)}
-    if (X_WASM_DEBUG_FRIENDLY in this) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY)}
-    if (X_WASM_DEBUG_INFO in this) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)}
-    if (X_WASM_DEBUGGER_CUSTOM_FORMATTERS in this) { arguments.debuggerCustomFormatters = get(X_WASM_DEBUGGER_CUSTOM_FORMATTERS)}
-    if (X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION in this) { arguments.wasmDisableArrayRangeChecksSafeElimination = get(X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION)}
-    if (X_WASM_ENABLE_ARRAY_RANGE_CHECKS in this) { arguments.wasmEnableArrayRangeChecks = get(X_WASM_ENABLE_ARRAY_RANGE_CHECKS)}
-    if (X_WASM_ENABLE_ASSERTS in this) { arguments.wasmEnableAsserts = get(X_WASM_ENABLE_ASSERTS)}
-    if (X_WASM_ENABLE_TAIL_CALLS in this) { arguments.wasmEnableTailCalls = get(X_WASM_ENABLE_TAIL_CALLS)}
-    if (X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE in this) { arguments.wasmGenerateClosedWorldMultimodule = get(X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)}
-    if (X_WASM_GENERATE_DWARF in this) { arguments.generateDwarf = get(X_WASM_GENERATE_DWARF)}
-    if (X_WASM_GENERATE_WAT in this) { arguments.wasmGenerateWat = get(X_WASM_GENERATE_WAT)}
-    if (X_WASM_INCLUDED_MODULE_ONLY in this) { arguments.wasmIncludedModuleOnly = get(X_WASM_INCLUDED_MODULE_ONLY)}
-    if (X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX in this) { arguments.wasmInternalLocalVariablePrefix = get(X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX)}
-    if (X_WASM_KCLASS_FQN in this) { arguments.wasmKClassFqn = get(X_WASM_KCLASS_FQN)}
-    if (X_WASM_NO_JSTAG in this) { arguments.wasmNoJsTag = get(X_WASM_NO_JSTAG)}
-    if (X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES in this) { arguments.includeUnavailableSourcesIntoSourceMap = get(X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES)}
-    if (X_WASM_TARGET in this) { arguments.wasmTarget = get(X_WASM_TARGET)?.stringValue}
-    if (X_WASM_USE_NEW_EXCEPTION_PROPOSAL in this) { arguments.wasmUseNewExceptionProposal = get(X_WASM_USE_NEW_EXCEPTION_PROPOSAL)}
-    if (X_WASM_USE_STACK_SWITCHING_PROPOSAL in this) { arguments.wasmUseStackSwitchingProposal = get(X_WASM_USE_STACK_SWITCHING_PROPOSAL)}
-    if (X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS in this) { arguments.wasmUseTrapsInsteadOfExceptions = get(X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)}
+    arguments.irDceDumpReachabilityInfoToFile = `Xir-dce-dump-reachability-info-to-file`?.absolutePathStringOrThrow()
+    arguments.irDceDumpDeclarationIrSizesToFile = `Xir-dump-declaration-ir-sizes-to-file`?.absolutePathStringOrThrow()
+    arguments.wasm = Xwasm
+    arguments.regenerateUnchangedModules = `Xwasm-IC-generate-unchanged-modules`
+    arguments.forceDebugFriendlyCompilation = `Xwasm-debug-friendly`
+    arguments.wasmDebug = `Xwasm-debug-info`
+    arguments.debuggerCustomFormatters = `Xwasm-debugger-custom-formatters`
+    arguments.wasmDisableArrayRangeChecksSafeElimination = `Xwasm-disable-array-range-checks-safe-elimination`
+    arguments.wasmEnableArrayRangeChecks = `Xwasm-enable-array-range-checks`
+    arguments.wasmEnableAsserts = `Xwasm-enable-asserts`
+    arguments.wasmEnableTailCalls = `Xwasm-enable-tail-calls`
+    arguments.wasmGenerateClosedWorldMultimodule = `Xwasm-generate-closed-world-multimodule`
+    arguments.generateDwarf = `Xwasm-generate-dwarf`
+    arguments.wasmGenerateWat = `Xwasm-generate-wat`
+    arguments.wasmIncludedModuleOnly = `Xwasm-included-module-only`
+    arguments.wasmInternalLocalVariablePrefix = `Xwasm-internal-local-variable-prefix`
+    arguments.wasmKClassFqn = `Xwasm-kclass-fqn`
+    arguments.wasmNoJsTag = `Xwasm-no-jstag`
+    arguments.includeUnavailableSourcesIntoSourceMap = `Xwasm-source-map-include-mappings-from-unavailable-sources`
+    arguments.wasmTarget = `Xwasm-target`?.stringValue
+    arguments.wasmUseNewExceptionProposal = `Xwasm-use-new-exception-proposal`
+    arguments.wasmUseStackSwitchingProposal = `Xwasm-use-stack-switching-proposal`
+    arguments.wasmUseTrapsInsteadOfExceptions = `Xwasm-use-traps-instead-of-exceptions`
     return arguments
   }
 
@@ -283,10 +330,10 @@ internal class WasmArgumentsImpl(
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
 
-    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmArgument<java.nio.`file`.Path?> =
+    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmArgument<Path?> =
         WasmArgument("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE")
 
-    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmArgument<java.nio.`file`.Path?> =
+    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmArgument<Path?> =
         WasmArgument("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE")
 
     public val X_WASM: WasmArgument<Boolean> = WasmArgument("X_WASM")
