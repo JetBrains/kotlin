@@ -22,8 +22,8 @@ excludedFunctions = acl_valid_link_np pfctlinput profil unwhiteout zopen getdire
 excludedFunctions.watchos_arm64 = longjmperror
 excludedFunctions.watchos_device_arm64 = longjmperror
 excludedFunctions.watchos_simulator_arm64 = longjmperror \
-    openat_dprotected_np mkfifoat mknodat openat_authenticated_np
-excludedFunctions.watchos_x64 = openat_dprotected_np mkfifoat mknodat openat_authenticated_np
+    openat_dprotected_np mkfifoat mknodat openat_authenticated_np getumask
+excludedFunctions.watchos_x64 = openat_dprotected_np mkfifoat mknodat openat_authenticated_np getumask
 
 ---
 // Wrapper to access errno variable.
