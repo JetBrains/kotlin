@@ -135,6 +135,60 @@ class ExportExtensionUnitTests {
     }
 
     @Test
+    fun `test swift package integration is not activated without an explicit call`() {
+        val project = buildProjectWithMPP()
+        project.exportExtension.swift {
+            moduleName.set("Shared")
+        }
+
+        assertNull(project.exportExtension.swiftExportConfiguration.activatedSwiftPackageIntegration)
+    }
+
+    @Test
+    fun `test swift package integration output directory is readable from the configuration`() {
+        val project = buildProjectWithMPP()
+        val packageDirectory = project.layout.projectDirectory.dir("iosApp/SharedPackage")
+        project.exportExtension.swift {
+            swiftPackageIntegration {
+                outputDirectory.set(packageDirectory)
+            }
+        }
+
+        val integration = assertNotNull(project.exportExtension.swiftExportConfiguration.activatedSwiftPackageIntegration)
+        assertEquals(packageDirectory.asFile, integration.outputDirectory.get().asFile)
+    }
+
+    @Test
+    fun `test repeated swift package integration calls configure the same integration`() {
+        val project = buildProjectWithMPP()
+        project.exportExtension.swift {
+            swiftPackageIntegration { }
+        }
+
+        val integration = assertNotNull(project.exportExtension.swiftExportConfiguration.activatedSwiftPackageIntegration)
+
+        val packageDirectory = project.layout.projectDirectory.dir("iosApp/SharedPackage")
+        project.exportExtension.swift {
+            swiftPackageIntegration {
+                outputDirectory.set(packageDirectory)
+            }
+        }
+
+        assertSame(integration, project.exportExtension.swiftExportConfiguration.activatedSwiftPackageIntegration)
+        assertEquals(packageDirectory.asFile, integration.outputDirectory.get().asFile)
+    }
+
+    @Test
+    fun `test swift package integration does not activate the xcode integration`() {
+        val project = buildProjectWithMPP()
+        project.exportExtension.swift {
+            swiftPackageIntegration { }
+        }
+
+        assertNull(project.exportExtension.swiftExportConfiguration.activatedXcodeIntegration)
+    }
+
+    @Test
     fun `dependency overrides are readable from the dsl`() {
         val project = buildProjectWithMPP()
         project.exportExtension.swift {
@@ -2068,3 +2122,4 @@ private data class ExportedSwiftModuleForAssertion(
     val exportMode: SwiftExportedModuleMode,
     val flattenPackage: String? = null,
 )
+

@@ -1914,6 +1914,8 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/export/ExportExtens
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportConfigurationDsl : org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportModuleOptionsDsl {
+	public abstract fun swiftPackageIntegration (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun swiftPackageIntegration (Lorg/gradle/api/Action;)V
 	public abstract fun xcodeIntegration ()V
 	public abstract fun xcodeIntegration (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun xcodeIntegration (Lorg/gradle/api/Action;)V
@@ -1933,6 +1935,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/Sw
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportModuleOptionsDsl {
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getRootPackage ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportSwiftPackageIntegration : org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportIntegration {
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportVisibility : java/lang/Enum {

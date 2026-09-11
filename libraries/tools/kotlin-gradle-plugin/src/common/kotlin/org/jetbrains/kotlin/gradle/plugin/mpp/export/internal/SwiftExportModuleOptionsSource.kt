@@ -42,6 +42,20 @@ internal data class SwiftExportDeclaredModuleOptions(
 )
 
 /**
+ * [this] with every property [override] declares replaced by [override]'s value, per property. A `null` in
+ * [override] leaves the value of [this] in place; a `null` receiver means there is nothing to layer under.
+ *
+ * This is the merge rule of repeated `configure(dependency) { }` calls, and the one used across integrations.
+ */
+internal fun SwiftExportDeclaredModuleOptions?.overriddenBy(
+    override: SwiftExportDeclaredModuleOptions,
+): SwiftExportDeclaredModuleOptions = SwiftExportDeclaredModuleOptions(
+    moduleName = override.moduleName ?: this?.moduleName,
+    rootPackage = override.rootPackage ?: this?.rootPackage,
+    visibility = override.visibility ?: this?.visibility,
+)
+
+/**
  * One layer of declared module options.
  *
  * Layers are consulted in order and the first non-null value wins, per property:
