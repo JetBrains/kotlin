@@ -439,7 +439,7 @@
 
 /plugins/allopen/ "Kotlin Frontend"
 /plugins/assign-plugin/ "Kotlin Frontend"
-/plugins/atomicfu/ vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com leonid.startsev@jetbrains.com
+/plugins/atomicfu/ vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com "Kotlin Frontend"
 /plugins/compose/ "Google Compose"
 /plugins/plugin-sandbox/ "Kotlin Frontend"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
