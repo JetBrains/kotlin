@@ -16,6 +16,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportFingerprintedCoordinationService
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyntheticPackageChangeReport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.sharedPackageRootFor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
 import org.jetbrains.kotlin.gradle.utils.CommaSeparatedEntriesBuilder
@@ -60,6 +61,29 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
      */
     @get:Input
     abstract val platforms: MapProperty<String, String>
+
+    /**
+     * The Swift Export output the package sources are taken from. [swiftModulesFile] only names the files, so
+     * this has to be an input of its own: otherwise a change to the generated `.swift` or `.h` content alone
+     * would leave this task UP-TO-DATE with stale package sources.
+     *
+     * Also compared with [otherSwiftExportOutputs] to report targets whose output differs from it. Optional
+     * because the Xcode flow never sets it.
+     */
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val primarySwiftExportOutput: DirectoryProperty
+
+    /**
+     * Swift Export outputs of the other targets that share this package. Each is compared with
+     * [primarySwiftExportOutput]; differences are reported as a warning because the package carries one copy of
+     * the sources.
+     */
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val otherSwiftExportOutputs: ConfigurableFileCollection
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -110,9 +134,20 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     fun generate() {
         val swiftModules = deserializeSwiftModules()
 
+        reportDivergentSwiftExportOutputs()
         createSPMSources(swiftModules)
         createPackageManifest(swiftModules)
         createKotlinRuntimeTarget()
+    }
+
+    private fun reportDivergentSwiftExportOutputs() {
+        val primary = primarySwiftExportOutput.orNull?.asFile ?: return
+        otherSwiftExportOutputs.files.forEach { other ->
+            val changes = SyntheticPackageChangeReport.diff(snapshotDirectory(primary), snapshotDirectory(other))
+            if (!changes.isEmpty) {
+                logger.warn(renderSwiftExportOutputDivergence(primary, other, changes))
+            }
+        }
     }
 
     private fun deserializeSwiftModules(): List<GradleSwiftExportModule> {
