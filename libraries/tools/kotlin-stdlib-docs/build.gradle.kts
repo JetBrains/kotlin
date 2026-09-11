@@ -83,6 +83,11 @@ buildscript {
              version.set(kotlinLanguageVersion)
              if (isLatest) {
                  olderVersionsDir.set(inputDirPrevious.resolve(moduleDirName))
+                 // kotlinlang.org serves this output from `/api/core/`, where an
+                 // `older/` path segment is stripped by a path-independent rewrite,
+                 // so anything published there becomes unreachable and the whole
+                 // version selector 404s (KT-89292).
+                 olderVersionsDirName.set("")
              }
          }
          if (isLatest) {
@@ -112,6 +117,7 @@ val moduleArtifacts = configurations["dokka"].allDependencies.withType(ProjectDe
         dependencyProject.layout.buildDirectory.file("dokka-module/html/module-descriptor.json").get().asFile to
                 dependencyProject.layout.buildDirectory.file("dokka-module/html/module/package-list").get().asFile
     }
+val olderVersionsInputDir = inputDirPrevious.resolve("all-libs")
 
 getTasksByName("dokkaGeneratePublicationHtml", false).forEach { task ->
     // Copy into locals so the doLast closure captures these values, not the enclosing
@@ -126,5 +132,44 @@ getTasksByName("dokkaGeneratePublicationHtml", false).forEach { task ->
             targetDir.mkdirs()
             packageList.copyTo(targetDir.resolve(packageList.name), overwrite = true)
         }
+    }
+
+    if (isLatest) {
+        // Locals again: the doLast closure must not capture the build script object.
+        val olderVersionsInput = olderVersionsInputDir
+        val currentVersion = kotlinLanguageVersion
+        val requireOlderVersions = isTeamcityBuild
+        task.doLast(Action<Task> {
+            // The version id of an older documentation archive comes from the contents of its
+            // `version.json`, the directory name is irrelevant for the versioning plugin.
+            val expectedVersions = olderVersionsInput.listFiles().orEmpty()
+                .filter { it.isDirectory && !it.isHidden }
+                .mapNotNull { dir -> dir.resolve("version.json").takeIf { it.isFile } }
+                .map { Json.decodeFromString<JsonObject>(it.readText()) }
+                .map { (it.get("version") as JsonPrimitive).content }
+
+            val defaultLayoutDir = outputDirectory.resolve("older")
+            check(!defaultLayoutDir.exists()) {
+                "Dokka versioning has fallen back to its default layout and created " +
+                        "$defaultLayoutDir. Older versions must be published at the root " +
+                        "of the output, see `olderVersionsDirName` in the `versioning` " +
+                        "block (KT-89292)."
+            }
+
+            val missingVersions = expectedVersions.filterNot { version ->
+                outputDirectory.resolve(version).resolve("version.json").isFile
+            }
+            check(missingVersions.isEmpty()) {
+                "Older documentation versions $missingVersions found in " +
+                        "$olderVersionsInput have not been copied into $outputDirectory."
+            }
+
+            if (expectedVersions.isEmpty()) {
+                val message = "No older documentation versions found in " +
+                        "$olderVersionsInput, the published version selector will only " +
+                        "offer $currentVersion."
+                if (requireOlderVersions) error(message) else logger.warn("w: $message")
+            }
+        })
     }
 }
