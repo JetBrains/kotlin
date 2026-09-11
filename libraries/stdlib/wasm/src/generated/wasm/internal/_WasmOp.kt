@@ -206,6 +206,8 @@ internal annotation class WasmOp(val name: String) {
         const val CALL = "CALL"
         const val CALL_PURE = "CALL_PURE"
         const val CALL_INDIRECT = "CALL_INDIRECT"
+        const val RETURN_CALL = "RETURN_CALL"
+        const val RETURN_CALL_INDIRECT = "RETURN_CALL_INDIRECT"
         const val TRY = "TRY"
         const val CATCH = "CATCH"
         const val CATCH_ALL = "CATCH_ALL"
