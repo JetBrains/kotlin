@@ -53,8 +53,8 @@ benchmark {
             include(".*ClasspathEntrySnapshotBenchmark.*")
             iterationTime = 1
             iterationTimeUnit = "sec"
-            warmups = 10
-            iterations = 10
+            warmups = 20
+            iterations = 60
         }
 
         // The compiler frontend benchmarks: `org.jetbrains.kotlin.benchmarks.jmh.compilation.*`.

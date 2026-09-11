@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 /**
  * Minimal information about a Kotlin class to compute recompilation-triggering changes during an incremental run of the `KotlinCompile`
@@ -159,24 +158,6 @@ class KotlinClassInfo(
                     else -> null
                 }
             } else null
-        }
-
-        /**
-         * Allows callers to customize [ExtraInfo] computation.
-         */
-        fun createFrom(
-            classId: ClassId,
-            classHeader: KotlinClassHeader,
-            classNode: ClassNode,
-            extraInfoGenerator: ExtraClassInfoGenerator = ExtraClassInfoGenerator(),
-            classProto: ProtoData? = readProtoData(classId, classHeader)
-        ): KotlinClassInfo {
-            return createFrom(
-                classId,
-                classHeader,
-                extraInfo = extraInfoGenerator.getExtraInfo(classHeader, classNode, classProto),
-                classProto = classProto
-            )
         }
 
         /**

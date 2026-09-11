@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff.impl
 
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.ProtoData
-import org.jetbrains.kotlin.incremental.impl.classNode
 import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.File
 
 /** Information about the location of a .class file. */
@@ -45,10 +43,8 @@ internal class ClassFileWithContents(
 ) {
     val classReader: ClassReader by lazy { ClassReader(contents) }
 
-    val classNode: ClassNode by lazy { classNode(classReader) }
-
     val classInfo: BasicClassInfo by lazy {
-        BasicClassInfo.compute(classNode)
+        BasicClassInfo.compute(classReader)
     }
 
     val classProto: ProtoData? by lazy {

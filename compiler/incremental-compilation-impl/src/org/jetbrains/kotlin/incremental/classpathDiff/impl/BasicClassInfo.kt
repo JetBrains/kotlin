@@ -17,7 +17,6 @@ import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_CODE
 import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_DEBUG
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 /** Basic information about a class (e.g., [classId], [kotlinClassHeader] and [supertypes]). */
 internal class BasicClassInfo(
@@ -50,19 +49,12 @@ internal class BasicClassInfo(
         fun compute(classContents: ByteArray): BasicClassInfo = compute(ClassReader(classContents))
 
         fun compute(classReader: ClassReader): BasicClassInfo {
-            return compute { classReader.accept(it, SKIP_CODE or SKIP_DEBUG) }
-        }
-
-        fun compute(classNode: ClassNode): BasicClassInfo {
-            return compute { classNode.accept(it) }
-        }
-
-        private inline fun compute(accept: (ClassVisitor) -> Unit): BasicClassInfo {
             val kotlinClassHeaderClassVisitor = KotlinClassHeaderClassVisitor()
             val innerClassesClassVisitor = InnerClassesClassVisitor(kotlinClassHeaderClassVisitor)
             val basicClassInfoVisitor = BasicClassInfoClassVisitor(innerClassesClassVisitor)
 
-            accept(basicClassInfoVisitor)
+            // parsingOptions = (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info are not important
+            classReader.accept(basicClassInfoVisitor, SKIP_CODE or SKIP_DEBUG)
 
             val className = basicClassInfoVisitor.getClassName()
             val innerClassesInfo = innerClassesClassVisitor.getInnerClassesInfo()
@@ -113,27 +105,11 @@ private class KotlinClassHeaderClassVisitor : ClassVisitor(Opcodes.API_VERSION) 
     private val kotlinClassHeaderAnnotationVisitor = ReadKotlinClassHeaderAnnotationVisitor()
 
     override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
-        val delegate = convertAnnotationVisitor(
+        return convertAnnotationVisitor(
             kotlinClassHeaderAnnotationVisitor,
             descriptor,
             InnerClassesInfo() // This info is not needed to resolve KotlinClassHeader
-        ) ?: return null
-        return object : AnnotationVisitor(Opcodes.API_VERSION, delegate) {
-            override fun visitArray(name: String): AnnotationVisitor? {
-                // ClassNode replays primitive arrays element by element, unlike ClassReader.
-                if (name != "mv" && name != "version") return super.visitArray(name)
-                val values = mutableListOf<Int>()
-                return object : AnnotationVisitor(Opcodes.API_VERSION) {
-                    override fun visit(name: String?, value: Any) {
-                        if (value is Int) values.add(value)
-                    }
-
-                    override fun visitEnd() {
-                        delegate.visit(name, values.toIntArray())
-                    }
-                }
-            }
-        }
+        )
     }
 
     fun getKotlinClassHeader(): KotlinClassHeader? = kotlinClassHeaderAnnotationVisitor.createHeaderWithDefaultMetadataVersion()

@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.BasicClassInfo
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFileWithContents
-import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassMultiHashProvider
-import org.jetbrains.kotlin.incremental.classpathDiff.impl.ExtraInfoGeneratorWithInlinedClassSnapshotting
 import org.jetbrains.kotlin.incremental.impl.ExtraClassInfoGenerator
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
@@ -27,67 +25,13 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassWriter
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.InsnNode
-import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.*
 
 @OptIn(K1Deprecation::class)
 class KotlinClassInfoReuseTest {
-
-    @Test
-    fun `class node is cached and preserved across snapshotting`() {
-        val fixture = compiledFixture("MetadataReuseFixture.class")
-        val classFile = ClassFileWithContents(ClassFile(File("."), "MetadataReuseFixture.class"), fixture.bytes)
-        val node = classFile.classNode
-        assertSame(node, classFile.classNode)
-        val original = ClassWriter(0).also { node.accept(it) }.toByteArray()
-        val fields = node.fields.toList()
-        val methods = node.methods.toList()
-        assertEquals(fixture.basicInfo.classId, classFile.classInfo.classId)
-        val info = KotlinClassInfo.createFrom(
-            classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, node, classProto = classFile.classProto
-        )
-        val repeated = KotlinClassInfo.createFrom(
-            classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, node, classProto = classFile.classProto
-        )
-        assertContentEquals(KotlinClassInfoExternalizer.toByteArray(info), KotlinClassInfoExternalizer.toByteArray(repeated))
-        assertContentEquals(KotlinClassInfoExternalizer.toByteArray(fixture.oldInfo()), KotlinClassInfoExternalizer.toByteArray(info))
-        assertEquals(fields, node.fields)
-        assertEquals(methods, node.methods)
-        assertContentEquals(original, ClassWriter(0).also { node.accept(it) }.toByteArray())
-        assertSame(node, classFile.classNode)
-    }
-
-    @Test
-    fun `shared class node records dependencies of inline methods`() {
-        val fixture = compiledFixture("MetadataReuseFixture.class")
-        val classFile = ClassFileWithContents(ClassFile(File("."), "MetadataReuseFixture.class"), fixture.bytes)
-        val node = classFile.classNode
-        val method = node.methods.single { it.name == "visibleInline" }
-        val dependencyName = "example/Owner\$InlinedClass"
-        method.instructions.insert(InsnNode(Opcodes.POP))
-        method.instructions.insert(TypeInsnNode(Opcodes.NEW, dependencyName))
-        val dependency = JvmClassName.byInternalName(dependencyName)
-        val visited = mutableSetOf<JvmClassName>()
-        val generator = ExtraInfoGeneratorWithInlinedClassSnapshotting(object : ClassMultiHashProvider {
-            override fun searchAndGetFullAbiHashOfUsedClasses(rootClasses: Set<JvmClassName>, initialPrefix: String): Long {
-                visited.addAll(rootClasses)
-                return if (dependency in rootClasses) 42L else 0L
-            }
-        })
-        val expected = ExtraClassInfoGenerator().getExtraInfo(fixture.header, node, classFile.classProto)
-        val actual = generator.getExtraInfo(fixture.header, node, classFile.classProto)
-        assertContains(visited, dependency)
-        assertEquals(expected.inlineFunctionOrAccessorSnapshots.mapValues { [member, hash] ->
-            if (member.jvmMethodSignature.name == "visibleInline") hash xor 42L else hash
-        }, actual.inlineFunctionOrAccessorSnapshots)
-    }
 
     @Test
     fun `class file shares decoded proto with Kotlin class info`() {

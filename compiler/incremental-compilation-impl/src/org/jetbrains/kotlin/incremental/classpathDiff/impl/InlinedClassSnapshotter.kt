@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.incremental.impl.hashToLong
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 internal interface ClassMultiHashProvider {
     /**
@@ -31,8 +32,8 @@ internal class ExtraInfoGeneratorWithInlinedClassSnapshotting(
 ) : ExtraClassInfoGenerator() {
     private val methodToUsedFqNames = mutableMapOf<JvmMemberSignature.Method, MutableSet<JvmClassName>>()
 
-    override fun makeClassVisitor(): ClassVisitor {
-        return InstanceOwnerRecordingClassVisitor(null, methodToUsedClassesMap = methodToUsedFqNames)
+    override fun makeClassVisitor(classNode: ClassNode): ClassVisitor {
+        return InstanceOwnerRecordingClassVisitor(classNode, methodToUsedClassesMap = methodToUsedFqNames)
     }
 
     override fun calculateInlineMethodHash(
@@ -65,7 +66,8 @@ private class InstanceBasedSnapshotter(
 
         val usedClasses = mutableSetOf<JvmClassName>()
         val visitor = InstanceOwnerRecordingClassVisitor(delegateClassVisitor = null, allUsedClassesSet = usedClasses)
-        classData.classNode.accept(visitor)
+        val classReader = classData.classReader
+        classReader.accept(visitor, 0)
         knownClassUsages[JvmClassName.byClassId(classData.classInfo.classId)] = usedClasses
 
         return classData.contents.hashToLong()
