@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 internal object SwiftExportConstants {
+    const val SWIFT_EXPORT_RUN = "swiftExport"
     const val SWIFT_EXPORT_COMPILATION = "swiftExportMain"
     const val SWIFT_EXPORT_BINARY = "SwiftExportBinary"
 
@@ -53,14 +54,43 @@ internal object SwiftExportConstants {
     )
 }
 
-internal fun Project.registerSwiftExportTask(
+/**
+ * What every Swift Export integration builds for a target and a build type.
+ */
+internal class SwiftExportBuildOutputs(
+    val taskNamePrefix: String,
+    val swiftApiModuleName: Provider<String>,
+    val swiftExportTask: TaskProvider<SwiftExportTask>,
+    val staticLibrary: AbstractNativeLibrary,
+)
+
+/**
+ * The names an integration gives to its Swift Export [run], its bridge [compilation] and its static library
+ * [binary], and how the integration is called in task descriptions. Two integrations with different names
+ * have nothing in common.
+ */
+internal class SwiftExportNames(val run: String, val compilation: String, val binary: String, val integration: String) {
+    /** The directory under `build` that holds the output of the run, one subdirectory per target. */
+    val outputDirectory: String get() = run.capitalizeAsciiOnly()
+
+    companion object {
+        val XCODE = SwiftExportNames(
+            run = SwiftExportConstants.SWIFT_EXPORT_RUN,
+            compilation = SwiftExportConstants.SWIFT_EXPORT_COMPILATION,
+            binary = SwiftExportConstants.SWIFT_EXPORT_BINARY,
+            integration = "the Xcode integration",
+        )
+    }
+}
+
+internal fun Project.registerSwiftExportRunAndBinary(
     swiftExportConfiguration: SwiftExportConfigurationCompat,
     taskGroup: String,
     buildType: NativeBuildType,
     target: KotlinNativeTarget,
-): TaskProvider<*> {
+    names: SwiftExportNames,
+): SwiftExportBuildOutputs {
     val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-    val buildConfiguration = buildType.configuration
 
     val swiftApiModuleName = swiftExportConfiguration
         .moduleName
@@ -72,6 +102,7 @@ internal fun Project.registerSwiftExportTask(
     )
 
     val swiftExportTask = registerSwiftExportRun(
+        names = names,
         taskGroup = taskGroup,
         target = target,
         swiftApiModuleName = swiftApiModuleName,
@@ -86,6 +117,7 @@ internal fun Project.registerSwiftExportTask(
     )
 
     val staticLibrary = registerSwiftExportCompilationAndGetBinary(
+        names = names,
         buildType = buildType,
         target = target,
         mainCompilation = mainCompilation,
@@ -95,6 +127,21 @@ internal fun Project.registerSwiftExportTask(
 
     swiftExportConfiguration.addBinary(staticLibrary)
 
+    return SwiftExportBuildOutputs(taskNamePrefix, swiftApiModuleName, swiftExportTask, staticLibrary)
+}
+
+internal fun Project.registerSwiftExportTask(
+    swiftExportConfiguration: SwiftExportConfigurationCompat,
+    taskGroup: String,
+    buildType: NativeBuildType,
+    target: KotlinNativeTarget,
+): TaskProvider<*> {
+    val outputs = registerSwiftExportRunAndBinary(swiftExportConfiguration, taskGroup, buildType, target, SwiftExportNames.XCODE)
+    val taskNamePrefix = outputs.taskNamePrefix
+    val swiftApiModuleName = outputs.swiftApiModuleName
+    val swiftExportTask = outputs.swiftExportTask
+    val staticLibrary = outputs.staticLibrary
+    val buildConfiguration = buildType.configuration
     val swiftApiLibraryName = swiftApiModuleName.map { it + "Library" }
 
     val packageGenerationTask = registerPackageGeneration(
@@ -168,6 +215,7 @@ internal fun Project.registerSwiftExportTask(
 }
 
 private fun Project.registerSwiftExportRun(
+    names: SwiftExportNames,
     taskGroup: String,
     target: KotlinNativeTarget,
     swiftApiModuleName: Provider<String>,
@@ -182,12 +230,12 @@ private fun Project.registerSwiftExportRun(
 ): TaskProvider<SwiftExportTask> {
     // The run doesn't depend on the build type: the klib it translates is the same for Debug and Release.
     // So there's one run per target, like the Kotlin compile tasks.
-    val swiftExportTaskName = target.disambiguateName("swiftExport")
+    val swiftExportTaskName = target.disambiguateName(names.run)
 
-    val outputDirectory = layout.buildDirectory.dir("SwiftExport/${target.name}")
+    val outputDirectory = layout.buildDirectory.dir("${names.outputDirectory}/${target.name}")
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
-        task.description = "Run ${target.name} Swift Export process"
+        task.description = "Run ${target.name} Swift Export process for ${names.integration}"
         task.group = taskGroup
 
         // Input
@@ -239,6 +287,7 @@ private fun Project.registerSwiftExportRun(
 }
 
 private fun registerSwiftExportCompilationAndGetBinary(
+    names: SwiftExportNames,
     buildType: NativeBuildType,
     target: KotlinNativeTarget,
     mainCompilation: KotlinNativeCompilation,
@@ -246,7 +295,7 @@ private fun registerSwiftExportCompilationAndGetBinary(
     swiftExportTask: TaskProvider<SwiftExportTask>,
 ): AbstractNativeLibrary {
     target.compilations.getOrCreate(
-        SwiftExportConstants.SWIFT_EXPORT_COMPILATION,
+        names.compilation,
         invokeWhenCreated = { swiftExportCompilation ->
             swiftExportCompilation.associateWith(mainCompilation)
 
@@ -258,7 +307,7 @@ private fun registerSwiftExportCompilationAndGetBinary(
                 it.compilerOptions.optIn.add("kotlin.native.internal.InternalForKotlinNative")
             }
 
-            target.binaries.staticLib(SwiftExportConstants.SWIFT_EXPORT_BINARY, listOf(buildType)) { staticLib ->
+            target.binaries.staticLib(names.binary, listOf(buildType)) { staticLib ->
                 staticLib.compilation = swiftExportCompilation
                 staticLib.binaryOption("swiftExport", "true")
                 staticLib.binaryOption("cInterfaceMode", "none")
@@ -270,10 +319,7 @@ private fun registerSwiftExportCompilationAndGetBinary(
         }
     )
 
-    return target.binaries.getStaticLib(
-        SwiftExportConstants.SWIFT_EXPORT_BINARY,
-        buildType
-    )
+    return target.binaries.getStaticLib(names.binary, buildType)
 }
 
 private fun Project.registerPackageGeneration(
