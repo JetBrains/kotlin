@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.SpatialPreview
+
+modules = SpatialPreview
+compilerOpts = -framework SpatialPreview
+linkerOpts = -framework SpatialPreview
+#Disabled: Swift-only framework

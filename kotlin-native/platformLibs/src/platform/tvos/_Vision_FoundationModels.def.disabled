@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._Vision_FoundationModels
+
+modules = _Vision_FoundationModels
+compilerOpts = -framework _Vision_FoundationModels
+linkerOpts = -framework _Vision_FoundationModels
+#Disabled: Unavailable

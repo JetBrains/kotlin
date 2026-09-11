@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.RealityCoreTextureProcessing
+
+modules = RealityCoreTextureProcessing
+compilerOpts = -framework RealityCoreTextureProcessing
+linkerOpts = -framework RealityCoreTextureProcessing
+#Disabled: Unavailable

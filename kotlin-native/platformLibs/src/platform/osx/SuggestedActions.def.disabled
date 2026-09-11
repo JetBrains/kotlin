@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.SuggestedActions
+
+modules = SuggestedActions
+compilerOpts = -framework SuggestedActions
+linkerOpts = -framework SuggestedActions
+#Disabled: Swift-only framework

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.CrashReportExtension
+
+modules = CrashReportExtension
+compilerOpts = -framework CrashReportExtension
+linkerOpts = -framework CrashReportExtension
+#Disabled: Swift-only framework
