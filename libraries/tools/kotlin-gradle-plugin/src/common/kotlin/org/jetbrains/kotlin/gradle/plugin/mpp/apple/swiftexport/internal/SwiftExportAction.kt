@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -22,6 +23,7 @@ import java.util.logging.Logger
 internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftExportWorkParameters> {
     internal interface SwiftExportWorkParameters : SwiftExportTaskParameters, WorkParameters {
         val konanDistribution: Property<Distribution>
+        val swiftModules: ListProperty<SwiftExportedModule>
     }
 
     private val swiftExportLogger = object : SwiftExportLogger {

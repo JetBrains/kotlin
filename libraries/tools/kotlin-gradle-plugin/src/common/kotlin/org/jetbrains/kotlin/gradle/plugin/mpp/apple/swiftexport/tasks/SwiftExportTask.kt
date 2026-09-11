@@ -7,20 +7,32 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportTaskParameters
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.collectModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Distribution
 import javax.inject.Inject
@@ -66,6 +78,105 @@ internal abstract class SwiftExportTask @Inject constructor(
     @get:Nested
     abstract val parameters: SwiftExportTaskParameters
 
+    /**
+     * The complete compilation dependency graph the exported modules are resolved from.
+     *
+     * Held as Configuration-Cache-safe [LazyResolvedConfigurationWithArtifacts] rather than a precomputed module list
+     * so that the resolution happens at execution time (see [run]); up-to-date checking is provided by the raw
+     * configurations wired as task inputs in `registerSwiftExportRun`.
+     */
+    @get:Internal
+    abstract val exportConfiguration: Property<LazyResolvedConfigurationWithArtifacts>
+
+    /**
+     * A version of the compilation dependency graph (represented by [exportConfiguration]) that only includes api
+     * dependencies. Used for identifying direct api dependencies of an exported module.
+     *
+     * Held as Configuration-Cache-safe [LazyResolvedConfigurationWithArtifacts] rather than a precomputed module list
+     * so that the resolution happens at execution time (see [run]); up-to-date checking is provided by the raw
+     * configurations wired as task inputs in `registerSwiftExportRun`.
+     */
+    @get:Internal
+    abstract val apiConfiguration: Property<LazyResolvedConfigurationWithArtifacts>
+
+    /**
+     * Mirrors [exportConfiguration] but contains Swift Export metadata of dependencies inside [exportConfiguration].
+     *
+     * Held as Configuration-Cache-safe [LazyResolvedConfigurationWithArtifacts] rather than a precomputed module list
+     * so that the resolution happens at execution time (see [run]); up-to-date checking is provided by the raw
+     * configurations wired as task inputs in `registerSwiftExportRun`.
+     */
+    @get:Internal
+    abstract val metadataConfiguration: Property<LazyResolvedConfigurationWithArtifacts>
+
+    /**
+     * Swift Export metadata shared by same-build subproject dependencies as a secondary variant.
+     *
+     * Held as a Configuration-Cache-safe [KotlinProjectSharedDataProvider] and read at execution time (see [run]);
+     * the producer's JSON is a task output, so it only exists once [sharedMetadataFiles] has forced the producing task to run.
+     */
+    @get:Internal
+    abstract val sharedMetadata: Property<KotlinProjectSharedDataProvider<SwiftExportMetadata>>
+
+    /**
+     * Gradle `InputFiles` view of [sharedMetadata]. Declaring it as a task input provides the `builtBy` edge that makes
+     * the subproject metadata producers run before this task executes, so their JSON exists when [run] reads it.
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val sharedMetadataFiles: List<FileCollection>
+        get() = sharedMetadata.orNull?.let { listOf(it.files) } ?: emptyList()
+
+    /**
+     * The explicitly-exported dependencies declared via the legacy `swiftExport { export(…) }` DSL. Is expected
+     * to be empty when the new `export { swift { … } }` DSL is used.
+     *
+     * Held as `@Internal` because [SwiftExportedDependency] wraps live Gradle `Property` values and a dependency
+     * selector, which is not a valid task input on its own. Up-to-date tracking of its output-affecting content
+     * is provided by [exportedModulesInputs].
+     */
+    @get:Internal
+    abstract val exportedModules: SetProperty<SwiftExportedDependency>
+
+    /**
+     * Up-to-date tracking projection of [exportedModules]. It exposes the plain, output-affecting values of every
+     * exported dependency - its identity (external coordinates or project path) and the explicit `moduleName` /
+     * `flattenPackage` overrides - as a stable list of strings.
+     */
+    @get:Input
+    internal val exportedModulesInputs: List<String>
+        get() = exportedModules.get()
+            .map { "${it.name}|${it.moduleName.orNull}|${it.flattenPackage.orNull}" }
+            .sorted()
+
+    /**
+     * The consumer-side module option overrides declared via the `export { swift { xcodeIntegration { configure(…) } } }` DSL,
+     * keyed by the dependency they apply to (external `group:name` coordinates or a project path).
+     *
+     * Held as `@Internal` because [SwiftExportDependencySelector] and [SwiftExportDeclaredModuleOptions] wrap plain
+     * values that are not a valid task input on their own. Read at execution time by [resolveSwiftExportedModules].
+     * Up-to-date tracking of its output-affecting content is provided by [dependencyOptionsOverridesInputs].
+     */
+    @get:Internal
+    abstract val dependencyOptionsOverrides: MapProperty<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>
+
+    /**
+     * Up-to-date tracking projection of [dependencyOptionsOverrides]. It exposes the plain, output-affecting values of
+     * every override - the selector identity (external `group:name` coordinates or a project path) and the declared
+     * `moduleName` / `rootPackage` options - as a stable list of strings.
+     */
+    @get:Input
+    internal val dependencyOptionsOverridesInputs: List<String>
+        get() = dependencyOptionsOverrides.get()
+            .map { (selector, options) ->
+                val selectorKey = when (selector) {
+                    is SwiftExportDependencySelector.ProjectPath -> "project|${selector.projectPath}"
+                    is SwiftExportDependencySelector.Module -> "module|${selector.group}|${selector.name}"
+                }
+                "$selectorKey|${options.moduleName}|${options.rootPackage}"
+            }
+            .sorted()
+
     @get:Internal
     abstract val ignoreExperimentalDiagnostic: Property<Boolean>
 
@@ -85,23 +196,25 @@ internal abstract class SwiftExportTask @Inject constructor(
             workerSpec.forkOptions.systemProperties.put("ide.can.use.coroutines.fork", "false")
         }
 
-        val swiftModules = parameters.swiftModules.map {
-            it.toMutableList().apply {
+        // The exported-module list is resolved here, at execution time, rather than during configuration: the resolved
+        // configurations only need to be readable when the task runs, which keeps the resolution off the
+        // configuration-cache store phase.
+        val swiftModules = buildList {
+            addAll(resolveSwiftExportedModules())
+            add(
+                createFullyExportedSwiftExportedModule(
+                    mainModuleInput.moduleName.get(),
+                    mainModuleInput.flattenPackage.orNull,
+                    mainModuleInput.artifact.getFile()
+                )
+            )
+            if (cinteropModuleName.isPresent) {
                 add(
-                    createFullyExportedSwiftExportedModule(
-                        mainModuleInput.moduleName.get(),
-                        mainModuleInput.flattenPackage.orNull,
-                        mainModuleInput.artifact.getFile()
+                    createTransitiveSwiftExportedModule(
+                        moduleName = cinteropModuleName.get(),
+                        artifact = cinteropModuleArtifact.getFile()
                     )
                 )
-                if (cinteropModuleName.isPresent) {
-                    add(
-                        createTransitiveSwiftExportedModule(
-                            moduleName = cinteropModuleName.get(),
-                            artifact = cinteropModuleArtifact.getFile()
-                        )
-                    )
-                }
             }
         }
 
@@ -116,6 +229,28 @@ internal abstract class SwiftExportTask @Inject constructor(
             workParameters.konanTarget.set(parameters.konanTarget)
         }
     }
+
+    /**
+     * Resolves the transitive and explicitly-exported Swift modules from the dependency graph. This is done at
+     * execution time (called from [run]), reading the Configuration-Cache-safe holders resolved during configuration.
+     * The main module and the optional cinterop module are appended by [run]; they are not part of this result.
+     *
+     * Exposed as `internal` so functional tests can assert the resolved module set without executing the whole task.
+     * [reportDiagnostic] defaults to this task's execution-time reporter; tests may pass a project-scoped reporter to
+     * observe resolution diagnostics through the regular collector.
+     */
+    internal fun resolveSwiftExportedModules(
+        reportDiagnostic: (ToolingDiagnostic) -> Unit = { this.reportDiagnostic(it) },
+    ): List<SwiftExportedModule> = collectModules(
+        exportConfiguration = exportConfiguration.get(),
+        apiConfiguration = apiConfiguration.orNull,
+        metadataConfiguration = metadataConfiguration.orNull,
+        sharedMetadata = sharedMetadata.orNull,
+        exportedModules = exportedModules.get(),
+        dependencyOptionsOverrides = dependencyOptionsOverrides.get(),
+        rootModuleName = mainModuleInput.moduleName.get(),
+        reportDiagnostic = reportDiagnostic,
+    )
 
     private fun cleanup() {
         fileSystem.delete {

@@ -198,6 +198,92 @@ class SwiftExportDslIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Changing an exported module name override invalidates the Swift Export task")
+    @GradleTest
+    @Suppress("DEPRECATION") // Tests the deprecated legacy Swift Export DSL on purpose.
+    fun testExportedModuleNameOverrideIsTrackedAsTaskInput(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        val exportedLibrary = publishMultiplatformLibrary(gradleVersion) {
+            iosArm64()
+            sourceSets.commonMain.get().compileSource(
+                """
+                package org.foo
+                class One
+                """.trimIndent()
+            )
+        }
+
+        val moduleNameProperty = "exportedModuleNameOverride"
+        val initialModuleName = "InitialExportedModule"
+        val renamedModuleName = "RenamedExportedModule"
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            addPublishedProjectToRepositories(exportedLibrary)
+
+            // Only Serializable values may be captured inside the build script injection below.
+            val exportedLibraryCoordinate = exportedLibrary.rootCoordinate
+
+            buildScriptInjection {
+                // The exported module name is read from a Gradle property so that it can be changed between builds.
+                // Crucially, none of the task's tracked file inputs (the sources, the resolved klib, or the resolved
+                // export configuration) change when only this property changes.
+                val moduleNameOverride = project.providers.gradleProperty(moduleNameProperty).orElse(initialModuleName)
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+
+                    with(swiftExport) {
+                        export(exportedLibraryCoordinate) {
+                            moduleName.set(moduleNameOverride)
+                        }
+                    }
+                }
+            }
+
+            val initialModuleDir = "build/SwiftExport/iosArm64/Debug/files/$initialModuleName"
+            val renamedModuleDir = "build/SwiftExport/iosArm64/Debug/files/$renamedModuleName"
+
+            // 1) First run with the initial override: the task executes and emits the exported module under its name.
+            build(
+                ":iosArm64DebugSwiftExport",
+                "-P$moduleNameProperty=$initialModuleName",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
+            ) {
+                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertDirectoryInProjectExists(initialModuleDir)
+            }
+
+            // 2) Re-running with the same override keeps the task UP-TO-DATE, as expected.
+            build(
+                ":iosArm64DebugSwiftExport",
+                "-P$moduleNameProperty=$initialModuleName",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
+            ) {
+                assertTasksUpToDate(":iosArm64DebugSwiftExport")
+            }
+
+            // 3) Change ONLY the exported module name override. The override drives the task's output and is tracked
+            // via the `exportedModulesInputs` task input, so up-to-date checking sees the change: the task re-executes
+            // and emits the exported module under its new name, while the stale directory is gone.
+            build(
+                ":iosArm64DebugSwiftExport",
+                "-P$moduleNameProperty=$renamedModuleName",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
+            ) {
+                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertDirectoryInProjectExists(renamedModuleDir)
+                assertDirectoryInProjectDoesNotExist(initialModuleDir)
+            }
+        }
+    }
+
     @DisplayName("embedSwiftExport executes normally when package flatten rule is defined in Swift Export DSL")
     @GradleTest
     fun testSwiftExportDSLWithPackageFlatteringRuleEnabled(
