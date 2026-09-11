@@ -6,10 +6,32 @@
 package org.jetbrains.kotlin.wasm.test.tools
 
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.security.MessageDigest
 
 class WasmVMTest {
+    @Test
+    fun `given output that fits the capture limit then no digest is created`() {
+        var digestCount = 0
+        val capture = BoundedOutputCapture {
+            digestCount++
+            MessageDigest.getInstance("SHA-256")
+        }
+
+        val chunk = CharArray(8 * 1024) { 'x' }
+        repeat((4 * 1024 * 1024) / chunk.size) {
+            capture.append(chunk, chunk.size)
+        }
+
+        assertEquals(0, digestCount)
+
+        capture.append(chunk, chunk.size)
+
+        assertEquals(1, digestCount)
+    }
+
     @Test
     fun `given more output than the capture limit then only bounded output with its digest is retained`() {
         val capture = BoundedOutputCapture()
