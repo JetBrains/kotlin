@@ -341,7 +341,7 @@ fun serializeModuleIntoKlib(
                 )
                 customProperties { this += properties }
             }
-            includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
+            includeMetadata(serializerOutput.serializedMetadata)
             includeIr(fullSerializedIr)
         }.writeTo(klibPath)
     }

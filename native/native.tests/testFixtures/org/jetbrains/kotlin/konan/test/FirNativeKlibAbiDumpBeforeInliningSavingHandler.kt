@@ -86,7 +86,7 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
                 platformAndTargets(BuiltInsPlatform.NATIVE, testServices.nativeEnvironmentConfigurator.getNativeTarget(module).name)
                 legacyNativeDependenciesInManifest(serializerOutput.neededLibraries.map { it.uniqueName })
             }
-            includeMetadata(serializerOutput.serializedMetadata ?: testServices.assertions.fail { "expected serialized metadata" })
+            includeMetadata(serializerOutput.serializedMetadata)
             includeIr(serializerOutput.serializedIr)
         }.writeTo(outputKlibArtifactFile.path)
     }
