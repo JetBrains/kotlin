@@ -42,6 +42,9 @@ interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val isFromSealedClass: Boolean
     override val isFromEnumClass: Boolean
     override val isFun: Boolean
+    /**
+     * A class or object with the `error` modifier.
+     */
     override val isRichError: Boolean
     override val hasStableParameterNames: Boolean
     override val returnValueStatus: ReturnValueStatus

@@ -42,6 +42,9 @@ interface FirDeclarationStatus : FirElement {
     val isFromSealedClass: Boolean
     val isFromEnumClass: Boolean
     val isFun: Boolean
+    /**
+     * A class or object with the `error` modifier.
+     */
     val isRichError: Boolean
     val hasStableParameterNames: Boolean
     val returnValueStatus: ReturnValueStatus
