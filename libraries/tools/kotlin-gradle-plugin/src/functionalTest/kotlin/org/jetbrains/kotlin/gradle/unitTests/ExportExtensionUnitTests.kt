@@ -11,6 +11,7 @@ import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.provider.ProviderConvertible
+import org.gradle.api.tasks.Sync
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
@@ -22,6 +23,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.swiftPackagePlatforms
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.AssembleSwiftPackageBinary
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
@@ -41,12 +45,14 @@ import org.jetbrains.kotlin.gradle.util.exportDslProject
 import org.jetbrains.kotlin.gradle.util.exportExtension
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.legacySwiftExportExtension
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.junit.jupiter.api.Assumptions
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.fail
@@ -2123,3 +2129,184 @@ private data class ExportedSwiftModuleForAssertion(
     val flattenPackage: String? = null,
 )
 
+class ExportExtensionSwiftPackageIntegrationTests {
+
+    @BeforeTest
+    fun runOnMacOSOnly() {
+        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+    }
+
+    private fun Project.assertSwiftPackageTasksRegistered(registered: Boolean) {
+        listOf(
+            "exportDebugSwiftPackage", "exportReleaseSwiftPackage",
+            "generateDebugSwiftPackage", "generateReleaseSwiftPackage",
+            "assembleDebugSwiftPackageBinary", "assembleReleaseSwiftPackageBinary",
+        ).forEach { name ->
+            assertEquals(registered, tasks.findByName(name) != null, "Expected task $name registered=$registered")
+        }
+    }
+
+    @Test
+    fun `test package tasks are registered when the swift package integration is activated`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                }
+            }
+        }
+
+        project.assertSwiftPackageTasksRegistered(true)
+        assertNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
+    @Test
+    fun `test package tasks are not registered without the swift package integration`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                xcodeIntegration()
+            }
+        }
+
+        project.assertSwiftPackageTasksRegistered(false)
+    }
+
+    @Test
+    fun `test both integrations register both task sets`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                xcodeIntegration()
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                }
+            }
+        }
+
+        project.assertSwiftPackageTasksRegistered(true)
+        assertNotNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
+    @Test
+    fun `test package tasks are not registered without apple targets`() {
+        val project = exportDslProject(multiplatform = { jvm() }) {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                }
+            }
+        }
+
+        project.assertSwiftPackageTasksRegistered(false)
+    }
+
+    @Test
+    fun `test the swift package integration can be activated before the module is configured`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                }
+            }
+            exportExtension.swift {
+                moduleName.set("Shared")
+            }
+        }
+
+        project.assertSwiftPackageTasksRegistered(true)
+    }
+
+    @Test
+    fun `test export task depends on the per target swift export and link tasks`() {
+        val project = exportDslProject(multiplatform = { iosArm64(); iosSimulatorArm64() }) {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                }
+            }
+        }
+
+        val exportTask = assertNotNull(project.tasks.findByName("exportDebugSwiftPackage"))
+        val dependencyNames = exportTask.taskDependencies.getDependencies(exportTask).map { it.name }.toSet()
+        assertEquals(setOf("generateDebugSwiftPackage", "assembleDebugSwiftPackageBinary"), dependencyNames)
+
+        val assembleTask = assertNotNull(project.tasks.findByName("assembleDebugSwiftPackageBinary"))
+        val assembleDependencies = assembleTask.taskDependencies.getDependencies(assembleTask).map { it.name }.toSet()
+        assertEquals(
+            setOf("linkSwiftExportBinaryDebugStaticIosArm64", "linkSwiftExportBinaryDebugStaticIosSimulatorArm64"),
+            assembleDependencies,
+        )
+
+        val generateTask = assertNotNull(project.tasks.findByName("generateDebugSwiftPackage"))
+        val generateDependencies = generateTask.taskDependencies.getDependencies(generateTask).map { it.name }.toSet()
+        assertEquals(setOf("iosArm64DebugSwiftExport", "iosSimulatorArm64DebugSwiftExport"), generateDependencies)
+    }
+
+    @Test
+    fun `test the assemble task declares one xcframework slice per apple platform group`() {
+        val project = exportDslProject(multiplatform = { iosArm64(); iosSimulatorArm64() }) {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                }
+            }
+        }
+
+        val assembleTask = assertIs<AssembleSwiftPackageBinary>(project.tasks.findByName("assembleDebugSwiftPackageBinary"))
+        assertEquals(listOf("ios", "iosSimulator"), assembleTask.sliceNames)
+    }
+
+    @Test
+    fun `test every build type is exported into its own subdirectory of the output directory`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                }
+            }
+        }
+
+        val debugTask = assertIs<Sync>(project.tasks.findByName("exportDebugSwiftPackage"))
+        val releaseTask = assertIs<Sync>(project.tasks.findByName("exportReleaseSwiftPackage"))
+
+        assertEquals(
+            project.layout.projectDirectory.dir("iosApp/SharedPackage/Debug").asFile,
+            debugTask.destinationDir,
+        )
+        assertEquals(
+            project.layout.projectDirectory.dir("iosApp/SharedPackage/Release").asFile,
+            releaseTask.destinationDir,
+        )
+        // A Sync deletes everything in its destination that it did not produce, so the two must never share one.
+        assertNotEquals(debugTask.destinationDir, releaseTask.destinationDir)
+    }
+
+    @Test
+    fun `test swift package platforms are derived from the exported target families`() {
+        assertEquals(
+            mapOf("iOS" to "18.0", "macOS" to "15.0"),
+            swiftPackagePlatforms(listOf(Family.OSX, Family.IOS, Family.IOS))
+        )
+    }
+
+    @Test
+    fun `test the generate task declares the platforms of the exported targets`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                }
+            }
+        }
+
+        val generateTask = assertIs<GenerateSPMPackageFromSwiftExport>(project.tasks.findByName("generateDebugSwiftPackage"))
+        assertEquals(mapOf("iOS" to "18.0"), generateTask.platforms.get())
+    }
+}
