@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 /**
  * Whether this declaration, as a member of a container, contributes its own graph to the container graph.
@@ -65,6 +66,17 @@ val FirControlFlowGraphOwner.isUsedInControlFlowGraphBuilderForFile: Boolean
         is FirProperty -> memberShouldHaveGraph
         else -> false
     }
+
+/**
+ * @return true for a symbol whose declaration, as a file member, should be part of the file graph.
+ *
+ * Being a syntactic property of the declaration, this needs no resolution, unlike looking the declaration up among
+ * [ControlFlowGraph.subGraphs] of the file graph, which requires the file to be resolved first.
+ *
+ * @see isUsedInControlFlowGraphBuilderForFile
+ */
+val FirBasedSymbol<*>.isUsedInControlFlowGraphBuilderForFile: Boolean
+    get() = (fir as? FirControlFlowGraphOwner)?.isUsedInControlFlowGraphBuilderForFile == true
 
 /**
  * @return true for [FirControlFlowGraphOwner] which, as a script statement, should be part of the script
