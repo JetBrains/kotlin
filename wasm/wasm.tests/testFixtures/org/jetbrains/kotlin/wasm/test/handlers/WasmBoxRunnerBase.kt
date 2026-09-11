@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
-data class WasmTestFailure(val name: String, val message: String?, val details: String?)
-
 abstract class WasmBoxRunnerBase(
     testServices: TestServices,
     executeWithV8Only: Boolean = false,
@@ -63,11 +61,16 @@ abstract class WasmBoxRunnerBase(
                         console.log = print;
                     }
                     try {
-                        await jsModule.startUnitTests();
-                        const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
-                                            (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
-                        if (hasFailures) {
-                            throw new Error('Unit test failed');
+                        if (typeof jsModule.runGroupedTests === 'function') {
+                            // Grouped batch: pass/fail is attributed on the JVM side, so a failure must NOT throw here.
+                            await jsModule.runGroupedTests();
+                        } else {
+                            await jsModule.startUnitTests();
+                            const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
+                                                (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
+                            if (hasFailures) {
+                                throw new Error('Unit test failed');
+                            }
                         }
                     } catch(e) {
                         console.log('Failed with exception!')
@@ -222,6 +225,8 @@ internal fun WasmVM.runWithCaughtExceptions(
         if (debugMode >= DebugMode.DEBUG) {
             println(" ------ Run in $vmName is completed")
         }
+        // Only single-test batches still go through `startUnitTests()`, and hence through `kotlin.test`'s TeamCity
+        // reporter; a grouped batch's launchers carry no `@Test`, so this marker cannot come from them.
         if (str.contains("##teamcity[testFailed")) {
             return AssertionError("Unit test failed in $vmName. Output:\n$str")
         }
@@ -291,43 +296,3 @@ private fun assertExpectedSizesMatchActual(
 private fun Long.toFormattedString(): String {
     return this.toString().reversed().chunked(3).joinToString("_").reversed()
 }
-
-fun parseTeamCityFailures(output: String): Map<String, WasmTestFailure> {
-    val failures = mutableMapOf<String, WasmTestFailure>()
-    val lines = output.lines()
-    val suiteStack = mutableListOf<String>()
-    for (line in lines) {
-        val trimmed = line.trim()
-        if (trimmed.startsWith("##teamcity[testSuiteStarted")) {
-            extractAttribute(trimmed, "name")?.let { suiteStack.add(it) }
-        } else if (trimmed.startsWith("##teamcity[testSuiteFinished")) {
-            if (suiteStack.isNotEmpty()) suiteStack.removeAt(suiteStack.size - 1)
-        } else if (trimmed.startsWith("##teamcity[testFailed")) {
-            val name = extractAttribute(trimmed, "name")
-            val message = extractAttribute(trimmed, "message")
-            val details = extractAttribute(trimmed, "details")
-            val fullSuiteName = suiteStack.lastOrNull()
-            if (fullSuiteName != null) {
-                failures[fullSuiteName] = WasmTestFailure(name ?: "unknown", message, details)
-            }
-        }
-    }
-    return failures
-}
-
-private fun extractAttribute(line: String, attribute: String): String? {
-    val key = "$attribute='"
-    val start = line.indexOf(key)
-    if (start == -1) return null
-    val end = line.indexOf("'", start + key.length)
-    if (end == -1) return null
-    return line.substring(start + key.length, end).tcUnescape()
-}
-
-private fun String.tcUnescape(): String = this
-    .replace("|n", "\n")
-    .replace("|r", "\r")
-    .replace("|'", "'")
-    .replace("||", "|")
-    .replace("|[", "[")
-    .replace("|]", "]")
