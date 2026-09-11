@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.utils.memoryOptimizedFilter
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class UselessDeclarationsRemover(
-    private val removeUnusedAssociatedObjects: Boolean,
     private val usefulDeclarations: Set<IrDeclaration>,
     private val context: JsIrBackendContext,
     private val dceRuntimeDiagnostic: RuntimeDiagnostic?,
@@ -71,7 +70,7 @@ class UselessDeclarationsRemover(
     override fun visitClass(declaration: IrClass) {
         process(declaration)
         // Drop `findAssociatedObject` annotations whose association can no longer be emitted. See `shouldKeepAnnotation`.
-        if (removeUnusedAssociatedObjects && declaration.annotations.any { !it.shouldKeepAnnotation() }) {
+        if (declaration.annotations.any { !it.shouldKeepAnnotation() }) {
             declaration.annotations = declaration.annotations.memoryOptimizedFilter { it.shouldKeepAnnotation() }
         }
 

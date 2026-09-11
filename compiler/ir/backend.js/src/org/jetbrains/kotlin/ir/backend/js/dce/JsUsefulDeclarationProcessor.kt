@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.ir.backend.js.BackendJsSymbols.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.BackendJsSymbols.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.exportedInlineClassBoxFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
@@ -26,9 +26,8 @@ import org.jetbrains.kotlin.ir.util.*
 
 internal class JsUsefulDeclarationProcessor(
     override val context: JsIrBackendContext,
-    printReachabilityInfo: Boolean,
-    removeUnusedAssociatedObjects: Boolean
-) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects) {
+    printReachabilityInfo: Boolean
+) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = true) {
     private val equalsMethod = getMethodOfAny("equals")
     private val hashCodeMethod = getMethodOfAny("hashCode")
 
