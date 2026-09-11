@@ -1,5 +1,4 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
 
 fun interface F {
     fun run(): String

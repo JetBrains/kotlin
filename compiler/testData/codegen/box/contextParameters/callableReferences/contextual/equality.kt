@@ -1,5 +1,4 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // ISSUE: KT-86452
 
 context(a: String, b: Int)
