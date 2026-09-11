@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrOptimizationContext
 
-@PhasePrerequisites(JsCleanupPurifiedLeftoverDeclarationsLowering::class)
+@PhasePrerequisites(PurifyObjectInstanceGettersLowering::class)
 class JsCleanupPurifiedLeftoverUsagesLowering(context: JsIrBackendContext) : CleanupPurifiedLeftoverUsagesLowering(context) {
     internal constructor(context: JsIrOptimizationContext) : this(context.backendContext)
 }
