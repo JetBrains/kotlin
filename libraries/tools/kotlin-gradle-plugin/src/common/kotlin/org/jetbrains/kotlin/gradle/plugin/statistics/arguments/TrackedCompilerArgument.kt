@@ -221,9 +221,10 @@ internal class TrackedArgumentsBuilder{
 
         fun selectFlagMetric(
             vararg cliArguments: String,
+            allowImplicit: Boolean = false,
             selectMetric: (A) -> BooleanMetrics?,
         ) {
-            register(cliArguments) { arguments, consumer ->
+            register(cliArguments, allowImplicit) { arguments, consumer ->
                 selectMetric(arguments)?.let { consumer.report(it, true) }
             }
         }
@@ -235,11 +236,13 @@ internal class TrackedArgumentsBuilder{
         fun <V : Any> stringMetric(
             metric: StringMetrics,
             argument: KProperty1<A, V>,
+            allowImplicit: Boolean = false,
             convert: (V) -> String?,
         ) {
             stringMetric(
                 metric,
                 argument.cliArgument,
+                allowImplicit = allowImplicit,
                 extract = { argument.get(it) },
                 convert = convert,
             )
