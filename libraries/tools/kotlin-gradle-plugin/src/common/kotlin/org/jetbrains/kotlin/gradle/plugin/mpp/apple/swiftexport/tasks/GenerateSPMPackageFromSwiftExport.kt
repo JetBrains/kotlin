@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.gradle.utils.CommaSeparatedEntriesBuilder
 import org.jetbrains.kotlin.gradle.utils.StringBlockBuilder
 import org.jetbrains.kotlin.gradle.utils.buildStringBlock
 import org.jetbrains.kotlin.gradle.utils.commaSeparatedEntries
+import org.jetbrains.kotlin.gradle.utils.emitListItems
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -42,6 +44,22 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     @get:Input
     abstract val swiftLibraryName: Property<String>
+
+    /**
+     * The name of the SwiftPM binary target that carries the Kotlin binaries. When set, the manifest declares
+     * `<name>.xcframework` at the package root and makes the Kotlin runtime target depend on it.
+     */
+    @get:Optional
+    @get:Input
+    abstract val kotlinBinaryTargetName: Property<String>
+
+    /**
+     * The `platforms:` the generated manifest declares: SwiftPM platform name (`iOS`, `macOS`, ...) to the
+     * minimum version the exported Swift requires. Empty means no `platforms:` entry, which leaves the
+     * deployment target to whoever builds the package.
+     */
+    @get:Input
+    abstract val platforms: MapProperty<String, String>
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -175,7 +193,10 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
                 packageIdentity = root.name,
             )
         } else null
-        val content = SPMManifestGenerator.generateManifest(swiftApiModule, swiftLibrary, kotlinRuntimeModule, modules, cinteropImport)
+        val content = SPMManifestGenerator.generateManifest(
+            swiftApiModule, swiftLibrary, kotlinRuntimeModule, modules, cinteropImport, kotlinBinaryTargetName.orNull,
+            platforms.get()
+        )
         manifest.writeText(content)
     }
 
@@ -208,6 +229,8 @@ internal object SPMManifestGenerator {
         kotlinRuntime: String,
         modules: List<GradleSwiftExportModule>,
         cinteropImport: CinteropPackageImport? = null,
+        kotlinBinaryTarget: String? = null,
+        platforms: Map<String, String> = emptyMap(),
     ): String = buildStringBlock {
         line("// swift-tools-version: 5.9")
         line()
@@ -215,6 +238,13 @@ internal object SPMManifestGenerator {
         block("let package = Package(", ")") {
             commaSeparatedEntries {
                 entry { line("name: \"$swiftApiModule\"") }
+                if (platforms.isNotEmpty()) {
+                    entry {
+                        block("platforms: [", "]") {
+                            emitListItems(platforms.map { (name, version) -> ".$name(\"$version\")" })
+                        }
+                    }
+                }
                 entry {
                     block("products: [", "]") {
                         block(".library(", ")") {
@@ -235,11 +265,23 @@ internal object SPMManifestGenerator {
                 entry {
                     block("targets: [", "]") {
                         commaSeparatedEntries {
+                            if (kotlinBinaryTarget != null) {
+                                entry { emitBinaryTarget(kotlinBinaryTarget) }
+                            }
                             emitTargetDefinitions(modules, kotlinRuntime, cinteropImport?.productExpression())
-                            entry { emitTarget(kotlinRuntime) }
+                            entry { emitTarget(kotlinRuntime, dependencies = listOfNotNull(kotlinBinaryTarget)) }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun StringBlockBuilder.emitBinaryTarget(name: String) {
+        block(".binaryTarget(", ")") {
+            commaSeparatedEntries {
+                entry { line("name: \"$name\"") }
+                entry { line("path: \"$name.xcframework\"") }
             }
         }
     }

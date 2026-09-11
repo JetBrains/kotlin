@@ -110,6 +110,109 @@ class SwiftExportManifestGeneratorTest {
         assertEquals(cinteropDependencyManifestGold(), manifest)
     }
 
+    @Test
+    fun `test swift export SPM manifest with a kotlin binary target`() {
+        val manifest = SPMManifestGenerator.generateManifest(
+            "Shared",
+            "SharedLibrary",
+            "KotlinRuntime",
+            sharedModulesFixture("Shared"),
+            kotlinBinaryTarget = "SharedKotlin",
+        )
+
+        assertEquals(binaryTargetManifestGold(), manifest)
+    }
+
+    @Test
+    fun `test swift export SPM manifest with a kotlin binary target and platforms`() {
+        val manifest = SPMManifestGenerator.generateManifest(
+            "Shared",
+            "SharedLibrary",
+            "KotlinRuntime",
+            sharedModulesFixture("Shared"),
+            kotlinBinaryTarget = "SharedKotlin",
+            platforms = linkedMapOf("iOS" to "18.0", "macOS" to "15.0"),
+        )
+
+        assertEquals(platformsManifestGold(), manifest)
+    }
+
+    private fun platformsManifestGold() = """
+        // swift-tools-version: 5.9
+
+        import PackageDescription
+        let package = Package(
+            name: "Shared",
+            platforms: [
+                .iOS("18.0"),
+                .macOS("15.0")
+            ],
+            products: [
+                .library(
+                    name: "SharedLibrary",
+                    targets: ["Shared", "Dependency"]
+                )
+            ],
+            targets: [
+                .binaryTarget(
+                    name: "SharedKotlin",
+                    path: "SharedKotlin.xcframework"
+                ),
+                .target(
+                    name: "Shared",
+                    dependencies: ["Dependency", "SharedBridge", "KotlinRuntime"]
+                ),
+                .target(
+                    name: "SharedBridge"
+                ),
+                .target(
+                    name: "Dependency",
+                    dependencies: ["KotlinRuntime"]
+                ),
+                .target(
+                    name: "KotlinRuntime",
+                    dependencies: ["SharedKotlin"]
+                )
+            ]
+        )
+    """.trimIndent() + "\n"
+
+    private fun binaryTargetManifestGold() = """
+        // swift-tools-version: 5.9
+
+        import PackageDescription
+        let package = Package(
+            name: "Shared",
+            products: [
+                .library(
+                    name: "SharedLibrary",
+                    targets: ["Shared", "Dependency"]
+                )
+            ],
+            targets: [
+                .binaryTarget(
+                    name: "SharedKotlin",
+                    path: "SharedKotlin.xcframework"
+                ),
+                .target(
+                    name: "Shared",
+                    dependencies: ["Dependency", "SharedBridge", "KotlinRuntime"]
+                ),
+                .target(
+                    name: "SharedBridge"
+                ),
+                .target(
+                    name: "Dependency",
+                    dependencies: ["KotlinRuntime"]
+                ),
+                .target(
+                    name: "KotlinRuntime",
+                    dependencies: ["SharedKotlin"]
+                )
+            ]
+        )
+    """.trimIndent() + "\n"
+
     private fun sharedModulesFixture(swiftApiModule: String): List<GradleSwiftExportModule> = listOf(
         GradleSwiftExportModule.BridgesToKotlin(
             GradleSwiftExportFiles(
