@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.STABLE_RELEASE
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
-
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -18,11 +17,11 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
 import java.nio.file.Path
-import kotlin.test.assertEquals
+import java.util.concurrent.TimeUnit
 
 // We temporarily disable it for windows until a proper fix is found for this issue: KT-62761
 @OsCondition(
@@ -30,6 +29,7 @@ import kotlin.test.assertEquals
 )
 @DisplayName("This test class contains different scenarios with downloading dependencies for Kotlin Native Compiler during build.")
 @NativeGradlePluginTests
+@Timeout(25, unit = TimeUnit.MINUTES)
 class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
 
     @TempDir
