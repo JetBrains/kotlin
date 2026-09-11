@@ -82,10 +82,12 @@ internal interface SwiftExportConfigurationCompat {
         fun from(
             configuration: SwiftExportConfiguration,
             kotlinNativeCompilation: KotlinNativeCompilation,
+            dependencyOptionsOverrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>,
             providers: ProviderFactory,
             objects: ObjectFactory,
-        ): SwiftExportConfigurationCompat =
-            object : SwiftExportConfigurationCompat {
+        ): SwiftExportConfigurationCompat {
+            val overrides = dependencyOptionsOverrides
+            return object : SwiftExportConfigurationCompat {
                 override val moduleName: Property<String> get() = configuration.moduleName
                 override val rootPackage: Property<String> get() = configuration.rootPackage
 
@@ -107,7 +109,7 @@ internal interface SwiftExportConfigurationCompat {
                     get() = providers.provider { emptySet() }
 
                 override val dependencyOptionsOverrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>
-                    get() = configuration.activatedXcodeIntegration?.dependencyOverrides ?: providers.provider { emptyMap() }
+                    get() = overrides
 
                 override val settings: MapProperty<String, String>
                     get() = objects.mapProperty(String::class.java, String::class.java) // TODO: KT-87890
@@ -118,6 +120,7 @@ internal interface SwiftExportConfigurationCompat {
                     // TODO: KT-87890
                 }
             }
+        }
 
         fun from(
             extension: SwiftExportExtension,

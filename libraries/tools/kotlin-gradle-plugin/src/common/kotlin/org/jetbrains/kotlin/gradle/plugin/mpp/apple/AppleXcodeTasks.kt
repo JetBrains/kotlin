@@ -249,6 +249,8 @@ internal fun Project.registerEmbedSwiftExportTask(
         SwiftExportConfigurationCompat.from(
             configuration = exportExtension.swiftExportConfiguration,
             kotlinNativeCompilation = kotlinNativeCompilation,
+            dependencyOptionsOverrides = exportExtension.swiftExportConfiguration.activatedXcodeIntegration?.dependencyOverrides
+                ?: providers.provider { emptyMap() },
             providers = providers,
             objects = objects,
         )
