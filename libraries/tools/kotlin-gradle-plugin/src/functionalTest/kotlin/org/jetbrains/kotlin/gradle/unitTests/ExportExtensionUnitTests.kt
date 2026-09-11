@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.swiftPackagePlat
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.AssembleSwiftPackageBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.effectiveDependencyOverrides
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
@@ -2187,6 +2188,108 @@ class ExportExtensionSwiftPackageIntegrationTests {
 
         project.assertSwiftPackageTasksRegistered(true)
         assertNotNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
+    /**
+     * Both integrations register the same `<target><BuildType>SwiftExport` task through `locateOrRegisterTask`,
+     * so only the configure block of whichever pipeline registers it first runs. The overrides declared in
+     * `xcodeIntegration { configure(...) }` have to reach that task either way.
+     */
+    @Test
+    fun `test xcode dependency overrides reach the swift export task shared with the package integration`() {
+        val project = exportDslProject(
+            withXcodeEnvironment = true,
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            }
+        ) {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        moduleName.set("OverriddenByteString")
+                    }
+                }
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                }
+            }
+        }
+
+        val swiftExportTask = assertIs<SwiftExportTask>(project.tasks.findByName("iosSimulatorArm64DebugSwiftExport"))
+        val moduleNames = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).map { it.moduleName }
+        assertTrue("OverriddenByteString" in moduleNames, moduleNames.toString())
+    }
+
+    /**
+     * The package integration is a [org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportIntegration] too,
+     * so a project that only activates it can override a dependency's Swift Export options.
+     */
+    @Test
+    fun `test package dependency overrides reach the swift export task`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            }
+        ) {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        moduleName.set("OverriddenByPackage")
+                    }
+                }
+            }
+        }
+
+        val swiftExportTask = assertIs<SwiftExportTask>(project.tasks.findByName("iosSimulatorArm64DebugSwiftExport"))
+        val moduleNames = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).map { it.moduleName }
+        assertTrue("OverriddenByPackage" in moduleNames, moduleNames.toString())
+    }
+
+    /**
+     * Both integrations feed the one shared `<target><BuildType>SwiftExport` task, so the overrides of both
+     * have to reach it. Overrides of the same property of the same dependency are layered in a fixed order,
+     * Xcode first and the package integration on top, so that the result doesn't depend on the DSL order.
+     */
+    @Test
+    fun `test overrides of both integrations are merged`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                xcodeIntegration {
+                    configure("org.example:only-xcode:1.0") { moduleName.set("OnlyXcode") }
+                    configure("org.example:both:1.0") { moduleName.set("OverriddenByXcode") }
+                    configure("org.example:both:1.0") { rootPackage.set("org.example.both") }
+                }
+                swiftPackageIntegration {
+                    outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+                    configure("org.example:only-package:1.0") { moduleName.set("OnlyPackage") }
+                    configure("org.example:both:1.0") { moduleName.set("OverriddenByPackage") }
+                }
+            }
+        }
+
+        val overrides = project.exportExtension.swiftExportConfiguration
+            .effectiveDependencyOverrides(project.providers).get()
+            .mapKeys { (selector, _) -> selector.toString() }
+
+        assertEquals(
+            listOf("OnlyXcode", "OverriddenByPackage", "OnlyPackage"),
+            overrides.values.map { it.moduleName },
+        )
+        // A property only the Xcode integration set survives the merge.
+        assertEquals(
+            listOf("org.example.both"),
+            overrides.values.mapNotNull { it.rootPackage },
+        )
     }
 
     @Test

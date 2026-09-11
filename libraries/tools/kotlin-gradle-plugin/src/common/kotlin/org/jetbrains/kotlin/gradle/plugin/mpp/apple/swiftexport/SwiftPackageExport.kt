@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSP
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportSwiftPackageIntegrationConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.effectiveDependencyOverrides
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -80,7 +81,7 @@ internal fun Project.registerSwiftPackageExportPipeline(exportExtension: ExportE
         SwiftExportConfigurationCompat.from(
             configuration = exportExtension.swiftExportConfiguration,
             kotlinNativeCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
-            dependencyOptionsOverrides = providers.provider { emptyMap() },
+            dependencyOptionsOverrides = exportExtension.swiftExportConfiguration.effectiveDependencyOverrides(providers),
             providers = providers,
             objects = objects,
         )

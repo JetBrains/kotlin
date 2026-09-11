@@ -21,8 +21,46 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftEx
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.overriddenBy
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
+
+/**
+ * The activated integrations of this module, in the order their overrides are layered: the Xcode integration
+ * first, the Swift package integration on top of it.
+ */
+private val SwiftExportConfiguration.activatedIntegrations: List<SwiftExportIntegrationConfiguration>
+    get() = listOfNotNull(activatedXcodeIntegration, activatedSwiftPackageIntegration)
+
+/**
+ * The dependency option overrides that apply to the Swift Export runs of this module: the overrides of every
+ * activated integration, merged.
+ *
+ * The Xcode integration and the Swift package integration share one `<target><BuildType>SwiftExport` task,
+ * registered through `locateOrRegisterTask` by whichever pipeline reaches it first: only that registration's
+ * configure block runs. Both pipelines therefore have to pass the same value here, or the overrides a user
+ * declared in `xcodeIntegration { configure(...) }` would silently depend on the registration order.
+ *
+ * Merging is per property and follows the rule of repeated `configure(dependency) { }` calls within one
+ * integration: a later value wins. Integrations are layered in a fixed order rather than in activation order,
+ * so that the result doesn't depend on how the build script is written: the Xcode integration first, the
+ * Swift package integration on top, so the package integration wins if both set the same property of the same
+ * dependency to different values.
+ */
+internal fun SwiftExportConfiguration.effectiveDependencyOverrides(
+    providers: ProviderFactory,
+): Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>> {
+    val integrations = activatedIntegrations
+    return providers.provider {
+        val merged = LinkedHashMap<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>()
+        for (integration in integrations) {
+            for ((selector, options) in integration.dependencyOverrides.get()) {
+                merged[selector] = merged[selector].overriddenBy(options)
+            }
+        }
+        merged
+    }
+}
 
 /**
  * A common interface for [SwiftExportConfiguration] and [org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension]

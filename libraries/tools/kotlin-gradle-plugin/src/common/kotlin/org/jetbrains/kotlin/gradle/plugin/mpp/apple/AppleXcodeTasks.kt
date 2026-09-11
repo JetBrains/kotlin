@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.effectiveDependencyOverrides
 import org.jetbrains.kotlin.gradle.utils.reportXcodeError
 import java.io.File
 import java.nio.file.Paths
@@ -249,8 +250,7 @@ internal fun Project.registerEmbedSwiftExportTask(
         SwiftExportConfigurationCompat.from(
             configuration = exportExtension.swiftExportConfiguration,
             kotlinNativeCompilation = kotlinNativeCompilation,
-            dependencyOptionsOverrides = exportExtension.swiftExportConfiguration.activatedXcodeIntegration?.dependencyOverrides
-                ?: providers.provider { emptyMap() },
+            dependencyOptionsOverrides = exportExtension.swiftExportConfiguration.effectiveDependencyOverrides(providers),
             providers = providers,
             objects = objects,
         )
