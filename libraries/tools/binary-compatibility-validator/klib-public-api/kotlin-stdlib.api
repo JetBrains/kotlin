@@ -1363,6 +1363,10 @@ abstract class kotlin/Number { // kotlin/Number|null[0]
     open fun toChar(): kotlin/Char // kotlin/Number.toChar|toChar(){}[0]
 }
 
+abstract class kotlin/RichError { // kotlin/RichError|null[0]
+    constructor <init>() // kotlin/RichError.<init>|<init>(){}[0]
+}
+
 final class <#A: in kotlin/Any?> kotlin.coroutines/SafeContinuation : kotlin.coroutines/Continuation<#A> { // kotlin.coroutines/SafeContinuation|null[0]
     constructor <init>(kotlin.coroutines/Continuation<#A>) // kotlin.coroutines/SafeContinuation.<init>|<init>(kotlin.coroutines.Continuation<1:0>){}[0]
 

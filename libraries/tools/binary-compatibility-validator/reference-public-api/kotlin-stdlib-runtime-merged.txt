@@ -256,6 +256,10 @@ public final class kotlin/ResultKt {
 	public static final fun throwOnFailure (Ljava/lang/Object;)V
 }
 
+public abstract class kotlin/RichError {
+	public fun <init> ()V
+}
+
 public abstract interface annotation class kotlin/SinceKotlin : java/lang/annotation/Annotation {
 	public abstract fun version ()Ljava/lang/String;
 }
