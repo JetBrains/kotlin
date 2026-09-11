@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,7 +19,7 @@ private object OtherLowercase {
     )
 }
 
-internal fun Int.isOtherLowercase(): Boolean {
-    val index = binarySearchRange(OtherLowercase.otherLowerStart, this)
-    return index >= 0 && this < OtherLowercase.otherLowerStart[index] + OtherLowercase.otherLowerLength[index]
+internal actual fun isOtherLowercase(code: Int): Boolean {
+    val index = binarySearchRange(OtherLowercase.otherLowerStart, code)
+    return index >= 0 && code < OtherLowercase.otherLowerStart[index] + OtherLowercase.otherLowerLength[index]
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,7 @@ private val otherLowerLength = intArrayOf(
     1, 1, 9, 2, 5, 1, 1, 63, 1, 37, 1, 1, 13, 16, 26, 2, 2, 1, 2, 4, 
 )
 
-internal fun Int.isOtherLowercase(): Boolean {
-    val index = binarySearchRange(otherLowerStart, this)
-    return index >= 0 && this < otherLowerStart[index] + otherLowerLength[index]
+internal actual fun isOtherLowercase(code: Int): Boolean {
+    val index = binarySearchRange(otherLowerStart, code)
+    return index >= 0 && code < otherLowerStart[index] + otherLowerLength[index]
 }
