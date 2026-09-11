@@ -355,6 +355,29 @@ fun RepositoryHandler.wasmtimeDistributions() {
     }
 }
 
+fun RepositoryHandler.wasmToolsDistributions() {
+    exclusiveContent { exclusive ->
+        exclusive.forRepository {
+            ivy { repository ->
+                repository.name = "wasm-tools Distributions"
+                // TODO (KT-87723): direct GitHub URL, since cache-redirector does not mirror bytecodealliance/wasm-tools
+                //  yet (it 404s); a mirror has to be requested, after which this should move to cache-redirector and
+                //  get an entry in cache-redirector.settings.gradle.kts, like wasmtime has. Until then CI reports a
+                //  "repository should be cached with cache-redirector" failure for this repository.
+                repository.setUrl("https://github.com/bytecodealliance/wasm-tools/releases/download")
+                repository.patternLayout { layout ->
+                    // the tag is prefixed with `v`, the archive name is not: v1.253.0/wasm-tools-1.253.0-x86_64-linux.tar.gz
+                    layout.artifact("v[revision]/[artifact]-[revision]-[classifier].[ext]")
+                }
+                repository.metadataSources { sources -> sources.artifact() }
+            }
+        }
+        exclusive.filter { content ->
+            content.includeModule("bytecodealliance.wasm-tools", "wasm-tools")
+        }
+    }
+}
+
 fun RepositoryHandler.androidRepository() {
     exclusiveContent { exclusive ->
         exclusive.forRepository {

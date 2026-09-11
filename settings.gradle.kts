@@ -129,6 +129,7 @@ dependencyResolutionManagement {
         binaryenDistributions()
         d8Distributions()
         wasmtimeDistributions()
+        wasmToolsDistributions()
         androidRepository()
         androidSystemImages()
         val mirrorRepo: String? = settings.providers.systemProperty("maven.repository.mirror").orNull
