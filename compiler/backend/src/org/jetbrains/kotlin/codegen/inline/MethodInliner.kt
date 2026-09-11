@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNot
 import org.jetbrains.kotlin.codegen.optimization.temporaryVals.TemporaryVariablesEliminationTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -244,6 +244,17 @@ class MethodInliner(
                     for (classBuilder in childInliningContext.continuationBuilders.values) {
                         classBuilder.done(inliningContext.state.config.generateSmapCopyToAnnotation)
                     }
+                } else if (!transformationInfo!!.wasAlreadyRegenerated) {
+                    result.addNotChangedClass(oldClassName)
+                    (transformationInfo as? AnonymousObjectTransformationInfo)?.notLambdaTransformedIntoSingleton()
+                } else if (transformationInfo is AnonymousObjectTransformationInfo) {
+                    val info = transformationInfo as AnonymousObjectTransformationInfo
+                    val existingInfo = generateSequence(inliningContext) { it.parent }
+                        .mapNotNull { it.transformationInfo as? AnonymousObjectTransformationInfo }
+                        .firstOrNull { it.oldClassName == info.oldClassName }
+                    if (existingInfo != null && existingInfo !== info) {
+                        info.inheritLambdaTransformedIntoSingleton(existingInfo)
+                    }
                 } else {
                     result.addNotChangedClass(oldClassName)
                 }
@@ -252,6 +263,10 @@ class MethodInliner(
             override fun anew(type: Type) {
                 if (isSamWrapper(type.internalName) || isAnonymousClass(type.internalName)) {
                     handleAnonymousObjectRegeneration()
+                    if ((transformationInfo as? AnonymousObjectTransformationInfo)?.isLambdaTransformedIntoSingleton == true) {
+                        super.visitFieldInsn(Opcodes.GETSTATIC, type.internalName, JvmAbi.INSTANCE_FIELD, type.descriptor)
+                        return
+                    }
                 }
 
                 //in case of regenerated transformationInfo type would be remapped to new one via remappingMethodAdapter
@@ -404,18 +419,22 @@ class MethodInliner(
                             as AnonymousObjectTransformationInfo?
                     val info = existingInfo ?: newInfo
                     if (info.shouldRegenerate(isSameModule)) {
-                        for (capturedParamDesc in info.allRecapturedParameters) {
-                            val realDesc = if (existingInfo != null && capturedParamDesc.fieldName == AsmUtil.THIS) {
-                                // The captures in `info` are relative to the parent context, so a normal `this` there
-                                // is a captured outer `this` here.
-                                CapturedParamDesc(Type.getObjectType(owner), AsmUtil.CAPTURED_THIS_FIELD, capturedParamDesc.type)
-                            } else capturedParamDesc
-                            visitFieldInsn(
-                                Opcodes.GETSTATIC, realDesc.containingLambdaName,
-                                foldName(realDesc.fieldName), realDesc.type.descriptor
-                            )
+                        if (info.isLambdaTransformedIntoSingleton) {
+                            visitInsn(Opcodes.POP)
+                        } else {
+                            for (capturedParamDesc in info.allRecapturedParameters) {
+                                val realDesc = if (existingInfo != null && capturedParamDesc.fieldName == AsmUtil.THIS) {
+                                    // The captures in `info` are relative to the parent context, so a normal `this` there
+                                    // is a captured outer `this` here.
+                                    CapturedParamDesc(Type.getObjectType(owner), AsmUtil.CAPTURED_THIS_FIELD, capturedParamDesc.type)
+                                } else capturedParamDesc
+                                visitFieldInsn(
+                                    Opcodes.GETSTATIC, realDesc.containingLambdaName,
+                                    foldName(realDesc.fieldName), realDesc.type.descriptor
+                                )
+                            }
+                            super.visitMethodInsn(opcode, info.oldClassName, name, info.newConstructorDescriptor, itf)
                         }
-                        super.visitMethodInsn(opcode, info.newClassName, name, info.newConstructorDescriptor, itf)
 
                         //TODO: add new inner class also for other contexts
                         if (inliningContext.parent is RegeneratedClassContext) {
