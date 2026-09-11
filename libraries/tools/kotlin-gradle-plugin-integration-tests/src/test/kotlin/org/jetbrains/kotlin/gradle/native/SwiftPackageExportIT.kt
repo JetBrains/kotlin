@@ -210,6 +210,47 @@ class SwiftPackageExportIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("A renamed module leaves nothing of the old one in the exported package")
+    @GradleTest
+    fun testRenamedModuleLeavesNoStaleFiles(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    sourceSets.commonMain.get().compileSource("fun sharedApi(): Int = 1")
+                }
+                export.swift {
+                    moduleName.set(project.providers.gradleProperty("swiftModuleName").orElse("Before"))
+                    swiftPackageIntegration {
+                        outputDirectory.set(project.layout.projectDirectory.dir("package"))
+                    }
+                }
+            }
+
+            val exportedPackage = projectPath.resolve("package/Debug")
+
+            build(":exportDebugSwiftPackage")
+            val sourcesBefore = exportedPackage.resolve("Sources").directoryNames()
+            assertEquals(setOf("Before", "SharedBridge_Before"), sourcesBefore.filter { it.endsWith("Before") }.toSet())
+            assertEquals(setOf("BeforeKotlin.xcframework"), exportedPackage.directoryNames().filter { it.endsWith(".xcframework") }.toSet())
+
+            build(":exportDebugSwiftPackage", "-PswiftModuleName=After")
+            assertEquals(
+                sourcesBefore - setOf("Before", "SharedBridge_Before") + setOf("After", "SharedBridge_After"),
+                exportedPackage.resolve("Sources").directoryNames(),
+            )
+            assertEquals(setOf("AfterKotlin.xcframework"), exportedPackage.directoryNames().filter { it.endsWith(".xcframework") }.toSet())
+        }
+    }
+
     @DisplayName("Targets that export different Swift modules can't share a package")
     @GradleTest
     fun testPerTargetApiDependencies(
