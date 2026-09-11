@@ -13,7 +13,6 @@ import kdump.item
 import kdump.readDump
 import text.prettyPrintln
 import java.io.File
-import java.io.PushbackInputStream
 
 fun main(args: Array<String>) {
     main(args.iterator())
@@ -72,9 +71,6 @@ fun mainPrintHprof(pathname: String) {
 
 fun mainConvertKdumpHprof(inPathname: String, outPathname: String) {
     File(inPathname)
-            .inputStream()
-            .buffered()
-            .let { PushbackInputStream(it) }
             .readDump()
             .toHProfProfile()
             .normalize()
