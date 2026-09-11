@@ -190,6 +190,9 @@ RUNTIME_EXPORT RUNTIME_WEAK extern "C" void* Kotlin_SwiftExport_allocInstanceFor
 
     const TypeInfo* typeInfo = Kotlin_ObjCExport_getAssociatedTypeInfo(swiftSubclass);
     if (typeInfo == nullptr) {
+        typeInfo = Kotlin_SwiftExport_getBoundKotlinTypeInfoForClass(swiftSubclass);
+    }
+    if (typeInfo == nullptr) {
         const TypeInfo* kotlinSuperTypeInfo = nullptr;
         Class boundClass = nil;
         for (Class cls = class_getSuperclass(swiftSubclass); cls != nil; cls = class_getSuperclass(cls)) {

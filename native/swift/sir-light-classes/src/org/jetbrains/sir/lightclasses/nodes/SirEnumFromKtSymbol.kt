@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInit
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.builder.buildVariable
-import org.jetbrains.kotlin.sir.implicitlyUnwrappedOptional
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.extractDeclarations
 import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
@@ -146,7 +145,7 @@ private class SirEnumFromKtSymbol(
         origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
         parameters[0] = SirParameter(
             argumentName = "__externalRCRefUnsafe",
-            type = unsafeMutableRawPointerFlexibleType()
+            type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
         )
         val ordinalBridges = this@SirEnumFromKtSymbol.withSessions {
             ordinalBridgeProxy?.createSirBridges { buildCall("") }.orEmpty()
@@ -171,7 +170,7 @@ private class SirEnumFromKtSymbol(
 
     private fun kotlinBridgeableExternalRcRef(): SirFunction = buildFunctionCopy(KotlinRuntimeSupportModule.kotlinBridgeableExternalRcRef) {
         origin = SirOrigin.KotlinBridgeableExternalRcRefOverride(`for` = KotlinSource(ktSymbol))
-        returnType = unsafeMutableRawPointerFlexibleType()
+        returnType = SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
         val separator = "\n                    "
         val caseSelector = cases.joinToString(separator = separator) {
             "case .${it.name}: ${it.nativeCaseRepresentation()}"
@@ -271,9 +270,6 @@ private class SirEnumFromKtSymbol(
             )
         )
     }.also { it.parent = this }
-
-    private fun unsafeMutableRawPointerFlexibleType(): SirNominalType =
-        SirNominalType(SirSwiftModule.unsafeMutableRawPointer).implicitlyUnwrappedOptional()
 }
 
 internal fun createSirEnumCaseFromKtSymbol(

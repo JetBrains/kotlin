@@ -914,7 +914,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
       const KotlinToObjCMethodAdapter* adapter = &typeAdapter->reverseAdapters[i];
       // Swift Export subclasses patch unconditionally — Swift dynamic dispatch
       // handles whether the method is actually overridden.
-      if (!isSwiftExportSubclass &&
+      if ((!isSwiftExportSubclass || t == theAnyTypeInfo) &&
           definedSelectors.find(sel_registerName(adapter->selector)) == definedSelectors.end()) continue;
 
       throwIfCantBeOverridden(clazz, adapter);
