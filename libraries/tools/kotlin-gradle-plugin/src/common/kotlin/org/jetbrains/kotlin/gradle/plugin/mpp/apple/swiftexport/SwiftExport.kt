@@ -51,14 +51,23 @@ internal object SwiftExportConstants {
     )
 }
 
-internal fun Project.registerSwiftExportTask(
+/**
+ * What every Swift Export integration builds for a target and a build type.
+ */
+internal class SwiftExportBuildOutputs(
+    val taskNamePrefix: String,
+    val swiftApiModuleName: Provider<String>,
+    val swiftExportTask: TaskProvider<SwiftExportTask>,
+    val staticLibrary: AbstractNativeLibrary,
+)
+
+internal fun Project.registerSwiftExportRunAndBinary(
     swiftExportConfiguration: SwiftExportConfigurationCompat,
     taskGroup: String,
     buildType: NativeBuildType,
     target: KotlinNativeTarget,
-): TaskProvider<*> {
+): SwiftExportBuildOutputs {
     val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-    val buildConfiguration = buildType.configuration
 
     val swiftApiModuleName = swiftExportConfiguration
         .moduleName
@@ -73,7 +82,7 @@ internal fun Project.registerSwiftExportTask(
         taskNamePrefix = taskNamePrefix,
         taskGroup = taskGroup,
         target = target,
-        configuration = buildConfiguration,
+        configuration = buildType.configuration,
         swiftApiModuleName = swiftApiModuleName,
         exportConfiguration = swiftExportConfiguration.exportConfiguration.get(),
         apiConfiguration = swiftExportConfiguration.apiConfiguration.orNull,
@@ -95,6 +104,21 @@ internal fun Project.registerSwiftExportTask(
 
     swiftExportConfiguration.addBinary(staticLibrary)
 
+    return SwiftExportBuildOutputs(taskNamePrefix, swiftApiModuleName, swiftExportTask, staticLibrary)
+}
+
+internal fun Project.registerSwiftExportTask(
+    swiftExportConfiguration: SwiftExportConfigurationCompat,
+    taskGroup: String,
+    buildType: NativeBuildType,
+    target: KotlinNativeTarget,
+): TaskProvider<*> {
+    val outputs = registerSwiftExportRunAndBinary(swiftExportConfiguration, taskGroup, buildType, target)
+    val taskNamePrefix = outputs.taskNamePrefix
+    val swiftApiModuleName = outputs.swiftApiModuleName
+    val swiftExportTask = outputs.swiftExportTask
+    val staticLibrary = outputs.staticLibrary
+    val buildConfiguration = buildType.configuration
     val swiftApiLibraryName = swiftApiModuleName.map { it + "Library" }
 
     val packageGenerationTask = registerPackageGeneration(
