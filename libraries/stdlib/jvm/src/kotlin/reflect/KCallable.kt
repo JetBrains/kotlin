@@ -88,6 +88,13 @@ public actual interface KCallable<out R> : KAnnotatedElement {
     /**
      * Companion extension class of the function or property, if this is a companion extension.
      */
+    @SinceKotlin("2.5")
     @ExperimentalCompanionExtensions
     public val companionExtensionClass: KClass<*>?
+
+    /**
+     * An entity containing this callable declaration.
+     */
+    @SinceKotlin("2.5")
+    public val container: KDeclarationContainer
 }
