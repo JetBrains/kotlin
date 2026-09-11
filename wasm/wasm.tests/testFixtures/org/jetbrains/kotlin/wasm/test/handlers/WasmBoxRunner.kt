@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: String, debugMode: DebugMode, mode: String = "") {
@@ -46,7 +45,7 @@ open class WasmBoxRunner(
     fun runWasmCode(
         artifacts: WasmCompilationSetsBinaryArtifact,
         useUnitTestRunnerOnly: Boolean = false,
-        outputCollector: MutableList<String>? = null,
+        outputCollector: MutableList<WasmVMOutput>? = null,
         // Whether the collected exceptions should be thrown inline here. The grouping handlers set this
         // to `false` so they can re-attribute failures to the specific per-test grouping input. By default
         // it follows `useUnitTestRunnerOnly` (the unit-test grouping path collects and re-attributes; the
@@ -57,6 +56,7 @@ open class WasmBoxRunner(
 
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val testFileText = originalFile.readText()
+        val callGroupedTestsDriver = artifacts.hasGroupedTestsDriver
 
         fun writeToFilesAndRunTest(mode: String, result: WasmCompilationSet): List<Throwable> {
             val outputDir = testServices.getWasmTestOutputDirectoryForMode(mode)
@@ -73,27 +73,25 @@ open class WasmBoxRunner(
                 mark = mode,
                 filesToIgnoreInSizeChecks = filesToIgnoreInSizeChecks,
                 useUnitTestRunnerOnly = useUnitTestRunnerOnly,
+                callGroupedTestsDriver = callGroupedTestsDriver,
                 outputCollector = outputCollector,
             )
 
-            return exceptions + when (mode) {
-                "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, outputDir, filesToIgnoreInSizeChecks)
-                "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, outputDir, filesToIgnoreInSizeChecks)
-                "dev" -> emptyList() // no additional checks required
-                else -> testInfraError("Unknown mode: $mode")
-            }
+            return exceptions + checkExpectedOutputSize(
+                mode = mode,
+                debugMode = debugMode,
+                testFileText = testFileText,
+                outputDir = outputDir,
+                filesToIgnoreInSizeChecks = filesToIgnoreInSizeChecks,
+            )
         }
 
-        val allExceptions = mutableListOf<Throwable>()
-
-        allExceptions.addAll(writeToFilesAndRunTest("dev", artifacts.compilation))
-
-        artifacts.dceCompilation?.let {
-            allExceptions.addAll(writeToFilesAndRunTest("dce", it))
-        }
-
-        artifacts.optimisedCompilation?.let {
-            allExceptions.addAll(writeToFilesAndRunTest("optimized", it))
+        val allExceptions = wasmCompilationModes(
+            compilation = artifacts.compilation,
+            dceCompilation = artifacts.dceCompilation,
+            optimisedCompilation = artifacts.optimisedCompilation,
+        ).flatMap { mode ->
+            writeToFilesAndRunTest(mode.directoryName, mode.compilation)
         }
 
         if (throwOnExceptions) {
@@ -141,12 +139,13 @@ open class WasmFolderGroupingStageBoxRunner(
     override fun runTestCode(
         artifact: BinaryArtifacts.Wasm,
         useUnitTestRunnerOnly: Boolean,
-        outputCollector: MutableList<String>?,
+        outputCollector: MutableList<WasmVMOutput>?,
     ): List<Throwable> {
-        val folder = (artifact as WasmFolderBinaryArtifact).folder
+        val folderArtifact = artifact as WasmFolderBinaryArtifact
         return wasmFolderBoxRunner.saveAdditionalFilesAndRun(
-            folder, "dev", mutableSetOf(),
+            folderArtifact.folder, "dev", mutableSetOf(),
             useUnitTestRunnerOnly = useUnitTestRunnerOnly,
+            callGroupedTestsDriver = folderArtifact.hasGroupedTestsDriver,
             outputCollector = outputCollector,
         )
     }

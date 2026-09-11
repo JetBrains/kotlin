@@ -5,7 +5,9 @@
 
 @kotlin.wasm.WasmExport
 fun runBoxTest(): Boolean {
-    val boxResult = box()
+    // The source provider can only identify the `box()` declaration syntactically before analysis is available. Keep
+    // inferred-String expression bodies supported, but make an inferred non-String return an explicit compile error.
+    val boxResult: String = box()
     val isOk = boxResult == "OK"
     if (!isOk) {
         println("Wrong box result '${boxResult}'; Expected 'OK'")
@@ -16,6 +18,8 @@ fun runBoxTest(): Boolean {
 @kotlin.wasm.WasmImport("wasi_snapshot_preview1", "proc_exit")
 private external fun wasiProcExit(code: Int)
 
+// This `startTest()` shares its export name with the grouped batches' result-collecting driver on purpose; the two never
+// end up in the same binary, see `WasmWasiGroupedTestsExportedEntryPointGenerator`.
 @kotlin.wasm.WasmExport
 fun startTest() {
     try {

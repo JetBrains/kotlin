@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.testInfraError
  * function during the NonGroupingStage (Stage 1) compilation:
  *
  *   ```kotlin
- *   class Launcher_<hash> {
+ *   class Launcher_<encoded-relative-path> {
  *       @kotlin.test.Test
  *       fun runTest() {
  *           val result = <boxFqName>()
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.test.testInfraError
  * into the per-test KLIB at Stage 1, which is what this provider does.
  *
  * For the other Stage 2 paths (groupedBatch — non-isolated grouped batch), a fresh `ProxyBatchLauncher.kt` is compiled into a small
- * `launcher.klib` that becomes the `-Xinclude` main module, and the per-test `Launcher_<hash>`
+ * `launcher.klib` that becomes the `-Xinclude` main module, and the per-test `Launcher_<encoded-relative-path>`
  * classes in the per-test KLIBs are simply ignored (their KLIBs are passed as ordinary
  * `-libraries`, and non-included modules only get `DeserializationStrategy.EXPLICITLY_EXPORTED`).
  * In isolatedWithoutBox (isolated batch without `box()`) there is no `ProxyBatchLauncher` at all and the
@@ -49,18 +49,20 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
     companion object {
         /**
          * Computes the synthetic per-test `Launcher` class name used by the WASM (non-grouped)
-         * test infrastructure for tests that are executed in isolation.
+         * test infrastructure for tests that are executed in isolation. The relative path is encoded
+         * character-by-character instead of hashed, so distinct paths always produce distinct identifiers.
          *
-         * The same name is referenced in two places that must stay in sync:
-         *   - [generateLauncherContent] generates the launcher class declaration
-         *     `class Launcher_<hash> { @Test fun runTest() = <fqn>.box() }` for the test file;
-         *   - `AbstractWasmGroupingStageBoxRunner.computeExpectedSuiteNames` consumes it
-         *     as one of the expected `##teamcity[testSuiteFinished name='Launcher_<hash>'`
-         *     markers when verifying that an isolated test from a grouped batch actually ran.
-         *  Should hash collisions ever happen here, please improve the logic
+         * This `@Test`-annotated launcher is driven by the compiler-generated `startUnitTests()`; a grouped batch uses
+         * the fresh `ProxyBatchLauncher` and its result-collecting driver instead.
          */
         fun computeLauncherClassName(file: TestFile): String =
-            "Launcher_${file.relativePath.hashCode().toUInt().toString(36)}"
+            "Launcher_${file.relativePath.encodeToIdentifier()}"
+
+        private fun String.encodeToIdentifier(): String = buildString(length * 4) {
+            for (character in this@encodeToIdentifier) {
+                append(character.code.toString(16).padStart(4, '0'))
+            }
+        }
     }
 
     override fun generateLauncherContent(boxFqName: String, expectedResult: String): String =
@@ -88,7 +90,7 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
         // (`WasmCompilerSecondStageFacade.Grouping.transform()`) synthesizes a fresh
         // `ProxyBatchLauncher.kt` and compiles it into a small `launcher.klib` that is used as the
         // `-Xinclude` main module, while the per-test KLIBs are passed as ordinary `-libraries`.
-        // The per-test `Launcher_<hash>` class baked into the per-test KLIB by this provider is
+        // The per-test `Launcher_<encoded-relative-path>` class baked into the per-test KLIB by this provider is
         // therefore dead — it is never visited by `GenerateWasmTests` because that lowering only
         // runs over the main module's IR.
         //
@@ -96,6 +98,9 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
         //   * isolatedWithBox — isolated batches (with or without friend deps): the per-test KLIB ends
         //     up as the included main module;
         //   * isolatedWithoutBox — non-grouped (legacy) execution: no `ProxyBatchLauncher.kt` exists at all.
+        //
+        // A `// RUN_UNIT_TESTS` test never reaches this branch: `WasmGroupingTestIsolator` isolates it, so it keeps its
+        // launcher via the exemption below whatever the size of the batch it ends up in.
         if (testServices.isGroupedNonIsolatedBatch(globalDirectives, testModuleStructure)) return emptyList()
 
         // An isolated single-test batch is executed via the standalone box-export
