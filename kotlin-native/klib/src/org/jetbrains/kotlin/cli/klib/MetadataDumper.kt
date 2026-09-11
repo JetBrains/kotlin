@@ -56,6 +56,7 @@ internal class MetadataDumper(private val output: KlibToolOutput) {
             }
     )
 
+    @Suppress("DEPRECATION")
     private fun preprocessMetadataForTests(module: KlibModuleMetadata) = KlibModuleMetadata(
         name = module.name,
         fragments = module.fragments.groupBy { it.fqName }.mapNotNull { [packageFqName, fragments] ->

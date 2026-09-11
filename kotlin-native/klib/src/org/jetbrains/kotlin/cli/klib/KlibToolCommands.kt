@@ -106,7 +106,6 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
                 .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
 
         output.appendLine("Full path: ${args.library.path.toRealPath()}")
-        output.appendLine("Module name (metadata): ${metadataHeader.moduleName}")
         output.appendLine("Non-empty package FQNs (${nonEmptyPackageFQNs.size}):")
         nonEmptyPackageFQNs.forEach { packageFQN ->
             output.appendLine("  $packageFQN")
