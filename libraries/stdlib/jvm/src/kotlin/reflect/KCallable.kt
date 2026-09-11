@@ -93,7 +93,8 @@ public actual interface KCallable<out R> : KAnnotatedElement {
     public val companionExtensionClass: KClass<*>?
 
     /**
-     * The container to which this callable belongs.
+     * An entity containing this callable declaration.
      */
+    @SinceKotlin("2.5")
     public val container: KDeclarationContainer
 }
