@@ -1,5 +1,4 @@
 KtCollectionLiteralExpression(10,19): '[1, 2, 3]'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
-      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-    ]
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'listOf'.>

@@ -30,5 +30,5 @@ KtCallExpression(153,177): 'Annotation(["v1", "v2"])'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Array<String>', but 'String' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): constructor(vararg strings: String): Annotation>
     isInBestCandidates = true

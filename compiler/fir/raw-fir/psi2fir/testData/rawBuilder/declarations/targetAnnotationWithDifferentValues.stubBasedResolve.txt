@@ -5,7 +5,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] targetAnnotationWithDifferentValues.kt
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Int(1))) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Int(1))]) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayLiteralAndIncorrectValue : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*ERROR_EXPR(Inapplicable(INAPPLICABLE): kotlin/arrayOf)) [evaluated = vararg(*ERROR_EXPR(Inapplicable(INAPPLICABLE): kotlin/arrayOf))]) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayLiteralAndIncorrectValue : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationWithArrayLiteralAndIncorrectValue] constructor(): R|AnnotationWithArrayLiteralAndIncorrectValue| {
             super<R|kotlin/Any|>()
         }
