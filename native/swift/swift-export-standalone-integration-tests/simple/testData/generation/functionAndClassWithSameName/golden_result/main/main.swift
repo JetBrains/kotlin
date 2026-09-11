@@ -38,7 +38,7 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         self = EnumWithFactory.allCases[Int(rawValue)]
     }
     public init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         switch __root___EnumWithFactory_ordinal(__externalRCRefUnsafe) {
@@ -46,7 +46,7 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         default: fatalError()
         }
     }
-    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer {
         return switch self {
         case .ONE: EnumWithFactory_ONE()
         default: fatalError()
@@ -89,7 +89,7 @@ public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
         { __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -101,24 +101,24 @@ public final class ObjectWithFactory: KotlinRuntime.KotlinBase {
             return main.ObjectWithFactory.__createClassWrapper(externalRCRef: __root___ObjectWithFactory_get())
         }
     }
-    private init() {
+    private override init() {
         fatalError()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class UtcOffset: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         let __kt = __root___UtcOffset_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -202,13 +202,13 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._InterfaceWithFact
 }
 extension ExportedKotlinPackages.test.factory {
     public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             let __kt = test_factory_ClassWithFactoryInAPackage_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -216,25 +216,25 @@ extension ExportedKotlinPackages.test.factory {
     }
     public final class Outer: KotlinRuntime.KotlinBase {
         public final class Nested: KotlinRuntime.KotlinBase {
-            public init() {
+            public override init() {
                 let __kt = test_factory_Outer_Nested_init_allocate()
                 super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
                 { test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
             }
             package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
         }
-        public init() {
+        public override init() {
             let __kt = test_factory_Outer_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { test_factory_Outer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
