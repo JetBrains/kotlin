@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.originalConstructor
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.MutableReference
+import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
+import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
+import org.jetbrains.kotlin.ir.backend.js.utils.mutableReferenceOf
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -73,7 +76,9 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
             constructor.parent = irClass
 
             if (irClass.isExported(context)) {
-                constructor.annotations = original.annotations.withoutFirst { it.isAnnotation(JsAnnotations.jsExportIgnoreFqn) }
+                constructor.annotations = original.annotations.withoutFirst {
+                    it.classSymbol == context.symbols.jsExportIgnoreAnnotationSymbol
+                }
             }
 
             val boxParameter = constructor.boxParameter
