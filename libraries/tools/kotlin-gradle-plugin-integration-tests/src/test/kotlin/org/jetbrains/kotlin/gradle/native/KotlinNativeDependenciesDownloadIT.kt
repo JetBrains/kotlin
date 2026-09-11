@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit
 )
 @DisplayName("This test class contains different scenarios with downloading dependencies for Kotlin Native Compiler during build.")
 @NativeGradlePluginTests
-@Timeout(25, unit = TimeUnit.MINUTES)
 class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
 
     @TempDir
@@ -74,6 +73,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
     // We temporarily disable both tests on intel macOS until networking issues are resolved: KT-68762
     @DisplayName("checks that native dependencies are not corrupted")
     @GradleTest
+    @Timeout(value = 25, unit = TimeUnit.MINUTES)
     fun testNativeDependencies(gradleVersion: GradleVersion) {
         if (HostManager.hostIsMac) Assumptions.assumeTrue(HostManager.host == KonanTarget.MACOS_ARM64)
         testNativeDependencies("native-simple-project", "assemble", gradleVersion)
@@ -82,6 +82,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
     @DisplayName("checks that macos dependencies are not corrupted")
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @Timeout(value = 25, unit = TimeUnit.MINUTES)
     fun testMacosNativeDependencies(gradleVersion: GradleVersion) {
         if (HostManager.hostIsMac) Assumptions.assumeTrue(HostManager.host == KonanTarget.MACOS_ARM64)
         testNativeDependencies("KT-66982-macos-target", "compileKotlinMacosArm64", gradleVersion)
