@@ -3612,6 +3612,12 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         }
 
     }
+    public abstract [ResolvedTo(BODY_RESOLVE)] class RichError : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=RichError] constructor(): R|kotlin/RichError| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
     public final [ResolvedTo(BODY_RESOLVE)] class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Short] constructor(): R|kotlin/Short| {
             super<R|kotlin/Number|>()
