@@ -1,0 +1,335 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassWithInlineClassProperty.kt
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.inline] inline: Inline, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: Inline?): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.inline] inline: Inline, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: Inline?): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.inline] inline: Inline, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: Inline?): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final? value [ResolvedTo(COMPANION_GENERATION)] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.inline] inline: Inline, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: Inline?): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final? value [ResolvedTo(SUPER_TYPES)] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.inline] inline: Inline, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: Inline?): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final? value [ResolvedTo(TYPES)] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.inline] inline: Inline, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: Inline?): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inline, pack/Inline), (nullableInline, pack/Inline?)])] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Full] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.inline] inline: R|pack/Inline|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: R|pack/Inline?|): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inline, pack/Inline), (nullableInline, pack/Inline?)])] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Full] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.inline] inline: R|pack/Inline|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: R|pack/Inline?|): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inline, pack/Inline), (nullableInline, pack/Inline?)])] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Full] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.inline] inline: R|pack/Inline|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: R|pack/Inline?|): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inline, pack/Inline), (nullableInline, pack/Inline?)])] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Full] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.inline] inline: R|pack/Inline|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: R|pack/Inline?|): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inline, pack/Inline), (nullableInline, pack/Inline?)])] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Full] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.inline] inline: R|pack/Inline|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: R|pack/Inline?|): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inline, pack/Inline), (nullableInline, pack/Inline?)])] class Full : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Full] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.inline] inline: R|pack/Inline|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: R|pack/Inline?|): R|pack/Full| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inline: Inline = R|<local>/inline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInline: Inline? = R|<local>/nullableInline|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Full] get(): Inline?
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inline, pack/Inline), (nullableInline, pack/Inline?)])] class Full : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Full] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Full.inline] inline: R|pack/Inline|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: R|pack/Inline?|): R|pack/Full| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val inline: R|pack/Inline| = R|<local>/inline|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Full] get(): R|pack/Inline|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val nullableInline: R|pack/Inline?| = R|<local>/nullableInline|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Full] get(): R|pack/Inline?|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassWithInlineClassProperty.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] get(): R|kotlin/Int|
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inline, pack/Inline), (nullableInline, pack/Inline?)])] class Full : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Full] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Full.inline] inline: R|pack/Inline|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Full.nullableInline] nullableInline: R|pack/Inline?|): R|pack/Full| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val inline: R|pack/Inline| = R|<local>/inline|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Full] get(): R|pack/Inline|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val nullableInline: R|pack/Inline?| = R|<local>/nullableInline|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Full] get(): R|pack/Inline?|
+
+    }

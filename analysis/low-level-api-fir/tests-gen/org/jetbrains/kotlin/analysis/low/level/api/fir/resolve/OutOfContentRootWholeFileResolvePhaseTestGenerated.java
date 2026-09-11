@@ -179,6 +179,12 @@ public class OutOfContentRootWholeFileResolvePhaseTestGenerated extends Abstract
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("funWithoutTypes.kt")
   public void testFunWithoutTypes() {
     run("funWithoutTypes.kt");

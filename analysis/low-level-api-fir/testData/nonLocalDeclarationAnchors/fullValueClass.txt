@@ -1,0 +1,15 @@
+package one
+
+/* anchor (KtClass) --> */value class Point/* anchor (KtPrimaryConstructor) --> */(/* anchor (KtParameter) --> */val x: Int/* <-- */, /* anchor (KtParameter) --> */val y: Int/* <-- */)/* <-- */ {
+    /* anchor (KtSecondaryConstructor) --> */constructor(/* anchor (KtParameter) --> */value: Int/* <-- */) : this(value, value)/* <-- */
+
+    /* anchor (KtClassInitializer) --> */init {
+        require(x >= 0)
+    }/* <-- */
+
+    /* anchor (KtProperty) --> */val sum: Int /* anchor (KtPropertyAccessor) --> */get() = x + y/* <-- *//* <-- */
+
+    /* anchor (KtNamedFunction) --> */fun scaled(/* anchor (KtParameter) --> */factor: Int/* <-- */): Point = Point(x * factor, y * factor)/* <-- */
+}/* <-- */
+
+/* anchor (KtObjectDeclaration) --> */value object Empty/* <-- */

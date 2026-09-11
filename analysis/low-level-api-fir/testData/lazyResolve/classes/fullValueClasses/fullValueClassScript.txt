@@ -1,0 +1,278 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? value [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: String): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? value [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: String): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: String): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? value [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: String): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? value [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: String): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? value [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: String): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final value [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/String|): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/String|): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-fullValueClassScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final value [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/String|): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-fullValueClassScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/String|): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-fullValueClassScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final value [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/String|): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-fullValueClassScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/String|): R|pack/Point| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: String = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): String
+
+        }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-fullValueClassScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final value [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/String|): R|pack/Point| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val y: R|kotlin/String| = R|<local>/y|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/String|
+
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-fullValueClassScript.kts>
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final value [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/String|): R|pack/Point| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val y: R|kotlin/String| = R|<local>/y|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/String|
+
+        }

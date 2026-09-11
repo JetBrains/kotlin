@@ -1036,6 +1036,30 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("fullValueClassConstructorCall.kt")
+    public void testFullValueClassConstructorCall() {
+      run("fullValueClassConstructorCall.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassConstructorDelegationThisCall.kt")
+    public void testFullValueClassConstructorDelegationThisCall() {
+      run("fullValueClassConstructorDelegationThisCall.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassSecondaryConstructorCall.kt")
+    public void testFullValueClassSecondaryConstructorCall() {
+      run("fullValueClassSecondaryConstructorCall.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassSuperTypeCall.kt")
+    public void testFullValueClassSuperTypeCall() {
+      run("fullValueClassSuperTypeCall.kt");
+    }
+
+    @Test
     @TestMetadata("functionCallArgumentList.kt")
     public void testFunctionCallArgumentList() {
       run("functionCallArgumentList.kt");
@@ -1550,6 +1574,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("fullValueClassConstructorProperty.kt")
+    public void testFullValueClassConstructorProperty() {
+      run("fullValueClassConstructorProperty.kt");
+    }
+
+    @Test
     @TestMetadata("initializerConflict.kt")
     public void testInitializerConflict() {
       run("initializerConflict.kt");
@@ -1704,6 +1734,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("entryInFullValueClassDestructuring.kt")
+    public void testEntryInFullValueClassDestructuring() {
+      run("entryInFullValueClassDestructuring.kt");
+    }
+
+    @Test
     @TestMetadata("entryUnderscoreInDestructuringDeclaration.kt")
     public void testEntryUnderscoreInDestructuringDeclaration() {
       run("entryUnderscoreInDestructuringDeclaration.kt");
@@ -1713,6 +1749,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("entryUnderscoreInDestructuringDeclarationParameterInLambda.kt")
     public void testEntryUnderscoreInDestructuringDeclarationParameterInLambda() {
       run("entryUnderscoreInDestructuringDeclarationParameterInLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassDestructuring.kt")
+    public void testFullValueClassDestructuring() {
+      run("fullValueClassDestructuring.kt");
     }
   }
 
@@ -1877,6 +1919,18 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("forExpressionVariableScript.kts")
     public void testForExpressionVariableScript() {
       run("forExpressionVariableScript.kts");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassEqualityExpression.kt")
+    public void testFullValueClassEqualityExpression() {
+      run("fullValueClassEqualityExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueObjectExpression.kt")
+    public void testFullValueObjectExpression() {
+      run("fullValueObjectExpression.kt");
     }
 
     @Test
@@ -3201,6 +3255,18 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("fileAnnotationScript.kts")
     public void testFileAnnotationScript() {
       run("fileAnnotationScript.kts");
+    }
+
+    @Test
+    @TestMetadata("fullValueClass.kt")
+    public void testFullValueClass() {
+      run("fullValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueObject.kt")
+    public void testFullValueObject() {
+      run("fullValueObject.kt");
     }
 
     @Test

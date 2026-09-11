@@ -1,0 +1,21 @@
+KT element: KtParameter
+FIR element: FirValueParameterImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Point.x] x: R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassConstructorProperty.kt
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Point.x] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Point.y] y: R|kotlin/Int|): R|Point| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+    }

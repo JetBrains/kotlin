@@ -143,6 +143,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassFunction.kt")
+  public void testFullValueClassFunction() {
+    run("fullValueClassFunction.kt");
+  }
+
+  @Test
   @TestMetadata("innerClasses.kt")
   public void testInnerClasses() {
     run("innerClasses.kt");
