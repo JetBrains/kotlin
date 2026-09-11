@@ -1,0 +1,7 @@
+compiler/testData/cli/wasm/withLib.kt:2:8: error: unresolved reference 'library'.
+import library.sample.*
+       ^^^^^^^
+compiler/testData/cli/wasm/withLib.kt:6:13: error: unresolved reference 'pairAdd'.
+    val x = pairAdd(p)
+            ^^^^^^^
+COMPILATION_ERROR

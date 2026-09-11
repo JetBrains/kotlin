@@ -1,0 +1,16 @@
+$TESTDATA_DIR$/distStdlibMain.kt
+-libraries
+$STDLIB_WASM_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+---
+-Xinclude=$TEMP_DIR$/out.klib
+-Xwasm-generate-wat
+-libraries
+$STDLIB_WASM_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

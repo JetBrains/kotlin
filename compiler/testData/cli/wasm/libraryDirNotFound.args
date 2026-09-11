@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/withLib.kt
+-libraries
+$STDLIB_WASM_JS$:not/existing/path
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

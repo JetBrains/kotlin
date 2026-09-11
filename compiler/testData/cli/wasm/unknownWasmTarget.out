@@ -1,0 +1,2 @@
+error: unknown Wasm target: wasm-unknown. Valid values are: wasm-js, wasm-wasi
+COMPILATION_ERROR
