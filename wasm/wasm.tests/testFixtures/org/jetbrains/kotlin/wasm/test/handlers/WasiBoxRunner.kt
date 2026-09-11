@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 /**
- * The `test.mjs` launcher script for running the WASI unit-test runner (`startUnitTests()`):
+ * The `test.mjs` launcher script for running the WASI unit-test runner (`startunittests()`):
  * imports the compiled module and starts unit tests, exiting with code 1 on any uncaught exception.
  */
 private fun startUnitTestsWasiScript(): String = """
     try {
         let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
-        jsModule.startUnitTests();
+        jsModule.startunittests();
     } catch(e) {
         console.log('Failed with exception!');
         console.log(e);
@@ -78,7 +78,7 @@ class WasiBoxRunner(
             let boxTestPassed = false;
             try {
                 let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
-                ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
+                ${if (startUnitTests) "jsModule.startunittests();" else ""}
                 boxTestPassed = jsModule.runBoxTest();
             } catch(e) {
                 console.log('Failed with exception!');

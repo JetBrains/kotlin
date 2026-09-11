@@ -63,7 +63,7 @@ abstract class WasmBoxRunnerBase(
                         console.log = print;
                     }
                     try {
-                        await jsModule.startUnitTests();
+                        await jsModule.startunittests();
                         const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
                                             (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
                         if (hasFailures) {
@@ -97,7 +97,7 @@ abstract class WasmBoxRunnerBase(
                     }
                     let actualResult;
                     try {
-                        ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
+                        ${if (startUnitTests) "jsModule.startunittests();" else ""}
                         actualResult = jsModule.box();
                     } catch(e) {
                         console.log('Failed with exception!')

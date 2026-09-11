@@ -13,7 +13,7 @@ internal expect fun adapter(): FrameworkAdapter
 
 /**
  * The functions below are used by the compiler to describe the tests structure, e.g.
- * fun startUnitTests() {
+ * fun startunittests() {
  *     `declare test fun`()
  *     runRootSuites()
  * }
