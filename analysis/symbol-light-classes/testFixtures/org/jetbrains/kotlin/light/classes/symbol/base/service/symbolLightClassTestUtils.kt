@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.light.classes.symbol.base.service
 
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiMember
 import com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.javaInterop.*
@@ -38,6 +38,15 @@ internal fun KtElement.getLightElements(): List<PsiNamedElement> {
     }
 }
 
+context(_: KaSession)
+internal fun PsiMember.getLightElementsForJavaDeclaration(): List<PsiNamedElement> {
+    val symbol = when (this) {
+        is PsiClass -> namedClassSymbol
+        else -> callableSymbol
+    }
+
+    return symbol?.getLightElementsFromDeclaration().orEmpty()
+}
 
 context(_: KaSession)
 internal fun KaSymbol.getLightElementsFromDeclaration(): List<PsiNamedElement> {

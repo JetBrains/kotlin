@@ -52,6 +52,42 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("javaClass.kt")
+  public void testJavaClass() {
+    run("javaClass.kt");
+  }
+
+  @Test
+  @TestMetadata("javaEnumClass.kt")
+  public void testJavaEnumClass() {
+    run("javaEnumClass.kt");
+  }
+
+  @Test
+  @TestMetadata("javaEnumEntry.kt")
+  public void testJavaEnumEntry() {
+    run("javaEnumEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("javaMethod.kt")
+  public void testJavaMethod() {
+    run("javaMethod.kt");
+  }
+
+  @Test
+  @TestMetadata("javaTypeParameter.kt")
+  public void testJavaTypeParameter() {
+    run("javaTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinIntersectionOverrideFromJava.kt")
+  public void testKotlinIntersectionOverrideFromJava() {
+    run("kotlinIntersectionOverrideFromJava.kt");
+  }
+
+  @Test
   @TestMetadata("mangledName.kt")
   public void testMangledName() {
     run("mangledName.kt");

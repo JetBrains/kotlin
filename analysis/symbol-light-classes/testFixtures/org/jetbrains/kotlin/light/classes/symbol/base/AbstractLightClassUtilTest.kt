@@ -5,11 +5,18 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.base
 
+import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.PsiMember
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightElements
+import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightElementsFromDeclaration
+import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightElementsForJavaDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -22,13 +29,25 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractLightClassUtilTest : AbstractAnalysisApiBasedTest() {
     override val configurator = LLSourceLikeTestConfigurator()
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
-
-        val lightElements = analyzeForTest(mainFile) {
-            declaration.getLightElements()
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
+        val file = mainFile ?: mainModule.psiFiles.first()
+        val lightElements = when (file) {
+            is KtFile -> {
+                val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtDeclaration>(file)
+                analyzeForTest(file) {
+                    // Declarations without PSI (e.g., intersection overrides) can be referenced by a fully qualified name
+                    declaration?.getLightElements()
+                        ?: getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(testDataPath, file).getLightElementsFromDeclaration()
+                }
+            }
+            is PsiJavaFile -> {
+                val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<PsiMember>(file)
+                analyze(mainModule.ktModule) {
+                    declaration.getLightElementsForJavaDeclaration()
+                }
+            }
+            else -> error("Unexpected file: ${file::class}")
         }
-        testServices.assertions.assertFalse(lightElements.isEmpty())
 
         val expectedLightElements = mainModule.testModule.directives[Directives.EXPECTED]
 
