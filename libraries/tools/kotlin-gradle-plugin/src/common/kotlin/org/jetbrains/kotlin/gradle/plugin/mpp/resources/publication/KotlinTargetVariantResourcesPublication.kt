@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.defaultKotlinUsageContextMaybeReplacedWithKar
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.karAssembleTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
@@ -32,8 +33,10 @@ internal fun AbstractKotlinTarget.setUpResourcesVariant(
     if (project.multiplatformExtensionOrNull == null || !project.kotlinPropertiesProvider.mppResourcesPublication) return null
 
     var targetRegistersResourcesForPublication = false
-    val resourcesVariant = DefaultKotlinUsageContext(
+    val resourcesVariant = project.defaultKotlinUsageContextMaybeReplacedWithKar(
+        isStoredInKotlinArchive = if (this is KotlinTargetWithKotlinArchiveSupport) isStoredInKotlinArchive else null,
         compilation = compilation,
+        mavenScope = null,
         dependencyConfigurationName = resourcesElementsConfigurationName,
         includeIntoProjectStructureMetadata = false,
         publishOnlyIf = {
