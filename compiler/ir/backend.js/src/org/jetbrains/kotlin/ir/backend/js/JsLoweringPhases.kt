@@ -230,7 +230,6 @@ val optimizationLoweringList: List<NamedCompilerPhase<JsIrOptimizationContext, I
     ::ES6PrimaryConstructorUsageOptimizationLowering,
     ::PurifyObjectInstanceGettersLowering,
     ::InlineObjectsWithPureInitializationLowering,
-    ::JsCleanupPurifiedLeftoverDeclarationsLowering,
     ::JsCleanupPurifiedLeftoverUsagesLowering,
     ::MoveCallableFactoriesToDeclarationsLowering,
     ::DeduplicateCallableReferenceFactoriesLowering,
