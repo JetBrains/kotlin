@@ -10,6 +10,7 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.*
 import kotlin.metadata.jvm.JvmMethodSignature
+import kotlin.metadata.jvm.hasAnnotationsInBytecode
 import kotlin.metadata.jvm.signature
 import kotlin.reflect.ExperimentalCompanionExtensions
 import kotlin.reflect.KClass
@@ -35,6 +36,7 @@ internal class KotlinKNamedFunction(
         // `signature` parameter that comes from the function reference.
         get() = kmFunction.signature ?: convertSignatureForBuiltinFunction(signature)
     override val metadataAnnotations: List<KmAnnotation> get() = kmFunction.annotations
+    override val hasAnnotationsInBytecode: Boolean get() = kmFunction.hasAnnotationsInBytecode
 
     private val _typeParameterTable: Lazy<TypeParameterTable> = lazy(PUBLICATION) {
         val parent = ((overriddenStorage.originalContainerIfFakeOverride ?: container) as? KClassImpl<*>)?.typeParameterTable

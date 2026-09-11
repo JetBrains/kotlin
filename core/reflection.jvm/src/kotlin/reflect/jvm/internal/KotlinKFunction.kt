@@ -35,6 +35,7 @@ internal abstract class KotlinKFunction(
     abstract val typeParameterTable: TypeParameterTable
     protected abstract val jvmSignature: JvmMethodSignature
     protected abstract val metadataAnnotations: List<KmAnnotation>
+    protected abstract val hasAnnotationsInBytecode: Boolean
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters(contextParameters, extensionReceiverType, valueParameters, typeParameterTable, includeReceivers = true)
@@ -50,6 +51,7 @@ internal abstract class KotlinKFunction(
 
     override val annotations: List<Annotation>
         get() {
+            if (!hasAnnotationsInBytecode) return emptyList()
             if ((container as? KClassImpl<*>)?.isMappedBuiltin == true) {
                 return metadataAnnotations.map { it.toAnnotation(container.jClass.safeClassLoader) }
             }
