@@ -157,7 +157,13 @@ class BlockDecomposerTransformer(
     }
 
     private fun makeTempVar(type: IrType, init: IrExpression? = null) =
-        JsIrBuilder.buildVar(type, function, initializer = init, isVar = true)
+        JsIrBuilder.buildVar(
+            type,
+            function,
+            initializer = init,
+            isVar = true,
+            origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+        )
 
     private fun makeLoopLabel() = "\$l\$${tmpVarCounter++}"
 
