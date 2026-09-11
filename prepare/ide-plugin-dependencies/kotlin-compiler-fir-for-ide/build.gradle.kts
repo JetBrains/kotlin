@@ -12,6 +12,11 @@ val excludedFirModules = listOf(
     ":compiler:multiplatform-parsing",
 )
 
-val projects = firCompilerModules.asList() + jvmCompilerModules - excludedFirModules
+val additionalK1Modules = listOf(
+    ":core:deserialization",
+    ":core:descriptors.jvm",
+)
+
+val projects = firCompilerModules.asList() + jvmCompilerModules + additionalK1Modules - excludedFirModules
 
 publishJarsForIde(projects)
