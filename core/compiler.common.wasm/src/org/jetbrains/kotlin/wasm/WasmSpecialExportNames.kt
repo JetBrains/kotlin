@@ -18,7 +18,8 @@ enum class WasmServiceImportExportKind(val prefix: String) {
 object WasmSpecialExportNames {
     const val MEMORY = "memory"
     const val INITIALIZE = "_initialize"
-    const val START = "_start"
+    const val START_WASM_JS = "_start"
+    const val START_WASM_WASI = "wasi:cli/run@0.2.12#run"
     const val START_UNIT_TESTS = "startUnitTests"
     const val CALL_FUNCTION_PREFIX = "__callFunction_"
 

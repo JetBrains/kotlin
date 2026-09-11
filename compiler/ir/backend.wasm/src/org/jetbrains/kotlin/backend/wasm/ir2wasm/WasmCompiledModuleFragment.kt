@@ -71,10 +71,13 @@ class WasmCompiledModuleFragment(
 
         createAssociatedObjectGetter(definedDeclarations = definedDeclarations, wasmElements = wasmElements)
 
+        val wasiPreview2 = !isWasmJsTarget
         val mainFunctionsExportName = if (wasmCommandModuleInitialization)
             WasmSpecialExportNames.INITIALIZE
+        else if (wasiPreview2)
+            WasmSpecialExportNames.START_WASM_WASI
         else
-            WasmSpecialExportNames.START
+            WasmSpecialExportNames.START_WASM_JS
 
         val mainFunctions = selectMainFunctions()
         mainFunctions.forEach { mainFunction ->

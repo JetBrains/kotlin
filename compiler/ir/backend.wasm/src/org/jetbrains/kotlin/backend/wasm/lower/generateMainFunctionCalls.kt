@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.isLoweredSuspendFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.isStringArrayParameter
+import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -22,6 +24,9 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.wasm.config.wasmCommandModule
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 /**
  * Find single most appropriate main function and call with empty arguments and generate wrappers for not simple one's
@@ -35,16 +40,26 @@ class GenerateMainFunctionWrappers(private val backendContext: WasmBackendContex
             val mainFunction = detector.getMainFunctionOrNull(file) ?: continue
             val generateArgv = mainFunction.parameters.firstOrNull()?.isStringArrayParameter() ?: false
             val generateContinuation = mainFunction.isLoweredSuspendFunction(backendContext)
+            // NOTE: with command module initialization, the compiler exports main as `_initialize`, which must have the type `() -> ()`
+            val exportedAsWasiCliRun = backendContext.configuration.wasmTarget == WasmTarget.WASI &&
+                    !backendContext.configuration.wasmCommandModule
 
             val fileContext = backendContext.getFileContext(file)
 
-            if (!generateArgv && !generateContinuation) {
+
+            // an export as wasi:cli/run always needs a wrapper, because the export must follow the canonical ABI
+            if (!generateArgv && !generateContinuation && !exportedAsWasiCliRun) {
                 fileContext.mainFunctionWrapper = mainFunction
                 continue
             }
 
             val wrapper = backendContext.irFactory.stageController.restrictTo(mainFunction) {
-                mainFunction.createMainFunctionWrapper(backendContext, generateArgv, generateContinuation)
+                mainFunction.createMainFunctionWrapper(
+                    backendContext,
+                    generateArgv,
+                    generateContinuation,
+                    exportedAsWasiCliRun
+                )
             }
             fileContext.mainFunctionWrapper = wrapper
         }
@@ -54,8 +69,15 @@ class GenerateMainFunctionWrappers(private val backendContext: WasmBackendContex
 private fun IrSimpleFunction.createMainFunctionWrapper(
     backendContext: WasmBackendContext,
     generateArgv: Boolean,
-    generateContinuation: Boolean
+    generateContinuation: Boolean,
+    exportedAsWasiCliRun: Boolean,
 ): IrSimpleFunction {
+    // NOTE: the key difference is that wasi:cli/run must return an integer
+    val returnType = if (!exportedAsWasiCliRun)
+        backendContext.irBuiltIns.unitType
+    else
+        backendContext.irBuiltIns.intType
+
     val mainWrapper = backendContext.irFactory.createSimpleFunction(
         startOffset = UNDEFINED_OFFSET,
         endOffset = UNDEFINED_OFFSET,
@@ -64,7 +86,7 @@ private fun IrSimpleFunction.createMainFunctionWrapper(
         visibility = visibility,
         isInline = false,
         isExpect = false,
-        returnType = backendContext.irBuiltIns.unitType,
+        returnType = returnType,
         modality = modality,
         symbol = IrSimpleFunctionSymbolImpl(),
         isTailrec = false,
@@ -76,8 +98,9 @@ private fun IrSimpleFunction.createMainFunctionWrapper(
     mainWrapper.parent = file
     file.declarations.add(mainWrapper)
 
-    with(backendContext.createIrBuilder(this.symbol)) {
+    with(backendContext.createIrBuilder(mainWrapper.symbol)) {
         val argv = if (generateArgv) {
+            // TODO(KT-89278): support commandline arguments via wasi:cli/environment
             backendContext.createArrayOfExpression(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
@@ -96,14 +119,22 @@ private fun IrSimpleFunction.createMainFunctionWrapper(
             }
 
         val wrapperBody = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+
         val call = irCall(this@createMainFunctionWrapper).also { call ->
             listOfNotNull(argv, continuation).forEachIndexed { index: Int, arg: IrExpression -> call.arguments[index] = arg }
         }
 
-        wrapperBody.statements += irReturn(call)
+        if (!exportedAsWasiCliRun) {
+            wrapperBody.statements += irReturn(call)
+        } else {
+            wrapperBody.statements += irBlock {
+                // NOTE: we explicitly do NOT wrap this call in a try-catch, as we want to let uncaught exceptions leak into the environment
+                +call
+                +irReturn(irInt(0))
+            }
+        }
         mainWrapper.body = wrapperBody
     }
 
     return mainWrapper
 }
-

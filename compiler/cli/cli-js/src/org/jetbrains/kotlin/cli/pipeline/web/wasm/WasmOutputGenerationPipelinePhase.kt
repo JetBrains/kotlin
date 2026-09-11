@@ -92,7 +92,7 @@ object WasmOutputGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelin
         val multimoduleParameters = moduleConfiguration.multimoduleOptions
         val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
 
-        val wasmStartFunctionDefined = linkedModule.exports.any { it.name == WasmSpecialExportNames.START }
+        val wasmStartFunctionDefined = linkedModule.exports.any { it.name == WasmSpecialExportNames.START_WASM_JS }
         val wasmInitializeFunctionDefined = linkedModule.exports.any { it.name == WasmSpecialExportNames.INITIALIZE }
 
         val dwarfGeneratorForBinary = runIf(configuration.wasmGenerateDwarf) {
@@ -497,7 +497,7 @@ $imports};
         val commonStdlibExports = if (isStdlibModule) ", getCachedJsObject, __TAG as wasmTag" else ""
 
         val mainFunctionCall = if (wasmStartFunctionDefined)
-            "exports.${WasmSpecialExportNames.START}();"
+            "exports.${WasmSpecialExportNames.START_WASM_JS}();"
         else if (wasmInitializeFunctionDefined)
             "exports.${WasmSpecialExportNames.INITIALIZE}();"
         else ""
