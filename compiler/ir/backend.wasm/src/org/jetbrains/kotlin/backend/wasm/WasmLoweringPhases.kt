@@ -153,7 +153,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::JsInteropFunctionsLowering,
 
-    ::ObjectDeclarationLowering, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
+    ::WasmObjectDeclarationLowering,
     ::WasmStaticInitializersDeclarationLowering,
     ::WasmStaticInitializersUsageLowering,
 
