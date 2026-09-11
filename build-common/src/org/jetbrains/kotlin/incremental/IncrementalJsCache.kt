@@ -52,6 +52,7 @@ open class IncrementalJsCache(
     override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile, icContext))
     private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, protoData, icContext))
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, icContext))
+    private val irInlineTranslationResults = registerMap(IrTranslationResultMap(INLINE_FUNCTIONS.storageFile, icContext))
 
     private val dirtySources = hashSetOf<File>()
 
@@ -100,6 +101,13 @@ open class IncrementalJsCache(
                 srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
             )
         }
+
+        for ([srcFile, irData] in incrementalResults.irInlineFileData) {
+            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val fileMetadata, val debugInfos = debugInfo, val fileEntries) = irData
+            irInlineTranslationResults.put(
+                srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
+            )
+        }
     }
 
     private fun registerOutputForFile(srcFile: File, name: FqName) {
@@ -111,6 +119,7 @@ open class IncrementalJsCache(
         dirtySources.forEach {
             translationResults.remove(it, changesCollector)
             irTranslationResults.remove(it)
+            irInlineTranslationResults.remove(it)
         }
         removeAllFromClassStorage(dirtyOutputClassesMap.getDirtyOutputClasses(), changesCollector)
         dirtySources.clear()
@@ -133,6 +142,16 @@ open class IncrementalJsCache(
 
                 if (file !in dirtySources) {
                     put(file, irTranslationResults[file]!!)
+                }
+            }
+        }
+
+    fun nonDirtyIrInlineParts(): Map<File, IrTranslationResultValue> =
+        hashMapOf<File, IrTranslationResultValue>().apply {
+            for (file in irInlineTranslationResults.keys) {
+
+                if (file !in dirtySources) {
+                    put(file, irInlineTranslationResults[file]!!)
                 }
             }
         }

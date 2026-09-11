@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.backend.common.DumpIrReferenceRenderingAsSignatureStrategy
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
+import org.jetbrains.kotlin.backend.common.serialization.InternalIrInlineDeserializerAPI
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
@@ -221,10 +222,9 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: ParsedArgu
                 referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(KonanManglerIr)
         )
 
-        val irDumps: List<String> = moduleDeserializer.reversedSignatureIndex.keys.mapNotNull { signature: IdSignature ->
-            val preprocessedFunction = moduleDeserializer.deserializeInlineFunction(signature, dummyIrFile, dummyIrFile.module)
-                    ?: return@mapNotNull null
-            val irDump = preprocessedFunction.dumpOrFail(dumpOptions)
+        @OptIn(InternalIrInlineDeserializerAPI::class)
+        val irDumps: List<String> = moduleDeserializer.deserializeAllInlineFunctions(dummyIrFile, dummyIrFile.module).map {
+            val irDump = it.dumpOrFail(dumpOptions)
             val irDumpFirstLine = irDump.substringBefore(Printer.LINE_SEPARATOR)
             irDumpFirstLine to irDump
         }.sortedBy { /* irDumpFirstLine */ it.first }.map { /* irDump */ it.second }
