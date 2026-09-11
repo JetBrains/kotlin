@@ -43,13 +43,13 @@ private inline fun highInU64(value: ULong): ULong = value shr 32
 private inline fun lowInU64(value: ULong): ULong = value and 0x00000000FFFFFFFFUL
 internal inline fun lowU32FromVar(u64: ULong): UInt = (u64 and 0x00000000FFFFFFFFUL).toUInt()
 internal inline fun highU32FromVar(u64: ULong): UInt = (u64 shr 32).toUInt()
-internal inline fun lowU32FromPtr(arr: ULongArray, idx: Int): UInt = (arr[idx] and 0x00000000FFFFFFFFUL).toUInt()
-internal inline fun highU32FromPtr(arr: ULongArray, idx: Int): UInt = (arr[idx] shr 32).toUInt()
-internal inline fun setLowU32Ptr(arr: ULongArray, idx: Int, value: UInt) {
+internal inline fun lowU32FromPtr(arr: ULongUnsafeArray, idx: Int): UInt = (arr[idx] and 0x00000000FFFFFFFFUL).toUInt()
+internal inline fun highU32FromPtr(arr: ULongUnsafeArray, idx: Int): UInt = (arr[idx] shr 32).toUInt()
+internal inline fun setLowU32Ptr(arr: ULongUnsafeArray, idx: Int, value: UInt) {
     arr[idx] = (arr[idx] and 0xFFFFFFFF00000000UL) or value.toULong()
 }
 
-internal inline fun setHighU32Ptr(arr: ULongArray, idx: Int, value: UInt) {
+internal inline fun setHighU32Ptr(arr: ULongUnsafeArray, idx: Int, value: UInt) {
     arr[idx] = (arr[idx] and 0x00000000FFFFFFFFUL) or (value.toULong() shl 32)
 }
 
@@ -84,7 +84,7 @@ internal inline fun isDenormalDouble(double: Double): Boolean {
     return (high and EXPONENT_MASK_HI == 0u) && (high and MANTISSA_MASK_HI != 0u || low != 0u)
 }
 
-private fun simpleAddHighPrecision(arg1: ULongArray, length: Int, arg2: ULong): Int {
+private fun simpleAddHighPrecision(arg1: ULongUnsafeArray, length: Int, arg2: ULong): Int {
     /* assumes length > 0 */
     var index = 1
 
@@ -100,7 +100,7 @@ private fun simpleAddHighPrecision(arg1: ULongArray, length: Int, arg2: ULong): 
     return if (index == length) 1 else 0
 }
 
-internal fun addHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongArray, length2: Int): Int {
+internal fun addHighPrecision(arg1: ULongUnsafeArray, length1: Int, arg2: ULongUnsafeArray, length2: Int): Int {
     var length2 = length2
     // addition is limited by length of arg1 as it this function is
     // storing the result in arg1
@@ -136,7 +136,7 @@ internal fun addHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongArray, 
     return if (index == length1) 1 else 0
 }
 
-internal fun subtractHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongArray, length2: Int) {
+internal fun subtractHighPrecision(arg1: ULongUnsafeArray, length1: Int, arg2: ULongUnsafeArray, length2: Int) {
     var length2 = length2
     // assumes arg1 > arg2
     for (index in 0 until length1)
@@ -153,7 +153,7 @@ internal fun subtractHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongAr
     simpleAddHighPrecision(arg1, length1, 1UL)
 }
 
-private fun simpleMultiplyHighPrecision(arg1: ULongArray, length: Int, arg2: ULong): UInt {
+private fun simpleMultiplyHighPrecision(arg1: ULongUnsafeArray, length: Int, arg2: ULong): UInt {
     /* assumes arg2 only holds 32 bits of information */
     var product: ULong
     var index: Int
@@ -173,7 +173,7 @@ private fun simpleMultiplyHighPrecision(arg1: ULongArray, length: Int, arg2: ULo
     return highU32FromVar(product)
 }
 
-private value class ULongArrayView(val array: ULongArray)
+private value class ULongArrayView(val array: ULongUnsafeArray)
 
 private operator fun ULongArrayView.get(idx32: Int): UInt =
     if (idx32 % 2 == 0) lowU32FromPtr(array, idx32 / 2) else highU32FromPtr(array, idx32 / 2)
@@ -181,7 +181,7 @@ private operator fun ULongArrayView.get(idx32: Int): UInt =
 private operator fun ULongArrayView.set(idx32: Int, value: UInt) =
     if (idx32 % 2 == 0) setLowU32Ptr(array, idx32 / 2, value) else setHighU32Ptr(array, idx32 / 2, value)
 
-private fun simpleMultiplyAddHighPrecision(arg1: ULongArray, length: Int, arg2: ULong, result: ULongArrayView, resultOffset: Int) {
+private fun simpleMultiplyAddHighPrecision(arg1: ULongUnsafeArray, length: Int, arg2: ULong, result: ULongArrayView, resultOffset: Int) {
     /* Assumes result can hold the product and arg2 only holds 32 bits
        of information */
     var product: ULong
@@ -214,13 +214,13 @@ private fun simpleMultiplyAddHighPrecision(arg1: ULongArray, length: Int, arg2: 
     }
 }
 
-internal fun multiplyHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongArray, length2: Int, result: ULongArray, length: Int) {
+internal fun multiplyHighPrecision(arg1: ULongUnsafeArray, length1: Int, arg2: ULongUnsafeArray, length2: Int, result: ULongUnsafeArray, length: Int) {
     var arg1 = arg1
     var arg2 = arg2
     var length1 = length1
     var length2 = length2
     /* assumes result is large enough to hold product */
-    val temp: ULongArray
+    val temp: ULongUnsafeArray
     val count: Int
     var index: Int
 
@@ -245,7 +245,7 @@ internal fun multiplyHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongAr
     }
 }
 
-internal fun simpleAppendDecimalDigitHighPrecision(arg1: ULongArray, length: Int, digit: ULong): UInt {
+internal fun simpleAppendDecimalDigitHighPrecision(arg1: ULongUnsafeArray, length: Int, digit: ULong): UInt {
     var digit = digit
     /* assumes digit is less than 32 bits */
     var arg: ULong
@@ -265,7 +265,7 @@ internal fun simpleAppendDecimalDigitHighPrecision(arg1: ULongArray, length: Int
     return highU32FromVar(digit)
 }
 
-internal fun simpleShiftLeftHighPrecision(arg1: ULongArray, length: Int, arg2: Int) {
+internal fun simpleShiftLeftHighPrecision(arg1: ULongUnsafeArray, length: Int, arg2: Int) {
     var arg2 = arg2
     var length = length
     /* assumes length > 0 */
@@ -301,7 +301,7 @@ private fun highestSetBit(y: ULong): Int =
 private fun lowestSetBit(y: ULong): Int =
     if (y != 0UL) y.countTrailingZeroBits() + 1 else 0
 
-internal fun highestSetBitHighPrecision(arg: ULongArray, length: Int): Int {
+internal fun highestSetBitHighPrecision(arg: ULongUnsafeArray, length: Int): Int {
     var len = length
     while (--len >= 0) {
         val highBit = highestSetBit(arg[len])
@@ -310,7 +310,7 @@ internal fun highestSetBitHighPrecision(arg: ULongArray, length: Int): Int {
     return 0
 }
 
-internal fun lowestSetBitHighPrecision(arg: ULongArray, length: Int): Int {
+internal fun lowestSetBitHighPrecision(arg: ULongUnsafeArray, length: Int): Int {
     var index = -1
     while (++index < length) {
         val lowBit = lowestSetBit(arg[index])
@@ -319,7 +319,7 @@ internal fun lowestSetBitHighPrecision(arg: ULongArray, length: Int): Int {
     return 0
 }
 
-internal fun compareHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongArray, length2: Int): Int {
+internal fun compareHighPrecision(arg1: ULongUnsafeArray, length1: Int, arg2: ULongUnsafeArray, length2: Int): Int {
     var length1 = length1
     var length2 = length2
     while (--length1 >= 0 && arg1[length1] == 0UL) { /* no body */
@@ -343,7 +343,7 @@ internal fun compareHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongArr
     return 0
 }
 
-internal fun toDoubleHighPrecision(arg: ULongArray, length: Int): Double {
+internal fun toDoubleHighPrecision(arg: ULongUnsafeArray, length: Int): Double {
     var length = length
     var highBit: Int
     var mantissa: ULong
@@ -427,7 +427,7 @@ internal fun toDoubleHighPrecision(arg: ULongArray, length: Int): Double {
     return result
 }
 
-internal fun timesTenToTheEHighPrecision(result: ULongArray, length: Int, e: Int): Int {
+internal fun timesTenToTheEHighPrecision(result: ULongUnsafeArray, length: Int, e: Int): Int {
     var length = length
     /* assumes result can hold value */
     var overflow: ULong
@@ -506,7 +506,7 @@ internal fun timesTenToTheEHighPrecision(result: ULongArray, length: Int, e: Int
     return length
 }
 
-private fun simpleMultiplyHighPrecision64(arg1: ULongArray, length: Int, arg2: ULong): ULong {
+private fun simpleMultiplyHighPrecision64(arg1: ULongUnsafeArray, length: Int, arg2: ULong): ULong {
     var intermediate: ULong
     var carry1: ULong
     var carry2: ULong
