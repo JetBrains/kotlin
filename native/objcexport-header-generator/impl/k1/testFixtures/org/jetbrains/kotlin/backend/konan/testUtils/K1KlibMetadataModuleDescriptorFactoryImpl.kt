@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
@@ -144,7 +143,7 @@ class K1KlibMetadataModuleDescriptorFactoryImpl {
 
         @OptIn(K1Deprecation::class)
         val enumEntriesDeserializationSupport = object : EnumEntriesDeserializationSupport {
-            override fun canSynthesizeEnumEntries(): Boolean = moduleDescriptor.platform.isJvm()
+            override fun canSynthesizeEnumEntries(): Boolean = false
         }
 
         @OptIn(K1Deprecation::class)
