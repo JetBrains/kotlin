@@ -157,6 +157,7 @@ class FirClassAnySynthesizedMemberScope(
                     this.name = Name.identifier("other")
                     origin = originForFunctions
                     moduleData = baseModuleData
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE
                     this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
                     this.symbol = FirValueParameterSymbol()
                     containingDeclarationSymbol = this@buildNamedFunction.symbol

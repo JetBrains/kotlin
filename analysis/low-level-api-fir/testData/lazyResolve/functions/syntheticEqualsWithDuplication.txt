@@ -1,5 +1,5 @@
 BODY_RESOLVE:
-TARGET: public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(RAW_FIR)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+TARGET: public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
 FILE: [ResolvedTo(IMPORTS)] syntheticEqualsWithDuplication.kt
     public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
