@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
 internal class KotlinDestructuringDeclarationStubImpl(
     parent: StubElement<*>?,
     override val isVar: Boolean,

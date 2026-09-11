@@ -3,12 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KtImplementationDetail::class)
-
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.psi.stubs.*
-import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
@@ -27,6 +24,6 @@ internal object KtFileStubSerializer : StubSerializer<KotlinFileStubImpl> {
     }
 
     override fun indexStub(stub: KotlinFileStubImpl, sink: IndexSink) {
-        StubIndexService.getInstance().indexFile(stub, sink)
+        StubIndexService.getInstance()?.indexFile(stub, sink)
     }
 }

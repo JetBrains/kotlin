@@ -2,7 +2,6 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:OptIn(KtImplementationDetail::class, KtExperimentalApi::class)
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
@@ -12,8 +11,6 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.psi.KtExperimentalApi
-import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinScriptStubImpl
@@ -48,6 +45,6 @@ internal object KtScriptStubSerializingElementFactory :
     }
 
     override fun indexStub(stub: KotlinScriptStubImpl, sink: IndexSink) {
-        StubIndexService.getInstance().indexScript(stub, sink)
+        StubIndexService.getInstance()?.indexScript(stub, sink)
     }
 }

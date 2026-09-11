@@ -233,6 +233,7 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
 
     val stub = greenStub
     if (stub != null) {
+        @OptIn(KtIdeApi::class)
         return stub.superNames
     }
 

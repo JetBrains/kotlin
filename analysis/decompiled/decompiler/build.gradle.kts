@@ -23,6 +23,21 @@ dependencies {
     api(intellijCore())
 }
 
+kotlin {
+    // The decompiler builds Kotlin PSI and stubs for binary files, so it opts in to all of
+    // psi-api's non-public markers (the same list psi-api excludes from its ABI dump)
+    // instead of repeating the suppression in every file.
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.psi.KtImplementationDetail",
+            "org.jetbrains.kotlin.psi.KtNonPublicApi",
+            "org.jetbrains.kotlin.psi.KtIdeApi",
+            "org.jetbrains.kotlin.psi.KtExperimentalApi",
+            "org.jetbrains.kotlin.psi.KtPlatformInterface",
+        )
+    )
+}
+
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }

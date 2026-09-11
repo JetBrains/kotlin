@@ -1311,6 +1311,7 @@ open class PsiRawFirBuilder(
             if (hasInnerModifier()) dispatchReceiverForInnerClassConstructor() else null
 
         override fun visitKtFile(file: KtFile, data: FirElement?): FirElement {
+            @OptIn(KtIdeApi::class)
             context.packageFqName = when (mode) {
                 BodyBuildingMode.NORMAL -> file.properPackageFqName
                 BodyBuildingMode.LAZY_BODIES -> file.stub?.getPackageFqName() ?: file.properPackageFqName

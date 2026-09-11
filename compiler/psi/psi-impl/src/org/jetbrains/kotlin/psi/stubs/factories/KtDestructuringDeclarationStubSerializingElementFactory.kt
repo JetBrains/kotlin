@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KtImplementationDetail::class)
-
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.lang.ASTNode
@@ -13,7 +11,6 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
-import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinDestructuringDeclarationStubImpl
 
 internal object KtDestructuringDeclarationStubSerializingElementFactory :
