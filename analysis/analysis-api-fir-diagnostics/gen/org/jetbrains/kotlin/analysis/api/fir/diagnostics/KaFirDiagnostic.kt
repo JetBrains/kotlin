@@ -8506,6 +8506,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JvmExposeBoxedNameIsNotJavaIdentifier : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<JvmExposeBoxedNameIsNotJavaIdentifier>
+            get() = JvmExposeBoxedNameIsNotJavaIdentifier::class
+
+        public val name: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface WrongTypeForJavaOverride : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<WrongTypeForJavaOverride>
             get() = WrongTypeForJavaOverride::class

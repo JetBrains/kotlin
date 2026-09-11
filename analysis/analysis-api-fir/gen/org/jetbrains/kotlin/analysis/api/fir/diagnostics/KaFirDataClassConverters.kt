@@ -8886,6 +8886,13 @@ private fun KaDiagnosticConverterBuilder.addConversions196() {
             token,
         )
     }
+    add(FirJvmErrors.JVM_EXPOSE_BOXED_NAME_IS_NOT_JAVA_IDENTIFIER) { firDiagnostic ->
+        JvmExposeBoxedNameIsNotJavaIdentifierImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.PROPERTY_HIDES_JAVA_FIELD) { firDiagnostic ->
         PropertyHidesJavaFieldImpl(
             firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),

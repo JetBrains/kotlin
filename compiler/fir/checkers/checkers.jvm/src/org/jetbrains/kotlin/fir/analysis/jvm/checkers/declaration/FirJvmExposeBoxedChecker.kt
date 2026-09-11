@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.isValidJavaIdentifier
 
 object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -59,8 +60,12 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
             }
 
             val value = (name as? FirLiteralExpression)?.value as? String
-            if (value != null && !Name.isValidIdentifier(value)) {
-                reporter.reportOn(name.source, FirJvmErrors.ILLEGAL_JVM_NAME)
+            if (value != null) {
+                if (!Name.isValidIdentifier(value)) {
+                    reporter.reportOn(name.source, FirJvmErrors.ILLEGAL_JVM_NAME)
+                } else if (!isValidJavaIdentifier(value)) {
+                    reporter.reportOn(name.source, FirJvmErrors.JVM_EXPOSE_BOXED_NAME_IS_NOT_JAVA_IDENTIFIER, value)
+                }
             }
 
             if (declaration is FirFunction && declaration.nameOrSpecialName.asString() == value) {
