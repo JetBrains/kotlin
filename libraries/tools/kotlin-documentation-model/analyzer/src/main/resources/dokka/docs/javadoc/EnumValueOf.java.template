@@ -1,0 +1,12 @@
+/**
+ * Returns the enum constant of this type with the specified
+ * name.
+ * The string must match exactly an identifier used to declare
+ * an enum constant in this type.  (Extraneous whitespace
+ * characters are not permitted.)
+ *
+ * @return the enum constant with the specified name
+ * @throws IllegalArgumentException if this enum type has no
+ * constant with the specified name
+ */
+ 

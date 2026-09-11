@@ -1,0 +1,107 @@
+/*
+ * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
+ */
+
+package multiplatform
+
+import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.model.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class BasicMultiplatformTest : BaseAbstractTest() {
+
+    @Test
+    fun `should resolve types from transitive source sets`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                val common = sourceSet {
+                    name = "common"
+                    displayName = "common"
+                    analysisPlatform = "common"
+                    sourceRoots = listOf("src/main/kotlin/common/Test.kt")
+                }
+
+                val shared = sourceSet {
+                    name = "shared"
+                    displayName = "shared"
+                    analysisPlatform = "common"
+                    dependentSourceSets = setOf(common.value.sourceSetID)
+                }
+                sourceSet {
+                    name = "jvm"
+                    displayName = "jvm"
+                    analysisPlatform = "jvm"
+                    sourceRoots = listOf("src/main/kotlin/jvm/Test.kt")
+                    dependentSourceSets = setOf(shared.value.sourceSetID)
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/common/Test.kt
+            |package multiplatform
+            |
+            |class A
+            |
+            |/src/main/kotlin/jvm/Test.kt
+            |package multiplatform
+            |
+            |fun fn(a: A) {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = {
+                val fn = it.dfs { it is DFunction && it.name == "fn" } as DFunction
+                assertEquals(DRI("multiplatform", "A"), fn.parameters.firstOrNull()?.type?.driOrNull)
+            }
+        }
+    }
+
+    @Test
+    fun `fun and prop should have external modifier`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    name = "js"
+                    displayName = "js"
+                    analysisPlatform = "js"
+                    sourceRoots = listOf("src/main/kotlin/js/Test.kt")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/js/Test.kt
+            |package multiplatform
+            |
+            |external fun fn(): Unit
+            |external val x: String
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = {
+                fun DProperty.hasModifier(modifier: ExtraModifiers.KotlinOnlyModifiers): Boolean =
+                    extra[AdditionalModifiers]
+                        ?.content
+                        ?.any { (_, modifiers) -> modifier in modifiers } == true
+
+                fun DFunction.hasModifier(modifier: ExtraModifiers.KotlinOnlyModifiers): Boolean =
+                    extra[AdditionalModifiers]
+                        ?.content
+                        ?.any { (_, modifiers) -> modifier in modifiers } == true
+
+                val fn = it.dfs { it is DFunction && it.name == "fn" } as DFunction
+                assertTrue(fn.hasModifier(ExtraModifiers.KotlinOnlyModifiers.External))
+
+                val prop = it.dfs { it is DProperty && it.name == "x" } as DProperty
+                assertTrue(prop.hasModifier(ExtraModifiers.KotlinOnlyModifiers.External))
+            }
+        }
+    }
+}

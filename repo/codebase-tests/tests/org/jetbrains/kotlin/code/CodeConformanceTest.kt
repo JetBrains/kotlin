@@ -136,7 +136,10 @@ class CodeConformanceTest {
             FileTestCase(
                 "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s",
                 allowedFiles = listOf(
-                    "native/swift/swift-export-standalone-integration-tests/simple/testData/generation/docc/"
+                    "native/swift/swift-export-standalone-integration-tests/simple/testData/generation/docc/",
+                    "libraries/tools/kotlin-documentation-model/analyzer/src/test/kotlin/translators/JavadocInheritedDocTagsTest.kt",
+                    "libraries/tools/kotlin-documentation-model/analyzer/src/test/kotlin/translators/JavadocParserTest.kt",
+                    "libraries/tools/kotlin-documentation-model/analyzer/src/main/kotlin/org/jetbrains/dokka/analysis/java/parsers/doctag/PsiElementToHtmlConverter.kt"
                 )
             ) { _, source ->
                 // substring check is an optimization
