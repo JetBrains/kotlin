@@ -16,7 +16,7 @@ import java.util.*
 import kotlin.math.max
 
 object SMAPBuilder {
-    fun build(fileMappings: List<FileMapping>, backwardsCompatibleSyntax: Boolean, validate: Boolean): String? {
+    fun build(fileMappings: List<FileMapping>, validate: Boolean): String? {
         if (fileMappings.isEmpty()) {
             return null
         }
@@ -38,15 +38,8 @@ object SMAPBuilder {
             }
         }
 
-        // Old versions of kotlinc and the IDEA plugin have incorrect implementations of SMAPParser:
-        //   1. they require *E between strata, which is not correct syntax according to JSR-045;
-        //   2. in KotlinDebug, they use `1#2,3:4` to mean "map lines 4..6 to line 1 of #2", when in reality (and in
-        //      the non-debug stratum) this maps lines 4..6 to lines 1..3. The correct syntax is `1#2:4,3`.
         val defaultStrata = fileMappings.toSMAP(KOTLIN_STRATA_NAME, mapToFirstLine = false)
-        val debugStrata = debugMappings.values.toSMAP(KOTLIN_DEBUG_STRATA_NAME, mapToFirstLine = !backwardsCompatibleSyntax)
-        if (backwardsCompatibleSyntax && defaultStrata.isNotEmpty() && debugStrata.isNotEmpty()) {
-            return "SMAP\n${fileMappings[0].name}\n$KOTLIN_STRATA_NAME\n$defaultStrata${SMAP.END}\n$debugStrata${SMAP.END}\n"
-        }
+        val debugStrata = debugMappings.values.toSMAP(KOTLIN_DEBUG_STRATA_NAME, mapToFirstLine = true)
         return "SMAP\n${fileMappings[0].name}\n$KOTLIN_STRATA_NAME\n$defaultStrata$debugStrata${SMAP.END}\n"
     }
 

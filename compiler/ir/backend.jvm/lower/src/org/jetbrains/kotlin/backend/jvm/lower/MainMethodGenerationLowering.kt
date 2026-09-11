@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -61,7 +60,6 @@ import org.jetbrains.kotlin.types.Variance
 @PhasePrerequisites(JvmOverloadsAnnotationLowering::class)
 internal class MainMethodGenerationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        if (!context.config.languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)) return
         if (!irClass.isFileClass) return
 
         irClass.functions.find { it.isMainMethod() }?.let { mainMethod ->
