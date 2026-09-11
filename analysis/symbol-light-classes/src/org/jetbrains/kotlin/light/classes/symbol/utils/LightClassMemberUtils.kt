@@ -29,6 +29,8 @@ internal object LightClassMemberUtils {
     fun getLightClassParameters(
         parameterSymbol: KaParameterSymbol,
     ): List<PsiParameter> {
+        parameterSymbol.anchorPsiIfNotKotlin()?.let { return listOfNotNull(it as? PsiParameter) }
+
         val enclosingDeclaration = parameterSymbol.containingDeclaration as? KaFunctionSymbol ?: return emptyList()
 
         val methods = enclosingDeclaration.asPsiMethods()
@@ -46,6 +48,8 @@ internal object LightClassMemberUtils {
     fun getLightClassTypeParameter(
         typeParameterSymbol: KaTypeParameterSymbol,
     ): List<PsiTypeParameter> {
+        typeParameterSymbol.anchorPsiIfNotKotlin()?.let { return listOfNotNull(it as? PsiTypeParameter) }
+
         val enclosingDeclaration = typeParameterSymbol.containingDeclaration ?: return emptyList()
         val paramIndex = enclosingDeclaration.typeParameters.indexOf(typeParameterSymbol)
 
@@ -68,6 +72,7 @@ internal object LightClassMemberUtils {
         declarationSymbol: KaSymbol,
     ): PsiField? {
         if (declarationSymbol !is KaClassSymbol && declarationSymbol !is KaEnumEntrySymbol && declarationSymbol !is KaBackingFieldSymbol) return null
+        declarationSymbol.anchorPsiIfNotKotlin()?.let { return it as? PsiField }
 
         val psiClass: PsiClass = getWrappingClass(declarationSymbol)?.let { wrapper ->
             (wrapper.parent as? PsiClass).takeIf { wrapper.isCreatedFromCompanion() } ?: wrapper
@@ -85,6 +90,8 @@ internal object LightClassMemberUtils {
     fun getLightClassMethods(
         functionSymbol: KaFunctionSymbol,
     ): List<PsiMethod> {
+        functionSymbol.anchorPsiIfNotKotlin()?.let { return listOfNotNull(it as? PsiMethod) }
+
         val functionSymbolPointer = functionSymbol.createPointer()
         val functionSymbolPsi = functionSymbol.getPsiForMatching()
 

@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.utils.LightClassMemberUtils
 import org.jetbrains.kotlin.light.classes.symbol.utils.SafeNestedNullableCaffeineCache
 import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.utils.anchorPsiIfNotKotlin
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
@@ -398,6 +399,8 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     override fun getLightClass(
         classSymbol: KaClassSymbol,
     ): PsiClass? {
+        classSymbol.anchorPsiIfNotKotlin()?.let { return it as? PsiClass }
+
         val contextModule = useSiteModule.takeIf(KaModule::isValidContextModule) ?: return null
         return getLightClass(classSymbol, contextModule)
     }
