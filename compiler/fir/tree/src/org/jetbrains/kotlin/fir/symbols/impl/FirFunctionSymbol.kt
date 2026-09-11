@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -62,12 +61,6 @@ sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: Cal
             }
         }
     }
-
-    val resolvedControlFlowGraphReference: FirControlFlowGraphReference?
-        get() {
-            lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-            return fir.controlFlowGraphReference
-        }
 
     val hasBody: Boolean
         get() = fir.body != null
