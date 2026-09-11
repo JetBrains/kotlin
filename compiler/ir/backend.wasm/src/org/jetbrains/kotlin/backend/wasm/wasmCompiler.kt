@@ -153,6 +153,15 @@ const val wasmWasiPreview2StartExportName = "wasi:cli/run@0.2.12#run"
 const val jsBuiltinsModulePrefix = "wasm:"
 const val importedStringConstants = "'"
 
+/**
+ * Entry point of the unit test runner.
+ *
+ * All lowercase, since it has to be both a JavaScript identifier (wasm-js) and a WIT label (WASI test binaries are
+ * turned into Component Model components, whose export names have to be WIT labels, and `wasmtime --invoke` parses
+ * WAVE); camelCase is not a WIT label and kebab-case is not an identifier.
+ */
+internal const val wasmUnitTestsExportName = "startunittests"
+
 class MultimoduleCompileOptions(
     val stdlibModuleNameForImport: String?,
     val dependencyModules: Set<WasmModuleDependencyImport>,
