@@ -66,8 +66,6 @@ private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[ProjectIsolationStartParameterAccessor.Factory::class] =
         ProjectIsolationStartParameterAccessorG76.Factory()
-    factories[CompatibilityConventionRegistrar.Factory::class] =
-        CompatibilityConventionRegistrarG76.Factory()
     factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
         ConfigurationCacheStartParameterAccessorG76.Factory()
     factories[MavenPublicationComponentAccessor.Factory::class] =
