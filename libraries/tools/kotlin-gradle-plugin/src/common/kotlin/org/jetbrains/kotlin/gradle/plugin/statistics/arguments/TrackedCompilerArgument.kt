@@ -28,13 +28,15 @@ internal class TrackedCompilerArgument<A : CommonToolArguments>(
      * CLI names of the arguments this rule reads, for example `["-jvm-default", "-Xjvm-default"]`.
      */
     val cliArguments: List<String>,
+    private val reportImplicit: Boolean,
     private val reporter: (A, StatisticsValuesConsumer) -> Unit,
 ) {
     fun reportIfApplicable(arguments: CommonToolArguments, consumer: StatisticsValuesConsumer) {
         if (!argumentsClass.isInstance(arguments)) return
-        if (!arguments.wasExplicitlyPassed(cliArguments)) return
-        @Suppress("UNCHECKED_CAST")
-        reporter(arguments as A, consumer)
+        if (reportImplicit || arguments.wasExplicitlyPassed(cliArguments)) {
+            @Suppress("UNCHECKED_CAST")
+            reporter(arguments as A, consumer)
+        }
     }
 
     override fun toString(): String = "${argumentsClass.simpleName}: ${cliArguments.joinToString("/")}"
@@ -63,9 +65,10 @@ internal class TrackedArgumentsBuilder{
         fun booleanMetric(
             metric: BooleanMetrics,
             vararg cliArguments: String,
+            allowImplicit: Boolean = false,
             extract: (A) -> Boolean?,
         ) {
-            register(cliArguments) { arguments, consumer ->
+            register(cliArguments, allowImplicit) { arguments, consumer ->
                 extract(arguments)?.let { consumer.report(metric, it) }
             }
         }
@@ -84,9 +87,10 @@ internal class TrackedArgumentsBuilder{
         fun numberMetric(
             metric: NumericalMetrics,
             vararg cliArguments: String,
+            allowImplicit: Boolean = false,
             extract: (A) -> Long?,
         ) {
-            register(cliArguments) { arguments, consumer ->
+            register(cliArguments, allowImplicit) { arguments, consumer ->
                 extract(arguments)?.let { consumer.report(metric, it) }
             }
         }
@@ -105,10 +109,11 @@ internal class TrackedArgumentsBuilder{
         fun <V : Any> stringMetric(
             metric: StringMetrics,
             vararg cliArguments: String,
+            allowImplicit: Boolean = false,
             extract: (A) -> V?,
             convert: (V) -> String? = { it.toString() },
         ) {
-            register(cliArguments) { arguments, consumer ->
+            register(cliArguments, allowImplicit) { arguments, consumer ->
                 extract(arguments)?.let(convert)?.let { consumer.report(metric, it) }
             }
         }
@@ -133,6 +138,7 @@ internal class TrackedArgumentsBuilder{
             stringMetric(
                 metric,
                 argument.cliArgument,
+                allowImplicit = default != null,
                 extract = { argument.get(it) ?: default },
                 convert = { it }
             )
@@ -141,10 +147,11 @@ internal class TrackedArgumentsBuilder{
         fun <V : Any> stringListMetric(
             metric: StringListMetrics,
             vararg cliArguments: String,
+            allowImplicit: Boolean = false,
             extract: (A) -> V?,
             convert: (V) -> String? = { it.toString() },
         ) {
-            register(cliArguments) { arguments, consumer ->
+            register(cliArguments, allowImplicit) { arguments, consumer ->
                 extract(arguments)?.let(convert)?.let { consumer.report(metric, it) }
             }
         }
@@ -188,8 +195,8 @@ internal class TrackedArgumentsBuilder{
             )
         }
 
-        private fun register(cliArguments: Array<out String>, reporter: (A, StatisticsValuesConsumer) -> Unit) {
-            trackedArguments += TrackedCompilerArgument(argumentsClass, cliArguments.toList(), reporter)
+        private fun register(cliArguments: Array<out String>, allowImplicit: Boolean, reporter: (A, StatisticsValuesConsumer) -> Unit) {
+            trackedArguments += TrackedCompilerArgument(argumentsClass, cliArguments.toList(), allowImplicit, reporter)
         }
     }
 
