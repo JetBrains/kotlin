@@ -1553,7 +1553,8 @@ class ExpressionCodegen(
             return IrCallGenerator.DefaultCallGenerator
         }
 
-        if (element.origin == JvmLoweredStatementOrigin.DEFAULT_STUB_CALL_TO_IMPLEMENTATION) {
+        val isDefaultStubCallToImplementation = element.origin == JvmLoweredStatementOrigin.DEFAULT_STUB_CALL_TO_IMPLEMENTATION
+        if (isDefaultStubCallToImplementation && sharesParameterLayoutWithEnclosingDefaultStub(element.symbol.owner)) {
             return IrInlineDefaultCodegen
         }
 
@@ -1590,9 +1591,21 @@ class ExpressionCodegen(
             mappings,
             sourceCompiler,
             reifiedTypeInliner,
-            markInlinedSuspensionPointAsUnitReturning
+            markInlinedSuspensionPointAsUnitReturning,
+            isDefaultStubCallToImplementation,
         )
     }
+
+    /**
+     * Whether [callee] and the enclosing `$default` stub use the same JVM parameter layout.
+     * [IrInlineDefaultCodegen] can reuse local slots only in this case; otherwise the general inliner has to coerce
+     * arguments, e.g. for nullable default-stub parameters of primitive-mapped type parameters. See KT-89206.
+     */
+    private fun sharesParameterLayoutWithEnclosingDefaultStub(callee: IrFunction): Boolean =
+        callee.parameters.size <= irFunction.parameters.size &&
+                callee.parameters.indices.all { index ->
+                    typeMapper.mapType(callee.parameters[index].type) == typeMapper.mapType(irFunction.parameters[index].type)
+                }
 
     private fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
         require(typeParameter is IrTypeParameterSymbol)

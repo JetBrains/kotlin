@@ -53,6 +53,9 @@ class MethodInliner(
     private val defaultMaskStart: Int = -1,
     private val defaultMaskEnd: Int = -1,
     private val skipLineNumbers: Boolean = false,
+    // Whether this is the call to the underlying function in a `$default` stub, which
+    // could not be handled because the two disagree on the JVM parameter layout. See KT-89206.
+    private val skipParameterLocalVariables: Boolean = false,
 ) {
     private val languageVersionSettings = inliningContext.state.config.languageVersionSettings
     private val invokeCalls = ArrayList<InvokeCall>()
@@ -506,6 +509,9 @@ class MethodInliner(
 
         inliningContext.inlineScopesGenerator?.addInlineScopesInfo(node, isRegeneratingAnonymousObject())
 
+        val skippedParameterLocalVariablesEnd =
+            if (skipParameterLocalVariables) argumentsSize(node.desc, node.access and Opcodes.ACC_STATIC != 0) else 0
+
         val transformationVisitor = object : InlineMethodInstructionAdapter(transformedNode) {
             private val GENERATE_DEBUG_INFO = GENERATE_SMAP && !isInlineOnlyMethod
 
@@ -573,6 +579,7 @@ class MethodInliner(
 
             override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) {
                 if (!isInliningLambda && !GENERATE_DEBUG_INFO) return
+                if (index < skippedParameterLocalVariablesEnd) return
 
                 val isInlineFunctionMarker = name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION)
                 val newName = when {
