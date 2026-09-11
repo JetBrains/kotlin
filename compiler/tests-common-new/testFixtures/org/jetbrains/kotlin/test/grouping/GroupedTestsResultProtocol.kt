@@ -125,15 +125,11 @@ object GroupedTestsResultProtocol {
      * in-progress crash and a malformed line carrying that same ID. This per-test correlation prevents a malformed
      * line for one test from being associated with another test's crash in the same VM output. The
      * per-test [Analysis.testResults] exposes these facts to callers without requiring them to repeat the correlation.
-     * [crashAttributedIds] contains the union of crash candidates from executions whose blocks had no malformed
-     * records. It is useful as an aggregate fact, but callers deciding whether a particular VM exception has already
-     * been accounted for must use the corresponding [ParsedExecution.crashAttributedIds] instead.
      */
     data class ParsedBatchResult(
         val outcomes: Map<String, List<Outcome>>,
         val sawStructuredBlock: Boolean,
         val crashedIds: Set<String>,
-        val crashAttributedIds: Set<String>,
         val crashedIdsInMalformedOutputs: Set<String>,
         /** The id field of every malformed line whose id was unambiguously terminated by a separator. */
         val malformedLineIds: Set<String>,
@@ -362,7 +358,6 @@ object GroupedTestsResultProtocol {
         var sawStructuredBlock = false
         val merged = LinkedHashMap<String, MutableList<Outcome>>()
         val crashedIds = LinkedHashSet<String>()
-        val crashAttributedIds = LinkedHashSet<String>()
         val crashedIdsInMalformedOutputs = LinkedHashSet<String>()
         val malformedLineIds = LinkedHashSet<String>()
         val malformedLineIdsInCrashedOutputs = LinkedHashSet<String>()
@@ -374,7 +369,6 @@ object GroupedTestsResultProtocol {
         for (parsed in parsedExecutions) {
             sawStructuredBlock = sawStructuredBlock || parsed.sawStructuredBlock
             crashedIds += parsed.crashedIds
-            crashAttributedIds += parsed.crashAttributedIds
             malformedLineIds += parsed.malformedLineIds
             for (line in parsed.malformedLines) {
                 if (malformedLines.size < MAX_RETAINED_MALFORMED_LINES) {
@@ -408,7 +402,6 @@ object GroupedTestsResultProtocol {
             outcomes = merged.mapValues { entry -> entry.value.toList() },
             sawStructuredBlock = sawStructuredBlock,
             crashedIds = crashedIds,
-            crashAttributedIds = crashAttributedIds,
             crashedIdsInMalformedOutputs = crashedIdsInMalformedOutputs,
             malformedLineIds = malformedLineIds,
             malformedLineIdsInCrashedOutputs = malformedLineIdsInCrashedOutputs,

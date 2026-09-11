@@ -441,7 +441,6 @@ class GroupedTestsResultProtocolTest {
         // Keep the last-start heuristic available to rejected-block diagnostics, but never use it to account for
         // an unexplained VM exception when the parser has already rejected the state transition.
         assertEquals(setOf("second"), result.crashedIds)
-        assertEquals(emptySet<String>(), result.crashAttributedIds)
         assertFalse(
             result.analyze(listOf("first", "second"))
                 .testResults
