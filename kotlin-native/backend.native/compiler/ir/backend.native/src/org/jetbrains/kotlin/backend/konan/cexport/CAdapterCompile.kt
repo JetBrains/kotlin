@@ -19,5 +19,6 @@ fun produceCAdapterBitcode(clang: ClangArgs, cppFile: File, bitcodeFile: File) {
             "-emit-llvm", "-c",
             "-o", bitcodeFile.absoluteFile.normalize().path
     )
+    System.gc() // Release memory before spawning clang++
     Command(clangCommand).execute()
 }
