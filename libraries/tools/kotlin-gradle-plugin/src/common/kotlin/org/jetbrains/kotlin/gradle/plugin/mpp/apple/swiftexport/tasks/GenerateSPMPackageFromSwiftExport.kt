@@ -157,6 +157,8 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         requireSameModuleGraph(targetModules)
         val swiftModules = targetModules.firstOrNull()?.modules ?: deserializeSwiftModules()
 
+        // Gradle keeps what a previous run left in an output directory, such as the sources of a renamed module.
+        fileSystem.delete { it.delete(sourcesPath, includesPath) }
         createSPMSources(swiftModules, targetModules)
         createPackageManifest(swiftModules)
         createKotlinRuntimeTarget()
