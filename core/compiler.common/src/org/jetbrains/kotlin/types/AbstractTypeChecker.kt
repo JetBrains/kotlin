@@ -679,6 +679,7 @@ object AbstractTypeChecker {
                     subTypeConstructor.getRichErrorsOfUnion().all { isSubtypeOf(state, it, superType) }
         }
 
+        // subType can't be a union type here because it's handled above.
         if (superTypeConstructor.isUnion()) {
             return superTypeConstructor.getPrimaryTypeOfUnion().let { it != null && isSubtypeOf(state, subType, it) } ||
                     superTypeConstructor.getRichErrorsOfUnion().any { isSubtypeOf(state, subType, it) }
