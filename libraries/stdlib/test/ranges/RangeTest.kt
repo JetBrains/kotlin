@@ -344,80 +344,69 @@ public class RangeTest {
         assertTrue(("range".."progression").isEmpty())
     }
 
-    @Suppress("ReplaceAssertBooleanWithAssertEquality", "EmptyRange")
-    @Test fun emptyEquals() {
-        assertTrue(IntRange.EMPTY == IntRange.EMPTY)
-        assertEquals(IntRange.EMPTY, IntRange.EMPTY)
-        assertEquals(0L..42L, 0L..42L)
-        assertEquals(0L..4200000042000000L, 0L..4200000042000000L)
-        assertEquals(3 downTo 0, 3 downTo 0)
-
-        assertEquals(2..1, 1..0)
-        assertEquals(2L..1L, 1L..0L)
-        assertEquals(2.toShort()..1.toShort(), 1.toShort()..0.toShort())
-        assertEquals(2.toByte()..1.toByte(), 1.toByte()..0.toByte())
-        assertEquals(0f..-3.14f, 3.14f..0f)
-        assertEquals(-2.0..-3.0, 3.0..2.0)
-        assertEquals(0.0..Double.NaN, 1.0..0.0)
-        assertEquals(0.0F..Float.NaN, 1.0F..0.0F)
-        assertEquals('b'..'a', 'c'..'b')
-
-        assertTrue(1 downTo 2 == 2 downTo 3)
-        assertTrue(-1L downTo 0L == -2L downTo -1L)
-        assertEquals('j'..'a' step 4, 'u'..'q' step 2)
-
-        assertFalse(0..1 == IntRange.EMPTY)
-
-        assertEquals("range".."progression", "hashcode".."equals")
-        assertFalse(("aa".."bb") == ("aaa".."bbb"))
+    private fun <T> assertAllEqual(vararg elements: T) {
+        for (i in 0..<elements.size) {
+            assertEquals(elements[i], elements[i])
+            for (j in i + 1..<elements.size) {
+                assertEquals(elements[i], elements[j])
+                assertEquals(elements[j], elements[i])
+                assertEquals(elements[i].hashCode(), elements[j].hashCode())
+            }
+        }
     }
 
     @Suppress("EmptyRange")
-    @Test fun emptyHashCode() {
-        assertEquals((0..42).hashCode(), (0..42).hashCode())
-        assertEquals((1.23..4.56).hashCode(), (1.23..4.56).hashCode())
+    @Test fun emptyEqualsHashCode() {
+        assertAllEqual(IntRange.EMPTY, 2..1, 3..<3, 1..<1, 5..4 step 1, 5..4 step 5, 0 downTo 3 step 2)
+        assertAllEqual(LongRange.EMPTY, 2L..1L, 3L..<3L, 1L..<1L, 5L..4L step 1, 5L..4L step 5, 0L downTo 3L step 2)
+        assertAllEqual(CharRange.EMPTY, 'b'..'a', 'c'..<'b', 'a'..<'a', 'e'..'d' step 2, 'e'..'d' step 5, 'a' downTo 'c' step 2)
+        assertAllEqual(0f..-3.14f, 3.14f..0f, 0.0F..Float.NaN, Float.NaN..Float.MAX_VALUE)
+        assertAllEqual(-2.0..-3.0, 3.0..2.0, 0.0..Double.NaN, Double.NaN..Double.MAX_VALUE)
+        assertAllEqual("range".."progression", "hashcode".."equals")
 
-        assertEquals((0..-1).hashCode(), IntRange.EMPTY.hashCode())
-        assertEquals((2L..1L).hashCode(), (1L..0L).hashCode())
-        assertEquals((0.toShort()..(-1).toShort()).hashCode(), (42.toShort()..0.toShort()).hashCode())
-        assertEquals((0.toByte()..(-1).toByte()).hashCode(), (42.toByte()..0.toByte()).hashCode())
-        assertEquals((0f..-3.14f).hashCode(), (2.39f..1.41f).hashCode())
-        assertEquals((0.0..-10.0).hashCode(), (10.0..0.0).hashCode())
-        assertEquals(('z'..'x').hashCode(), ('l'..'k').hashCode())
-
-        assertEquals((1 downTo 2).hashCode(), (2 downTo 3).hashCode())
-        assertEquals((1L downTo 2L).hashCode(), (2L downTo 3L).hashCode())
-        assertEquals(('a' downTo 'b').hashCode(), ('c' downTo 'd').hashCode())
-
-        assertEquals(("range".."progression").hashCode(), ("hashcode".."equals").hashCode())
+        assertNotEquals(0..1, IntRange.EMPTY)
+        assertNotEquals(0L..1L, LongRange.EMPTY)
+        assertNotEquals('a'..'b', CharRange.EMPTY)
+        assertNotEquals("aa".."bb", "bb".."aa")
     }
 
     @Suppress("EmptyRange")
     @Test fun emptyOpenEquals() {
-        assertEquals(0..<0, 1..<1)
-        assertEquals(0..-1, 1..<1)
-        assertEquals(0L..<0L, 1L..<1L)
-        assertEquals(0L..-1L, 1L..<1L)
-
-        assertEquals(0u..<0u, 1u..<1u)
-        assertEquals(1u..0u, 2u..<2u)
-        assertEquals(0uL..<0uL, 1uL..<1uL)
-        assertEquals(1uL..0uL, 2uL..<2uL)
-
         assertEquals(Double.NaN..<0.0, 0.0..<0.0)
         assertEquals(0.0F..<Float.NaN, 0.0F..<0.0F)
+
         assertNotEquals<Any>(1.0..0.0, 1.0..<0.0)
         assertNotEquals<Any>(1.0F..0.0F, 1.0F..<0.0F)
     }
 
     @Test
+    fun nonEmptyEquals() {
+        assertAllEqual(0..42, 0..<43, 0..42 step 1)
+        assertAllEqual(0L..4200000042000000L, 0L..<4200000042000001L, 0L..4200000042000000L step 1)
+        assertAllEqual('a'..'d', 'a'..<'e', 'a'..'d' step 1)
+
+        assertAllEqual(0.0..1.0, 0.0..1.0)
+        assertAllEqual(0.0F..1.0F, 0.0F..1.0F)
+
+        assertAllEqual(3 downTo 0, 3 downTo 0 step 1)
+        assertAllEqual(3L downTo 0L, 3L downTo 0L step 1)
+        assertAllEqual('d' downTo 'a', 'd' downTo 'a' step 1)
+    }
+
+    @Test
     fun nonEmptyRangeHashCode() {
+        fun <N : Comparable<N>, R> checkIterableRangeHashCode(range: R) where R : ClosedRange<N>, R : Iterable<N> {
+            assertEquals(31 * 31 * range.start.hashCode() + 31 * range.endInclusive.hashCode() + 1, range.hashCode())
+        }
         fun <N : Comparable<N>> checkHashCode(range: ClosedRange<N>) {
             assertEquals(31 * range.start.hashCode() + range.endInclusive.hashCode(), range.hashCode())
         }
-        checkHashCode(1u..10u)
-        checkHashCode(1uL..10uL)
-        checkHashCode('a'..'z')
+        checkIterableRangeHashCode(1..10)
+        checkIterableRangeHashCode(1L..10L)
+        checkIterableRangeHashCode('a'..'z')
+        checkHashCode(1.0..2.0)
+        checkHashCode(1.0f..2.0f)
+        checkHashCode("a".."bz")
     }
 
     @Test
