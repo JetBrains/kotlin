@@ -196,13 +196,13 @@ public enum class MemberKind(kind: Int) {
  *
  * There are three main sources of this status:
  *  * Ignorability annotations: `@MustUseReturnValues` or `@IgnorableReturnValue`.
- *  * `-Xreturn-value-checker=full` compiler flag
+ *  * `-return-value-checker=full` compiler flag
  *  * For overrides, status is copied from the base function unless explicitly changed by annotation.
  *
  * Note that status is not the only factor to decide whether to report the warning on a particular callable.
  * Checker implementations should also consider other factors, such as the expression's return type or shape.
  * For example, it is typical for Unit-returning functions to have MUST_USE return value status
- * if they were compiled with `-Xreturn-value-checker=full` compiler flag.
+ * if they were compiled with `-return-value-checker=full` compiler flag.
  * However, they should not be reported as unused.
  */
 @ExperimentalMustUseStatus
@@ -210,7 +210,7 @@ public enum class ReturnValueStatus {
     /**
      * Signifies that the corresponding callable does not have status associated with its return value.
      *
-     * This is a default value for callables which were compiled without the `-Xreturn-value-checker=full` compiler flag,
+     * This is a default value for callables which were compiled without the `-return-value-checker=full` compiler flag,
      * do not belong to any scope annotated with `@MustUseReturnValues`, and override only callables with unspecified status.
      */
     UNSPECIFIED,
@@ -219,7 +219,7 @@ public enum class ReturnValueStatus {
      * Signifies that the corresponding callable has a must-use status associated with its return value.
      * A compiler might issue a warning if the return value is not used.
      *
-     * This status is set for all callables which were compiled with the `-Xreturn-value-checker=full` compiler flag,
+     * This status is set for all callables which were compiled with the `-return-value-checker=full` compiler flag,
      * or placed inside a scope annotated with `@MustUseReturnValues`,
      * unless they were annotated with `@IgnorableReturnValue`.
      *

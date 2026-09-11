@@ -5961,51 +5961,6 @@
                         "deprecatedMessage": null
                     },
                     {
-                        "name": "Xreturn-value-checker",
-                        "shortName": null,
-                        "deprecatedName": null,
-                        "description": {
-                            "current": "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
-                            "valueInVersions": []
-                        },
-                        "delimiter": null,
-                        "affectsCompilationOutcome": true,
-                        "restrictedToCompilerPhase": null,
-                        "valueType": {
-                            "type": "org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerModeType",
-                            "isNullable": {
-                                "current": false,
-                                "valueInVersions": []
-                            },
-                            "defaultValue": {
-                                "current": "disable",
-                                "valueInVersions": []
-                            }
-                        },
-                        "valueDescription": {
-                            "current": "{check|full|disable}",
-                            "valueInVersions": []
-                        },
-                        "releaseVersionsMetadata": {
-                            "introducedVersion": "2.2.0",
-                            "stabilizedVersion": null,
-                            "deprecatedVersion": null,
-                            "removedVersion": null
-                        },
-                        "argumentType": {
-                            "type": "org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerModeType",
-                            "isNullable": {
-                                "current": false,
-                                "valueInVersions": []
-                            },
-                            "defaultValue": {
-                                "current": "disable",
-                                "valueInVersions": []
-                            }
-                        },
-                        "deprecatedMessage": null
-                    },
-                    {
                         "name": "Xseparate-kmp-compilation",
                         "shortName": null,
                         "deprecatedName": null,
@@ -7065,6 +7020,63 @@
                             "defaultValue": {
                                 "current": false,
                                 "valueInVersions": []
+                            }
+                        },
+                        "deprecatedMessage": null
+                    },
+                    {
+                        "name": "return-value-checker",
+                        "shortName": null,
+                        "deprecatedName": "Xreturn-value-checker",
+                        "description": {
+                            "current": "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerModeType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": "disable",
+                                "valueInVersions": [
+                                    {
+                                        "minReleaseVersion": "2.2.0",
+                                        "maxReleaseVersion": "2.4.20",
+                                        "value": "disable"
+                                    }
+                                ]
+                            }
+                        },
+                        "valueDescription": {
+                            "current": "{check|full|disable}",
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.2.0",
+                            "stabilizedVersion": "2.5.0",
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerModeType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": "disable",
+                                "valueInVersions": [
+                                    {
+                                        "minReleaseVersion": "2.2.0",
+                                        "maxReleaseVersion": "2.4.20",
+                                        "value": "disable"
+                                    }
+                                ]
                             }
                         },
                         "deprecatedMessage": null

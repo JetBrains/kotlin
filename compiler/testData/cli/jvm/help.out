@@ -31,6 +31,8 @@ where possible options include:
                              instead of going through a graceful migration cycle.
                              Code written in progressive mode is backward compatible; however, code written without
                              progressive mode enabled may cause compilation errors in progressive mode.
+  -return-value-checker {check|full|disable}
+                             Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
   -script                    Evaluate the given Kotlin script (*.kts) file.
   -Werror                    Report an error if there are any warnings.
   -Wextra                    Enable extra checkers for K2.

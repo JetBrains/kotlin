@@ -631,6 +631,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("deprecated.args")
+    public void testDeprecated() {
+      run("deprecated.args");
+    }
+
+    @Test
     @TestMetadata("full.args")
     public void testFull() {
       run("full.args");
