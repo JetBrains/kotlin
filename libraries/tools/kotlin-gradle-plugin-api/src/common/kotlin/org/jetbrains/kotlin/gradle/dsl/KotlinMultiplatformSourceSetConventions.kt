@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
+import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_AS_ERROR_MESSAGE
 
 /**
  * Provides static accessors for source set conventions
@@ -1286,7 +1287,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.macosX64Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -1310,7 +1311,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.macosX64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -1472,7 +1473,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.tvosX64Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -1496,8 +1497,56 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.tvosX64Test: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the main Kotlin Source Set of watchosArm32 target.
+     * Declare watchosArm32 target to access this source set.
+     * If watchosArm32 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    watchosArm32() // Target is declared, watchosArm32Main source set is created
+     *
+     *    sourceSets {
+     *      watchosArm32Main.dependencies {
+     *          // Add watchosArm32Main dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
+    val NamedDomainObjectContainer<KotlinSourceSet>.watchosArm32Main: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the test Kotlin Source Set of watchosArm32 target.
+     * Declare watchosArm32 target to access this source set.
+     * If watchosArm32 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    watchosArm32() // Target is declared, watchosArm32Test source set is created
+     *
+     *    sourceSets {
+     *      watchosArm32Test.dependencies {
+     *          // Add watchosArm32Test dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
+    val NamedDomainObjectContainer<KotlinSourceSet>.watchosArm32Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
      * Static accessor for the main Kotlin Source Set of watchosArm64 target.
@@ -1658,7 +1707,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.watchosX64Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -1682,7 +1731,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.watchosX64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     // endregion
