@@ -147,6 +147,9 @@ object Mapping : TemplateGroupBase() {
             else -> "samples.collections.Collections.Transformations"
         }
         sample("${sampleClass(f)}.mapNotNull")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.mapNotNull")
+        }
 
         body {
             "return mapNotNullTo(ArrayList<R>(), transform)"
