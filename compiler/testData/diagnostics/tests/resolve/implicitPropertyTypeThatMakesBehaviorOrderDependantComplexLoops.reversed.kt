@@ -1,9 +1,3 @@
-// LL_FIR_DIVERGENCE
-// The test is about implicit property types whose inference result depends on the order in which the declarations are resolved. LL FIR
-// resolves the declarations of a file lazily and bottom-up, the deepest and innermost one first, while the compiler goes through them in
-// the document order. So a different set of `TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM` diagnostics is reported, which is exactly the
-// order dependency KT-76240 is about.
-// LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76240
 // IGNORE_PARTIAL_BODY_ANALYSIS
