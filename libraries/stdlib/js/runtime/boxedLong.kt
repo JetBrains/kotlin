@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,19 @@ package kotlin.js.internal.boxedLong
 import withType
 import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.math.floor
 import kotlin.reflect.js.internal.PrimitiveKClassImpl
+
+/* Several algorithms come from "the JS Long paper":
+ *   S. Doeraene and T. Schlatter,
+ *   "64-bit Integer Division for the JavaScript Platform,"
+ *   33rd IEEE Symposium on Computer Arithmetic (ARITH), Fulda, Germany, 2026.
+ *   https://arith2026.org/papers/64-bit%20Integer%20Division%20for%20the%20JavaScript%20Platform.pdf
+ */
+private const val TWO_PWR_32_DBL_ = 4294967296.0
+private const val TWO_PWR_M32_DBL_ = 1.0 / TWO_PWR_32_DBL_
+
+private const val TWO_PWR_63_DBL_ = 9223372036854775808.0
 
 /**
  * Marks the stdlib functions that implement the pre-BigInt Long boxing or rely on [Long] being implemented as a regular class
@@ -52,13 +64,6 @@ internal annotation class BoxedLongApi
 internal fun Long.toNumber(): Double {
     // JS Long paper, Section V.A.
     return high.toDouble() * TWO_PWR_32_DBL_ + uintToDouble(low)
-}
-
-@BoxedLongApi
-@InlineOnly
-private inline fun toUnsignedNumber(low: Int, high: Int): Double {
-    // JS Long paper, Section V.A.
-    return uintToDouble(high) * TWO_PWR_32_DBL_ + uintToDouble(low)
 }
 
 @BoxedLongApi
@@ -444,12 +449,6 @@ internal fun fromNumber(value: Double): Long {
     }
 }
 
-private const val TWO_PWR_32_DBL_ = 4294967296.0
-
-private const val TWO_PWR_M32_DBL_ = 1.0 / TWO_PWR_32_DBL_
-
-private const val TWO_PWR_63_DBL_ = 9223372036854775808.0
-
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 @OptIn(ExperimentalStdlibApi::class)
@@ -487,12 +486,199 @@ internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic = VOID, toIndex: d
     withType("LongArray", arr.slice(fromIndex, toIndex)).unsafeCast<LongArray>()
 
 @InlineOnly
-private inline fun bothZero(a: Int, b: Int): Boolean = (a or b) == 0
-
-@InlineOnly
 @OptIn(JsIntrinsic::class)
 private inline fun jsToInt32(x: Double): Int = jsBitOr(x, 0)
 
 @InlineOnly
 @OptIn(JsIntrinsic::class)
 private inline fun boolToInt(x: Boolean): Int = jsBitOr(x, 0)
+
+@BoxedLongApi
+@UsedFromCompilerGeneratedCode
+internal fun ulongDivide(v1: ULong, v2: ULong): ULong {
+    // JS Long paper, Section VI, Algorithm 6, specialized to get the quotient
+
+    val a = v1.toLong()
+    val b = v2.toLong()
+    val alo = a.toInt()
+    val ahi = (a ushr 32).toInt()
+    val blo = b.toInt()
+    val bhi = (b ushr 32).toInt()
+
+    /* Conveniently, when b = 0, we enter the first case, where the first thing
+     * we do is an int division by blo. If that throws an ArithmeticException,
+     * we will throw it as well. If it ignores it and returns 0, we'll also
+     * compute a 0 quotient, so we're in sync with the behavior of Int division.
+     */
+
+    if (bothZero(bhi, blo and 0xffe00000.toInt())) {
+        // b < 2^21, Algorithm 4
+        val quotHi = (ahi.toUInt() / blo.toUInt()).toInt()
+        val k = ahi - blo * quotHi
+        val quotLo = jsToInt32(toUnsignedNumber(alo, k) / blo.toDouble())
+        return makeULong(quotLo, quotHi)
+    } else if (bhi >= 0) {
+        // 2^21 <= b < 2^63, Algorithm 5
+        val aHat = toUnsignedNumber(alo, ahi)
+        val bHat = toUnsignedNumber(blo, bhi)
+        val qHat = ulongFromUnsignedSafeDouble((aHat / bHat) + 0.00390625).toLong() // 2^(-8)
+        val rHat = a - b * qHat
+        return if (rHat < 0L) (qHat - 1L).toULong() else qHat.toULong()
+    } else {
+        if (v1 >= v2) {
+            return 1UL
+        } else {
+            return 0UL
+        }
+    }
+}
+
+@BoxedLongApi
+@UsedFromCompilerGeneratedCode
+internal fun ulongRemainder(v1: ULong, v2: ULong): ULong {
+    // JS Long paper, Section VI, Algorithm 6, specialized to get the remainder
+
+    val a = v1.toLong()
+    val b = v2.toLong()
+    val alo = a.toInt()
+    val ahi = (a ushr 32).toInt()
+    val blo = b.toInt()
+    val bhi = (b ushr 32).toInt()
+
+    // See ulongDivide about division by 0
+
+    if (bothZero(bhi, blo and 0xffe00000.toInt())) {
+        // b < 2^21, Algorithm 4
+        val k = (ahi.toUInt() % blo.toUInt()).toInt()
+        val quotLo = jsToInt32(toUnsignedNumber(alo, k) / blo.toDouble())
+        val remLo = alo - blo * quotLo
+        return makeULong(remLo, 0)
+    } else if (bhi >= 0) {
+        // 2^21 <= b < 2^63, Algorithm 5
+        val aHat = toUnsignedNumber(alo, ahi)
+        val bHat = toUnsignedNumber(blo, bhi)
+        val qHat = ulongFromUnsignedSafeDouble((aHat / bHat) + 0.00390625).toLong() // 2^(-8)
+        val rHat = a - b * qHat
+        return if (rHat < 0L) (rHat + b).toULong() else rHat.toULong()
+    } else {
+        if (v1 >= v2) {
+            return v1 - v2
+        } else {
+            return v1
+        }
+    }
+}
+
+@BoxedLongApi
+@UsedFromCompilerGeneratedCode
+internal fun ulongToDouble(value: Long): Double =
+    toUnsignedNumber(value.toInt(), (value ushr 32).toInt())
+
+@InlineOnly
+private inline fun toUnsignedNumber(low: Int, high: Int): Double {
+    // See the JS Long paper, Section V.A.
+    return uintToDouble(high) * TWO_PWR_32_DBL_ + uintToDouble(low)
+}
+
+@InlineOnly
+private inline fun bothZero(a: Int, b: Int): Boolean = (a or b) == 0
+
+@InlineOnly
+private inline fun makeULong(low: Int, high: Int): ULong =
+    low.toUInt().toULong() or (high.toUInt().toULong() shl 32)
+
+@BoxedLongApi
+@UsedFromCompilerGeneratedCode
+internal fun ulongFromUnsignedSafeDouble(value: Double): ULong {
+    // JS Long paper, Section V.B.
+    return makeULong(jsToInt32(value), jsToInt32(value * TWO_PWR_M32_DBL_))
+}
+
+
+/* Conversion from ulong to string.
+ * See the JS Long paper, Section VIII.
+ */
+
+private class ToStringTableEntry(
+    val w: Int,
+    val d: Int,
+    val mHat: Double,
+    val paddingZeros: String
+)
+
+private fun makeToStringTable(): Array<ToStringTableEntry?> {
+    val r = arrayOfNulls<ToStringTableEntry>(37)
+
+    for (base in 2..36) {
+        /* - d must be the biggest exact power of base that is <= 2^30.
+         * - w is then log_radix(d).
+         * - paddingZeros is a string with exactly w '0's.
+         * - mHat = (1.0 / d.toDouble()) + 2^(-75).
+         */
+        val barrier = (1 shl 30) / base
+        var d = base
+        var w = 1
+        var paddingZeros = "0"
+        while (d <= barrier) {
+            d *= base
+            w += 1
+            paddingZeros += "0"
+        }
+        val mHat = (1.0 / d.toDouble()) + 2.6469779601696886e-23 // 2^(-75)
+        r[base] = ToStringTableEntry(w, d, mHat, paddingZeros)
+    }
+
+    return r
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+@Suppress("DEPRECATION")
+@EagerInitialization
+private val ToStringTable: Array<ToStringTableEntry?> = makeToStringTable()
+
+@BoxedLongApi
+@UsedFromCompilerGeneratedCode
+internal fun ulongToString(value: Long, base: Int): String {
+    // JS Long paper, Algorithm 10
+
+    val low = value.toInt()
+    val high = (value ushr 32).toInt()
+
+    if (high == 0) {
+        // value < 2^32
+        return jsToString(uintToDouble(low), base)
+    } else if ((high and 0xffe00000.toInt()) == 0) {
+        // value < 2^53
+        return jsToString(ulongToDouble(value), base)
+    } else {
+        // value >= 2^53
+        return ulongToStringLarge(value, base)
+    }
+}
+
+/**
+ * Converts an unsigned long >= 2^53 to string.
+ */
+@BoxedLongApi
+private fun ulongToStringLarge(value: Long, base: Int): String {
+    // JS Long paper, Algorithm 12
+
+    val entry = ToStringTable[base]!!
+    val d = entry.d
+
+    // initial approximation of the quotient and remainder
+    val aHat = ulongToDouble(value)
+    var qHat = floor(aHat * entry.mHat)
+    var rHat = value.toInt() - d * jsToInt32(qHat)
+
+    // correct the approximations
+    if (rHat < 0) {
+        qHat -= 1.0
+        rHat += d
+    }
+
+    // build the result string
+    val qStr = jsToString(qHat, base)
+    val rStr = jsToString(rHat.toDouble(), base)
+    return qStr + entry.paddingZeros.substring(rStr.length) + rStr
+}

@@ -275,6 +275,64 @@ class ULongTest {
             val v = 2.0.pow(msb) * (1.0 + Random.nextDouble())
             testTrailingBits(v, msb - 52)
         }
+
+        // ULong.MAX_VALUE - 1024 is not representable as Double exactly, it is rounded to 2^64 - 2048
+        val d = (ULong.MAX_VALUE - 1024U).toDouble() // 1.8446744073709550E19
+        val u = d.toULong()
+        testEquals(d, 18446744073709549568UL)
+        assertEquals(ULong.MAX_VALUE - 2047U, u)
+        assertEquals(-2048L, u.toLong())
+        assertEquals(u, u.toLong().toULong())
+    }
+
+    @Test
+    fun convertToLong() {
+        fun testEquals(expected: Long, u: ULong) {
+            assertEquals(expected, u.toLong())
+            assertEquals(u, expected.toULong(), "Round trip through Long")
+            assertEquals(expected, expected.toULong().toLong(), "Round trip through ULong")
+        }
+
+        testEquals(0L, zero)
+        testEquals(1L, one)
+        testEquals(-1L, max)
+        testEquals(-2L, max - 1u)
+        testEquals(-2048L, max - 2047u)
+
+        testEquals(Long.MAX_VALUE, Long.MAX_VALUE.toULong())
+        testEquals(Long.MIN_VALUE, Long.MAX_VALUE.toULong() + 1u)
+        testEquals(Long.MIN_VALUE, 9223372036854775808uL)
+        testEquals(Long.MIN_VALUE + 1, 9223372036854775809uL)
+        testEquals(Int.MAX_VALUE.toLong(), Int.MAX_VALUE.toULong())
+        testEquals(Int.MIN_VALUE.toLong(), 18446744071562067968uL)
+        testEquals(UInt.MAX_VALUE.toLong(), UInt.MAX_VALUE.toULong())
+
+        // values in the lower half [0, 2^63) keep their numeric value
+        repeat(100) {
+            val v = Random.nextLong(from = 0, until = Long.MAX_VALUE)
+            testEquals(v, v.toULong())
+            assertTrue(v.toULong().toLong() >= 0)
+        }
+
+        // values in the upper half [2^63, 2^64) map to negative Longs with the same bit pattern
+        repeat(100) {
+            val v = Random.nextLong(from = Long.MIN_VALUE, until = 0)
+            val u = v.toULong()
+            assertTrue(u >= 9223372036854775808uL)
+            assertTrue(u.toLong() < 0)
+            testEquals(v, u)
+            assertEquals(ULong.MAX_VALUE - u + 1u, (-v).toULong(), "Two's complement of $v")
+        }
+
+        // ULong values obtained from large Doubles must also convert to Long by bit pattern
+        repeat(100) {
+            val d = 2.0.pow(63) * (1 + Random.nextDouble())
+            val u = d.toULong()
+            val l = u.toLong()
+            assertTrue(l < 0, "$u should convert to a negative Long, got $l")
+            assertEquals(u, l.toULong())
+            assertEquals(u.toDouble(), d)
+        }
     }
 
     /** Creates an ULong value directly from mantissa bits of Double that is in range [2^63, 2^64). */
