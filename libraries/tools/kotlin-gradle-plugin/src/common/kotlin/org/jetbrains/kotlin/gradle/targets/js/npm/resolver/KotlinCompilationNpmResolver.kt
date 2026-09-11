@@ -167,18 +167,7 @@ class KotlinCompilationNpmResolver(
             attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
             description = "NPM configuration for $compilation."
 
-            /**
-             * [KotlinDependencyScope.COMPILE_ONLY_SCOPE] is not valid for non-JVM projects,
-             * so it is not included here.
-             * See [org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.IncorrectCompileOnlyDependenciesChecker].
-             */
-            val extendableScopes = setOf(
-                KotlinDependencyScope.API_SCOPE,
-                KotlinDependencyScope.IMPLEMENTATION_SCOPE,
-                KotlinDependencyScope.RUNTIME_ONLY_SCOPE,
-            )
-
-            extendableScopes.forEach { scope ->
+            KotlinDependencyScope.runtimeScopes.forEach { scope ->
                 val compilationConfiguration = project.compilationDependencyConfigurationByScope(
                     compilation,
                     scope

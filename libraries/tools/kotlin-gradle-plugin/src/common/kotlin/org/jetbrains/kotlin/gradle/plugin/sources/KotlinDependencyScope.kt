@@ -28,6 +28,13 @@ internal enum class KotlinDependencyScope(val scopeName: String) {
 
     companion object {
         val compileScopes = listOf(API_SCOPE, IMPLEMENTATION_SCOPE, COMPILE_ONLY_SCOPE)
+
+        /**
+         * The scopes contributing to the runtime dependencies of a compilation.
+         * [COMPILE_ONLY_SCOPE] is not included: it is not valid for non-JVM projects,
+         * see [org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.IncorrectCompileOnlyDependenciesChecker].
+         */
+        val runtimeScopes = listOf(API_SCOPE, IMPLEMENTATION_SCOPE, RUNTIME_ONLY_SCOPE)
     }
 }
 

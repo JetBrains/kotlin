@@ -5852,6 +5852,12 @@ public class org/jetbrains/kotlin/gradle/targets/web/nodejs/NpmToolingEnv {
 public abstract interface class org/jetbrains/kotlin/gradle/targets/web/npm/CommonNpmResolverPlugin : org/gradle/api/Plugin {
 }
 
+public final class org/jetbrains/kotlin/gradle/targets/web/npm/KotlinSharedNpmProjectPlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
 public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootEnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getIgnoreScripts ()Lorg/gradle/api/provider/Property;
