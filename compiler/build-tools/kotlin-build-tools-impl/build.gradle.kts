@@ -6,11 +6,15 @@ plugins {
     kotlin("jvm")
     id("generated-sources")
     id("test-inputs-check")
+    kotlin("plugin.serialization")
 }
 
 dependencies {
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
     implementation(kotlinStdlib())
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.protobuf)
+    implementation(libs.kotlinx.serialization.json)
     compileOnly(libs.guava)
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-jvm"))
