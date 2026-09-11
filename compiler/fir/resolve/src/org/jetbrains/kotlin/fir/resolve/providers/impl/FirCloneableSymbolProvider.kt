@@ -13,22 +13,16 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructType
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 @NoMutableState
@@ -36,8 +30,14 @@ class FirCloneableSymbolProvider(
     session: FirSession,
     moduleData: FirModuleData,
     scopeProvider: FirScopeProvider,
-) : FirSymbolProvider(session) {
-    private val klass = buildRegularClass {
+) : FirSingleClassSymbolProvider(buildCloneableClass(moduleData, session, scopeProvider), session)
+
+private fun buildCloneableClass(
+    moduleData: FirModuleData,
+    session: FirSession,
+    scopeProvider: FirScopeProvider,
+): FirRegularClass {
+    return buildRegularClass {
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         origin = FirDeclarationOrigin.Library
         this.moduleData = moduleData
@@ -76,37 +76,5 @@ class FirCloneableSymbolProvider(
 
         this.scopeProvider = scopeProvider
         name = StandardClassIds.Cloneable.shortClassName
-
-    }
-
-    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
-        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = true
-
-        override fun getPackageNamesWithTopLevelClassifiers(): Set<String> = setOf(StandardClassIds.Cloneable.packageFqName.asString())
-
-        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
-            if (packageFqName == StandardClassIds.Cloneable.packageFqName) {
-                setOf(StandardClassIds.Cloneable.shortClassName)
-            } else emptySet()
-    }
-
-    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        return if (classId == StandardClassIds.Cloneable) klass.symbol else null
-    }
-
-    @FirSymbolProviderInternals
-    override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-    }
-
-    @FirSymbolProviderInternals
-    override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-    }
-
-    @FirSymbolProviderInternals
-    override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-    }
-
-    override fun hasPackage(fqName: FqName): Boolean {
-        return false
     }
 }
