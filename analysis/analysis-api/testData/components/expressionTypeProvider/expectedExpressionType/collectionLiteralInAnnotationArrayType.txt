@@ -1,5 +1,14 @@
-expression: xyz
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: SomeEnum
+expression:
+  xyz
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: SomeEnum
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: SomeEnum

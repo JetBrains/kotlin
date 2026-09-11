@@ -1,5 +1,14 @@
-expression: { return@l }
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: java/lang/Runnable
+expression:
+  { return@l }
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: java/lang/Runnable
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: java/lang/Runnable
