@@ -121,7 +121,7 @@ class K1KlibMetadataModuleDescriptorFactoryImpl {
             moduleDescriptor, configuration, compositePackageFragmentAddend, lookupTracker)
     }
 
-    fun initializePackageFragmentProvider(
+    private fun initializePackageFragmentProvider(
         provider: PackageFragmentProviderImpl,
         @OptIn(K1Deprecation::class)
         fragmentsToInitialize: List<DeserializedPackageFragment>,

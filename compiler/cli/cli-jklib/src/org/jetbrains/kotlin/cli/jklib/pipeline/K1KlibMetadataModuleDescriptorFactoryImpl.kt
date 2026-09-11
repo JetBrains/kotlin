@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 class K1KlibMetadataModuleDescriptorFactoryImpl(
     private val createBuiltIns: (StorageManager) -> KotlinBuiltIns,
     private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
-    val fictitiousClassDescriptorFactories: List<ClassDescriptorFactory> = emptyList(),
+    private val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
+    private val fictitiousClassDescriptorFactories: List<ClassDescriptorFactory> = emptyList(),
 ) {
 
     fun createDescriptorOptionalBuiltIns(
@@ -123,7 +123,7 @@ class K1KlibMetadataModuleDescriptorFactoryImpl(
             moduleDescriptor, configuration, compositePackageFragmentAddend, lookupTracker)
     }
 
-    fun initializePackageFragmentProvider(
+    private fun initializePackageFragmentProvider(
         provider: PackageFragmentProviderImpl,
         @OptIn(K1Deprecation::class)
         fragmentsToInitialize: List<DeserializedPackageFragment>,
