@@ -699,8 +699,7 @@ include(":native:swift:swift-export-embeddable")
 include(
     ":js:typescript-export-model",
     ":js:typescript-printer",
-    ":js:typescript-export-standalone",
-    ":js:typescript-export-standalone-embeddable"
+    ":js:typescript-export-standalone"
 )
 
 include(
