@@ -24,6 +24,7 @@ interface TestVersions {
         const val G_9_5 = "9.5.1"
         const val G_9_6 = "9.6.1"
         const val G_9_7 = "9.7.0"
+        const val G_9_8 = "9.8.1"
 
         /**
          * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
@@ -33,11 +34,11 @@ interface TestVersions {
         // Should be the same minor release as GradleCompatibilityCheck.minSupportedGradleVersion
         // Check [org.jetbrains.kotlin.gradle.GradleTestVersionsSanityTest]
         const val MIN_SUPPORTED = G_8_14
-        const val MAX_SUPPORTED = G_9_7
+        const val MAX_SUPPORTED = G_9_8
     }
 
     object Kotlin {
-        const val STABLE_RELEASE = "2.3.0"
+        const val STABLE_RELEASE = "2.4.20"
 
         // Copied from KOTLIN_VERSION.kt file
         val CURRENT
@@ -55,7 +56,7 @@ interface TestVersions {
         const val AGP_91 = "9.1.1"
         const val AGP_92 = "9.2.1"
         const val AGP_93 = "9.3.2"
-        const val AGP_94 = "9.4.0"
+        const val AGP_94 = "9.4.1"
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
         const val MIN_SUPPORTED = AGP_88 // AgpCompatibilityCheck.minimalSupportedAgpVersion
@@ -78,7 +79,7 @@ interface TestVersions {
         AGP_91(AGP.AGP_91, GradleVersion.version(Gradle.G_9_3), GradleVersion.version(Gradle.G_9_5), JavaVersion.VERSION_17),
         AGP_92(AGP.AGP_92, GradleVersion.version(Gradle.G_9_4), GradleVersion.version(Gradle.G_9_5), JavaVersion.VERSION_17),
         AGP_93(AGP.AGP_93, GradleVersion.version(Gradle.G_9_5), GradleVersion.version(Gradle.G_9_7), JavaVersion.VERSION_17),
-        AGP_94(AGP.AGP_94, GradleVersion.version(Gradle.G_9_6), GradleVersion.version(Gradle.G_9_7), JavaVersion.VERSION_17),
+        AGP_94(AGP.AGP_94, GradleVersion.version(Gradle.G_9_6), GradleVersion.version(Gradle.G_9_8), JavaVersion.VERSION_17),
         ;
 
         companion object {
@@ -101,9 +102,9 @@ interface TestVersions {
         const val KOTLINX_KOVER = "0.9.8"
         const val KOTLINX_BINARY_COMPATIBILITY_VALIDATOR = "0.17.0"
         const val DOKKA = "1.8.10"
-        const val DOKKA_V2 = "2.1.0"
+        const val DOKKA_V2 = "2.2.0"
 
-        const val KSP = "1.9.22-1.0.16"
+        const val KSP = "2.3.12"
     }
 
     object Compose {
