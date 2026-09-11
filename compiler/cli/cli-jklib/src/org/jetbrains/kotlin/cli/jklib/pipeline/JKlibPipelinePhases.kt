@@ -378,7 +378,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
                 metadataFlags(configuration.languageVersionSettings)
             }
-            includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
+            includeMetadata(serializerOutput.serializedMetadata)
             includeIr(serializerOutput.serializedIr)
         }.writeTo(destination)
 
@@ -438,7 +438,7 @@ object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArti
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
                 metadataFlags(configuration.languageVersionSettings)
             }
-            includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
+            includeMetadata(serializerOutput.serializedMetadata)
             // serializedIr is null for metadata-only serialization; includeIr(null) is a no-op.
             includeIr(serializerOutput.serializedIr)
         }.writeTo(destination)
