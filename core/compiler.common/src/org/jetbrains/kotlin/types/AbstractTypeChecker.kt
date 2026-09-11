@@ -681,7 +681,17 @@ object AbstractTypeChecker {
 
         // subType can't be a union type here because it's handled above.
         if (superTypeConstructor.isUnion()) {
-            return superTypeConstructor.getPrimaryTypeOfUnion().let { it != null && isSubtypeOf(state, subType, it) } ||
+            val superTypePrimaryType = superTypeConstructor.getPrimaryTypeOfUnion()
+
+            if (!AbstractNullabilityChecker.isSubtypeOfAny(state, subType)) {
+                if (superTypePrimaryType == null || AbstractNullabilityChecker.isSubtypeOfAny(state, superTypePrimaryType)) return false
+
+                val notNullSubType = subType.makeDefinitelyNotNullOrNotNull()
+                return isSubtypeOf(state, notNullSubType, superTypePrimaryType) ||
+                        superTypeConstructor.getRichErrorsOfUnion().any { isSubtypeOf(state, notNullSubType, it) }
+            }
+
+            return superTypePrimaryType.let { it != null && isSubtypeOf(state, subType, it) } ||
                     superTypeConstructor.getRichErrorsOfUnion().any { isSubtypeOf(state, subType, it) }
         }
 
