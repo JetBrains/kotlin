@@ -680,6 +680,10 @@ object Filtering : TemplateGroupBase() {
                 """
             }
         }
+
+        specialFor(CharSequences, Strings) {
+            sample("samples.text.Strings.filterIndexed")
+        }
     }
 
     val f_filterIndexedTo = fn("filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean)") {
@@ -707,6 +711,10 @@ object Filtering : TemplateGroupBase() {
             }
             return destination
             """
+        }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.filterIndexedTo")
         }
     }
 
