@@ -12,26 +12,26 @@
     },
     "isLocal": false
   },
-  "classAbiHash": 2881075740228300324,
+  "classAbiHash": 6080175213331035933,
   "classMemberLevelSnapshot": {
     "classAbiExcludingMembers": {
       "name": "com/example/SimpleClass",
-      "abiHash": 8734303838782665320
+      "abiHash": -1281978324851116160
     },
     "fieldsAbi": [
       {
         "name": "publicField",
-        "abiHash": -2698261112133196916
+        "abiHash": 1995453259267068234
       }
     ],
     "methodsAbi": [
       {
         "name": "\u003cinit\u003e",
-        "abiHash": 6894913661751208844
+        "abiHash": -128995387587966260
       },
       {
         "name": "publicMethod",
-        "abiHash": -3018578973377534537
+        "abiHash": 6488922784965681426
       }
     ]
   },
