@@ -39,6 +39,7 @@ class FirErrorPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilde
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     override val contextParameters: MutableList<FirValueParameter> = []
+    override var isCopy: Boolean = false
     override lateinit var name: Name
     override var initializer: FirExpression? = null
     override var backingField: FirBackingField? = null
@@ -59,6 +60,7 @@ class FirErrorPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilde
             containerSource,
             dispatchReceiverType,
             contextParameters.toMutableOrEmpty(),
+            isCopy,
             name,
             initializer,
             backingField,

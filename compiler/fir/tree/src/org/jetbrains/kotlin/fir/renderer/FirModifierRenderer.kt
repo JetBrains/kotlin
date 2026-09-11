@@ -43,6 +43,9 @@ abstract class FirModifierRenderer {
         if (valueParameter.isVararg) {
             renderModifier("vararg")
         }
+        if (valueParameter.isCopy) {
+            renderModifier("copy")
+        }
     }
 
     open fun renderModifiers(typeParameter: FirTypeParameter) {

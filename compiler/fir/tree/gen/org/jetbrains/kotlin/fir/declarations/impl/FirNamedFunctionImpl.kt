@@ -44,6 +44,7 @@ internal class FirNamedFunctionImpl(
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var contextParameters: MutableOrEmptyList<FirValueParameter>,
+    override val isCopy: Boolean,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
     override var contractDescription: FirContractDescription?,

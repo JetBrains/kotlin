@@ -320,6 +320,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags))
         val effectiveVisibility = visibility.toLazyEffectiveVisibility(classSymbol)
         val isStatic = Flags.IS_STATIC_PROPERTY.get(proto.flags) || proto.hasCompanionExtensionReceiver()
+        val isCopy = Flags.IS_COPY_PROPERTY.get(proto.flags)
         return if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
             buildPropertyAccessor {
                 moduleData = c.moduleData
@@ -327,6 +328,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 this.returnTypeRef = FirImplicitUnitTypeRef(source)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 isGetter = false
+                this.isCopy = isCopy
                 status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(visibility, accessorModality, effectiveVisibility).apply {
                     isInline = Flags.IS_INLINE_ACCESSOR.get(setterFlags)
                     isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
@@ -358,6 +360,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(visibility, propertyModality, effectiveVisibility).apply {
                     this.isStatic = isStatic
                 },
+                isCopy = isCopy,
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             )
         }.apply {
@@ -405,6 +408,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val propertyModality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
 
         val isVar = Flags.IS_VAR.get(flags)
+        val isCopy = Flags.IS_COPY_PROPERTY.get(flags)
         val versionRequirements = VersionRequirement.create(proto, c)
 
         // classSymbol?.classKind?.isAnnotationClass throws 'Fir is not initialized for FirRegularClassSymbol kotlin/String'
@@ -426,6 +430,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             name = callableName
             this.isVar = isVar
+            this.isCopy = isCopy
             this.symbol = symbol
             val isStatic = Flags.IS_STATIC_PROPERTY.get(flags) || proto.hasCompanionExtensionReceiver()
             dispatchReceiverType = runUnless(isStatic) { c.dispatchReceiver }
@@ -702,6 +707,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 hasStableParameterNames = !Flags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
                 returnValueStatus = ProtoEnumFlags.returnValueStatus(Flags.RETURN_VALUE_STATUS_FUNCTION.get(flags))
             }
+            this.isCopy = Flags.IS_COPY_FUNCTION.get(flags)
             isLocal = false
             this.symbol = symbol
             dispatchReceiverType = runUnless(isStatic) { c.dispatchReceiver }

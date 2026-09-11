@@ -54,6 +54,8 @@ class FirErrorPrimaryConstructorImpl @FirImplementationDetail constructor(
     override var body: FirBlock?,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorPrimaryConstructor() {
+    override val isCopy: Boolean
+        get() = false
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val isPrimary: Boolean
         get() = true

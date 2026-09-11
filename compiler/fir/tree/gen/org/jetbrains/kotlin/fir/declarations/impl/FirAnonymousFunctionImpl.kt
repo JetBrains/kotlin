@@ -44,6 +44,7 @@ internal class FirAnonymousFunctionImpl(
     override var deprecationsProvider: DeprecationsProvider,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var contextParameters: MutableOrEmptyList<FirValueParameter>,
+    override val isCopy: Boolean,
     override var controlFlowGraphReference: FirControlFlowGraphReference?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,

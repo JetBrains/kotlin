@@ -45,6 +45,9 @@ class FirPartialModifierRenderer(private val staticPolicy: StaticPolicy) : FirMo
         if (memberDeclaration.isSuspend) {
             renderModifier("suspend")
         }
+        if (memberDeclaration is FirCallableDeclaration && memberDeclaration.isCopy) {
+            renderModifier("copy")
+        }
     }
 
     override fun renderModifiers(backingField: FirBackingField) {

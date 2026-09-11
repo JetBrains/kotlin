@@ -45,6 +45,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBu
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     override val contextParameters: MutableList<FirValueParameter> = []
+    override var isCopy: Boolean = false
     var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val valueParameters: MutableList<FirValueParameter> = []
     override var body: FirBlock? = null
@@ -72,6 +73,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBu
             deprecationsProvider,
             dispatchReceiverType,
             contextParameters.toMutableOrEmpty(),
+            isCopy,
             controlFlowGraphReference,
             valueParameters,
             body,
@@ -129,6 +131,7 @@ inline fun buildAnonymousFunctionCopy(original: FirAnonymousFunction, init: FirA
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.contextParameters.addAll(original.contextParameters)
+    copyBuilder.isCopy = original.isCopy
     copyBuilder.controlFlowGraphReference = original.controlFlowGraphReference
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.body = original.body

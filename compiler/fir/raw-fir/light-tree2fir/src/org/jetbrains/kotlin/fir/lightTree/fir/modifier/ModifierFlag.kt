@@ -47,6 +47,7 @@ enum class ModifierFlag(val value: Long) {
     REIFICATION_REIFIED(1L shl 34),
     CLASS_VALUE(1L shl 35),
     CLASS_ERROR(1L shl 36),
+    COPY(1L shl 37)
     ;
 
     companion object {
@@ -98,6 +99,9 @@ enum class ModifierFlag(val value: Long) {
 
             // Reification
             KtTokens.REIFIED_KEYWORD to REIFICATION_REIFIED,
+
+            // Copy
+            KtTokens.COPY_KEYWORD to COPY,
         )
     }
 }

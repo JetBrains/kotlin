@@ -576,6 +576,7 @@ class FirElementSerializer private constructor(
             property.delegateFieldSymbol != null,
             property.isExpect,
             property.isCompanionBlockMember,
+            property.isCopy,
             ProtoEnumFlags.returnValueStatus(property.status.returnValueStatus),
         )
         if (flags != builder.flags) {
@@ -664,6 +665,7 @@ class FirElementSerializer private constructor(
             namedFunction?.isExpect == true,
             shouldSetStableParameterNames(function),
             function.isCompanionBlockMember,
+            function.isCopy,
             ProtoEnumFlags.returnValueStatus(namedFunction?.status?.returnValueStatus),
         )
 

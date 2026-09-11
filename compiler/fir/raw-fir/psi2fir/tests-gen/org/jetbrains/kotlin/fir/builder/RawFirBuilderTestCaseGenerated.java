@@ -234,6 +234,12 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
     }
 
     @Test
+    @TestMetadata("copy.kt")
+    public void testCopy() {
+      run("copy.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationOnMemberClass.kt")
     public void testDanglingAnnotationOnMemberClass() {
       run("danglingAnnotationOnMemberClass.kt");

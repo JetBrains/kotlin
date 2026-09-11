@@ -59,6 +59,7 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner, FirCon
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
     abstract override val contextParameters: List<FirValueParameter>
+    abstract override val isCopy: Boolean
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val contractDescription: FirContractDescription?

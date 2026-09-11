@@ -95,6 +95,9 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override val isLocal: Boolean
         get() = false
 
+    override val isCopy: Boolean
+        get() = false
+
     internal fun withTypeParameterBoundsResolveLock(f: () -> Unit) {
         // TODO: KT-68587
         typeParameterBoundsResolveLock.withLock(f)
@@ -243,6 +246,13 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
 
     @Deprecated("Modification of 'isLocal' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
     override var isLocal: Boolean
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'isCopy' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
+    override var isCopy: Boolean
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

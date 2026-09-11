@@ -35,6 +35,7 @@ internal class FirReceiverParameterImpl(
     override var typeRef: FirTypeRef,
     override val containingDeclarationSymbol: FirBasedSymbol<*>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
+    override val isCopy: Boolean,
 ) : FirReceiverParameter() {
 
     init {

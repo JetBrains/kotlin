@@ -52,6 +52,8 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override var delegatedConstructor: FirDelegatedConstructorCall?,
     override var body: FirBlock?,
 ) : FirConstructor() {
+    override val isCopy: Boolean
+        get() = false
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val isPrimary: Boolean
         get() = true

@@ -79,7 +79,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         val abstractConstructorBuilder by builder {
             parents += functionBuilder
-            fields from constructor without listOf("isPrimary")
+            fields from constructor without listOf("isPrimary", "isCopy")
         }
 
         val abstractFunctionCallBuilder by builder {
@@ -119,6 +119,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         }
 
         builder(receiverParameter) {
+            defaultFalse("isCopy")
             withCopy()
         }
 
@@ -236,6 +237,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         val variableBuilder by builder {
             fields from variable without listOf("symbol", "typeParameters", "isVal")
             parents += declarationBuilder
+            defaultFalse("isCopy")
         }
 
         builder(property) {
@@ -244,6 +246,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             defaultNull("getter", "setter", "containerSource", "delegateFieldSymbol")
             default("resolvePhase", "FirResolvePhase.RAW_FIR")
             default("bodyResolveState", "FirPropertyBodyResolveState.NOTHING_RESOLVED")
+            defaultFalse("isCopy")
             withCopy()
         }
 
@@ -251,6 +254,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             parents += variableBuilder
             parents += typeParametersOwnerBuilder
             default("bodyResolveState", "FirPropertyBodyResolveState.NOTHING_RESOLVED")
+            defaultFalse("isCopy")
         }
 
         builder(field) {
@@ -296,12 +300,14 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             default("status", "FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS")
             default("typeRef", "FirImplicitTypeRefImplWithoutSource")
             additionalImports(resolvedDeclarationStatusImport, firImplicitTypeWithoutSourceType)
+            defaultFalse("isCopy")
             withCopy()
         }
 
         builder(propertyAccessor) {
             parents += functionBuilder
             defaultNull("body", "contractDescription")
+            defaultFalse("isCopy")
             withCopy()
         }
 
@@ -359,7 +365,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         builder(valueParameter, type = "FirValueParameterImpl") {
             openBuilder()
             withCopy()
-            defaultFalse("isCrossinline", "isNoinline", "isVararg")
+            defaultFalse("isCrossinline", "isNoinline", "isVararg", "isCopy")
             default("valueParameterKind", "FirValueParameterKind.Regular")
         }
 
@@ -370,8 +376,13 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             parents += functionBuilder
             parents += typeParametersOwnerBuilder
             defaultNull("body", "contractDescription")
+            defaultFalse("isCopy")
             openBuilder()
             withCopy()
+        }
+
+        builder(errorFunction) {
+            defaultFalse("isCopy")
         }
 
         builder(smartCastExpression) {

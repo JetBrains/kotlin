@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor(
     val delegate: FirNamedFunction,
     override val isGetter: Boolean,
+    override val isCopy: Boolean,
     override val propertySymbol: FirPropertySymbol,
 ) : FirPropertyAccessor() {
     override val source: KtSourceElement?

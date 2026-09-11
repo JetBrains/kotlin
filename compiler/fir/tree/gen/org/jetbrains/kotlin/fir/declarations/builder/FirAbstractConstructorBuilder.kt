@@ -39,6 +39,7 @@ interface FirAbstractConstructorBuilder : FirFunctionBuilder {
     abstract override var containerSource: DeserializedContainerSource?
     abstract override var dispatchReceiverType: ConeSimpleKotlinType?
     abstract override val contextParameters: MutableList<FirValueParameter>
+    abstract override var isCopy: Boolean
     abstract override val valueParameters: MutableList<FirValueParameter>
     abstract override var body: FirBlock?
     abstract val typeParameters: MutableList<FirTypeParameterRef>

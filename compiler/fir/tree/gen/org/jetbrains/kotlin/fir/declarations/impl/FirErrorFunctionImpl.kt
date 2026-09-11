@@ -41,6 +41,7 @@ internal class FirErrorFunctionImpl(
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var contextParameters: MutableOrEmptyList<FirValueParameter>,
+    override val isCopy: Boolean,
     override val valueParameters: MutableList<FirValueParameter>,
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorFunctionSymbol,

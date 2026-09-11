@@ -216,6 +216,12 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
     }
 
     @Test
+    @TestMetadata("copy.kt")
+    public void testCopy() {
+      run("copy.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationOnMemberClass.kt")
     public void testDanglingAnnotationOnMemberClass() {
       run("danglingAnnotationOnMemberClass.kt");

@@ -42,6 +42,7 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     override val contextParameters: MutableList<FirValueParameter> = []
+    override var isCopy: Boolean = false
     override lateinit var name: Name
     override var initializer: FirExpression? = null
     override var delegate: FirExpression? = null
@@ -70,6 +71,7 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
             containerSource,
             dispatchReceiverType,
             contextParameters.toMutableOrEmpty(),
+            isCopy,
             name,
             initializer,
             delegate,
@@ -114,6 +116,7 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.contextParameters.addAll(original.contextParameters)
+    copyBuilder.isCopy = original.isCopy
     copyBuilder.name = original.name
     copyBuilder.initializer = original.initializer
     copyBuilder.delegate = original.delegate

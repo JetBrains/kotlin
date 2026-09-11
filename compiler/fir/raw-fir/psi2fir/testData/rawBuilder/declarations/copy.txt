@@ -1,0 +1,31 @@
+FILE: copy.kt
+    public final? class Person : R|kotlin/Any| {
+        public? [ContainingClassKey=Person] constructor([CorrespondingProperty=/Person.name] copy name: String, [CorrespondingProperty=/Person.title] copy title: String?): R|Person| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? copy [IsFromPrimaryConstructor=true] var name: String = R|<local>/name|
+            public? [ContainingClassKey=Person] get(): String
+            public? copy [ContainingClassKey=Person] set(value: String): R|kotlin/Unit|
+
+        public? final? copy [IsFromPrimaryConstructor=true] var title: String? = R|<local>/title|
+            public? [ContainingClassKey=Person] get(): String?
+            public? copy [ContainingClassKey=Person] set(value: String?): R|kotlin/Unit|
+
+        public? final? copy var visibleName: String
+            public? [ContainingClassKey=Person] get(): String
+            public? copy [ContainingClassKey=Person] set(value: String): R|kotlin/Unit|
+
+        public? final? copy fun capitalize(): R|kotlin/Unit| {
+        }
+
+        public? final? fun test(): R|kotlin/Unit| {
+            lval f: <implicit> = fun <implicit>.<anonymous>(copy x: <implicit>): <implicit> <inline=Unknown>  {
+                IntegerLiteral(0)
+            }
+
+        }
+
+    }
+    public? final? copy fun Person.doSomething(): R|kotlin/Unit| {
+    }

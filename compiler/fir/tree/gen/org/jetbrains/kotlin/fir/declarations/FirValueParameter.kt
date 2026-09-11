@@ -40,6 +40,7 @@ abstract class FirValueParameter : FirVariable(), FirControlFlowGraphOwner {
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
     abstract override val contextParameters: List<FirValueParameter>
+    abstract override val isCopy: Boolean
     abstract override val name: Name
     abstract override val initializer: FirExpression?
     abstract override val delegate: FirExpression?

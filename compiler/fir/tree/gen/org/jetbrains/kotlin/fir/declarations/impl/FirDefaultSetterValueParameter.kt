@@ -55,6 +55,8 @@ internal class FirDefaultSetterValueParameter(
         get() = null
     override val contextParameters: List<FirValueParameter>
         get() = emptyList()
+    override val isCopy: Boolean
+        get() = false
     override val name: Name = Name.identifier("value")
     override val initializer: FirExpression?
         get() = null

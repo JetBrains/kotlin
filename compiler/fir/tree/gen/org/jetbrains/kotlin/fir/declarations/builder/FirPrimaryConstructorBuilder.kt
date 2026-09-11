@@ -79,6 +79,13 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
     }
 
 
+    @Deprecated("Modification of 'isCopy' has no impact for FirPrimaryConstructorBuilder", level = DeprecationLevel.HIDDEN)
+    override var isCopy: Boolean
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
     @Deprecated("Modification of 'controlFlowGraphReference' has no impact for FirPrimaryConstructorBuilder", level = DeprecationLevel.HIDDEN)
     override var controlFlowGraphReference: FirControlFlowGraphReference?
         get() = throw IllegalStateException()

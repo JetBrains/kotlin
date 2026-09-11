@@ -1,0 +1,24 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] copy.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Person : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Person] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Person.name] copy name: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Person.title] copy title: R|kotlin/String?|): R|Person| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final copy [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var name: R|kotlin/String| = R|<local>/name|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Person] get(): R|kotlin/String|
+            public copy [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Person] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final copy [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var title: R|kotlin/String?| = R|<local>/title|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Person] get(): R|kotlin/String?|
+            public copy [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Person] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
+
+        public final copy [ResolvedTo(BODY_RESOLVE)] var visibleName: R|kotlin/String|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Person] get(): R|kotlin/String|
+            public copy [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Person] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final copy [ResolvedTo(ANNOTATION_ARGUMENTS)] fun capitalize(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final copy [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|Person|.doSomething(): R|kotlin/Unit| { LAZY_BLOCK }

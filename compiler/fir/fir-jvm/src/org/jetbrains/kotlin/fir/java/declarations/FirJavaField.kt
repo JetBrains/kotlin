@@ -67,6 +67,7 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val receiverParameter: FirReceiverParameter? get() = null
     override val isVal: Boolean get() = !isVar
+    override val isCopy: Boolean get() = false
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
     override val backingField: FirBackingField? = null

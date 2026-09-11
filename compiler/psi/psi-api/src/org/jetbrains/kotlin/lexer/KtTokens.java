@@ -167,6 +167,7 @@ public interface KtTokens {
     int ERROR_KEYWORD_Id = ALL_KEYWORD_Id + 1;
     int OR_Id = ERROR_KEYWORD_Id + 1;
     int ERROR_SAFE_ACCESS_Id = OR_Id + 1;
+    int COPY_KEYWORD_Id = ERROR_SAFE_ACCESS_Id + 1;
 
     @NotNull KtToken EOF   = new KtToken("EOF", EOF_Id);
 
@@ -345,6 +346,8 @@ public interface KtTokens {
     @NotNull KtModifierKeywordToken EXPECT_KEYWORD = KtModifierKeywordToken.softKeywordModifier("expect", EXPECT_KEYWORD_Id);
     @NotNull KtModifierKeywordToken ACTUAL_KEYWORD = KtModifierKeywordToken.softKeywordModifier("actual", ACTUAL_KEYWORD_Id);
 
+    @NotNull KtModifierKeywordToken COPY_KEYWORD = KtModifierKeywordToken.softKeywordModifier("copy", COPY_KEYWORD_Id);
+
 
     @NotNull
     TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, CLASS_KEYWORD, INTERFACE_KEYWORD,
@@ -369,7 +372,7 @@ public interface KtTokens {
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
                                              ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD,
                                              SUSPEND_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD,
-                                             VALUE_KEYWORD, CONTEXT_KEYWORD, ERROR_KEYWORD
+                                             VALUE_KEYWORD, CONTEXT_KEYWORD, ERROR_KEYWORD, COPY_KEYWORD
     );
 
     /**
@@ -409,13 +412,14 @@ public interface KtTokens {
                     REIFIED_KEYWORD,
                     NOINLINE_KEYWORD,
                     CROSSINLINE_KEYWORD,
+                    COPY_KEYWORD,
             };
 
     @NotNull TokenSet MODIFIER_KEYWORDS = TokenSet.create(MODIFIER_KEYWORDS_ARRAY);
 
     @NotNull TokenSet TYPE_MODIFIER_KEYWORDS = TokenSet.create(SUSPEND_KEYWORD);
     @NotNull TokenSet TYPE_ARGUMENT_MODIFIER_KEYWORDS = TokenSet.create(IN_KEYWORD, OUT_KEYWORD);
-    @NotNull TokenSet RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS = TokenSet.create(OUT_KEYWORD, VARARG_KEYWORD);
+    @NotNull TokenSet RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS = TokenSet.create(OUT_KEYWORD, VARARG_KEYWORD, COPY_KEYWORD);
 
     @NotNull TokenSet VISIBILITY_MODIFIERS = TokenSet.create(PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD);
     @NotNull TokenSet MODALITY_MODIFIERS = TokenSet.create(ABSTRACT_KEYWORD, FINAL_KEYWORD, SEALED_KEYWORD, OPEN_KEYWORD);

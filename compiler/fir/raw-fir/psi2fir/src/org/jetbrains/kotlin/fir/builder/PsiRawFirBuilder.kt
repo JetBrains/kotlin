@@ -590,6 +590,7 @@ open class PsiRawFirBuilder(
                             this@toFirPropertyAccessor?.hasModifier(EXPECT_KEYWORD) == true
                     isStatic = property.hasModifier(COMPANION_KEYWORD) || isCompanionBlockMember
                 }
+            val isCopy = !isGetter && property.hasModifier(COPY_KEYWORD)
             val propertyTypeRefToUse = propertyTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
             return when {
                 this != null && hasBody() -> {
@@ -607,6 +608,7 @@ open class PsiRawFirBuilder(
                             typeReference.toFirOrUnitType()
                         }
                         this.isGetter = isGetter
+                        this.isCopy = isCopy
                         this.status = status
                         annotations += accessorAnnotationsFromProperty
                         extractAnnotationsTo(this)
@@ -662,6 +664,7 @@ open class PsiRawFirBuilder(
                             accessorVisibility,
                             propertySymbol,
                             isGetter,
+                            isCopy,
                             parameterAnnotations = parameterAnnotationsFromProperty,
                             parameterSource = valueParameter?.toKtPsiSourceElement(),
                         )
@@ -794,6 +797,7 @@ open class PsiRawFirBuilder(
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
+                isCopy = hasModifier(COPY_KEYWORD)
                 valueParameterKind = if (valueParameterDeclaration == ValueParameterDeclaration.CONTEXT_PARAMETER) {
                     FirValueParameterKind.ContextParameter
                 } else {
@@ -854,6 +858,7 @@ open class PsiRawFirBuilder(
                         }
                     }
                     isVar = isMutable
+                    isCopy = hasModifier(COPY_KEYWORD)
                     symbol = propertySymbol
 
                     val defaultBackingFieldSource = propertySource.fakeElement(KtFakeSourceElementKind.DefaultAccessor.BackingField)
@@ -901,6 +906,7 @@ open class PsiRawFirBuilder(
                         modality = status.modality,
                         parameterAnnotations = parameterAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
                         isInline = hasModifier(INLINE_KEYWORD),
+                        isCopy = hasModifier(COPY_KEYWORD),
                     ).also { setter ->
                         setter.initContainingClassAttr()
                         setter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_SETTER))
@@ -2328,6 +2334,7 @@ open class PsiRawFirBuilder(
                             isExternal = function.hasModifier(EXTERNAL_KEYWORD)
                             isSuspend = function.hasModifier(SUSPEND_KEYWORD)
                             isStatic = function.hasModifier(COMPANION_KEYWORD) || isCompanionBlockMember
+                            isCopy = function.hasModifier(COPY_KEYWORD)
                         }
                     }
                 }
@@ -2621,6 +2628,7 @@ open class PsiRawFirBuilder(
             }
             val isCompanionBlockMember = isDirectlyInsideCompanionBlock
             val isStatic = hasModifier(COMPANION_KEYWORD) || isCompanionBlockMember
+            val isCopy = hasModifier(COPY_KEYWORD)
 
             withContainerSymbol(propertySymbol, isLocal) {
                 val propertyType = typeReference.toFirOrImplicitType()
@@ -2636,6 +2644,7 @@ open class PsiRawFirBuilder(
                     returnTypeRef = propertyType
                     name = propertyName
                     this.isVar = isVar
+                    this.isCopy = isCopy
 
                     receiverParameter = receiverTypeReference?.let {
                         createReceiverParameter({ it.toFirType() }, moduleData, propertySymbol)

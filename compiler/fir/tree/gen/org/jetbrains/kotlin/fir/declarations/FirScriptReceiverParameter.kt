@@ -29,6 +29,7 @@ abstract class FirScriptReceiverParameter : FirReceiverParameter() {
     abstract override val symbol: FirReceiverParameterSymbol
     abstract override val containingDeclarationSymbol: FirBasedSymbol<*>
     abstract override val annotations: List<FirAnnotation>
+    abstract override val isCopy: Boolean
     abstract override val typeRef: FirTypeRef
     abstract val isBaseClassReceiver: Boolean
 

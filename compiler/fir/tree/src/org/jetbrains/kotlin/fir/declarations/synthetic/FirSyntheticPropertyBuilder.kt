@@ -31,10 +31,10 @@ class FirSyntheticPropertyBuilder {
 
     @OptIn(FirImplementationDetail::class)
     fun build(): FirSyntheticProperty = FirSyntheticProperty(
-        moduleData, name, isVar = delegateSetter != null, symbol = symbol,
+        moduleData, name, isVar = delegateSetter != null, isCopy = delegateSetter?.isCopy ?: false, symbol = symbol,
         customStatus = customStatus,
-        getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true, symbol),
-        setter = delegateSetter?.let { FirSyntheticPropertyAccessor(it, isGetter = false, symbol) },
+        getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true, isCopy = false, symbol),
+        setter = delegateSetter?.let { FirSyntheticPropertyAccessor(it, isGetter = false, isCopy = false, symbol) },
         dispatchReceiverType = dispatchReceiverType ?: delegateGetter.dispatchReceiverType,
         deprecationsProvider = deprecationsProvider
     )

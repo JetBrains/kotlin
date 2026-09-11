@@ -36,6 +36,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
     val contextParameters: MutableList<FirValueParameter> = []
+    var isCopy: Boolean = false
     val valueParameters: MutableList<FirValueParameter> = []
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirErrorFunctionSymbol
@@ -52,6 +53,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
             containerSource,
             dispatchReceiverType,
             contextParameters.toMutableOrEmpty(),
+            isCopy,
             valueParameters,
             diagnostic,
             symbol,

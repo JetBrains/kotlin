@@ -119,6 +119,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
         +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
         +listField(name = "contextParameters", valueParameter, useMutableOrEmpty = true, withReplace = true, withTransform = true)
+        generateBooleanFields("copy")
     }
 
     val function: Element by sealedElement(Declaration) {
@@ -905,6 +906,7 @@ object FirTree : AbstractFirTreeBuilder() {
             withBindThis = false
         }
         +annotations
+        generateBooleanFields("copy")
     }
 
     val scriptReceiverParameter: Element by element(Declaration) {

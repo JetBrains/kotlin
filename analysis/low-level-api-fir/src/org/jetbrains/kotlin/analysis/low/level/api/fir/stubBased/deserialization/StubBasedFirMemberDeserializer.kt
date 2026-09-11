@@ -247,6 +247,7 @@ internal class StubBasedFirMemberDeserializer(
         propertySource = propertySource,
         propertyStatus = propertyStatus,
         isStatic = isStatic,
+        isCopy = false,
     )
 
     private fun FirContractDescriptionOwner.loadContracts(local: StubBasedFirDeserializationContext) {
@@ -266,6 +267,7 @@ internal class StubBasedFirMemberDeserializer(
         propertySource: KtSourceElement?,
         propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
         isStatic: Boolean,
+        isCopy: Boolean,
     ): FirPropertyAccessor = loadPropertyAccessor(
         psiPropertyAccessor = setter,
         isGetter = false,
@@ -276,6 +278,7 @@ internal class StubBasedFirMemberDeserializer(
         propertySource = propertySource,
         propertyStatus = propertyStatus,
         isStatic = isStatic,
+        isCopy = isCopy,
     )
 
     private fun loadPropertyAccessor(
@@ -288,6 +291,7 @@ internal class StubBasedFirMemberDeserializer(
         propertySource: KtSourceElement?,
         propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
         isStatic: Boolean,
+        isCopy: Boolean,
     ): FirPropertyAccessor {
         val accessor = if (psiPropertyAccessor?.hasBody() == true) {
             buildPropertyAccessor {
@@ -351,6 +355,7 @@ internal class StubBasedFirMemberDeserializer(
                     propertyTypeRef = propertyTypeRef,
                     propertySymbol = propertySymbol,
                     status = status,
+                    isCopy = isCopy,
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
                 )
             }
@@ -499,6 +504,7 @@ internal class StubBasedFirMemberDeserializer(
             propertySource = propertySource,
             propertyStatus = propertyStatus,
             isStatic = false,
+            isCopy = false,
         )
 
         val filter = if (isGetter) GETTER_ANNOTATIONS_FILTER else SETTER_ANNOTATIONS_FILTER
@@ -534,6 +540,7 @@ internal class StubBasedFirMemberDeserializer(
         val propertyModality = property.modality
         val isVar = property.isVar
         val isStatic = property.hasModifier(KtTokens.COMPANION_KEYWORD) || property.isFromCompanionBlock
+        val isCopy = property.hasModifier(KtTokens.COPY_KEYWORD)
 
         val propertyStub: KotlinPropertyStubImpl = property.compiledStub
 
@@ -602,6 +609,7 @@ internal class StubBasedFirMemberDeserializer(
                     propertySource = source,
                     propertyStatus = resolvedStatus,
                     isStatic = isStatic,
+                    isCopy = isCopy,
                 )
             } else {
                 null

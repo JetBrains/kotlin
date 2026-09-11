@@ -123,6 +123,8 @@ open class ModifierList(var modifiers: Long = ModifierFlag.NONE.value) {
 
     fun hasConst(): Boolean = hasFlag(ModifierFlag.PARAMETER_CONST)
 
+    fun hasCopy(): Boolean = hasFlag(ModifierFlag.COPY)
+
     protected fun hasFlag(flag: ModifierFlag): Boolean = (modifiers and flag.value) == flag.value
 
     protected fun setFlag(flag: ModifierFlag?) {

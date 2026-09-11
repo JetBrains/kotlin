@@ -33,6 +33,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open lateinit var origin: FirDeclarationOrigin
     open var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     open lateinit var returnTypeRef: FirTypeRef
+    open var isCopy: Boolean = false
     open lateinit var name: Name
     override val annotations: MutableList<FirAnnotation> = []
     open lateinit var symbol: FirValueParameterSymbol
@@ -51,6 +52,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             origin,
             attributes,
             returnTypeRef,
+            isCopy,
             name,
             annotations.toMutableOrEmpty(),
             symbol,
@@ -85,6 +87,7 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.isCopy = original.isCopy
     copyBuilder.name = original.name
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.defaultValue = original.defaultValue

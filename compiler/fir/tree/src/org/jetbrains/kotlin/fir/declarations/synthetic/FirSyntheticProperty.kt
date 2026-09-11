@@ -27,6 +27,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val moduleData: FirModuleData,
     override val name: Name,
     override val isVar: Boolean,
+    override val isCopy: Boolean,
     override val symbol: FirSyntheticPropertySymbol,
     private val customStatus: FirDeclarationStatus?,
     override val getter: FirSyntheticPropertyAccessor,

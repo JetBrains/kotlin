@@ -1480,6 +1480,7 @@ class LightTreeRawFirDeclarationBuilder(
             val calculatedModifiers = modifiers ?: ModifierList()
             val propertyAnnotations = calculatedModifiers.convertAnnotations()
             val isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
+            val isCopy = calculatedModifiers.hasCopy()
 
             return buildProperty {
                 source = propertySource
@@ -1488,6 +1489,7 @@ class LightTreeRawFirDeclarationBuilder(
                 returnTypeRef = returnType
                 name = propertyName
                 this.isVar = isVar
+                this.isCopy = isCopy
 
                 receiverParameter = receiverTypeNode?.let { createReceiverParameter({ convertType(it) }, moduleData, propertySymbol) }
                 initializer = propertyInitializer
@@ -1589,6 +1591,7 @@ class LightTreeRawFirDeclarationBuilder(
                                     propertySymbol = symbol,
                                     modality = calculatedModifiers.getModality(isClassOrObject = false),
                                     parameterAnnotations = propertyAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
+                                    isCopy = isCopy
                                 ).also {
                                     it.status = defaultAccessorStatus()
                                     it.replaceAnnotations(propertyAnnotations.filterUseSiteTarget(PROPERTY_SETTER))
@@ -1799,6 +1802,7 @@ class LightTreeRawFirDeclarationBuilder(
                     accessorVisibility,
                     propertySymbol,
                     isGetter,
+                    propertyModifiers.hasCopy(),
                     parameterSource = firValueParameters.source,
                 )
                 .also { accessor ->
@@ -1816,6 +1820,7 @@ class LightTreeRawFirDeclarationBuilder(
             returnTypeRef = returnType ?: if (isGetter) propertyTypeRefToUse else implicitUnitType
             symbol = accessorSymbol
             this.isGetter = isGetter
+            this.isCopy = !isGetter && propertyModifiers.hasCopy()
             this.status = status
             context.firFunctionTargets += target
             annotations += accessorAdditionalAnnotations
@@ -2076,6 +2081,7 @@ class LightTreeRawFirDeclarationBuilder(
                             isSuspend = isSuspend,
                         )
                     }
+                    isCopy = calculatedModifiers.hasCopy()
                 }
             } else {
                 val labelName =
@@ -2101,6 +2107,7 @@ class LightTreeRawFirDeclarationBuilder(
                         isSuspend = calculatedModifiers.hasSuspend()
                         isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
                     }
+                    isCopy = calculatedModifiers.hasCopy()
 
                     symbol = functionSymbol as FirNamedFunctionSymbol
                     dispatchReceiverType = runIf(!isLocal && !isCompanionBlockMember) { currentDispatchReceiverType() }

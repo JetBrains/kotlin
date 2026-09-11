@@ -1198,6 +1198,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
             PsiBuilder.Marker parameter = mark();
 
+            if (at(COPY_KEYWORD)) {
+                myKotlinParsing.parseModifierList(TokenSet.create(COPY_KEYWORD));
+            }
+
             if (at(COLON)) {
                 error("Expecting parameter name");
             }

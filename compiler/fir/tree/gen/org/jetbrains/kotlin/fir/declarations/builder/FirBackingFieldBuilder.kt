@@ -104,6 +104,13 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
     @Deprecated("Modification of 'contextParameters' has no impact for FirBackingFieldBuilder", level = DeprecationLevel.HIDDEN)
     override val contextParameters: MutableList<FirValueParameter> = []
 
+    @Deprecated("Modification of 'isCopy' has no impact for FirBackingFieldBuilder", level = DeprecationLevel.HIDDEN)
+    override var isCopy: Boolean
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
     @Deprecated("Modification of 'delegate' has no impact for FirBackingFieldBuilder", level = DeprecationLevel.HIDDEN)
     override var delegate: FirExpression?
         get() = throw IllegalStateException()

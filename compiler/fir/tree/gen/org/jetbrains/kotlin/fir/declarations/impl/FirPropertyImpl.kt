@@ -45,6 +45,7 @@ internal class FirPropertyImpl(
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var contextParameters: MutableOrEmptyList<FirValueParameter>,
+    override val isCopy: Boolean,
     override val name: Name,
     override var initializer: FirExpression?,
     override var delegate: FirExpression?,

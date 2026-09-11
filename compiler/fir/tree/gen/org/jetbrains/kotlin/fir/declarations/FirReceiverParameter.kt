@@ -30,6 +30,7 @@ abstract class FirReceiverParameter : FirDeclaration() {
     abstract val typeRef: FirTypeRef
     abstract val containingDeclarationSymbol: FirBasedSymbol<*>
     abstract override val annotations: List<FirAnnotation>
+    abstract val isCopy: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitReceiverParameter(this, data)

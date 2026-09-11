@@ -41,6 +41,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override var returnTypeRef: FirTypeRef,
     override var deprecationsProvider: DeprecationsProvider,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
+    override val isCopy: Boolean,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
     override var contractDescription: FirContractDescription?,

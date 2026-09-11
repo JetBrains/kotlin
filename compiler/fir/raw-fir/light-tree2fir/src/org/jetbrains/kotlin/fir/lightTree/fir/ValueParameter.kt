@@ -83,6 +83,7 @@ class ValueParameter(
             moduleData = this@ValueParameter.moduleData
             origin = FirDeclarationOrigin.Source
             isVararg = modifiers.hasVararg()
+            isCopy = modifiers.hasCopy()
             returnTypeRef = if (isVararg && this@ValueParameter.returnTypeRef is FirErrorTypeRef) {
                 this@ValueParameter.returnTypeRef.wrapIntoArray()
             } else {
@@ -163,6 +164,7 @@ class ValueParameter(
                 isLateInit = modifiers.hasLateinit()
                 isExternal = modifiers.hasExternal()
             }
+            isCopy = modifiers.hasCopy()
             isLocal = context.inLocalContext
 
             val defaultBackingFieldSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.BackingField)
@@ -209,6 +211,7 @@ class ValueParameter(
                 modality = status.modality,
                 parameterAnnotations = remappedAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
                 isInline = modifiers.hasInline(),
+                isCopy = modifiers.hasCopy(),
             ).also {
                 it.initContainingClassAttr(context)
                 it.replaceAnnotations(remappedAnnotations.filterUseSiteTarget(PROPERTY_SETTER))

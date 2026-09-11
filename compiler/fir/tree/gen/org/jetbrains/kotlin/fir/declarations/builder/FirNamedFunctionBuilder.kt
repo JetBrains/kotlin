@@ -42,6 +42,7 @@ open class FirNamedFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerB
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     override val contextParameters: MutableList<FirValueParameter> = []
+    override var isCopy: Boolean = false
     override val valueParameters: MutableList<FirValueParameter> = []
     override var body: FirBlock? = null
     open var contractDescription: FirContractDescription? = null
@@ -65,6 +66,7 @@ open class FirNamedFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerB
             containerSource,
             dispatchReceiverType,
             contextParameters.toMutableOrEmpty(),
+            isCopy,
             valueParameters,
             body,
             contractDescription,
@@ -104,6 +106,7 @@ inline fun buildNamedFunctionCopy(original: FirNamedFunction, init: FirNamedFunc
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.contextParameters.addAll(original.contextParameters)
+    copyBuilder.isCopy = original.isCopy
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.body = original.body
     copyBuilder.contractDescription = original.contractDescription

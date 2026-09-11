@@ -89,7 +89,7 @@ value class FunctionFlags(val flags: Long) {
                     hasAnnotation, visibility, modality, kind,
                     isOperator, isInfix, isInline, isTailrec, isExternal, isSuspend, isExpect,
                     /* hasStableParameterNames = */ true,
-                    /* isStatic = */ false,
+                    /* isStatic = */ false, /* isCopy = */ false,
                     ProtoBuf.ReturnValueStatus.UNSPECIFIED
                     // hasStableParameterNames/hasMustUseReturnValue do not make sense for Ir, just pass the default value
                 )
@@ -142,7 +142,7 @@ value class PropertyFlags(val flags: Long) {
                 val flags = IrFlags.getPropertyFlags(
                     hasAnnotation, visibility, modality, kind,
                     isVar, hasGetter, hasSetter, false, isConst, isLateinit, isExternal, isDelegated, isExpect,
-                    /* isStatic = */ false,
+                    /* isStatic = */ false, /* isCopy = */ false,
                     ProtoBuf.ReturnValueStatus.UNSPECIFIED
                 )
 

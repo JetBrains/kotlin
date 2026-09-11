@@ -34,6 +34,7 @@ class FirReceiverParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var typeRef: FirTypeRef
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
     override val annotations: MutableList<FirAnnotation> = []
+    var isCopy: Boolean = false
 
     override fun build(): FirReceiverParameter {
         return FirReceiverParameterImpl(
@@ -46,6 +47,7 @@ class FirReceiverParameterBuilder : FirAnnotationContainerBuilder {
             typeRef,
             containingDeclarationSymbol,
             annotations.toMutableOrEmpty(),
+            isCopy,
         )
     }
 
@@ -73,5 +75,6 @@ inline fun buildReceiverParameterCopy(original: FirReceiverParameter, init: FirR
     copyBuilder.typeRef = original.typeRef
     copyBuilder.containingDeclarationSymbol = original.containingDeclarationSymbol
     copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.isCopy = original.isCopy
     return copyBuilder.apply(init).build()
 }

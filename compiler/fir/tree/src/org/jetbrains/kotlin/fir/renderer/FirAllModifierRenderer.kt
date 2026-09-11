@@ -83,6 +83,9 @@ class FirAllModifierRenderer(private val staticPolicy: StaticPolicy) : FirModifi
         if (memberDeclaration.isLateInit) {
             renderModifier("lateinit")
         }
+        if (memberDeclaration is FirCallableDeclaration && memberDeclaration.isCopy) {
+            renderModifier("copy")
+        }
     }
 
     override fun renderModifiers(backingField: FirBackingField) {
@@ -110,6 +113,9 @@ class FirAllModifierRenderer(private val staticPolicy: StaticPolicy) : FirModifi
         }
         if (propertyAccessor.isExternal) {
             renderModifier("external")
+        }
+        if (propertyAccessor.isCopy) {
+            renderModifier("copy")
         }
     }
 

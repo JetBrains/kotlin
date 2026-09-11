@@ -37,6 +37,8 @@ internal class FirScriptReceiverParameterImpl(
     override var typeRef: FirTypeRef,
     override val isBaseClassReceiver: Boolean,
 ) : FirScriptReceiverParameter() {
+    override val isCopy: Boolean
+        get() = false
 
     init {
         symbol.bind(this)

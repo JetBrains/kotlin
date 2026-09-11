@@ -62,6 +62,7 @@ public class Flags {
     public static final BooleanFlagField IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES = FlagField.booleanAfter(IS_EXPECT_FUNCTION);
     public static final FlagField<ProtoBuf.ReturnValueStatus> RETURN_VALUE_STATUS_FUNCTION = FlagField.after(IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES, ProtoBuf.ReturnValueStatus.values());
     public static final BooleanFlagField IS_STATIC_FUNCTION = FlagField.booleanAfter(RETURN_VALUE_STATUS_FUNCTION);
+    public static final BooleanFlagField IS_COPY_FUNCTION = FlagField.booleanAfter(IS_STATIC_FUNCTION);
 
     // Properties
 
@@ -76,6 +77,7 @@ public class Flags {
     public static final BooleanFlagField IS_EXPECT_PROPERTY = FlagField.booleanAfter(IS_DELEGATED);
     public static final FlagField<ProtoBuf.ReturnValueStatus> RETURN_VALUE_STATUS_PROPERTY = FlagField.after(IS_EXPECT_PROPERTY, ProtoBuf.ReturnValueStatus.values());
     public static final BooleanFlagField IS_STATIC_PROPERTY = FlagField.booleanAfter(RETURN_VALUE_STATUS_PROPERTY);
+    public static final BooleanFlagField IS_COPY_PROPERTY = FlagField.booleanAfter(IS_STATIC_PROPERTY);
 
     // Parameters
 
@@ -158,6 +160,7 @@ public class Flags {
             boolean isExpect,
             boolean hasStableParameterNames,
             boolean isStatic,
+            boolean isCopy,
             ProtoBuf.ReturnValueStatus returnValueStatus
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
@@ -174,6 +177,7 @@ public class Flags {
                | IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.toFlags(!hasStableParameterNames)
                | RETURN_VALUE_STATUS_FUNCTION.toFlags(returnValueStatus)
                | IS_STATIC_FUNCTION.toFlags(isStatic)
+               | IS_COPY_FUNCTION.toFlags(isCopy)
                 ;
     }
 
@@ -192,6 +196,7 @@ public class Flags {
             boolean isDelegated,
             boolean isExpect,
             boolean isStatic,
+            boolean isCopy,
             ProtoBuf.ReturnValueStatus returnValueStatus
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
@@ -209,6 +214,7 @@ public class Flags {
                | IS_EXPECT_PROPERTY.toFlags(isExpect)
                | RETURN_VALUE_STATUS_PROPERTY.toFlags(returnValueStatus)
                | IS_STATIC_PROPERTY.toFlags(isStatic)
+               | IS_COPY_PROPERTY.toFlags(isCopy)
                 ;
     }
 

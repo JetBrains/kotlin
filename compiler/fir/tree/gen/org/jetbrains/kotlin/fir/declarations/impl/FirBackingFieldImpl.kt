@@ -57,6 +57,8 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
         get() = propertySymbol.dispatchReceiverType
     override val contextParameters: List<FirValueParameter>
         get() = emptyList()
+    override val isCopy: Boolean
+        get() = false
     override val delegate: FirExpression?
         get() = null
     override val getter: FirPropertyAccessor?

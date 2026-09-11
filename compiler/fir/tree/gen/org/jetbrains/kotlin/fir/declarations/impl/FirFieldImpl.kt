@@ -54,6 +54,8 @@ class FirFieldImpl @FirImplementationDetail constructor(
         get() = null
     override val contextParameters: List<FirValueParameter>
         get() = emptyList()
+    override val isCopy: Boolean
+        get() = false
     override val delegate: FirExpression?
         get() = null
     override val isVal: Boolean

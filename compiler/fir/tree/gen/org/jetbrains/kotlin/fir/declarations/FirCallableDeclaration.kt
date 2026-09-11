@@ -56,6 +56,7 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract val containerSource: DeserializedContainerSource?
     abstract val dispatchReceiverType: ConeSimpleKotlinType?
     abstract val contextParameters: List<FirValueParameter>
+    abstract val isCopy: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitCallableDeclaration(this, data)

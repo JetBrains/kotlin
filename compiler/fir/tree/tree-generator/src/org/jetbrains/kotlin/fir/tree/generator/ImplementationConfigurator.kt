@@ -20,18 +20,25 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(receiverParameter)
 
+        impl(scriptReceiverParameter) {
+            defaultFalse("isCopy", withGetter = true)
+        }
+
         impl(constructor) {
             defaultFalse("isPrimary", withGetter = true)
+            defaultFalse("isCopy", withGetter = true)
         }
 
         impl(constructor, "FirPrimaryConstructor") {
             publicImplementation()
             defaultTrue("isPrimary", withGetter = true)
+            defaultFalse("isCopy", withGetter = true)
         }
 
         impl(errorPrimaryConstructor) {
             publicImplementation()
             defaultTrue("isPrimary", withGetter = true)
+            defaultFalse("isCopy", withGetter = true)
         }
 
         impl(outerClassTypeParameterRef) {
@@ -396,6 +403,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
             defaultNull("receiverParameter", "delegate", "getter", "setter", "containerSource", "backingField", withGetter = true)
             defaultEmptyList("contextParameters", "typeParameters", withGetter = true)
+            defaultFalse("isCopy", withGetter = true)
         }
 
         impl(enumEntry) {
@@ -407,6 +415,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             )
             defaultEmptyList("contextParameters", "typeParameters", withGetter = true)
+            defaultFalse("isCopy", withGetter = true)
         }
 
         impl(namedArgumentExpression) {
@@ -534,6 +543,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "EmptyDeprecationsProvider"
                 withGetter = true
             }
+            defaultFalse("isCopy", withGetter = true)
         }
 
         impl(whenSubjectExpression) {
@@ -715,7 +725,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             configureCommonValueParameter()
             default("name", "Name.identifier(\"value\")")
             defaultNull("defaultValue", "initializer", "delegate", withGetter = true)
-            defaultFalse("isCrossinline", "isNoinline", "isVararg", "isVar", withGetter = true)
+            defaultFalse("isCrossinline", "isNoinline", "isVararg", "isVar", "isCopy", withGetter = true)
             default("valueParameterKind", "FirValueParameterKind.Regular", withGetter = true)
         }
 

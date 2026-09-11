@@ -72,6 +72,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val isVar: Boolean
         get() = false
 
+    override val isCopy: Boolean
+        get() = false
+
     override val annotations: List<FirAnnotation> get() = annotationList
 
     override val receiverParameter: FirReceiverParameter?
