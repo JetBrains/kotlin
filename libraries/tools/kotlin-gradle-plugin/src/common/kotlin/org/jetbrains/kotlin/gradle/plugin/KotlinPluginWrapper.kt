@@ -211,11 +211,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            CompatibilityConventionRegistrar.Factory::class,
-            DefaultCompatibilityConventionRegistrar.Factory()
-        )
-
-        factories.putIfAbsent(
             ConfigurationCacheStartParameterAccessor.Factory::class,
             DefaultConfigurationCacheStartParameterAccessorVariantFactory()
         )
