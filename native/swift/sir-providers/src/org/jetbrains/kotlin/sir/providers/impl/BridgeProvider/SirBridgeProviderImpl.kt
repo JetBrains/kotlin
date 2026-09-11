@@ -488,8 +488,7 @@ private class BridgeFunctionDescriptor(
 
         val deprecationPrefix = swiftDeprecation?.let { "${it.renderAsSwiftSourceLine()}\n" }.orEmpty()
         val selfDeclaration = if (selfBridge != null) {
-            val forceUnwrap = if (selfBridge.bridge is Bridge.AsObject) "!" else ""
-            "    let _self = $selfConversion$forceUnwrap\n"
+            "    let _self = $selfConversion\n"
         } else {
             ""
         }
@@ -635,8 +634,7 @@ private class BridgeFunctionDescriptor(
         val resultLine = returnBridge.inSwiftSources.swiftToKotlin(typeNamer, "_result")
 
         val selfDeclaration = selfBridge?.let {
-            val forceUnwrap = if (it.bridge is Bridge.AsObject) "!" else "" // Swift infers T? from T! here for objects
-            "\n    let _self = $selfConversion$forceUnwrap"
+            "\n    let _self = $selfConversion"
         }.orEmpty()
 
         val callBody = if (errorParameter != null) {
