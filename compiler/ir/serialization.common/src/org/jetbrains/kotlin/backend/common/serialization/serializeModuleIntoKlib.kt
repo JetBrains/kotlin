@@ -65,7 +65,7 @@ class KotlinFileSerializedData private constructor(
 }
 
 class SerializerOutput(
-    val serializedMetadata: SerializedMetadata?,
+    val serializedMetadata: SerializedMetadata,
     val serializedIr: SerializedIrModule?,
     val neededLibraries: Collection<KotlinLibrary>,
 )

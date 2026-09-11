@@ -109,7 +109,7 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
             legacyNativeShortNameInManifest(shortLibraryName)
             legacyNativeDependenciesInManifest(linkDependencies.map { it.uniqueName })
         }
-        includeMetadata(input.serializerOutput.serializedMetadata!!)
+        includeMetadata(input.serializerOutput.serializedMetadata)
         includeIr(input.serializerOutput.serializedIr)
         includeBitcode(target, config.nativeLibraries.map(::Path))
         includeNativeIncludedBinaries(target, config.includeBinaries.map(::Path))
