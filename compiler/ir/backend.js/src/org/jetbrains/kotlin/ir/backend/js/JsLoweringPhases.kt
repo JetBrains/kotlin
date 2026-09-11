@@ -222,7 +222,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::IrValidationAfterLoweringsSecondStagePhase,
 )
 
-val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
+val optimizationLoweringList: List<NamedCompilerPhase<JsIrOptimizationContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
     ::ES6CollectConstructorsWhichNeedBoxParameters,
     ::ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
     ::ES6ConstructorBoxParameterOptimizationLowering,

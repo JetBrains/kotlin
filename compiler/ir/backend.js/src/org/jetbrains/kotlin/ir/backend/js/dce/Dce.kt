@@ -24,13 +24,11 @@ import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun eliminateDeadDeclarations(
+    allRoots: Iterable<IrDeclaration>,
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
-    moduleKind: ModuleKind,
     dceDumpNameCache: DceDumpNameCache,
 ) {
-    val allRoots = buildRoots(modules, context, moduleKind)
-
     val printReachabilityInfo =
         context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
                 java.lang.Boolean.getBoolean("kotlin.js.ir.dce.print.reachability.info")
@@ -94,7 +92,7 @@ private fun IrDeclaration.addRootsTo(
     }
 }
 
-private fun buildRoots(
+internal fun buildRoots(
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
     moduleKind: ModuleKind

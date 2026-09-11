@@ -9,15 +9,11 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.constructorFactory
-import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
-import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.isFullValueClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
@@ -73,6 +69,7 @@ private var IrSimpleFunction.replacementWithoutBoxParameter: IrSimpleFunction? b
  */
 @PhasePrerequisites(ES6CollectConstructorsWhichNeedBoxParameters::class)
 class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBackendContext) : FileLoweringPass {
+    internal constructor(context: JsIrOptimizationContext) : this(context.backendContext)
 
     override fun lower(irFile: IrFile) {
         if (!context.es6mode) return
@@ -183,6 +180,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
  * Optimization: collects all constructors which require a box parameter.
  */
 class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBackendContext) : DeclarationTransformer {
+    internal constructor(context: JsIrOptimizationContext) : this(context.backendContext)
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.es6mode || declaration !is IrClass) return null
