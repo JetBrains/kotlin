@@ -160,7 +160,6 @@ enum class TranslationMode(
 class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
     moduleToName: Map<IrModuleFragment, String> = emptyMap(),
-    private val removeUnusedAssociatedObjects: Boolean = true,
 ) {
     private val shouldGeneratePolyfills = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
@@ -221,7 +220,7 @@ class IrModuleToJsTransformer(
         }
 
         if (artifactConfigurations.any { it.production }) {
-            optimizeProgramByIr(modules, backendContext, moduleKind, removeUnusedAssociatedObjects)
+            optimizeProgramByIr(modules, backendContext, moduleKind)
         }
 
         artifactConfigurations.filter { it.production }.forEach {
