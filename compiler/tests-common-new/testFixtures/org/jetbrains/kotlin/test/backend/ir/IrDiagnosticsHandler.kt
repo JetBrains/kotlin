@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.diagnosticCodeMetaInfos
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
-class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
+class IrDiagnosticsHandler(
+    testServices: TestServices,
+    private val diagnosticsDumpFileExtension: String = ".ir.diag.txt",
+) : AbstractIrHandler(testServices) {
     private val globalMetadataInfoHandler: GlobalMetadataInfoHandler
         get() = testServices.globalMetadataInfoHandler
 
@@ -51,6 +54,6 @@ class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testS
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        fullDiagnosticsRenderer.assertCollectedDiagnostics(testServices, ".ir.diag.txt")
+        fullDiagnosticsRenderer.assertCollectedDiagnostics(testServices, diagnosticsDumpFileExtension)
     }
 }

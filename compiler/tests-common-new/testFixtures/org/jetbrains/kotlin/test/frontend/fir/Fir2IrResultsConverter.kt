@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.RUN_PIPELINE_TILL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.testInfraError
 
@@ -55,5 +58,33 @@ class Fir2IrResultsConverter(
             }
             else -> testInfraError("Unsupported platform: $targetPlatform")
         }
+    }
+}
+
+/**
+ * The ordinary FIR diagnostic pipeline stops after the frontend. Tests that explicitly request the backend need
+ * FIR2IR so that backend lowering diagnostics can be checked.
+ */
+class Fir2IrForBackendDiagnosticsConverter(
+    testServices: TestServices,
+) : Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>(
+    testServices,
+    FrontendKinds.FIR,
+    BackendKinds.IrBackend,
+) {
+    private val delegate = Fir2IrResultsConverter(testServices)
+
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = delegate.additionalServices
+
+    override val directiveContainers: List<DirectivesContainer>
+        get() = delegate.directiveContainers + TestPhaseDirectives
+
+    override fun shouldTransform(module: TestModule): Boolean {
+        return module.directives[RUN_PIPELINE_TILL].lastOrNull() == TestPhase.BACKEND
+    }
+
+    override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? {
+        return delegate.transform(module, inputArtifact)
     }
 }

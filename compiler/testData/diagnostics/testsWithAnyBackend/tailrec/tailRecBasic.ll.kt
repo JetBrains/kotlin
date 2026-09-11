@@ -1,6 +1,10 @@
+// LL_FIR_DIVERGENCE
+// LL FIR diagnostics wrongly marks `foo8` as not having any tailrec calls, despite it has one.
+// LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // DIAGNOSTICS: -UNREACHABLE_CODE
+// RENDER_IR_DIAGNOSTICS_FULL_TEXT
 
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
     <!NON_TAIL_RECURSIVE_CALL!>foo1<!>()

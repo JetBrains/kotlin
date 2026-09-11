@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.test.backend.handlers.IrPreprocessedInlineFunctionDu
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
-import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE_DIFFERENCE
@@ -112,9 +111,6 @@ abstract class AbstractJsCodegenBoxTestBase(
             ::FirMetaInfoDiffSuppressor
         )
 
-        builder.configureIrHandlersStep {
-            commonIrHandlersForCodegenTest()
-        }
     }
 }
 

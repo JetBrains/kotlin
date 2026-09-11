@@ -63,7 +63,9 @@ class PhasedPipelineChecker(
                 is FrontendKind ->
                     TestPhase.FIR2IR
                 is BackendKind -> {
-                    require(this is IrPreSerializationLoweringFacade)
+                    require(this is BackendPhaseFacade) {
+                        "A facade that transforms a backend input into a backend input must declare itself as a backend-phase facade"
+                    }
                     TestPhase.BACKEND
                 }
                 is ArtifactKinds.KLib -> {

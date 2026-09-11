@@ -48,7 +48,7 @@ abstract class AbstractJsDiagnosticTestBase(val parser: FirParser) : AbstractKot
             useHandlers(::IrDiagnosticsHandler)
         }
         configureLoweredIrHandlersStep {
-            useHandlers(::IrDiagnosticsHandler)
+            useHandlers({ IrDiagnosticsHandler(it, ".lowered.ir.diag.txt") })
         }
 
         useFailureSuppressors(
