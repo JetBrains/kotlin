@@ -15,7 +15,7 @@ IMPORTANT formatting rules:
   new line when the next word would cross 72. Do not wrap early.
 - Use imperative mood.
 - Commit messages must explain not just WHAT but also WHY and HOW.
-- Commit tests together with corresponding code changes.
+- Before fixing a bug, make sure existing tests reproduce the problem. If they do not, add and commit the reproducer first. Keep the implementation fix and any resulting expected-output or test-data updates in the following commit, so its diff clearly demonstrates exactly what was fixed. If the reproducer cannot form a usable standalone commit — for example, because running it aborts with an exception or enters an infinite loop — commit the test together with the fix instead.
 - Non-functional changes (refactorings, reformats) should be in separate commits.
 
 #### Example
