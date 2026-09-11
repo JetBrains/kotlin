@@ -5,13 +5,10 @@
 
 package kotlin.time
 
+import stdlib.wit.bindings.MonotonicClock
+import stdlib.wit.bindings.WallClock
 import kotlin.internal.InlineOnly
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
-import kotlin.wasm.WasiError
-import kotlin.wasm.WasiErrorCode
-import kotlin.wasm.WasmImport
-import kotlin.wasm.ExperimentalWasmInterop
-import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
 /**
  * The clock measuring real time. Time value zero corresponds with 1970-01-01T00:00:00Z.
@@ -25,28 +22,22 @@ private const val CLOCK_ID_REALTIME = 0
  */
 private const val CLOCK_ID_MONOTONIC = 1
 
-/**
- * Return the time value of a clock. Note: This is similar to `clock_gettime` in POSIX.
- */
-@ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "clock_time_get")
-private external fun wasiRawClockTimeGet(clockId: Int, precision: Long, resultPtr: Int): Int
 
 /**
  * Returns timestamp of the given clock in nanoseconds.
  */
-@OptIn(ExperimentalWasmInterop::class)
-private fun clockTimeGet(clockId: Int): Long = withScopedMemoryAllocator { allocator ->
-    val rp0 = allocator.allocate(8)
-    val ret = wasiRawClockTimeGet(
-        clockId = clockId,
-        precision = 1,
-        resultPtr = rp0.address.toInt()
-    )
-    if (ret == 0) {
-        rp0.loadLong()
-    } else {
-        throw WasiError(WasiErrorCode.entries[ret])
+private fun clockTimeGet(clockId: Int): Long {
+    when (clockId) {
+        CLOCK_ID_REALTIME -> {
+            val now = WallClock.now()
+            return (now.seconds * 1_000_000_000uL + now.nanoseconds).toLong()
+        }
+        CLOCK_ID_MONOTONIC -> {
+            val nanosecondPerTick = MonotonicClock.resolution()
+            val ticksRightNow = MonotonicClock.now()
+            return (ticksRightNow * nanosecondPerTick).toLong()
+        }
+        else -> throw IllegalArgumentException("Unknown clock id: $clockId")
     }
 }
 

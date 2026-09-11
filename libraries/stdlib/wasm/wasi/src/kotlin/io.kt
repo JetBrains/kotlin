@@ -3,98 +3,81 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalUnsignedTypes::class)
+
 package kotlin.io
 
-import kotlin.wasm.WasiError
-import kotlin.wasm.WasiErrorCode
-import kotlin.wasm.WasmImport
-import kotlin.wasm.ExperimentalWasmInterop
+import stdlib.wit.bindings.Streams
+import stdlib.wit.bindings.runtime.ComponentException
 import kotlin.wasm.unsafe.MemoryAllocator
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
-
-private const val STDIN = 0
-private const val STDOUT = 1
-private const val STDERR = 2
-
-private const val USER_DATA = 0L
-private const val EVENT_FD_READ = 1
-private const val EVENT_FD_WRITE = 2
 
 private const val BUFFER_SIZE: Int = 32
 
 private const val CR: Byte = 0x0D.toByte()
 private const val LF: Byte = 0x0A.toByte()
 
-/**
- * Write to a file descriptor. Note: This is similar to `writev` in POSIX.
- */
-@ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "fd_write")
-private external fun wasiRawFdWrite(descriptor: Int, scatterPtr: Int, scatterSize: Int, resultPtr: Int): Int
-
-/** Read from a file descriptor. Note: This is similar to `readv` in POSIX. */
-@ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "fd_read")
-private external fun wasiRawFdRead(descriptor: Int, gatherPtr: Int, gatherSize: Int, resultPtr: Int): Int
-
-/** Concurrently poll for the occurrence of a set of events. */
-@ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "poll_oneoff")
-private external fun wasiPollOneOff(subscriptionPtr: Int, eventPtr: Int, nSubscriptions: Int, resultPtr: Int): Int
-
 @OptIn(ExperimentalWasmInterop::class)
 private fun wasiPrintImpl(
     allocator: MemoryAllocator,
     data: ByteArray?,
     newLine: Boolean,
-    useErrorStream: Boolean
+    useErrorStream: Boolean,
 ) {
-    val dataSize = data?.size ?: 0
-    val bytesToWrite = dataSize + (if (newLine) 1 else 0)
-    if (bytesToWrite == 0) return
+    val dataSize: ULong = data?.size?.toULong() ?: 0u
+    val bytesToWrite: ULong = dataSize + (if (newLine) 1u else 0u)
+    if (bytesToWrite == 0uL)
+        return
 
-    val ptr = allocator.allocate(bytesToWrite)
-    if (data != null) {
-        var currentPtr = ptr
-        for (el in data) {
-            currentPtr.storeByte(el)
-            currentPtr += 1
-        }
-    }
-    if (newLine) {
-        (ptr + dataSize).storeByte(0x0A)
-    }
+    val ostream = if (useErrorStream)
+        stdlib.wit.bindings.Stderr.getStderr()
+    else
+        stdlib.wit.bindings.Stdout.getStdout()
 
-    val scatterPtr = allocator.allocate(8)
-    val rp0 = allocator.allocate(4)
-    val descriptor = if (useErrorStream) STDERR else STDOUT
-
-    var written = 0
+    var written = 0u.toULong()
     while (written < bytesToWrite) {
-        (scatterPtr + 0).storeInt(ptr.address.toInt() + written)
-        (scatterPtr + 4).storeInt(bytesToWrite - written)
+        val allowedToWrite = ostream.checkWrite();
+        if (allowedToWrite.isFailure)
+            throw WasiError("Cannot write to this stream", allowedToWrite.exceptionOrNull()!!)
 
-        var res = wasiRawFdWrite(
-            descriptor = descriptor,
-            scatterPtr = scatterPtr.address.toInt(),
-            scatterSize = 1,
-            resultPtr = rp0.address.toInt()
-        )
-        if (res == WasiErrorCode.AGAIN.ordinal) {
-            wasiWaitUntilEventImpl(allocator, descriptor, EVENT_FD_WRITE)
-            res = wasiRawFdWrite(
-                descriptor = descriptor,
-                scatterPtr = scatterPtr.address.toInt(),
-                scatterSize = 1,
-                resultPtr = rp0.address.toInt()
-            )
-        }
-        if (res != 0) {
-            throw WasiError(WasiErrorCode.entries[res])
+        val allowedBytesToWrite = allowedToWrite.getOrThrow()
+
+        // NOTE: polling in this case is the correct behavior, also see wasi-libc: https://github.com/WebAssembly/wasi-libc/blob/79c1a738e1b3df432545666a1a579c49a82b4514/libc-bottom-half/sources/file_utils.c#L487
+        if (allowedBytesToWrite == 0uL)
+            continue
+
+        val remainingBytesToWrite = bytesToWrite - written
+        val actualBytesToWriteRightNow = minOf(remainingBytesToWrite, allowedBytesToWrite)
+
+        val listToWrite = ArrayList<UByte>(actualBytesToWriteRightNow.toInt())
+        for (i in written until written + actualBytesToWriteRightNow) {
+            if (data != null && i < data.size.toULong()) {
+                // TODO(REVIEW) could optimize this to not use the high-level wit-bindgen generated write, but instead directly use the __wasm_import_write function and do canonical ABI related stuff by hand. Would save one set of list copies.
+                listToWrite.add(data[i.toInt()].toUByte())
+            } else {
+                // TODO(REVIEW) probably delete the assert?
+                assert(newLine)
+                // NOTE: this also takes care of the case in which data was null to begin with
+                listToWrite.add('\n'.code.toUByte())
+            }
+
         }
 
-        written += rp0.loadInt()
+        // NOTE: does not flush, this is done manually after the loop
+        // TODO(REVIEW): to optimize this, could perform an `ostream.blockingWriteAndFlush()` if this write is the last one, and less than 4096 bytes, then we wouldn't need the separate blockingFlush() call afterwards
+        val res = ostream.write(listToWrite);
+
+        if (res.isFailure) // NOTE: this can most likely only occur in a TOCTOU case, where, e.g., the stream has closed since we called `checkWrite()`
+            throw WasiError("WASI stream did not accept write, even though `checkWrite()` permitted it", res.exceptionOrNull()!!)
+
+        written += actualBytesToWriteRightNow
     }
+
+    // manually flush, as we can't rely on having written a newline at the end
+    // NOTE: this result has a unit type on success, i.e. doesn't have a success value
+    val ret = ostream.blockingFlush()
+    if (ret.isFailure)
+        throw WasiError(null, ret.exceptionOrNull()!!)
 }
 
 private fun printImpl(message: String?, useErrorStream: Boolean, newLine: Boolean) {
@@ -128,75 +111,46 @@ public actual fun print(message: Any?) {
 }
 
 @OptIn(ExperimentalWasmInterop::class)
-private fun wasiWaitUntilEventImpl(allocator: MemoryAllocator, descriptor: Int, fdEvent: Int) {
-    val subscriptionPtr = allocator.allocate(20)
-    (subscriptionPtr + 0).storeLong(USER_DATA)
-    (subscriptionPtr + 8).storeByte(fdEvent.toByte())
-    (subscriptionPtr + 16).storeInt(descriptor)
-
-    val eventSize = 26
-    val eventPtr = allocator.allocate(eventSize)
-
-    val rp0 = allocator.allocate(4)
-
-    val ret = wasiPollOneOff(
-        subscriptionPtr = subscriptionPtr.address.toInt(),
-        eventPtr = eventPtr.address.toInt(),
-        nSubscriptions = 1,
-        resultPtr = rp0.address.toInt()
-    )
-    if (ret != 0) {
-        throw WasiError(WasiErrorCode.entries[ret])
-    }
-
-    val eventsCount = rp0.loadInt()
-    check(eventsCount == 1) { "Unexpected WASI result" }
-    val eventUserdata = (eventPtr + 0).loadLong()
-    check(eventUserdata == USER_DATA) { "Unexpected WASI result" }
-    val eventRet = (eventPtr + 8).loadShort().toInt()
-    if (eventRet != 0) {
-        throw WasiError(WasiErrorCode.entries[eventRet])
-    }
-    val eventType = (eventPtr + 10).loadByte().toInt()
-    check(eventType == fdEvent) { "Unexpected WASI result" }
-}
-
-@OptIn(ExperimentalWasmInterop::class)
-private fun wasiReadLineImpl(allocator: MemoryAllocator): ByteArray? {
+private fun wasiReadLineImpl(): ByteArray? {
+    // use a linked list of fixed-size buffers to avoid too many copies
     val arrayBuffers = mutableListOf<ByteArray>()
     var currentBuffer = ByteArray(BUFFER_SIZE)
     var currentBufferIndex = 0
 
-    val singleBytePtr = allocator.allocate(1)
-    val ioVecPtr = allocator.allocate(8)
-    (ioVecPtr + 0).storeInt(singleBytePtr.address.toInt())
-    (ioVecPtr + 4).storeInt(1)
+    val stdinStr = stdlib.wit.bindings.Stdin.getStdin()
 
-    val rp0 = allocator.allocate(4)
-
-    var crInCurrentBuffer = false
     while (true) {
-        val ret = wasiRawFdRead(
-            descriptor = STDIN,
-            gatherPtr = ioVecPtr.address.toInt(),
-            gatherSize = 1,
-            resultPtr = rp0.address.toInt()
-        )
-        if (ret != 0) {
-            throw WasiError(WasiErrorCode.entries[ret])
+        // NOTE: we can only read one byte at a time, as we need to be able to detect a newline. We cannot "put back" any bytes into the stream, so reading anything more than the next \n would simply be incorrect
+        //       (Also note that internally buffering the stream wouldn't help: a) we'd still consume it from the outside, and b) if the user accesses the stream through raw wasi calls, they won't see our Kotlin-specfic buffer)
+        val ret = stdinStr.blockingRead(1u)
+        if (ret.isFailure) {
+            val componentExcn = ret.exceptionOrNull()!! as ComponentException
+            val streamError = componentExcn.value as Streams.StreamError
+
+            // end of file / stream otherwise closed
+            // this is the exact case that the null return value represents here
+            if (streamError == Streams.StreamError.Closed)
+                return null
+
+            throw WasiError("WASI stream read failed", ret.exceptionOrNull()!!)
         }
-        val readSize = rp0.loadInt()
+
+        // TODO(REVIEW): Technically this is one check too much, as we already know ret.value is valid, so we could just do `ret as List<UByte>`. Just a big ugly
+        val returnedListOfBytes = ret.getOrThrow()
+
+        val readSize = returnedListOfBytes.size
         check(readSize == 0 || readSize == 1) { "Unexpected WASI result" }
         if (readSize == 0 && currentBufferIndex == 0 && arrayBuffers.isEmpty()) return null
 
-        val nextByte = singleBytePtr.loadByte()
-        if (readSize == 0 || nextByte == LF) {
-            if (crInCurrentBuffer) {
+        fun finish(): ByteArray {
+            // don't put an ending CR (\r) of a potential \n\r into the buffer
+            if (currentBufferIndex > 0 && currentBuffer[currentBufferIndex - 1] == CR) {
                 currentBufferIndex--
             }
 
             val resultSize = arrayBuffers.size * BUFFER_SIZE + currentBufferIndex
             val result = ByteArray(resultSize)
+            // concatenate all the buffers together
             arrayBuffers.forEachIndexed { index, array ->
                 array.copyInto(destination = result, destinationOffset = index * BUFFER_SIZE)
             }
@@ -208,14 +162,22 @@ private fun wasiReadLineImpl(allocator: MemoryAllocator): ByteArray? {
             return result
         }
 
+        if (readSize == 0)
+            return finish()
+
+        // convert to Byte, which doesn't change the binary representation. This allows us to use ByteArray.decodeToString()
+        val nextByte: Byte = returnedListOfBytes[0].toByte()
+        if (nextByte == LF)
+            return finish()
+
         if (currentBufferIndex >= BUFFER_SIZE) {
+            // save the buffer as "done", and start reading into a new one
             arrayBuffers.add(currentBuffer)
             currentBuffer = ByteArray(BUFFER_SIZE)
             currentBufferIndex = 0
         }
 
         currentBuffer[currentBufferIndex] = nextByte
-        crInCurrentBuffer = nextByte == CR
         currentBufferIndex++
     }
 }
@@ -240,7 +202,6 @@ public actual fun readln(): String = readlnOrNull() ?: throw ReadAfterEOFExcepti
  * The input is decoded using the system default Charset. A [CharacterCodingException] is thrown if input is malformed.
  */
 @SinceKotlin("1.6")
-public actual fun readlnOrNull(): String? = withScopedMemoryAllocator { allocator ->
-    wasiWaitUntilEventImpl(allocator, STDIN, EVENT_FD_READ)
-    wasiReadLineImpl(allocator)?.decodeToString()
+public actual fun readlnOrNull(): String? {
+    return wasiReadLineImpl()?.decodeToString()
 }
