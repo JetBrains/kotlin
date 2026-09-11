@@ -30,6 +30,7 @@ internal suspend inline fun getCoroutineContext(): CoroutineContext =
     getCoroutineContextImpl()
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal suspend fun getCoroutineContextImpl(): CoroutineContext =
     getContinuation<Any?>().context
 
