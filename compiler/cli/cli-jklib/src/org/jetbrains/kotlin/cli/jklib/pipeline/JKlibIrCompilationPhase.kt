@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJklibStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
@@ -264,7 +263,7 @@ object JKlibIrCompilationPhase :
         storageManager: StorageManager,
         builtIns: JvmBuiltIns,
     ): Map<KotlinLibrary, ModuleDescriptorImpl> {
-        val klibFactories = KlibMetadataFactories(
+        val moduleDescriptorFactory = K1KlibMetadataModuleDescriptorFactoryImpl(
             { builtIns },
             JavaFlexibleTypeDeserializer,
             // We need to wire the JvmBuiltInsCustomizer instance to the KlibMetadataFactories. This allows resolving APIs that are not part
@@ -308,7 +307,7 @@ object JKlibIrCompilationPhase :
         )
 
         val dependencyDescriptorsByKlib = sortedDependencies.associateWith { klib ->
-            val descriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+            val descriptor = moduleDescriptorFactory.createDescriptorOptionalBuiltIns(
                 klib,
                 configuration.languageVersionSettings,
                 storageManager,
