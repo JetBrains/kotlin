@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE
+import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
@@ -53,6 +54,11 @@ class CustomKlibCompilerFirstStageTestSuppressor(
                     is NoFirCompilationErrorsHandler -> processFirstStageException(wrappedException)
                     is BinaryArtifactHandler -> processNonFirstStageException(wrappedException, IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE)
                     else -> listOf(wrappedException)
+                }
+            } else if (wrappedException is WrappedException.FromGroupingHandler) {
+                when (wrappedException.handler.artifactKind) {
+                    is ArtifactKinds.KLib -> processFirstStageException(wrappedException)
+                    else -> processNonFirstStageException(wrappedException, IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE)
                 }
             } else {
                 listOf(wrappedException)
