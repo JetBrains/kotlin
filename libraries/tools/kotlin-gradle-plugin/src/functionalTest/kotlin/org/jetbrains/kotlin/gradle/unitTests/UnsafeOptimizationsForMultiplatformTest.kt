@@ -20,25 +20,36 @@ import kotlin.test.assertTrue
 class UnsafeOptimizationsForMultiplatformTest {
 
     @Test
-    fun disabledByDefaultForEveryTarget() {
+    fun enabledByDefaultOnlyForJvmTarget() {
         assertEnabledTargets(
-            enabledProperty = null,
-            expectedJvm = false, expectedJs = false, expectedWasm = false,
+            properties = emptyMap(),
+            expectedJvm = true, expectedJs = false, expectedWasm = false,
         )
     }
 
     @Test
     fun jvmPropertyAffectsOnlyJvmTasks() {
         assertEnabledTargets(
-            enabledProperty = "kotlin.jvm.enableIncrementalCompilationOfCommonSources",
+            properties = mapOf(JVM_ENABLE_KMP_IC to "true"),
             expectedJvm = true, expectedJs = false, expectedWasm = false,
+        )
+    }
+
+    @Test
+    fun jvmPropertyCanBeDisabled() {
+        assertEnabledTargets(
+            properties = mapOf(JVM_ENABLE_KMP_IC to "false"),
+            expectedJvm = false, expectedJs = false, expectedWasm = false,
         )
     }
 
     @Test
     fun jsPropertyAffectsOnlyJsTasks() {
         assertEnabledTargets(
-            enabledProperty = "kotlin.internal.js.enableUnsafeOptimizationsForMultiplatform",
+            properties = mapOf(
+                JVM_ENABLE_KMP_IC to "false",
+                "kotlin.internal.js.enableUnsafeOptimizationsForMultiplatform" to "true",
+            ),
             expectedJvm = false, expectedJs = true, expectedWasm = false,
         )
     }
@@ -46,7 +57,10 @@ class UnsafeOptimizationsForMultiplatformTest {
     @Test
     fun wasmPropertyAffectsOnlyWasmTasks() {
         assertEnabledTargets(
-            enabledProperty = "kotlin.internal.wasm.enableUnsafeOptimizationsForMultiplatform",
+            properties = mapOf(
+                JVM_ENABLE_KMP_IC to "false",
+                "kotlin.internal.wasm.enableUnsafeOptimizationsForMultiplatform" to "true",
+            ),
             expectedJvm = false, expectedJs = false, expectedWasm = true,
         )
     }
@@ -70,13 +84,13 @@ class UnsafeOptimizationsForMultiplatformTest {
     }
 
     private fun assertEnabledTargets(
-        enabledProperty: String?,
+        properties: Map<String, String>,
         expectedJvm: Boolean,
         expectedJs: Boolean,
         expectedWasm: Boolean,
     ) {
         val project = buildKMPWithAllBackends(preApplyCode = {
-            if (enabledProperty != null) extraProperties.set(enabledProperty, "true")
+            properties.forEach { (name, value) -> extraProperties.set(name, value) }
         })
 
         project.evaluate()
@@ -92,5 +106,9 @@ class UnsafeOptimizationsForMultiplatformTest {
                 (jsTasks + wasmTasks).associate { it.path to it.enableUnsafeIncrementalCompilationForMultiplatform.get() }
 
         assertEquals(expected, actual)
+    }
+
+    private companion object {
+        const val JVM_ENABLE_KMP_IC = "kotlin.jvm.enableIncrementalCompilationOfCommonSources"
     }
 }
