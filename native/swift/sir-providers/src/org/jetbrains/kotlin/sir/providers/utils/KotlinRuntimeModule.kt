@@ -35,11 +35,18 @@ public object KotlinRuntimeModule : SirModule() {
 
     public val kotlinBaseDesignatedInit: SirInit = buildKotlinBaseDesignatedInit()
 
+    public val kotlinBaseNoArgInit: SirInit = buildInit {
+        origin = KotlinRuntimeElement()
+        isFailable = false
+        isOverride = false
+    }
+
     public val kotlinBase: SirClass by lazy {
         buildClass {
             name = "KotlinBase"
             origin = KotlinRuntimeElement()
 
+            declarations += kotlinBaseNoArgInit
             declarations += kotlinBaseDesignatedInit
 
             declarations += buildVariable {
@@ -85,7 +92,7 @@ public object KotlinRuntimeSupportModule : SirModule() {
     public val kotlinBridgeableExternalRcRef: SirFunction = buildFunction {
         origin = KotlinRuntimeElement()
         name = "__externalRCRef"
-        returnType = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
+        returnType = SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
     }
 
     public val kotlinBridgeable: SirProtocol by lazy {
@@ -241,7 +248,7 @@ private fun buildKotlinBaseDesignatedInit(): SirInit = buildInit {
         listOf(
             SirParameter(
                 argumentName = "__externalRCRefUnsafe",
-                type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
+                type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
             ),
             SirParameter(
                 argumentName = "options",
