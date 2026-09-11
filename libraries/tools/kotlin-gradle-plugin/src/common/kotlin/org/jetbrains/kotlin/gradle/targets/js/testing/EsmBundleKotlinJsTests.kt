@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import javax.inject.Inject
 import kotlin.io.path.Path
+import kotlin.io.path.copyTo
+import kotlin.io.path.name
 import kotlin.io.path.readText
 
 @DisableCachingByDefault(because = "Performs lightweight FS and text substitution operations, not worth caching")
@@ -96,6 +98,7 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
 
         val jsTestRunnerFile = modules.require("kotlin-web-helpers/dist/kotlin-test-mocha-browser-runner.js")
         val testHtmlFileTemplate = Path(modules.require("kotlin-web-helpers/dist/static/test.html"))
+        val mochaAssets = modules.resolveMochaBrowserAssets()
 
         /** sync will remove old files, if they're missing in [kotlinLinkerOutputFiles] */
         fs.sync { syncSpec ->
@@ -141,6 +144,10 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
             }
 
         outputDirectory.file("test.html").get().asFile.writeText(testHtmlFileContent)
+
+        // test.html references the mocha assets relative to itself, see replaceMochaCdnReferences
+        copyMochaBrowserAssets(mochaAssets, outputDirectory.get().asFile.toPath())
+
     }
 }
 

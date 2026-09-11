@@ -193,17 +193,12 @@ constructor(
 
         runner.execute()
 
-        copyMochaBrowserAssets(mochaAssets)
+        copyMochaBrowserAssets(mochaAssets, outputBundleDir.get().asFile.toPath())
         // Writes should happen after webpack build, because of 'clean' policy
         writeTestHtmlFile(staticHtml)
     }
 
-    private fun copyMochaBrowserAssets(assets: List<Path>) {
-        val outputDir = outputBundleDir.get().asFile.toPath()
-        assets.forEach { asset ->
-            asset.copyTo(outputDir.resolve(asset.name), overwrite = true)
-        }
-    }
+
 
     private fun writeTestHtmlFile(staticHtmlPath: String) {
         val source = Path(staticHtmlPath)
@@ -230,6 +225,12 @@ constructor(
     }
 }
 
+internal fun copyMochaBrowserAssets(assets: List<Path>, outputBundleDir : Path) {
+    assets.forEach { asset ->
+        asset.copyTo(outputBundleDir.resolve(asset.name), overwrite = true)
+    }
+}
+
 private val MOCHA_ASSET_FILE_NAMES = listOf("mocha.js", "mocha.css")
 
 private const val MOCHA_SOURCE_MAP_FILE_NAME = "mocha.js.map"
@@ -239,7 +240,7 @@ private val MOCHA_CDN_URL = Regex("""https://unpkg\.com/mocha(?:@[^/"']+)?/(moch
 internal fun replaceMochaCdnReferences(html: String): String? =
     if (MOCHA_CDN_URL.containsMatchIn(html)) MOCHA_CDN_URL.replace(html, "$1") else null
 
-private fun NpmProjectModules.resolveMochaBrowserAssets(): List<Path> {
+internal fun NpmProjectModules.resolveMochaBrowserAssets(): List<Path> {
     val assets = MOCHA_ASSET_FILE_NAMES.map { Path(require("mocha/$it")) }
     val sourceMap = resolve("mocha/$MOCHA_SOURCE_MAP_FILE_NAME")?.toPath()
     return assets + listOfNotNull(sourceMap)
