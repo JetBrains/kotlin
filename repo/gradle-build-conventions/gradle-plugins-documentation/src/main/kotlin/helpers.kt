@@ -30,7 +30,6 @@ import java.io.File
 // Gradle 7.6 javadoc does not have published 'package-list' file
 internal fun DokkaExternalDocumentationLinkSpec.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
     if (pluginVariant == GradlePluginVariant.GRADLE_MIN ||
-        pluginVariant == GradlePluginVariant.GRADLE_80 ||
         pluginVariant == GradlePluginVariant.GRADLE_81 ||
         pluginVariant == GradlePluginVariant.GRADLE_82 ||
         pluginVariant == GradlePluginVariant.GRADLE_85 ||
