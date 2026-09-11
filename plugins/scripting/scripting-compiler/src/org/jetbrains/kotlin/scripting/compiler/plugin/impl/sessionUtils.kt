@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.flattenAndFilterOwnProviders
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.registerLibrarySessionComponents
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import java.io.File
 
@@ -100,9 +102,9 @@ internal fun configureLibrarySessionIfNeeded(
     val [libModuleData, _] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
     if (libModuleData != null) {
         val projectEnvironment = state.sessionFactoryContext.projectEnvironment
-        val searchScope = state.moduleDataProvider.getModuleDataPaths(libModuleData)?.let { paths ->
-            projectEnvironment.getSearchScopeByClassPath(paths)
-        } ?: state.sessionFactoryContext.librariesScope
+        val libraryClasspath = state.moduleDataProvider.getModuleDataPaths(libModuleData)
+            ?.let { paths -> JvmClasspath.Roots(paths.map(JvmClasspathRootId::of)) }
+            ?: state.sessionFactoryContext.librariesClasspath
 
         return createScriptingAdditionalLibrariesSession(
             libModuleData,
@@ -111,8 +113,11 @@ internal fun configureLibrarySessionIfNeeded(
             state.sharedLibrarySession,
             state.extensionRegistrars,
             compilerConfiguration,
-            getKotlinClassFinder = { projectEnvironment.getKotlinClassFinder(searchScope) },
-            getJavaFacade = { projectEnvironment.getFirJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesScope) }
+            getKotlinClassFinder = { projectEnvironment.getKotlinClassFinder(libraryClasspath) },
+            getJavaFacade = {
+                state.sessionFactoryContext.javaInterop
+                    .createBinaryJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesClasspath)
+            }
         )
     }
     return null

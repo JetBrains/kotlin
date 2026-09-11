@@ -5,20 +5,17 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.contentRoots
-import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
@@ -28,7 +25,6 @@ import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
@@ -97,11 +93,11 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             val projectEnvironment = VfsBasedProjectEnvironment(
                 project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
             ) { packagePartProviderFactory.invoke(it) }
-            val librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
             FirJvmSessionFactory.Context(
                 configuration,
                 projectEnvironment,
-                librariesScope,
+                JvmClasspath.ProjectLibraries(),
+                projectEnvironment.javaInterop(configuration),
             )
         }
         val librarySession = createLibrarySession(
@@ -201,7 +197,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         extensionRegistrars = extensionRegistrars,
                         JarMetadataProviderComponents(
                             jvmSessionFactoryContext.packagePartProviderForLibraries as PackageAndMetadataPartProvider,
-                            jvmSessionFactoryContext.librariesScope,
+                            jvmSessionFactoryContext.librariesClasspath,
                             jvmSessionFactoryContext.projectEnvironment,
                         ),
                         resolvedKLibs = klibs,
@@ -222,7 +218,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         extensionRegistrars,
                         languageVersionSettings,
                         jvmSessionFactoryContext,
-                        createJavaFacade = AbstractProjectEnvironment::getFirJavaFacade,
                     ).also(::registerExtraComponents)
                 }
             }
@@ -304,8 +299,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             extensionRegistrars,
             sessionConfigurator,
             jvmSessionFactoryContext,
-            project,
-            ktFiles.values,
         )
 
         val firAnalyzerFacade = FirAnalyzerFacade(
@@ -343,8 +336,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         extensionRegistrars: List<FirExtensionRegistrar>,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
         jvmSessionFactoryContext: FirJvmSessionFactory.Context?,
-        project: Project,
-        ktFiles: Collection<KtFile>,
     ): FirSession {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val sessionFactory = FirMetadataSessionFactory(configuration.targetPlatform ?: CommonPlatforms.defaultCommonPlatform)
@@ -367,14 +358,11 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             targetPlatform.isJvm() -> {
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
-                    PsiBasedProjectFileSearchScope(newModuleSearchScope(project, ktFiles)),
                     createIncrementalCompilationSymbolProviders = { null },
                     extensionRegistrars,
                     configuration,
                     jvmSessionFactoryContext!!,
-                    needRegisterJavaElementFinder = true,
                     kmpModuleKind = KmpModuleKind.SingleModule,
-                    createJavaFacade = AbstractProjectEnvironment::getFirJavaFacade,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
@@ -483,13 +471,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             } else {
                 true
             }
-        }
-
-        fun newModuleSearchScope(project: Project, files: Collection<KtFile>): GlobalSearchScope {
-            // In case of separate modules, the source module scope generally consists of the following scopes:
-            // 1) scope which only contains passed Kotlin source files (.kt and .kts)
-            // 2) scope which contains all Java source files (.java) in the project
-            return GlobalSearchScope.filesScope(project, files.map { it.virtualFile }.toSet()).uniteWith(AllJavaSourcesInProjectScope(project))
         }
     }
 }

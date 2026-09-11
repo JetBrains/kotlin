@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
@@ -122,7 +123,7 @@ class CliJavaModuleFinder(
         val file = moduleRoot.findChild(if (useSig) PsiJavaModule.MODULE_INFO_CLASS + ".sig" else PsiJavaModule.MODULE_INFO_CLS_FILE)
             ?: return null
         val moduleInfo = try {
-            JavaModuleInfo.read(file, javaFileManager, allScope) ?: return null
+            JavaModuleInfo.read(file) { javaFileManager.findClass(JavaClassFinder.Request(it), allScope) } ?: return null
         } catch (e: FileReadingException) {
             reportError(e.message + "\nCaused by: ${e.cause::class.java.name}: ${e.cause.message}")
             throw CompilationErrorException()

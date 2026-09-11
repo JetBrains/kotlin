@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 
 @ObsoleteTestInfrastructure
 object FirSessionFactoryHelper {
@@ -25,11 +25,10 @@ object FirSessionFactoryHelper {
         platform: TargetPlatform,
         projectEnvironment: VfsBasedProjectEnvironment,
         configuration: CompilerConfiguration,
-        javaSourcesScope: AbstractProjectFileSearchScope,
-        librariesScope: AbstractProjectFileSearchScope,
+        javaInterop: FirJavaInterop,
+        librariesClasspath: JvmClasspath,
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        needRegisterJavaElementFinder: Boolean,
         dependenciesConfigurator: DependencyListForCliModule.Builder.BuilderForDefaultDependenciesModule.() -> Unit = {},
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
@@ -39,7 +38,8 @@ object FirSessionFactoryHelper {
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
-            librariesScope,
+            librariesClasspath,
+            javaInterop,
         )
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
@@ -66,12 +66,10 @@ object FirSessionFactoryHelper {
         )
         return FirJvmSessionFactory.createSourceSession(
             mainModuleData,
-            javaSourcesScope,
-            { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, projectEnvironment) },
+            { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, context) },
             extensionRegistrars,
             configuration,
             context,
-            needRegisterJavaElementFinder,
             kmpModuleKind = KmpModuleKind.SingleModule,
         ) {
             registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, librarySession.syntheticFunctionInterfacesSymbolProvider)
