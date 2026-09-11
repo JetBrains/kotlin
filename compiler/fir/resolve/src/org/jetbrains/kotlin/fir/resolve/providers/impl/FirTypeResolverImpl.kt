@@ -648,7 +648,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val coneTypes = typeRef.types.mapTo(mutableListOf()) { it.coneType }
 
                 val firstType = coneTypes.first()
-                val primaryType = if (firstType.toClassLikeSymbol(session)?.isRichError != true) {
+                val primaryType = if (firstType.toClassLikeSymbol(session).let { it != null && !it.isRichError }) {
                     coneTypes.removeAt(0)
                     firstType.applyIf(typeRef.isMarkedNullable) {
                         withNullability(true, session.typeContext)

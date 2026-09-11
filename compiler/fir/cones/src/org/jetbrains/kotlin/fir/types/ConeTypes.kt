@@ -354,7 +354,7 @@ class ConeIntersectionType @DelicateIntersectionConstructor constructor(
 annotation class DelicateUnionConstructor
 
 /**
- * An intersection type like `String? | MyError | MyOtherError`.
+ * A union type like `String? | MyError | MyOtherError`.
  *
  * The contract of the class is
  *
