@@ -8,14 +8,17 @@
 package kotlin.wasm.internal
 
 import kotlin.coroutines.*
+import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
+@PublishedApi
 internal fun <T> getContinuation(): Continuation<T> =
     implementedAsIntrinsic
 
+@PublishedApi
 @Suppress("UNCHECKED_CAST")
 @UsedFromCompilerGeneratedCode
 internal suspend fun <T> returnIfSuspended(argument: Any?): T =
@@ -27,6 +30,7 @@ internal suspend inline fun getCoroutineContext(): CoroutineContext =
     getCoroutineContextImpl()
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal suspend fun getCoroutineContextImpl(): CoroutineContext =
     getContinuation<Any?>().context
 
@@ -79,6 +83,8 @@ internal fun <T> interceptedIntrinsic(cont: Continuation<T>): Continuation<T> =
 
 @InlineOnly
 @PublishedApi
+@DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
-internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(noinline block: (Continuation<T>) -> Any?): T =
-    suspendCoroutineUninterceptedOrReturnIntrinsic(block)
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+    suspendCoroutineUninterceptedOrReturnStateMachine(block)
+// TODO: replace with `processSuspendCoroutineUninterceptedResultIntrinsic(block(getContinuation<T>()))`
