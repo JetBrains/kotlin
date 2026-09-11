@@ -95,7 +95,7 @@ extension ExportedKotlinPackages.namespace {
             { namespace_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -118,7 +118,7 @@ extension ExportedKotlinPackages.namespace {
                 }
             }
         }
-        public init() {
+        public override init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == ExportedKotlinPackages.namespace.Foo.self {
                  __kt = namespace_Foo_init_allocate()
@@ -129,7 +129,7 @@ extension ExportedKotlinPackages.namespace {
             { namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -164,7 +164,7 @@ extension ExportedKotlinPackages.namespace {
             { namespace_MutableSharedFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -199,7 +199,7 @@ extension ExportedKotlinPackages.namespace {
             { namespace_MutableStateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -234,7 +234,7 @@ extension ExportedKotlinPackages.namespace {
             { namespace_Nar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -269,7 +269,7 @@ extension ExportedKotlinPackages.namespace {
             { namespace_SharedFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -304,7 +304,7 @@ extension ExportedKotlinPackages.namespace {
             { namespace_StateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -339,7 +339,7 @@ extension ExportedKotlinPackages.namespace {
             { namespace_Zar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -355,112 +355,112 @@ extension ExportedKotlinPackages.namespace {
 }
 @_cdecl("namespace_Bar_foo__reverse_swift")
 package func namespace_Bar_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.Bar.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.Bar.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedFlow<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2> = _self.foo()
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_Bar_voo_get__reverse_swift")
 package func namespace_Bar_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.Bar.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.Bar.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedFlow<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2> = _self.voo
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_Foo_foo__reverse_swift")
 package func namespace_Foo_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.Foo.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.Foo.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.foo()
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_Foo_voo_get__reverse_swift")
 package func namespace_Foo_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.Foo.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.Foo.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.voo
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_MutableSharedFoo_foo__reverse_swift")
 package func namespace_MutableSharedFoo_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.MutableSharedFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.MutableSharedFoo.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedMutableSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.foo()
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_MutableSharedFoo_voo_get__reverse_swift")
 package func namespace_MutableSharedFoo_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.MutableSharedFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.MutableSharedFoo.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedMutableSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.voo
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_MutableStateFoo_foo__reverse_swift")
 package func namespace_MutableStateFoo_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.MutableStateFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.MutableStateFoo.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.foo()
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_MutableStateFoo_voo_get__reverse_swift")
 package func namespace_MutableStateFoo_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.MutableStateFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.MutableStateFoo.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.voo
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_Nar_foo__reverse_swift")
 package func namespace_Nar_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.Nar.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.Nar.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Never> = _self.foo()
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_Nar_voo_get__reverse_swift")
 package func namespace_Nar_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.Nar.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.Nar.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Never> = _self.voo
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_SharedFoo_foo__reverse_swift")
 package func namespace_SharedFoo_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.SharedFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.SharedFoo.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.foo()
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_SharedFoo_voo_get__reverse_swift")
 package func namespace_SharedFoo_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.SharedFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.SharedFoo.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.voo
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_StateFoo_foo__reverse_swift")
 package func namespace_StateFoo_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.StateFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.StateFoo.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.foo()
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_StateFoo_voo_get__reverse_swift")
 package func namespace_StateFoo_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.StateFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.StateFoo.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.voo
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_Zar_foo__reverse_swift")
 package func namespace_Zar_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.Zar.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.Zar.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>> = _self.foo()
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("namespace_Zar_voo_get__reverse_swift")
 package func namespace_Zar_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.namespace.Zar.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.namespace.Zar.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>> = _self.voo
     return _result.wrapped.__externalRCRef()
 }

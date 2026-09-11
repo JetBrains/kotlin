@@ -21,7 +21,7 @@ public protocol __Driver_Listener {
 public protocol ___Driver_Listener: KotlinRuntimeSupport._KotlinBridgeable {
 }
 open class BaseDriver: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.BaseDriver.self {
              __kt = __root___BaseDriver_init_allocate()
@@ -32,7 +32,7 @@ open class BaseDriver: KotlinRuntime.KotlinBase {
         { __root___BaseDriver_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -96,21 +96,21 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main.__Driver_Listener 
 }
 @_cdecl("BaseDriver_addInts__TypesOfArguments__Swift_Array_Swift_Int32__Vararg_____reverse_swift")
 package func BaseDriver_addInts__TypesOfArguments__Swift_Array_Swift_Int32__Vararg_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ queryKeys: Any) -> Swift.Bool {
-    let _self = main.BaseDriver.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.BaseDriver.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = unsafeBitCast(_self.addInts, to: ((Swift.Array<Swift.Int32>) -> Swift.Void).self)(queryKeys as! Swift.Array<Swift.Int32>)
     return { _result; return true }()
 }
 
 @_cdecl("BaseDriver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg_____reverse_swift")
 package func BaseDriver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ queryKeys: Any) -> Swift.Bool {
-    let _self = main.BaseDriver.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.BaseDriver.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = unsafeBitCast(_self.addListener, to: ((Swift.Array<Swift.String>) -> Swift.Void).self)(queryKeys as! Swift.Array<Swift.String>)
     return { _result; return true }()
 }
 
 @_cdecl("BaseDriver_addOptionalInts__TypesOfArguments__Swift_Array_Swift_Optional_Swift_Int32___Vararg_____reverse_swift")
 package func BaseDriver_addOptionalInts__TypesOfArguments__Swift_Array_Swift_Optional_Swift_Int32___Vararg_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ queryKeys: Any) -> Swift.Bool {
-    let _self = main.BaseDriver.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.BaseDriver.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = unsafeBitCast(_self.addOptionalInts, to: ((Swift.Array<Swift.Optional<Swift.Int32>>) -> Swift.Void).self)(queryKeys as! Swift.Array<Swift.Optional<Swift.Int32>>)
     return { _result; return true }()
 }

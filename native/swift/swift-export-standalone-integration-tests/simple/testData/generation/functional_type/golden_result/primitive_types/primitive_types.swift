@@ -14,8 +14,8 @@ public func consume_block_with_uint_id(
 }
 public func produce_block_with_byte_byte() -> (Swift.Int8, Swift.Int8, Swift.Int8) -> Swift.Int8 {
     return {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___produce_block_with_byte_byte(), options: .asBestFittingWrapper)!
-        return { _1, _2, _3 in return primitive_types_internal_functional_type_caller_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8_Swift_Int8_Swift_Int8__(pointerToBlock.__externalRCRef()!, _1, _2, _3) }
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___produce_block_with_byte_byte(), options: .asBestFittingWrapper)
+        return { _1, _2, _3 in return primitive_types_internal_functional_type_caller_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8_Swift_Int8_Swift_Int8__(pointerToBlock.__externalRCRef(), _1, _2, _3) }
     }()
 }
 @_cdecl("primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8__")

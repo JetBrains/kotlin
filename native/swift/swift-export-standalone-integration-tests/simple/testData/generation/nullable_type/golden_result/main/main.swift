@@ -7,13 +7,13 @@ public typealias OptOptRef = main.OptionalRef
 public typealias OptToNonOptTypealias = main.NonoptionalRef?
 public typealias OptionalRef = main.Bar?
 public final class Bar: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         let __kt = __root___Bar_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -46,7 +46,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_main_Bar___(__kt, b.map { it in it.__externalRCRef() } ?? nil); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

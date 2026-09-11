@@ -48,7 +48,7 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         self = Enum.allCases[Int(rawValue)]
     }
     public init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         switch __root___Enum_ordinal(__externalRCRefUnsafe) {
@@ -57,7 +57,7 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         default: fatalError()
         }
     }
-    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer {
         return switch self {
         case .a: Enum_a()
         case .b: Enum_b()
@@ -109,7 +109,7 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
         self = EnumSimple.allCases[Int(rawValue)]
     }
     public init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         switch __root___EnumSimple_ordinal(__externalRCRefUnsafe) {
@@ -119,7 +119,7 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
         default: fatalError()
         }
     }
-    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer {
         return switch self {
         case .FIRST: EnumSimple_FIRST()
         case .SECOND: EnumSimple_SECOND()
@@ -174,7 +174,7 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
         self = EnumWithAbstractMembers.allCases[Int(rawValue)]
     }
     public init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         switch __root___EnumWithAbstractMembers_ordinal(__externalRCRefUnsafe) {
@@ -184,7 +184,7 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
         default: fatalError()
         }
     }
-    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer {
         return switch self {
         case .YELLOW: EnumWithAbstractMembers_YELLOW()
         case .SKY: EnumWithAbstractMembers_SKY()
@@ -244,7 +244,7 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         self = EnumWithMembers.allCases[Int(rawValue)]
     }
     public init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         switch __root___EnumWithMembers_ordinal(__externalRCRefUnsafe) {
@@ -253,7 +253,7 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         default: fatalError()
         }
     }
-    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer {
         return switch self {
         case .NORTH: EnumWithMembers_NORTH()
         case .SOUTH: EnumWithMembers_SOUTH()

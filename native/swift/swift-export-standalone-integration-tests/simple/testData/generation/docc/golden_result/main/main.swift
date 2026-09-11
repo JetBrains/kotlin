@@ -24,11 +24,11 @@ public final class Baz: KotlinRuntime.KotlinBase {
             return main.Baz.__createClassWrapper(externalRCRef: __root___Baz_get())
         }
     }
-    private init() {
+    private override init() {
         fatalError()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -84,7 +84,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         }
     }
     /// Secondary constructor without parameters
-    public init() {
+    public override init() {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -109,7 +109,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, arg.__externalRCRef()); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

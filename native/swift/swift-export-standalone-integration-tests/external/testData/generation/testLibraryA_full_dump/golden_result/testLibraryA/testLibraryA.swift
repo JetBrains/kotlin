@@ -11,13 +11,13 @@ extension ExportedKotlinPackages.org.jetbrains.a {
         public func returnMe() -> ExportedKotlinPackages.org.jetbrains.a.MyLibraryA {
             return ExportedKotlinPackages.org.jetbrains.a.MyLibraryA.__createClassWrapper(externalRCRef: org_jetbrains_a_MyLibraryA_returnMe(self.__externalRCRef()))
         }
-        public init() {
+        public override init() {
             let __kt = org_jetbrains_a_MyLibraryA_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { org_jetbrains_a_MyLibraryA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

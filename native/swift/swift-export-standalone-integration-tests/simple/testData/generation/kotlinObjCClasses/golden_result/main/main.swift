@@ -7,13 +7,13 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public final class RegularKotlinClass: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         let __kt = __root___RegularKotlinClass_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___RegularKotlinClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
