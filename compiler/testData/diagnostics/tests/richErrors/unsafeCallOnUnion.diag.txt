@@ -1,5 +1,3 @@
-/test.kt:10:1: error: Modifier 'error' is not applicable to 'class'.
-
 /test.kt:13:6: error: Unsafe call on receiver of union type 'String | Foo'. Consider using an error-safe call '|.'.
 
 /test.kt:15:6: error: Unsafe call on receiver of nullable union type 'String? | Foo'.

@@ -303,7 +303,8 @@ val possibleTargetPredicateMap = mapOf(
     VALUE_KEYWORD to or(
         always(KotlinTarget.CLASS_ONLY),
         ifSupported(LanguageFeature.FullValueClasses, KotlinTarget.STANDALONE_OBJECT)
-    )
+    ),
+    ERROR_KEYWORD to always(KotlinTarget.CLASS_ONLY, KotlinTarget.OBJECT),
 )
 
 // NOTE: deprecated targets must be possible!

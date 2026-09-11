@@ -7,7 +7,7 @@ package kotlin
 
 abstract class RichError
 // FILE: test.kt
-<!WRONG_MODIFIER_TARGET("error; class")!>error<!> class Foo
+error class Foo
 
 fun test(x: String | Foo, y: String? | Foo, z: String?) {
     x<!UNSAFE_CALL("on receiver of union type 'String | Foo'. Consider using an error-safe call '|.'")!>.<!>length

@@ -11,8 +11,8 @@ package kotlin
 abstract class RichError
 // FILE: test.kt
 
-<!UNSUPPORTED_FEATURE, WRONG_MODIFIER_TARGET!>error<!> class Foo
-<!UNSUPPORTED_FEATURE, WRONG_MODIFIER_TARGET!>error<!> object Bar
+<!UNSUPPORTED_FEATURE!>error<!> class Foo
+<!UNSUPPORTED_FEATURE!>error<!> object Bar
 
 fun <T : <!UNSUPPORTED_FEATURE!>RichError<!>, V : <!UNSUPPORTED_FEATURE!>NonError<!>> foo(
     x: <!UNSUPPORTED_FEATURE!>String | Foo<!>,
