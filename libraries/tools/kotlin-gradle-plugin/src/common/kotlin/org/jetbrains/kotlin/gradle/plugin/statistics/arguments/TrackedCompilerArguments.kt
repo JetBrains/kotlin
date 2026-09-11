@@ -157,7 +157,6 @@ internal object TrackedCompilerArguments {
 
             stringMetric(StringMetrics.CLI_ABI_STABILITY_MODE, K2JVMCompilerArguments::abiStability)
             stringMetric(StringMetrics.CLI_ASSERTIONS_MODE, K2JVMCompilerArguments::assertionsMode)
-            stringMetric(StringMetrics.CLI_DEFAULT_SCRIPT_EXTENSION, K2JVMCompilerArguments::defaultScriptExtension)
             stringMetric(StringMetrics.CLI_JDK_RELEASE_VERSION, K2JVMCompilerArguments::jdkRelease)
             stringMetric(StringMetrics.CLI_JSPECIFY_ANNOTATIONS_MODE, K2JVMCompilerArguments::jspecifyAnnotations)
             stringMetric(StringMetrics.CLI_LAMBDAS_CODEGEN_MODE, K2JVMCompilerArguments::lambdas)
@@ -230,7 +229,6 @@ internal object TrackedCompilerArguments {
             booleanMetric(BooleanMetrics.CLI_WASM_STACK_SWITCHING_PROPOSAL_USED, KotlinWasmCompilerArguments::wasmUseStackSwitchingProposal)
             booleanMetric(BooleanMetrics.CLI_WASM_TRAPS_INSTEAD_OF_EXCEPTIONS_USED, KotlinWasmCompilerArguments::wasmUseTrapsInsteadOfExceptions)
 
-            stringMetric(StringMetrics.CLI_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX, KotlinWasmCompilerArguments::wasmInternalLocalVariablePrefix)
             stringMetric(StringMetrics.CLI_WASM_TARGET_MODE, KotlinWasmCompilerArguments::wasmTarget)
         }
 
@@ -306,14 +304,10 @@ internal object TrackedCompilerArguments {
             stringMetric(StringMetrics.CLI_NATIVE_DEBUG_INFO_FORMAT_VERSION, K2NativeCompilerArguments::debugInfoFormatVersion)
             stringMetric(StringMetrics.CLI_NATIVE_DEBUG_TRAMPOLINE_MODE, K2NativeCompilerArguments::generateDebugTrampolineString)
             stringMetric(StringMetrics.CLI_NATIVE_IR_PROPERTY_LAZY_INITIALIZATION_MODE, K2NativeCompilerArguments::propertyLazyInitialization)
-            stringMetric(StringMetrics.CLI_NATIVE_LLVM_LTO_PASSES, K2NativeCompilerArguments::llvmLTOPasses)
-            stringMetric(StringMetrics.CLI_NATIVE_LLVM_MODULE_PASSES, K2NativeCompilerArguments::llvmModulePasses)
             stringMetric(StringMetrics.CLI_NATIVE_PRE_LINK_CACHES_MODE, K2NativeCompilerArguments::preLinkCaches)
-            stringMetric(StringMetrics.CLI_NATIVE_RUNTIME_LOGS, K2NativeCompilerArguments::runtimeLogs)
             stringMetric(StringMetrics.CLI_NATIVE_MEMORY_MODEL, K2NativeCompilerArguments::memoryModel)
             stringMetric(StringMetrics.CLI_NATIVE_PRODUCE_OUTPUT_KIND, K2NativeCompilerArguments::produce)
             stringMetric(StringMetrics.CLI_NATIVE_MANIFEST_TARGETS, K2NativeCompilerArguments::manifestNativeTargets)
-            stringMetric(StringMetrics.CLI_NATIVE_SAVE_LLVM_IR_AFTER_PHASES, K2NativeCompilerArguments::saveLlvmIrAfter)
 
             numberMetric(NumericalMetrics.CLI_BACKEND_THREADS_COUNT, K2NativeCompilerArguments::backendThreads)
         }

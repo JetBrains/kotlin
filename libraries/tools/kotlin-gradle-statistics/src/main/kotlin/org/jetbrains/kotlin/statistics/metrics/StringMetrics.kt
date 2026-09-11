@@ -53,7 +53,6 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     CLI_VERIFY_IR_MODE(OVERRIDE, AllowedListAnonymizer(listOf("none", "warning", "error"))),
     CLI_ABI_STABILITY_MODE(OVERRIDE, AllowedListAnonymizer(listOf("stable", "unstable"))),
     CLI_ASSERTIONS_MODE(OVERRIDE, AllowedListAnonymizer(listOf("always-enable", "always-disable", "jvm", "legacy"))),
-    CLI_DEFAULT_SCRIPT_EXTENSION(OVERRIDE, RegexControlled(".{1,32}", false)),
     CLI_JDK_RELEASE_VERSION(OVERRIDE, AllowedListAnonymizer(listOf("1.8") + (9..27).map { it.toString() })),
     CLI_JSPECIFY_ANNOTATIONS_MODE(OVERRIDE, AllowedListAnonymizer(listOf("ignore", "strict", "warn"))),
     CLI_LAMBDAS_CODEGEN_MODE(OVERRIDE, AllowedListAnonymizer(listOf("class", "indy"))),
@@ -72,7 +71,6 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     CLI_MAIN_FUNCTION_EXECUTION_MODE(OVERRIDE, AllowedListAnonymizer(listOf("call", "noCall"))),
     CLI_SOURCE_MAP_EMBED_SOURCES_MODE(OVERRIDE, AllowedListAnonymizer(listOf("always", "never", "inlining"))),
     CLI_SOURCE_MAP_NAMES_POLICY(OVERRIDE, AllowedListAnonymizer(listOf("no", "simple-names", "fully-qualified-names"))),
-    CLI_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX(OVERRIDE, RegexControlled(".{0,32}", false)),
     CLI_WASM_TARGET_MODE(OVERRIDE, AllowedListAnonymizer(listOf("wasm-js", "wasm-wasi"))),
     CLI_JS_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC_MODE(OVERRIDE, AllowedListAnonymizer(listOf("log", "exception"))),
     CLI_NATIVE_LIGHT_DEBUG_MODE(OVERRIDE, AllowedListAnonymizer(listOf("disable", "enable"))),
@@ -80,10 +78,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     CLI_NATIVE_DEBUG_INFO_FORMAT_VERSION(OVERRIDE, AllowedListAnonymizer(listOf("1", "2"))),
     CLI_NATIVE_DEBUG_TRAMPOLINE_MODE(OVERRIDE, AllowedListAnonymizer(listOf("disable", "enable"))),
     CLI_NATIVE_IR_PROPERTY_LAZY_INITIALIZATION_MODE(OVERRIDE, AllowedListAnonymizer(listOf("disable", "enable"))),
-    CLI_NATIVE_LLVM_LTO_PASSES(OVERRIDE, RegexControlled(".{1,200}", false)),
-    CLI_NATIVE_LLVM_MODULE_PASSES(OVERRIDE, RegexControlled(".{1,200}", false)),
     CLI_NATIVE_PRE_LINK_CACHES_MODE(OVERRIDE, AllowedListAnonymizer(listOf("disable", "enable"))),
-    CLI_NATIVE_RUNTIME_LOGS(OVERRIDE, RegexControlled(".{1,200}", false)),
     CLI_NATIVE_MEMORY_MODEL(OVERRIDE, AllowedListAnonymizer(listOf("strict", "experimental"))),
     CLI_NATIVE_PRODUCE_OUTPUT_KIND(OVERRIDE, AllowedListAnonymizer(listOf("program", "static", "dynamic", "framework", "library", "bitcode"))),
     CLI_MANUALLY_CONFIGURED_LANGUAGE_FEATURES(OVERRIDE, ARRAY_REGEX),
@@ -100,8 +95,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     CLI_WARNING_LEVELS(OVERRIDE, ARRAY_REGEX),
     CLI_JSR305_NULLABILITY_ANNOTATIONS_MODE(OVERRIDE, ARRAY_REGEX),
     CLI_METADATA_TARGET_PLATFORM(OVERRIDE, ARRAY_REGEX),
-    CLI_NATIVE_MANIFEST_TARGETS(OVERRIDE, ARRAY_REGEX),
-    CLI_NATIVE_SAVE_LLVM_IR_AFTER_PHASES(OVERRIDE, ARRAY_REGEX);
+    CLI_NATIVE_MANIFEST_TARGETS(OVERRIDE, ARRAY_REGEX);
 
     companion object {
         const val VERSION = 15
