@@ -136,6 +136,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         val swiftModules = deserializeSwiftModules()
 
         reportDivergentSwiftExportOutputs()
+        cleanGeneratedPackageDirectories(sourcesPath.getFile(), includesPath.getFile())
         createSPMSources(swiftModules)
         createPackageManifest(swiftModules)
         createKotlinRuntimeTarget()
@@ -258,6 +259,21 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     companion object {
         const val SOURCES_DIRECTORY = "Sources"
+    }
+}
+
+/**
+ * Empties the directories [GenerateSPMPackageFromSwiftExport] regenerates from scratch.
+ *
+ * The task writes every file it owns on every run but never removes one, so a module that was renamed or
+ * dropped left its `Sources/<Old>` directory behind, and the export Sync then copied it into the user's
+ * package. Follows `GenerateSyntheticLinkageImportProject.removeStaleSubpackages`, in its simplest correct
+ * form: the whole content is rewritten, so the whole content can go first.
+ */
+internal fun cleanGeneratedPackageDirectories(sources: File, includes: File) {
+    listOf(sources, includes).forEach { directory ->
+        directory.deleteRecursively()
+        directory.mkdirs()
     }
 }
 
