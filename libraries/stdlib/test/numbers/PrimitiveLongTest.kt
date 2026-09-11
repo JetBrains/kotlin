@@ -388,6 +388,7 @@ class PrimitiveLongTest {
     @Test
     fun toLong() {
         fun test(expected: Long, x: Long) {
+            @Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
             assertEquals(expected, x.toLong())
         }
 
@@ -530,6 +531,9 @@ class PrimitiveLongTest {
         test(-1769686613392113L, -1.769686613392113e15)
         test(-7292607053441567L, -7.292607053441567e15)
         test(2667276401109539L, 2.667276401109539e15)
+
+        val d = (ULong.MAX_VALUE - 1024U).toDouble() // 18446744073709550000
+        test(9223372036854775807L, d)
     }
 
     @Test
