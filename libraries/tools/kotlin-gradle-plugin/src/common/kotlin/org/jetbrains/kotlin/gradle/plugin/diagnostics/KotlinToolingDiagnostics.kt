@@ -2014,6 +2014,66 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    /**
+     * FATAL, like [SwiftExportDuplicateModuleNames]: the export Sync would otherwise delete the content of the
+     * destination, and an ERROR reported from a project checker is only logged once
+     * `checkKotlinGradlePluginConfigurationErrors` has run.
+     */
+    internal object SwiftExportPackageOutputDirectoryNotSet : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(projectPath: String) = build {
+            title("Swift Package Output Directory Is Not Set")
+                .description {
+                    "swiftPackageIntegration.outputDirectory is not set in project '$projectPath'. " +
+                            "Set it to the directory that should receive the exported Swift package."
+                }
+                .solution {
+                    "Set export { swift { swiftPackageIntegration { outputDirectory = ... } } } in project '$projectPath'."
+                }
+        }
+    }
+
+    internal object SwiftExportPackageOutputDirectoryUnsafe : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param projectPath the project that declares the DSL property
+         * @param destination the directory the export would synchronise into
+         * @param reason what makes that directory unsafe, rendered after "which"
+         */
+        operator fun invoke(projectPath: String, destination: String, reason: String) = build {
+            title("Unsafe Swift Package Output Directory")
+                .description {
+                    "swiftPackageIntegration.outputDirectory in project '$projectPath' makes the Swift package " +
+                            "export write into '$destination', which $reason. The export<BuildType>SwiftPackage " +
+                            "task synchronises that directory: everything in it that is not part of the generated " +
+                            "Swift package is deleted."
+                }
+                .solution {
+                    "Point swiftPackageIntegration.outputDirectory at a directory dedicated to the exported package."
+                }
+        }
+    }
+
+    internal object SwiftExportPackageOutputDirectoryNotEmpty : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param projectPath the project that declares the DSL property
+         * @param destination the directory the export would synchronise into
+         * @param markerFileName the marker a previously exported package carries
+         */
+        operator fun invoke(projectPath: String, destination: String, markerFileName: String) = build {
+            title("Swift Package Output Directory Is Not Empty")
+                .description {
+                    "swiftPackageIntegration.outputDirectory in project '$projectPath' makes the Swift package " +
+                            "export write into '$destination', which is not empty and was not produced by a " +
+                            "previous export: it does not hold the '$markerFileName' marker. The " +
+                            "export<BuildType>SwiftPackage task empties that directory on every export, so it " +
+                            "must be empty or hold a previously exported package."
+                }
+                .solution {
+                    "Delete '$destination' if it is no longer needed, or point " +
+                            "swiftPackageIntegration.outputDirectory at a directory dedicated to the exported package."
+                }
+        }
+    }
+
     internal object DeprecatedSwiftExportDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke() = build {
             title("Deprecated 'swiftExport { }' DSL")

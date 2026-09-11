@@ -48,6 +48,17 @@ internal fun exportDslProject(
     withXcodeEnvironment: Boolean = false,
     multiplatform: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64() },
     configureExport: Project.() -> Unit = {},
+): ProjectInternal = unevaluatedExportDslProject(withXcodeEnvironment, multiplatform, configureExport)
+    .also { it.evaluate() }
+
+/**
+ * [exportDslProject] without the `evaluate()`, for tests that expect evaluation to fail, such as the ones
+ * that assert a FATAL diagnostic from a project checker.
+ */
+internal fun unevaluatedExportDslProject(
+    withXcodeEnvironment: Boolean = false,
+    multiplatform: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64() },
+    configureExport: Project.() -> Unit = {},
 ): ProjectInternal = buildProjectWithMPP(
     preApplyCode = {
         if (withXcodeEnvironment) {
@@ -59,4 +70,4 @@ internal fun exportDslProject(
         kotlin { multiplatform() }
         configureExport()
     }
-).also { it.evaluate() }
+)

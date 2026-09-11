@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportFingerprintedCoordinationService
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyntheticPackageChangeReport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.sharedPackageRootFor
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
 import org.jetbrains.kotlin.gradle.utils.CommaSeparatedEntriesBuilder
 import org.jetbrains.kotlin.gradle.utils.StringBlockBuilder
@@ -138,6 +139,18 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         createSPMSources(swiftModules)
         createPackageManifest(swiftModules)
         createKotlinRuntimeTarget()
+        createPackageMarker()
+    }
+
+    /**
+     * Marks the generated package so that the export Sync carries the marker into its destination, which is
+     * how `SwiftPackageOutputDirectoryChecker` tells a previously exported directory from one the user filled
+     * with something else.
+     */
+    private fun createPackageMarker() {
+        packagePath.getFile()
+            .resolve(SwiftExportConstants.SWIFT_PACKAGE_MARKER_FILE_NAME)
+            .writeText(SwiftExportConstants.SWIFT_PACKAGE_MARKER_FILE_CONTENT)
     }
 
     private fun reportDivergentSwiftExportOutputs() {

@@ -204,6 +204,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, MultipleSourceSetRootsInCompilationChecker)
             register(project, SwiftExportModuleNameChecker)
             register(project, SwiftExportDslDeprecationChecker)
+            register(project, SwiftPackageOutputDirectoryChecker)
             register(project, CinteropCrossCompilationChecker)
             register(project, NativeBinaryConfigurationChecker)
         }
