@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._Contacts_AppIntents
+
+modules = _Contacts_AppIntents
+compilerOpts = -framework _Contacts_AppIntents
+linkerOpts = -framework _Contacts_AppIntents
+#Disabled: Unavailable

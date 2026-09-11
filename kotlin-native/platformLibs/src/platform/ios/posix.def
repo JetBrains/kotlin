@@ -20,8 +20,8 @@ excludedFunctions = acl_valid_link_np add_profil pfctlinput profil unwhiteout zo
                     in6addr_linklocal_allv2routers
 excludedFunctions.ios_arm64 = longjmperror
 excludedFunctions.ios_simulator_arm64 = longjmperror \
-    openat_dprotected_np mkfifoat mknodat openat_authenticated_np
-excludedFunctions.ios_x64 = openat_dprotected_np mkfifoat mknodat openat_authenticated_np
+    openat_dprotected_np mkfifoat mknodat openat_authenticated_np getumask
+excludedFunctions.ios_x64 = openat_dprotected_np mkfifoat mknodat openat_authenticated_np getumask
 
 ---
 // Wrapper to access errno variable.

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.USDKit
+
+modules = USDKit
+compilerOpts = -framework USDKit
+linkerOpts = -framework USDKit
+#Disabled: Swift-only framework

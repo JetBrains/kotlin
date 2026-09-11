@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._NowPlaying_AppIntents
+
+modules = _NowPlaying_AppIntents
+compilerOpts = -framework _NowPlaying_AppIntents
+linkerOpts = -framework _NowPlaying_AppIntents
+#Disabled: Unavailable

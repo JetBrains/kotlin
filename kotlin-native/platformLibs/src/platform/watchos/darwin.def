@@ -43,6 +43,9 @@ excludedFunctions.watchos_arm64 = _simd_ceil_f4 _simd_ceil_d2 _simd_floor_f4 _si
                                   _simd_rint_f4 _simd_rint_d2 _simd_trunc_f4 _simd_trunc_d2 \
                                   __tg_trunc __tg_ceil __tg_rint __tg_floor simd_fract
 
+excludedFunctions.watchos_simulator_arm64 = aio_readv aio_writev
+excludedFunctions.watchos_x64 = aio_readv aio_writev
+
 compilerOpts = -D_XOPEN_SOURCE -DSYSCTL_DEF_ENABLED
 linkerOpts = -ldl -lz -lbz2 -lcompression
 

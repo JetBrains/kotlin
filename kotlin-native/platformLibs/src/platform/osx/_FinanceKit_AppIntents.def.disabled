@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._FinanceKit_AppIntents
+
+modules = _FinanceKit_AppIntents
+compilerOpts = -framework _FinanceKit_AppIntents
+linkerOpts = -framework _FinanceKit_AppIntents
+#Disabled: Unavailable

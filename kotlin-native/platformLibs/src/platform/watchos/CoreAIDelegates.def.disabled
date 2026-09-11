@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.CoreAIDelegates
+
+modules = CoreAIDelegates
+compilerOpts = -framework CoreAIDelegates
+linkerOpts = -framework CoreAIDelegates
+#Disabled: Unavailable

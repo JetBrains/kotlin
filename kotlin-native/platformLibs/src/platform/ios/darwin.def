@@ -40,8 +40,8 @@ excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     mach_memory_info_redacted thread_resume2 thread_set_x86_64_compat thread_suspend2 vm_reallocate \
 
 
-excludedFunctions.ios_x64 = task_register_hardened_exception_handler thread_adopt_exception_handler
-excludedFunctions.ios_simulator_arm64 = task_register_hardened_exception_handler thread_adopt_exception_handler
+excludedFunctions.ios_x64 = task_register_hardened_exception_handler thread_adopt_exception_handler aio_readv aio_writev
+excludedFunctions.ios_simulator_arm64 = task_register_hardened_exception_handler thread_adopt_exception_handler aio_readv aio_writev
 
 compilerOpts = -D_XOPEN_SOURCE -DSYSCTL_DEF_ENABLED
 linkerOpts = -ldl -lz -lbz2 -lcompression -late
