@@ -230,19 +230,37 @@ internal class BoundedOutputCapture(
         }
         val chunk = String(buffer, 0, length)
         checkNotNull(digest).update(chunk.toByteArray(Charsets.UTF_8))
-        appendToSuffix(chunk)
+        appendToSuffix(buffer, 0, length)
+    }
+
+    private fun appendToSuffix(buffer: CharArray, offset: Int, length: Int) {
+        val capacity = suffix.size
+        if (length >= capacity) {
+            System.arraycopy(buffer, offset + length - capacity, suffix, 0, capacity)
+            suffixStart = 0
+            suffixSize = capacity
+            return
+        }
+
+        val writePos = (suffixStart + suffixSize) % capacity
+        val firstPart = minOf(length, capacity - writePos)
+        System.arraycopy(buffer, offset, suffix, writePos, firstPart)
+        if (firstPart < length) {
+            System.arraycopy(buffer, offset + firstPart, suffix, 0, length - firstPart)
+        }
+
+        if (suffixSize + length > capacity) {
+            val evicted = suffixSize + length - capacity
+            suffixStart = (suffixStart + evicted) % capacity
+            suffixSize = capacity
+        } else {
+            suffixSize += length
+        }
     }
 
     private fun appendToSuffix(text: String) {
-        for (character in text) {
-            if (suffixSize < suffix.size) {
-                suffix[(suffixStart + suffixSize) % suffix.size] = character
-                suffixSize++
-            } else {
-                suffix[suffixStart] = character
-                suffixStart = (suffixStart + 1) % suffix.size
-            }
-        }
+        val chars = text.toCharArray()
+        appendToSuffix(chars, 0, chars.size)
     }
 
     override fun toString(): String {
@@ -250,11 +268,15 @@ internal class BoundedOutputCapture(
         val output = prefix?.let { outputPrefix ->
             val hash = checkNotNull(digest).digest().joinToString("") { byte -> "%02x".format(byte) }
             val retainedPrefix = outputPrefix.throughLastLineBreak()
-            val retainedSuffix = buildString(suffixSize) {
-                for (index in 0 until suffixSize) {
-                    append(suffix[(suffixStart + index) % suffix.size])
+            val retainedSuffix = if (suffixSize == 0) "" else {
+                val chars = CharArray(suffixSize)
+                val firstPart = minOf(suffixSize, suffix.size - suffixStart)
+                System.arraycopy(suffix, suffixStart, chars, 0, firstPart)
+                if (firstPart < suffixSize) {
+                    System.arraycopy(suffix, 0, chars, firstPart, suffixSize - firstPart)
                 }
-            }.afterFirstLineBreak()
+                String(chars).afterFirstLineBreak()
+            }
             buildString(retainedPrefix.length + retainedSuffix.length + 128) {
                 append(retainedPrefix)
                 append(GroupedTestsResultProtocol.LINE_PREFIX)

@@ -83,4 +83,18 @@ class WasmVMTest {
         )
         assertTrue(crashedIds.isEmpty(), crashedIds.toString())
     }
+
+    @Test
+    fun `given large output streams then suffix ring buffer accurately preserves the latest characters`() {
+        val capture = BoundedOutputCapture()
+        val chunk = "0123456789abcdef".repeat(512).toCharArray() // 8192 chars
+        repeat((6 * 1024 * 1024) / chunk.size) {
+            capture.append(chunk, chunk.size)
+        }
+        val endMarker = "\nfinal_marker_end_of_output"
+        capture.append(endMarker.toCharArray(), endMarker.length)
+
+        val output = capture.toString()
+        assertTrue(output.endsWith(endMarker), "Output should end with the final marker")
+    }
 }
