@@ -200,7 +200,7 @@ public var KmConstructor.hasNonStableParameterNames: Boolean by constructorBoole
 
 /**
  * Indicates whether the constructor was compiled with return value status information.
- * This status may come from `@MustUseReturnValues` annotation on one of the containing scopes, or from `-Xreturn-value-checker=full` global compilation setting.
+ * This status may come from `@MustUseReturnValues` annotation on one of the containing scopes, or from `-return-value-checker=full` global compilation setting.
  * See [ReturnValueStatus] for details.
  *
  * Constructors cannot have [ReturnValueStatus.EXPLICITLY_IGNORABLE] status.
@@ -286,7 +286,7 @@ public var KmFunction.hasNonStableParameterNames: Boolean by functionBooleanFlag
 
 /**
  * Indicates whether the function was compiled with return value status information.
- * This status may come from `@MustUseReturnValues` annotation on one of the containing scopes, or from `-Xreturn-value-checker=full` global compilation setting.
+ * This status may come from `@MustUseReturnValues` annotation on one of the containing scopes, or from `-return-value-checker=full` global compilation setting.
  * See [ReturnValueStatus] for details.
  *
  * @see [MustUseReturnValues]
@@ -395,7 +395,7 @@ public var KmProperty.isExpect: Boolean by propertyBooleanFlag(FlagImpl(ProtoFla
 
 /**
  * Indicates whether the property was compiled with return value status information.
- * This status may come from `@MustUseReturnValues` annotation on one of the containing scopes, or from `-Xreturn-value-checker=full` global compilation setting.
+ * This status may come from `@MustUseReturnValues` annotation on one of the containing scopes, or from `-return-value-checker=full` global compilation setting.
  * See [ReturnValueStatus] for details.
  *
  * While `@IgnorableReturnValue` annotation is not applicable to properties,
