@@ -122,7 +122,7 @@ async function box(): Promise<string> {
     assert(await exportedChild.parentSuspendFun1() === "NotExportedParent 1");
     assert(await exportedChild.parentSuspendFun1("Test") === "NotExportedParent Test");
     assert(await exportedChild.childSuspendFun() === "ExportedChild");
-
+    assert(await exportedChild.withDefaultImpl() === "OK");
     class TypeScriptExportedChild extends ExportedChild {
         override async childSuspendFun(): Promise<string> {
             return "TypeScriptChild"

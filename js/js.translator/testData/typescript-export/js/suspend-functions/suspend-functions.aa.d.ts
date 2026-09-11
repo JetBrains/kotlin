@@ -108,22 +108,34 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => TestChild;
             }
         }
-        interface HolderOfParentSuspendFun1<T> {
+        interface HolderOfParentSuspendFun1<T> extends foo.IntermediateImplicitExportInterface {
             parentSuspendFun1(someValue?: string): Promise<T>;
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.HolderOfParentSuspendFun1": unique symbol;
-            };
+            } & foo.IntermediateImplicitExportInterface["__doNotUseOrImplementIt"];
         }
         class ExportedChild /* extends foo.NotExportedParent */ implements foo.HolderOfParentSuspendFun1<string> {
             constructor();
             childSuspendFun(): Promise<string>;
             parentSuspendFun1(someValue?: string): Promise<string>;
-            readonly __doNotUseOrImplementIt: foo.HolderOfParentSuspendFun1<any>["__doNotUseOrImplementIt"];
+            withDefaultImpl(): Promise<string>;
+            readonly __doNotUseOrImplementIt: foo.HolderOfParentSuspendFun1<any>["__doNotUseOrImplementIt"] & foo.IntermediateImplicitExportInterface["__doNotUseOrImplementIt"];
         }
         namespace ExportedChild {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
                 const constructor: abstract new () => ExportedChild;
+            }
+        }
+        interface IntermediateImplicitExportInterface {
+            withDefaultImpl(): Promise<string>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.IntermediateImplicitExportInterface": unique symbol;
+            };
+        }
+        namespace IntermediateImplicitExportInterface {
+            namespace DefaultImpls {
+                function withDefaultImpl($this: foo.IntermediateImplicitExportInterface): Promise<string>;
             }
         }
     }
