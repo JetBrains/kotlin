@@ -2002,6 +2002,7 @@ open class PsiRawFirBuilder(
                         isValue = classOrObject.hasModifier(VALUE_KEYWORD)
                         isFun = classOrObject.hasModifier(FUN_KEYWORD)
                         isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
+                        isRichError = classOrObject.hasModifier(ERROR_KEYWORD)
                     }
                     val firTypeParameters = classOrObject.convertTypeParameters(classSymbol)
 
@@ -2932,9 +2933,10 @@ open class PsiRawFirBuilder(
                     leftType = unwrappedElement.getLeftTypeRef().toFirOrErrorType()
                     rightType = unwrappedElement.getRightTypeRef().toFirOrErrorType()
                 }
-                is KtUnionType -> FirErrorTypeRefBuilder().apply {
+                is KtUnionType -> FirUnionTypeRefBuilder().apply {
                     this.source = source
-                    diagnostic = ConeSyntaxDiagnostic("Union types are not supported")
+                    isMarkedNullable = isNullable
+                    unwrappedElement.types.mapTo(types) { it.toFirOrErrorType() }
                 }
                 null -> FirErrorTypeRefBuilder().apply {
                     this.source = source
@@ -3755,6 +3757,7 @@ open class PsiRawFirBuilder(
             }.pullUpSafeCallIfNecessary()
         }
 
+        @KtExperimentalApi
         override fun visitQualifiedExpression(expression: KtQualifiedExpression, data: FirElement?): FirElement {
             val receiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
 
@@ -3770,12 +3773,18 @@ open class PsiRawFirBuilder(
             val firSelector = selector.toFirExpression("Incorrect selector expression")
             return when (firSelector) {
                 is FirQualifiedAccessExpression -> {
-                    if (expression is KtSafeQualifiedExpression) {
+                    val kind = when (expression) {
+                        is KtSafeQualifiedExpression -> FirSafeCallKind.NullSafe
+                        is KtErrorSafeQualifiedExpression -> FirSafeCallKind.ErrorSafe
+                        else -> null
+                    }
+                    if (kind != null) {
                         @OptIn(FirImplementationDetail::class)
                         firSelector.replaceSource(expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
                         return firSelector.createSafeCall(
                             receiver,
-                            expression.toFirSourceElement()
+                            expression.toFirSourceElement(),
+                            kind,
                         )
                     }
 

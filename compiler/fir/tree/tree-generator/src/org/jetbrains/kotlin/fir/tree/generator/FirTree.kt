@@ -803,11 +803,13 @@ object FirTree : AbstractFirTreeBuilder() {
         generateBooleanFields(
             "expect", "actual", "override", "operator", "infix", "inline", "value", "tailRec",
             "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
-            "fromSealedClass", "fromEnumClass", "fun", "hasStableParameterNames"
+            "fromSealedClass", "fromEnumClass", "fun", "richError", "hasStableParameterNames"
         )
         +field("returnValueStatus", returnValueStatusType, nullable = false)
         +field("defaultVisibility", visibilityType, nullable = false)
         +field("defaultModality", modalityType, nullable = false)
+
+        fields.find { it.name == "isRichError" }!!.kDoc = "A class or object with the `error` modifier."
     }
 
     val resolvedDeclarationStatus: Element by element(Declaration) {
@@ -1229,6 +1231,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("checkedSubjectRef", safeCallCheckedSubjectReferenceType)
         // One that uses checkedReceiver as a receiver
         +field("selector", statement, withReplace = true, withTransform = true)
+        +field("kind", safeCallKind)
     }
 
     val checkedSafeCallSubject: Element by element(Expression) {
@@ -1647,6 +1650,11 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("leftType", typeRef)
         +field("rightType", typeRef)
+    }
+
+    val unionTypeRef: Element by element(TypeRefElement) {
+        parent(unresolvedTypeRef)
+        +listField("types", typeRef)
     }
 
     val thisReceiverExpression: Element by element(Expression) {

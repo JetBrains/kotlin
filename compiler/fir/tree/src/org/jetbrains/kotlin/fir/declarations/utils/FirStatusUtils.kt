@@ -76,6 +76,7 @@ inline val FirRegularClassSymbol.canHaveAbstractDeclaration: Boolean
 
 inline val FirRegularClass.isCompanion: Boolean get() = status.isCompanion
 inline val FirRegularClass.isData: Boolean get() = status.isData
+inline val FirRegularClass.isRichError: Boolean get() = status.isRichError
 
 inline val FirFunction.hasBody: Boolean get() = body != null
 

@@ -1,0 +1,15 @@
+FILE: unionTypeSmoke.kt
+    public final error class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final error class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo(a: R|union(kotlin/String | Foo)|, b: R|union(kotlin/String | Foo | Bar)|, c: R|union(kotlin/String? | Foo | Bar)|, d: R|union(kotlin/String? | Foo)|, e: R|union(Foo | Bar)|, f: R|union(kotlin/Nothing? | Foo | Bar)|): R|kotlin/Unit| {
+    }

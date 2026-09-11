@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isRichError
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -641,6 +643,26 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 } else {
                     FirTypeResolutionResult(ConeErrorType(ConeForbiddenIntersection), diagnostic = null)
                 }
+            }
+            is FirUnionTypeRef -> {
+                val coneTypes = typeRef.types.mapTo(mutableListOf()) { it.coneType }
+
+                val firstType = coneTypes.first()
+                val primaryType = if (firstType.toClassLikeSymbol(session).let { it != null && !it.isRichError }) {
+                    coneTypes.removeAt(0)
+                    firstType.applyIf(typeRef.isMarkedNullable) {
+                        withNullability(true, session.typeContext)
+                    }
+                } else if (typeRef.isMarkedNullable) {
+                    session.builtinTypes.nullableNothingType.coneType
+                } else {
+                    null
+                }
+
+                FirTypeResolutionResult(
+                    ConeTypeUnifier.unify(primaryType, coneTypes, ConeAttributes.Empty, session.typeContext),
+                    diagnostic = null
+                )
             }
             else -> error(typeRef.render())
         }.also {

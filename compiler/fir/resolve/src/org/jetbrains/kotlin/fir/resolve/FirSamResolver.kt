@@ -107,6 +107,8 @@ class FirSamResolver(
                 -> null
 
             is ConeCapturedType -> type.constructor.lowerType?.let { getSamInfoForPossibleSamType(it) }
+
+            is ConeUnionType -> type.primaryType?.let { getSamInfoForPossibleSamType(it) }
         }
     }
 

@@ -333,6 +333,12 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
             FirDiagnosticsDirectives.RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES + "EqualityBoundType"
         }
     }
+
+    forTestsMatching("compiler/testData/diagnostics/tests/richErrors/*") {
+        defaultDirectives {
+            LANGUAGE + "+RichErrors"
+        }
+    }
 }
 
 /**

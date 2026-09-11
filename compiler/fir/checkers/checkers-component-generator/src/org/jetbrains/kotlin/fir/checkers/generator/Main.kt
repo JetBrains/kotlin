@@ -106,6 +106,7 @@ fun main(args: Array<String>) {
             }
             alias<FirFunctionTypeRef>("FunctionTypeRefChecker")
             alias<FirIntersectionTypeRef>("IntersectionTypeRefChecker")
+            alias<FirUnionTypeRef>("UnionTypeRefChecker")
         }
 
         val expressionPackage = "$basePackage.checkers.expression"

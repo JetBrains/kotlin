@@ -155,6 +155,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker> = setOf(
         FirUnnecessarySafeCallChecker,
+        FirErrorSafeCallChecker,
     )
 
     override val smartCastExpressionCheckers: Set<FirSmartCastExpressionChecker> = setOf(

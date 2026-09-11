@@ -612,20 +612,30 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
 
 fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
     nullableReceiverExpression: FirExpression,
+    kind: FirSafeCallKind,
     session: FirSession,
     file: FirFile,
 ) {
     // If the receiver expression is smartcast to `null`, it would have `Nothing?` as its type, which may not have members called by user
     // code. Hence, we fallback to the type before intersecting with `Nothing?`.
-    val receiverType = (nullableReceiverExpression as? FirSmartCastExpression)
+    val receiverType = ((nullableReceiverExpression as? FirSmartCastExpression)
         ?.takeIf { it.isStable }
         ?.smartcastTypeWithoutNullableNothing
         ?.coneTypeSafe<ConeKotlinType>()
-        ?: nullableReceiverExpression.resolvedType
+        ?: nullableReceiverExpression.resolvedType)
+        .fullyExpandedType(session)
 
-    val expandedReceiverType = receiverType.fullyExpandedType(session).makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
-    replaceConeTypeOrNull(expandedReceiverType)
-    session.lookupTracker?.recordTypeResolveAsLookup(expandedReceiverType, source, file.source)
+    val safeReceiverType = when (kind) {
+        FirSafeCallKind.NullSafe -> receiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+        FirSafeCallKind.ErrorSafe -> if (receiverType is ConeUnionType) {
+            receiverType.primaryType ?: session.builtinTypes.nothingType.coneType
+        } else {
+            receiverType
+        }
+    }
+
+    replaceConeTypeOrNull(safeReceiverType)
+    session.lookupTracker?.recordTypeResolveAsLookup(safeReceiverType, source, file.source)
 }
 
 fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
@@ -637,7 +647,17 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     val resultingType = when {
         selector is FirExpression && !selector.isStatementLikeExpression -> {
             val type = selector.resolvedType
-            type.withNullability(nullable = true, session.typeContext)
+            when (kind) {
+                FirSafeCallKind.NullSafe -> type.withNullability(nullable = true, session.typeContext)
+                FirSafeCallKind.ErrorSafe -> {
+                    val receiverType = receiver.resolvedType
+                    if (receiverType is ConeUnionType) {
+                        ConeTypeUnifier.unify(type, receiverType.richErrorTypes, attributes = ConeAttributes.Empty, session.typeContext)
+                    } else {
+                        type
+                    }
+                }
+            }
         }
         // Branch for things that shouldn't be used as expressions.
         // They are forced to return not-null `Unit`, regardless of the receiver.
@@ -838,6 +858,7 @@ private fun ConeKotlinType.simplifyForReceiverInfo(): ConeKotlinType {
         is ConeErrorType -> this
         is ConeStubTypeForTypeVariableInSubtyping -> this
         is ConeTypeVariableType -> this
+        is ConeUnionType -> this
     }
 }
 

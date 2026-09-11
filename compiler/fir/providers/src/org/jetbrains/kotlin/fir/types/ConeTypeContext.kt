@@ -224,7 +224,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeCapturedTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionType
+            is ConeIntersectionType,
+            is ConeUnionType,
                 -> 0
             is ConeClassifierLookupTag -> {
                 when (val symbol = toSymbol(session)) {
@@ -276,12 +277,29 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             }
             is ConeCapturedTypeConstructor -> supertypes.orEmpty()
             is ConeIntersectionType -> intersectedTypes
+            is ConeUnionType -> if (primaryType?.canBeNull(session) == true) {
+                [session.builtinTypes.nullableAnyType.coneType]
+            } else {
+                [session.builtinTypes.anyType.coneType]
+            }
             is ConeIntegerLiteralType -> supertypes
         }
     }
 
     override fun TypeConstructorMarker.isIntersection(): Boolean {
         return this is ConeIntersectionType
+    }
+
+    override fun TypeConstructorMarker.isUnion(): Boolean {
+        return this is ConeUnionType
+    }
+
+    override fun TypeConstructorMarker.getPrimaryTypeOfUnion(): KotlinTypeMarker? {
+        return (this as? ConeUnionType)?.primaryType
+    }
+
+    override fun TypeConstructorMarker.getRichErrorsOfUnion(): List<KotlinTypeMarker> {
+        return (this as? ConeUnionType)?.richErrorTypes.orEmpty()
     }
 
     override fun TypeConstructorMarker.isClassTypeConstructor(): Boolean {
@@ -335,6 +353,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         require(this is ConeTypeConstructorMarker)
         return when (this) {
             is ConeClassifierLookupTag -> this !is ConeClassLikeErrorLookupTag
+            is ConeUnionType -> true
 
             is ConeStubTypeConstructor,
             is ConeCapturedTypeConstructor,
@@ -404,6 +423,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeCapturedType -> true
             is ConeTypeVariableType -> false
             is ConeIntersectionType -> false
+            is ConeUnionType -> false
             is ConeIntegerLiteralType -> true
             is ConeStubType -> true
             is ConeDefinitelyNotNullType -> true

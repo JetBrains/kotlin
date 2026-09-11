@@ -237,6 +237,7 @@ private fun ConeKotlinType.isFinal(session: FirSession): Boolean = when (this) {
     is ConeTypeParameterType -> toTypeParameterSymbol(session)?.resolvedBounds?.any { it.coneType.isFinal(session) } == true
 
     is ConeIntersectionType -> intersectedTypes.any { it.isFinal(session) }
+    is ConeUnionType -> primaryType.let { it == null || it.isFinal(session) } // error classes are always final
     is ConeCapturedType -> constructor.supertypes?.any { it.isFinal(session) } == true
     is ConeIntegerLiteralType -> true
 

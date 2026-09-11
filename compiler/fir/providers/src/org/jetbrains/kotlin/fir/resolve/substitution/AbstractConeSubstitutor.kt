@@ -73,6 +73,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             is ConeIntersectionType -> this.substituteIntersectedTypes()
             is ConeStubType -> null
             is ConeIntegerLiteralType -> null
+            is ConeUnionType -> this.substituteUnionType()
         }
     }
 
@@ -89,6 +90,23 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         if (!somethingIsSubstituted && substitutedUpperBound == null) return null
 
         return ConeTypeIntersector.intersectTypes(typeContext, substitutedTypes, substitutedUpperBound ?: upperBoundForApproximation)
+    }
+
+    private fun ConeUnionType.substituteUnionType(): ConeKotlinType? {
+        val substitutedPrimaryType = substituteOrNull(primaryType)
+
+        val substitutedRichErrorTypes = ArrayList<ConeKotlinType>(richErrorTypes.size)
+        var somethingIsSubstituted = false
+        for (type in richErrorTypes) {
+            val substitutedType = substituteOrNull(type)?.also {
+                somethingIsSubstituted = true
+            } ?: type
+            substitutedRichErrorTypes += substitutedType
+        }
+
+        if (!somethingIsSubstituted && substitutedPrimaryType == null) return null
+
+        return ConeTypeUnifier.unify(substitutedPrimaryType, substitutedRichErrorTypes, attributes, typeContext)
     }
 
     protected fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {

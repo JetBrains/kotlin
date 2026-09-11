@@ -152,6 +152,12 @@ open class FirDeclarationStatusImpl(
             this[FUN] = value
         }
 
+    override var isRichError: Boolean
+        get() = this[RICH_ERROR]
+        set(value) {
+            this[RICH_ERROR] = value
+        }
+
     override var hasStableParameterNames: Boolean
         get() = this[HAS_STABLE_PARAMETER_NAMES]
         set(value) {
@@ -194,6 +200,7 @@ open class FirDeclarationStatusImpl(
         VALUE(0x80000),
         HAS_MUST_USE_RETURN_VALUE(0x100000),
         HAS_IGNORABLE_RETURN_VALUE(0x200000),
+        RICH_ERROR(0x400000)
         ;
     }
 

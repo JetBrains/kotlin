@@ -28,6 +28,7 @@ class FirSafeCallExpressionBuilder : FirAnnotationContainerBuilder, FirExpressio
     lateinit var receiver: FirExpression
     lateinit var checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>
     lateinit var selector: FirStatement
+    lateinit var kind: FirSafeCallKind
 
     override fun build(): FirSafeCallExpression {
         return FirSafeCallExpressionImpl(
@@ -37,6 +38,7 @@ class FirSafeCallExpressionBuilder : FirAnnotationContainerBuilder, FirExpressio
             receiver,
             checkedSubjectRef,
             selector,
+            kind,
         )
     }
 

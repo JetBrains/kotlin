@@ -1,0 +1,13 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] errorClass.kt
+    public final error [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final error [ResolvedTo(BODY_RESOLVE)] object Bar : R|kotlin/Any| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

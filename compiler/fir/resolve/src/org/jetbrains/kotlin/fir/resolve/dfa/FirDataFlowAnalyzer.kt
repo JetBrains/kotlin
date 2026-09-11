@@ -242,6 +242,7 @@ abstract class FirDataFlowAnalyzer(
                                     ?.all { it.coneType.isAcceptableForSmartcast() } == true
                                 is ConeFlexibleType -> lowerBound.isAcceptableForSmartcast() && upperBound.isAcceptableForSmartcast()
                                 is ConeIntersectionType -> intersectedTypes.all { it.isAcceptableForSmartcast() }
+                                is ConeUnionType -> primaryType.let { it == null || it.isAcceptableForSmartcast() } && richErrorTypes.all { it.isAcceptableForSmartcast() }
                                 is ConeDefinitelyNotNullType -> original.isAcceptableForSmartcast()
 
                                 is ConeCapturedType -> constructor.supertypes?.all { it.isAcceptableForSmartcast() } == true

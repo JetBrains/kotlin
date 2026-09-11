@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.psi.KtPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
-import static org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION;
-import static org.jetbrains.kotlin.KtNodeTypes.SAFE_ACCESS_EXPRESSION;
+import static org.jetbrains.kotlin.KtNodeTypes.*;
 
 public interface KtTokens {
     int INVALID_Id = 0;
@@ -445,6 +444,6 @@ public interface KtTokens {
     @NotNull TokenSet AUGMENTED_ASSIGNMENTS = TokenSet.create(PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
     @NotNull TokenSet ALL_ASSIGNMENTS = TokenSet.create(EQ, PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
     @NotNull TokenSet INCREMENT_AND_DECREMENT = TokenSet.create(PLUSPLUS, MINUSMINUS);
-    @NotNull TokenSet QUALIFIED_ACCESS = TokenSet.create(DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION, ERROR_SAFE_ACCESS);
+    @NotNull TokenSet QUALIFIED_ACCESS = TokenSet.create(DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION, ERROR_SAFE_ACCESS_EXPRESSION);
     @NotNull TokenSet VAL_VAR = TokenSet.create(VAL_KEYWORD, VAR_KEYWORD);
 }

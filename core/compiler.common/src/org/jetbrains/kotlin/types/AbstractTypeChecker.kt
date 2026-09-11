@@ -672,13 +672,35 @@ object AbstractTypeChecker {
             return superTypeConstructor.supertypes().all { isSubtypeOf(state, subType, it) }
         }
 
+        val subTypeConstructor = subType.typeConstructor()
+
+        if (subTypeConstructor.isUnion()) {
+            return subTypeConstructor.getPrimaryTypeOfUnion().let { it == null || isSubtypeOf(state, it, superType) } &&
+                    subTypeConstructor.getRichErrorsOfUnion().all { isSubtypeOf(state, it, superType) }
+        }
+
+        // subType can't be a union type here because it's handled above.
+        if (superTypeConstructor.isUnion()) {
+            val superTypePrimaryType = superTypeConstructor.getPrimaryTypeOfUnion()
+
+            if (!AbstractNullabilityChecker.isSubtypeOfAny(state, subType)) {
+                if (superTypePrimaryType == null || AbstractNullabilityChecker.isSubtypeOfAny(state, superTypePrimaryType)) return false
+
+                val notNullSubType = subType.makeDefinitelyNotNullOrNotNull()
+                return isSubtypeOf(state, notNullSubType, superTypePrimaryType) ||
+                        superTypeConstructor.getRichErrorsOfUnion().any { isSubtypeOf(state, notNullSubType, it) }
+            }
+
+            return superTypePrimaryType.let { it != null && isSubtypeOf(state, subType, it) } ||
+                    superTypeConstructor.getRichErrorsOfUnion().any { isSubtypeOf(state, subType, it) }
+        }
+
         /*
          * We handle cases like CapturedType(out Bar) <: Foo<CapturedType(out Bar)> separately here.
          * If Foo is a self type i.g. Foo<E: Foo<E>>, then argument for E will certainly be subtype of Foo<same_argument_for_E>,
          * so if CapturedType(out Bar) is the same as a type of Foo's argument and Foo is a self type, then subtyping should return true.
          * If we don't handle this case separately, subtyping may not converge due to the nature of the capturing.
          */
-        val subTypeConstructor = subType.typeConstructor()
         if (subType is CapturedTypeMarker
             || (subTypeConstructor.isIntersection() && subTypeConstructor.supertypes().all { it is CapturedTypeMarker })
         ) {
