@@ -1,4 +1,4 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText CoreVideo Foundation HealthKit QuartzCore Security Symbols UIKit UIUtilities UniformTypeIdentifiers UserNotifications darwin posix
+depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreLocation CoreMotion CoreText CoreVideo Foundation HealthKit QuartzCore Security Symbols UIKit UIUtilities UniformTypeIdentifiers UserNotifications _LocationEssentials darwin posix
 language = Objective-C
 package = platform.HealthKitUI
 

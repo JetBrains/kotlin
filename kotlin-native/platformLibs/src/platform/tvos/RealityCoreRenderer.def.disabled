@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.RealityCoreRenderer
+
+modules = RealityCoreRenderer
+compilerOpts = -framework RealityCoreRenderer
+linkerOpts = -framework RealityCoreRenderer
+#Disabled: Unavailable

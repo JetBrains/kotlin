@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.DiskImageKit
+
+modules = DiskImageKit
+compilerOpts = -framework DiskImageKit
+linkerOpts = -framework DiskImageKit
+#Disabled: Swift-only framework

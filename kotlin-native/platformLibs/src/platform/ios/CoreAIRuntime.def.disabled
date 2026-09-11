@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.CoreAIRuntime
+
+modules = CoreAIRuntime
+compilerOpts = -framework CoreAIRuntime
+linkerOpts = -framework CoreAIRuntime
+#Disabled: Unavailable

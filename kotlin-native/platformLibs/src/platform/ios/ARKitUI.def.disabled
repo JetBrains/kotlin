@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.ARKitUI
+
+modules = ARKitUI
+compilerOpts = -framework ARKitUI
+linkerOpts = -framework ARKitUI
+#Disabled: Unavailable
