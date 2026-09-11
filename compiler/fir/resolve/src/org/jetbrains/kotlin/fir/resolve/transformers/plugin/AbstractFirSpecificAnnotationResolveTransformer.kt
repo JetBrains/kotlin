@@ -197,11 +197,12 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         val targetType = symbol.classId.constructClassLikeType(typeArguments)
         val kclassType = StandardClassIds.KClass.constructClassLikeType(typeArguments = [targetType])
 
-        // We deliberately omit receivers here; our goal is just to put some
+        // We deliberately leave unresolved arguments here; our goal is just to put some
         // resolved value to the mapping. Expressions from argument mappings should
         // never be asked for their structure, but rather for values they represent.
         return buildGetClassCallCopy(getClassCall) {
             coneTypeOrNull = kclassType
+            argumentList = FirEmptyArgumentList
         }
     }
 
