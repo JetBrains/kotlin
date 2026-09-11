@@ -27,9 +27,9 @@ internal object TrackedCompilerArguments {
 
         forArguments<K2JSCompilerArguments> {
             withCondition(K2JSCompilerArguments::irProduceJs) {
-                booleanMetric(BooleanMetrics.JS_SOURCE_MAP, K2JSCompilerArguments::sourceMap)
-                booleanMetric(BooleanMetrics.JS_GENERATE_DTS, K2JSCompilerArguments::generateDts)
-                stringListMetric(StringListMetrics.JS_PROPERTY_LAZY_INITIALIZATION, K2JSCompilerArguments::irPropertyLazyInitialization)
+                booleanMetric(BooleanMetrics.JS_SOURCE_MAP, K2JSCompilerArguments::sourceMap, allowImplicit = true)
+                booleanMetric(BooleanMetrics.JS_GENERATE_DTS, K2JSCompilerArguments::generateDts, allowImplicit = true)
+                stringListMetric(StringListMetrics.JS_PROPERTY_LAZY_INITIALIZATION, K2JSCompilerArguments::irPropertyLazyInitialization, allowImplicit = true)
                 stringMetric(StringMetrics.JS_ES_TARGET, K2JSCompilerArguments::target, default = "default")
                 stringMetric(StringMetrics.JS_MODULE_SYSTEM, K2JSCompilerArguments::moduleKind, default = "default")
             }

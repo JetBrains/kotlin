@@ -83,10 +83,12 @@ internal class TrackedArgumentsBuilder{
         fun booleanMetric(
             metric: BooleanMetrics,
             argument: KProperty1<A, Boolean>,
+            allowImplicit: Boolean = false,
         ) {
             booleanMetric(
                 metric,
                 argument.cliArgument,
+                allowImplicit = allowImplicit,
                 extract = { argument.get(it) }
             )
         }
@@ -167,10 +169,12 @@ internal class TrackedArgumentsBuilder{
         fun stringListMetric(
             metric: StringListMetrics,
             argument: KProperty1<A, Boolean>,
+            allowImplicit: Boolean = false,
         ) {
             stringListMetric(
                 metric,
                 argument.cliArgument,
+                allowImplicit = allowImplicit,
                 extract = { argument.get(it) },
                 convert = { it.toString() },
             )
