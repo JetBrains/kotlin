@@ -27,6 +27,7 @@ dependencies {
     api(project(":analysis:analysis-api-impl-base"))
     api(project(":analysis:light-classes-base"))
     api(project(":analysis:analysis-api-platform-interface"))
+    api(project(":analysis:analysis-api-standalone"))
     implementation(libs.intellij.patched.kotlinx.coroutines.core.jvm)
 
     testImplementation(platform(libs.junit.bom))
@@ -44,10 +45,16 @@ sourceSets {
 }
 
 kotlin {
-    compilerOptions {
-        optIn.add("org.jetbrains.kotlin.analysis.api.KaExperimentalApi")
-        optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
-    }
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+            "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+            "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+            "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+        )
+    )
 }
 
 projectTests {

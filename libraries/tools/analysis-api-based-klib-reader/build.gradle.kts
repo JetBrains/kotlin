@@ -67,6 +67,7 @@ dependencies {
     testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":analysis:analysis-api-standalone"))
+    testRuntimeOnly(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
     testImplementation(project(":native:native.config"))
 }
 

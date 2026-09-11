@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.references
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 internal class KaBaseDefaultAnnotationArgumentReference(
     element: KtValueArgument,
 ) : KtDefaultAnnotationArgumentReference(element), KaBaseReference {
-    @OptIn(KaExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return emptyList()
         val constructorSymbol = annotationEntry.resolveSymbol() ?: return emptyList()
