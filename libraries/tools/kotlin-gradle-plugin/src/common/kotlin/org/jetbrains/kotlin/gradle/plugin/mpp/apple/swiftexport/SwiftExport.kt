@@ -270,7 +270,7 @@ private fun registerSwiftExportCompilationAndGetBinary(
     freeCompilerArgs: Provider<List<String>>,
     swiftExportTask: TaskProvider<SwiftExportTask>,
 ): AbstractNativeLibrary {
-    target.compilations.getOrCreate(
+    val swiftExportCompilation = target.compilations.getOrCreate(
         SwiftExportConstants.SWIFT_EXPORT_COMPILATION,
         invokeWhenCreated = { swiftExportCompilation ->
             swiftExportCompilation.associateWith(mainCompilation)
@@ -284,18 +284,21 @@ private fun registerSwiftExportCompilationAndGetBinary(
                 it.compilerOptions.optIn.add("kotlinx.cinterop.ExperimentalForeignApi")
                 it.compilerOptions.optIn.add("kotlin.native.internal.InternalForKotlinNative")
             }
-
-            target.binaries.staticLib(SwiftExportConstants.SWIFT_EXPORT_BINARY, listOf(buildType)) { staticLib ->
-                staticLib.compilation = swiftExportCompilation
-                staticLib.binaryOption("swiftExport", "true")
-                staticLib.binaryOption("cInterfaceMode", "none")
-
-                staticLib.linkTaskProvider.configure {
-                    it.toolOptions.freeCompilerArgs.addAll(freeCompilerArgs)
-                }
-            }
         }
     )
+
+    // Every build type has a binary of its own, but they share the compilation.
+    if (target.binaries.findStaticLib(SwiftExportConstants.SWIFT_EXPORT_BINARY, buildType) == null) {
+        target.binaries.staticLib(SwiftExportConstants.SWIFT_EXPORT_BINARY, listOf(buildType)) { staticLib ->
+            staticLib.compilation = swiftExportCompilation
+            staticLib.binaryOption("swiftExport", "true")
+            staticLib.binaryOption("cInterfaceMode", "none")
+
+            staticLib.linkTaskProvider.configure {
+                it.toolOptions.freeCompilerArgs.addAll(freeCompilerArgs)
+            }
+        }
+    }
 
     return target.binaries.getStaticLib(
         SwiftExportConstants.SWIFT_EXPORT_BINARY,
