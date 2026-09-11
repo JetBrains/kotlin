@@ -1,0 +1,3 @@
+y: kotlin.Int
+
+val y: kotlin.Int

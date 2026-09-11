@@ -1,0 +1,5 @@
+KtCallExpression(119,159): 'Pair(second = "second", first = "first")'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(first: T, second: T, count: kotlin.Int): Pair<T>
+    ]

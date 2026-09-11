@@ -13,6 +13,7 @@ CLASS:
   isFun: true
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: ABSTRACT
   name: JavaRunnable

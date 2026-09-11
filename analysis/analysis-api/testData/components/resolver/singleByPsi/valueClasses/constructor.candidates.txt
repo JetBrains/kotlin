@@ -1,0 +1,56 @@
+KtCallExpression(119,159): 'Pair(second = "second", first = "first")'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Pair<kotlin.String>
+        symbol = <constructor>(first: T, second: T, count: kotlin.Int): Pair<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = first
+            receiverType = null
+            returnType = kotlin.String
+            symbol = first: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = second
+            receiverType = null
+            returnType = kotlin.String
+            symbol = second: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = count
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = count: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "second" -> (KaVariableSignature:
+          name = second
+          receiverType = null
+          returnType = kotlin.String
+          symbol = second: T
+          contextParameters = []
+          callableId = null),
+        "first" -> (KaVariableSignature:
+          name = first
+          receiverType = null
+          returnType = kotlin.String
+          symbol = first: T
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true

@@ -1,0 +1,11 @@
+override var value: kotlin.Int
+
+fun doubled(): kotlin.Int
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+constructor(value: kotlin.Int)

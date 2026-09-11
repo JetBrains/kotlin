@@ -56,6 +56,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLSmartCastInfoTestGenerated ex
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("multiSmartcastAsReceiver_stable.kt")
   public void testMultiSmartcastAsReceiver_stable() {
     run("multiSmartcastAsReceiver_stable.kt");

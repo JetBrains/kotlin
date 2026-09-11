@@ -24,6 +24,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        isValue: false
         location: CLASS
         modality: FINAL
         name: NestedFromClass
@@ -52,6 +53,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: true
+        isValue: false
         location: CLASS
         modality: FINAL
         name: InnerFromClass
@@ -92,6 +94,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        isValue: false
         location: TOP_LEVEL
         modality: ABSTRACT
         name: BaseInterface
@@ -120,6 +123,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        isValue: false
         location: TOP_LEVEL
         modality: OPEN
         name: Base
@@ -148,6 +152,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        isValue: false
         location: TOP_LEVEL
         modality: FINAL
         name: Child
