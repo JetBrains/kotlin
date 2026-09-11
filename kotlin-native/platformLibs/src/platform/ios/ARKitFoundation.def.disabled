@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.ARKitFoundation
+
+modules = ARKitFoundation
+compilerOpts = -framework ARKitFoundation
+linkerOpts = -framework ARKitFoundation
+#Disabled: Unavailable

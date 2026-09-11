@@ -1,0 +1,7 @@
+depends = AVFAudio AVFoundation AVRouting AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreMIDI CoreMedia CoreMotion CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaToolbox Metal Network OpenGLESCommon QuartzCore Security Symbols UIKit UIUtilities UniformTypeIdentifiers UserNotifications VideoToolbox _LocationEssentials darwin posix
+language = Objective-C
+package = platform.ScreenCaptureKit
+
+modules.ios_arm64 = ScreenCaptureKit
+compilerOpts.ios_arm64 = -framework ScreenCaptureKit
+linkerOpts.ios_arm64 = -framework ScreenCaptureKit
