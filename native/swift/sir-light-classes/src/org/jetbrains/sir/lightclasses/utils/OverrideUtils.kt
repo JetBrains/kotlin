@@ -49,8 +49,11 @@ internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
 private fun SirDeclaration.isSubclassOf(other: SirDeclaration): Boolean = this == other || this is SirClass && superClass?.typeDeclaration?.isSubclassOf(other) ?: false
 
 private fun SirInit.bestOverrideCandidate(): SirInit? = (this.parent as? SirClass)?.superClassDeclaration?.let { cls ->
-    cls.overrideableInitializers.firstOrNull { other -> this.parameters.isSuitableForOverrideOf(other.parameters) }
+    cls.overrideableInitializers.firstOrNull { other -> this.hasOverridingSignatureOf(other) }
 }
+
+private fun SirInit.hasOverridingSignatureOf(other: SirInit): Boolean = this.parameters.isSuitableForOverrideOf(other.parameters)
+        && this.parameters.zip(other.parameters).all { it.first.argumentName == it.second.argumentName }
 
 internal sealed class OverrideStatus<T: SirDeclaration>(val declaration: T) {
     class Overrides<T: SirDeclaration>(declaration: T): OverrideStatus<T>(declaration)
@@ -102,7 +105,7 @@ internal fun List<SirParameter>.isSuitableForOverrideOf(other: List<SirParameter
     this.size == other.size && this.zip(other).all { it.second.type.isSubtypeOf(it.first.type) }
 
 private fun SirInit.isViableOverrideFor(other: SirInit): Boolean =
-    this.parameters.isSuitableForOverrideOf(other.parameters) && (!this.isFailable || this.isFailable && other.isFailable)
+    this.hasOverridingSignatureOf(other) && (!this.isFailable || this.isFailable && other.isFailable)
 
 private val SirClass.overrideableInitializers: List<SirInit>
     // By swift rules:

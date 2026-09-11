@@ -662,6 +662,66 @@ open class Parent: KotlinRuntime.KotlinBase {
         this.contains(element: element)
     }
 }
+open class RenamedInitBase: KotlinRuntime.KotlinBase {
+    public final var a: Swift.Int32 {
+        get {
+            return RenamedInitBase_a_get(self.__externalRCRef())
+        }
+    }
+    public init(
+        a: Swift.Int32
+    ) {
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == overrides.RenamedInitBase.self {
+             __kt = __root___RenamedInitBase_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___RenamedInitBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+public final class RenamedInitDerived: overrides.RenamedInitBase {
+    public var b: Swift.Int32 {
+        get {
+            return RenamedInitDerived_b_get(self.__externalRCRef())
+        }
+    }
+    public init(
+        b: Swift.Int32
+    ) {
+        let __kt = __root___RenamedInitDerived_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___RenamedInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, b); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+public final class SameInitDerived: overrides.RenamedInitBase {
+    public override init(
+        a: Swift.Int32
+    ) {
+        let __kt = __root___SameInitDerived_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___SameInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
 @_cdecl("AbstractBase_abstractFun1__reverse_swift")
 package func AbstractBase_abstractFun1__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = overrides.AbstractBase.__createClassWrapper(externalRCRef: `self`)!

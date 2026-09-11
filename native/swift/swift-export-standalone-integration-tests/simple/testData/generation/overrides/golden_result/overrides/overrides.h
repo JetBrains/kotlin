@@ -341,6 +341,10 @@ _Bool Parent_varToVar_set__TypesOfArguments__Swift_Int32__(void * self, int32_t 
 
 _Bool Parent_varToVar_set__TypesOfArguments__Swift_Int32___direct(void * self, int32_t newValue);
 
+int32_t RenamedInitBase_a_get(void * self);
+
+int32_t RenamedInitDerived_b_get(void * self);
+
 _Bool __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 _Bool __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t x);
@@ -370,5 +374,17 @@ _Bool __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutab
 void * __root___Parent_init_allocate();
 
 _Bool __root___Parent_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(void * __kt, NSString * value);
+
+void * __root___RenamedInitBase_init_allocate();
+
+_Bool __root___RenamedInitBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
+
+void * __root___RenamedInitDerived_init_allocate();
+
+_Bool __root___RenamedInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t b);
+
+void * __root___SameInitDerived_init_allocate();
+
+_Bool __root___SameInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
 
 NS_ASSUME_NONNULL_END
