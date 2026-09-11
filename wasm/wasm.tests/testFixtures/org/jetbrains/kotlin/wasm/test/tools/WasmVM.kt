@@ -192,8 +192,10 @@ private const val CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH = MAX_CAPTURED_PROCESS_O
 private const val CAPTURED_PROCESS_OUTPUT_SUFFIX_LENGTH =
     MAX_CAPTURED_PROCESS_OUTPUT_LENGTH - CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH
 
-internal class BoundedOutputCapture {
-    private val digest = MessageDigest.getInstance("SHA-256")
+internal class BoundedOutputCapture(
+    private val createDigest: () -> MessageDigest = { MessageDigest.getInstance("SHA-256") },
+) {
+    private var digest: MessageDigest? = null
     private var totalLength = 0L
     private var fullOutput = StringBuilder()
     private var prefix: String? = null
@@ -203,24 +205,27 @@ internal class BoundedOutputCapture {
     private var renderedOutput: String? = null
 
     fun append(buffer: CharArray, length: Int) {
-        val chunk = String(buffer, 0, length)
-        totalLength += chunk.length
-        digest.update(chunk.toByteArray(Charsets.UTF_8))
+        totalLength += length
 
+        var offset = 0
         if (prefix == null) {
-            if (fullOutput.length + chunk.length <= MAX_CAPTURED_PROCESS_OUTPUT_LENGTH) {
-                fullOutput.append(chunk)
+            if (fullOutput.length + length <= MAX_CAPTURED_PROCESS_OUTPUT_LENGTH) {
+                fullOutput.appendRange(buffer, 0, length)
                 return
             }
 
-            val headFromChunk = (CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH - fullOutput.length).coerceIn(0, chunk.length)
-            fullOutput.append(chunk, 0, headFromChunk)
+            offset = (CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH - fullOutput.length).coerceIn(0, length)
+            fullOutput.appendRange(buffer, 0, offset)
+            digest = createDigest().apply {
+                update(fullOutput.toString().toByteArray(Charsets.UTF_8))
+            }
             prefix = fullOutput.substring(0, CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH)
             appendToSuffix(fullOutput.substring(CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH))
             fullOutput = StringBuilder()
-            appendToSuffix(chunk.substring(headFromChunk))
-            return
         }
+        if (offset == length) return
+        val chunk = String(buffer, offset, length - offset)
+        checkNotNull(digest).update(chunk.toByteArray(Charsets.UTF_8))
         appendToSuffix(chunk)
     }
 
@@ -239,7 +244,7 @@ internal class BoundedOutputCapture {
     override fun toString(): String {
         renderedOutput?.let { return it }
         val output = prefix?.let { outputPrefix ->
-            val hash = digest.digest().toHexString()
+            val hash = checkNotNull(digest).digest().toHexString()
             buildString(outputPrefix.length + suffixSize + 128) {
                 append(outputPrefix)
                 append('\n')
