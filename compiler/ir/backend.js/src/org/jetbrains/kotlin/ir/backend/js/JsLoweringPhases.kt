@@ -218,6 +218,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::CallsLowering,
     ::EscapedIdentifiersLowering,
     ::MainFunctionCallWrapperLowering,
+    ::EffectAnalysisLowering,
     ::CleanupLowering,
     ::IrValidationAfterLoweringsSecondStagePhase,
 )

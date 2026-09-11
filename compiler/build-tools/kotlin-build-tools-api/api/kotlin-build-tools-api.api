@@ -618,6 +618,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field SOURCE_MAP_NAMES_POLICY Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field SOURCE_MAP_PREFIX Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_CACHE_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
+	public static final field X_ENABLE_ADVANCED_OPTIMIZATIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_GENERATE_DTS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_IR_DCE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_IR_DCE_PRINT_REACHABILITY_INFO Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;

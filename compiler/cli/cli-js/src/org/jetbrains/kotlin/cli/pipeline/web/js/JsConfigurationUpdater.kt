@@ -80,6 +80,8 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         configuration.compileLongAsBigint = arguments.compileLongAsBigInt ?: isES2020
         configuration.exportUntypedAsUnknown = arguments.useUnknownInsteadAny
 
+        configuration.dceUnusedProperties = arguments.enableAdvancedOptimizations
+
         configuration.targetPlatform = JsPlatforms.defaultJsPlatform
 
         arguments.irSafeExternalBooleanDiagnostic?.let {

@@ -197,6 +197,10 @@ object JSConfigurationKeys {
     @JvmField
     val EXPORT_UNTYPED_AS_UNKNOWN = CompilerConfigurationKey.create<Boolean>("EXPORT_UNTYPED_AS_UNKNOWN")
 
+    // Enable DCE for unused properties
+    @JvmField
+    val DCE_UNUSED_PROPERTIES = CompilerConfigurationKey.create<Boolean>("DCE_UNUSED_PROPERTIES")
+
 }
 
 var CompilerConfiguration.wasmCompilation: Boolean
@@ -394,4 +398,8 @@ var CompilerConfiguration.additionalExportedDeclarationNames: Set<FqName>
 var CompilerConfiguration.exportUntypedAsUnknown: Boolean
     get() = getBoolean(JSConfigurationKeys.EXPORT_UNTYPED_AS_UNKNOWN)
     set(value) { put(JSConfigurationKeys.EXPORT_UNTYPED_AS_UNKNOWN, value) }
+
+var CompilerConfiguration.dceUnusedProperties: Boolean
+    get() = getBoolean(JSConfigurationKeys.DCE_UNUSED_PROPERTIES)
+    set(value) { put(JSConfigurationKeys.DCE_UNUSED_PROPERTIES, value) }
 

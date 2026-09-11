@@ -252,6 +252,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Any,
     )
 
+    val ENABLE_UNUSED_PROPERTY_DCE by directive(
+        description = "Enabled DCE of unused properties, and effect analysis",
+        applicability = DirectiveApplicability.Any
+    )
+
     @OptIn(SensitiveDirectiveAPI::class)
     val JS_DCE_EXPECTED_OUTPUT_SIZE by valueDirective(
         description = "Expected total size (in bytes) of JS output files after DCE compilation. The file extension is inferred from the module system.",

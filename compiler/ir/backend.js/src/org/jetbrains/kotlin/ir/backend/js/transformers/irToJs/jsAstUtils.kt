@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.EffectsKind
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
+import org.jetbrains.kotlin.ir.backend.js.effects
 import org.jetbrains.kotlin.ir.backend.js.ir.isBridge
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterWithDefaultForExportedSuspendFunction
@@ -249,7 +251,17 @@ fun translateFunction(
 
     check(!declaration.isSuspend) { "All Suspend functions should be lowered" }
 
+    declaration.effects?.compute()?.let {
+        function.sideEffects = it.toJs()
+    }
+
     return function
+}
+
+fun EffectsKind.toJs() = when (this) {
+    EffectsKind.PURE -> SideEffectKind.PURE
+    EffectsKind.READ -> SideEffectKind.DEPENDS_ON_STATE
+    EffectsKind.WRITE -> SideEffectKind.AFFECTS_STATE
 }
 
 private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
