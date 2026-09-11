@@ -19,13 +19,13 @@ func swiftSubclassInheritsAnyMembersFromKotlin() throws {
 
     // kotlin.Any.hashCode() is the identity hash, and `-hash` bridges the same slot.
     #expect(Swift.Int(callHashCode(value: value)) == value.hash)
-    #expect(callHashCode(value: value) == callHashCode(value: value))
 
     // kotlin.Any.equals() is reference equality. Distinct receivers are the interesting case:
     // -[KotlinBase isEqual:] short-circuits on identity before reaching Kotlin.
     #expect(callEquals(lhs: value, rhs: value))
     #expect(!callEquals(lhs: value, rhs: other))
     #expect(!value.isEqual(other))
+    #expect(!other.isEqual(value))
 }
 
 // Overriding an open Kotlin member must not disturb the inherited kotlin.Any members: the reverse

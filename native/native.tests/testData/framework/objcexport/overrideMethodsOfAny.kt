@@ -32,3 +32,20 @@ fun testDescribedByKotlin(obj: DescribedByKotlin, expectedToString: String, expe
     assertEquals(expectedToString, obj.toString())
     assertEquals(expectedHashCode, obj.hashCode())
 }
+
+// `DescribedByKotlin` claims the toString/hashCode vtable slots with its own reverse adapters. This
+// class leaves them to `kotlin.Any`, which is the other half of the recursion: an Obj-C subclass
+// that defines -description/-hash/-isEqual: and calls `super` lands back in -[KotlinBase ...],
+// which then has to reach the compiled Kotlin implementation instead of re-sending the selector it
+// was entered through. Note that kotlin.Any.toString() calls hashCode() virtually, so handling
+// `description` alone would only move the recursion to the `hash` slot.
+open class InheritingMethodsOfAny
+
+@Throws(Throwable::class)
+fun callToString(obj: Any): String = obj.toString()
+
+@Throws(Throwable::class)
+fun callHashCode(obj: Any): Int = obj.hashCode()
+
+@Throws(Throwable::class)
+fun callEquals(obj: Any, other: Any): Boolean = obj == other

@@ -18,6 +18,10 @@ func swiftOverridesKotlinOverridesOfAnyMembers() throws {
     #expect(String(describing: swiftValue) == "swift-describable")
     #expect(swiftValue.hash == 22)
 
+}
+
+@Test
+func kotlinOverridesOfAnyMembersGetExposed() throws {
     // A plain Kotlin instance keeps the Kotlin implementations.
     let kotlinValue = Describable()
     #expect(callToString(value: kotlinValue) == "kotlin-describable")
