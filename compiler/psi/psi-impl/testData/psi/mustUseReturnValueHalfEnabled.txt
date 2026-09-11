@@ -6,7 +6,7 @@ KtFile: mustUseReturnValueHalfEnabled.kt
   CLASS
     PsiComment(EOL_COMMENT)('// WITH_STDLIB')
     PsiWhiteSpace('\n')
-    PsiComment(EOL_COMMENT)('// COMPILER_ARGUMENTS: -Xreturn-value-checker=check')
+    PsiComment(EOL_COMMENT)('// COMPILER_ARGUMENTS: -return-value-checker=check')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// FILE: Unmarked.kt')
     PsiWhiteSpace('\n')

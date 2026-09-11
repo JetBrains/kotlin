@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // RETURN_VALUE_CHECKER_MODE: FULL
-// COMPILER_ARGUMENTS: -Xreturn-value-checker=full
+// COMPILER_ARGUMENTS: -return-value-checker=full
 // MODULE: lib
 // MODULE_KIND: LibraryBinary
 // FILE: Lib.kt

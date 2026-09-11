@@ -223,7 +223,7 @@ private class ExtTestDataFile(
             .orEmpty().flatMap { it.split(" ") }
             .map { it.replace("\$generatedSourcesDir", testDataFileSettings.generatedSourcesDir.absolutePath) }
         testDataFileSettings.returnValueCheckerMode?.let {
-            args += "-Xreturn-value-checker=${it.state}"
+            args += "-return-value-checker=${it.state}"
         }
         val fileCheckStage = retrieveFileCheckStage()
         if (fileCheckStage != null && !args.any { it.startsWith("-Xbinary=preCodegenInlineThreshold=") })
