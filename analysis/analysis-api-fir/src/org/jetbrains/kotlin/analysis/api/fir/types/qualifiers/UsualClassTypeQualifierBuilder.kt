@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.types.qualifiers
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.toSequence
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithOptionalFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -16,9 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
@@ -27,54 +26,59 @@ internal object UsualClassTypeQualifierBuilder {
         coneType: ConeClassLikeTypeImpl,
         builder: KaSymbolByFirBuilder
     ): List<KaResolvedClassTypeQualifier> {
-
-        val classSymbolToRender = coneType.lookupTag.toSymbol(builder.rootSession)
+        val coneTypeClassSymbol = coneType.lookupTag.toSymbol(builder.rootSession)
             ?: errorWithFirSpecificEntries("ConeClassLikeTypeImpl is not resolved to symbol for on-error type", coneType = coneType) {
                 withEntry("useSiteSession", builder.rootSession) { it.toString() }
             }
 
-        val designation = classSymbolToRender.fir.let {
+        val designation = coneTypeClassSymbol.fir.let {
             val nonLocalDesignation = it.tryCollectDesignationWithOptionalFile()
             nonLocalDesignation?.toSequence(includeTarget = true)?.toList() ?: collectDesignationPathForLocal(it)
         }.filterIsInstance<FirClassLikeDeclaration>()
 
-        var typeParametersLeft = coneType.typeArguments.size
+        /**
+         * Returns a number of own type parameters for [this].
+         * In general, it should only count [FirTypeParameter], i.e., type parameters that are declared right on this class.
+         * [FirOuterClassTypeParameterRef] and [FirConstructedClassTypeParameterRef] should be ignored.
+         */
+        fun FirClassLikeDeclaration.numberOfOwnParameters() = typeParameters.count { it is FirTypeParameter }
 
-        fun needToRenderTypeParameters(index: Int): Boolean {
-            if (typeParametersLeft <= 0) return false
+        /**
+         * Type arguments are only rendered for the type's own class and for the chain of its `inner` containers,
+         * as only those may have type arguments in a qualified type reference.
+         */
+        fun shouldRegisterTypeParametersForDesignationPart(index: Int): Boolean {
             return index == designation.lastIndex || designation[index].isInner || designation[index + 1].isInner
         }
 
-        val result = mutableListOf<KaResolvedClassTypeQualifier>()
-        designation.forEachIndexed { index, currentClass ->
-            val typeParameters = if (needToRenderTypeParameters(index)) {
-                val typeParametersCount = currentClass.typeParameters.count { it is FirTypeParameter }
-                val begin = typeParametersLeft - typeParametersCount
-                val end = typeParametersLeft
-                checkWithAttachment(begin >= 0, { "Unexpected number of type parameters" }) {
-                    withEntry("designation", designation.toString())
-                    withFirEntry("currentClass", currentClass)
-                    withConeTypeEntry("coneType", coneType)
-                }
+        val ownTypeParametersCountsByDesignation = designation.mapIndexed { index, designationClass ->
+            if (shouldRegisterTypeParametersForDesignationPart(index)) designationClass.numberOfOwnParameters() else 0
+        }
+        var restTypeArguments = coneType.typeArguments.asList()
 
-                typeParametersLeft -= typeParametersCount
-                coneType.typeArguments.slice(begin until end).map { builder.typeBuilder.buildTypeProjection(it) }
-            } else emptyList()
-            result += KaBaseResolvedClassTypeQualifier(
+        // The designation is ordered outermost-first and the arguments innermost-first, so every part takes its own
+        // ones from the back of what is left.
+        fun takeTypeArguments(count: Int): List<KaTypeProjection> {
+            if (count == 0 || restTypeArguments.isEmpty()) return emptyList()
+            val taken = restTypeArguments.takeLast(count)
+            restTypeArguments = restTypeArguments.dropLast(count)
+            return taken.map { builder.typeBuilder.buildTypeProjection(it) }
+        }
+
+        return designation.mapIndexed { index, currentClass ->
+            KaBaseResolvedClassTypeQualifier(
                 builder.classifierBuilder.buildClassifierSymbol(currentClass.symbol),
-                typeParameters,
+                takeTypeArguments(ownTypeParametersCountsByDesignation[index]),
             )
         }
-        return result
     }
 
     private fun FirClassLikeDeclaration.collectForLocal(): List<FirClassLikeDeclaration> {
         require(isLocal)
         var containingClassLookUp = containingClassForLocal()
-        val designation = mutableListOf<FirClassLikeDeclaration>(this)
+        val designation = mutableListOf(this)
         var currentClass = containingClassLookUp?.toRegularClassSymbol(moduleData.session)?.fir
 
-        @OptIn(LookupTagInternals::class)
         while (containingClassLookUp != null && currentClass?.isLocal == true) {
             designation.add(currentClass)
             containingClassLookUp = currentClass.containingClassForLocal()
