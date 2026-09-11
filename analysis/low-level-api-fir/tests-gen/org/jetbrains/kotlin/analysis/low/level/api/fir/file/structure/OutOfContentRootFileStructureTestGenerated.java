@@ -179,6 +179,12 @@ public class OutOfContentRootFileStructureTestGenerated extends AbstractOutOfCon
   }
 
   @Test
+  @TestMetadata("explicitBackingField.kt")
+  public void testExplicitBackingField() {
+    run("explicitBackingField.kt");
+  }
+
+  @Test
   @TestMetadata("funWithoutTypes.kt")
   public void testFunWithoutTypes() {
     run("funWithoutTypes.kt");

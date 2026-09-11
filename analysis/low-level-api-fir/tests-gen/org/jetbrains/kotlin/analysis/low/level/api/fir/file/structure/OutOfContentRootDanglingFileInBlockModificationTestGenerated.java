@@ -166,6 +166,12 @@ public class OutOfContentRootDanglingFileInBlockModificationTestGenerated extend
   }
 
   @Test
+  @TestMetadata("memberGetterWithTypeWithBodyNearExplicitBackingField.kt")
+  public void testMemberGetterWithTypeWithBodyNearExplicitBackingField() {
+    run("memberGetterWithTypeWithBodyNearExplicitBackingField.kt");
+  }
+
+  @Test
   @TestMetadata("memberGetterWithTypeWithoutBody.kt")
   public void testMemberGetterWithTypeWithoutBody() {
     run("memberGetterWithTypeWithoutBody.kt");
@@ -205,6 +211,12 @@ public class OutOfContentRootDanglingFileInBlockModificationTestGenerated extend
   @TestMetadata("memberPropertyWithTypeInErrorDelegate.kt")
   public void testMemberPropertyWithTypeInErrorDelegate() {
     run("memberPropertyWithTypeInErrorDelegate.kt");
+  }
+
+  @Test
+  @TestMetadata("memberPropertyWithTypeInExplicitBackingFieldInitializer.kt")
+  public void testMemberPropertyWithTypeInExplicitBackingFieldInitializer() {
+    run("memberPropertyWithTypeInExplicitBackingFieldInitializer.kt");
   }
 
   @Test
@@ -406,6 +418,12 @@ public class OutOfContentRootDanglingFileInBlockModificationTestGenerated extend
   }
 
   @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyNearExplicitBackingField.kt")
+  public void testTopLevelGetterWithTypeWithBodyNearExplicitBackingField() {
+    run("topLevelGetterWithTypeWithBodyNearExplicitBackingField.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelGetterWithTypeWithBodyNearField.kt")
   public void testTopLevelGetterWithTypeWithBodyNearField() {
     run("topLevelGetterWithTypeWithBodyNearField.kt");
@@ -457,6 +475,12 @@ public class OutOfContentRootDanglingFileInBlockModificationTestGenerated extend
   @TestMetadata("topLevelPropertyWithTypeInErrorDelegate.kt")
   public void testTopLevelPropertyWithTypeInErrorDelegate() {
     run("topLevelPropertyWithTypeInErrorDelegate.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelPropertyWithTypeInExplicitBackingFieldInitializer.kt")
+  public void testTopLevelPropertyWithTypeInExplicitBackingFieldInitializer() {
+    run("topLevelPropertyWithTypeInExplicitBackingFieldInitializer.kt");
   }
 
   @Test

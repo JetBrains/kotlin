@@ -1,0 +1,13 @@
+/* anchor (KtClass) --> */class A {
+    /* anchor (KtProperty) --> */val prop: Any
+        /* anchor (KtBackingField) --> */@Ann field: Int = run {
+            fun local() {}
+            1
+        }/* <-- *//* <-- */
+}/* <-- */
+
+/* anchor (KtProperty) --> */val topLevel: Any
+    /* anchor (KtBackingField) --> */field: Int = 1/* <-- */
+    /* anchor (KtPropertyAccessor) --> */get() = field/* <-- *//* <-- */
+
+/* anchor (KtClass) --> */annotation class Ann/* <-- */

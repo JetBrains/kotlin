@@ -214,6 +214,12 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("explicitBackingField.kts")
+    public void testExplicitBackingField() {
+      run("explicitBackingField.kts");
+    }
+
+    @Test
     @TestMetadata("insideClassBody.kts")
     public void testInsideClassBody() {
       run("insideClassBody.kts");
