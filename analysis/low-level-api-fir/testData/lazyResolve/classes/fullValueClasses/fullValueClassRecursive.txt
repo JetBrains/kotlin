@@ -1,0 +1,209 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassRecursive.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.self] self: Recursive, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.other] other: Int): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.self] self: Recursive, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.other] other: Int): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.self] self: Recursive, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.other] other: Int): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final? value [ResolvedTo(COMPANION_GENERATION)] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.self] self: Recursive, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.other] other: Int): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final? value [ResolvedTo(SUPER_TYPES)] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.self] self: Recursive, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.other] other: Int): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final? value [ResolvedTo(TYPES)] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.self] self: Recursive, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Recursive.other] other: Int): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(self, pack/Recursive), (other, kotlin/Int)])] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Recursive] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.self] self: R|pack/Recursive|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.other] other: R|kotlin/Int|): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(self, pack/Recursive), (other, kotlin/Int)])] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Recursive] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.self] self: R|pack/Recursive|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.other] other: R|kotlin/Int|): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(self, pack/Recursive), (other, kotlin/Int)])] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Recursive] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.self] self: R|pack/Recursive|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.other] other: R|kotlin/Int|): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(self, pack/Recursive), (other, kotlin/Int)])] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Recursive] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.self] self: R|pack/Recursive|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.other] other: R|kotlin/Int|): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(self, pack/Recursive), (other, kotlin/Int)])] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Recursive] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.self] self: R|pack/Recursive|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.other] other: R|kotlin/Int|): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(self, pack/Recursive), (other, kotlin/Int)])] class Recursive : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Recursive] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.self] self: R|pack/Recursive|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Recursive.other] other: R|kotlin/Int|): R|pack/Recursive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val self: Recursive = R|<local>/self|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Recursive
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val other: Int = R|<local>/other|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Recursive] get(): Int
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(self, pack/Recursive), (other, kotlin/Int)])] class Recursive : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Recursive] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Recursive.self] self: R|pack/Recursive|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Recursive.other] other: R|kotlin/Int|): R|pack/Recursive| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val self: R|pack/Recursive| = R|<local>/self|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Recursive] get(): R|pack/Recursive|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val other: R|kotlin/Int| = R|<local>/other|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Recursive] get(): R|kotlin/Int|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassRecursive.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(self, pack/Recursive), (other, kotlin/Int)])] class Recursive : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Recursive] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Recursive.self] self: R|pack/Recursive|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Recursive.other] other: R|kotlin/Int|): R|pack/Recursive| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val self: R|pack/Recursive| = R|<local>/self|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Recursive] get(): R|pack/Recursive|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val other: R|kotlin/Int| = R|<local>/other|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Recursive] get(): R|kotlin/Int|
+
+    }

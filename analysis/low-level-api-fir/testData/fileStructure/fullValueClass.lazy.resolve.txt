@@ -1,0 +1,54 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClass.kt
+    public abstract value [ResolvedTo(BODY_RESOLVE)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val size: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun isEmpty(): R|kotlin/Boolean| {
+            ^isEmpty ==(this@R|test/Base|.R|test/Base.size|, Int(0))
+        }
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] class Point : R|test/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] y: R|kotlin/Int|): R|test/Point| {
+            super<R|test/Base|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|test/Point| {
+            this<R|test/Point|>(R|<local>/value|, R|<local>/value|)
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            <Unresolved name: require>#(CMP(>=, this@R|test/Point|.R|test/Point.x|.R|kotlin/Int.compareTo|(Int(0))))
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] val size: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ this@R|test/Point|.R|test/Point.x|.R|kotlin/Int.plus|(this@R|test/Point|.R|test/Point.y|)
+            }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun sum(): R|kotlin/Int| {
+            ^sum this@R|test/Point|.R|test/Point.x|.R|kotlin/Int.plus|(this@R|test/Point|.R|test/Point.y|)
+        }
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] object Empty : R|test/Base| {
+        private [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Empty| {
+            super<R|test/Base|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] val size: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ Int(0)
+            }
+
+    }

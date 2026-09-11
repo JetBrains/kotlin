@@ -1,0 +1,27 @@
+KT element: KtSuperTypeCallEntry
+FIR element: FirDelegatedConstructorCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+super<R|Result|>()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSuperTypeCall.kt
+    public sealed value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=Result] constructor(): R|Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/String), (code, kotlin/Int)])] class Success : R|Result| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Success] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Success.value] value: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Success.code] code: R|kotlin/Int|): R|Success| {
+            super<R|Result|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/String| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Success] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val code: R|kotlin/Int| = R|<local>/code|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Success] get(): R|kotlin/Int|
+
+    }

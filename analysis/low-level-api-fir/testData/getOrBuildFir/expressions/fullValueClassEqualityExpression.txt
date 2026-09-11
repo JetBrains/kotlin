@@ -1,0 +1,24 @@
+KT element: KtBinaryExpression
+FIR element: FirEqualityOperatorCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+==(R|<local>/first|, R|<local>/second|)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassEqualityExpression.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Point.y] y: R|kotlin/Int|): R|Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] first: R|Point|, [ResolvedTo(BODY_RESOLVE)] second: R|Point|): R|kotlin/Boolean| {
+        ^test ==(R|<local>/first|, R|<local>/second|)
+    }

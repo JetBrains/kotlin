@@ -1,0 +1,125 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassNoFields.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final? value [ResolvedTo(COMPANION_GENERATION)] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final? value [ResolvedTo(SUPER_TYPES)] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final? value [ResolvedTo(TYPES)] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] class Empty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassNoFields.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] class Empty : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassNoFields.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] class Empty : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

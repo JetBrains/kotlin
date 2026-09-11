@@ -96,6 +96,18 @@ public class SourceLikeLazyTypeAnnotationsTestGenerated extends AbstractSourceLi
     }
 
     @Test
+    @TestMetadata("fullValueClassParameterTypeCollisionAndAnnotations.kt")
+    public void testFullValueClassParameterTypeCollisionAndAnnotations() {
+      run("fullValueClassParameterTypeCollisionAndAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassParameterTypeCollisionAndAnnotationsScript.kts")
+    public void testFullValueClassParameterTypeCollisionAndAnnotationsScript() {
+      run("fullValueClassParameterTypeCollisionAndAnnotationsScript.kts");
+    }
+
+    @Test
     @TestMetadata("nestedClassAsAnnotationArgument.kt")
     public void testNestedClassAsAnnotationArgument() {
       run("nestedClassAsAnnotationArgument.kt");

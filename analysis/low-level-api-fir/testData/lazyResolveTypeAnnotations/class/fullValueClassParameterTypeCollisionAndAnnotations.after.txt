@@ -1,0 +1,59 @@
+@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>
+  context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyValueClass.MyValueClass
+  anchor -> [FirConstructorSymbol one/two/MyValueClass.MyValueClass]
+
+@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>
+  context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyValueClass.MyValueClass
+  anchor -> [FirConstructorSymbol one/two/MyValueClass.MyValueClass]
+
+@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int
+  context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyValueClass.MyValueClass
+  anchor -> [FirConstructorSymbol one/two/MyValueClass.MyValueClass]
+
+FILE: [ResolvedTo(IMPORTS)] fullValueClassParameterTypeCollisionAndAnnotations.kt
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/Anno.i] i: R|kotlin/Int|): R|one/two/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(prop, @R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>), (second, @R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(3)])  one/two/MyValueClass.MyClass<kotlin/Int>)])] class MyValueClass : R|kotlin/Any| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyValueClass.prop] prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyValueClass.second] second: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(3)])  one/two/MyValueClass.MyClass<kotlin/Int>|): R|one/two/MyValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/prop|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyValueClass] get(): R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyValueClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val second: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(3)])  one/two/MyValueClass.MyClass<kotlin/Int>| = R|<local>/second|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyValueClass] get(): R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyValueClass.Companion|.R|one/two/MyValueClass.Companion.constant|) [evaluated = Int(3)])  one/two/MyValueClass.MyClass<kotlin/Int>|
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyValueClass.MyClass<B>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|one/two/MyValueClass.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+    }

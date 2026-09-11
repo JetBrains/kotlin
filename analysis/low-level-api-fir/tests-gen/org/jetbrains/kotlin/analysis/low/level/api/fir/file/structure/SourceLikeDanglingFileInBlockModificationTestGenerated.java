@@ -118,6 +118,30 @@ public class SourceLikeDanglingFileInBlockModificationTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("fullValueClassGetterBody.kt")
+  public void testFullValueClassGetterBody() {
+    run("fullValueClassGetterBody.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassGetterBodyScript.kts")
+  public void testFullValueClassGetterBodyScript() {
+    run("fullValueClassGetterBodyScript.kts");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassMemberFunctionBody.kt")
+  public void testFullValueClassMemberFunctionBody() {
+    run("fullValueClassMemberFunctionBody.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassMemberFunctionBodyScript.kts")
+  public void testFullValueClassMemberFunctionBodyScript() {
+    run("fullValueClassMemberFunctionBodyScript.kts");
+  }
+
+  @Test
   @TestMetadata("functionWithDefaultParameters.kt")
   public void testFunctionWithDefaultParameters() {
     run("functionWithDefaultParameters.kt");
