@@ -16,7 +16,7 @@ public final class Bar: KotlinRuntime.KotlinBase {
         fatalError()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -73,13 +73,13 @@ public func nothingClosureParam(
 }
 public func nothingFunctional() -> () -> Swift.Never {
     return {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingFunctional(), options: .asBestFittingWrapper)!
-        return { return { main_internal_functional_type_caller_SwiftU2ENever__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!); fatalError() }() }
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingFunctional(), options: .asBestFittingWrapper)
+        return { return { main_internal_functional_type_caller_SwiftU2ENever__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()); fatalError() }() }
     }()
 }
 public func nothingFunctionalParam() -> (Swift.Never) -> Swift.String {
     return {
-        let _ = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingFunctionalParam(), options: .asBestFittingWrapper)!
+        let _ = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingFunctionalParam(), options: .asBestFittingWrapper)
         return { _ in fatalError() }
     }()
 }
@@ -95,14 +95,14 @@ public func nothingOptClosureParam(
 }
 public func nothingOptFunctional() -> () -> Swift.Never? {
     return {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingOptFunctional(), options: .asBestFittingWrapper)!
-        return { return { main_internal_functional_type_caller_SwiftU2EOptionalU3CSwiftU2ENeverU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!); return nil }() }
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingOptFunctional(), options: .asBestFittingWrapper)
+        return { return { main_internal_functional_type_caller_SwiftU2EOptionalU3CSwiftU2ENeverU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()); return nil }() }
     }()
 }
 public func nothingOptFunctionalParam() -> (Swift.Never?) -> Swift.String {
     return {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingOptFunctionalParam(), options: .asBestFittingWrapper)!
-        return { _1 in return main_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Never___(pointerToBlock.__externalRCRef()!, { _1; return true }()) }
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingOptFunctionalParam(), options: .asBestFittingWrapper)
+        return { _1 in return main_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Never___(pointerToBlock.__externalRCRef(), { _1; return true }()) }
     }()
 }
 public func nullableNothingInput(

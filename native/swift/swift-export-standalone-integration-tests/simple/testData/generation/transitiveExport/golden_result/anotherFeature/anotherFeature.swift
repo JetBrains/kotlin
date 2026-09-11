@@ -9,13 +9,13 @@ public final class FeatureC: KotlinRuntime.KotlinBase {
             return ExportedKotlinPackages.oh.my.state.State.__createClassWrapper(externalRCRef: FeatureC_state_get(self.__externalRCRef()))
         }
     }
-    public init() {
+    public override init() {
         let __kt = __root___FeatureC_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___FeatureC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
