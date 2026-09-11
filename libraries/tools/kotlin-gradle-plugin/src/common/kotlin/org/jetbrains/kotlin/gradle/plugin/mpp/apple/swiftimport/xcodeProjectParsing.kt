@@ -196,6 +196,8 @@ internal class PbxShellScriptBuildPhase(
 internal class XCSwiftPackageProductDependency(
     val isa: String = "XCSwiftPackageProductDependency",
     val productName: String?,
+    @SerialName("package")
+    var packageReference: String?,
 ) : PbxObject()
 
 @Serializable
