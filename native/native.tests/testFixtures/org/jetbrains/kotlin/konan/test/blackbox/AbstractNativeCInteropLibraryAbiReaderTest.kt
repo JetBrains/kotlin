@@ -43,6 +43,8 @@ import java.io.File
 @OptIn(ExperimentalLibraryAbiReader::class)
 abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimpleTest() {
     fun runTest(localPath: String) {
+        assumeTrue(targets.testTarget.family.isAppleFamily) // ObjC tests can run only on Apple targets.
+
         val [sourceFile, dumpFiles] = computeTestFiles(localPath)
         val (moduleName, filters, klibAbiLevel) = parseDirectives(sourceFile)
 
@@ -81,8 +83,6 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
     }
 
     private fun produceCustomDependencies(sourceFile: File, klibAbiLevel: KlibAbiCompatibilityLevel?): List<TestCompilationArtifact.KLIB> {
-        assumeTrue(targets.hostTarget.family.isAppleFamily) // ObjC tests can run only on Apple targets.
-
         val defFile = sourceFile.withExtension(".def")
         assertTrue(defFile.isFile) { "Def file does not exist: $defFile" }
 
