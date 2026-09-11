@@ -42,6 +42,17 @@ internal data class SwiftExportDeclaredModuleOptions(
 )
 
 /**
+ * [this] with the properties that [override] sets replaced by their values from [override].
+ */
+internal fun SwiftExportDeclaredModuleOptions?.overriddenBy(
+    override: SwiftExportDeclaredModuleOptions,
+): SwiftExportDeclaredModuleOptions = SwiftExportDeclaredModuleOptions(
+    moduleName = override.moduleName ?: this?.moduleName,
+    rootPackage = override.rootPackage ?: this?.rootPackage,
+    visibility = override.visibility ?: this?.visibility,
+)
+
+/**
  * One layer of declared module options.
  *
  * Layers are consulted in order and the first non-null value wins, per property:
