@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import java.lang.reflect.*
 import kotlin.reflect.*
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.functions
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.staticProperties
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.internal.*
 import kotlin.reflect.javaType as stdlibJavaType
 
@@ -70,6 +67,28 @@ val KFunction<*>.javaMethod: Method?
 @Suppress("UNCHECKED_CAST")
 val <T> KFunction<T>.javaConstructor: Constructor<T>?
     get() = this.asReflectCallable()?.caller?.member as? Constructor<T>
+
+
+/**
+ * Returns a [Parameter] instance corresponding to the given Kotlin [KParameter] instance,
+ * or `null` if this parameter cannot be represented by a Java parameter.
+ * (for example, instance parameters of top-level classes)
+ */
+@SinceKotlin("2.5")
+val KParameter.javaParameter: Parameter?
+    get() {
+        return when (val member = (this as ReflectKParameter).callable.caller.member) {
+            is Method -> {
+                if (kind == KParameter.Kind.INSTANCE) return null
+                member.parameters[index + (if (callable.instanceParameter == null) 0 else -1)]
+            }
+            is Constructor<*> -> {
+                val shift = if (member.declaringClass.isEnum) 2 else 0
+                member.parameters[shift + index]
+            }
+            else -> throw KotlinReflectionInternalError("Unsupported parameter owner: $member")
+        }
+    }
 
 
 /**
