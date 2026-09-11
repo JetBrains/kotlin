@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.assertNull
@@ -872,6 +873,38 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 logFile.assertLogContainsSequence("Idle timeout exceeded 1s",
                                                   "Shutdown started")
             }
+        }
+    }
+
+    @Test
+    @DisplayName("Daemon correctly deduplicates client registrations in client set")
+    fun testDaemonKeepsOnlyOneClientRegistered() {
+        val daemonOptions = DaemonOptions(
+            autoshutdownIdleSeconds = 1000,
+            shutdownDelayMilliseconds = 1,
+            runFilesPath = File(testTempDir, getTestName(testInfo)).absolutePath
+        )
+        val clientFlag = FileUtil.createTempFile(getTestName(testInfo), "-client.alive").also { it.deleteOnExit() }
+        val sessionFlag = FileUtil.createTempFile(getTestName(testInfo), "-session.alive").also { it.deleteOnExit() }
+        try {
+            val daemonJVMOptions = makeTestDaemonJvmOptions()
+            val daemon = KotlinCompilerClient.connectToCompileService(
+                compilerId,
+                clientFlag,
+                daemonJVMOptions,
+                daemonOptions,
+                DaemonReportingTargets(out = System.err),
+                autostart = true
+            )
+            assertNotNull(daemon) { "failed to connect daemon" }
+            assertEquals(1, daemon.getClients().get().size)
+            daemon.registerClient(clientFlag.absolutePath)
+            daemon.registerClient(clientFlag.absolutePath)
+            daemon.registerClient(clientFlag.absolutePath)
+            assertEquals(1, daemon.getClients().get().size)
+        } finally {
+            sessionFlag.delete()
+            clientFlag.delete()
         }
     }
 
