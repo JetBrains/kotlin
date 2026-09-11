@@ -239,6 +239,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::WhenBranchOptimiserLowering,
 
+    ::WasmAssociativeReductionLowering,
     ::WasmTailCallLowering,
 
     ::IrValidationAfterLoweringsSecondStagePhase,
