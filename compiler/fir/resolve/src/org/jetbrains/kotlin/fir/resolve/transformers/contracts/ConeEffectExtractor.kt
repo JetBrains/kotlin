@@ -130,7 +130,7 @@ class ConeEffectExtractor(
                 } else {
                     ConeContractDescriptionError.RequiresLanguageFeature(
                         "-Xallow-returns-result-of",
-                        "-Xreturn-value-checker"
+                        "-return-value-checker"
                     ).asElement()
                 }
             }
@@ -140,7 +140,7 @@ class ConeEffectExtractor(
                     val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(VALUE_ARGUMENT_NAME)
                     ConeReturnsParameterDeclaration(reference)
                 } else {
-                    ConeContractDescriptionError.RequiresLanguageFeature("-Xreturn-value-checker").asElement()
+                    ConeContractDescriptionError.RequiresLanguageFeature("-return-value-checker").asElement()
                 }
             }
 

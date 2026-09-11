@@ -107,7 +107,7 @@ abstract class AbstractCompilerTest(private val runner: CompilerRunner) {
     }
 
     private fun RegisteredDirectives.valueDirectiveFlags(): List<String> = listOfNotNull(
-        renderValueFlag(LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE, "-Xreturn-value-checker") { it.state },
+        renderValueFlag(LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE, "-return-value-checker") { it.state },
         renderValueFlag(JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE, "-Xassertions") { it.description },
         renderValueFlag(JvmEnvironmentConfigurationDirectives.LAMBDAS, "-Xlambdas") { it.description },
         renderValueFlag(JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS, "-Xsam-conversions") { it.description },

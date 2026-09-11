@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // RETURN_VALUE_CHECKER_MODE: FULL
-// COMPILER_ARGUMENTS: -Xreturn-value-checker=full
+// COMPILER_ARGUMENTS: -return-value-checker=full
 // LANGUAGE: +AllowReturnsResultOfContract
 // MODULE: lib1
 // MODULE_KIND: LibraryBinary
