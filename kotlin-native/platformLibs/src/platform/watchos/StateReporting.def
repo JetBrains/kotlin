@@ -1,0 +1,7 @@
+depends = CFCGTypes CoreFoundation CoreFoundationBase Foundation Security darwin posix
+language = Objective-C
+package = platform.StateReporting
+
+modules = StateReporting
+compilerOpts = -framework StateReporting
+linkerOpts = -framework StateReporting

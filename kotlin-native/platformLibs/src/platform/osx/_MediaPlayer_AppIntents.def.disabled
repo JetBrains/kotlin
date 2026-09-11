@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._MediaPlayer_AppIntents
+
+modules = _MediaPlayer_AppIntents
+compilerOpts = -framework _MediaPlayer_AppIntents
+linkerOpts = -framework _MediaPlayer_AppIntents
+#Disabled: Unavailable

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.AccessoryLiveActivities
+
+modules = AccessoryLiveActivities
+compilerOpts = -framework AccessoryLiveActivities
+linkerOpts = -framework AccessoryLiveActivities
+#Disabled: Swift-only framework

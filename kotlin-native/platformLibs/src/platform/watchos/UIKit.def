@@ -1,4 +1,4 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText CoreVideo Foundation QuartzCore Security Symbols UIUtilities UserNotifications darwin posix
+depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreLocation CoreMotion CoreText CoreVideo Foundation QuartzCore Security Symbols UIUtilities UserNotifications _LocationEssentials darwin posix
 language = Objective-C
 package = platform.UIKit
 modules = UIKit
@@ -7,4 +7,5 @@ apiNotesSwiftName = true
 compilerOpts = -framework UIKit
 linkerOpts = -framework UIKit
 
+strictEnums = UIWritingToolsCoordinatorTextAnimation UIWritingToolsCoordinatorTextReplacementReason
 objcClassesIncludingCategories = NSMutableParagraphStyle NSParagraphStyle NSTextContainer NSTextTab

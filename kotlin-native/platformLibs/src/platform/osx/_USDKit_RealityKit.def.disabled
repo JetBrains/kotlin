@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._USDKit_RealityKit
+
+modules = _USDKit_RealityKit
+compilerOpts = -framework _USDKit_RealityKit
+linkerOpts = -framework _USDKit_RealityKit
+#Disabled: Unavailable

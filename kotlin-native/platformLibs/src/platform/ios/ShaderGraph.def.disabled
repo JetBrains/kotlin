@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.ShaderGraph
+
+modules = ShaderGraph
+compilerOpts = -framework ShaderGraph
+linkerOpts = -framework ShaderGraph
+#Disabled: Swift-only framework
