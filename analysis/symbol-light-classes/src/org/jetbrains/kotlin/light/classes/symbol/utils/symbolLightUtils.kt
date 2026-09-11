@@ -139,6 +139,17 @@ internal fun basicIsEquivalentTo(`this`: PsiElement?, that: PsiElement?): Boolea
     return thisMemberOrigin.isEquivalentTo(thatMemberOrigin)
 }
 
+/**
+ * Returns [anchorPsi] if this symbol is not a Kotlin one.
+ * [anchorPsi] is used instead of [realPsi] as [realPsi] is not available
+ * for Java symbols with `FirDeclarationOrigin.Enhancement` symbol origin.
+ */
+internal fun KaSymbol.anchorPsiIfNotKotlin(): PsiElement? {
+    return anchorPsi?.takeIf {
+        it.language != KotlinLanguage.INSTANCE
+    }
+}
+
 internal fun KtLightElement<*, *>.isOriginEquivalentTo(that: PsiElement?): Boolean {
     return kotlinOrigin?.isEquivalentTo(that) == true
 }
