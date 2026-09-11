@@ -10,7 +10,7 @@ fun interface Sam {
     fun invoke()
 }
 
-<!WRONG_MODIFIER_TARGET!>error<!> class Foo
+error class Foo
 
 fun foo(f: Sam | Foo) { }
 
