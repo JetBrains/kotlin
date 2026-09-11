@@ -3131,6 +3131,12 @@ private fun KaDiagnosticConverterBuilder.addConversions68() {
             token,
         )
     }
+    add(FirJsErrors.IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE) { firDiagnostic ->
+        ImplementingSuspendFunctionInterfaceImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirWebCommonErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION) { firDiagnostic ->
         CallToDefinedExternallyFromNonExternalDeclarationImpl(
             firDiagnostic as KtDiagnosticWithSource,

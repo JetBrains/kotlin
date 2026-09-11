@@ -1,3 +1,5 @@
+// DIAGNOSTICS: -IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE
+// ^^^ Kotlin/JS partially forbids implementing suspend function interfaces and report this diagnostic
 // WITH_STDLIB
 // LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // ^^^ This test demonstrates how after IR Inliner on 1st phase, there is no discrepancy in the name of value parameter of `FAKE_OVERRIDE name:invoke`

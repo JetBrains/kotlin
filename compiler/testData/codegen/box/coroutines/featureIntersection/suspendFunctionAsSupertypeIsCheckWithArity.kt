@@ -1,3 +1,5 @@
+// DIAGNOSTICS: -IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE
+// ^^^ Kotlin/JS partially forbids implementing suspend function interfaces and report this diagnostic
 // KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND: JVM_IR
 // FIR status: not supported in JVM
