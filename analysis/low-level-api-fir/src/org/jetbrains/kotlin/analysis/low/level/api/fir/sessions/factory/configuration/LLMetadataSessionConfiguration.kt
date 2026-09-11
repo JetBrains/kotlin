@@ -25,7 +25,7 @@ internal class LLMetadataSessionConfiguration(private val project: Project) : LL
     override fun createPlatformSpecificSymbolProvidersForBuiltinsSession(
         session: LLFirBuiltinsAndCloneableSession
     ): List<FirSymbolProvider> {
-        /** Aligned with [org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory] (adds `Cloneable` similarly to JVM). */
-        return listOf(createCloneableSymbolProvider(session))
+        /** Aligned with [org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory] (adds `Cloneable` and `Value` similarly to JVM). */
+        return createSyntheticSymbolProviders(session)
     }
 }

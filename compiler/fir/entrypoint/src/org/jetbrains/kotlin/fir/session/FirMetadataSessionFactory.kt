@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirValueSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -337,6 +338,7 @@ class FirMetadataSessionFactory(targetPlatform: TargetPlatform) : AbstractFirMet
                 FirFallbackBuiltinSymbolProvider(session, moduleData, scopeProvider)
             },
             FirCloneableSymbolProvider(session, moduleData, scopeProvider),
+            FirValueSymbolProvider.createIfRichErrorsEnabled(session, moduleData, scopeProvider),
         )
     }
 
