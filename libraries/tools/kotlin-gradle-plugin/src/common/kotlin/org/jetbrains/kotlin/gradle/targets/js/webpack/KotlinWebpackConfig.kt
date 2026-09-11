@@ -7,10 +7,15 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import com.google.gson.*
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
+import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
@@ -20,8 +25,6 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
 import java.io.Serializable
-import java.io.StringWriter
-import java.lang.reflect.Type
 import kotlin.collections.joinToString
 
 /**
@@ -182,7 +185,6 @@ data class KotlinWebpackConfig(
          * https://webpack.js.org/configuration/dev-server/#devserverstatic
          */
         @Suppress("DEPRECATION")
-        @get:SerializedName("static")
         internal val actualStatic: List<Any>?
             get() {
                 return buildList {
@@ -191,19 +193,46 @@ data class KotlinWebpackConfig(
                 }.takeIf { it.isNotEmpty() }
             }
 
-        internal object DevServerAdapter : JsonSerializer<DevServer> {
-            override fun serialize(
-                src: DevServer,
-                typeOfSrc: Type,
-                ctx: JsonSerializationContext,
-            ): JsonElement {
-                val obj = GsonBuilder().create()
-                    .toJsonTree(src, typeOfSrc).asJsonObject
-                obj.remove("static")
-                obj.remove("mutableStatics")
-                obj.add("static", ctx.serialize(src.actualStatic))
-                return obj
-            }
+        internal fun toJsonElement(): JsonObject = buildJsonObject {
+            put("open", anyToJsonElement(open))
+            if (port != null) put("port", JsonPrimitive(port!!))
+            if (proxy != null) put("proxy", buildJsonArray { proxy!!.forEach { add(it.toJsonElement()) } })
+            if (contentBase != null) put("contentBase", buildJsonArray { contentBase!!.forEach { add(JsonPrimitive(it)) } })
+            if (client != null) put("client", client!!.toJsonElement())
+            val staticList = actualStatic
+            if (staticList != null) put("static", buildJsonArray {
+                staticList.forEach { item ->
+                    when (item) {
+                        is String -> add(JsonPrimitive(item))
+                        is Static -> add(item.toJsonElement())
+                        else -> add(JsonPrimitive(item.toString()))
+                    }
+                }
+            })
+        }
+
+        private fun Proxy.toJsonElement(): JsonObject = buildJsonObject {
+            put("context", buildJsonArray { context.forEach { add(JsonPrimitive(it)) } })
+            put("target", JsonPrimitive(target))
+            if (pathRewrite != null) put("pathRewrite", buildJsonObject {
+                pathRewrite.forEach { (k, v) -> put(k, JsonPrimitive(v)) }
+            })
+            if (secure != null) put("secure", JsonPrimitive(secure))
+            if (changeOrigin != null) put("changeOrigin", JsonPrimitive(changeOrigin))
+        }
+
+        private fun Client.toJsonElement(): JsonObject = buildJsonObject {
+            // `overlay` is typed Any because webpack accepts either a boolean or an object; Gson reflected the
+            // object case into its fields, so spell it out instead
+            put(
+                "overlay", when (val overlay = overlay) {
+                    is Client.Overlay -> buildJsonObject {
+                        put("errors", JsonPrimitive(overlay.errors))
+                        put("warnings", JsonPrimitive(overlay.warnings))
+                    }
+                    else -> anyToJsonElement(overlay)
+                }
+            )
         }
 
         data class Client(
@@ -230,22 +259,10 @@ data class KotlinWebpackConfig(
             val directory: String,
             val watch: Boolean = false,
         ) {
-            internal object StaticSerializer : JsonSerializer<Static> {
-                override fun serialize(
-                    src: Static,
-                    typeOfSrc: Type,
-                    context: JsonSerializationContext,
-                ): JsonElement {
-                    val obj = JsonObject()
-                    obj.addProperty(
-                        "directory",
-                        src.directory.quoteRawJsRelativePath()
-                    )
-                    obj.addProperty("watch", src.watch)
-                    return obj
-                }
+            internal fun toJsonElement(): JsonObject = buildJsonObject {
+                put("directory", JsonPrimitive(directory.quoteRawJsRelativePath()))
+                put("watch", JsonPrimitive(watch))
             }
-
         }
     }
 
@@ -532,27 +549,42 @@ data class KotlinWebpackConfig(
         appendLine("// section end")
     }
 
-    private fun json(obj: Any) = StringWriter().also {
-        GsonBuilder()
-            .registerTypeAdapter(DevServer::class.java, DevServer.DevServerAdapter)
-            .registerTypeAdapter(DevServer.Static::class.java, DevServer.Static.StaticSerializer)
-            .setPrettyPrinting()
-            .create()
-            .toJson(obj, it)
-    }.toString()
+    private fun json(obj: Any): String = KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonElement.serializer(), webpackValueToJsonElement(obj))
+}
+
+/**
+ * Walks the webpack config tree by hand. [KotlinWebpackConfig.DevServer], [KotlinWebpackConfig.Optimization] and
+ * [KotlinWebpackConfig.WatchOptions] carry webpack-specific shapes that used to be produced by dedicated Gson type
+ * adapters, so they get explicit branches here instead of being reflected over.
+ */
+private fun webpackValueToJsonElement(value: Any?): JsonElement = when (value) {
+    is KotlinWebpackConfig.DevServer -> value.toJsonElement()
+    is KotlinWebpackConfig.Optimization -> buildJsonObject {
+        // both are nullable and webpack rejects an explicit null for either, so omit them as Gson did
+        value.runtimeChunk?.let { put("runtimeChunk", webpackValueToJsonElement(it)) }
+        value.splitChunks?.let { put("splitChunks", webpackValueToJsonElement(it)) }
+    }
+    is KotlinWebpackConfig.WatchOptions -> buildJsonObject {
+        value.aggregateTimeout?.let { put("aggregateTimeout", JsonPrimitive(it)) }
+        value.ignored?.let { put("ignored", webpackValueToJsonElement(it)) }
+    }
+    // recurse through this function, not the shared one, so that nested webpack types are still recognised
+    is Map<*, *> -> buildJsonObject { value.forEach { (k, v) -> put(k.toString(), webpackValueToJsonElement(v)) } }
+    is Iterable<*> -> buildJsonArray { value.forEach { add(webpackValueToJsonElement(it)) } }
+    is Array<*> -> buildJsonArray { value.forEach { add(webpackValueToJsonElement(it)) } }
+    else -> anyToJsonElement(value)
 }
 
 /**
  * Marks a string value as a raw JavaScript expression to be embedded into the
  * generated webpack.config.js.
  *
- * Gson can only produce JSON (strings, numbers, objects, arrays). However, the
- * file we generate is an executable JavaScript file, and in some places we need
+ * The file we generate is an executable JavaScript file and in some places we need
  * to emit JavaScript expressions rather than quoted JSON strings. This helper
  * wraps the receiver string with a special marker understood by [unquoteRawJsRelativePath].
  *
  * The typical flow is:
- * - Kotlin objects are serialized to JSON using Gson.
+ * - Kotlin objects are serialized to JSON using kotlinx-serialization.
  * - Certain string fields that must become JS expressions are pre-wrapped using
  *   [quoteRawJsRelativePath].
  * - After serialization, the resulting JSON text is post-processed with
@@ -576,10 +608,9 @@ internal fun String.quoteRawJsRelativePath(): String {
  * `require('path').resolve(__dirname, "<value>")` so that the final output is
  * an executable JS expression instead of a plain string.
  *
- * This is applied to the JSON produced by Gson right before writing the
+ * This is applied to the JSON produced right before writing the
  * webpack configuration file to disk. It allows parts of the configuration to
- * contain dynamic, executable JavaScript where needed, while still leveraging
- * Gson for the bulk of the serialization.
+ * contain dynamic, executable JavaScript where needed.
  */
 private fun String.unquoteRawJsRelativePath(): String {
     return replace("\"__RAW_JS__\\((.*?)\\)__\"".toRegex()) { match ->

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.GsonBuilder
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
@@ -78,16 +77,9 @@ fun makeNodeModule(
         "Cannot create directory: $dir"
     }
 
-    val gson = GsonBuilder()
-        .setPrettyPrinting()
-        .disableHtmlEscaping()
-        .create()
-
     files(dir)
 
-    dir.resolve("package.json").writer().use {
-        gson.toJson(packageJson, it)
-    }
+    packageJson.saveTo(dir.resolve("package.json"))
 
     return dir
 }
