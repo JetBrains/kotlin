@@ -53,7 +53,9 @@ public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
 @ExperimentalNativeApi
 @IgnorableReturnValue
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): ReportUnhandledExceptionHook? {
-    return UnhandledExceptionHookHolder.hook.exchange(hook)
+    return UnhandledExceptionHookHolder.hook.exchange(hook).also {
+        updateTerminateHandler();
+    }
 }
 
 /**
@@ -98,3 +100,6 @@ public external fun terminateWithUnhandledException(throwable: Throwable): Nothi
 @GCUnsafeCall("Kotlin_Any_hashCode")
 @Escapes.Nothing
 public external fun Any?.identityHashCode(): Int
+
+@GCUnsafeCall("Kotlin_updateTerminateHandler")
+private external fun updateTerminateHandler(): Unit

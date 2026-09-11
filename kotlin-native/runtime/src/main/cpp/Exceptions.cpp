@@ -19,7 +19,9 @@
 #include <stdint.h>
 
 #include <exception>
+#include <mutex>
 #include <unistd.h>
+#include <vector>
 
 #include "KAssert.h"
 #include "Exceptions.h"
@@ -58,10 +60,11 @@ class {
      * If the terminate handler hangs for 5 sec it is probably fatally broken, so let's do abnormal _Exit in that case.
      */
     unsigned int timeoutSec = 5;
-    std::atomic<int> terminatingFlag = 0;
+    std::recursive_mutex terminationMutex_{};
   public:
     template <class Fun> RUNTIME_NORETURN void operator()(Fun block) {
-      if (kotlin::std_support::atomic_compare_exchange_strong(terminatingFlag, 0, 1)) {
+      kotlin::CallsCheckerIgnoreGuard guard;
+      if (terminationMutex_.try_lock()) {
         block();
         // block() is supposed to be NORETURN, otherwise go to normal abort()
         std::abort();
@@ -112,70 +115,82 @@ PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* h
 }
 
 namespace {
-// Copy, move and assign would be safe, but not much useful, so let's delete all (rule of 5)
-class TerminateHandler : private kotlin::Pinned {
-  RUNTIME_NORETURN static void queuedHandler() {
-      concurrentTerminateWrapper([]() {
-          // Not a Kotlin exception - call default handler
-          instance().queuedHandler_();
-      });
-  }
-
-  // In fact, it's safe to call my_handler directly from outside: it will do the job and then invoke original handler,
-  // even if it has not been initialized yet. So one may want to make it public and/or not the class member
-  RUNTIME_NORETURN static void kotlinHandler() {
-      if (auto currentException = std::current_exception()) {
-        try {
-          std::rethrow_exception(currentException);
-        } catch (ExceptionObjHolder& e) {
-          // Both thread states are allowed here because there is no guarantee that
-          // C++ runtime will unwind the stack for an unhandled exception. Thus there
-          // is no guarantee that state switches made on interop borders will be rolled back.
-
-          // Moreover, a native code can catch an exception thrown by a Kotlin callback,
-          // store it to a global and then re-throw it in another thread which is not attached
-          // to the Kotlin runtime. To handle this case, use the CalledFromNativeGuard.
-          // TODO: Forbid throwing Kotlin exceptions through the interop border to get rid of this case.
-          kotlin::CalledFromNativeGuard guard(/* reentrant = */ true);
-          processUnhandledException(e.GetExceptionObject());
-          terminateWithUnhandledException(e.GetExceptionObject());
-        } catch (...) {
-          // Not a Kotlin exception - call default handler
-          kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
-          queuedHandler();
+    class TerminateHandlersRegistry : kotlin::Pinned {
+    public:
+        static TerminateHandlersRegistry& instance() {
+            [[clang::no_destroy]] static TerminateHandlersRegistry instance;
+            return instance;
         }
-      }
-      // Come here in case of direct terminate() call or unknown exception - go to default terminate handler.
-      kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
-      queuedHandler();
-  }
+        
+        void installKotlinHandler() {
+            pushHandler(kotlinHandler);
+        }
 
-  using QH = __attribute__((noreturn)) void(*)();
-  QH queuedHandler_;
+    private:
+        RUNTIME_NORETURN static void kotlinHandler() {
+            if (auto currentException = std::current_exception()) {
+                try {
+                    std::rethrow_exception(currentException);
+                } catch (ExceptionObjHolder& e) {
+                    // Both thread states are allowed here because there is no guarantee that
+                    // C++ runtime will unwind the stack for an unhandled exception. Thus there
+                    // is no guarantee that state switches made on interop borders will be rolled back.
 
-  /// Use machinery like Meyers singleton to provide thread safety
-  TerminateHandler()
-    : queuedHandler_((QH)std::set_terminate(kotlinHandler)) {}
+                    // Moreover, a native code can catch an exception thrown by a Kotlin callback,
+                    // store it to a global and then re-throw it in another thread which is not attached
+                    // to the Kotlin runtime. To handle this case, use the CalledFromNativeGuard.
+                    // TODO: Forbid throwing Kotlin exceptions through the interop border to get rid of this case.
+                    kotlin::CalledFromNativeGuard guard(/* reentrant = */ true);
+                    processUnhandledException(e.GetExceptionObject());
+                    terminateWithUnhandledException(e.GetExceptionObject());
+                } catch (...) {
+                    // Not a Kotlin exception - call default handler
+                    kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
+                    queuedHandler();
+                }
+            }
+            // Come here in case of direct terminate() call or unknown exception - go to default terminate handler.
+            kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
+            queuedHandler();
+        }
 
-  static TerminateHandler& instance() {
-    static TerminateHandler singleton [[clang::no_destroy]];
-    return singleton;
-  }
+        RUNTIME_NORETURN static void queuedHandler() {
+            concurrentTerminateWrapper([]() {
+                // Not a Kotlin exception - call default handler
+                if (auto handler = instance().popHandler()) {
+                    handler();
+                }
+            });
+        }
 
-  // Dtor might be in use to restore original handler. However, consequent install
-  // will not reconstruct handler anyway, so let's keep dtor deleted to avoid confusion.
-  ~TerminateHandler() = delete;
-public:
-  /// First call will do the job, all consequent will do nothing.
-  static void install() {
-    instance(); // Use side effect of warming up
-  }
-};
+        TerminateHandlersRegistry() = default;
+
+        void pushHandler(std::terminate_handler newHandler) {
+            std::lock_guard lock(handlersMutex_);
+            auto previousHandler = std::set_terminate(newHandler);
+            previousHandlers_.push_back(previousHandler);
+        }
+
+        std::terminate_handler popHandler() {
+            std::lock_guard lock(handlersMutex_);
+            if (previousHandlers_.empty()) return nullptr;
+            auto handler = previousHandlers_.back();
+            previousHandlers_.pop_back();
+            return handler;
+        }
+
+        std::mutex handlersMutex_{};
+        std::vector<std::terminate_handler> previousHandlers_{};
+    };
 } // anon namespace
 
-// Use one public function to limit access to the class declaration
 void SetKonanTerminateHandler() {
-  TerminateHandler::install();
+    TerminateHandlersRegistry::instance().installKotlinHandler();
+}
+
+extern "C" void Kotlin_updateTerminateHandler() {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    SetKonanTerminateHandler();
 }
 
 extern "C" void RUNTIME_NORETURN Kotlin_terminateWithUnhandledException(KRef exception) {
