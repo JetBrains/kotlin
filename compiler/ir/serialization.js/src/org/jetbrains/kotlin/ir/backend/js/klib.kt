@@ -297,10 +297,11 @@ fun serializeModuleIntoKlib(
                     )
                 }
 
-                { ioFile, compiledFile ->
+                { ioFile, compiledFile, inlineIds ->
                     icConsumer.processPackagePart(ioFile, compiledFile.metadata)
                     compiledFile.irData!!.processIrFile(ioFile, icConsumer::processIrFile)
                     compiledFile.irInlineData?.processIrFile(ioFile, icConsumer::processIrInlineFile)
+                    icConsumer.processIrInlineIds(ioFile, inlineIds)
                 }
             },
         )
