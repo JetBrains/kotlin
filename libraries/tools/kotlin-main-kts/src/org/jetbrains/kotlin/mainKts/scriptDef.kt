@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.mainKts.impl.Directories
 import java.io.File
 import java.nio.ByteBuffer
 import java.security.MessageDigest
-import kotlin.script.dependencies.ScriptContents
-import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.*
@@ -18,10 +16,9 @@ import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.resolveDependencies
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
-import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
 import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
 import kotlin.script.experimental.jvmhost.jsr223.configureExposedJsr223Context
 import kotlin.script.experimental.jvmhost.jsr223.generateBindingSnippetIfNeeded
@@ -52,6 +49,7 @@ class MainKtsScriptDefinition : ScriptCompilationConfiguration(
         refineConfiguration {
             onAnnotations(DependsOn::class, Repository::class, Import::class, CompilerOptions::class, handler = MainKtsConfigurator())
             onAnnotations(ScriptFileLocation::class, handler = ScriptFileLocationCustomConfigurator())
+            beforeCompiling(MainKtsDependencyResolver())
             beforeCompiling(::configureScriptFileLocationPathVariablesForCompilation)
             beforeCompiling(::configureExposedJsr223Context)
             prependSyntheticSnippets(::generateBindingSnippetIfNeeded)
@@ -148,30 +146,12 @@ fun configureConstructorArgsFromMainArgs(context: ScriptEvaluationConfigurationR
     return res.asSuccess()
 }
 
-class MainKtsConfigurator(
-    private val resolver: ExternalDependenciesResolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver()),
-) : RefineScriptCompilationConfigurationHandler, ConfiguratorWithDependencyResolver<MainKtsConfigurator> {
-
-    override fun transformResolver(transform: (ExternalDependenciesResolver) -> ExternalDependenciesResolver) =
-        MainKtsConfigurator(transform(resolver))
-
+class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
     override operator fun invoke(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> =
         processAnnotations(context)
 
     fun processAnnotations(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
         val diagnostics = arrayListOf<ScriptDiagnostic>()
-
-        fun report(severity: ScriptDependenciesResolver.ReportSeverity, message: String, position: ScriptContents.Position?) {
-            diagnostics.add(
-                ScriptDiagnostic(
-                    ScriptDiagnostic.unspecifiedError,
-                    message,
-                    mapLegacyDiagnosticSeverity(severity),
-                    context.script.locationId,
-                    mapLegacyScriptPosition(position)
-                )
-            )
-        }
 
         val annotations = context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.takeIf { it.isNotEmpty() }
             ?: return context.compilationConfiguration.asSuccess()
@@ -201,20 +181,54 @@ class MainKtsConfigurator(
             it.annotation.options.toList()
         }
 
+        val (dependencyCoordinates, dependencyRepositories) = externalDependenciesFromScriptAnnotations(
+            annotations.filter {
+                when (it.annotation) {
+                    is DependsOn,
+                    is Repository
+                        -> true
+                    else ->
+                        if ((it.annotation::class.simpleName?.let { it == "DependsOn" || it == "Repository" }) == true)
+                            error("Annotation ${it.annotation::class.simpleName} loaded in another classloader")
+                        else false
+                }
+            }
+        ).valueOr { return it }
+
+        return ScriptCompilationConfiguration(context.compilationConfiguration) {
+            if (dependencyCoordinates.isNotEmpty()) this.dependencies.append(dependencyCoordinates)
+            if (dependencyRepositories.isNotEmpty()) this.dependencyRepositories.append(dependencyRepositories)
+            if (importedSources.isNotEmpty()) importScripts.append(importedSources.values.map { FileScriptSource(it.first) })
+            if (compileOptions.isNotEmpty()) compilerOptions.append(compileOptions)
+        }.asSuccess()
+    }
+}
+
+class MainKtsDependencyResolver(
+    private val resolver: ExternalDependenciesResolver =
+        CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver()),
+) : RefineScriptCompilationConfigurationHandler {
+
+    override operator fun invoke(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+        val diagnostics = arrayListOf<ScriptDiagnostic>()
+        val configuration = context.compilationConfiguration
+
+        val shouldResolve = configuration[ScriptCompilationConfiguration.hostConfiguration]
+            ?.get(ScriptingHostConfiguration.resolveDependencies) ?: true
+        if (!shouldResolve) return configuration.asSuccess()
+
+        val currentDependencies = configuration[ScriptCompilationConfiguration.dependencies].orEmpty()
+        val dependencyCoordinates = currentDependencies.filterIsInstance<DependencyCoordinates>()
+        if (dependencyCoordinates.isEmpty()) return configuration.asSuccess()
+
+        val dependencyRepositories = configuration[ScriptCompilationConfiguration.dependencyRepositories].orEmpty()
+
         val resolveResult = try {
             @Suppress("DEPRECATION_ERROR")
             internalScriptingRunSuspend {
-                resolver.resolveFromScriptSourceAnnotations(
-                    annotations.filter {
-                        when (it.annotation) {
-                            is DependsOn,
-                            is Repository -> true
-                            else ->
-                                if ((it.annotation::class.simpleName?.let { it == "DependsOn" || it == "Repository" }) == true )
-                                    error("Annotation ${it.annotation::class.simpleName} loaded in another classloader")
-                                else false
-                        }
-                    }
+                resolver.resolveDependencies(
+                    dependencyCoordinates,
+                    dependencyRepositories
                 )
             }
         } catch (e: Throwable) {
@@ -224,9 +238,8 @@ class MainKtsConfigurator(
 
         return resolveResult.onSuccess { resolvedClassPath ->
             ScriptCompilationConfiguration(context.compilationConfiguration) {
+                dependencies.put(currentDependencies.filterNot { it is DependencyCoordinates })
                 updateClasspath(resolvedClassPath)
-                if (importedSources.isNotEmpty()) importScripts.append(importedSources.values.map { FileScriptSource(it.first) })
-                if (compileOptions.isNotEmpty()) compilerOptions.append(compileOptions)
             }.asSuccess()
         }
     }

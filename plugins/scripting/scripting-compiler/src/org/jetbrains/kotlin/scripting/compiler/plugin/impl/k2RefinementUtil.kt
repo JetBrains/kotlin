@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.FileBasedScriptSource
-import kotlin.script.experimental.host.FileScriptSource
-import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.configurationDependencies
-import kotlin.script.experimental.host.withDefaultsFrom
+import kotlin.script.experimental.host.*
 import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
