@@ -1,19 +1,8 @@
 ================ Step #1 =================
 
-Cleaning output files:
-  out/production/module/A.class
-  out/production/module/META-INF/module.kotlin_module
-End of files
 Compiling files:
   src/A.kt
-End of files
-Exit code: OK
-------------------------------------------
-Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/UsageKt.class
-End of files
-Compiling files:
+  src/B.kt
   src/usage.kt
 End of files
 Exit code: OK
@@ -21,20 +10,9 @@ Exit code: OK
 
 ================ Step #2 =================
 
-Cleaning output files:
-  out/production/module/A.class
-  out/production/module/META-INF/module.kotlin_module
-End of files
 Compiling files:
   src/A.kt
-End of files
-Exit code: OK
-------------------------------------------
-Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/UsageKt.class
-End of files
-Compiling files:
+  src/B.kt
   src/usage.kt
 End of files
 Exit code: OK
