@@ -457,6 +457,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_CLAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM_COMPARISON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM_COMPARISON_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_BACKING_FIELD_TYPE
@@ -3609,6 +3610,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INCOMPATIBLE_ENUM_COMPARISON,
             "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful.",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON,
+            "Comparison might not be intended because ''{1}'' and ''{2}'' are incompatible types with structural equality.",
             RENDER_TYPE,
             RENDER_TYPE
         )

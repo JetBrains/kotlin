@@ -1,5 +1,5 @@
 // LANGUAGE: -StrictEquals +StrictEqualsForStructuralClasses +FullValueClasses
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 value object A
 value object B {
@@ -12,15 +12,15 @@ abstract value class E
 value object F : E()
 
 fun test(c: C, d: D, e: E): Boolean {
-    if (<!EQUALITY_NOT_APPLICABLE!>A != B<!>) return true
-    if (<!EQUALITY_NOT_APPLICABLE!>A == c<!>) return false
-    if (<!EQUALITY_NOT_APPLICABLE!>c == A<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>A != B<!>) return true
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>A == c<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>c == A<!>) return false
     if (c != d) return false
     if (d == c) return true
     if (D != d) return false
     if (e == F) return true
     if (F != e) return false
-    if (<!EQUALITY_NOT_APPLICABLE!>A == F<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>A == F<!>) return false
     return true
 }
 
@@ -28,7 +28,7 @@ fun testAfterSmartCast(d: D, nAny: Any?) {
     if (nAny == A) return
     if (A == nAny) return
     if (nAny is A && A == nAny) return
-    if (nAny is B && (<!EQUALITY_NOT_APPLICABLE_WARNING!>nAny == A<!> || <!EQUALITY_NOT_APPLICABLE_WARNING!>A == nAny<!>)) return
+    if (nAny is B && (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>nAny == A<!> || <!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>A == nAny<!>)) return
     if (d == nAny) return
     if (nAny is C && d != nAny) return
 }
