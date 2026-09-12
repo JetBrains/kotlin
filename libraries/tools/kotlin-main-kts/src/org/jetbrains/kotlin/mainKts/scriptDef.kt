@@ -40,7 +40,7 @@ abstract class MainKtsScript(val args: Array<String>)
 
 const val COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR = "KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
 const val COMPILED_SCRIPTS_CACHE_DIR_PROPERTY = "kotlin.main.kts.compiled.scripts.cache.dir"
-const val COMPILED_SCRIPTS_CACHE_VERSION = 1
+const val COMPILED_SCRIPTS_CACHE_VERSION = 2
 const val SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME = "__FILE__"
 
 class MainKtsScriptDefinition : ScriptCompilationConfiguration(

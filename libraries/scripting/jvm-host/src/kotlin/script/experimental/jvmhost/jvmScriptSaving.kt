@@ -6,8 +6,10 @@
 package kotlin.script.experimental.jvmhost
 
 import org.jetbrains.kotlin.utils.KotlinPaths
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.ObjectInputStream
 import java.net.URI
 import java.net.URLClassLoader
 import java.util.jar.JarEntry
@@ -16,6 +18,7 @@ import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.impl.*
@@ -95,13 +98,21 @@ fun KJvmCompiledScript.saveToJar(outputJar: File) {
 }
 
 fun File.loadScriptFromJar(checkMissingDependencies: Boolean = true): CompiledScript? {
-    val [className: String?, classPathUrls] = this.inputStream().use { ostr ->
-        JarInputStream(ostr).use {
-            it.manifest.mainAttributes.getValue("Main-Class") to
-                    (it.manifest.mainAttributes.getValue("Class-Path")?.split(" ") ?: emptyList())
+    val [className: String?, classPathUrls, scriptMetadata] = this.inputStream().use { ostr ->
+        JarInputStream(ostr).use { jarStream ->
+            val mainAttributes = jarStream.manifest?.mainAttributes
+            val className = mainAttributes?.getValue("Main-Class")
+            Triple(
+                className,
+                mainAttributes?.getValue("Class-Path")?.split(" ") ?: emptyList(),
+                className?.let { jarStream.readEntry(scriptMetadataPath(it)) }
+            )
         }
     }
     if (className == null) return null
+
+    // the script is compiled together with the scripts it imports, so it has to be recompiled when any of them changes
+    if (scriptMetadata != null && !importedScriptsAreUpToDate(scriptMetadata)) return null
 
     val classPath = classPathUrls.mapNotNullTo(mutableListOf(this)) { cpEntry ->
         File(URI(cpEntry)).takeIf { it.exists() } ?: File(cpEntry).takeIf { it.exists() }
@@ -168,6 +179,29 @@ private class KJvmCompiledScriptLazilyLoadedFromClasspath(
     override val resultField: Pair<String, KotlinType>?
         get() = getScriptOrError().resultField
 }
+
+private fun JarInputStream.readEntry(path: String): ByteArray? {
+    while (true) {
+        val entry = nextJarEntry ?: return null
+        if (entry.name == path) return readBytes()
+    }
+}
+
+// without readable metadata there is nothing to check against, so the script is treated as up to date, as it was before
+private fun importedScriptsAreUpToDate(scriptMetadata: ByteArray): Boolean = runCatching {
+    val script = ObjectInputStream(ByteArrayInputStream(scriptMetadata)).use { it.readObject() as KJvmCompiledScript }
+    val visited = mutableSetOf<CompiledScript>()
+
+    fun isUpToDate(compiledScript: CompiledScript): Boolean {
+        if (!visited.add(compiledScript)) return true
+        val hashes = compiledScript.compilationConfiguration[ScriptCompilationConfiguration.importedScriptsHashes].orEmpty()
+        return hashes.all { [path, hash] ->
+            File(path).takeIf { it.isFile }?.let { importedScriptHash(FileScriptSource(it).text) } == hash
+        } && compiledScript.otherScripts.all(::isUpToDate)
+    }
+
+    isUpToDate(script)
+}.getOrDefault(true)
 
 private fun failure(msg: String) =
     ResultWithDiagnostics.Failure(msg.asErrorDiagnostics())
