@@ -7,14 +7,7 @@ End of files
 Compiling files:
   src/B.kt
 End of files
-After build round. Marked as dirty by Kotlin:
-  src/C.kt
-  src/getB.kt
-  src/getBorC.kt
-  src/getBorD.kt
-  src/getC.kt
-  src/getCorD.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Cleaning output files:
   out/production/module/C.class

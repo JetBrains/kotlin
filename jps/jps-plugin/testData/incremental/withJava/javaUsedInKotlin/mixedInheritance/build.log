@@ -18,7 +18,6 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Class 'DerivedClass1' is not abstract and does not implement abstract base class member public/*package*/ abstract fun myAbs(): Unit defined in BaseClass
 
 ================ Step #2 =================
 
@@ -65,7 +64,6 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-'doSmth' hides member of supertype 'BaseClass' and needs 'override' modifier
 
 ================ Step #5 =================
 
@@ -113,4 +111,3 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Return type of 'doSmthAnother' is not a subtype of the return type of the overridden member 'public/*package*/ open fun doSmthAnother(): String! defined in BaseClass'

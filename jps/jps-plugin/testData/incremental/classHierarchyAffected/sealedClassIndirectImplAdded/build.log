@@ -9,9 +9,7 @@ End of files
 Compiling files:
   src/Base.kt
 End of files
-After build round. Marked as dirty by Kotlin:
-  src/use.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module

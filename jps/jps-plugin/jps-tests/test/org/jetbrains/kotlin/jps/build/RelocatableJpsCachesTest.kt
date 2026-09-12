@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.incremental.KOTLIN_CACHE_DIRECTORY_NAME
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
-import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
@@ -33,13 +32,11 @@ import kotlin.reflect.KFunction1
 import kotlin.reflect.jvm.javaMethod
 
 class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
-    private val enableICFixture = EnableICFixture()
     private lateinit var workingDir: File
 
     @BeforeEach
     override fun setUp() {
         super.setUp()
-        enableICFixture.setUp()
         workingDir = createTempDirectory("RelocatableJpsCachesTest-" + getTestName(testInfo)).toFile()
     }
 
@@ -47,7 +44,6 @@ class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
     override fun tearDown() {
         RunAll(
             { workingDir.deleteRecursively() },
-            { enableICFixture.tearDown() },
             { super.tearDown() }
         ).run()
     }

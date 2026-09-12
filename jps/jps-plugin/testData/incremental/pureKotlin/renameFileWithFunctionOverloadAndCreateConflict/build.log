@@ -1,0 +1,11 @@
+================ Step #1 =================
+
+Compiling files:
+  src/foo3.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Conflicting overloads:
+fun f(a: Any): Unit
+fun f(a: Any): Unit

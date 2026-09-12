@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.incremental.utils.TestLookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinBuilder.Companion.useDependencyGraph
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxtBuilder
-import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
 import org.jetbrains.kotlin.jps.incremental.CacheVersionManager
 import org.jetbrains.kotlin.jps.incremental.CompositeLookupsCacheAttributesManager
@@ -57,11 +56,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.util.*
 import kotlin.reflect.jvm.javaField
 
 @Suppress("UnstableApiUsage")
@@ -117,48 +114,26 @@ abstract class AbstractIncrementalJpsTest(
         Logger.getRootLogger().addAppender(console)
     }
 
-    private var systemPropertiesBackup = run {
-        val props = System.getProperties()
-        val output = ByteArrayOutputStream()
-        props.store(output, "System properties backup")
-        output.toByteArray()
-    }
-
-    private fun restoreSystemProperties() {
-        val input = ByteArrayInputStream(systemPropertiesBackup)
-        val props = Properties()
-        props.load(input)
-        System.setProperties(props)
-    }
-
-    private val enableICFixture = EnableICFixture()
-
     @BeforeEach
     override fun setUp() {
         super.setUp()
 
-        enableICFixture.setUp()
         lookupsDuringTest = hashSetOf()
 
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
         }
-        System.getProperties()
-            .setProperty("kotlin.jps.classPrefixesToLoadByParent", "kotlin.") // for debugging tests with in-process compiler
+
     }
 
     @AfterEach
     override fun tearDown() {
         try {
-            restoreSystemProperties()
-
             (AbstractIncrementalJpsTest::myProject).javaField!![this] = null
             (AbstractIncrementalJpsTest::projectDescriptor).javaField!![this] = null
-            (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
         } finally {
             RunAll(
                 { lookupsDuringTest.clear() },
-                { enableICFixture.tearDown() },
                 { super.tearDown() }
             ).run()
         }

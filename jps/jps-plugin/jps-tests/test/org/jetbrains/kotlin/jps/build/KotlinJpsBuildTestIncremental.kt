@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import com.intellij.testFramework.RunAll
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.JVM_FULL_RUNTIME
-import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
@@ -39,22 +37,6 @@ import java.nio.file.Path
 import kotlin.reflect.KMutableProperty1
 
 class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
-    private val enableICFixture = EnableICFixture()
-
-    @BeforeEach
-    override fun setUp() {
-        super.setUp()
-        enableICFixture.setUp()
-    }
-
-    @AfterEach
-    override fun tearDown() {
-        RunAll(
-            { enableICFixture.tearDown() },
-            { super.tearDown() }
-        ).run()
-    }
-
     @Test
     fun testJpsBuildReportIC() {
 

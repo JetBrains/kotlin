@@ -1,0 +1,3 @@
+package root
+//comment me:
+var myVar = 1

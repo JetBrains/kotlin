@@ -4,8 +4,6 @@ Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/TheClass.class
 End of files
-After chunkBuildStarted. Marked as dirty by Kotlin:
-  src/usageInKotlin.kt
 Cleaning output files:
   out/production/module/Usage.class
   out/production/module/UsageInKotlinKt.class
