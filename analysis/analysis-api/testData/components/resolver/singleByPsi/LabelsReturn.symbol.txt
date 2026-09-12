@@ -1,7 +1,6 @@
 KtLabelReferenceExpression(22,26): '@foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /foo(): kotlin.Unit

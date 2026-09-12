@@ -211,7 +211,6 @@ KtConstantExpression(310,311): '1'
 KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
@@ -241,7 +240,6 @@ KtConstantExpression(354,355): '1'
 KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
@@ -270,7 +268,6 @@ KtConstantExpression(403,404): '1'
 KtOperationReferenceExpression(405,418): 'infixConsumer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /infixConsumer(<extension receiver>: kotlin.Int, arg: MyClass): kotlin.Unit

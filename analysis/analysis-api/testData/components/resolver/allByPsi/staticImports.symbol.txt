@@ -706,7 +706,6 @@ KtNameReferenceExpression(899,902): 'doo'
 KtOperationReferenceExpression(903,904): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtStringTemplateExpression(905,910): '"str"'

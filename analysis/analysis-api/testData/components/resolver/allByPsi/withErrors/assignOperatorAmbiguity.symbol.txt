@@ -1162,7 +1162,6 @@ KtNameReferenceExpression(505,508): 'foo'
 KtOperationReferenceExpression(509,511): '+='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /plus(<extension receiver>: Test, i: kotlin.Int): Test,
@@ -1197,7 +1196,6 @@ KtNameReferenceExpression(518,521): 'foo'
 KtOperationReferenceExpression(522,524): '-='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /minus(<extension receiver>: Test, i: kotlin.Int): Test,
@@ -1232,7 +1230,6 @@ KtNameReferenceExpression(531,534): 'foo'
 KtOperationReferenceExpression(535,537): '/='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /div(<extension receiver>: Test, i: kotlin.Int): Test,
@@ -1267,7 +1264,6 @@ KtNameReferenceExpression(544,547): 'foo'
 KtOperationReferenceExpression(548,550): '*='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /times(<extension receiver>: Test, i: kotlin.Int): Test,
@@ -1302,7 +1298,6 @@ KtNameReferenceExpression(557,560): 'foo'
 KtOperationReferenceExpression(561,563): '%='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /rem(<extension receiver>: Test, i: kotlin.Int): Test,

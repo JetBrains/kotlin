@@ -139,7 +139,6 @@ KtNameReferenceExpression(93,97): 'this'
 KtOperationReferenceExpression(99,101): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtConstantExpression(102,107): 'false'
@@ -235,7 +234,6 @@ KtNameReferenceExpression(168,169): 'm'
 KtOperationReferenceExpression(170,172): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(173,175): 'm2'
@@ -250,7 +248,6 @@ KtNameReferenceExpression(173,175): 'm2'
 KtOperationReferenceExpression(176,178): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtConstantExpression(179,183): 'null'
@@ -271,7 +268,6 @@ KtNameReferenceExpression(188,189): 'f'
 KtOperationReferenceExpression(190,192): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(193,195): 'm2'
@@ -298,7 +294,6 @@ KtNameReferenceExpression(200,202): 'm2'
 KtOperationReferenceExpression(203,205): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(206,207): 'm'
