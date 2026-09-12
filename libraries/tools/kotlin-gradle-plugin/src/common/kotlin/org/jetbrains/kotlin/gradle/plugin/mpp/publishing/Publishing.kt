@@ -16,6 +16,7 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.plugins.signing.Sign
+import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -102,6 +103,8 @@ private fun createRootPublication(project: Project, publishing: PublishingExtens
         (this as MavenPublicationInternal).publishWithOriginalFileName()
 
         addKotlinToolingMetadataArtifactIfNeeded(project)
+
+        project.multiplatformExtension.metadataTarget.onPublicationCreated(this)
     }
 }
 
