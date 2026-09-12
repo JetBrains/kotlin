@@ -3394,4 +3394,172 @@ public class IncrementalFirICJvmCompilerRunnerTestGenerated extends AbstractIncr
       }
     }
   }
+
+  @Nested
+  @TestMetadata("jps/jps-plugin/testData/incremental/sealed")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SealedAbstractIncrementalFirICJvmCompilerRunnerTest {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/sealed/" + fileName);
+    }
+
+    @Test
+    @TestMetadata("addedEntry")
+    public void testAddedEntry() {
+      runTest("jps/jps-plugin/testData/incremental/sealed/addedEntry/");
+    }
+
+    @Test
+    public void testAllFilesPresentInSealedAbstractIncrementalFirICJvmCompilerRunnerTest() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/sealed"), Pattern.compile("^([^.]+)$"), Pattern.compile("((^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$))"), true);
+    }
+
+    @Test
+    @TestMetadata("removedEntry")
+    public void testRemovedEntry() {
+      runTest("jps/jps-plugin/testData/incremental/sealed/removedEntry/");
+    }
+
+    @Test
+    @TestMetadata("unrelatedDiff")
+    public void testUnrelatedDiff() {
+      runTest("jps/jps-plugin/testData/incremental/sealed/unrelatedDiff/");
+    }
+
+    @Nested
+    @TestMetadata("jps/jps-plugin/testData/incremental/sealed/addedEntry")
+    @TestDataPath("$PROJECT_ROOT")
+    public class AddedEntry {
+      private void run(String fileName) {
+        runTest("jps/jps-plugin/testData/incremental/sealed/addedEntry/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInAddedEntry() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/sealed/addedEntry"), Pattern.compile("^([^.]+)$"), Pattern.compile("((^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$))"), true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("jps/jps-plugin/testData/incremental/sealed/removedEntry")
+    @TestDataPath("$PROJECT_ROOT")
+    public class RemovedEntry {
+      private void run(String fileName) {
+        runTest("jps/jps-plugin/testData/incremental/sealed/removedEntry/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInRemovedEntry() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/sealed/removedEntry"), Pattern.compile("^([^.]+)$"), Pattern.compile("((^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$))"), true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("jps/jps-plugin/testData/incremental/sealed/unrelatedDiff")
+    @TestDataPath("$PROJECT_ROOT")
+    public class UnrelatedDiff {
+      private void run(String fileName) {
+        runTest("jps/jps-plugin/testData/incremental/sealed/unrelatedDiff/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInUnrelatedDiff() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/sealed/unrelatedDiff"), Pattern.compile("^([^.]+)$"), Pattern.compile("((^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$))"), true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("jps/jps-plugin/testData/incremental/resolution")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ResolutionAbstractIncrementalFirICJvmCompilerRunnerTest {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/resolution/" + fileName);
+    }
+
+    @Test
+    @TestMetadata("addMethodDirectly_implicitThis")
+    public void testAddMethodDirectly_implicitThis() {
+      runTest("jps/jps-plugin/testData/incremental/resolution/addMethodDirectly_implicitThis/");
+    }
+
+    @Test
+    @TestMetadata("addMethodToParent_implicitThis")
+    public void testAddMethodToParent_implicitThis() {
+      runTest("jps/jps-plugin/testData/incremental/resolution/addMethodToParent_implicitThis/");
+    }
+
+    @Test
+    public void testAllFilesPresentInResolutionAbstractIncrementalFirICJvmCompilerRunnerTest() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/resolution"), Pattern.compile("^([^.]+)$"), Pattern.compile("((^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$))"), true);
+    }
+
+    @Test
+    @TestMetadata("classOverFun")
+    public void testClassOverFun() {
+      runTest("jps/jps-plugin/testData/incremental/resolution/classOverFun/");
+    }
+
+    @Test
+    @TestMetadata("invokeOverFun")
+    public void testInvokeOverFun() {
+      runTest("jps/jps-plugin/testData/incremental/resolution/invokeOverFun/");
+    }
+
+    @Nested
+    @TestMetadata("jps/jps-plugin/testData/incremental/resolution/addMethodDirectly_implicitThis")
+    @TestDataPath("$PROJECT_ROOT")
+    public class AddMethodDirectly_implicitThis {
+      private void run(String fileName) {
+        runTest("jps/jps-plugin/testData/incremental/resolution/addMethodDirectly_implicitThis/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInAddMethodDirectly_implicitThis() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/resolution/addMethodDirectly_implicitThis"), Pattern.compile("^([^.]+)$"), Pattern.compile("((^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$))"), true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("jps/jps-plugin/testData/incremental/resolution/addMethodToParent_implicitThis")
+    @TestDataPath("$PROJECT_ROOT")
+    public class AddMethodToParent_implicitThis {
+      private void run(String fileName) {
+        runTest("jps/jps-plugin/testData/incremental/resolution/addMethodToParent_implicitThis/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInAddMethodToParent_implicitThis() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/resolution/addMethodToParent_implicitThis"), Pattern.compile("^([^.]+)$"), Pattern.compile("((^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$))"), true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("jps/jps-plugin/testData/incremental/resolution/classOverFun")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ClassOverFun {
+      private void run(String fileName) {
+        runTest("jps/jps-plugin/testData/incremental/resolution/classOverFun/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInClassOverFun() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/resolution/classOverFun"), Pattern.compile("^([^.]+)$"), Pattern.compile("((^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$))"), true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("jps/jps-plugin/testData/incremental/resolution/invokeOverFun")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvokeOverFun {
+      private void run(String fileName) {
+        runTest("jps/jps-plugin/testData/incremental/resolution/invokeOverFun/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInInvokeOverFun() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/resolution/invokeOverFun"), Pattern.compile("^([^.]+)$"), Pattern.compile("((^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$))"), true);
+      }
+    }
+  }
 }
