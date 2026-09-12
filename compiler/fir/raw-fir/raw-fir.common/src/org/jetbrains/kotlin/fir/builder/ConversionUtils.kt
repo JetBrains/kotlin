@@ -217,12 +217,12 @@ fun FirExpression.generateContainsOperation(
 
 fun FirExpression.generateComparisonExpression(
     argument: FirExpression,
-    operatorToken: IElementType,
+    operatorToken: Int,
     baseSource: KtSourceElement?,
     operationReferenceSource: KtSourceElement?,
 ): FirComparisonExpression {
-    require(operatorToken in OperatorConventions.COMPARISON_OPERATIONS) {
-        "$operatorToken is not in ${OperatorConventions.COMPARISON_OPERATIONS}"
+    require(operatorToken in comparisonOperationsId) {
+        "$operatorToken is not in $comparisonOperationsId"
     }
 
     val compareToCall = createConventionCall(
@@ -233,10 +233,10 @@ fun FirExpression.generateComparisonExpression(
     )
 
     val firOperation = when (operatorToken) {
-        KtTokens.LT -> FirOperation.LT
-        KtTokens.GT -> FirOperation.GT
-        KtTokens.LTEQ -> FirOperation.LT_EQ
-        KtTokens.GTEQ -> FirOperation.GT_EQ
+        org.jetbrains.kotlin.kmp.lexer.KtTokens.LT_ID -> FirOperation.LT
+        org.jetbrains.kotlin.kmp.lexer.KtTokens.GT_ID -> FirOperation.GT
+        org.jetbrains.kotlin.kmp.lexer.KtTokens.LTEQ_ID -> FirOperation.LT_EQ
+        org.jetbrains.kotlin.kmp.lexer.KtTokens.GTEQ_ID -> FirOperation.GT_EQ
         else -> error("Unknown $operatorToken")
     }
 
@@ -246,6 +246,13 @@ fun FirExpression.generateComparisonExpression(
         this.compareToCall = compareToCall
     }
 }
+
+val comparisonOperationsId: Set<Int> = setOf(
+    org.jetbrains.kotlin.kmp.lexer.KtTokens.LT_ID,
+    org.jetbrains.kotlin.kmp.lexer.KtTokens.LTEQ_ID,
+    org.jetbrains.kotlin.kmp.lexer.KtTokens.GTEQ_ID,
+    org.jetbrains.kotlin.kmp.lexer.KtTokens.GT_ID
+)
 
 private fun FirExpression.createConventionCall(
     operationReferenceSource: KtSourceElement?,
@@ -663,38 +670,6 @@ fun FirQualifiedAccessExpression.createSafeCall(receiver: FirExpression, source:
     }
 }
 
-fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression =
-    pullUpSafeCallIfNecessary(
-        FirQualifiedAccessExpression::explicitReceiver,
-        FirQualifiedAccessExpression::replaceExplicitReceiver
-    )
-
-// Turns a?.b.f(...) to a?.{ b.f(...) ) -- for any qualified access `.f(...)`
-// Other patterns remain unchanged
-fun <F : FirExpression> F.pullUpSafeCallIfNecessary(
-    obtainReceiver: F.() -> FirExpression?,
-    replaceReceiver: F.(FirExpression) -> Unit,
-): FirExpression {
-    val safeCall = obtainReceiver() as? FirSafeCallExpression ?: return this
-    val safeCallSelector = safeCall.selector as? FirExpression ?: return this
-
-    // (a?.b).f and `(a?.b)[3]` should be left as is
-    if (safeCall.isChildInParentheses()) return this
-
-    replaceReceiver(safeCallSelector)
-    safeCall.replaceSelector(this)
-
-    return safeCall
-}
-
-fun FirStatement.isChildInParentheses(): Boolean {
-    val sourceElement = source ?: error("Nullable source")
-    return sourceElement.isChildInParentheses()
-}
-
-fun KtSourceElement.isChildInParentheses(): Boolean =
-    treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED
-
 fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget): List<FirAnnotationCall> =
     mapNotNull {
         if (it.useSiteTarget != target) null
@@ -703,13 +678,14 @@ fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget)
         }
     }
 
-fun AbstractRawFirBuilder<*>.createReceiverParameter(
+fun createReceiverParameter(
     typeRefCalculator: () -> FirTypeRef,
+    context: Context<*>,
     moduleData: FirModuleData,
     containingCallableSymbol: FirCallableSymbol<*>,
 ): FirReceiverParameter = buildReceiverParameter {
     symbol = FirReceiverParameterSymbol()
-    withContainerSymbol(symbol) {
+    context.withContainerSymbol(symbol) {
         val typeRef = typeRefCalculator()
         source = typeRef.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
 

@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-class ClassWrapper(
-    val modifiers: ModifierList,
+class ClassWrapper<Node : Any>(
+    val modifiers: ModifierList<Node>,
     private val classKind: ClassKind,
     val classBuilder: FirClassBuilder,
     val hasSecondaryConstructor: Boolean,

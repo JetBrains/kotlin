@@ -114,7 +114,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
 
         val outputs = sessionsWithSources.map { (session, files) ->
             val firFiles = when {
-                isLightTree -> session.buildFirViaLightTree(files, diagnosticsReporter) { files, lines ->
+                isLightTree -> session.buildFirViaLightTree(files, diagnosticsReporter, useMultiplatformParsing = false) { files, lines ->
                     perfManager?.addSourcesStats(files, lines)
                 }
                 else -> session.buildFirFromKtFiles(files.map { (it as KtPsiSourceFile).psiFile as KtFile })

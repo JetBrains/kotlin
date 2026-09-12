@@ -398,6 +398,7 @@ private fun compileImpl(
                 session.buildFirViaLightTree(
                     otherSources.map { it.toKtSourceFile() },
                     diagnosticsReporter,
+                    useMultiplatformParsing = false,
                     reportFilesAndLines = null
                 )
     }

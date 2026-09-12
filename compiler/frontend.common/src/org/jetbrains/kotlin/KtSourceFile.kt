@@ -15,6 +15,7 @@ import java.io.InputStream
 interface KtSourceFile {
     val name: String
     val path: String?
+    val extension: String
 
     fun getContentsAsStream(): InputStream
 
@@ -28,6 +29,9 @@ class KtPsiSourceFile(val psiFile: PsiFile) : KtSourceFile {
 
     override val path: String?
         get() = psiFile.virtualFile?.path
+
+    override val extension: String
+        get() = psiFile.virtualFile?.extension ?: ""
 
     override fun getContentsAsStream(): InputStream = psiFile.virtualFile.inputStream
 
@@ -47,6 +51,9 @@ class KtVirtualFileSourceFile(val virtualFile: VirtualFile) : KtSourceFile {
     override val path: String
         get() = virtualFile.path
 
+    override val extension: String
+        get() = virtualFile.extension ?: ""
+
     override fun getContentsAsStream(): InputStream = virtualFile.inputStream
 
     override fun equals(other: Any?): Boolean {
@@ -63,6 +70,8 @@ class KtIoFileSourceFile(val file: File) : KtSourceFile {
         get() = file.name
     override val path: String
         get() = FileUtilRt.toSystemIndependentName(file.path)
+    override val extension: String
+        get() = file.extension
 
     override fun getContentsAsStream(): InputStream = file.inputStream()
 
@@ -80,6 +89,9 @@ class KtInMemoryTextSourceFile(
     override val path: String?,
     val text: CharSequence
 ) : KtSourceFile {
+    override val extension: String
+        get() = ""
+
     override fun getContentsAsStream(): InputStream = ByteArrayInputStream(text.toString().toByteArray())
 
     override fun equals(other: Any?): Boolean {

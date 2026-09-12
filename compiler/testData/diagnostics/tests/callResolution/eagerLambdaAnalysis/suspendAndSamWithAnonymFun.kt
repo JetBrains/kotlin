@@ -12,3 +12,6 @@ fun interface StringSam {
 fun test() {
     a { fun() {} }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, stringLiteral, suspend */
