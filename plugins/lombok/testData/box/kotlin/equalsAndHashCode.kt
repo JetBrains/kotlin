@@ -83,6 +83,17 @@ open class CallSuperBase(val baseProp: Int)
 @EqualsAndHashCode(callSuper = true)
 class CallSuperDerived(val ownProp: String) : CallSuperBase(10)
 
+// KT-89189: `canEqual` must make `equals` symmetric across a hierarchy - a subtype with more state must not
+// compare equal to an instance of its looser supertype, in either direction.
+@EqualsAndHashCode
+open class CanEqualGrandparent(val a: Int)
+
+@EqualsAndHashCode(callSuper = true)
+open class CanEqualParent(a: Int, val b: Int) : CanEqualGrandparent(a)
+
+@EqualsAndHashCode(callSuper = true)
+class CanEqualChild(a: Int, b: Int, val c: Int) : CanEqualParent(a, b)
+
 @EqualsAndHashCode
 class WithComputedProperties(val real: String) {
     val computedProp: String get() = "computed"
@@ -191,6 +202,29 @@ fun box(): String {
     val cd2 = CallSuperDerived("x")
     assertEquals(true, cd1 == cd2)
     assertEquals(true, cd1.hashCode() == cd2.hashCode())
+
+    // KT-89189: a `CallSuperBase` and a `CallSuperDerived` sharing the same `baseProp` must not compare equal
+    // in either direction, unlike the bug where the looser supertype's `equals` accepted the stricter subtype.
+    assertEquals(true, CallSuperBase(10) == CallSuperBase(10))
+    val callSuperBase = CallSuperBase(10)
+    val callSuperDerived = CallSuperDerived("x")
+    assertEquals(false, callSuperBase == callSuperDerived)
+    assertEquals(false, callSuperDerived == callSuperBase)
+
+    // Same asymmetry check, one level deeper: the override lookup must walk the whole ancestor chain, not just
+    // the immediate superclass, or one of the three classes below fails to even compile.
+    val grandparent = CanEqualGrandparent(1)
+    val parent = CanEqualParent(1, 2)
+    val child = CanEqualChild(1, 2, 3)
+    assertEquals(true, CanEqualGrandparent(1) == CanEqualGrandparent(1))
+    assertEquals(true, CanEqualParent(1, 2) == CanEqualParent(1, 2))
+    assertEquals(true, CanEqualChild(1, 2, 3) == CanEqualChild(1, 2, 3))
+    assertEquals(false, grandparent == parent)
+    assertEquals(false, parent == grandparent)
+    assertEquals(false, parent == child)
+    assertEquals(false, child == parent)
+    assertEquals(false, grandparent == child)
+    assertEquals(false, child == grandparent)
 
     assertEquals(true, WithComputedProperties("X") == WithComputedProperties("X"))
 
