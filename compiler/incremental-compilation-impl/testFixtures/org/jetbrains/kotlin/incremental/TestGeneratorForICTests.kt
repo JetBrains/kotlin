@@ -134,14 +134,13 @@ private object ExcludePattern {
     private const val ALL_EXPECT = "(^.*Expect.*)"
 
     val JPS_ONLY = listOf(
-        "(^multifileClassFileMovedToAnotherMultifileClass$)",
-        "(^addNullableAnnotation$)",
-        "(^changeTypeWithHierarchyDependency$)",
-        "(^changeTopLevelTypeAlias$)",
-        "(^renameFileWithFunctionOverloadAndCreateConflict$)",
-        "(^unwrapJvmFieldInJvmNameFromObject$)",
-        "(^changeTypealiasTypeWithHierarchy$)",
-        "(^changeMethodToPropertyInInheritance$)"
+        "(^multifileClassFileMovedToAnotherMultifileClass$)", // KT-89326
+        "(^addNullableAnnotation$)", // KT-89329
+        "(^changeTypeWithHierarchyDependency$)", // KT-89336
+        "(^changeTopLevelTypeAlias$)", // KT-28233
+        "(^unwrapJvmFieldInJvmNameFromObject$)", // KT-89352
+        "(^changeTypealiasTypeWithHierarchy$)", // KT-28233
+        "(^changeMethodToPropertyInInheritance$)" // KT-11196
     ).joinToString("|")
 
     val forK2 = listOf(

@@ -63,7 +63,7 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
 
     @Test
     public void testAllFilesPresentInPureKotlinAbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^.]+)$"), Pattern.compile("^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)|(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^renameFileWithFunctionOverloadAndCreateConflict$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), false);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^.]+)$"), Pattern.compile("^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)|(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), false);
     }
 
     @Test
@@ -733,6 +733,12 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
     }
 
     @Test
+    @TestMetadata("renameFileWithFunctionOverloadAndCreateConflict")
+    public void testRenameFileWithFunctionOverloadAndCreateConflict() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/renameFileWithFunctionOverloadAndCreateConflict/");
+    }
+
+    @Test
     @TestMetadata("returnTypeChanged")
     public void testReturnTypeChanged() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/returnTypeChanged/");
@@ -851,7 +857,7 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
 
     @Test
     public void testAllFilesPresentInClassHierarchyAffectedAbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^.]+)$"), Pattern.compile("secondaryConstructorAdded|(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^renameFileWithFunctionOverloadAndCreateConflict$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), false);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^.]+)$"), Pattern.compile("secondaryConstructorAdded|(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), false);
     }
 
     @Test
@@ -1123,7 +1129,7 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
 
     @Test
     public void testAllFilesPresentInJsAbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^renameFileWithFunctionOverloadAndCreateConflict$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), true);
     }
 
     @Test
@@ -1142,7 +1148,7 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
 
       @Test
       public void testAllFilesPresentInFriendsModuleDisabled() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^renameFileWithFunctionOverloadAndCreateConflict$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), true);
       }
 
       @Test
@@ -1161,7 +1167,7 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
 
         @Test
         public void testAllFilesPresentInInternalInlineFunctionIsChanged() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled/internalInlineFunctionIsChanged"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^renameFileWithFunctionOverloadAndCreateConflict$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled/internalInlineFunctionIsChanged"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), true);
         }
       }
     }
@@ -1176,7 +1182,7 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
 
       @Test
       public void testAllFilesPresentInInlineFunctionLocalDeclarationChanges() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/inlineFunctionLocalDeclarationChanges"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^renameFileWithFunctionOverloadAndCreateConflict$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/inlineFunctionLocalDeclarationChanges"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^multifileClassFileMovedToAnotherMultifileClass$)|(^addNullableAnnotation$)|(^changeTypeWithHierarchyDependency$)|(^changeTopLevelTypeAlias$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), true);
       }
     }
   }
