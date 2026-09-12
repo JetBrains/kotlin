@@ -74,6 +74,27 @@ class BuildScriptInjectionIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun testAssertionsInTaskAction(version: GradleVersion) {
+        project("empty", version) {
+            val taskName = "checkAssertions"
+            buildScriptInjection {
+                project.tasks.register(taskName) {
+                    it.doLast {
+                        assertEquals("org.junit.Assert", Class.forName("org.junit.Assert").name)
+                    }
+                }
+            }
+
+            build(taskName) {
+                assertConfigurationCacheStored()
+            }
+            build(taskName) {
+                assertConfigurationCacheReused()
+            }
+        }
+    }
+
+    @GradleTest
     fun consumeProjectDependencyViaSettingsInjection(version: GradleVersion) {
         // Use Groovy because it loads faster
         project("empty", version) {
