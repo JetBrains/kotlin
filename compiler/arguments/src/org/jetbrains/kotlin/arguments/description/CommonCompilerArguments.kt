@@ -789,6 +789,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 
@@ -858,6 +859,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 
@@ -1027,6 +1029,7 @@ The argument should be used only if the new compilation scheme is enabled with -
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 

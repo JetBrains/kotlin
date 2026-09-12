@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -350,6 +351,59 @@ private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument
         else -> null
     }
 
+    fun validateDeprecatedAndRemovedVersions() {
+        /**
+         * The earliest language version in which every feature the argument enables is already on by default. An
+         * argument that has such a version has nothing left to do, because every language version it can still be
+         * combined with enables all of its features anyway.
+         *
+         * Only [Enables] is taken into account. A [Disables] annotation describes an opt-out, which becomes useful
+         * exactly when its feature stabilizes and stays useful until the opt-out itself is withdrawn, so the version of
+         * the feature says nothing about the lifetime of such an argument.
+         *
+         * Bail out when there is no such version: either the argument enables nothing, or one of its features is
+         * experimental and no version turns it on.
+         */
+        var enablingVersion: LanguageVersion? = null
+        for (additionalAnn in argument.additionalAnnotations) {
+            if (additionalAnn !is Enables) continue
+            val sinceVersion = additionalAnn.feature.sinceVersion ?: return
+            if (enablingVersion == null || sinceVersion > enablingVersion) enablingVersion = sinceVersion
+        }
+        if (enablingVersion == null) return
+
+        /**
+         * Check only that the deprecated/removed versions are specified, disregarding the concrete value, because an
+         * argument cannot be deprecated in an already published release, nor in one that does not exist yet. The only
+         * thing that can be suggested is the version of the compiler being built, of which at least the major and the
+         * minor components are meaningful. Version ordering is not checked here, [validateLifetime] does that.
+         */
+        fun throwUnspecifiedVersionError(deprecated: Boolean): Nothing {
+            val message = buildString {
+                append("Argument '${argument.name}' enables language features of a version that is already ")
+                append(if (deprecated) "deprecated" else "unsupported")
+                append(". Specify '${if (deprecated) "deprecated" else "removed"}Version = KotlinReleaseVersion.v")
+                val currentVersion = kotlin.KotlinVersion.CURRENT
+                append("${currentVersion.major}_${currentVersion.minor}_<patch>")
+                append("' for this argument, where <patch> is the actual patch version taken from the build server (0, 10, 20).")
+                append(". The minor version might be different if you are performing a cherry-pick on release branch.")
+            }
+            error(message)
+        }
+
+        // A removed version alone is enough: removing an experimental flag without deprecating it first is legal.
+        val releaseVersionsMetadata = argument.releaseVersionsMetadata
+        if (releaseVersionsMetadata.removedVersion == null) {
+            if (enablingVersion.isUnsupported) {
+                throwUnspecifiedVersionError(deprecated = false)
+            }
+
+            if (releaseVersionsMetadata.deprecatedVersion == null && enablingVersion.isDeprecated) {
+                throwUnspecifiedVersionError(deprecated = true)
+            }
+        }
+    }
+
     when (val argumentType = argument.argumentType) {
         is BooleanType -> {
             val defaultValue = argumentType.defaultValue.current
@@ -362,6 +416,7 @@ private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument
                     error("Argument '${argument.name}' has Boolean type and changes language features. It's expected that 'ifValueIs' isn't set, but actually it's '$ifValueIs'.")
                 }
             }
+            validateDeprecatedAndRemovedVersions()
         }
         is AnnotationDefaultTargetModeType,
         is NameBasedDestructuringModeType
@@ -377,6 +432,7 @@ private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument
                     error("Argument '${argument.name}' has $typeName type and changes language features. Non-empty 'ifValueIs' is expected.")
                 }
             }
+            validateDeprecatedAndRemovedVersions()
         }
         else -> {
             error(
