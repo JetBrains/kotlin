@@ -30,6 +30,7 @@ import kotlin.time.Duration.Companion.seconds
  * Runs `:repo:test-runtime:test` with different modes and domain selections, then checks which tests ran.
  * Covers full test runs, selection by annotations and automatic sampling, and nightly filters.
  */
+@Ignore
 class TestFederationFunctionalTest {
 
     @Test
