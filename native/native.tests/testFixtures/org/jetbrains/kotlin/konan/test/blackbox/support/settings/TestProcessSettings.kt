@@ -84,7 +84,7 @@ enum class TestMode(private val description: String) {
 }
 
 /**
- * Kotlin compiler plugins to be used together with the the Kotlin/Native compiler.
+ * Kotlin compiler plugins to be used together with the Kotlin/Native compiler.
  */
 @JvmInline
 value class CompilerPlugins(val compilerPluginJars: Set<File>) {
