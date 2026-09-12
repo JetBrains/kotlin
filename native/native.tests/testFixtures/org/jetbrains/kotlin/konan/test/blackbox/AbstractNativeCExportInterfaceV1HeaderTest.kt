@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.test.TestDataAssertions
@@ -24,13 +25,16 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
 
     private val testCompilationFactory = TestCompilationFactory()
 
+    /** Extra compiler args for subclasses, e.g. to exercise the IR-based discovery mode. */
+    protected open val additionalCompilerArgs: List<String> get() = emptyList()
+
     protected fun runTest(@TestDataFile testFile: String) {
         val path = ForTestCompileRuntime.transformTestDataPath(testFile).toPath()
         val goldenDataHeaderFile = resolveTargetSpecificGoldenDataFile(path)
 
         val moduleName: String = path.nameWithoutExtension
         val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
-        module.files += TestFile.createCommitted(path.toFile(), module)
+        createTestFiles(path, module).forEach { module.files += it }
 
         val testCase = TestCase(
             id = TestCaseId.Named(moduleName),
@@ -44,7 +48,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
                 "-XXLanguage:+CompanionBlocks",
                 "-XXLanguage:+CompanionExtensions",
                 "-Xbinary=cInterfaceMode=v1",
-            )),
+            ) + additionalCompilerArgs),
             nominalPackageName = PackageName(moduleName),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
             extras = TestCase.NoTestRunnerExtras()
@@ -63,6 +67,39 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         TestDataAssertions.assertEqualsToFile(goldenDataHeaderFile.toFile(), headerFile.readText())
     }
 
+    /**
+     * Splits the test data file into individual source files by `// FILE: <name>` markers. This is needed to place
+     * declarations in several packages (a package can be declared only once per file). A file without any marker is
+     * used as a single source file as-is; text before the first marker (if any) is treated as a preamble and dropped.
+     */
+    private fun createTestFiles(path: Path, module: TestModule.Exclusive): List<TestFile<TestModule.Exclusive>> {
+        val marker = "// FILE: "
+        val lines = path.toFile().readLines()
+        if (lines.none { it.startsWith(marker) }) {
+            return listOf(TestFile.createCommitted(path.toFile(), module))
+        }
+
+        val sourcesDir = testRunSettings.get<Binaries>().testBinariesDir.resolve(path.nameWithoutExtension + "-sources")
+        val files = mutableListOf<TestFile<TestModule.Exclusive>>()
+        var currentName: String? = null
+        val currentText = StringBuilder()
+        fun flush() {
+            val name = currentName ?: return
+            files += TestFile.createUncommitted(sourcesDir.resolve(name), module, currentText.toString())
+            currentText.clear()
+        }
+        for (line in lines) {
+            if (line.startsWith(marker)) {
+                flush()
+                currentName = line.removePrefix(marker).trim()
+            } else if (currentName != null) {
+                currentText.appendLine(line)
+            }
+        }
+        flush()
+        return files
+    }
+
     private fun resolveTargetSpecificGoldenDataFile(pathToTestFile: Path): Path {
         val testName = pathToTestFile.nameWithoutExtension
         val parentDirectory = pathToTestFile.parent
@@ -70,4 +107,15 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         val commonFile = parentDirectory.resolve("$testName.h")
         return if (targetSpecificFile.exists()) targetSpecificFile else commonFile
     }
+}
+
+/**
+ * Same as [AbstractNativeCExportInterfaceV1HeaderTest], but with the model built from the IR instead
+ * of K1 descriptors (`-Xbinary=cExportUseIrDiscovery=true`).
+ * The IR mode must produce byte-identical output to the descriptor mode, so both share the same
+ * golden `.h` files.
+ */
+abstract class AbstractNativeCExportInterfaceV1HeaderIrTest : AbstractNativeCExportInterfaceV1HeaderTest() {
+    override val additionalCompilerArgs: List<String>
+        get() = listOf("-Xbinary=cExportUseIrDiscovery=true")
 }
