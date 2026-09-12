@@ -70,7 +70,9 @@ private object IncrementalTestsGeneratorUtil {
         CLASS_HIERARCHY_AFFECTED("classHierarchyAffected"),
         INLINE_FUN_CALL_SITE("inlineFunCallSite"),
         WITH_JAVA("withJava"),
-        INCREMENTAL_JVM_COMPILER_ONLY("incrementalJvmCompilerOnly")
+        INCREMENTAL_JVM_COMPILER_ONLY("incrementalJvmCompilerOnly"),
+        SEALED("sealed"),
+        RESOLUTION("resolution")
     }
 
     private fun buildExcludePattern(excludePatterns: List<String>): String? =
@@ -121,6 +123,28 @@ private object IncrementalTestsGeneratorUtil {
             excludedPattern = buildExcludePattern(
                 listOfNotNull(
                     folderToExcludePatternMap?.get(INCREMENTAL_JVM_COMPILER_ONLY),
+                    excludeForAllTestData
+                )
+            )
+        )
+        modelForDirectoryBasedTest(
+            "incremental", SEALED.folderName,
+            extension = null,
+            excludeParentDirs = true,
+            excludedPattern = buildExcludePattern(
+                listOfNotNull(
+                    folderToExcludePatternMap?.get(SEALED),
+                    excludeForAllTestData
+                )
+            )
+        )
+        modelForDirectoryBasedTest(
+            "incremental", RESOLUTION.folderName,
+            extension = null,
+            excludeParentDirs = true,
+            excludedPattern = buildExcludePattern(
+                listOfNotNull(
+                    folderToExcludePatternMap?.get(RESOLUTION),
                     excludeForAllTestData
                 )
             )
