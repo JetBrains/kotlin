@@ -222,6 +222,14 @@ KClass: interface kotlin.EqualityBound : Annotation, Any
     public final val kotlin.EqualityBound.bound: kotlin.reflect.KClass<*>
   declaredMembers:
     public final val kotlin.EqualityBound.bound: kotlin.reflect.KClass<*>
+KClass: interface kotlin.ExperimentalCollectionLiteralsApi : Annotation, Any
+  constructors:
+    public final fun `<init>`(): kotlin.ExperimentalCollectionLiteralsApi
+  members:
+    public open operator fun kotlin.ExperimentalCollectionLiteralsApi.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.ExperimentalCollectionLiteralsApi.hashCode(): kotlin.Int
+    public open fun kotlin.ExperimentalCollectionLiteralsApi.toString(): kotlin.String
+  declaredMembers:
 KClass: interface kotlin.ExperimentalStdlibApi : Annotation, Any
   constructors:
     public final fun `<init>`(): kotlin.ExperimentalStdlibApi
