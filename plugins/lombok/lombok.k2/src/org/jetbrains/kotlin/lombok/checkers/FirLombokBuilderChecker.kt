@@ -89,6 +89,9 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
         declaredMemberScope.processAllProperties { variableSymbol ->
             val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
             if (!property.hasBackingField) return@processAllProperties
+            // `AbstractBuilderGenerator` builds nothing out of a property the parser could not read a name off,
+            // so nothing here has anything to report about one either.
+            if (property.name.isSpecial) return@processAllProperties
 
             val singularAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.SINGULAR_ID, context.session)
             val defaultAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID, context.session)
@@ -121,6 +124,9 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkFunctionParameters(function: FirFunctionSymbol<*>, lombokService: LombokService) {
         for (parameterSymbol in function.valueParameterSymbols) {
+            // See the same guard in `checkClassProperties`: a parameter without a name is left alone.
+            if (parameterSymbol.name.isSpecial) continue
+
             parameterSymbol.getAnnotationByClassId(LombokNames.SINGULAR_ID, context.session)?.let { singularAnnotation ->
                 checkSingular(parameterSymbol, singularAnnotation, lombokService)
             }

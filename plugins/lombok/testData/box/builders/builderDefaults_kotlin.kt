@@ -3,6 +3,10 @@
 
 import lombok.Builder
 import lombok.ToString
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertFalse
+import kotlin.test.assertFailsWith
 
 @Builder
 class PrimitivesAndNullables(
@@ -42,20 +46,15 @@ class DefaultDependsOnPlain(
 fun box(): String {
     // Mirrors Lombok behavior with default initialization
     val obj = PrimitivesAndNullables.builder().build()
-    assertEquals(false, obj.boolean)
+    assertFalse(obj.boolean)
     assertEquals('\u0000', obj.char)
     assertEquals(0, obj.int)
     assertEquals(0u, obj.uint)
-    assertEquals(null, obj.nullable)
-
+    assertNull(obj.nullable)
     // The default value for a non-nullable property is unclear; Lombok throws an NPE at runtime
-    var npe: Boolean = false
-    try {
+    assertFailsWith<NullPointerException> {
         NotNullable.builder().build()
-    } catch (e: NullPointerException) {
-        npe = true
     }
-    assertEquals(true, npe)
 
     val defaultAnnObj = DefaultAnn.builder().build()
     assertEquals("default", defaultAnnObj.ann)

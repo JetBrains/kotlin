@@ -3,6 +3,8 @@
 // DUMP_KT_IR
 
 import lombok.NoArgsConstructor
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 // The KT-88659 repro: the property initializer references a non-property constructor parameter. fir2ir used to
 // inline such initializers into the generated constructor, where `input` is unbound, and the JVM backend
@@ -30,12 +32,12 @@ class WithInitializers(val text: String) {
 
 fun box(): String {
     val withReferencedParameter = WithReferencedParameter()
-    assertEquals(null, withReferencedParameter.inputValue)
+    assertNull(withReferencedParameter.inputValue)
 
     val withInitializers = WithInitializers()
-    assertEquals(null, withInitializers.text)
+    assertNull(withInitializers.text)
     assertEquals(0, withInitializers.initialized)
-    assertEquals(null, withInitializers.fromInitBlock)
+    assertNull(withInitializers.fromInitBlock)
 
     return "OK"
 }

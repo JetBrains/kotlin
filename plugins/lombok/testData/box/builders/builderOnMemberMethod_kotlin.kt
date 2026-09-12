@@ -2,6 +2,7 @@
 
 import lombok.Builder
 import lombok.Singular
+import kotlin.test.assertEquals
 
 // `@Builder` on a regular member function: `builder()` is an instance method and `build()` invokes the
 // function on the very instance it was called on. The Kotlin counterpart of builderOnMethods.kt's

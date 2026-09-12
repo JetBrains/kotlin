@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrF
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * Per-property data passed from the FIR generator to the IR body filler.
@@ -162,15 +163,13 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
                     true // Treat properties without backing fields as parameterless methods, so include them if only they are explicitly included.
                 }
 
-                val displayName = if (toStringConfig.includeFieldNames ?: config.toStringIncludeFieldNames) {
+                val displayName = runIf(toStringConfig.includeFieldNames ?: config.toStringIncludeFieldNames) {
                     val customName = toStringIncludeAnnotation?.let {
                         it.findArgumentByName(INCLUDE_NAME)
                             ?.let { arg -> (arg as? FirLiteralExpression)?.value as? String }
                             ?.takeIf { name -> name.isNotEmpty() }
                     }
-                    customName ?: propertyName.identifier
-                } else {
-                    null
+                    customName ?: propertyName.identifierOrNullIfSpecial
                 }
 
                 val rank = toStringIncludeAnnotation

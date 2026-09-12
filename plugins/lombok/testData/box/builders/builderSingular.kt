@@ -25,6 +25,8 @@ public class Other {
 }
 
 // FILE: test.kt
+import kotlin.test.assertEquals
+
 fun box(): String {
     val userBuilder = User.builder()
         .status("wrong")
@@ -48,14 +50,10 @@ fun box(): String {
     val expectedSome = listOf(1, 2, 3)
     val expectedNames = listOf("John", "Peter")
 
-    return if (
-        user.numbers == expectedNumbers &&
-        user.statuses == expectedStatuses &&
-        other.some == expectedSome &&
-        other.names == expectedNames
-    ) {
-        "OK"
-    } else {
-        "Error: $user"
-    }
+    assertEquals(expectedNumbers, user.numbers)
+    assertEquals(expectedStatuses, user.statuses)
+    assertEquals(expectedSome, other.some)
+    assertEquals(expectedNames, other.names)
+
+    return "OK"
 }

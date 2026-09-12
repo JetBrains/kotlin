@@ -2,6 +2,7 @@
 
 import lombok.Builder
 import lombok.Singular
+import kotlin.test.assertEquals
 
 // A function declared directly inside a companion object is the Kotlin analogue of a Java static
 // factory method (mirrors builderOnMethods.kt's `User.create`).
