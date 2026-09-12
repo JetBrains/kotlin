@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
-import org.jetbrains.kotlin.ir.backend.js.fileMetadata
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrFileMetadata
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -36,16 +34,9 @@ class JsKlibExportingDeclaration(
 
     companion object {
         fun collectDeclarations(
-            cleanFiles: List<SerializedIrFile>,
             dirtyFiles: List<IrFile>,
             exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>>,
         ) = buildList {
-            for (serializedFile in cleanFiles) {
-                val fileMetadata = JsIrFileMetadata.fromByteArray(serializedFile.fileMetadata)
-                for (exportedName in fileMetadata.exportedNames) {
-                    add(JsKlibExportingDeclaration(exportedName, serializedFile))
-                }
-            }
             for (dirtyFile in dirtyFiles) {
                 val exportedDeclarations = exportedNames[dirtyFile] ?: continue
                 for ([declaration, exportedName] in exportedDeclarations) {

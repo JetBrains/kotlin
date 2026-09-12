@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.includes
@@ -588,10 +589,9 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
 
         fun updateStdlibIntrinsicDependencies(
             loadedIr: LoadedJsIr,
-            mainModule: IrModuleFragment,
             dirtyFiles: Map<KotlinLibraryFile, Set<KotlinSourceFile>>
         ) {
-            val [stdlibFile, _] = findStdlib(mainModule, loadedIr.orderedFragments)
+            val stdlibFile = findStdlibFile(loadedIr)
             val stdlibDirtyFiles = dirtyFiles[stdlibFile] ?: return
 
             val stdlibSymbolProviders = loadedIr.getSignatureProvidersForLib(stdlibFile)
@@ -674,6 +674,13 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
 
                 cacheArtifact
             }
+        }
+
+        private fun findStdlibFile(loadedIr: LoadedJsIr): KotlinLibraryFile {
+            val stdlibFragment = loadedIr.irBuiltIns.anyClass.owner.moduleFragment
+            val [stdlibFile, _] = loadedIr.orderedFragments.entries.find { it.value === stdlibFragment }
+                ?: notFoundIcError("stdlib fragment")
+            return stdlibFile
         }
     }
 
@@ -802,7 +809,7 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
         }
 
         stopwatch.startNext("Processing IR - updating intrinsics and builtins dependencies")
-        updater.updateStdlibIntrinsicDependencies(loadedIr, mainModuleFragment, dirtyFiles)
+        updater.updateStdlibIntrinsicDependencies(loadedIr, dirtyFiles)
 
         stopwatch.startNext("Incremental cache - building artifacts")
         val incrementalCachesArtifacts = updater.buildAndCommitCacheArtifacts(loadedIr)
