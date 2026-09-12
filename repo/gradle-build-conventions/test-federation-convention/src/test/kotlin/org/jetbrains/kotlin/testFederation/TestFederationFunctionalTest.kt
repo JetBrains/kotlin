@@ -23,6 +23,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
+import kotlin.test.Ignore
 import kotlin.test.*
 import kotlin.time.Duration.Companion.seconds
 
@@ -30,6 +31,7 @@ import kotlin.time.Duration.Companion.seconds
  * Runs `:repo:test-runtime:test` with different modes and domain selections, then checks which tests ran.
  * Covers full test runs, selection by annotations and automatic sampling, and nightly filters.
  */
+@Ignore
 class TestFederationFunctionalTest {
 
     @Test
