@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.collectUpperBounds
+import org.jetbrains.kotlin.fir.declarations.isFullValueClass
+import org.jetbrains.kotlin.fir.declarations.isInlineClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -17,9 +19,9 @@ import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class TypeInfo(
@@ -27,13 +29,22 @@ class TypeInfo(
     val notNullType: ConeKotlinType,
     val directType: ConeKotlinType,
     val isEnumClass: Boolean,
+    /** [Int], [Long], [Byte], [Short], [Boolean], [Char], [Float], or [Double] */
     val isPrimitive: Boolean,
+    /** [Int], [Long], [Byte], [Short], [UInt], [ULong], [UByte], [UShort], [Boolean], [Char], [String], or [isEnumClass] */
     val isBuiltin: Boolean,
-    val isValueClass: Boolean,
+    val isFullValueClassOrObject: Boolean,
+    val isInlineValueClass: Boolean,
+    val isAnnotationClass: Boolean,
+    val isDataClassOrObject: Boolean,
     val isFinal: Boolean,
     val isClass: Boolean,
     val canHaveSubtypesAccordingToK1: Boolean,
 ) {
+    val isValueClass: Boolean get() = isInlineValueClass || isFullValueClassOrObject
+
+    val isStructuralClass: Boolean get() = isValueClass || isDataClassOrObject || isEnumClass || isAnnotationClass
+
     override fun toString(): String = "$type"
 }
 
@@ -67,7 +78,10 @@ fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         isEnumClass = boundsSymbols.any { it.isEnumClass },
         isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
         isBuiltin = boundsSymbols.any { it.isBuiltin },
-        isValueClass = boundsSymbols.any { it.isInlineOrValue },
+        isFullValueClassOrObject = boundsSymbols.any { (it as? FirRegularClassSymbol)?.isFullValueClass == true },
+        isInlineValueClass = boundsSymbols.any { (it as? FirRegularClassSymbol)?.isInlineClass == true },
+        isAnnotationClass = boundsSymbols.any { it.isAnnotationClass },
+        isDataClassOrObject = boundsSymbols.any { it.isData },
         isFinal = boundsSymbols.any { it.isFinalClass },
         isClass = boundsSymbols.any { it.isClass },
         // In K1's intersector, `canHaveSubtypes()` is called for `nullabilityStripped`.

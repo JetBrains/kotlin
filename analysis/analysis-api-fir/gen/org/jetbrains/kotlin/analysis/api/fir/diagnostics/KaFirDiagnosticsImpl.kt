@@ -5105,6 +5105,13 @@ internal class IncompatibleEnumComparisonImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IncompatibleEnumComparison
 
+internal class IncompatibleStructuralClassComparisonImpl(
+    override val leftType: KaType,
+    override val rightType: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IncompatibleStructuralClassComparison
+
 internal class ForbiddenIdentityEqualsImpl(
     override val leftType: KaType,
     override val rightType: KaType,

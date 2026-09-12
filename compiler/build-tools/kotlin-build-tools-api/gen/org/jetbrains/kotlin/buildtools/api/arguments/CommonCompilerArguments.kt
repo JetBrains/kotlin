@@ -796,6 +796,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_SKIP_PRERELEASE_CHECK", KotlinReleaseVersion(1, 4, 0))
 
     /**
+     * Report warnings on inapplicable equalities with data, value, and enum classes.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Suppress error about API version greater than language version.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

@@ -965,6 +965,17 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xstrict-equality-for-structural-classes",
+        description = "Report warnings on inapplicable equalities with data, value, and enum classes.",
+    )
+    @Enables(LanguageFeature.StrictEqualsForStructuralClasses)
+    var strictEqualityForStructuralClasses: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xsuppress-version-warnings",
         description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions.",
     )
