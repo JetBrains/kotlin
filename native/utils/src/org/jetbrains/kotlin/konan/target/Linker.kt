@@ -410,6 +410,13 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             listOf(dsymutil, executable, "-o", outputDsymBundle)
 }
 
+/**
+ * Whether the user asked the linker for a static executable, in which case emitting a dynamic
+ * interpreter for it produces a binary that cannot start.
+ */
+private val List<String>.wantsStaticExecutable: Boolean
+    get() = "-static" in this
+
 class GccBasedLinker(targetProperties: GccConfigurables)
     : LinkerFlags(targetProperties), GccConfigurables by targetProperties {
 
@@ -450,8 +457,15 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +"relro"
             +"--build-id"
             +"--eh-frame-hdr"
-            +"-dynamic-linker"
-            +dynamicLinker
+            // A user asking for a static executable with `-linker-option -static` gets a dynamic
+            // interpreter anyway: these two are emitted unconditionally, and ahead of `linkerArgs`,
+            // so nothing the user or `-Xoverride-konan-properties` can set removes them. The kernel
+            // then hands the statically linked program to the dynamic loader, which relocates it as
+            // though it were dynamic, and it segfaults with no diagnostic.
+            if (!linkerArgs.wantsStaticExecutable) {
+                +"-dynamic-linker"
+                +dynamicLinker
+            }
             linkerHostSpecificFlags.forEach { +it }
             +"-o"
             +executable
