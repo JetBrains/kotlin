@@ -197,3 +197,24 @@ val <T : Any> Constructor<T>.kotlinFunction: KFunction<T>?
     get() {
         return declaringClass.kotlin.constructors.firstOrNull { it.javaConstructor == this }
     }
+
+/**
+ * Returns a [KParameter] instance corresponding to the given Java [Parameter] instance,
+ * or `null` if this parameter cannot be represented by a Kotlin parameter.
+ *
+ * Examples of unsupported parameters:
+ * - Parameters declared by executables that can't be represented by a [KFunction], such as generated inline class methods
+ * - `name`/`ordinal` of enum constructors
+ * - Special compiler-generated parameters such as continuations or default markers
+ */
+@SinceKotlin("2.5")
+val Parameter.kotlinParameter: KParameter?
+    get() {
+        val function = when (val executable = declaringExecutable) {
+            is Method -> executable.kotlinFunction
+            is Constructor<*> -> executable.kotlinFunction
+            else -> throw KotlinReflectionInternalError("Unsupported parameter owner: $this")
+        }
+        if (function == null) return null
+        return function.parameters.firstOrNull { it.javaParameter == this }
+    }

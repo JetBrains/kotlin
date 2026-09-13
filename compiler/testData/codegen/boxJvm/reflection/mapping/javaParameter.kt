@@ -55,34 +55,40 @@ fun checkKotlinToJava(kotlinParameter: KParameter, javaParameter: Parameter) {
     assertEquals(javaParameter, kotlinParameter.javaParameter)
 }
 
+fun checkBidirectional(kotlinParameter: KParameter, javaParameter: Parameter) {
+    checkKotlinToJava(kotlinParameter, javaParameter)
+    assertEquals(kotlinParameter, kotlinParameter.javaParameter!!.kotlinParameter)
+}
+
 fun box(): String {
     // Instance parameters don't exist in Java (except for inner class constructors)
     for (callable in listOf(Java::foo, Kotlin::withInlineClass, Kotlin::withContinuation, Kotlin::withDefault)) {
         if (callable.instanceParameter!!.javaParameter != null) return "Fail: Java parameter was returned for an instance parameter"
     }
 
-    checkKotlinToJava(::Java.valueParameters.single(), Java::class.java.constructors.single().parameters[0])
-    checkKotlinToJava(Java::foo.valueParameters.single(), Java::foo.javaMethod!!.parameters[0])
+    checkBidirectional(::Java.valueParameters.single(), Java::class.java.constructors.single().parameters[0])
+    checkBidirectional(Java::foo.valueParameters.single(), Java::foo.javaMethod!!.parameters[0])
 
-    checkKotlinToJava(Kotlin::withInlineClass.valueParameters.single(), Kotlin::withInlineClass.javaMethod!!.parameters[0])
-    checkKotlinToJava(::WithInlineClass.valueParameters.single(), ::WithInlineClass.javaConstructor!!.parameters[0])
+    checkBidirectional(Kotlin::withInlineClass.valueParameters.single(), Kotlin::withInlineClass.javaMethod!!.parameters[0])
+    checkBidirectional(::WithInlineClass.valueParameters.single(), ::WithInlineClass.javaConstructor!!.parameters[0])
 
-    checkKotlinToJava(Kotlin::withDefault.valueParameters.single(), Kotlin::withDefault.javaMethod!!.parameters[0])
-    checkKotlinToJava(::WithDefault.valueParameters.single(), ::WithDefault.javaConstructor!!.parameters[0])
+    checkBidirectional(Kotlin::withDefault.valueParameters.single(), Kotlin::withDefault.javaMethod!!.parameters[0])
+    checkBidirectional(::WithDefault.valueParameters.single(), ::WithDefault.javaConstructor!!.parameters[0])
 
     // Inline class constructors point to a Java static method
+    // Not a bidirectional test as 'constructor-impl' cannot be represented by 'Method.kotlinFunction', it would need to inspect constructors
     checkKotlinToJava(::InlineClass.valueParameters.single(), InlineClass::class.java.getDeclaredMethod("constructor-impl", Int::class.java).parameters[0])
 
     // Inner class constructor's instance parameter
     // The JDK 8 bug described in (internal) 'ReflectKParameter.javaParameter' does not affect 'Method.getParameters'
-    checkKotlinToJava(Java::Inner.instanceParameter!!, Java::Inner.javaConstructor!!.parameters[0])
+    checkBidirectional(Java::Inner.instanceParameter!!, Java::Inner.javaConstructor!!.parameters[0])
     assertEquals(Java::class.java, Java::Inner.javaConstructor!!.parameters[0].type)
 
-    checkKotlinToJava(Kotlin::Inner.instanceParameter!!, Kotlin::Inner.javaConstructor!!.parameters[0])
+    checkBidirectional(Kotlin::Inner.instanceParameter!!, Kotlin::Inner.javaConstructor!!.parameters[0])
 
     // Enum constructors have 2 implicit parameters (name/ordinal) not present in kotlin-reflect
     // The JDK <17 bug described in (internal) 'ReflectKParameter.javaParameter' does not affect 'Method.getParameters' either
-    checkKotlinToJava(MyEnum::class.constructors.single().parameters[0], MyEnum::class.java.declaredConstructors.single().parameters[2])
+    checkBidirectional(MyEnum::class.constructors.single().parameters[0], MyEnum::class.java.declaredConstructors.single().parameters[2])
 
     return "OK"
 }
