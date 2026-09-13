@@ -46,10 +46,6 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun hasImportTracker(): Boolean = importTracker != null
 
-    override fun hasIncrementalResultsConsumer(): Boolean = false
-
-    override fun hasIncrementalDataProvider(): Boolean = false
-
     // TODO: consider replacing NPE with other reporting, although NPE here means most probably incorrect usage
 
     override fun incrementalCache_getObsoletePackageParts(target: TargetId): Collection<String> =
@@ -69,10 +65,6 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun incrementalCache_getMetadata(target: TargetId, fragmentName: String): Map<File, ByteArray> =
         incrementalCompilationComponents!!.getIncrementalCache(target).getMetadata(fragmentName)
-
-    // todo: remove (the method it called was relevant only for old IC)
-    override fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String) {
-    }
 
     override fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String =
         incrementalCompilationComponents!!.getIncrementalCache(target).getClassFilePath(internalClassName)
@@ -127,23 +119,4 @@ open class CompilerCallbackServicesFacadeServer(
     override fun importTracker_report(filePath: String, importedFqName: String) {
         importTracker?.report(filePath, importedFqName) ?: throw NullPointerException("importTracker was not initialized")
     }
-
-    override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {}
-
-    override fun incrementalResultsConsumer_processPackagePart(
-        sourceFilePath: String,
-        packagePartMetadata: ByteArray,
-        binaryAst: ByteArray,
-        inlineData: ByteArray
-    ) {
-    }
-
-    override fun incrementalResultsConsumer_processPackageMetadata(packageName: String, metadata: ByteArray) {
-    }
-
-    override fun incrementalDataProvider_getHeaderMetadata(): ByteArray = byteArrayOf()
-
-    override fun incrementalDataProvider_getCompiledPackageParts(): Collection<CompiledPackagePart> = emptyList()
-
-    override fun incrementalDataProvider_getPackageMetadata(): Collection<PackageMetadata> = emptyList()
 }
