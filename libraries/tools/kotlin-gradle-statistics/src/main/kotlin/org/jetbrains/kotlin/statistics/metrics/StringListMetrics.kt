@@ -89,10 +89,16 @@ enum class StringListMetrics(
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
 
     // options overridden via the `export { swift { } }` DSL
-    SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES(CONCAT, AllowedListAnonymizer(listOf("moduleName", "rootPackage")));
+    SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES(CONCAT, AllowedListAnonymizer(listOf("moduleName", "rootPackage"))),
+
+    // options overridden via the `export { swift { xcodeIntegration { configure(dependency) { } } } }` DSL
+    SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES(
+        CONCAT,
+        AllowedListAnonymizer(listOf("exposed", "hidden", "moduleName", "rootPackage", "settings"))
+    );
 
 
     companion object {
-        const val VERSION = 6
+        const val VERSION = 7
     }
 }

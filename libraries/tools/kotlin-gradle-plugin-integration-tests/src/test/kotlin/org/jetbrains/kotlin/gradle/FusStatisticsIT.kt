@@ -14,12 +14,14 @@ import org.gradle.kotlin.dsl.version
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.includeBuild
 import org.jetbrains.kotlin.gradle.util.filterBackwardCompatibilityKotlinFusFiles
 import org.jetbrains.kotlin.gradle.util.filterKotlinFusFiles
@@ -733,6 +735,91 @@ class FusStatisticsIT : KGPBaseTest() {
             validateFusDirectory("help") { fusDirectory ->
                 fusDirectory.assertFusReportDoesNotContain(
                     "SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES",
+                )
+            }
+        }
+    }
+
+    // Swift export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("native swift export - overridden Xcode integration options are reported")
+    @GradleTest
+    @NativeGradlePluginTests
+    @OptIn(ExperimentalExportDsl::class, ExperimentalSwiftExportDsl::class)
+    fun testSwiftExportDslXcodeIntegrationOverridesIsReported(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration {
+                        settings.put("key", "value")
+                        configure(project.dependencies.project(mapOf("path" to ":sub"))) {
+                            moduleName.set("Sub")
+                            rootPackage.set("com.example.sub")
+                            visibility.set(SwiftExportVisibility.EXPOSED)
+                        }
+                        configure("com.example:other:1.0") {
+                            visibility.set(SwiftExportVisibility.HIDDEN)
+                        }
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                    }
+                }
+            }
+
+            include(subproject, "sub")
+
+            // Check that overriding settings, moduleName, rootPackage and visibility via
+            // `xcodeIntegration { configure(dependency) { } }` is reported.
+            validateFusDirectory("help") { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES",
+                    listOf("exposed", "hidden", "moduleName", "rootPackage", "settings")
+                )
+            }
+        }
+    }
+
+    // Swift export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("native swift export - Xcode integration options are not reported without an override")
+    @GradleTest
+    @NativeGradlePluginTests
+    @OptIn(ExperimentalExportDsl::class, ExperimentalSwiftExportDsl::class)
+    fun testSwiftExportDslXcodeIntegrationOverridesIsNotReportedWithoutNeed(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration()
+                }
+            }
+
+            // Check that we do not generate the metric when the Xcode integration is activated without overrides.
+            validateFusDirectory("help") { fusDirectory ->
+                fusDirectory.assertFusReportDoesNotContain(
+                    "SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES",
                 )
             }
         }
