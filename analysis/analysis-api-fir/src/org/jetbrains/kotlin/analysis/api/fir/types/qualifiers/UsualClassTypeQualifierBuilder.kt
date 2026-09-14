@@ -47,12 +47,10 @@ internal object UsualClassTypeQualifierBuilder {
          * Type arguments are only rendered for the type's own class and for the chain of its `inner` containers,
          * as only those may have type arguments in a qualified type reference.
          */
-        fun shouldRegisterTypeParametersForDesignationPart(index: Int): Boolean {
-            return index == designation.lastIndex || designation[index].isInner || designation[index + 1].isInner
-        }
+        val firstDesignationToRegisterTypeArguments = designation.indexOfLast { !it.isInner }
 
         val ownTypeParametersCountsByDesignation = designation.mapIndexed { index, designationClass ->
-            if (shouldRegisterTypeParametersForDesignationPart(index)) designationClass.numberOfOwnParameters() else 0
+            if (index >= firstDesignationToRegisterTypeArguments) designationClass.numberOfOwnParameters() else 0
         }
 
         /**
@@ -62,6 +60,25 @@ internal object UsualClassTypeQualifierBuilder {
          * The arguments the designation accounts for are the leading ones, defined by [ownTypeParametersCountsByDesignation];
          * the rest are arguments of designation parts that do not render arguments, plus parameters captured from containing *functions*,
          * so they are cut off right away.
+         *
+         * Note that type parameters of outer functions are always properly ignored for local declarations.
+         * That's because `ownTypeParametersCountsByDesignation.sum()` is a number of type parameters from the end class itself
+         * as well as from the `inner` class containers, see [firstDesignationToRegisterTypeArguments].
+         * For local declarations, designation calculation stops at the first class that doesn't have a direct class parent:
+         * ```kotlin
+         * class A<AA> {
+         *     fun <FOO> foo() {
+         *         class B<BB> {
+         *             inner class C<CC> {
+         *                 val r<caret>ef: C<Int>? = null
+         *             }
+         *         }
+         *     }
+         * }
+         * ```
+         *
+         * In this case, `coneType.typeArguments` is `[Int, BB, FOO, AA]`, and there are designations `[B, C]`
+         * Each of these designation classes has a single own type parameter, so [restTypeArguments] is `[Int, BB]`
          */
         var restTypeArguments = coneType.typeArguments.asList().take(ownTypeParametersCountsByDesignation.sum())
 
