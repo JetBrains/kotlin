@@ -266,7 +266,7 @@ internal object VirtualTablesLookup {
     }
 
     fun FunctionGenerationContext.getVirtualImpl(receiver: LLVMValueRef, irFunction: IrSimpleFunction): LlvmCallable {
-        assert(LLVMTypeOf(receiver) == llvm.pointerType)
+        assert(LLVMTypeOf(receiver) == llvm.refPointerType)
 
         val typeInfoPtr: LLVMValueRef = if (irFunction.getObjCMethodInfo() != null)
             call(llvm.getObjCKotlinTypeInfo, listOf(receiver))
@@ -345,7 +345,7 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
                     linkage = linkageOf(irFunction)
             )
             if (isExternal(irFunction))
-                llvm.externalFunction(proto)
+                llvm.externalFunction(proto, isKotlinCode = true)
             else {
                 val offset = irFunction.startOffset.takeIf { it != UNDEFINED_OFFSET }
                         ?: irFunction.parentAsClass.startOffset.takeIf { it != UNDEFINED_OFFSET }
@@ -427,8 +427,13 @@ internal class StackLocalsManagerImpl(
 
     fun isEmpty() = stackLocals.isEmpty()
 
-    private fun FunctionGenerationContext.createRootSetSlot() =
-            alloca(llvm.pointerType, true)
+    private fun FunctionGenerationContext.createRootSetSlot(objHeader: LLVMValueRef): LLVMValueRef? =
+            if (useLateShadowStack) {
+                call(llvm.gcStackObjectMarker, listOf(objHeader))
+                null
+            } else {
+                alloca(llvm.refPointerType, true)
+            }
 
     override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
         val classInfo = llvmDeclarations.forClass(irClass)
@@ -442,8 +447,9 @@ internal class StackLocalsManagerImpl(
             val objectHeader = structGep(type, stackSlot, 0, "objHeader")
             val typeInfo = codegen.typeInfoForAllocation(irClass)
             setTypeInfoForStackObject(runtime.objHeaderType, objectHeader, typeInfo)
-            val gcRootSetSlot = createRootSetSlot()
-            StackLocal(null, irClass, stackSlot, objectHeader, gcRootSetSlot)
+            val gcRootSetSlot = createRootSetSlot(objectHeader)
+            val objectHeaderRef = addrspacecast(runtime.objHeaderPtrType, objectHeader)
+            StackLocal(null, irClass, stackSlot, objectHeaderRef, gcRootSetSlot)
         }
 
         stackLocals += stackLocal
@@ -475,7 +481,7 @@ internal class StackLocalsManagerImpl(
 
     // TODO: find better place?
     private val arrayToElementType = mapOf(
-            irBuiltIns.arrayClass to llvm.pointerType,
+            irBuiltIns.arrayClass to llvm.refPointerType,
             irBuiltIns.byteArray to llvm.int8Type,
             irBuiltIns.charArray to llvm.int16Type,
             irBuiltIns.stringClass to llvm.int16Type,
@@ -503,8 +509,9 @@ internal class StackLocalsManagerImpl(
                     0,
                     constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[irClass.symbol]).toInt() / 8
             )
-            val gcRootSetSlot = createRootSetSlot()
-            StackLocal(constCount, irClass, arraySlot, arrayHeaderSlot, gcRootSetSlot)
+            val gcRootSetSlot = createRootSetSlot(arrayHeaderSlot)
+            val arrayHeaderRef = addrspacecast(runtime.objHeaderPtrType, arrayHeaderSlot)
+            StackLocal(constCount, irClass, arraySlot, arrayHeaderRef, gcRootSetSlot)
         }
 
         stackLocals += stackLocal
@@ -523,7 +530,7 @@ internal class StackLocalsManagerImpl(
     private fun clean(stackLocal: StackLocal, refsOnly: Boolean) = with(functionGenerationContext) {
         if (stackLocal.isArray) {
             if (stackLocal.irClass.symbol == context.irBuiltIns.arrayClass) {
-                call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
+                call(llvm.zeroArrayRefsFunction, listOf(addrspacecast(llvm.pointerType, stackLocal.objHeaderPtr)))
             } else if (!refsOnly) {
                 val arrayType = localArrayType(stackLocal.irClass, stackLocal.arraySize!!)
                 memset(structGep(arrayType, stackLocal.stackAllocationPtr, 1, "arrayBody"),
@@ -539,7 +546,7 @@ internal class StackLocalsManagerImpl(
                 if (fieldSymbol.owner.type.binaryTypeIsReference()) {
                     val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
                     if (refsOnly)
-                        storeHeapRef(llvm.kNull, fieldPtr)
+                        storeHeapRef(llvm.kNullRef, fieldPtr)
                     else
                         call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
                 }
@@ -555,7 +562,7 @@ internal class StackLocalsManagerImpl(
             }
         }
         if (stackLocal.gcRootSetSlot != null) {
-            storeStackRef(llvm.kNull, stackLocal.gcRootSetSlot)
+            storeStackRef(llvm.kNullRef, stackLocal.gcRootSetSlot)
         }
     }
 
@@ -620,6 +627,8 @@ internal abstract class FunctionGenerationContext(
         basicBlockToLastLocation.put(block, LocationInfoRange(startLocationInfo, endLocation))
     }
 
+    val useLateShadowStack get() = generationState.config.lateShadowStack
+
     var returnType: LLVMTypeRef? = function.returnType
     var returnSlot: LLVMValueRef? = null
         private set
@@ -631,6 +640,11 @@ internal abstract class FunctionGenerationContext(
     // TODO: remove if exactly unused.
     //private var arenaSlot: LLVMValueRef? = null
     private val slotToVariableLocation = mutableMapOf<Int, VariableDebugLocation>()
+
+    fun addrspacecast(type: LLVMTypeRef, value: LLVMValueRef, name: String = ""): LLVMValueRef {
+        if (LLVMTypeOf(value) == type) return value
+        return LLVMBuildAddrSpaceCast(builder, value, type, name)!!
+    }
 
     private val prologueBb = basicBlockInFunction("prologue", null)
     private val localsInitBb = basicBlockInFunction("locals_init", null)
@@ -687,7 +701,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun alloca(type: LLVMTypeRef?, isObjectType: Boolean, name: String = "", variableLocation: VariableDebugLocation? = null): LLVMValueRef {
-        if (isObjectType) {
+        if (!useLateShadowStack && isObjectType) {
             appendingTo(localsInitBb) {
                 val slotAddress = gep(type!!, slotsPhi!!, llvm.int32(slotCount), name)
                 variableLocation?.let {
@@ -697,8 +711,7 @@ internal abstract class FunctionGenerationContext(
                 return slotAddress
             }
         }
-
-        appendingTo(prologueBb) {
+        return appendingTo(prologueBb) {
             val slotAddress = LLVMBuildAlloca(builder, type, name)!!
             variableLocation?.let {
                 DIInsertDeclaration(
@@ -710,7 +723,7 @@ internal abstract class FunctionGenerationContext(
                         expr = null,
                         exprCount = 0)
             }
-            return slotAddress
+            slotAddress
         }
     }
 
@@ -744,7 +757,7 @@ internal abstract class FunctionGenerationContext(
         val value = LLVMBuildLoad2(builder, type, address, name)!!
         memoryOrder?.let { LLVMSetOrdering(value, it) }
         alignment?.let { LLVMSetAlignment(value, it) }
-        if (isObjectType && isVar) {
+        if (!useLateShadowStack && isObjectType && isVar) {
             val slot = resultSlot ?: alloca(type, isObjectType, variableLocation = null)
             storeStackRef(value, slot)
         }
@@ -762,7 +775,11 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun storeStackRef(value: LLVMValueRef, ptr: LLVMValueRef) {
-        updateRef(value, ptr, onStack = true)
+        if (useLateShadowStack) {
+            store(value, ptr)
+        } else {
+            updateRef(value, ptr, onStack = true)
+        }
     }
 
     fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, isObjectRef: Boolean, onStack: Boolean, isVolatile: Boolean = false, alignment: Int? = null) {
@@ -772,23 +789,32 @@ internal abstract class FunctionGenerationContext(
         }
     }
 
-    private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
-        call(llvm.updateReturnRefFunction, listOf(address, value))
-    }
-
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
                           isVolatile: Boolean = false, alignment: Int? = null) {
         require(alignment == null || alignment % runtime.pointerAlignment == 0)
         if (onStack) {
             require(!isVolatile) { "Stack ref update can't be volatile"}
-            call(llvm.updateStackRefFunction, listOf(address, value))
-        } else {
-            if (isVolatile) {
-                call(llvm.UpdateVolatileHeapRef, listOf(address, value))
+            if (useLateShadowStack) {
+                store(value, address, alignment = alignment)
             } else {
-                call(llvm.updateHeapRefFunction, listOf(address, value))
+                call(llvm.updateStackRefFunction, listOf(address, value))
+            }
+        } else {
+            val castAddress = if (address.type != llvm.pointerType) {
+                addrspacecast(llvm.pointerType, address)
+            } else {
+                address
+            }
+            if (isVolatile) {
+                call(llvm.UpdateVolatileHeapRef, listOf(castAddress, value))
+            } else {
+                call(llvm.updateHeapRefFunction, listOf(castAddress, value))
             }
         }
+    }
+
+    private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
+        call(llvm.updateReturnRefFunction, listOf(address, value))
     }
 
     //-------------------------------------------------------------------------//
@@ -818,33 +844,47 @@ internal abstract class FunctionGenerationContext(
             verbatim: Boolean = false,
             resultSlot: LLVMValueRef? = null,
     ): LLVMValueRef {
-        val callArgs = if (verbatim || !llvmCallable.returnsObjectType) {
-            args
-        } else {
-            // If function returns an object - create slot for the returned value or give local arena.
-            // This allows appropriate rootset accounting by just looking at the stack slots,
-            // along with ability to allocate in appropriate arena.
-            val realResultSlot = resultSlot ?: when (resultLifetime.slotType) {
-                SlotType.STACK -> {
-                    localAllocs++
-                    // Case of local call. Use memory allocated on stack.
-                    val type = llvmCallable.returnType
-                    val stackPointer = alloca(type, llvmCallable.returnsObjectType)
-                    //val objectHeader = structGep(stackPointer, 0)
-                    //setTypeInfoForLocalObject(objectHeader)
-                    stackPointer
-                    //arenaSlot!!
-                }
-
-                SlotType.RETURN -> returnSlot!!
-
-                SlotType.ANONYMOUS -> vars.createAnonymousSlot(llvmCallable.returnsObjectType)
-
-                else -> throw Error("Incorrect slot type: ${resultLifetime.slotType}")
+        val callArgs = if (useLateShadowStack) {
+            val withSlot = if (!verbatim && llvmCallable.returnsObjectType && args.size < llvmCallable.numParams) {
+                args + (resultSlot ?: call(llvm.gcReturnSlotMarker, emptyList()))
+            } else {
+                args
             }
-            args + realResultSlot
+            val expectedParamTypes = llvmCallable.paramTypes
+            withSlot.mapIndexed { index, arg ->
+                val expectedType = expectedParamTypes.getOrNull(index)
+                if (expectedType != null && LLVMTypeOf(arg) == llvm.refPointerType && expectedType == llvm.pointerType) {
+                    addrspacecast(expectedType, arg)
+                } else {
+                    arg
+                }
+            }
+        } else {
+            if (verbatim || !llvmCallable.returnsObjectType) {
+                args
+            } else {
+                val realResultSlot = resultSlot ?: when (resultLifetime.slotType) {
+                    SlotType.STACK -> {
+                        localAllocs++
+                        val type = llvmCallable.returnType
+                        alloca(type, llvmCallable.returnsObjectType)
+                    }
+
+                    SlotType.RETURN -> returnSlot!!
+
+                    SlotType.ANONYMOUS -> vars.createAnonymousSlot(llvmCallable.returnsObjectType)
+
+                    else -> throw Error("Incorrect slot type: ${resultLifetime.slotType}")
+                }
+                args + realResultSlot
+            }
         }
-        return callRaw(llvmCallable, callArgs, exceptionHandler)
+        val rawResult = callRaw(llvmCallable, callArgs, exceptionHandler)
+        return if (useLateShadowStack && llvmCallable.returnsObjectType && llvmCallable.returnType == llvm.pointerType) {
+            addrspacecast(llvm.refPointerType, rawResult)
+        } else {
+            rawResult
+        }
     }
 
     private fun callRaw(
@@ -1051,8 +1091,13 @@ internal abstract class FunctionGenerationContext(
         if (switchThreadState) {
             switchThreadState(Runnable)
         }
-        call(llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
-        setCurrentFrameIsCalled = true
+        if (!useLateShadowStack) {
+            call(llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
+            setCurrentFrameIsCalled = true
+        } else {
+            call(llvm.gcFrameSetCurrentMarker, emptyList())
+            LLVMSetMetadata(landingpad, llvm.gcLandingpadMetadataKind, llvm.emptyMetadataNode)
+        }
 
         return landingpad
     }
@@ -1201,7 +1246,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun generateFrameCheck() {
-        if (!context.shouldOptimize())
+        if (!useLateShadowStack && !context.shouldOptimize())
             call(llvm.checkCurrentFrameFunction, listOf(slotsPhi!!))
     }
 
@@ -1357,11 +1402,10 @@ internal abstract class FunctionGenerationContext(
             returnSlot = function.param(function.numParams - 1)
         }
 
-        positionAtEnd(localsInitBb)
-        slotsPhi = phi(llvm.pointerType)
-        // Is removed by DCE trivially, if not needed.
-        /*arenaSlot = intToPtr(
-                or(ptrToInt(slotsPhi, codegen.intPtrType), codegen.immOneIntPtrType), kObjHeaderPtrPtr)*/
+        if (!useLateShadowStack) {
+            positionAtEnd(localsInitBb)
+            slotsPhi = phi(llvm.pointerType)
+        }
         positionAtEnd(entryBb)
     }
 
@@ -1369,28 +1413,32 @@ internal abstract class FunctionGenerationContext(
         val needCleanupLandingpadAndLeaveFrame = this.needCleanupLandingpadAndLeaveFrame
 
         appendingTo(prologueBb) {
-            val slots = if (needSlotsPhi || needCleanupLandingpadAndLeaveFrame)
-                LLVMBuildArrayAlloca(builder, llvm.pointerType, llvm.int32(slotCount), "")!!
-            else
-                llvm.kNull
-            if (needSlots || needCleanupLandingpadAndLeaveFrame) {
-                check(!forbidRuntime) { "Attempt to start a frame where runtime usage is forbidden" }
-                // Zero-init slots.
-                memset(slots, 0, slotCount * codegen.runtime.pointerSize)
-            }
-            addPhiIncoming(slotsPhi!!, prologueBb to slots)
-            memScoped {
-                slotToVariableLocation.forEach { [slot, variable] ->
-                    val expr = longArrayOf(DwarfOp.DW_OP_plus_uconst.value,
-                            runtime.pointerSize * slot.toLong()).toCValues()
-                    DIInsertDeclaration(
-                            builder       = generationState.debugInfo.builder,
-                            value         = slots,
-                            localVariable = variable.localVariable,
-                            location      = variable.location,
-                            bb            = prologueBb,
-                            expr          = expr,
-                            exprCount     = 2)
+            if (!useLateShadowStack) {
+                val slots = if (needSlotsPhi || needCleanupLandingpadAndLeaveFrame)
+                    LLVMBuildArrayAlloca(builder, llvm.pointerType, llvm.int32(slotCount), "")!!
+                else
+                    llvm.kNull
+                if (needSlots || needCleanupLandingpadAndLeaveFrame) {
+                    check(!forbidRuntime) { "Attempt to start a frame where runtime usage is forbidden" }
+                    // Zero-init slots.
+                    memset(slots, 0, slotCount * codegen.runtime.pointerSize)
+                }
+                addPhiIncoming(slotsPhi!!, prologueBb to slots)
+                memScoped {
+                    for (entry in slotToVariableLocation.entries) {
+                        val slot = entry.key
+                        val variable = entry.value
+                        val expr = longArrayOf(DwarfOp.DW_OP_plus_uconst.value,
+                                runtime.pointerSize * slot.toLong()).toCValues()
+                        DIInsertDeclaration(
+                                builder       = generationState.debugInfo.builder,
+                                value         = slots,
+                                localVariable = variable.localVariable,
+                                location      = variable.location,
+                                bb            = prologueBb,
+                                expr          = expr,
+                                exprCount     = 2)
+                    }
                 }
             }
             br(localsInitBb)
@@ -1406,7 +1454,11 @@ internal abstract class FunctionGenerationContext(
                     val landingpad = gxxLandingpad(numClauses = 0)
                     LLVMSetCleanup(landingpad, 1)
 
-                    releaseVars()
+                    if (!useLateShadowStack) {
+                        releaseVars()
+                    } else if (switchToRunnable) {
+                        call(llvm.gcFrameLeaveMarker, emptyList())
+                    }
                     handleEpilogueExperimentalMM()
                     LLVMBuildResume(builder, landingpad)
                 }
@@ -1429,10 +1481,14 @@ internal abstract class FunctionGenerationContext(
             if (switchToRunnable) {
                 switchThreadState(Runnable)
             }
-            if (needSlots || needCleanupLandingpadAndLeaveFrame) {
-                call(llvm.enterFrameFunction, listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
-            } else {
-                check(!setCurrentFrameIsCalled)
+            if (!useLateShadowStack) {
+                if (needSlots || needCleanupLandingpadAndLeaveFrame) {
+                    call(llvm.enterFrameFunction, listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
+                } else {
+                    check(!setCurrentFrameIsCalled)
+                }
+            } else if (needsRuntimeInit || switchToRunnable) {
+                call(llvm.gcFrameEnterMarker, emptyList())
             }
             if (!forbidRuntime && needSafePoint) {
                 call(llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
@@ -1445,7 +1501,9 @@ internal abstract class FunctionGenerationContext(
 
         vars.clear()
         returnSlot = null
-        slotsPhi = null
+        if (!useLateShadowStack) {
+            slotsPhi = null
+        }
     }
 
     protected abstract fun processReturns()
@@ -1471,7 +1529,11 @@ internal abstract class FunctionGenerationContext(
     }
 
     protected fun onReturn() {
-        releaseVars()
+        if (!useLateShadowStack) {
+            releaseVars()
+        } else if (switchToRunnable) {
+            call(llvm.gcFrameLeaveMarker, emptyList())
+        }
         handleEpilogueExperimentalMM()
     }
 
@@ -1479,6 +1541,24 @@ internal abstract class FunctionGenerationContext(
         if (switchToRunnable) {
             check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
             switchThreadState(Native)
+        }
+    }
+
+    private val needSlots: Boolean
+        get() {
+            return slotCount - vars.skipSlots > frameOverlaySlotCount
+        }
+
+    private val needSlotsPhi: Boolean
+        get() {
+            return slotCount > frameOverlaySlotCount || localAllocs > 0
+        }
+
+    private fun releaseVars() {
+        if (needCleanupLandingpadAndLeaveFrame || needSlots) {
+            check(!forbidRuntime) { "Attempt to leave a frame where runtime usage is forbidden" }
+            call(llvm.leaveFrameFunction,
+                    listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
         }
     }
 
@@ -1598,23 +1678,6 @@ internal abstract class FunctionGenerationContext(
         code()
     }
 
-    private val needSlots: Boolean
-        get() {
-            return slotCount - vars.skipSlots > frameOverlaySlotCount
-        }
-
-    private val needSlotsPhi: Boolean
-        get() {
-            return slotCount > frameOverlaySlotCount || localAllocs > 0
-        }
-
-    private fun releaseVars() {
-        if (needCleanupLandingpadAndLeaveFrame || needSlots) {
-            check(!forbidRuntime) { "Attempt to leave a frame where runtime usage is forbidden" }
-            call(llvm.leaveFrameFunction,
-                    listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
-        }
-    }
 }
 
 internal class DefaultFunctionGenerationContext(

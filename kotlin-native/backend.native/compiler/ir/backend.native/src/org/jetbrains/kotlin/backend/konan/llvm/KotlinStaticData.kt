@@ -40,7 +40,8 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         global.setUnnamedAddr(true)
         global.setConstant(true)
         // value should be of struct type with first element having the object/array header layout
-        return global.pointer.getElementPtr(llvm, global.type, 0)
+        val rawPtr = global.pointer.getElementPtr(llvm, global.type, 0)
+        return rawPtr.addrspacecast(runtime.objHeaderPtrType)
     }
 
     private fun createKotlinStringLiteral(value: String): ConstPointer {
@@ -107,12 +108,13 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
             UniqueKind.UNIT -> context.irBuiltIns.unitClass.owner
             UniqueKind.EMPTY_ARRAY -> context.irBuiltIns.arrayClass.owner
         }
-        return if (isExternal(descriptor)) {
+        val rawPtr = if (isExternal(descriptor)) {
             generationState.dependenciesTracker.add(descriptor)
             constPointer(importGlobal(kind.llvmName, runtime.objHeaderType))
         } else {
             generationState.llvmDeclarations.forUnique(kind).pointer
         }
+        return rawPtr.addrspacecast(runtime.objHeaderPtrType)
     }
 
     /**

@@ -1,3 +1,4 @@
+// IGNORE_NATIVE: lateShadowStack=true
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 import kotlin.native.ref.WeakReference
 

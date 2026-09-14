@@ -11,6 +11,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.*
@@ -193,8 +194,9 @@ internal interface ContextUtils : RuntimeAware {
             return if (isExternal(this)) {
                 runtime.addedLLVMExternalFunctions.getOrPut(this) {
                     val symbolName = this.computeSymbolName(context, forImplementation = true)
-                    val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils, LLVMLinkage.LLVMExternalLinkage)
-                    llvm.externalFunction(proto)
+                    val isExternalNative = this.isExternal && context.config.lateShadowStack
+                    val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils, LLVMLinkage.LLVMExternalLinkage, isExternalNative = isExternalNative)
+                    llvm.externalFunction(proto, isKotlinCode = !this.isExternal)
                 }
             } else {
                 generationState.llvmDeclarations.forFunctionOrNull(this)
@@ -363,7 +365,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         return LlvmFunction.Declaration(type, false, result, LlvmFunctionAttributeProvider.copyFromExternal(result))
     }
 
-    internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmFunction {
+    internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto, isKotlinCode: Boolean): LlvmFunction {
         if (llvmFunctionProto.origin != null) {
             this.dependenciesTracker.add(llvmFunctionProto.origin, onlyBitcode = llvmFunctionProto.independent)
         }
@@ -376,7 +378,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
             return LlvmFunction.Declaration(found, llvmFunctionProto.signature)
         } else {
-            return llvmFunctionProto.createLlvmFunction(context, module)
+            return llvmFunctionProto.createLlvmFunction(context, module, isKotlinCode)
         }
     }
 
@@ -392,7 +394,8 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
                     origin = FunctionOrigin.FromNativeRuntime,
                     linkage = LLVMLinkage.LLVMExternalLinkage,
                     independent = false
-            )
+            ),
+            isKotlinCode = false
     )
 
     internal fun externalNativeRuntimeFunction(name: String, signature: LlvmFunctionSignature) =
@@ -407,6 +410,9 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     private val target = context.config.target
 
     override val runtime get() = generationState.runtime
+    val pointerType get() = runtime.pointerType
+    val refPointerType get() = runtime.refPointerType
+    val objHeaderPtrType get() = runtime.objHeaderPtrType
 
     init {
         LLVMSetDataLayout(module, runtime.dataLayout)
@@ -521,7 +527,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val doubleType = LLVMDoubleTypeInContext(llvmContext)!!
     val vector128Type = LLVMVectorType(floatType, 4)!!
     val voidType = LLVMVoidTypeInContext(llvmContext)!!
-    val pointerType = runtime.pointerType
+
 
     fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 
@@ -561,6 +567,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     fun float64(value: Double): LLVMValueRef = constFloat64(value).llvm
 
     val kNull = LLVMConstNull(pointerType)!!
+    val kNullRef = runtime.kNullRef
     val kImmInt32Zero by lazy { int32(0) }
     val kImmInt32One by lazy { int32(1) }
     val kTrue by lazy { int1(true) }
@@ -569,8 +576,38 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val nullPointer = object : ConstPointer {
         override val llvm = kNull
     }
+    val nullRefPointer = object : ConstPointer {
+        override val llvm = kNullRef
+    }
 
     val memsetFunction = importMemset()
+
+    val gcReturnSlotMarker by lazy {
+        llvmIntrinsic("Kotlin_gc_returnSlot", functionType(pointerType, false), "nounwind")
+    }
+
+    val gcFrameEnterMarker by lazy {
+        llvmIntrinsic("Kotlin_gc_frameEnter", functionType(voidType, false), "nounwind")
+    }
+
+    val gcFrameLeaveMarker by lazy {
+        llvmIntrinsic("Kotlin_gc_frameLeave", functionType(voidType, false), "nounwind")
+    }
+
+    val gcFrameSetCurrentMarker by lazy {
+        llvmIntrinsic("Kotlin_gc_frameSetCurrent", functionType(voidType, false), "nounwind")
+    }
+
+    val gcLandingpadMetadataKind by lazy {
+        val name = "kotlin.gc.landingpad"
+        LLVMGetMDKindIDInContext(llvmContext, name, name.length)
+    }
+
+    val emptyMetadataNode by lazy { LLVMMDNodeInContext(llvmContext, null, 0)!! }
+
+    val gcStackObjectMarker by lazy {
+        llvmIntrinsic("Kotlin_gc_stackObject", functionType(voidType, false, pointerType), "nounwind")
+    }
 
     val llvmTrap = llvmIntrinsic(
             "llvm.trap",
