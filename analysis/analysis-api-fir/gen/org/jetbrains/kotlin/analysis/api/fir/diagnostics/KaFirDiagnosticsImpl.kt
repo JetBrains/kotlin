@@ -5911,6 +5911,11 @@ internal class CopyFunWithReturnTypeOrExpressionBodyImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CopyFunWithReturnTypeOrExpressionBody
 
+internal class CopyFunTooManyArgsImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CopyFunTooManyArgs
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

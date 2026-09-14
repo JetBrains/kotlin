@@ -8369,6 +8369,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CopyFunTooManyArgs : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<CopyFunTooManyArgs>
+            get() = CopyFunTooManyArgs::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<OverrideCannotBeStatic>
             get() = OverrideCannotBeStatic::class

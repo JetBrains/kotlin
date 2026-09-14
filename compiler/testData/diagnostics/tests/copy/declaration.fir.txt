@@ -1,6 +1,6 @@
 FILE: declaration.kt
     public final class Person : R|kotlin/Any| {
-        public constructor(name: R|kotlin/String|, title: R|kotlin/String?|): R|Person| {
+        public constructor(name: R|kotlin/String|, title: R|kotlin/String?|, age: R|kotlin/Int?|): R|Person| {
             super<R|kotlin/Any|>()
         }
 
@@ -11,6 +11,9 @@ FILE: declaration.kt
         public final copy var title: R|kotlin/String?| = R|<local>/title|
             public get(): R|kotlin/String?|
             public copy set(value: R|kotlin/String?|): R|kotlin/Unit|
+
+        public final copy val age: R|kotlin/Int?| = R|<local>/age|
+            public get(): R|kotlin/Int?|
 
         public final copy var visibleName: R|kotlin/String| = String(hello)
             public get(): R|kotlin/String|
@@ -45,11 +48,28 @@ FILE: declaration.kt
             ^f3 this@R|/Person|
         }
 
+        public final copy fun f4(copy x: R|kotlin/Int|): R|Person| {
+             {
+            }
+
+            ^f4 this@R|/Person|
+        }
+
         public final fun test(): R|kotlin/Unit| {
-            lval h: R|(Person) -> kotlin/Int| = fun <anonymous>(copy x: R|Person|): R|kotlin/Int| <inline=NoInline>  {
+            lval h1: R|(Person) -> kotlin/Int| = fun <anonymous>(copy x: R|Person|): R|kotlin/Int| <inline=NoInline>  {
                 ^ Int(0)
             }
 
+            lval h2: R|(Person, kotlin/Int) -> kotlin/Int| = fun <anonymous>(copy x: R|Person|, y: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(0)
+            }
+
+            lval h3: R|(Person, kotlin/Int) -> kotlin/Int| = fun <anonymous>(copy x: R|Person|, copy y: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(0)
+            }
+
+            copy lvar one: R|kotlin/Int| = Int(1)
+            copy lval two: R|kotlin/Int| = Int(2)
         }
 
     }
@@ -102,4 +122,10 @@ FILE: declaration.kt
         }
 
         ^g7 this#
+    }
+    public final copy fun R|Person|.g8(copy x: R|kotlin/Int|): R|Person| {
+         {
+        }
+
+        ^g8 this@R|/g8|
     }

@@ -220,6 +220,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTRACT_NOT_ALLO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COPY_VAR_UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COPY_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COPY_FUN_WITH_RETURN_TYPE_OR_EXPRESSION_BODY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COPY_FUN_TOO_MANY_ARGS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ESCAPING_CAPTURED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER_ERROR
@@ -4125,6 +4126,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             COPY_FUN_WITH_RETURN_TYPE_OR_EXPRESSION_BODY,
             "Copy fun must be defined without return type and with a block body"
+        )
+        map.put(
+            COPY_FUN_TOO_MANY_ARGS,
+            "Too many copy arguments in this function"
         )
     }
 }

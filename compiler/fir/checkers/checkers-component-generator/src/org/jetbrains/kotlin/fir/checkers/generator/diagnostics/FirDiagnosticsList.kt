@@ -2510,6 +2510,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COPY_VAR_UNSUPPORTED by error<PsiElement>()
         val COPY_VAL by error<PsiElement>()
         val COPY_FUN_WITH_RETURN_TYPE_OR_EXPRESSION_BODY by error<PsiElement>()
+        val COPY_FUN_TOO_MANY_ARGS by error<PsiElement>()
     }
 }
 

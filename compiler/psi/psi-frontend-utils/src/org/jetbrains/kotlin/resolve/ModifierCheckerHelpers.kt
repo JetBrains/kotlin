@@ -308,6 +308,7 @@ val possibleTargetPredicateMap = mapOf(
         KotlinTarget.FUNCTION,
         KotlinTarget.VALUE_PARAMETER,
         KotlinTarget.PROPERTY,
+        KotlinTarget.LOCAL_VARIABLE,
     )
 )
 

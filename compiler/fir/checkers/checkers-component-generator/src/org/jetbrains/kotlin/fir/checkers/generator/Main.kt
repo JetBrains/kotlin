@@ -127,6 +127,7 @@ fun main(args: Array<String>) {
                 visitAlso<FirErrorExpression>(it)
                 visitAlso<FirQualifiedErrorAccessExpression>(it)
                 visitAlso<FirNumericClassConversion>(it)
+                visitAlso<FirCopyFunCallExpression>(it)
             }
             alias<FirQualifiedAccessExpression>("QualifiedAccessExpressionChecker")
             alias<FirCall>("CallChecker", false).let {

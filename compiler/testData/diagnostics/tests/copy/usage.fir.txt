@@ -23,4 +23,5 @@ FILE: usage.kt
     public final fun test(): R|kotlin/Unit| {
         lvar person: R|Person| = R|/Person.Person|(String(me), Null(null))
         R|<local>/person|.R|/Person.f|()
+        R|<local>/person|.R|/Person.name| = String(you)
     }

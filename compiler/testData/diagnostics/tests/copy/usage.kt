@@ -11,6 +11,8 @@ class Person(
 fun test() {
     var person = Person("me", null)
     person.f()
+
+    person.name = "you"
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, primaryConstructor,

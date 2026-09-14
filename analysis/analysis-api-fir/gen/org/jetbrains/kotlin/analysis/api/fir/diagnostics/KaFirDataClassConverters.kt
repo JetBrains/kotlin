@@ -1053,6 +1053,12 @@ private fun KaDiagnosticConverterBuilder.addConversions18() {
             token,
         )
     }
+    add(FirErrors.COPY_FUN_TOO_MANY_ARGS) { firDiagnostic ->
+        CopyFunTooManyArgsImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions19() {
