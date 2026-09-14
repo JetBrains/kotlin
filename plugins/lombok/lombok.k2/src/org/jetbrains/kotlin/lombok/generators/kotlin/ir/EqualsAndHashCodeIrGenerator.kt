@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.lombok.generators.AccessorGenerator
 import org.jetbrains.kotlin.lombok.generators.EqualsAndHashCodeGeneratorKey
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -65,6 +66,10 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
             HASHCODE_NAME -> {
                 buildHashCodeBody(irClass, key, thisParam)
             }
+            AccessorGenerator.CAN_EQUAL -> {
+                val otherParam = declaration.parameters.single { it.kind == IrParameterKind.Regular }
+                buildCanEqualBody(irClass, otherParam)
+            }
         }
     }
 
@@ -77,6 +82,23 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
         +irIfThenReturnTrue(irEqeqeq(irGetThis(thisParam), irGetOther(otherParam)))
         +irIfThenReturnFalse(irNotIs(irGetOther(otherParam), irClass.defaultTypeForLombok()))
 
+        val included: List<IrProperty> = extractIncludedProperties(key, irClass)
+
+        // The cast is shared by the `canEqual` call and the property comparisons below - create it once, and
+        // only when at least one of them needs it, mirroring the old no-op shortcut for a property-less class.
+        val otherCast = runIf(key.hasCanEqual || included.isNotEmpty()) {
+            irTemporary(
+                irImplicitCast(irGetOther(otherParam), irClass.defaultTypeForLombok()),
+                nameHint = "other_with_cast",
+            )
+        }
+
+        // Right after the instanceof-check-and-cast, and before `super.equals()`: the same position real Lombok
+        // generates its own `canEqual` call in, so a stricter subtype can reject a looser supertype (KT-89189).
+        if (key.hasCanEqual) {
+            +irIfThenReturnFalse(primitiveBooleanNot(buildCanEqualCall(irClass, irGet(otherCast!!), irGetThis(thisParam))))
+        }
+
         val superEquals = runIf(key.callSuper) { buildSuperEqualsCall(irClass, thisParam, otherParam) }
         if (superEquals != null) {
             +irIfThenReturnFalse(
@@ -84,17 +106,10 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
             )
         }
 
-        val included: List<IrProperty> = extractIncludedProperties(key, irClass)
-
-        if (included.isEmpty()) {
+        if (otherCast == null) {
             +irReturnTrue()
             return
         }
-
-        val otherCast = irTemporary(
-            irImplicitCast(irGetOther(otherParam), irClass.defaultTypeForLombok()),
-            nameHint = "other_with_cast",
-        )
 
         for (property in included) {
             val thisProp = irGetPropertyValue(irGetThis(thisParam), property)
@@ -293,6 +308,23 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
             superQualifierSymbol = superClass.symbol,
         ).apply {
             arguments[0] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisParam.type, thisParam.symbol)
+        }
+    }
+
+    private fun IrBlockBodyBuilder.buildCanEqualBody(irClass: IrClass, otherParam: IrValueParameter) {
+        +irReturn(irIs(irGetOther(otherParam), irClass.defaultTypeForLombok()))
+    }
+
+    /**
+     * `receiver.canEqual(argument)`, virtually dispatched: [receiver] is statically typed as [irClass] but may be
+     * an instance of a stricter subtype whose own generated `canEqual` overrides this one.
+     */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.buildCanEqualCall(irClass: IrClass, receiver: IrExpression, argument: IrExpression): IrExpression {
+        val canEqualFunction = irClass.findDeclaration<IrSimpleFunction> { it.name == AccessorGenerator.CAN_EQUAL }!!
+        return irCall(canEqualFunction.symbol).apply {
+            arguments[0] = receiver
+            arguments[1] = argument
         }
     }
 

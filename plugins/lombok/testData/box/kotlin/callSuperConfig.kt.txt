@@ -39,6 +39,10 @@ class DerivedExplicitFalse : Base {
 
   }
 
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is DerivedExplicitFalse
+  }
+
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -47,6 +51,9 @@ class DerivedExplicitFalse : Base {
       other !is DerivedExplicitFalse -> return false
     }
     val tmp_0: DerivedExplicitFalse = other /*as DerivedExplicitFalse */
+    when {
+      tmp_0.canEqual(other = <this>).not() -> return false
+    }
     when {
       EQEQ(arg0 = <this>.<get-ownProp>(), arg1 = tmp_0.<get-ownProp>()).not() -> return false
     }
@@ -78,6 +85,10 @@ class DerivedExplicitTrue : Base {
 
   }
 
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is DerivedExplicitTrue
+  }
+
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -85,10 +96,13 @@ class DerivedExplicitTrue : Base {
     when {
       other !is DerivedExplicitTrue -> return false
     }
+    val tmp_2: DerivedExplicitTrue = other /*as DerivedExplicitTrue */
+    when {
+      tmp_2.canEqual(other = <this>).not() -> return false
+    }
     when {
       super<Base>.equals(other = other).not() -> return false
     }
-    val tmp_2: DerivedExplicitTrue = other /*as DerivedExplicitTrue */
     when {
       EQEQ(arg0 = <this>.<get-ownProp>(), arg1 = tmp_2.<get-ownProp>()).not() -> return false
     }
@@ -120,6 +134,10 @@ class DerivedImplicit : Base {
 
   }
 
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is DerivedImplicit
+  }
+
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -127,10 +145,13 @@ class DerivedImplicit : Base {
     when {
       other !is DerivedImplicit -> return false
     }
+    val tmp_4: DerivedImplicit = other /*as DerivedImplicit */
+    when {
+      tmp_4.canEqual(other = <this>).not() -> return false
+    }
     when {
       super<Base>.equals(other = other).not() -> return false
     }
-    val tmp_4: DerivedImplicit = other /*as DerivedImplicit */
     when {
       EQEQ(arg0 = <this>.<get-ownProp>(), arg1 = tmp_4.<get-ownProp>()).not() -> return false
     }
@@ -238,3 +259,4 @@ fun box(): String {
   }
   return "OK"
 }
+
