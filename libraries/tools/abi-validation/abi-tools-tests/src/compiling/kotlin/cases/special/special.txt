@@ -23,12 +23,12 @@ public final class cases/special/JvmFieldKt {
 
 public class cases/special/JvmFieldsClass {
 	public static final field JvmFieldsCompanion Lcases/special/JvmFieldsClass$JvmFieldsCompanion;
+	protected static field protectedCField Ljava/lang/String;
 	protected static final field protectedConst I
 	protected field protectedField Ljava/lang/String;
-	protected static field protectedСField Ljava/lang/String;
+	public static field publicCField Ljava/lang/String;
 	public static final field publicConst I
 	public field publicField Ljava/lang/String;
-	public static field publicСField Ljava/lang/String;
 	public fun <init> ()V
 }
 

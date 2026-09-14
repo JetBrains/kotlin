@@ -13,7 +13,7 @@ fun <A> main() {
     C<Int>()
 
     // TODO svtk, uncomment when extensions are called for nested calls!
-    //val < !UNUSED_VARIABLE!>с< !>: C<A> = id(< !TYPE_PARAMETER_AS_REIFIED!>C< !>())
+    //val < !UNUSED_VARIABLE!>c< !>: C<A> = id(< !TYPE_PARAMETER_AS_REIFIED!>C< !>())
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, propertyDeclaration, reified,

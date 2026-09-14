@@ -17,7 +17,7 @@ typealias TAtoNC<B> = C<B>?
 fun C.Companion.extFoo() { }
 
 enum class CE { X }
-typealias TAtoСE = CE
+typealias TAtoCE = CE
 typealias TAtoNCE = CE?
 
 fun test() {
@@ -52,7 +52,7 @@ fun test() {
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TAtoNC<!>?::Nested
 
     <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>CE<!>?::values
-    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoСE<!>?::values
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoCE<!>?::values
     TAtoNCE::values
     <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoNCE<!>?::values
 }
