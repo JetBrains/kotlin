@@ -55,11 +55,6 @@ registerKotlinSourceForVersionRange(
 
 registerKotlinSourceForVersionRange(
     GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_86,
-)
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
     GradlePluginVariant.GRADLE_811,
 )
 
