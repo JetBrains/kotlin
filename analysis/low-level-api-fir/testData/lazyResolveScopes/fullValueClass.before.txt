@@ -9,7 +9,7 @@ public final [ResolvedTo(STATUS)] fun sum([ResolvedTo(STATUS)] i: R|kotlin/Int|)
 public final [ResolvedTo(STATUS)] val doubled: <implicit>
     public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): <implicit> { LAZY_BLOCK }
 
-public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(RAW_FIR)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
 public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
