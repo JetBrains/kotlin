@@ -434,6 +434,12 @@ projectTests {
     // The `wasmFirCompilerExtraTest` task is excluded from aggregate `wasmFirCompilerTest` task.
     wasmProjectTest("wasmFirCompilerExtraTest", tags = extraTag)
     wasmProjectTest("wasmJsBoxTest", tags = jsBoxTag)
+    wasmProjectTest("wasmJsBoxWithJscOnWindows", tags = jsBoxTag) {
+        systemProperty(
+            "javascript.engine.JavaScriptCore.EnableOnWindows",
+            "true"
+        )
+    }
     wasmProjectTest("wasmJsSplittingTest", tags = jsSplittingTag)
     wasmProjectTest("wasmJsMultiModuleTest", tags = jsMultiModuleTag)
     wasmProjectTest("wasmWasiBoxTest", tags = wasiBoxTag)

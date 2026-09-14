@@ -359,6 +359,10 @@ tasks {
         dependsOn(":wasm:wasm.tests:wasmJsBoxTest")
     }
 
+    testLifecycleTask("wasmJsBoxWithJscOnWindows", QualityGate.Nightly) {
+        dependsOn(":wasm:wasm.tests:wasmJsBoxWithJscOnWindows")
+    }
+
     testLifecycleTask("wasmJsSplittingTest", QualityGate.Master) {
         dependsOn(":wasm:wasm.tests:wasmJsSplittingTest")
     }
