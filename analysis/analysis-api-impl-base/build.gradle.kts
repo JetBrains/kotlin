@@ -37,7 +37,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesImplementation(testFixtures(project(":plugins:plugin-sandbox")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler"))
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))

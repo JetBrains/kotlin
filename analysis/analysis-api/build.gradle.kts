@@ -34,7 +34,6 @@ dependencies {
 
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
-    testImplementation(project(":analysis:analysis-internal-utils"))
 }
 
 private val unstableNonPublicMarkers = listOf(
