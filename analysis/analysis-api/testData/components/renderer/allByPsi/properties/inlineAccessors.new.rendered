@@ -1,0 +1,10 @@
+val computed: Int
+  inline get()
+
+var wrapped: Int
+  inline get()
+  inline set(value: Int)
+
+var restricted: Int
+  get()
+  private inline set(value: Int)

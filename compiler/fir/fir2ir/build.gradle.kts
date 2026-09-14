@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("test-coverage-convention")
     id("require-explicit-types")
 }
 

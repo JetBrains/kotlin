@@ -1,0 +1,56 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class test/IntWrapper {
+    // source: 'primitiveTypeParameterUpperBound.kt'
+    private final field value: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): test.IntWrapper
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getValue(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class test/PrimitiveTypeParameterUpperBoundKt {
+    // source: 'primitiveTypeParameterUpperBound.kt'
+    public synthetic static method inlineLongBound$default(p0: java.lang.Long, p1: int, p2: java.lang.Object): long
+    public final static method inlineLongBound(p0: long): long
+    public synthetic static method longBound$default(p0: java.lang.Long, p1: int, p2: java.lang.Object): long
+    public final static method longBound(p0: long): long
+    public synthetic static method nullableLongBound$default(p0: java.lang.Long, p1: int, p2: java.lang.Object): java.lang.Long
+    public final static @org.jetbrains.annotations.Nullable method nullableLongBound(@org.jetbrains.annotations.Nullable p0: java.lang.Long): java.lang.Long
+    public synthetic static method partiallyMatchingStub$default(p0: java.lang.Long, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method partiallyMatchingStub(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+    public synthetic static method referenceBound$default(p0: java.lang.CharSequence, p1: int, p2: java.lang.Object): java.lang.CharSequence
+    public final static @org.jetbrains.annotations.Nullable method referenceBound(@org.jetbrains.annotations.Nullable p0: java.lang.CharSequence): java.lang.CharSequence
+    public synthetic static method referenceValueClassBound-oQxV8iw$default(p0: java.lang.String, p1: int, p2: java.lang.Object): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method referenceValueClassBound-oQxV8iw(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic static method valueClassBound-Npg_7MQ$default(p0: test.IntWrapper, p1: int, p2: java.lang.Object): int
+    public final static method valueClassBound-Npg_7MQ(p0: int): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class test/StringWrapper {
+    // source: 'primitiveTypeParameterUpperBound.kt'
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.String
+    private synthetic method <init>(p0: java.lang.String): void
+    public synthetic final static method box-impl(p0: java.lang.String): test.StringWrapper
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.String
+}

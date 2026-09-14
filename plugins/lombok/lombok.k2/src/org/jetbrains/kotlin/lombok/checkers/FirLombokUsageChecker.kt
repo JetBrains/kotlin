@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.config.ConeAnnotationCompanion
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.FlagUsageValue
 import org.jetbrains.kotlin.lombok.config.lombokService
@@ -36,13 +37,7 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
                     is ConeLombokAnnotations.Log4j2Log -> lombokService.config.log4j2LogFlagUsage
                     is ConeLombokAnnotations.XSlf4jLog -> lombokService.config.xslf4jLogFlagUsage
                 }
-                val maxOrdinal = maxOf(
-                    specificFlagUsage?.ordinal ?: -1,
-                    lombokService.config.logFlagUsage?.ordinal ?: -1
-                )
-                if (maxOrdinal >= 0) {
-                    add(log to FlagUsageValue.entries.single { it.ordinal == maxOrdinal })
-                }
+                maxOfFlagUsage(specificFlagUsage, lombokService.config.logFlagUsage)?.let { add(log to it) }
             }
             lombokService.config.toStringFlagUsage?.let { toStringFlagUsage ->
                 lombokService.getToString(declaration.symbol)?.let { toString ->
@@ -65,6 +60,21 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
                     add(superBuilder to superBuilderFlagUsage)
                 }
             }
+
+            // `lombok.anyConstructor.flagUsage` covers all three at once, exactly as `lombok.log.flagUsage` covers
+            // every log annotation above.
+            val anyConstructorFlagUsage = lombokService.config.anyConstructorFlagUsage
+
+            fun addConstructorFlagUsageIfNeeded(constructorCompanion: ConeAnnotationCompanion<*>, constructorFlagUsage: FlagUsageValue?) {
+                val flagUsage = maxOfFlagUsage(constructorFlagUsage, anyConstructorFlagUsage) ?: return
+                declaration.annotations.getAnnotationByClassId(constructorCompanion.name, context.session)?.let { rawAnnotation ->
+                    add(constructorCompanion.extract(rawAnnotation, context.session) to flagUsage)
+                }
+            }
+
+            addConstructorFlagUsageIfNeeded(ConeLombokAnnotations.NoArgsConstructor, lombokService.config.noArgsConstructorFlagUsage)
+            addConstructorFlagUsageIfNeeded(ConeLombokAnnotations.AllArgsConstructor, lombokService.config.allArgsConstructorFlagUsage)
+            addConstructorFlagUsageIfNeeded(ConeLombokAnnotations.RequiredArgsConstructor, lombokService.config.requiredArgsConstructorFlagUsage)
         }
 
         for ([actualLombokAnnotation, flagUsage] in lombokAnnotationsWithFlagUsages) {
@@ -81,4 +91,16 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
             )
         }
     }
+
+    /**
+     * Mirrors Lombok's `HandlerUtil.handleFlagUsage`, which reads both keys and takes `error` from either before
+     * `warning` from either. It prefers the specific key only between equals, and only to pick the name it prints;
+     * that choice is invisible here, the diagnostic naming the annotation rather than the key that flagged it.
+     */
+    private fun maxOfFlagUsage(specific: FlagUsageValue?, umbrella: FlagUsageValue?): FlagUsageValue? =
+        when {
+            specific == null -> umbrella
+            umbrella == null -> specific
+            else -> maxOf(umbrella, specific)
+        }
 }

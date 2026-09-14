@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.wasm.test
 
+import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoadingPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmOutputGenerationPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.*
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_WASM_JS_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
@@ -107,9 +107,14 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             this.includes = includes
         }
 
-        val loadedIr = WasmIrLoadingPipelinePhase.executePhase(input)
-        val intermediateArtifact = WasmSingleModuleBackendPipelinePhase.compileNonIncrementally(loadedIr)!!
-        val compileResult = WasmOutputGenerationPipelinePhase.executePhase(intermediateArtifact).result.single()
+        val compileResult = (WasmIrLoadingPipelinePhase then
+                WasmIrLinkingPipelinePhase then
+                WasmIrLoweringPipelinePhase then
+                WasmSingleModuleBackendIrGenerationPipelinePhase then
+                WasmOutputGenerationPipelinePhase)
+            .executePhaseIsolatedWithActions(input)!!
+            .result
+            .single()
         compileResult.writeTo(outputDir, outputName, debugMode)
     }
 

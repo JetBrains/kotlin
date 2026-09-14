@@ -4,7 +4,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("Foo_accept__TypesOfArguments__Swift_Optional_main_Bar___")
 public fun Foo_accept__TypesOfArguments__Swift_Optional_main_Bar___(self: kotlin.native.internal.NativePtr, b: kotlin.native.internal.NativePtr): Boolean {

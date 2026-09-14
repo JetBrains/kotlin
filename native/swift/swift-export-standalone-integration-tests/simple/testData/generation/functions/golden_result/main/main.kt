@@ -7,7 +7,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import operators.invoke as operators_invoke
 
 @ExportedBridge("Foo_ext__TypesOfArgumentsE__Swift_String__")

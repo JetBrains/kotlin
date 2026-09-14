@@ -10,21 +10,18 @@ public func testSuspendFunction() async throws -> Swift.Int32 {
 extension ExportedKotlinPackages.flattened {
     public static func testSuspendFunction() async throws -> Swift.Int32 {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = flattened_testSuspendFunction({
-                let originalBlock: (Swift.Int32) -> Swift.Void = continuation
-                return { (arg0: Swift.Int32) in
-                    let _arg0: Swift.Int32 = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = flattened_testSuspendFunction(Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
+}
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int32) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int32) -> Swift.Void)(_1)
+    return { _result; return true }()
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<Swift.Error>) -> Swift.Void)({ switch _1 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }())
+    return { _result; return true }()
 }

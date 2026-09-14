@@ -8,22 +8,14 @@ package org.jetbrains.kotlin.cli.pipeline.web.wasm
 import org.jetbrains.kotlin.backend.wasm.MultimoduleCompileOptions
 import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.WasmModuleDependencyImport
-import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsMultimodule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsSingleModule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
-import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifactMultimodule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifactMultimoduleBase
-import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifactSingleModule
+import org.jetbrains.kotlin.backend.wasm.ic.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import org.jetbrains.kotlin.wasm.config.wasmIcGenerateUnchangedModules
 import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
-import kotlin.collections.mutableSetOf
-import kotlin.collections.set
 
 enum class WasmCompilationMode {
     REGULAR,
@@ -189,12 +181,9 @@ private fun compileStdlibArtifactMultimodule(
 }
 
 fun compileIncrementallyMultimodule(
-    moduleArtifacts: List<ModuleArtifact>,
+    artifacts: List<WasmModuleArtifactMultimodule>,
     configuration: CompilerConfiguration
 ): List<WasmIrModuleConfiguration> {
-    val artifacts = moduleArtifacts.filterIsInstance<WasmModuleArtifactMultimodule>()
-    check(moduleArtifacts.size == artifacts.size)
-
     val stdLibArtifact = artifacts.first { it.moduleName == "<kotlin>" }
     val kotlinTestArtifact = artifacts.firstOrNull { it.moduleName == "<kotlin-test>" }
 
@@ -254,12 +243,9 @@ fun compileIncrementallyMultimodule(
 }
 
 fun compileIncrementallySingleModule(
-    moduleArtifacts: List<ModuleArtifact>,
+    artifacts: List<WasmModuleArtifactSingleModule>,
     configuration: CompilerConfiguration
 ): List<WasmIrModuleConfiguration> {
-    val artifacts = moduleArtifacts.filterIsInstance<WasmModuleArtifactSingleModule>()
-    check(moduleArtifacts.size == artifacts.size)
-
     val stdLibArtifact = artifacts.first { it.moduleName == "<kotlin>" }
     val mainArtifact = artifacts.last()
 
@@ -330,12 +316,9 @@ fun compileIncrementallySingleModule(
 }
 
 fun compileIncrementallyWholeWorld(
-    moduleArtifacts: List<ModuleArtifact>,
+    artifacts: List<WasmModuleArtifact>,
     configuration: CompilerConfiguration
 ): List<WasmIrModuleConfiguration> {
-    val artifacts = moduleArtifacts.filterIsInstance<WasmModuleArtifact>()
-    check(moduleArtifacts.size == artifacts.size)
-
     val wasmArtifacts = artifacts
         .flatMap { it.fileArtifacts }
         .mapNotNull { it.loadIrFragments()?.mainFragment }

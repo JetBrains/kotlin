@@ -9,9 +9,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.junit.jupiter.api.Timeout
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
+import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.io.path.exists
@@ -30,14 +32,7 @@ import kotlin.time.TimeSource
  *- A bug (in KGP, or configuration of the external processes) could cause the Gradle build, and thus daemon, to hang.
  *  Using independent daemons per-test means one hanging test won't affect others.
  */
-class JsContinuousBuildIT : KGPDaemonsBaseTest() {
-
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(
-            // Continuous build requires file watching is enabled.
-            fileSystemWatchEnabled = true,
-        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
-
+class JsContinuousBuildIT : AbstractWebContinuousBuildIT() {
     @GradleTest
     @TestMetadata("js-run-continuous")
     // Timeout is much longer than expected test duration because sometimes KGP needs to download JS tools.
@@ -45,14 +40,43 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
     fun testJsRunContinuousBuild(
         gradleVersion: GradleVersion,
     ) {
-        project("js-run-continuous", gradleVersion) {
+        doTest(gradleVersion, "js", "js") {
+            assertFileContains(
+                it,
+                /* language=text */ """
+                    |  function main() {
+                    |    println('Hello, world!');
+                    |    println('Hello again!!!');
+                    |  }
+                    """.trimMargin()
+            )
+        }
+    }
+}
 
-            val compiledJs = projectPath.resolve("build/compileSync/js/main/developmentExecutable/kotlin/js-run-continuous.js")
+abstract class AbstractWebContinuousBuildIT : KGPDaemonsBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            // Continuous build requires file watching is enabled.
+            fileSystemWatchEnabled = true,
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+
+    protected fun doTest(
+        gradleVersion: GradleVersion,
+        targetName: String,
+        sourceSetName: String,
+        expectedInFile: (Path) -> Unit,
+    ) {
+        project("$targetName-run-continuous", gradleVersion) {
+
+            val compiledJs =
+                projectPath.resolve("build/compileSync/$sourceSetName/main/developmentExecutable/kotlin/$targetName-run-continuous.$targetName")
 
             val daemonRelease = PipedOutputStream()
             val daemonStdin = PipedInputStream(daemonRelease)
 
-            val checker = thread(name = "testJsRunContinuousBuild checker", isDaemon = true) {
+            val checker = thread(name = "test${targetName.capitalizeAsciiOnly()}RunContinuousBuild checker", isDaemon = true) {
                 try {
                     val buildStartMark = TimeSource.Monotonic.markNow()
                     fun checkBuildDuration() {
@@ -73,7 +97,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                     Thread.sleep(5000)
 
                     // modify a file to trigger a re-build
-                    projectPath.resolve("src/jsMain/kotlin/main.kt")
+                    projectPath.resolve("src/${sourceSetName}Main/kotlin/main.kt")
                         .replaceText("//println", "println")
                     println("Modified main.kt")
 
@@ -95,7 +119,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
             }
 
             build(
-                "jsBrowserDevelopmentRun",
+                "${targetName}BrowserDevelopmentRun",
                 buildOptions = defaultBuildOptions.copy(
                     verboseVfsLogging = true,
                     continuousBuild = true,
@@ -105,18 +129,10 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
             ) {
                 checker.join()
 
-                assertFileContains(
-                    compiledJs,
-                    /* language=text */ """
-                    |  function main() {
-                    |    println('Hello, world!');
-                    |    println('Hello again!!!');
-                    |  }
-                    """.trimMargin()
-                )
+                expectedInFile(compiledJs)
 
                 // verify yarn dependency resolution can run
-                assertTasksExecuted(":kotlinStoreYarnLock")
+                assertTasksExecuted(":kotlin${if (targetName == "js") "" else targetName.capitalizeAsciiOnly()}StoreYarnLock")
 
                 // verify there's no error in the ExecAsyncHandle thread management
                 assertOutputDoesNotContain("Exception in thread")
@@ -126,15 +142,15 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                 val expectedMessage =
                     // language=text
                     """
-                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain] started
-                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain] finished {exitValue=?, failure=null}
-                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain] aborted
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js ${sourceSetName}Main] started
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js ${sourceSetName}Main] finished {exitValue=?, failure=null}
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js ${sourceSetName}Main] aborted
                     """.trimMargin()
 
                 assertEquals(
                     expectedMessage,
                     output
-                        .filterLinesStartingWith("[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain]")
+                        .filterLinesStartingWith("[ExecAsyncHandle webpack webpack/bin/webpack.js ${sourceSetName}Main]")
                         // For some reason webpack doesn't close with a consistent exit code.
                         // We don't really care about the exit code, only that it _does_ exit.
                         // So, replace the exit code with a '?' to make the assertion stable.
@@ -145,10 +161,10 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                 assertEquals(
                     // language=text
                     """
-                    |[:jsBrowserDevelopmentRun] webpack-dev-server started webpack webpack/bin/webpack.js jsMain
-                    |[:jsBrowserDevelopmentRun] webpack-dev-server stopped webpack webpack/bin/webpack.js jsMain
+                    |[:${sourceSetName}BrowserDevelopmentRun] webpack-dev-server started webpack webpack/bin/webpack.js ${sourceSetName}Main
+                    |[:${sourceSetName}BrowserDevelopmentRun] webpack-dev-server stopped webpack webpack/bin/webpack.js ${sourceSetName}Main
                     """.trimMargin(),
-                    output.filterLinesStartingWith("[:jsBrowserDevelopmentRun] webpack")
+                    output.filterLinesStartingWith("[:${sourceSetName}BrowserDevelopmentRun] webpack")
                 )
             }
         }

@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.export.internal
 
-import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createHiddenSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.defaultSwiftExportModuleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import java.io.File
 
@@ -28,30 +32,51 @@ private const val EXPORTED_MODULE_ITSELF = "the module being exported"
  *
  * @param rootModuleName the Swift module name of the module being exported, for collision detection
  */
-internal fun Project.applySwiftExportConsumerOverrides(
-    modules: Provider<List<SwiftExportedModule>>,
-    overrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>,
-    exportConfiguration: Provider<LazyResolvedConfigurationWithArtifacts>,
-    apiConfiguration: Provider<LazyResolvedConfigurationWithArtifacts?>,
-    rootModuleName: Provider<String>,
-): Provider<List<SwiftExportedModule>> = provider {
-    val overridesMap = overrides.get()
-    // Declared option layers, highest precedence first. KT-87987 adds the producer source here.
-    val sources = listOf(ConsumerOverridesOptionsSource(overridesMap))
+internal fun applySwiftExportConsumerOverrides(
+    modules: List<SwiftExportedModule>,
+    overrides: Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>,
+    metadataByComponent: Map<ComponentIdentifier, SwiftExportMetadata>,
+    exportConfiguration: LazyResolvedConfigurationWithArtifacts,
+    apiConfiguration: LazyResolvedConfigurationWithArtifacts?,
+    rootModuleName: String,
+    reportDiagnostic: (ToolingDiagnostic) -> Unit,
+): List<SwiftExportedModule> {
+    if (overrides.isEmpty() && metadataByComponent.isEmpty()) return modules
 
-    val componentByArtifact = componentByArtifact(exportConfiguration.get(), apiConfiguration.orNull)
-    val exported = modules.get().map { module ->
+    // Declared option layers, highest precedence first. KT-87987 adds the producer source here.
+    val sources = listOf(
+        ConsumerOverridesOptionsSource(overrides),
+        MetadataOptionsSource(metadataByComponent),
+    )
+
+    val componentByArtifact = componentByArtifact(exportConfiguration, apiConfiguration)
+    val exported = modules.map { module ->
         val component = componentByArtifact[module.artifact] ?: return@map module to null
-        val declaredName = sources.declaredModuleName(component)?.also { validateSwiftExportModuleName(it) }
-        val adjusted = when {
-            module.shouldBeFullyExported -> createFullyExportedSwiftExportedModule(
-                moduleName = declaredName ?: module.moduleName,
-                flattenPackage = sources.declaredRootPackage(component) ?: module.flattenPackage,
+        val declaredName = sources.declaredModuleName(component)?.also { validateSwiftExportModuleName(it, reportDiagnostic) }
+        val visibility = sources.declaredVisibility(component)
+        val mode = when (visibility) {
+            SwiftExportVisibility.EXPOSED -> SwiftExportedModuleMode.FULL
+            SwiftExportVisibility.HIDDEN -> SwiftExportedModuleMode.HIDDEN
+            null -> module.exportMode
+        }
+        // The collector names transitive modules from coordinates and fully exported ones from the component.
+        // With a declared visibility use the latter, so the name matches `api(project(...))` regardless of scope.
+        val derivedName =
+            if (visibility == null) module.moduleName else (component.defaultModuleName() ?: module.moduleName)
+        val adjusted = when (mode) {
+            SwiftExportedModuleMode.FULL -> createFullyExportedSwiftExportedModule(
+                moduleName = declaredName ?: derivedName,
+                rootPackage = sources.declaredRootPackage(component) ?: module.rootPackage,
                 artifact = module.artifact,
             )
             // A transitively exported module has no root package, so a declared one has no effect here.
-            else -> createTransitiveSwiftExportedModule(
-                moduleName = declaredName ?: module.moduleName,
+            SwiftExportedModuleMode.TRANSITIVE -> createTransitiveSwiftExportedModule(
+                moduleName = declaredName ?: derivedName,
+                artifact = module.artifact,
+            )
+            // The stub module is emitted under this name. A root package makes no sense for it, as for transitive.
+            SwiftExportedModuleMode.HIDDEN -> createHiddenSwiftExportedModule(
+                moduleName = declaredName ?: derivedName,
                 artifact = module.artifact,
             )
         }
@@ -59,7 +84,7 @@ internal fun Project.applySwiftExportConsumerOverrides(
     }
 
     val components = exported.mapNotNull { (_, component) -> component }
-    val unmatched = overridesMap.keys.filterNot { selector -> components.any(selector::matches) }
+    val unmatched = overrides.keys.filterNot { selector -> components.any(selector::matches) }
     if (unmatched.isNotEmpty()) {
         reportDiagnostic(
             KotlinToolingDiagnostics.SwiftExportModuleResolutionError(
@@ -69,7 +94,7 @@ internal fun Project.applySwiftExportConsumerOverrides(
         )
     }
 
-    val owners = listOf(rootModuleName.get() to EXPORTED_MODULE_ITSELF) +
+    val owners = listOf(rootModuleName to EXPORTED_MODULE_ITSELF) +
             exported.map { (module, component) -> module.moduleName to (component?.displayName ?: module.artifact.name) }
     // Ignoring case: the output directories are named after the modules, and the macOS file system is
     // case-insensitive by default.
@@ -81,7 +106,7 @@ internal fun Project.applySwiftExportConsumerOverrides(
         reportDiagnostic(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(duplicates))
     }
 
-    exported.map { (module, _) -> module }
+    return exported.map { (module, _) -> module }
 }
 
 /**
@@ -97,7 +122,11 @@ private fun componentByArtifact(
             for (artifact in configuration.getArtifacts(dependency.selected)) {
                 result.putIfAbsent(
                     artifact.file,
-                    SwiftExportResolvedComponent(artifact.id.componentIdentifier, dependency.selected.moduleVersion),
+                    SwiftExportResolvedComponent(
+                        id = artifact.id.componentIdentifier,
+                        rootComponentId = dependency.resolvedVariant.owner,
+                        moduleVersion = dependency.selected.moduleVersion,
+                    ),
                 )
             }
         }
@@ -108,3 +137,7 @@ private fun componentByArtifact(
     }
     return result
 }
+
+/** What the collector would name this component if it were fully exported, `null` if that can't be derived. */
+private fun SwiftExportResolvedComponent.defaultModuleName(): String? =
+    defaultSwiftExportModuleName(id, moduleVersion)?.normalizedSwiftExportModuleName

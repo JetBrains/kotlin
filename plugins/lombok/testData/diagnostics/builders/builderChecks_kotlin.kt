@@ -96,3 +96,9 @@ fun test() {
 
     BuilderLocal.<!UNRESOLVED_REFERENCE!>builder<!>()
 }
+
+// `builder()` goes into a companion object, and a nested class of that name leaves nowhere to put it, KT-88276.
+@Builder
+class BuilderWithNestedCompanionClass(val id: Int) {
+    class <!COMPANION_OBJECT_IS_NOT_GENERATED!>Companion<!>
+}

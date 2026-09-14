@@ -19,10 +19,13 @@ import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationDsl
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
@@ -407,6 +410,131 @@ class ExportExtensionXcodeIntegrationTests {
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
         assertNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
     }
+
+    @Test
+    fun `test visibility declared through the block is recorded`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure("org.example:lib:1.0") {
+                        visibility.set(SwiftExportVisibility.HIDDEN)
+                    }
+                }
+            }
+        }
+
+        assertEquals(
+            mapOf<SwiftExportDependencySelector, SwiftExportVisibility?>(
+                SwiftExportDependencySelector.Module("org.example", "lib") to SwiftExportVisibility.HIDDEN,
+            ),
+            project.declaredVisibilities(),
+        )
+    }
+
+    @Test
+    fun `test the shorthand records the same visibility as the block`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure("org.example:lib:1.0", SwiftExportVisibility.EXPOSED)
+                }
+            }
+        }
+
+        assertEquals(
+            mapOf<SwiftExportDependencySelector, SwiftExportVisibility?>(
+                SwiftExportDependencySelector.Module("org.example", "lib") to SwiftExportVisibility.EXPOSED,
+            ),
+            project.declaredVisibilities(),
+        )
+    }
+
+    @Test
+    fun `test a later call wins per property, so visibility and module name merge independently`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure("org.example:lib:1.0") {
+                        moduleName.set("Lib")
+                        visibility.set(SwiftExportVisibility.EXPOSED)
+                    }
+                    configure("org.example:lib:1.0") {
+                        visibility.set(SwiftExportVisibility.HIDDEN)
+                    }
+                }
+            }
+        }
+
+        val selector = SwiftExportDependencySelector.Module("org.example", "lib")
+        val options = assertNotNull(project.declaredOverrides()[selector])
+        assertEquals(SwiftExportVisibility.HIDDEN, options.visibility)
+        assertEquals("Lib", options.moduleName)
+    }
+
+    @Test
+    fun `test an override that declares no visibility records null`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure("org.example:lib:1.0") {
+                        moduleName.set("Lib")
+                    }
+                }
+            }
+        }
+
+        val selector = SwiftExportDependencySelector.Module("org.example", "lib")
+        assertNull(assertNotNull(project.declaredOverrides()[selector]).visibility)
+    }
+
+    @Test
+    fun `test the shorthand accepts a project dependency`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure(dependencies.project(mapOf("path" to ":")), SwiftExportVisibility.HIDDEN)
+                }
+            }
+        }
+
+        assertEquals(
+            mapOf<SwiftExportDependencySelector, SwiftExportVisibility?>(
+                SwiftExportDependencySelector.ProjectPath(":") to SwiftExportVisibility.HIDDEN,
+            ),
+            project.declaredVisibilities(),
+        )
+    }
+
+    @Test
+    fun `test the shorthand accepts a dependency provider, as a version catalog accessor is`() {
+        val project = exportDslProject {
+            // Same lazy path a version catalog accessor (a Provider<MinimalExternalModuleDependency>) takes.
+            exportExtension.swift {
+                xcodeIntegration {
+                    configure(
+                        provider { dependencies.create("org.example:lib:1.0") },
+                        SwiftExportVisibility.HIDDEN,
+                    )
+                }
+            }
+        }
+
+        assertEquals(
+            mapOf<SwiftExportDependencySelector, SwiftExportVisibility?>(
+                SwiftExportDependencySelector.Module("org.example", "lib") to SwiftExportVisibility.HIDDEN,
+            ),
+            project.declaredVisibilities(),
+        )
+    }
+
+    private fun Project.declaredOverrides(): Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions> =
+        assertNotNull(
+            exportExtension.swiftExportConfiguration.activatedXcodeIntegration,
+            "Expected the Xcode integration to have been activated"
+        ).dependencyOverrides.get()
+
+    private fun Project.declaredVisibilities(): Map<SwiftExportDependencySelector, SwiftExportVisibility?> =
+        declaredOverrides().mapValues { (_, options) -> options.visibility }
 }
 
 class LegacySwiftExportDslDiagnosticsTests {
@@ -576,14 +704,13 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
                 artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
         )
 
@@ -607,14 +734,13 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
                 artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
         )
 
@@ -649,14 +775,13 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
                 moduleName = "Subproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
         )
 
@@ -691,14 +816,13 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
                 moduleName = "SharedSubproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
         )
 
@@ -737,34 +861,33 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxAtomicfu",
                 artifactName = "atomicfu.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
                 artifactName = "kotlinx-coroutines-core.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxDatetime",
                 artifactName = "kotlinx-datetime.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxSerializationCore",
                 artifactName = "kotlinx-serialization-core.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "Subproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
         )
 
@@ -790,8 +913,7 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         assertTrue(actualModules.isEmpty(), "No modules should be exported for JVM dependencies")
     }
@@ -825,24 +947,23 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxAtomicfu",
                 artifactName = "atomicfu.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
                 artifactName = "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "SharedSubproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
         )
 
@@ -881,24 +1002,23 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxAtomicfu",
                 artifactName = "atomicfu.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
                 artifactName = "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "SharedSubproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
         )
 
@@ -931,29 +1051,28 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
                 moduleName = "AppCashSqldelightRuntime",
                 artifactName = "runtime.klib",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsComposeRuntimeRuntime",
                 artifactName = "runtime-uikitSimArm64Main-1.8.2.klib",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxAtomicfu",
                 artifactName = "atomicfu.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
                 artifactName = "kotlinx-coroutines-core.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
         )
 
@@ -996,24 +1115,23 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
                 artifactName = "kotlinx-coroutines-core.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxDatetime",
                 artifactName = "kotlinx-datetime.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "Subproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
         )
 
@@ -1050,7 +1168,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "ByteString",
                     artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                    shouldBeFullyExported = true,
+                    exportMode = SwiftExportedModuleMode.FULL,
                 ),
             ),
             actualModules.toModulesForAssertion(),
@@ -1084,7 +1202,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
                     artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                    shouldBeFullyExported = true,
+                    exportMode = SwiftExportedModuleMode.FULL,
                     flattenPackage = "kotlinx.io.bytestring",
                 ),
             ),
@@ -1120,7 +1238,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "ByteString",
                     artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                    shouldBeFullyExported = true,
+                    exportMode = SwiftExportedModuleMode.FULL,
                 ),
             ),
             actualModules.toModulesForAssertion(),
@@ -1156,7 +1274,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "ByteString",
                     artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                    shouldBeFullyExported = true,
+                    exportMode = SwiftExportedModuleMode.FULL,
                 ),
             ),
             actualModules.toModulesForAssertion(),
@@ -1199,7 +1317,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "Renamed",
                     artifactName = "subproject",
-                    shouldBeFullyExported = true,
+                    exportMode = SwiftExportedModuleMode.FULL,
                     flattenPackage = "org.example.subproject",
                 ),
             ),
@@ -1235,7 +1353,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "ByteString",
                     artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                    shouldBeFullyExported = false,
+                    exportMode = SwiftExportedModuleMode.TRANSITIVE,
                     flattenPackage = null,
                 ),
             ),
@@ -1465,9 +1583,368 @@ class ExportExtensionSwiftExportTests {
         project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
     }
 
+    @Test
+    fun `hidden visibility beats a direct api dependency`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0", SwiftExportVisibility.HIDDEN)
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.HIDDEN,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `hidden visibility applies to a transitive dependency`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0", SwiftExportVisibility.HIDDEN)
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.HIDDEN,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `exposed visibility promotes a transitive dependency and its root package now applies`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        visibility.set(SwiftExportVisibility.EXPOSED)
+                        rootPackage.set("kotlinx.io.bytestring")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.FULL,
+                    flattenPackage = "kotlinx.io.bytestring",
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `visibility and module name can be declared in the same block`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        visibility.set(SwiftExportVisibility.EXPOSED)
+                        moduleName.set("ByteString")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "ByteString",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.FULL,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `a hidden dependency keeps its root package unset`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        visibility.set(SwiftExportVisibility.HIDDEN)
+                        rootPackage.set("kotlinx.io.bytestring")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.HIDDEN,
+                    flattenPackage = null,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `a visibility override for a dependency absent from the graph is reported`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.example:not-in-the-graph:1.0", SwiftExportVisibility.EXPOSED)
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.realizeSwiftModules()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportModuleResolutionError)
+    }
+
+    @Test
+    fun `a hidden module still participates in duplicate module name detection`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                moduleName.set("Shared")
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        visibility.set(SwiftExportVisibility.HIDDEN)
+                        // Collides with the exported module itself.
+                        moduleName.set("Shared")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.assertRealizingSwiftModulesFailsWith(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
+    }
+
+    @Test
+    fun `promoting a transitive project dependency derives the same name as an api dependency would`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure(projectDependency, SwiftExportVisibility.EXPOSED)
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    // Same name as with `api(projectDependency)`, not the coordinate-derived `SharedSubproject`.
+                    moduleName = "Subproject",
+                    artifactName = "subproject",
+                    exportMode = SwiftExportedModuleMode.FULL,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `an explicit module name still wins over the re-derived one`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure(projectDependency) {
+                        visibility.set(SwiftExportVisibility.EXPOSED)
+                        moduleName.set("Renamed")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    moduleName = "Renamed",
+                    artifactName = "subproject",
+                    exportMode = SwiftExportedModuleMode.FULL,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `hiding a project dependency names its stub module the same regardless of the gradle scope`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure(projectDependency, SwiftExportVisibility.HIDDEN)
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    // `Subproject` as with `api(...)`, not `SharedSubproject` as for a plain implementation dependency.
+                    moduleName = "Subproject",
+                    artifactName = "subproject",
+                    exportMode = SwiftExportedModuleMode.HIDDEN,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `promoting an external dependency keeps its derived name`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0", SwiftExportVisibility.EXPOSED)
+                }
+            }
+        )
+
+        project.evaluate()
+
+        assertSetsEqual(
+            setOf(
+                ExportedSwiftModuleForAssertion(
+                    // External names come from the coordinates either way.
+                    moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                    artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                    exportMode = SwiftExportedModuleMode.FULL,
+                ),
+            ),
+            project.realizeSwiftModules().toModulesForAssertion(),
+        )
+    }
+
     /** The export graph diagnostics are reported when the `swiftModules` provider is realized, not during configuration. */
     private fun Project.realizeSwiftModules(): List<SwiftExportedModule> =
-        tasks.withType(SwiftExportTask::class.java).single().parameters.swiftModules.get()
+        tasks.withType(SwiftExportTask::class.java).single().resolveSwiftExportedModules(project::reportDiagnostic)
 
     /**
      * Outside a real build the diagnostics collector turns a FATAL diagnostic into an exception right away, and
@@ -1571,14 +2048,14 @@ private fun List<SwiftExportedModule>.toModulesForAssertion() = mapToSetOrEmpty 
     ExportedSwiftModuleForAssertion(
         moduleName = module.moduleName,
         artifactName = module.artifact.name,
-        shouldBeFullyExported = module.shouldBeFullyExported,
-        flattenPackage = module.flattenPackage,
+        exportMode = module.exportMode,
+        flattenPackage = module.rootPackage,
     )
 }
 
 private data class ExportedSwiftModuleForAssertion(
     val moduleName: String,
     val artifactName: String,
-    val shouldBeFullyExported: Boolean,
+    val exportMode: SwiftExportedModuleMode,
     val flattenPackage: String? = null,
 )

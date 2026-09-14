@@ -43,11 +43,22 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.time.Duration::class, "22ExportedKotlinPackages6kotlinO4timeO12KotlinStdlibE8DurationC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.time.Duration.Companion::class, "22ExportedKotlinPackages6kotlinO4timeO12KotlinStdlibE8DurationC9CompanionC")
 
-import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__")
+internal external fun KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Long, _2: Int, _3: Int, _4: Int, _5: Int): kotlin.native.internal.NativePtr
+
+@ImportedBridge("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32__")
+internal external fun KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Long, _2: Int, _3: Int, _4: Int): kotlin.native.internal.NativePtr
+
+@ImportedBridge("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32__")
+internal external fun KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Long, _2: Int, _3: Int): kotlin.native.internal.NativePtr
+
+@ImportedBridge("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32__")
+internal external fun KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Long, _2: Int): kotlin.native.internal.NativePtr
 
 @ImportedBridge("kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift")
 internal external fun kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, index: Int): Char
@@ -7119,14 +7130,15 @@ public fun kotlin_time_Duration_times__TypesOfArguments__Swift_Double__(self: ko
 public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, action: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __action = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Long, Int, Int, Int, Int)->kotlin.native.internal.NativePtr>(action);
+        val closurePtr = action;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Long, arg1: Int, arg2: Int, arg3: Int, arg4: Int ->
             val _arg0 = arg0
             val _arg1 = arg1
             val _arg2 = arg2
             val _arg3 = arg3
             val _arg4 = arg4
-            val _result = kotlinFun(_arg0, _arg1, _arg2, _arg3, _arg4)
+            val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__(closureBox.objcPtr(), _arg0, _arg1, _arg2, _arg3, _arg4)
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
         }
     }
@@ -7138,13 +7150,14 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
 public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, action: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __action = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Long, Int, Int, Int)->kotlin.native.internal.NativePtr>(action);
+        val closurePtr = action;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Long, arg1: Int, arg2: Int, arg3: Int ->
             val _arg0 = arg0
             val _arg1 = arg1
             val _arg2 = arg2
             val _arg3 = arg3
-            val _result = kotlinFun(_arg0, _arg1, _arg2, _arg3)
+            val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32__(closureBox.objcPtr(), _arg0, _arg1, _arg2, _arg3)
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
         }
     }
@@ -7156,12 +7169,13 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
 public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, action: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __action = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Long, Int, Int)->kotlin.native.internal.NativePtr>(action);
+        val closurePtr = action;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Long, arg1: Int, arg2: Int ->
             val _arg0 = arg0
             val _arg1 = arg1
             val _arg2 = arg2
-            val _result = kotlinFun(_arg0, _arg1, _arg2)
+            val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32__(closureBox.objcPtr(), _arg0, _arg1, _arg2)
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
         }
     }
@@ -7173,11 +7187,12 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
 public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, action: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __action = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Long, Int)->kotlin.native.internal.NativePtr>(action);
+        val closurePtr = action;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Long, arg1: Int ->
             val _arg0 = arg0
             val _arg1 = arg1
-            val _result = kotlinFun(_arg0, _arg1)
+            val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32__(closureBox.objcPtr(), _arg0, _arg1)
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
         }
     }

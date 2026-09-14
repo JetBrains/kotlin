@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportModuleOptionsSource
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportResolvedComponent
@@ -21,7 +20,11 @@ import kotlin.test.assertNull
  */
 class SwiftExportModuleOptionsSourceTests {
 
-    private val component = SwiftExportResolvedComponent(ComponentIdentifier { "test-component" }, moduleVersion = null)
+    private val component = SwiftExportResolvedComponent(
+        id = { "test-component" },
+        rootComponentId = { "test-component" },
+        moduleVersion = null
+    )
 
     private fun layer(moduleName: String?, rootPackage: String?) =
         SwiftExportModuleOptionsSource { SwiftExportDeclaredModuleOptions(moduleName, rootPackage) }

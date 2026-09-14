@@ -7,6 +7,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
+    id("test-coverage-convention")
 }
 
 val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }

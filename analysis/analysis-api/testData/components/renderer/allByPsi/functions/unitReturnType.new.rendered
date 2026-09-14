@@ -1,0 +1,7 @@
+fun implicitUnit()
+
+fun explicitUnit()
+
+fun nullableUnit(): Unit?
+
+suspend fun suspendingUnit()

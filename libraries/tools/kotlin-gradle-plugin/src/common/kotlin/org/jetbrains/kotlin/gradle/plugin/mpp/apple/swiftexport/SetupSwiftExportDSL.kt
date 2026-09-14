@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedSwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.EXPORT_EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.shareSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.swiftExportDependencySelectorFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration
 
@@ -52,6 +54,23 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
     val swiftExportConfiguration = exportExtension.swiftExportConfiguration
     if (swiftExportConfiguration.moduleName.isPresent || swiftExportConfiguration.rootPackage.isPresent) {
         locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration(swiftExportConfiguration)
+
+        // Published dependencies expose their metadata through the `swiftExportMetadataElements` variant registered
+        // above. Same-build subprojects additionally share it as a secondary variant on each apple target's
+        // `apiElements`, so that a consuming project in the same build can read it at execution time without relying on
+        // the module cache (which a not-yet-published subproject has no entry in).
+        val metadata = project.provider {
+            SwiftExportMetadata(
+                moduleName = swiftExportConfiguration.moduleName.orNull,
+                rootPackage = swiftExportConfiguration.rootPackage.orNull,
+            )
+        }
+        appleTargets.all { target ->
+            project.shareSwiftExportMetadata(
+                project.configurations.getByName(target.apiElementsConfigurationName),
+                metadata,
+            )
+        }
     }
 
     // The targets are awaited above, so the DSL is finalised by now and the activation is order-independent.

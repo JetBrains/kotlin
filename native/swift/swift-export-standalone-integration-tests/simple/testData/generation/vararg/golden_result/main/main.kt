@@ -2,9 +2,12 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Accessor::class, "4main8AccessorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Accessor.Inner::class, "4main8AccessorC5InnerC")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+import kotlin.native.internal.ExportedBridge
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): Boolean
 
 @ExportedBridge("Accessor_Inner_init_allocate")
 public fun Accessor_Inner_init_allocate(): kotlin.native.internal.NativePtr {
@@ -129,12 +132,5 @@ public fun __root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Var
     val __a = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(a).toTypedArray()
     val __b = b
     val _result = run { withDefault(*__a, b = __b) }
-    return run { _result; true }
-}
-
-@ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock: kotlin.native.internal.NativePtr): Boolean {
-    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val _result = run { (__pointerToBlock as Function0<Unit>).invoke() }
     return run { _result; true }
 }

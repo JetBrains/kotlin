@@ -1,5 +1,4 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
 
 context(c: String, n: Int)
 val topProp: String

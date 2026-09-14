@@ -13,6 +13,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
+import org.jetbrains.kotlin.gradle.fus.internal.isCiBuild
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CLASSLOADER_CACHE_TIMEOUT
@@ -485,8 +486,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val runKotlinMetadataCompilerViaBuildToolsApi: Provider<Boolean>
         get() = booleanProvider(KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
 
+    @Suppress("DEPRECATION")
+    // Uses [runKotlinCompilerViaBuildToolsApi] as the default value provider to avoid warnings when BTA is explicitly disabled
     val generateCompilerRefIndex: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_GENERATE_COMPILER_REF_INDEX).orElse(false)
+        get() = booleanProvider(KOTLIN_GENERATE_COMPILER_REF_INDEX).orElse(
+            runKotlinCompilerViaBuildToolsApi.zip(project.providers.provider { isCiBuild() }) { runsViaBta, isCi ->
+                runsViaBta && !isCi
+            }
+        )
 
     val allowLegacyMppDependencies: Boolean
         get() = booleanProperty(KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES) ?: false

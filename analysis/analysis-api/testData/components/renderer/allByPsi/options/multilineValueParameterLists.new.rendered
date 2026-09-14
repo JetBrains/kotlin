@@ -1,0 +1,24 @@
+fun none()
+
+fun single(a: Int)
+
+fun several(
+  a: Int,
+  b: String,
+  c: Boolean = ...
+)
+
+class Owner(
+  val a: Int,
+  b: String
+) {
+  constructor(a: Int)
+
+  fun member(
+    x: Long,
+    y: Long
+  )
+
+  var counted: Int
+    set(value: Int)
+}

@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
@@ -186,6 +188,26 @@ val FirBasedSymbol<*>.hasJavaOrigin get() = origin is FirDeclarationOrigin.Java
  */
 val FirClassSymbol<*>.isSupportedLombokTarget: Boolean
     get() = !isInterface && !isAnnotationClass
+
+/**
+ * Whether a constructor can be generated into [this] class at all.
+ *
+ * A Kotlin inner class cannot have one. A property initializer referencing a primary constructor parameter is
+ * inlined by fir2ir into every constructor that carries a delegating call, and in the generated one that
+ * parameter is unbound, so the JVM backend fails with "No mapping for symbol" (KT-88659). The only way out is
+ * to leave the delegating call off and build the body after fir2ir, which an inner class cannot do:
+ * `InnerClassesLowering` takes a super-delegating constructor without an `IrInstanceInitializerCall` for a
+ * `this(...)` delegation and passes the outer instance to a call with no receiver slot. Neither shape works.
+ *
+ * A local class follows it: `ANNOTATION_HAS_NO_EFFECT` has always been reported for one,
+ * `KotlinTarget.LOCAL_CLASS` never having been an allowed target, while the generator generated into it anyway.
+ * The noarg plugin supports neither kind either, and for the very same lowering.
+ *
+ * A Java class is unaffected: nothing is generated into its bytecode here - `javac` and Lombok itself do that -
+ * and the constructor built in FIR exists only so that Kotlin code can resolve the one Lombok really writes.
+ */
+val FirClassSymbol<*>.supportsGeneratedConstructor: Boolean
+    get() = hasJavaOrigin || (!isInner && !isLocal)
 
 /**
  * Whether [this] is a plain class, that is, neither an interface, nor an annotation class, nor an enum class, nor

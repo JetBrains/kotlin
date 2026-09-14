@@ -1,0 +1,5 @@
+enum class Order {
+    FIRST,
+    SECOND,
+    THIRD
+}

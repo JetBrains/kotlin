@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
-import org.jetbrains.kotlin.fir.plugin.createCompanionObject
+import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -56,13 +56,9 @@ import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Singular
 import org.jetbrains.kotlin.lombok.config.LombokService
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCallOrError
-import org.jetbrains.kotlin.lombok.generators.kotlin.createConstructorIfGeneratedCompanion
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
-import org.jetbrains.kotlin.lombok.generators.kotlin.isCompanionNeeded
-import org.jetbrains.kotlin.lombok.generators.kotlin.needsConstructorIfGeneratedCompanion
 import org.jetbrains.kotlin.lombok.java.*
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
@@ -70,7 +66,6 @@ import kotlin.contracts.contract
 
 sealed class BuilderDeclarationType {
     sealed class Class : BuilderDeclarationType() {
-        object Companion : Class()
         object Builder : Class()
     }
 
@@ -107,7 +102,8 @@ sealed class BuilderDeclarationType {
 
 class BuilderGeneratorKey(val type: BuilderDeclarationType) : LombokDeclarationKey()
 
-abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession) : FirDeclarationGenerationExtension(session) {
+abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession) :
+    FirDeclarationGenerationExtension(session), LombokCompanionObjectContributor {
     companion object {
         private val TO_BUILDER = Name.identifier("toBuilder")
     }
@@ -160,7 +156,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return buildSet {
-            if (classSymbol.needsConstructorIfGeneratedCompanion<BuilderGeneratorKey>()) {
+            if (classSymbol.generatedBuilderClassKey != null) {
                 add(SpecialNames.INIT)
             }
 
@@ -172,13 +168,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        return buildSet {
-            if (isCompanionNeeded(classSymbol, context) && needsCompanionForStaticBuilder(classSymbol)) {
-                add(DEFAULT_NAME_FOR_COMPANION_OBJECT)
-            }
-
-            addAll(getBuilderNames(classSymbol))
-        }
+        return getBuilderNames(classSymbol)
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
@@ -204,35 +194,37 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         } ?: emptyList()
     }
 
-    override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        return buildList {
-            createConstructorIfGeneratedCompanion<BuilderGeneratorKey>(context.owner)?.let {
-                add(it)
-            }
-        }
-    }
-
     override fun generateNestedClassLikeDeclaration(
         owner: FirClassSymbol<*>,
         name: Name,
         context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
-        if (name == DEFAULT_NAME_FOR_COMPANION_OBJECT) {
-            return runIf(needsCompanionForStaticBuilder(owner)) {
-                createCompanionObject(owner, BuilderGeneratorKey(BuilderDeclarationType.Class.Companion)).symbol
-            }
-        }
-
         return builderClassesCache.getValue(BuilderKey(owner, name))
     }
 
+    override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
+        val key = context.owner.generatedBuilderClassKey ?: return emptyList()
+        return listOf(createDefaultPrivateConstructor(context.owner, key).symbol)
+    }
+
     /**
-     * Whether [classSymbol] needs a generated companion object to host its `builder()` factories. Only a static
-     * builder needs one — a `@Builder` method's factory is an instance method on the entity itself, so a class
-     * carrying nothing but method builders must not grow an otherwise empty companion.
+     * The key of [this] if it is a builder class this generator produced, `null` otherwise.
+     *
+     * `createEmptyBuilderClass` builds the class alone; the constructor `builder()` and `toBuilder()` call has to
+     * be generated separately, and only for the builder class - the companion object holding those functions is
+     * [LombokCompanionObjectGenerator]'s, constructor included.
      */
-    private fun needsCompanionForStaticBuilder(classSymbol: FirClassSymbol<*>): Boolean =
-        builderWithDeclarationsCache.getValue(classSymbol)?.any { it.declaration.isStaticDeclaration } == true
+    private val FirClassSymbol<*>.generatedBuilderClassKey: BuilderGeneratorKey?
+        get() = ((origin as? FirDeclarationOrigin.Plugin)?.key as? BuilderGeneratorKey)
+            ?.takeIf { it.type is BuilderDeclarationType.Class.Builder }
+
+    /**
+     * Whether [owner] needs a generated companion object to host its `builder()` factories. Only a static builder
+     * needs one — a `@Builder` method's factory is an instance method on the entity itself, so a class carrying
+     * nothing but method builders must not ask for an otherwise empty companion.
+     */
+    override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean =
+        builderWithDeclarationsCache.getValue(owner)?.any { it.declaration.isStaticDeclaration } == true
 
     /**
      * The same class can have both builder and entity methods in case of names clashing.

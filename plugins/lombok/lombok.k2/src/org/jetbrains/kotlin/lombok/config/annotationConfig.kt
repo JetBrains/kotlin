@@ -57,9 +57,14 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TOPIC
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TO_BUILDER
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.VALUE
 import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.ConeLombokAnnotation
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_CALL_SUPER_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_DO_NOT_USE_GETTERS_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ANY_CONSTRUCTOR_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.NO_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ALL_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_ONLY_EXPLICITLY_INCLUDED_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.OF
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TO_STRING_DO_NOT_USE_GETTERS_CONFIG
@@ -75,7 +80,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * keeping processors' code unaware about configuration origin.
  */
 
-abstract class ConeAnnotationCompanion<T>(val name: ClassId) {
+abstract class ConeAnnotationCompanion<T : ConeLombokAnnotation>(val name: ClassId) {
     abstract fun extract(annotation: FirAnnotation, session: FirSession): T
 
     fun getOrNull(annotated: FirAnnotationContainer, session: FirSession): T? {
@@ -127,6 +132,10 @@ class GlobalConfig(
     val equalsAndHashCodeOnlyExplicitlyIncluded: Boolean,
     val equalsAndHashCodeFlagUsage: FlagUsageValue?,
     val equalsAndHashCodeDoNotUseGetters: Boolean,
+    val anyConstructorFlagUsage: FlagUsageValue?,
+    val noArgsConstructorFlagUsage: FlagUsageValue?,
+    val allArgsConstructorFlagUsage: FlagUsageValue?,
+    val requiredArgsConstructorFlagUsage: FlagUsageValue?,
 ) {
     companion object {
         fun extract(config: LombokConfig): GlobalConfig {
@@ -166,6 +175,10 @@ class GlobalConfig(
                     EQUALS_AND_HASH_CODE_FLAG_USAGE_CONFIG
                 ),
                 equalsAndHashCodeDoNotUseGetters = config.getBoolean(EQUALS_AND_HASH_CODE_DO_NOT_USE_GETTERS_CONFIG) ?: false,
+                anyConstructorFlagUsage = parseFlagUsage(config, ANY_CONSTRUCTOR_FLAG_USAGE_CONFIG),
+                noArgsConstructorFlagUsage = parseFlagUsage(config, NO_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
+                allArgsConstructorFlagUsage = parseFlagUsage(config, ALL_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
+                requiredArgsConstructorFlagUsage = parseFlagUsage(config, REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
             )
         }
     }

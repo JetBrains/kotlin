@@ -251,7 +251,7 @@ public class SirCustomTypeTranslatorImpl(
         }
 
         context(sir: SirSession)
-        override fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> =
+        override fun helperBridges(typeNamer: SirTypeNamer, position: SirTypeVariance): List<SirBridge> =
             listOf(constructorBridge(), getterBridge(0), getterBridge(1))
 
         private fun constructorBridge(): SirFunctionBridge {

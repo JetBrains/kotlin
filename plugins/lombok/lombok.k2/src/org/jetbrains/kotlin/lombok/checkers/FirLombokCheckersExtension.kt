@@ -26,6 +26,7 @@ class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExt
             FirLombokConstructorsChecker,
             FirLombokEqualsAndHashCodeChecker,
             FirLombokBuilderChecker,
+            FirLombokCompanionObjectChecker,
         )
     }
 

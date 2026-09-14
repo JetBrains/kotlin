@@ -170,7 +170,6 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, 
     )
 
     return KonanIrLinker(
-            currentModule = moduleDescriptor,
             configuration = config.configuration,
             symbolTable = symbolTable,
             friendModules = friendModulesMap,

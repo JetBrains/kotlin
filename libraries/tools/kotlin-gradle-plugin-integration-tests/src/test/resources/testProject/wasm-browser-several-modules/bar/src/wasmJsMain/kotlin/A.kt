@@ -4,5 +4,7 @@
  */
 
 fun main() {
-    println("Hello, world")
+    bar()
 }
+
+fun bar() = "Hello from bar"

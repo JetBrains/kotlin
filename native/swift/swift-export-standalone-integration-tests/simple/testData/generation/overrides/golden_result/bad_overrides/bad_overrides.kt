@@ -6,7 +6,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ImportedBridge("weird_A_bar_get__reverse_swift")
 internal external fun weird_A_bar_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int

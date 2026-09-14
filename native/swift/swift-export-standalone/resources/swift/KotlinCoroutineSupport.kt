@@ -6,9 +6,9 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.coroutines.*
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.ImportedBridge
 import kotlin.plus
 import platform.Foundation.NSValue
 import platform.Foundation.valueWithPointer
@@ -86,6 +86,22 @@ public suspend fun <T> suspendSwiftCoroutine(
     }
 }
 
+@ImportedBridge("_kotlin_swift_invokeCancellationCallback")
+internal external fun _kotlin_swift_invokeCancellationCallback(pointerToClosure: kotlin.native.internal.NativePtr)
+
+@ImportedBridge("_kotlin_swift_invokeFlowContinuation")
+internal external fun _kotlin_swift_invokeFlowContinuation(
+    pointerToClosure: kotlin.native.internal.NativePtr,
+    hasValue: Boolean,
+    value: kotlin.native.internal.NativePtr,
+)
+
+@ImportedBridge("_kotlin_swift_invokeFlowException")
+internal external fun _kotlin_swift_invokeFlowException(
+    pointerToClosure: kotlin.native.internal.NativePtr,
+    error: kotlin.native.internal.NativePtr,
+)
+
 @ExportedBridge("__root___SwiftJob_init_allocate")
 public fun __root___SwiftJob_init_allocate(): kotlin.native.internal.NativePtr {
     val instance = kotlin.native.internal.createUninitializedInstance<SwiftJob>()
@@ -95,7 +111,8 @@ public fun __root___SwiftJob_init_allocate(): kotlin.native.internal.NativePtr {
 @ExportedBridge("__root___SwiftJob_init_initialize")
 public fun __root___SwiftJob_init_initialize(__kt: kotlin.native.internal.NativePtr, _block: kotlin.native.internal.NativePtr): Unit {
     val instance = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val block = convertBlockPtrToKotlinFunction<()->Unit>(_block)
+    val closureBox = interpretObjCPointer<kotlin.Any>(_block).also { objc_release(_block) }
+    val block = { _kotlin_swift_invokeCancellationCallback(closureBox.objcPtr()) }
     kotlin.native.internal.initInstance(instance, SwiftJob(cancellationCallback = block))
 }
 
@@ -108,7 +125,8 @@ public fun __root___SwiftJob_cancelExternally(self: kotlin.native.internal.Nativ
 @ExportedBridge("__root___SwiftJob_setCallback")
 public fun __root___SwiftJob_setCallback(self: kotlin.native.internal.NativePtr, _block: kotlin.native.internal.NativePtr): Unit {
     val instance = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SwiftJob
-    val block = convertBlockPtrToKotlinFunction<()->Unit>(_block)
+    val closureBox = interpretObjCPointer<kotlin.Any>(_block).also { objc_release(_block) }
+    val block = { _kotlin_swift_invokeCancellationCallback(closureBox.objcPtr()) }
     instance.setCallback(block)
 }
 
@@ -260,23 +278,24 @@ public fun SwiftFlowIterator_cancel(self: kotlin.native.internal.NativePtr): Uni
 public fun SwiftFlowIterator_next(self: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SwiftFlowIterator<kotlin.Any?>
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.Boolean, kotlin.native.internal.NativePtr)->Unit>(continuation);
+        val closureBox = interpretObjCPointer<kotlin.Any>(continuation).also { objc_release(continuation) };
         { arg0: SwiftFlowIterator<kotlin.Any?>.Value? ->
-            val _result = if (arg0 == null) {
-                kotlinFun(false, kotlin.native.internal.NativePtr.NULL)
+            if (arg0 == null) {
+                _kotlin_swift_invokeFlowContinuation(closureBox.objcPtr(), false, kotlin.native.internal.NativePtr.NULL)
             } else {
                 val value = arg0.value
                 val _value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
-                kotlinFun(true, _value)
+                _kotlin_swift_invokeFlowContinuation(closureBox.objcPtr(), true, _value)
             }
-            _result
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(exception);
+        val closureBox = interpretObjCPointer<kotlin.Any>(exception).also { objc_release(exception) };
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
-            _result
+            _kotlin_swift_invokeFlowException(
+                closureBox.objcPtr(),
+                if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            )
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob

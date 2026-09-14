@@ -101,6 +101,12 @@ object LombokConfigNames {
     const val EQUALS_AND_HASH_CODE_DO_NOT_USE_GETTERS_CONFIG = "lombok.equalsAndHashCode.doNotUseGetters"
     const val EQUALS_AND_HASH_CODE_ONLY_EXPLICITLY_INCLUDED_CONFIG = "lombok.equalsAndHashCode.onlyExplicitlyIncluded"
     const val EQUALS_AND_HASH_CODE_FLAG_USAGE_CONFIG = "lombok.equalsAndHashCode.flagUsage"
+
+    /** Covers every `@XArgsConstructor` at once, the way `lombok.log.flagUsage` covers every log annotation. */
+    const val ANY_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.anyConstructor.flagUsage"
+    const val NO_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.noArgsConstructor.flagUsage"
+    const val ALL_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.allArgsConstructor.flagUsage"
+    const val REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.requiredArgsConstructor.flagUsage"
 }
 
 enum class FlagUsageValue {

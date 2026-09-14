@@ -233,21 +233,7 @@ public func awaitAll(
     deferreds: any ExportedKotlinPackages.kotlinx.coroutines.Deferred...
 ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
     try await withKotlinContinuation { continuation, exception, cancellation in
-        let _: Bool = kotlinx_coroutines_awaitAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Deferred__Vararg___(deferreds, {
-            let originalBlock: (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void = continuation
-            return { (arg0: Any) in
-                let _arg0: Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = arg0 as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }(), {
-            let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }(), cancellation.__externalRCRef())
+        let _: Bool = kotlinx_coroutines_awaitAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Deferred__Vararg___(deferreds, Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
 public func awaitCancellation() async throws -> Swift.Never {
@@ -282,21 +268,7 @@ public func joinAll(
     jobs: any ExportedKotlinPackages.kotlinx.coroutines.Job...
 ) async throws -> Swift.Void {
     try await withKotlinContinuation { continuation, exception, cancellation in
-        let _: Bool = kotlinx_coroutines_joinAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__Vararg___(jobs, {
-            let originalBlock: (Swift.Void) -> Swift.Void = continuation
-            return { (arg0: Swift.Bool) in
-                let _arg0: Swift.Void = { arg0; return () }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }(), {
-            let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }(), cancellation.__externalRCRef())
+        let _: Bool = kotlinx_coroutines_joinAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__Vararg___(jobs, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
 public func newFixedThreadPoolContext(
@@ -406,25 +378,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
             receiver: (any KotlinRuntimeSupport._KotlinBridgeable)?,
             completion: any ExportedKotlinPackages.kotlin.coroutines.Continuation
         ) -> Swift.Void {
-            return { kotlinx_coroutines_CoroutineStart_invoke__TypesOfArguments__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation__(self.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-                return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), receiver.map { it in it.__externalRCRef() } ?? nil, completion.__externalRCRef()); return () }()
+            return { kotlinx_coroutines_CoroutineStart_invoke__TypesOfArguments__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation__(self.__externalRCRef(), Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), receiver.map { it in it.__externalRCRef() } ?? nil, completion.__externalRCRef()); return () }()
         }
         public init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
@@ -741,25 +695,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
             receiver: (any KotlinRuntimeSupport._KotlinBridgeable)?,
             block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void {
-            return { kotlinx_coroutines_AbstractCoroutine_start__TypesOfArguments__ExportedKotlinPackages_kotlinx_coroutines_CoroutineStart_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), start.__externalRCRef(), receiver.map { it in it.__externalRCRef() } ?? nil, {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-                return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }()); return () }()
+            return { kotlinx_coroutines_AbstractCoroutine_start__TypesOfArguments__ExportedKotlinPackages_kotlinx_coroutines_CoroutineStart_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), start.__externalRCRef(), receiver.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
         }
         @_spi(kotlinx$coroutines$InternalCoroutinesApi)
         public init(
@@ -1142,46 +1078,18 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
             invokeImmediately: Swift.Bool,
             handler: @escaping ExportedKotlinPackages.kotlinx.coroutines.CompletionHandler
         ) -> any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_JobSupport_invokeOnCompletion__TypesOfArguments__Swift_Bool_Swift_Bool_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), onCancelling, invokeImmediately, {
-                let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = handler
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_JobSupport_invokeOnCompletion__TypesOfArguments__Swift_Bool_Swift_Bool_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), onCancelling, invokeImmediately, Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
         }
         @_spi(kotlinx$coroutines$InternalCoroutinesApi)
         public final func invokeOnCompletion(
             handler: @escaping ExportedKotlinPackages.kotlinx.coroutines.CompletionHandler
         ) -> any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_JobSupport_invokeOnCompletion__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = handler
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_JobSupport_invokeOnCompletion__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
         }
         @_spi(kotlinx$coroutines$InternalCoroutinesApi)
         public final func join() async throws -> Swift.Void {
             try await withKotlinContinuation { continuation, exception, cancellation in
-                let _: Bool = kotlinx_coroutines_JobSupport_join(self.__externalRCRef(), {
-                    let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                    return { (arg0: Swift.Bool) in
-                        let _arg0: Swift.Void = { arg0; return () }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), {
-                    let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                    return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                        let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), cancellation.__externalRCRef())
+                let _: Bool = kotlinx_coroutines_JobSupport_join(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
         @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Unavailable type(s): ExportedKotlinPackages.kotlinx.coroutines.ParentJob")
@@ -1328,46 +1236,18 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
             invokeImmediately: Swift.Bool,
             handler: @escaping ExportedKotlinPackages.kotlinx.coroutines.CompletionHandler
         ) -> any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_NonCancellable_invokeOnCompletion__TypesOfArguments__Swift_Bool_Swift_Bool_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), onCancelling, invokeImmediately, {
-                let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = handler
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_NonCancellable_invokeOnCompletion__TypesOfArguments__Swift_Bool_Swift_Bool_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), onCancelling, invokeImmediately, Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
         }
         @available(*, deprecated, message: "NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")
         public func invokeOnCompletion(
             handler: @escaping ExportedKotlinPackages.kotlinx.coroutines.CompletionHandler
         ) -> any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_NonCancellable_invokeOnCompletion__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = handler
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_NonCancellable_invokeOnCompletion__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
         }
         @available(*, deprecated, message: "NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")
         public func join() async throws -> Swift.Void {
             try await withKotlinContinuation { continuation, exception, cancellation in
-                let _: Bool = kotlinx_coroutines_NonCancellable_join(self.__externalRCRef(), {
-                    let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                    return { (arg0: Swift.Bool) in
-                        let _arg0: Swift.Void = { arg0; return () }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), {
-                    let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                    return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                        let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), cancellation.__externalRCRef())
+                let _: Bool = kotlinx_coroutines_NonCancellable_join(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
         @available(*, deprecated, message: "NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")
@@ -1469,15 +1349,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func coroutineExceptionHandler(
         handler: @escaping (any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext, ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.CoroutineExceptionHandler {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_CoroutineExceptionHandler__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_U20ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void__({
-            let originalBlock: (any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext, ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void = handler
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
-                let _arg1: ExportedKotlinPackages.kotlin.Throwable = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: arg1)
-                let _result = originalBlock(_arg0, _arg1)
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineExceptionHandler.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineExceptionHandler
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_CoroutineExceptionHandler__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_U20ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void__(Unmanaged.passRetained((handler as (any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext, ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineExceptionHandler.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineExceptionHandler
     }
     public static func coroutineScope(
         context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
@@ -1495,13 +1367,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func runnable(
         block: @escaping () -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.Runnable {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_Runnable__TypesOfArguments__U2829202D_U20Swift_Void__({
-            let originalBlock: () -> Swift.Void = block
-            return {
-                let _result = originalBlock()
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Runnable.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Runnable
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_Runnable__TypesOfArguments__U2829202D_U20Swift_Void__(Unmanaged.passRetained((block as () -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Runnable.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Runnable
     }
     public static func supervisorJob(
         parent: (any ExportedKotlinPackages.kotlinx.coroutines.Job)?
@@ -1512,140 +1378,38 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         deferreds: any ExportedKotlinPackages.kotlinx.coroutines.Deferred...
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_awaitAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Deferred__Vararg___(deferreds, {
-                let originalBlock: (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void = continuation
-                return { (arg0: Any) in
-                    let _arg0: Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = arg0 as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_awaitAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Deferred__Vararg___(deferreds, Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func awaitCancellation() async throws -> Swift.Never {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_awaitCancellation({
-                let originalBlock: (Swift.Never) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Never = { arg0; fatalError() }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_awaitCancellation(Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func coroutineScope(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_coroutineScope__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___({
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-                return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_coroutineScope__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func currentCoroutineContext() async throws -> any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_currentCoroutineContext({
-                let originalBlock: (any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_currentCoroutineContext(Unmanaged.passRetained((continuation as (any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func delay(
         timeMillis: Swift.Int64
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_delay__TypesOfArguments__Swift_Int64__(timeMillis, {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_delay__TypesOfArguments__Swift_Int64__(timeMillis, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func delay(
         duration: ExportedKotlinPackages.kotlin.time.Duration
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_delay__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(duration.__externalRCRef(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_delay__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(duration.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
@@ -1659,21 +1423,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         jobs: any ExportedKotlinPackages.kotlinx.coroutines.Job...
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_joinAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__Vararg___(jobs, {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_joinAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__Vararg___(jobs, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func newFixedThreadPoolContext(
@@ -1692,91 +1442,20 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlinx_coroutines_runBlocking__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(context.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch kotlinx_coroutines_runBlocking__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(context.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     public static func supervisorScope(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_supervisorScope__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___({
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-                return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_supervisorScope__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func suspendCancellableCoroutine(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation) -> Swift.Void
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_suspendCancellableCoroutine__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuationU29202D_U20Swift_Void__({
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation) -> Swift.Void = block
-                return { (arg0: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_suspendCancellableCoroutine__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuationU29202D_U20Swift_Void__(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func withContext(
@@ -1784,39 +1463,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_withContext__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(context.__externalRCRef(), {
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-                return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_withContext__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(context.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func withTimeout(
@@ -1824,39 +1471,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_withTimeout__TypesOfArguments__Swift_Int64_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeMillis, {
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-                return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_withTimeout__TypesOfArguments__Swift_Int64_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeMillis, Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func withTimeout(
@@ -1864,39 +1479,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_withTimeout__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeout.__externalRCRef(), {
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-                return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_withTimeout__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeout.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func withTimeoutOrNull(
@@ -1904,39 +1487,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_withTimeoutOrNull__TypesOfArguments__Swift_Int64_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeMillis, {
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-                return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_withTimeoutOrNull__TypesOfArguments__Swift_Int64_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeMillis, Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func withTimeoutOrNull(
@@ -1944,58 +1495,12 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_withTimeoutOrNull__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeout.__externalRCRef(), {
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-                return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_withTimeoutOrNull__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeout.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func yield() async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_yield({
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_yield(Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func async(
@@ -2004,25 +1509,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         start: ExportedKotlinPackages.kotlinx.coroutines.CoroutineStart,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.Deferred {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_async__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ExportedKotlinPackages_kotlinx_coroutines_CoroutineStart_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), context.__externalRCRef(), start.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Deferred.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Deferred
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_async__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ExportedKotlinPackages_kotlinx_coroutines_CoroutineStart_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), context.__externalRCRef(), start.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Deferred.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Deferred
     }
     public static func cancel(
         _ receiver: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext,
@@ -2054,21 +1541,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.Job
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_cancelAndJoin__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__(receiver.__externalRCRef(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_cancelAndJoin__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__(receiver.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func cancelChildren(
@@ -2116,39 +1589,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_invoke__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_CoroutineDispatcher_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), {
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-                return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_invoke__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_CoroutineDispatcher_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func launch(
@@ -2157,25 +1598,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         start: ExportedKotlinPackages.kotlinx.coroutines.CoroutineStart,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.Job {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_launch__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ExportedKotlinPackages_kotlinx_coroutines_CoroutineStart_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Void__(receiver.__externalRCRef(), context.__externalRCRef(), start.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Void = block
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Job.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Job
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_launch__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ExportedKotlinPackages_kotlinx_coroutines_CoroutineStart_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Void__(receiver.__externalRCRef(), context.__externalRCRef(), start.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Job.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Job
     }
     public static func newCoroutineContext(
         _ receiver: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext,
@@ -2198,13 +1621,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func disposableHandle(
         function: @escaping () -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_DisposableHandle__TypesOfArguments__U2829202D_U20Swift_Void__({
-            let originalBlock: () -> Swift.Void = function
-            return {
-                let _result = originalBlock()
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_DisposableHandle__TypesOfArguments__U2829202D_U20Swift_Void__(Unmanaged.passRetained((function as () -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
     }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.intrinsics {
@@ -2213,24 +1630,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.intrinsics {
         _ receiver: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?,
         completion: any ExportedKotlinPackages.kotlin.coroutines.Continuation
     ) -> Swift.Void {
-        return { kotlinx_coroutines_intrinsics_startCoroutineCancellable__TypesOfArgumentsE__U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation__({
-            let originalBlock: () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = receiver
-            return { (continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock()
-                }
-                return { _result; return true }()
-            }
-        }(), completion.__externalRCRef()); return () }()
+        return { kotlinx_coroutines_intrinsics_startCoroutineCancellable__TypesOfArgumentsE__U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation__(Unmanaged.passRetained((receiver as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), completion.__externalRCRef()); return () }()
     }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.channels {
@@ -2558,14 +1958,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         public func invokeOnClose(
             handler: @escaping (ExportedKotlinPackages.kotlin.Throwable?) -> Swift.Void
         ) -> Swift.Void {
-            return { kotlinx_coroutines_channels_ConflatedBroadcastChannel_invokeOnClose__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = handler
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }()); return () }()
+            return { kotlinx_coroutines_channels_ConflatedBroadcastChannel_invokeOnClose__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()); return () }()
         }
         @available(*, unavailable, message: "Deprecated in the favour of 'trySend' method. Replacement: trySend(element).isSuccess") @_spi(kotlinx$coroutines$ObsoleteCoroutinesApi)
         public func offer(
@@ -2582,21 +1975,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) async throws -> Swift.Void {
             try await withKotlinContinuation { continuation, exception, cancellation in
-                let _: Bool = kotlinx_coroutines_channels_ConflatedBroadcastChannel_send__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil, {
-                    let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                    return { (arg0: Swift.Bool) in
-                        let _arg0: Swift.Void = { arg0; return () }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), {
-                    let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                    return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                        let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), cancellation.__externalRCRef())
+                let _: Bool = kotlinx_coroutines_channels_ConflatedBroadcastChannel_send__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
         @_spi(kotlinx$coroutines$ObsoleteCoroutinesApi)
@@ -2637,41 +2016,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         onBufferOverflow: ExportedKotlinPackages.kotlinx.coroutines.channels.BufferOverflow,
         onUndeliveredElement: (((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Void)?
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.channels.Channel {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_channels_Channel__TypesOfArguments__Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow_Swift_Optional_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Void___(capacity, onBufferOverflow.__externalRCRef(), onUndeliveredElement.map { it in {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = it
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }() } ?? nil), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.Channel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.Channel
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_channels_Channel__TypesOfArguments__Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow_Swift_Optional_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Void___(capacity, onBufferOverflow.__externalRCRef(), onUndeliveredElement.map { it in Unmanaged.passRetained((it as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque() } ?? nil), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.Channel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.Channel
     }
     public static func awaitClose(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope,
         block: @escaping () -> Swift.Void
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_channels_awaitClose__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScope_U2829202D_U20Swift_Void__(receiver.__externalRCRef(), {
-                let originalBlock: () -> Swift.Void = block
-                return {
-                    let _result = originalBlock()
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_channels_awaitClose__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScope_U2829202D_U20Swift_Void__(receiver.__externalRCRef(), Unmanaged.passRetained((block as () -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @available(*, deprecated, message: "BroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported") @_spi(kotlinx$coroutines$ObsoleteCoroutinesApi)
@@ -2683,32 +2035,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         onCompletion: ExportedKotlinPackages.kotlinx.coroutines.CompletionHandler?,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.channels.BroadcastChannel {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_channels_broadcast__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_CoroutineStart_Swift_Optional_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScopeU2920asyncU20throwsU202D_U20Swift_Void__(receiver.__externalRCRef(), context.__externalRCRef(), capacity, start.__externalRCRef(), onCompletion.map { it in {
-            let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = it
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }() } ?? nil, {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void = block
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.BroadcastChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.BroadcastChannel
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_channels_broadcast__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_CoroutineStart_Swift_Optional_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScopeU2920asyncU20throwsU202D_U20Swift_Void__(receiver.__externalRCRef(), context.__externalRCRef(), capacity, start.__externalRCRef(), onCompletion.map { it in Unmanaged.passRetained((it as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque() } ?? nil, Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.BroadcastChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.BroadcastChannel
     }
     @available(*, deprecated, message: "BroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported") @_spi(kotlinx$coroutines$ObsoleteCoroutinesApi)
     public static func broadcast(
@@ -2729,14 +2056,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlinx_coroutines_channels_consume__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannelU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (arg0: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
-                let _result = originalBlock(_arg0)
-                return _result.map { it in it.__externalRCRef() } ?? nil
-            }
-        }()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch kotlinx_coroutines_channels_consume__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannelU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     @available(*, unavailable, message: "BroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported") @_spi(kotlinx$coroutines$ObsoleteCoroutinesApi)
     public static func consumeEach(
@@ -2750,81 +2070,32 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         action: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Void
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_channels_consumeEach__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Void__(receiver.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = action
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_channels_consumeEach__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Void__(receiver.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func getOrElse(
         _ receiver: ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult,
         onFailure: @escaping (ExportedKotlinPackages.kotlin.Throwable?) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlinx_coroutines_channels_getOrElse__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_channels_ChannelResult_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = onFailure
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return _result.map { it in it.__externalRCRef() } ?? nil
-            }
-        }()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch kotlinx_coroutines_channels_getOrElse__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_channels_ChannelResult_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), Unmanaged.passRetained((onFailure as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     public static func onClosed(
         _ receiver: ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult,
         action: @escaping (ExportedKotlinPackages.kotlin.Throwable?) -> Swift.Void
     ) -> ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult {
-        return ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult.__createClassWrapper(externalRCRef: kotlinx_coroutines_channels_onClosed__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_channels_ChannelResult_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(receiver.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = action
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }()))
+        return ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult.__createClassWrapper(externalRCRef: kotlinx_coroutines_channels_onClosed__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_channels_ChannelResult_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(receiver.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()))
     }
     public static func onFailure(
         _ receiver: ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult,
         action: @escaping (ExportedKotlinPackages.kotlin.Throwable?) -> Swift.Void
     ) -> ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult {
-        return ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult.__createClassWrapper(externalRCRef: kotlinx_coroutines_channels_onFailure__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_channels_ChannelResult_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(receiver.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = action
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }()))
+        return ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult.__createClassWrapper(externalRCRef: kotlinx_coroutines_channels_onFailure__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_channels_ChannelResult_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(receiver.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()))
     }
     public static func onSuccess(
         _ receiver: ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult,
         action: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Void
     ) -> ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult {
-        return ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult.__createClassWrapper(externalRCRef: kotlinx_coroutines_channels_onSuccess__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_channels_ChannelResult_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Void__(receiver.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = action
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }()))
+        return ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult.__createClassWrapper(externalRCRef: kotlinx_coroutines_channels_onSuccess__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_channels_ChannelResult_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Void__(receiver.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque()))
     }
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
     public static func produce(
@@ -2835,32 +2106,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         onCompletion: ExportedKotlinPackages.kotlinx.coroutines.CompletionHandler?,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_channels_produce__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_CoroutineStart_Swift_Optional_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScopeU2920asyncU20throwsU202D_U20Swift_Void__(receiver.__externalRCRef(), context.__externalRCRef(), capacity, start.__externalRCRef(), onCompletion.map { it in {
-            let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = it
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }() } ?? nil, {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void = block
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_channels_produce__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_CoroutineStart_Swift_Optional_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScopeU2920asyncU20throwsU202D_U20Swift_Void__(receiver.__externalRCRef(), context.__externalRCRef(), capacity, start.__externalRCRef(), onCompletion.map { it in Unmanaged.passRetained((it as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque() } ?? nil, Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
     public static func produce(
@@ -2869,45 +2115,13 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         capacity: Swift.Int32,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_channels_produce__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScopeU2920asyncU20throwsU202D_U20Swift_Void__(receiver.__externalRCRef(), context.__externalRCRef(), capacity, {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void = block
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_channels_produce__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScopeU2920asyncU20throwsU202D_U20Swift_Void__(receiver.__externalRCRef(), context.__externalRCRef(), capacity, Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
     }
     public static func toList(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_channels_toList__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__(receiver.__externalRCRef(), {
-                let originalBlock: (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void = continuation
-                return { (arg0: Any) in
-                    let _arg0: Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = arg0 as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_channels_toList__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__(receiver.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func trySendBlocking(
@@ -3071,21 +2285,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
             collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
         ) async throws -> Swift.Void {
             try await withKotlinContinuation { continuation, exception, cancellation in
-                let _: Bool = kotlinx_coroutines_flow_AbstractFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), {
-                    let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                    return { (arg0: Swift.Bool) in
-                        let _arg0: Swift.Void = { arg0; return () }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), {
-                    let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                    return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                        let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), cancellation.__externalRCRef())
+                let _: Bool = kotlinx_coroutines_flow_AbstractFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
         @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
@@ -3094,21 +2294,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         ) async throws -> Swift.Void {
             if Self.self == ExportedKotlinPackages.kotlinx.coroutines.flow.AbstractFlow.self {
                 try await withKotlinContinuation { continuation, exception, cancellation in
-                let _: Bool = kotlinx_coroutines_flow_AbstractFlow_collectSafely__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), {
-                    let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                    return { (arg0: Swift.Bool) in
-                        let _arg0: Swift.Void = { arg0; return () }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), {
-                    let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                    return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                        let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), cancellation.__externalRCRef())
+                let _: Bool = kotlinx_coroutines_flow_AbstractFlow_collectSafely__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
             } else {
                 fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlinx.coroutines.flow.AbstractFlow.collectSafely': a Swift subclass must override it and must not call super.")
@@ -3167,48 +2353,12 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func callbackFlow(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_callbackFlow__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScopeU2920asyncU20throwsU202D_U20Swift_Void__({
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void = block
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_callbackFlow__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScopeU2920asyncU20throwsU202D_U20Swift_Void__(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func channelFlow(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_channelFlow__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScopeU2920asyncU20throwsU202D_U20Swift_Void__({
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void = block
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_channelFlow__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScopeU2920asyncU20throwsU202D_U20Swift_Void__(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func combine(
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
@@ -3218,29 +2368,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         flow5: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combine__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), flow4.wrapped.__externalRCRef(), flow5.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, arg2: Swift.UnsafeMutableRawPointer?, arg3: Swift.UnsafeMutableRawPointer?, arg4: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg2: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg3: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg4: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg4 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1, _arg2, _arg3, _arg4)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combine__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), flow4.wrapped.__externalRCRef(), flow5.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func combine(
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
@@ -3249,28 +2377,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         flow4: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combine__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), flow4.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, arg2: Swift.UnsafeMutableRawPointer?, arg3: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg2: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg3: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1, _arg2, _arg3)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combine__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), flow4.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func combine(
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
@@ -3278,79 +2385,21 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         flow3: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combine__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, arg2: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg2: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1, _arg2)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combine__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func combine(
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         flow2: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combine__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combine__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func combine(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combine__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), flow.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combine__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), flow.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func combineTransform(
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
@@ -3360,30 +2409,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         flow5: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combineTransform__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), flow4.wrapped.__externalRCRef(), flow5.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer?, arg2: Swift.UnsafeMutableRawPointer?, arg3: Swift.UnsafeMutableRawPointer?, arg4: Swift.UnsafeMutableRawPointer?, arg5: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg2: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg3: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg4: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg4 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg5: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg5 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1, _arg2, _arg3, _arg4, _arg5)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combineTransform__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), flow4.wrapped.__externalRCRef(), flow5.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func combineTransform(
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
@@ -3392,29 +2418,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         flow4: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combineTransform__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), flow4.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer?, arg2: Swift.UnsafeMutableRawPointer?, arg3: Swift.UnsafeMutableRawPointer?, arg4: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg2: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg3: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg4: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg4 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1, _arg2, _arg3, _arg4)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combineTransform__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), flow4.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func combineTransform(
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
@@ -3422,82 +2426,21 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         flow3: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combineTransform__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer?, arg2: Swift.UnsafeMutableRawPointer?, arg3: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg2: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg3: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1, _arg2, _arg3)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combineTransform__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), flow3.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func combineTransform(
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         flow2: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combineTransform__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer?, arg2: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg2: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1, _arg2)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combineTransform__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(flow.wrapped.__externalRCRef(), flow2.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func combineTransform(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, (any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combineTransform__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), flow.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer?, arg2: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg2: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1, _arg2)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_combineTransform__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), flow.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func emptyFlow() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
         return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_emptyFlow(), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
@@ -3505,25 +2448,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func flow(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_flow__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollectorU2920asyncU20throwsU202D_U20Swift_Void__({
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void = block
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_flow__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollectorU2920asyncU20throwsU202D_U20Swift_Void__(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func flowOf(
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -3550,13 +2475,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func asFlow(
         _ receiver: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_asFlow__TypesOfArgumentsE__U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___({
-            let originalBlock: () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = receiver
-            return {
-                let _result = originalBlock()
-                return _result.map { it in it.__externalRCRef() } ?? nil
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_asFlow__TypesOfArgumentsE__U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(Unmanaged.passRetained((receiver as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func asFlow(
         _ receiver: ExportedKotlinPackages.kotlin.Array
@@ -3601,24 +2520,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func asFlow(
         _ receiver: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_asFlow__TypesOfArgumentsE__U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___({
-            let originalBlock: () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = receiver
-            return { (continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock()
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_asFlow__TypesOfArgumentsE__U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(Unmanaged.passRetained((receiver as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @available(*, unavailable, message: "'BroadcastChannel' is obsolete and all corresponding operators are deprecated in the favour of StateFlow and SharedFlow") @_spi(kotlinx$coroutines$ObsoleteCoroutinesApi)
     public static func asFlow(
@@ -3671,72 +2573,20 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_catch__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20ExportedKotlinPackages_kotlin_ThrowableU2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Void = action
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: ExportedKotlinPackages.kotlin.Throwable = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: arg1)
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_catch__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20ExportedKotlinPackages_kotlin_ThrowableU2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @available(*, deprecated, message: "SharedFlow never completes, so this operator typically has not effect, it can only catch exceptions from 'onSubscribe' operator. Replacement: this")
     public static func `catch`(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_catch__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20ExportedKotlinPackages_kotlin_ThrowableU2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Void = action
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: ExportedKotlinPackages.kotlin.Throwable = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: arg1)
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_catch__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20ExportedKotlinPackages_kotlin_ThrowableU2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func collect(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_collect__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_Flow__(receiver.__externalRCRef(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_collect__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_Flow__(receiver.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func collectIndexed(
@@ -3744,40 +2594,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         action: @escaping (Swift.Int32, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_collectIndexed__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Int32_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Int32, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = action
-                return { (arg0: Swift.Int32, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: Swift.Int32 = arg0
-                    let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _continuation: (Swift.Void) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0, _arg1)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_collectIndexed__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Int32_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Int32, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func collectLatest(
@@ -3785,39 +2602,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         action: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_collectLatest__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = action
-                return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _continuation: (Swift.Void) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_collectLatest__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @available(*, unavailable, message: "Flow analogue of 'combineLatest' is 'combine'. Replacement: combine(this, other, other2, other3, transform)")
@@ -3906,21 +2691,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Int32 {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Int32) -> Swift.Void = continuation
-                return { (arg0: Swift.Int32) in
-                    let _arg0: Swift.Int32 = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func count(
@@ -3928,39 +2699,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) async throws -> Swift.Int32 {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool = predicate
-                return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _continuation: (Swift.Bool) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Int32) -> Swift.Void = continuation
-                return { (arg0: Swift.Int32) in
-                    let _arg0: Swift.Int32 = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @available(*, deprecated, message: "SharedFlow never completes, so this terminal operation never completes.")
@@ -3968,21 +2707,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Int32 {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Int32) -> Swift.Void = continuation
-                return { (arg0: Swift.Int32) in
-                    let _arg0: Swift.Int32 = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @_spi(kotlinx$coroutines$FlowPreview)
@@ -3990,28 +2715,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         timeoutMillis: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Int64
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_debounce__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Int64__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Int64 = timeoutMillis
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return _result
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_debounce__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Int64__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((timeoutMillis as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Int64) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @_spi(kotlinx$coroutines$FlowPreview)
     public static func debounce(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         timeout: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> ExportedKotlinPackages.kotlin.time.Duration
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_debounce__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20ExportedKotlinPackages_kotlin_time_Duration__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> ExportedKotlinPackages.kotlin.time.Duration = timeout
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return _result.__externalRCRef()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_debounce__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20ExportedKotlinPackages_kotlin_time_Duration__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((timeout as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> ExportedKotlinPackages.kotlin.time.Duration) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @_spi(kotlinx$coroutines$FlowPreview)
     public static func debounce(
@@ -4050,15 +2761,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         areEquivalent: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Bool
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_distinctUntilChanged__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Bool = areEquivalent
-            return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0, _arg1)
-                return _result
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_distinctUntilChanged__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((areEquivalent as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Bool) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @available(*, unavailable, message: "Applying 'distinctUntilChanged' to StateFlow has no effect. See the StateFlow documentation on Operator Fusion.. Replacement: this")
     public static func distinctUntilChanged(
@@ -4070,14 +2773,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         keySelector: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_distinctUntilChangedBy__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = keySelector
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return _result.map { it in it.__externalRCRef() } ?? nil
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_distinctUntilChangedBy__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((keySelector as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func drop(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
@@ -4089,46 +2785,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_dropWhile__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool = predicate
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Bool) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_dropWhile__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func emitAll(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector,
         channel: any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_emitAll__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__(receiver.__externalRCRef(), channel.__externalRCRef(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_emitAll__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__(receiver.__externalRCRef(), channel.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func emitAll(
@@ -4136,46 +2800,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_emitAll__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.__externalRCRef(), flow.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_emitAll__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.__externalRCRef(), flow.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func filter(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_filter__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool = predicate
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Bool) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_filter__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func filterIsInstance(
@@ -4188,25 +2820,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_filterNot__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool = predicate
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Bool) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_filterNot__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func filterNotNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
@@ -4217,21 +2831,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_first__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_first__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func first(
@@ -4239,60 +2839,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_first__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool = predicate
-                return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _continuation: (Swift.Bool) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_first__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func firstOrNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_firstOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_firstOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func firstOrNull(
@@ -4300,39 +2854,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_firstOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool = predicate
-                return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _continuation: (Swift.Bool) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_firstOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @available(*, unavailable, message: "Flow analogue is 'flatMapConcat'. Replacement: flatMapConcat(mapper)")
@@ -4347,50 +2869,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_flatMapConcat__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(pointerToBlock.__externalRCRef()!, _1.wrapped.__externalRCRef()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_flatMapConcat__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
     public static func flatMapLatest(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_flatMapLatest__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(pointerToBlock.__externalRCRef()!, _1.wrapped.__externalRCRef()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_flatMapLatest__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
     public static func flatMapMerge(
@@ -4398,25 +2884,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         concurrency: Swift.Int32,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_flatMapMerge__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Int32_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), concurrency, {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(pointerToBlock.__externalRCRef()!, _1.wrapped.__externalRCRef()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_flatMapMerge__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Int32_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), concurrency, Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @available(*, unavailable, message: "Flow analogue of 'flatten' is 'flattenConcat'. Replacement: flattenConcat()")
     public static func flatten(
@@ -4456,40 +2924,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_fold__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = operation
-                return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0, _arg1)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_fold__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @available(*, unavailable, message: "Flow analogue of 'forEach' is 'collect'. Replacement: collect(action)")
@@ -4503,55 +2938,20 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         function: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlinx_coroutines_flow_getAndUpdate__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedMutableStateFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = function
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return _result.map { it in it.__externalRCRef() } ?? nil
-            }
-        }()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch kotlinx_coroutines_flow_getAndUpdate__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedMutableStateFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((function as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     public static func last(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_last__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_last__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func lastOrNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_lastOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_lastOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func launchIn(
@@ -4564,74 +2964,20 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_map__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_map__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
     public static func mapLatest(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_mapLatest__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_mapLatest__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func mapNotNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<any KotlinRuntimeSupport._KotlinBridgeable> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<any KotlinRuntimeSupport._KotlinBridgeable>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_mapNotNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<any KotlinRuntimeSupport._KotlinBridgeable>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_mapNotNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @available(*, unavailable, message: "Flow analogue of 'merge' is 'flattenConcat'. Replacement: flattenConcat()")
     public static func merge(
@@ -4650,74 +2996,19 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable?) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_onCompletion__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) async throws -> Swift.Void = action
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg1 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_onCompletion__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func onEach(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_onEach__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = action
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_onEach__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func onEmpty(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_onEmpty__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollectorU2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void = action
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_onEmpty__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollectorU2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @available(*, unavailable, message: "Flow analogue of 'onErrorXxx' is 'catch'. Use 'catch { emitAll(fallback) }'. Replacement: catch { emitAll(fallback) }")
     public static func onErrorResume(
@@ -4752,49 +3043,13 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_onStart__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollectorU2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void = action
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_onStart__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollectorU2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func onSubscription(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedSharedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_onSubscription__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollectorU2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void = action
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedSharedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_onSubscription__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollectorU2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func produceIn(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
@@ -4842,40 +3097,7 @@ publish().refCount() translates to 'started = SharingStared.WhileSubscribed()' a
         operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_reduce__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = operation
-                return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                    }()
-                    let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                        return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                    }()
-                    let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                    let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                        try await originalBlock(_arg0, _arg1)
-                    }
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_reduce__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @available(*, unavailable, message: """
@@ -4906,25 +3128,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         retries: Swift.Int64,
         predicate: @escaping (ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Bool
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_retry__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Int64_U28ExportedKotlinPackages_kotlin_ThrowableU2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), retries, {
-            let originalBlock: (ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Bool = predicate
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: ExportedKotlinPackages.kotlin.Throwable = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: arg0)
-                let _continuation: (Swift.Bool) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_retry__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Int64_U28ExportedKotlinPackages_kotlin_ThrowableU2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), retries, Unmanaged.passRetained((predicate as (ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Bool) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @available(*, deprecated, message: "SharedFlow never completes, so this operator has no effect.. Replacement: this")
     public static func retry(
@@ -4932,129 +3136,33 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         retries: Swift.Int64,
         predicate: @escaping (ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Bool
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_retry__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Int64_U28ExportedKotlinPackages_kotlin_ThrowableU2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), retries, {
-            let originalBlock: (ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Bool = predicate
-            return { (arg0: Swift.UnsafeMutableRawPointer, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: ExportedKotlinPackages.kotlin.Throwable = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: arg0)
-                let _continuation: (Swift.Bool) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_retry__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Int64_U28ExportedKotlinPackages_kotlin_ThrowableU2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), retries, Unmanaged.passRetained((predicate as (ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Bool) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func retryWhen(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable, Swift.Int64) async throws -> Swift.Bool
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_retryWhen__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20ExportedKotlinPackages_kotlin_Throwable_U20Swift_Int64U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable, Swift.Int64) async throws -> Swift.Bool = predicate
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer, arg2: Swift.Int64, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: ExportedKotlinPackages.kotlin.Throwable = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: arg1)
-                let _arg2: Swift.Int64 = arg2
-                let _continuation: (Swift.Bool) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1, _arg2)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_retryWhen__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20ExportedKotlinPackages_kotlin_Throwable_U20Swift_Int64U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable, Swift.Int64) async throws -> Swift.Bool) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @available(*, deprecated, message: "SharedFlow never completes, so this operator has no effect.. Replacement: this")
     public static func retryWhen(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable, Swift.Int64) async throws -> Swift.Bool
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_retryWhen__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20ExportedKotlinPackages_kotlin_Throwable_U20Swift_Int64U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable, Swift.Int64) async throws -> Swift.Bool = predicate
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer, arg2: Swift.Int64, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: ExportedKotlinPackages.kotlin.Throwable = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: arg1)
-                let _arg2: Swift.Int64 = arg2
-                let _continuation: (Swift.Bool) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1, _arg2)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_retryWhen__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20ExportedKotlinPackages_kotlin_Throwable_U20Swift_Int64U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable, Swift.Int64) async throws -> Swift.Bool) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func runningFold(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         initial: (any KotlinRuntimeSupport._KotlinBridgeable)?,
         operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_runningFold__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = operation
-            return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_runningFold__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func runningReduce(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_runningReduce__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = operation
-            return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_runningReduce__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @_spi(kotlinx$coroutines$FlowPreview)
     public static func sample(
@@ -5075,26 +3183,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         initial: (any KotlinRuntimeSupport._KotlinBridgeable)?,
         operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_scan__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = operation
-            return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_scan__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @available(*, unavailable, message: "Flow has less verbose 'scan' shortcut. Replacement: scan(initial, operation)")
     public static func scanFold(
@@ -5123,42 +3212,14 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_single__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_single__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func singleOrNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_singleOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_singleOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @available(*, unavailable, message: "Flow analogue of 'skip' is 'drop'. Replacement: drop(count)")
@@ -5187,21 +3248,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         scope: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
     ) async throws -> any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_stateIn__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope__(receiver.wrapped.__externalRCRef(), scope.__externalRCRef(), {
-                let originalBlock: (any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_stateIn__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope__(receiver.wrapped.__externalRCRef(), scope.__externalRCRef(), Unmanaged.passRetained((continuation as (any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func stateIn(
@@ -5257,25 +3304,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_takeWhile__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool = predicate
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Bool) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_takeWhile__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @_spi(kotlinx$coroutines$FlowPreview)
     public static func timeout(
@@ -5289,21 +3318,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         destination: any ExportedKotlinPackages.kotlin.collections.MutableCollection
     ) async throws -> any ExportedKotlinPackages.kotlin.collections.MutableCollection {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_toCollection__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableCollection__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), {
-                let originalBlock: (any ExportedKotlinPackages.kotlin.collections.MutableCollection) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlin.collections.MutableCollection = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlin.collections.MutableCollection.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableCollection
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_toCollection__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableCollection__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (any ExportedKotlinPackages.kotlin.collections.MutableCollection) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func toList(
@@ -5311,21 +3326,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         destination: any ExportedKotlinPackages.kotlin.collections.MutableList
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableList__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), {
-                let originalBlock: (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void = continuation
-                return { (arg0: Any) in
-                    let _arg0: Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = arg0 as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableList__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @available(*, deprecated, message: "SharedFlow never completes, so this terminal operation never completes.")
@@ -5333,21 +3334,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void = continuation
-                return { (arg0: Any) in
-                    let _arg0: Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = arg0 as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func toList(
@@ -5355,21 +3342,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         destination: any ExportedKotlinPackages.kotlin.collections.MutableList
     ) async throws -> Swift.Never {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableList__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), {
-                let originalBlock: (Swift.Never) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Never = { arg0; fatalError() }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableList__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func toSet(
@@ -5377,21 +3350,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         destination: any ExportedKotlinPackages.kotlin.collections.MutableSet
     ) async throws -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableSet__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), {
-                let originalBlock: (Swift.Set<Swift.Optional<Swift.AnyHashable>>) -> Swift.Void = continuation
-                return { (arg0: Any) in
-                    let _arg0: Swift.Set<Swift.Optional<Swift.AnyHashable>> = arg0 as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableSet__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Set<Swift.Optional<Swift.AnyHashable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @available(*, deprecated, message: "SharedFlow never completes, so this terminal operation never completes.")
@@ -5399,21 +3358,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), {
-                let originalBlock: (Swift.Set<Swift.Optional<Swift.AnyHashable>>) -> Swift.Void = continuation
-                return { (arg0: Any) in
-                    let _arg0: Swift.Set<Swift.Optional<Swift.AnyHashable>> = arg0 as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Set<Swift.Optional<Swift.AnyHashable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func toSet(
@@ -5421,124 +3366,39 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         destination: any ExportedKotlinPackages.kotlin.collections.MutableSet
     ) async throws -> Swift.Never {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableSet__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), {
-                let originalBlock: (Swift.Never) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Never = { arg0; fatalError() }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableSet__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func transform(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_transform__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_transform__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
     public static func transformLatest(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_transformLatest__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_transformLatest__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func transformWhile(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_transformWhile__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Bool) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_transformWhile__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func update(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         function: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlinx_coroutines_flow_update__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedMutableStateFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = function
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return _result.map { it in it.__externalRCRef() } ?? nil
-            }
-        }()); return () }()
+        return { kotlinx_coroutines_flow_update__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedMutableStateFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((function as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
     }
     public static func updateAndGet(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         function: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlinx_coroutines_flow_updateAndGet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedMutableStateFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = function
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return _result.map { it in it.__externalRCRef() } ?? nil
-            }
-        }()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch kotlinx_coroutines_flow_updateAndGet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedMutableStateFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((function as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     public static func withIndex(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
@@ -5550,61 +3410,17 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         other: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         transform: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_zip__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), other.wrapped.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = transform
-            return { (arg0: Swift.UnsafeMutableRawPointer?, arg1: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _arg1: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0, _arg1)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_zip__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), other.wrapped.__externalRCRef(), Unmanaged.passRetained((transform as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
     public static func flowCollector(
         function: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__({
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void = function
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Void) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(Unmanaged.passRetained((function as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     }
     public static func sharingStarted(
         function: @escaping (any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Int32>) -> any KotlinCoroutineSupport.KotlinTypedFlow<ExportedKotlinPackages.kotlinx.coroutines.flow.SharingCommand>
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.flow.SharingStarted {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_SharingStarted__TypesOfArguments__U28anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32_U29202D_U20anyU20KotlinCoroutineSupport_KotlinTypedFlow_ExportedKotlinPackages_kotlinx_coroutines_flow_SharingCommand___({
-            let originalBlock: (any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Int32>) -> any KotlinCoroutineSupport.KotlinTypedFlow<ExportedKotlinPackages.kotlinx.coroutines.flow.SharingCommand> = function
-            return { (arg0: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Int32> = KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Int32>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow, Swift.Int32.Type.self)
-                let _result = originalBlock(_arg0)
-                return _result.wrapped.__externalRCRef()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.SharingStarted.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharingStarted
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_SharingStarted__TypesOfArguments__U28anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32_U29202D_U20anyU20KotlinCoroutineSupport_KotlinTypedFlow_ExportedKotlinPackages_kotlinx_coroutines_flow_SharingCommand___(Unmanaged.passRetained((function as (any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Int32>) -> any KotlinCoroutineSupport.KotlinTypedFlow<ExportedKotlinPackages.kotlinx.coroutines.flow.SharingCommand>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.SharingStarted.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharingStarted
     }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.selects {
@@ -5774,56 +3590,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects {
         builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_selects_select__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__({
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void = builder
-                return { (arg0: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_selects_select__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func selectUnbiased(
         builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_selects_selectUnbiased__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__({
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void = builder
-                return { (arg0: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_selects_selectUnbiased__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
@@ -5831,28 +3605,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects {
         builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_selects_whileSelect__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__({
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void = builder
-                return { (arg0: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_selects_whileSelect__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
@@ -5861,24 +3614,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects {
         timeMillis: Swift.Int64,
         block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_onTimeout__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder_Swift_Int64_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), timeMillis, {
-            let originalBlock: () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock()
-                }
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { kotlinx_coroutines_selects_onTimeout__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder_Swift_Int64_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), timeMillis, Unmanaged.passRetained((block as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
     public static func onTimeout(
@@ -5886,24 +3622,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects {
         timeout: ExportedKotlinPackages.kotlin.time.Duration,
         block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_onTimeout__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder_ExportedKotlinPackages_kotlin_time_Duration_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), timeout.__externalRCRef(), {
-            let originalBlock: () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock()
-                }
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { kotlinx_coroutines_selects_onTimeout__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder_ExportedKotlinPackages_kotlin_time_Duration_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), timeout.__externalRCRef(), Unmanaged.passRetained((block as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
     }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.`internal` {
@@ -6174,26 +3893,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.`internal` {
         lock: ExportedKotlinPackages.kotlinx.coroutines.`internal`.SynchronizedObject,
         block: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlinx_coroutines_internal_synchronized__TypesOfArguments__ExportedKotlinPackages_kotlinx_atomicfu_locks_SynchronizedObject_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(lock.__externalRCRef(), {
-            let originalBlock: () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return {
-                let _result = originalBlock()
-                return _result.map { it in it.__externalRCRef() } ?? nil
-            }
-        }()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch kotlinx_coroutines_internal_synchronized__TypesOfArguments__ExportedKotlinPackages_kotlinx_atomicfu_locks_SynchronizedObject_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(lock.__externalRCRef(), Unmanaged.passRetained((block as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
     public static func synchronizedImpl(
         lock: ExportedKotlinPackages.kotlinx.coroutines.`internal`.SynchronizedObject,
         block: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlinx_coroutines_internal_synchronizedImpl__TypesOfArguments__ExportedKotlinPackages_kotlinx_atomicfu_locks_SynchronizedObject_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(lock.__externalRCRef(), {
-            let originalBlock: () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return {
-                let _result = originalBlock()
-                return _result.map { it in it.__externalRCRef() } ?? nil
-            }
-        }()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch kotlinx_coroutines_internal_synchronizedImpl__TypesOfArguments__ExportedKotlinPackages_kotlinx_atomicfu_locks_SynchronizedObject_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(lock.__externalRCRef(), Unmanaged.passRetained((block as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
     public static func resumeCancellableWith(
@@ -6201,14 +3908,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.`internal` {
         result: ExportedKotlinPackages.kotlin.Result,
         onCancellation: ((ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void)?
     ) -> Swift.Void {
-        return { kotlinx_coroutines_internal_resumeCancellableWith__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation_ExportedKotlinPackages_kotlin_Result_Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void___(receiver.__externalRCRef(), result.__externalRCRef(), onCancellation.map { it in {
-            let originalBlock: (ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void = it
-            return { (arg0: Swift.UnsafeMutableRawPointer) in
-                let _arg0: ExportedKotlinPackages.kotlin.Throwable = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: arg0)
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }() } ?? nil); return () }()
+        return { kotlinx_coroutines_internal_resumeCancellableWith__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation_ExportedKotlinPackages_kotlin_Result_Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void___(receiver.__externalRCRef(), result.__externalRCRef(), onCancellation.map { it in Unmanaged.passRetained((it as (ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void) as AnyObject).toOpaque() } ?? nil); return () }()
     }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.sync {
@@ -6268,27 +3968,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.sync {
         action: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_sync_withLock__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Mutex_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil, {
-                let originalBlock: () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = action
-                return {
-                    let _result = originalBlock()
-                    return _result.map { it in it.__externalRCRef() } ?? nil
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_sync_withLock__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Mutex_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((action as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func withPermit(
@@ -6296,27 +3976,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.sync {
         action: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_sync_withPermit__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Semaphore_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), {
-                let originalBlock: () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = action
-                return {
-                    let _result = originalBlock()
-                    return _result.map { it in it.__externalRCRef() } ?? nil
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_sync_withPermit__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Semaphore_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), Unmanaged.passRetained((action as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
 }
@@ -6365,39 +4025,11 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal` {
         ) async throws -> Swift.Void {
             if Self.self == ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.ChannelFlow.self {
                 try await withKotlinContinuation { continuation, exception, cancellation in
-                let _: Bool = kotlinx_coroutines_flow_internal_ChannelFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), {
-                    let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                    return { (arg0: Swift.Bool) in
-                        let _arg0: Swift.Void = { arg0; return () }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), {
-                    let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                    return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                        let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), cancellation.__externalRCRef())
+                let _: Bool = kotlinx_coroutines_flow_internal_ChannelFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
             } else {
                 try await withKotlinContinuation { continuation, exception, cancellation in
-                let _: Bool = kotlinx_coroutines_flow_internal_ChannelFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector___direct(self.__externalRCRef(), collector.__externalRCRef(), {
-                    let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                    return { (arg0: Swift.Bool) in
-                        let _arg0: Swift.Void = { arg0; return () }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), {
-                    let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                    return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                        let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), cancellation.__externalRCRef())
+                let _: Bool = kotlinx_coroutines_flow_internal_ChannelFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector___direct(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
             }
         }
@@ -6464,21 +4096,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal` {
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) async throws -> Swift.Void {
             try await withKotlinContinuation { continuation, exception, cancellation in
-                let _: Bool = kotlinx_coroutines_flow_internal_SendingCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, {
-                    let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                    return { (arg0: Swift.Bool) in
-                        let _arg0: Swift.Void = { arg0; return () }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), {
-                    let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                    return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                        let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                        let _result = originalBlock(_arg0)
-                        return { _result; return true }()
-                    }
-                }(), cancellation.__externalRCRef())
+                let _: Bool = kotlinx_coroutines_flow_internal_SendingCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
         @_spi(kotlinx$coroutines$InternalCoroutinesApi)
@@ -6707,28 +4325,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation wher
     public func invokeOnCancellation(
         handler: @escaping ExportedKotlinPackages.kotlinx.coroutines.CompletionHandler
     ) -> Swift.Void {
-        return { kotlinx_coroutines_CancellableContinuation_invokeOnCancellation__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = handler
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { kotlinx_coroutines_CancellableContinuation_invokeOnCancellation__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()); return () }()
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
     public func resume(
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?,
         onCancellation: ((ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void)?
     ) -> Swift.Void {
-        return { kotlinx_coroutines_CancellableContinuation_resume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, onCancellation.map { it in {
-            let originalBlock: (ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void = it
-            return { (arg0: Swift.UnsafeMutableRawPointer) in
-                let _arg0: ExportedKotlinPackages.kotlin.Throwable = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: arg0)
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }() } ?? nil); return () }()
+        return { kotlinx_coroutines_CancellableContinuation_resume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, onCancellation.map { it in Unmanaged.passRetained((it as (ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void) as AnyObject).toOpaque() } ?? nil); return () }()
     }
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
     public func tryResume(
@@ -6743,14 +4347,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation wher
         idempotent: (any KotlinRuntimeSupport._KotlinBridgeable)?,
         onCancellation: ((ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, idempotent.map { it in it.__externalRCRef() } ?? nil, onCancellation.map { it in {
-            let originalBlock: (ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void = it
-            return { (arg0: Swift.UnsafeMutableRawPointer) in
-                let _arg0: ExportedKotlinPackages.kotlin.Throwable = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: arg0)
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, idempotent.map { it in it.__externalRCRef() } ?? nil, onCancellation.map { it in Unmanaged.passRetained((it as (ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void) as AnyObject).toOpaque() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
     public func tryResumeWithException(
@@ -6955,21 +4552,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.Deferred where Self : Export
     }
     public func `await`() async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_Deferred_await(self.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_Deferred_await(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
@@ -7103,44 +4686,16 @@ extension ExportedKotlinPackages.kotlinx.coroutines.Job where Self : ExportedKot
         invokeImmediately: Swift.Bool,
         handler: @escaping ExportedKotlinPackages.kotlinx.coroutines.CompletionHandler
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_Job_invokeOnCompletion__TypesOfArguments__Swift_Bool_Swift_Bool_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), onCancelling, invokeImmediately, {
-            let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = handler
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_Job_invokeOnCompletion__TypesOfArguments__Swift_Bool_Swift_Bool_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), onCancelling, invokeImmediately, Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
     }
     public func invokeOnCompletion(
         handler: @escaping ExportedKotlinPackages.kotlinx.coroutines.CompletionHandler
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_Job_invokeOnCompletion__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = handler
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_Job_invokeOnCompletion__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
     }
     public func join() async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_Job_join(self.__externalRCRef(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_Job_join(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func start() -> Swift.Bool {
@@ -7249,21 +4804,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels.Channel {
 extension ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelIterator where Self : ExportedKotlinPackages.kotlinx.coroutines.channels.__ChannelIterator {
     public func hasNext() async throws -> Swift.Bool {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_channels_ChannelIterator_hasNext(self.__externalRCRef(), {
-                let originalBlock: (Swift.Bool) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Bool = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_channels_ChannelIterator_hasNext(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Bool) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
@@ -7334,40 +4875,12 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel wher
     }
     public func receive() async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_channels_ReceiveChannel_receive(self.__externalRCRef(), {
-                let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_channels_ReceiveChannel_receive(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func receiveCatching() async throws -> ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_channels_ReceiveChannel_receiveCatching(self.__externalRCRef(), {
-                let originalBlock: (ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult) -> Swift.Void = continuation
-                return { (arg0: Swift.UnsafeMutableRawPointer) in
-                    let _arg0: ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult = ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult.__createClassWrapper(externalRCRef: arg0)
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_channels_ReceiveChannel_receiveCatching(self.__externalRCRef(), Unmanaged.passRetained((continuation as (ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func tryReceive() -> ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult {
@@ -7434,34 +4947,13 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels.SendChannel where S
     public func invokeOnClose(
         handler: @escaping (ExportedKotlinPackages.kotlin.Throwable?) -> Swift.Void
     ) -> Swift.Void {
-        return { kotlinx_coroutines_channels_SendChannel_invokeOnClose__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void = handler
-            return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                let _arg0: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = { switch arg0 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { kotlinx_coroutines_channels_SendChannel_invokeOnClose__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()); return () }()
     }
     public func send(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_channels_SendChannel_send__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil, {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_channels_SendChannel_send__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func trySend(
@@ -7498,21 +4990,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.Flow where Self : Expor
         collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
 }
@@ -7530,21 +5008,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector where Sel
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
 }
@@ -7567,21 +5031,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow where
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
@@ -7642,21 +5092,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow where Self :
         collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     ) async throws -> Swift.Never {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), {
-                let originalBlock: (Swift.Never) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Never = { arg0; fatalError() }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
 }
@@ -7727,49 +5163,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder where 
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0,
         block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause0_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), {
-            let originalBlock: () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock()
-                }
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause0_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
     }
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
     public func invoke(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1,
         block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause1_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause1_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
     }
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
     public func invoke(
@@ -7777,50 +5178,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder where 
         param: (any KotlinRuntimeSupport._KotlinBridgeable)?,
         block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), param.map { it in it.__externalRCRef() } ?? nil, {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), param.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
     }
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
     public func invoke(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
         block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
     }
 }
 @_documentation(visibility: internal)
@@ -7857,25 +5222,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
         block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self.__externalRCRef(), receiver.__externalRCRef(), {
-            let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (arg0: Swift.UnsafeMutableRawPointer?, continuation: Swift.UnsafeMutableRawPointer, exception: Swift.UnsafeMutableRawPointer, cancellation: Swift.UnsafeMutableRawPointer) in
-                let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let _continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
-                }()
-                let _exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
-                    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
-                    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
-                }()
-                let _cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
-                let _result = withKotlinTask(_continuation, _exception, _cancellation){
-                    try await originalBlock(_arg0)
-                }
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
     }
 }
 @_documentation(visibility: internal)
@@ -8070,21 +5417,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex where Self : Expo
         owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_sync_Mutex_lock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil, {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_sync_Mutex_lock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func tryLock(
@@ -8122,21 +5455,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore where Self : 
     }
     public func acquire() async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_sync_Semaphore_acquire(self.__externalRCRef(), {
-                let originalBlock: (Swift.Void) -> Swift.Void = continuation
-                return { (arg0: Swift.Bool) in
-                    let _arg0: Swift.Void = { arg0; return () }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = kotlinx_coroutines_sync_Semaphore_acquire(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func tryAcquire() -> Swift.Bool {
@@ -8151,6 +5470,564 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore {
 }
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_ExportedKotlinPackagesU2EkotlinU2EtimeU2EDuration__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_ExportedKotlinPackagesU2EkotlinU2EtimeU2EDuration__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer {
+    let _result: ExportedKotlinPackages.kotlin.time.Duration = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> ExportedKotlinPackages.kotlin.time.Duration)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result.__externalRCRef()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?, _ _2: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _result: Swift.Bool = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Bool)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EInt64__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EInt64__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.Int64 {
+    let _result: Swift.Int64 = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Int64)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer? {
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)({ switch _1 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }())
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer? {
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)()
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel)
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Throwable__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Throwable__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void)(ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: _1))
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlinx_coroutines_channels_ChannelResult__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlinx_coroutines_channels_ChannelResult__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult) -> Swift.Void)(ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult.__createClassWrapper(externalRCRef: _1))
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Any) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void)(_1 as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>)
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Bool) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Bool) -> Swift.Void)(_1)
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int32) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int32) -> Swift.Void)(_1)
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void)({ switch _1 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }())
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<Swift.Error>) -> Swift.Void)({ switch _1 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }())
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Set_Swift_Optional_Swift_AnyHashable____")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Set_Swift_Optional_Swift_AnyHashable____(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Any) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Set<Swift.Optional<Swift.AnyHashable>>) -> Swift.Void)(_1 as! Swift.Set<Swift.Optional<Swift.AnyHashable>>)
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Bool) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Void) -> Swift.Void)({ _1; return () }())
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> Swift.Void)()
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_collections_MutableCollection__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_collections_MutableCollection__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlin.collections.MutableCollection) -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlin.collections.MutableCollection.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableCollection)
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ExportedKotlinPackages_kotlin_Throwable__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ExportedKotlinPackages_kotlin_Throwable__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ _2: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext, ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext, ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: _2))
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext) -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext)
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation) -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation)
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder)
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void)(KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow, KotlinRuntimeSupport._KotlinBridgeable.Type.self))
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_anyU20KotlinCoroutineSupportU2EKotlinTypedFlowU3CExportedKotlinPackagesU2EkotlinxU2EcoroutinesU2EflowU2ESharingCommandU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_anyU20KotlinCoroutineSupportU2EKotlinTypedFlowU3CExportedKotlinPackagesU2EkotlinxU2EcoroutinesU2EflowU2ESharingCommandU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _result: any KotlinCoroutineSupport.KotlinTypedFlow<ExportedKotlinPackages.kotlinx.coroutines.flow.SharingCommand> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Int32>) -> any KotlinCoroutineSupport.KotlinTypedFlow<ExportedKotlinPackages.kotlinx.coroutines.flow.SharingCommand>)(KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Int32>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow, Swift.Int32.Type.self))
+    return _result.wrapped.__externalRCRef()
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Throwable__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Throwable__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Bool) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Bool)(ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: _1))
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Bool) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_ExportedKotlinPackages_kotlin_Throwable_Swift_Int64__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_ExportedKotlinPackages_kotlin_Throwable_Swift_Int64__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ _2: Swift.UnsafeMutableRawPointer, _ _3: Swift.Int64, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Bool) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable, Swift.Int64) async throws -> Swift.Bool)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: _2), _3)
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ _2: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Bool) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(pointerToBlock.__externalRCRef()!, _1); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?, _ _2: Swift.UnsafeMutableRawPointer?, _ _3: Swift.UnsafeMutableRawPointer?, _ _4: Swift.UnsafeMutableRawPointer?, _ _5: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _4 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _5 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?, _ _2: Swift.UnsafeMutableRawPointer?, _ _3: Swift.UnsafeMutableRawPointer?, _ _4: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _4 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?, _ _2: Swift.UnsafeMutableRawPointer?, _ _3: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?, _ _2: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)()
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope)
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int32, _ _2: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int32, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void)(_1, { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope)
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScope__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScope__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope) async throws -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope)
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_ExportedKotlinPackages_kotlin_Throwable__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_ExportedKotlinPackages_kotlin_Throwable__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ _2: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable) async throws -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: _2))
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ _2: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) async throws -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, { switch _2 { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ _2: Swift.UnsafeMutableRawPointer?, _ _3: Swift.UnsafeMutableRawPointer?, _ _4: Swift.UnsafeMutableRawPointer?, _ _5: Swift.UnsafeMutableRawPointer?, _ _6: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _4 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _5 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _6 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ _2: Swift.UnsafeMutableRawPointer?, _ _3: Swift.UnsafeMutableRawPointer?, _ _4: Swift.UnsafeMutableRawPointer?, _ _5: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _4 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _5 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ _2: Swift.UnsafeMutableRawPointer?, _ _3: Swift.UnsafeMutableRawPointer?, _ _4: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _4 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ _2: Swift.UnsafeMutableRawPointer?, _ _3: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), { switch _3 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ _2: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, { switch _2 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector) async throws -> Swift.Void)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector)
+    }
+    return true
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_async_anyU20KotlinCoroutineSupportU2EKotlinTypedFlowU3CSwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_async_anyU20KotlinCoroutineSupportU2EKotlinTypedFlowU3CSwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let __continuation: (any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(pointerToBlock.__externalRCRef()!, _1.wrapped.__externalRCRef()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    }
+    return true
+}
+
 @_cdecl("kotlinx_coroutines_CancellableContinuation_cancel__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_____reverse_swift")
 package func kotlinx_coroutines_CancellableContinuation_cancel__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ cause: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation
@@ -8169,6 +6046,16 @@ package func kotlinx_coroutines_CancellableContinuation_completeResume__TypesOfA
 package func kotlinx_coroutines_CancellableContinuation_initCancellability__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation
     let _result: Swift.Void = _self.initCancellability()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_coroutines_CancellableContinuation_invokeOnCancellation__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void____reverse_swift")
+package func kotlinx_coroutines_CancellableContinuation_invokeOnCancellation__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ handler: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation
+    let _result: Swift.Void = _self.invokeOnCancellation(handler: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: handler, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}())
     return { _result; return true }()
 }
 
@@ -8207,10 +6094,30 @@ package func kotlinx_coroutines_CancellableContinuation_resumeUndispatched__Type
     return { _result; return true }()
 }
 
+@_cdecl("kotlinx_coroutines_CancellableContinuation_resume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void_____reverse_swift")
+package func kotlinx_coroutines_CancellableContinuation_resume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?, _ onCancellation: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation
+    let _result: Swift.Void = _self.resume(value: { switch value { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), onCancellation: onCancellation.map { it in {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: it, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Throwable__(pointerToBlock.__externalRCRef()!, _1.__externalRCRef()); return () }() }
+}() })
+    return { _result; return true }()
+}
+
 @_cdecl("kotlinx_coroutines_CancellableContinuation_tryResumeWithException__TypesOfArguments__ExportedKotlinPackages_kotlin_Throwable____reverse_swift")
 package func kotlinx_coroutines_CancellableContinuation_tryResumeWithException__TypesOfArguments__ExportedKotlinPackages_kotlin_Throwable____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.tryResumeWithException(exception: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: exception))
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void_____reverse_swift")
+package func kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?, _ idempotent: Swift.UnsafeMutableRawPointer?, _ onCancellation: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.tryResume(value: { switch value { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), idempotent: { switch idempotent { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), onCancellation: onCancellation.map { it in {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: it, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Throwable__(pointerToBlock.__externalRCRef()!, _1.__externalRCRef()); return () }() }
+}() })
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
@@ -8383,6 +6290,26 @@ package func kotlinx_coroutines_Job_children_get__reverse_swift(_ `self`: Swift.
 package func kotlinx_coroutines_Job_getCancellationException__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Job.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Job
     let _result: ExportedKotlinPackages.kotlin.coroutines.cancellation.CancellationException = _self.getCancellationException()
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_coroutines_Job_invokeOnCompletion__TypesOfArguments__Swift_Bool_Swift_Bool_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void____reverse_swift")
+package func kotlinx_coroutines_Job_invokeOnCompletion__TypesOfArguments__Swift_Bool_Swift_Bool_U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ onCancelling: Swift.Bool, _ invokeImmediately: Swift.Bool, _ handler: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Job.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Job
+    let _result: any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle = _self.invokeOnCompletion(onCancelling: onCancelling, invokeImmediately: invokeImmediately, handler: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: handler, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}())
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_coroutines_Job_invokeOnCompletion__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void____reverse_swift")
+package func kotlinx_coroutines_Job_invokeOnCompletion__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ handler: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Job.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Job
+    let _result: any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle = _self.invokeOnCompletion(handler: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: handler, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}())
     return _result.__externalRCRef()
 }
 
@@ -8612,6 +6539,16 @@ package func kotlinx_coroutines_channels_SendChannel_close__TypesOfArguments__Sw
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.SendChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.SendChannel
     let _result: Swift.Bool = _self.close(cause: { switch cause { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }())
     return _result
+}
+
+@_cdecl("kotlinx_coroutines_channels_SendChannel_invokeOnClose__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void____reverse_swift")
+package func kotlinx_coroutines_channels_SendChannel_invokeOnClose__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ handler: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.SendChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.SendChannel
+    let _result: Swift.Void = _self.invokeOnClose(handler: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: handler, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil); return () }() }
+}())
+    return { _result; return true }()
 }
 
 @_cdecl("kotlinx_coroutines_channels_SendChannel_isClosedForSend_get__reverse_swift")
@@ -8961,6 +6898,54 @@ package func kotlinx_coroutines_internal_ThreadSafeHeapNode_index_get__reverse_s
 package func kotlinx_coroutines_internal_ThreadSafeHeapNode_index_set__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.Int32) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.`internal`.ThreadSafeHeapNode.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.`internal`.ThreadSafeHeapNode
     let _result: Swift.Void = { _self.index = newValue }()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause0_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause0_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.UnsafeMutableRawPointer, _ block: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
+    let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0, block: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)!
+    return { try await withKotlinContinuation { continuation, exception, cancellation in
+    let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!, Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+} }
+}())
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause1_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause1_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.UnsafeMutableRawPointer, _ block: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
+    let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1, block: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)!
+    return { _1 in try await withKotlinContinuation { continuation, exception, cancellation in
+    let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+} }
+}())
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.UnsafeMutableRawPointer, _ param: Swift.UnsafeMutableRawPointer?, _ block: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
+    let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2, param: { switch param { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), block: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)!
+    return { _1 in try await withKotlinContinuation { continuation, exception, cancellation in
+    let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+} }
+}())
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.UnsafeMutableRawPointer, _ block: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
+    let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2, block: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)!
+    return { _1 in try await withKotlinContinuation { continuation, exception, cancellation in
+    let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+} }
+}())
     return { _result; return true }()
 }
 

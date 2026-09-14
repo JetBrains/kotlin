@@ -37,12 +37,17 @@ private abstract class KonanInteropInProcessAction @Inject constructor() : WorkA
         val isolatedClassLoadersService: Property<KonanCliRunnerIsolatedClassLoadersService>
         val compilerDistributionRoot: DirectoryProperty
         val target: Property<String>
+        val useProvisionedXcode: Property<Boolean>
         val args: ListProperty<String>
     }
 
     override fun execute() {
         val dist = parameters.compilerDistributionRoot.asNativeDistribution().get()
-        object : AbstractToolConfig(dist.root.asFile.absolutePath, parameters.target.get(), emptyMap()) {
+        object : AbstractToolConfig(
+                dist.root.asFile.absolutePath,
+                parameters.target.get(),
+                if (parameters.useProvisionedXcode.get()) mapOf("useProvisionedXcode" to "true") else emptyMap()
+        ) {
             override fun loadLibclang() {
                 // Load libclang into the system class loader. This is needed to allow developers to make changes
                 // in the tooling infrastructure without having to stop the daemon (otherwise libclang might end up
@@ -174,6 +179,10 @@ open class KonanInteropTask @Inject constructor(
             addAll(extraOpts.get())
 
             if (useProvisionedXcode.get()) {
+                add("-Xoverride-konan-properties")
+                add("useProvisionedXcode=true")
+
+                add("-Xkotlinc-option")
                 add("-Xoverride-konan-properties=useProvisionedXcode=true")
             }
 
@@ -187,6 +196,7 @@ open class KonanInteropTask @Inject constructor(
                 this.isolatedClassLoadersService.set(this@KonanInteropTask.isolatedClassLoadersService)
                 this.compilerDistributionRoot.set(this@KonanInteropTask.compilerDistributionRoot)
                 this.target.set(this@KonanInteropTask.target)
+                this.useProvisionedXcode.set(this@KonanInteropTask.useProvisionedXcode)
                 this.args.addAll(args)
             }
         } else {

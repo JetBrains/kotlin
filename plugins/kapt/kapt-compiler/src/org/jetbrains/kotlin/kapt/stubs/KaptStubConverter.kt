@@ -145,9 +145,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     // processing) stubs. Currently, it is mostly a marker for the known cases of potentially incorrect syntax rather than a public flag
     private val avoidIncorrectJavaCode = false
 
-    val bindings: Map<String, KaptJavaFileObject>
-        field = mutableMapOf<String, KaptJavaFileObject>()
-
     private val typeMapper = KaptTypeMapper
 
     val treeMaker = TreeMaker.instance(kaptContext.context) as KaptTreeMaker
@@ -322,10 +319,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             append(classText)
         }
 
-        KaptJavaFileObject(topLevel, classDeclaration).apply {
-            topLevel.sourcefile = this
-            bindings[clazz.name] = this
-        }
+        topLevel.sourcefile = KaptJavaFileObject(topLevel, classDeclaration)
 
         postProcess(topLevel)
 

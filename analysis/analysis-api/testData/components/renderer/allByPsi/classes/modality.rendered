@@ -1,0 +1,20 @@
+class Final {
+  open fun redundantOpen()
+
+  protected fun protectedMember()
+}
+
+open class Open {
+  fun nonOverridable()
+
+  open fun overridable()
+
+  protected open fun protectedOverridable()
+}
+
+abstract class Abstract {
+  abstract fun implicitlyOpen()
+
+  open val overridable: Int
+    get()
+}

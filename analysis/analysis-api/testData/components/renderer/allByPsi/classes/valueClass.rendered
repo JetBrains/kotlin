@@ -1,0 +1,11 @@
+@JvmInline
+inline class Meters(value: Double) {
+  val value: Double
+}
+
+@JvmInline
+inline class Wrapper(text: String) {
+  fun describe(): String
+
+  val text: String
+}

@@ -158,9 +158,27 @@ interface SwiftExportModuleOptionsDsl {
      * The root package to flatten.
      *
      * For a dependency, it takes precedence over the root package the dependency publishes. Ignored for
-     * transitively exported dependencies.
+     * transitively exported and for hidden dependencies.
      */
     val rootPackage: Property<String>
+}
+
+/**
+ * Swift Export options of a dependency. Adds [visibility] to [SwiftExportModuleOptionsDsl], which makes no
+ * sense for the exported module itself.
+ *
+ * This API is experimental and may change in future versions.
+ *
+ * @since 2.5.0
+ */
+@ExperimentalSwiftExportDsl
+@KotlinGradlePluginDsl
+interface SwiftExportDependencyOptionsDsl : SwiftExportModuleOptionsDsl {
+    /**
+     * How much of this dependency appears in the generated Swift API. Takes precedence over the default derived
+     * from the dependency graph, so a direct `api` dependency can be [SwiftExportVisibility.HIDDEN].
+     */
+    val visibility: Property<SwiftExportVisibility>
 }
 
 /**
@@ -228,7 +246,7 @@ interface SwiftExportIntegration {
      *
      * @since 2.5.0
      */
-    fun configure(dependency: Any, configure: SwiftExportModuleOptionsDsl.() -> Unit)
+    fun configure(dependency: Any, configure: SwiftExportDependencyOptionsDsl.() -> Unit)
 
     /**
      * Override the Swift Export options of [dependency].
@@ -236,7 +254,15 @@ interface SwiftExportIntegration {
      * @see configure
      * @since 2.5.0
      */
-    fun configure(dependency: Any, configure: Action<SwiftExportModuleOptionsDsl>)
+    fun configure(dependency: Any, configure: Action<SwiftExportDependencyOptionsDsl>)
+
+    /**
+     * Shorthand for `configure(dependency) { this.visibility.set(visibility) }`.
+     *
+     * @see configure
+     * @since 2.5.0
+     */
+    fun configure(dependency: Any, visibility: SwiftExportVisibility)
 }
 
 /**
@@ -287,16 +313,19 @@ private class DefaultSwiftExportXcodeIntegration(
     override val settings: MapProperty<String, String> = objectFactory.mapProperty(String::class.java, String::class.java)
 
     /** One `configure(dependency) { }` call each, in declaration order, so that a later call wins. */
-    private val pendingOverrides = mutableListOf<Pair<Provider<SwiftExportDependencySelector>, SwiftExportModuleOptionsDsl>>()
+    private val pendingOverrides = mutableListOf<Pair<Provider<SwiftExportDependencySelector>, SwiftExportDependencyOptionsDsl>>()
 
-    override fun configure(dependency: Any, configure: SwiftExportModuleOptionsDsl.() -> Unit) {
-        val dsl = objectFactory.newInstance<SwiftExportModuleOptionsDsl>()
+    override fun configure(dependency: Any, configure: SwiftExportDependencyOptionsDsl.() -> Unit) {
+        val dsl = objectFactory.newInstance<SwiftExportDependencyOptionsDsl>()
         dsl.configure()
         pendingOverrides += dependency.selectorProvider() to dsl
     }
 
-    override fun configure(dependency: Any, configure: Action<SwiftExportModuleOptionsDsl>) =
+    override fun configure(dependency: Any, configure: Action<SwiftExportDependencyOptionsDsl>) =
         configure(dependency) { configure.execute(this) }
+
+    override fun configure(dependency: Any, visibility: SwiftExportVisibility) =
+        configure(dependency) { this.visibility.set(visibility) }
 
     override val dependencyOverrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>> =
         providerFactory.provider {
@@ -307,6 +336,7 @@ private class DefaultSwiftExportXcodeIntegration(
                 overrides[selector] = SwiftExportDeclaredModuleOptions(
                     moduleName = dsl.moduleName.orNull ?: previous?.moduleName,
                     rootPackage = dsl.rootPackage.orNull ?: previous?.rootPackage,
+                    visibility = dsl.visibility.orNull ?: previous?.visibility,
                 )
             }
             overrides

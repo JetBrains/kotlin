@@ -1,9 +1,18 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "4main3BarC")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+import kotlin.native.internal.ExportedBridge
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2ENever__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun main_internal_functional_type_callee_SwiftU2ENever__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EOptionalU3CSwiftU2ENeverU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun main_internal_functional_type_callee_SwiftU2EOptionalU3CSwiftU2ENeverU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Never___")
+internal external fun main_internal_functional_type_callee_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Never___(pointerToClosure: kotlin.native.internal.NativePtr, _1: Boolean): kotlin.native.internal.NativePtr
 
 @ExportedBridge("Bar_p_get")
 public fun Bar_p_get(self: kotlin.native.internal.NativePtr): Boolean {
@@ -35,9 +44,10 @@ public fun __root___meaningOfLife__TypesOfArguments__Swift_Optional_Swift_Never_
 @ExportedBridge("__root___nothingClosure__TypesOfArguments__U2829202D_U20Swift_Never__")
 public fun __root___nothingClosure__TypesOfArguments__U2829202D_U20Swift_Never__(block: kotlin.native.internal.NativePtr): Boolean {
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = main_internal_functional_type_callee_SwiftU2ENever__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             run { _result; throw IllegalStateException() }
         }
     }
@@ -48,10 +58,11 @@ public fun __root___nothingClosure__TypesOfArguments__U2829202D_U20Swift_Never__
 @ExportedBridge("__root___nothingClosureParam__TypesOfArguments__U28Swift_NeverU29202D_U20Swift_String__")
 public fun __root___nothingClosureParam__TypesOfArguments__U28Swift_NeverU29202D_U20Swift_String__(block: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->kotlin.native.internal.NativePtr>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Nothing ->
             val _arg0 = arg0
-            val _result = kotlinFun(_arg0)
+            val _result = error("Unsupported functional type: (Swift.Never) -> Swift.String")
             interpretObjCPointer<kotlin.String>(_result)
         }
     }
@@ -74,9 +85,10 @@ public fun __root___nothingFunctionalParam(): kotlin.native.internal.NativePtr {
 @ExportedBridge("__root___nothingOptClosure__TypesOfArguments__U2829202D_U20Swift_Optional_Swift_Never___")
 public fun __root___nothingOptClosure__TypesOfArguments__U2829202D_U20Swift_Optional_Swift_Never___(block: kotlin.native.internal.NativePtr): Boolean {
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = main_internal_functional_type_callee_SwiftU2EOptionalU3CSwiftU2ENeverU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             run { _result; null }
         }
     }
@@ -87,10 +99,11 @@ public fun __root___nothingOptClosure__TypesOfArguments__U2829202D_U20Swift_Opti
 @ExportedBridge("__root___nothingOptClosureParam__TypesOfArguments__U28Swift_Optional_Swift_Never_U29202D_U20Swift_String__")
 public fun __root___nothingOptClosureParam__TypesOfArguments__U28Swift_Optional_Swift_Never_U29202D_U20Swift_String__(block: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->kotlin.native.internal.NativePtr>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Nothing? ->
             val _arg0 = run { arg0; true }
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Never___(closureBox.objcPtr(), _arg0)
             interpretObjCPointer<kotlin.String>(_result)
         }
     }

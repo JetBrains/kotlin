@@ -1,0 +1,44 @@
+FILE: noArgsConstructorSkipsInitializers.kt
+    @R|lombok/NoArgsConstructor|() public final class WithReferencedParameter : R|kotlin/Any| {
+        public constructor(input: R|kotlin/Int|): R|WithReferencedParameter| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var inputValue: R|kotlin/Int?| = R|<local>/input|
+            public get(): R|kotlin/Int?|
+            public set(value: R|kotlin/Int?|): R|kotlin/Unit|
+
+        public constructor(): R|WithReferencedParameter|
+
+    }
+    @R|lombok/NoArgsConstructor|(force = Boolean(true) [evaluated = Boolean(true)]) public final class WithInitializers : R|kotlin/Any| {
+        public constructor(text: R|kotlin/String|): R|WithInitializers| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val text: R|kotlin/String| = R|<local>/text|
+            public get(): R|kotlin/String|
+
+        public final val initialized: R|kotlin/Int| = Int(5)
+            public get(): R|kotlin/Int|
+
+        public final var fromInitBlock: R|kotlin/String?| = Null(null)
+            public get(): R|kotlin/String?|
+            public set(value: R|kotlin/String?|): R|kotlin/Unit|
+
+        init {
+            this@R|/WithInitializers|.R|/WithInitializers.fromInitBlock| = <strcat>(String(init:), this@R|/WithInitializers|.R|/WithInitializers.text|)
+        }
+
+        public constructor(): R|WithInitializers|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval withReferencedParameter: R|WithReferencedParameter| = R|/WithReferencedParameter|()
+        R|/assertEquals|<R|kotlin/Int?|>(Null(null), R|<local>/withReferencedParameter|.R|/WithReferencedParameter.inputValue|)
+        lval withInitializers: R|WithInitializers| = R|/WithInitializers|()
+        R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/withInitializers|.R|/WithInitializers.text|)
+        R|/assertEquals|<R|kotlin/Int|>(Int(0), R|<local>/withInitializers|.R|/WithInitializers.initialized|)
+        R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/withInitializers|.R|/WithInitializers.fromInitBlock|)
+        ^box String(OK)
+    }

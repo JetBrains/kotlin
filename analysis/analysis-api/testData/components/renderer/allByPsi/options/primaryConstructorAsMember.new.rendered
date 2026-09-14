@@ -1,0 +1,22 @@
+class Simple {
+  constructor(x: Int, y: String)
+
+  val x: Int
+}
+
+class WithSecondary {
+  constructor()
+
+  constructor(x: Int)
+
+  val x: Int
+}
+
+class WithAnnotatedConstructor {
+  @Ctor constructor(x: Int)
+
+  val x: Int
+}
+
+@Target(allowedTargets = [AnnotationTarget.CONSTRUCTOR])
+annotation class Ctor

@@ -2,7 +2,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("__root___consume_nsdate__TypesOfArguments__Foundation_NSDate__")
 @OptIn(kotlinx.cinterop.BetaInteropApi::class)

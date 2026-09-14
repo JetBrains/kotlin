@@ -601,6 +601,12 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             }
         }
     }
+
+    @DisplayName("Change in a dependency should invalidate up-to-date check")
+    @GradleTest
+    fun testMultiModuleWasmDist(gradleVersion: GradleVersion) {
+        testMultiModuleWasmDistDoTest(gradleVersion, "foo")
+    }
 }
 
 class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
@@ -650,6 +656,12 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                     }
             }
         }
+    }
+
+    @DisplayName("Change in a dependency should invalidate up-to-date check")
+    @GradleTest
+    fun testMultiModuleWasmDist(gradleVersion: GradleVersion) {
+        testMultiModuleWasmDistDoTest(gradleVersion, "bar")
     }
 }
 
@@ -1556,6 +1568,83 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                     module.exports = config
                 """.trimIndent()
             )
+        }
+    }
+
+    @DisplayName("Check css support API")
+    @GradleTest
+    @TestMetadata("kotlin-wasm-js-css-browser-project")
+    fun testWebpackCssSupport(gradleVersion: GradleVersion) {
+        project("kotlin-wasm-js-css-browser-project", gradleVersion) {
+
+            build("wasmJsBrowserProductionWebpack")
+        }
+    }
+
+    @DisplayName("webpack-config-d directory created during the build is not ignored")
+    @GradleTest
+    fun testDynamicWebpackConfigD(gradleVersion: GradleVersion) {
+        project("wasm-js-dynamic-webpack-config-d", gradleVersion) {
+            build("build") {
+                assertDirectoryInProjectExists("build/wasm/packages/wasm-js-dynamic-webpack-config-d")
+                assertFileInProjectContains(
+                    "build/wasm/packages/wasm-js-dynamic-webpack-config-d/webpack.config.js",
+                    "// hello from patch.js"
+                )
+            }
+        }
+    }
+
+    protected fun testMultiModuleWasmDistDoTest(gradleVersion: GradleVersion, subProjectName: String) {
+        project("wasm-browser-several-modules", gradleVersion) {
+            subProject("foo").let {
+                it.projectPath.resolve("src/wasmJsMain/kotlin/A.kt")
+                    .replaceText(
+                        "\"Hello, world\"",
+                        "bar()"
+                    )
+
+                it.buildScriptInjection {
+                    kotlinMultiplatform.sourceSets.getByName("wasmJsMain").dependencies {
+                        implementation(project(":bar"))
+                    }
+                }
+            }
+
+            val compiledWasm =
+                projectPath.resolve("build/wasm/packages/wasm-browser-several-modules-foo/kotlin/wasm-browser-several-modules-$subProjectName.wasm")
+
+            build(":foo:wasmJsBrowserDistribution") {
+                assertTasksExecuted(
+                    ":foo:wasmJsBrowserProductionWebpack",
+                    ":foo:wasmJsBrowserDistribution",
+                )
+                assertFileContains(
+                    compiledWasm,
+                    "Hello from bar"
+                )
+            }
+
+            subProject("bar").projectPath.resolve("src/wasmJsMain/kotlin/A.kt")
+                .replaceText(
+                    "Hello from bar",
+                    "Hello again from bar"
+                )
+
+            build(":foo:wasmJsBrowserDistribution") {
+                assertTasksExecuted(
+                    ":foo:wasmJsBrowserProductionWebpack",
+                    ":foo:wasmJsBrowserDistribution",
+                )
+                assertFileDoesNotContain(
+                    compiledWasm,
+                    "Hello from bar"
+                )
+                assertFileContains(
+                    compiledWasm,
+                    "Hello again from bar"
+                )
+            }
         }
     }
 }

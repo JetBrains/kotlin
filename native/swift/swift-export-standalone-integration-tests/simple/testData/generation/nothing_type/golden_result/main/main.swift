@@ -64,25 +64,12 @@ public func meaningOfLife(
 public func nothingClosure(
     block: @escaping () -> Swift.Never
 ) -> Swift.Never {
-    return { __root___nothingClosure__TypesOfArguments__U2829202D_U20Swift_Never__({
-        let originalBlock: () -> Swift.Never = block
-        return {
-            let _result = originalBlock()
-            return { _result }()
-        }
-    }()); fatalError() }()
+    return { __root___nothingClosure__TypesOfArguments__U2829202D_U20Swift_Never__(Unmanaged.passRetained((block as () -> Swift.Never) as AnyObject).toOpaque()); fatalError() }()
 }
 public func nothingClosureParam(
     block: @escaping (Swift.Never) -> Swift.String
 ) -> Swift.String {
-    return __root___nothingClosureParam__TypesOfArguments__U28Swift_NeverU29202D_U20Swift_String__({
-        let originalBlock: (Swift.Never) -> Swift.String = block
-        return { (arg0: Swift.Bool) in
-            let _arg0: Swift.Never = { arg0; fatalError() }()
-            let _result = originalBlock(_arg0)
-            return _result
-        }
-    }())
+    return __root___nothingClosureParam__TypesOfArguments__U28Swift_NeverU29202D_U20Swift_String__(Unmanaged.passRetained((block as (Swift.Never) -> Swift.String) as AnyObject).toOpaque())
 }
 public func nothingFunctional() -> () -> Swift.Never {
     return {
@@ -99,25 +86,12 @@ public func nothingFunctionalParam() -> (Swift.Never) -> Swift.String {
 public func nothingOptClosure(
     block: @escaping () -> Swift.Never?
 ) -> Swift.Never {
-    return { __root___nothingOptClosure__TypesOfArguments__U2829202D_U20Swift_Optional_Swift_Never___({
-        let originalBlock: () -> Swift.Optional<Swift.Never> = block
-        return {
-            let _result = originalBlock()
-            return { _result; return true }()
-        }
-    }()); fatalError() }()
+    return { __root___nothingOptClosure__TypesOfArguments__U2829202D_U20Swift_Optional_Swift_Never___(Unmanaged.passRetained((block as () -> Swift.Optional<Swift.Never>) as AnyObject).toOpaque()); fatalError() }()
 }
 public func nothingOptClosureParam(
     block: @escaping (Swift.Never?) -> Swift.String
 ) -> Swift.String {
-    return __root___nothingOptClosureParam__TypesOfArguments__U28Swift_Optional_Swift_Never_U29202D_U20Swift_String__({
-        let originalBlock: (Swift.Optional<Swift.Never>) -> Swift.String = block
-        return { (arg0: Swift.Bool) in
-            let _arg0: Swift.Optional<Swift.Never> = { arg0; return nil }()
-            let _result = originalBlock(_arg0)
-            return _result
-        }
-    }())
+    return __root___nothingOptClosureParam__TypesOfArguments__U28Swift_Optional_Swift_Never_U29202D_U20Swift_String__(Unmanaged.passRetained((block as (Swift.Optional<Swift.Never>) -> Swift.String) as AnyObject).toOpaque())
 }
 public func nothingOptFunctional() -> () -> Swift.Never? {
     return {
@@ -138,4 +112,21 @@ public func nullableNothingInput(
 }
 public func nullableNothingOutput() -> Swift.Never? {
     return { __root___nullableNothingOutput(); return nil }()
+}
+@_cdecl("main_internal_functional_type_callee_SwiftU2ENever__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func main_internal_functional_type_callee_SwiftU2ENever__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Never = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> Swift.Never)()
+    return { _result }()
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EOptionalU3CSwiftU2ENeverU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func main_internal_functional_type_callee_SwiftU2EOptionalU3CSwiftU2ENeverU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Optional<Swift.Never> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> Swift.Optional<Swift.Never>)()
+    return { _result; return true }()
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Never___")
+package func main_internal_functional_type_callee_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Never___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Bool) -> Swift.String {
+    let _result: Swift.String = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<Swift.Never>) -> Swift.String)({ _1; return nil }())
+    return _result
 }

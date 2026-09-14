@@ -38,8 +38,8 @@ enum class KaptCliOption(
     val cliToolOption: CliToolOption? = null
 ) : AbstractCliOption {
     APT_MODE_OPTION(
-        "aptMode", "<apt|stubs|stubsAndApt|compile>",
-        "Annotation processing mode: only apt, only stub generation, both, or with the subsequent compilation",
+        "aptMode", "<apt|stubs|stubsAndApt>",
+        "Annotation processing mode: only apt, only stub generation, or both",
         cliToolOption = CliToolOption("-Kapt-mode", VALUE)
     ),
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.export.internal
 
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 
 /**
  * A node of the resolved Swift Export graph.
@@ -17,6 +18,12 @@ import org.gradle.api.artifacts.component.ComponentIdentifier
  */
 internal data class SwiftExportResolvedComponent(
     val id: ComponentIdentifier,
+    /**
+     * The component that owns this artifact as seen from the requesting dependency edge, i.e. before KMP
+     * `available-at` redirection to the platform component. Useful for accessing Swift Export metadata,
+     * which is published on the root component.
+     */
+    val rootComponentId: ComponentIdentifier,
     /** `null` when Gradle resolved the component without module coordinates. */
     val moduleVersion: ModuleVersionIdentifier?,
 ) {
@@ -30,6 +37,8 @@ internal data class SwiftExportResolvedComponent(
 internal data class SwiftExportDeclaredModuleOptions(
     val moduleName: String?,
     val rootPackage: String?,
+    /** Not published, so only consumer overrides can set it. */
+    val visibility: SwiftExportVisibility? = null,
 )
 
 /**
@@ -37,7 +46,7 @@ internal data class SwiftExportDeclaredModuleOptions(
  *
  * Layers are consulted in order and the first non-null value wins, per property:
  *
- *  1. consumer overrides from `xcodeIntegration { configure(dependency) { } }` (KT-87990)
+ *  1. consumer overrides from `xcodeIntegration { configure(dependency) { } }` (KT-87990); only they set visibility
  *  2. options published by the dependency itself (KT-87987)
  *
  * The derived default applies when no layer declares a value.
@@ -57,3 +66,10 @@ internal fun List<SwiftExportModuleOptionsSource>.declaredModuleName(component: 
  */
 internal fun List<SwiftExportModuleOptionsSource>.declaredRootPackage(component: SwiftExportResolvedComponent): String? =
     firstNotNullOfOrNull { it.optionsFor(component)?.rootPackage }
+
+/**
+ * The declared visibility for [component], or `null` to use the derived default.
+ */
+internal fun List<SwiftExportModuleOptionsSource>.declaredVisibility(
+    component: SwiftExportResolvedComponent,
+): SwiftExportVisibility? = firstNotNullOfOrNull { it.optionsFor(component)?.visibility }

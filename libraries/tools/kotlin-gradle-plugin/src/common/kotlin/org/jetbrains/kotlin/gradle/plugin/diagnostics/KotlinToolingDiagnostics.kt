@@ -1959,6 +1959,42 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftExportUnsupportedMetadataSchemaVersion : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param component the dependency that published the metadata, rendered for the user
+         * @param foundSchemaVersion the schema version found in the published metadata
+         * @param supportedSchemaVersion the schema version supported by this Kotlin Gradle plugin
+         */
+        operator fun invoke(component: String, foundSchemaVersion: Int, supportedSchemaVersion: Int) = build {
+            title("Unsupported Swift Export Metadata Schema Version")
+                .description {
+                    "The Swift Export metadata published by '$component' uses schema version $foundSchemaVersion, " +
+                            "but this version of the Kotlin Gradle plugin only supports schema version $supportedSchemaVersion. " +
+                            "The metadata is ignored and default Swift Export options are used for this module."
+                }
+                .solution {
+                    "Please update the Kotlin Gradle plugin to a version that supports schema version $foundSchemaVersion."
+                }
+        }
+    }
+
+    object SwiftExportMalformedMetadata : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param component the dependency that published the metadata, rendered for the user
+         * @param reason the underlying decoding failure message, if available
+         */
+        operator fun invoke(component: String, reason: String?) = build {
+            title("Malformed Swift Export Metadata")
+                .description {
+                    "The Swift Export metadata published by '$component' could not be read because it is malformed" +
+                            (reason?.let { ": $it" } ?: ".")
+                }
+                .solution {
+                    "This is likely a bug, please report it to the relevant issue tracker for '$component'."
+                }
+        }
+    }
+
     object SwiftExportMinimumDeployTargetError : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
             deploymentTargetSettingName: String,

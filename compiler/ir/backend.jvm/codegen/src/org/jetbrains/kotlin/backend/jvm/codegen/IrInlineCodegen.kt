@@ -46,6 +46,9 @@ class IrInlineCodegen(
     private val sourceCompiler: SourceCompilerForInline,
     private val reifiedTypeInliner: ReifiedTypeInliner,
     private val markInlinedSuspensionPointAsUnitReturning: Boolean,
+    // Whether this is the call to the underlying function in a `$default` stub, which
+    // could not be handled because the two disagree on the JVM parameter layout. See KT-89206.
+    private val isDefaultStubCallToImplementation: Boolean,
 ) : IrInlineCallGenerator {
 
     private val inlineArgumentsInPlace = canInlineArgumentsInPlace()
@@ -160,10 +163,12 @@ class IrInlineCodegen(
                     //         .let {}
                     //   * Inline parameters.
                     //   * Continuation argument.
+                    //   * An unchanged `$default` stub parameter whose slot already has a local variable table entry.
                     val argValue = if (
                         (irValueParameter.parent as IrDeclaration).isInlineOnly() && irValueParameter.kind != IrParameterKind.ExtensionReceiver ||
                         irValueParameter.isInlineParameter() ||
-                        irValueParameter.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
+                        irValueParameter.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
+                        isDefaultStubCallToImplementation
                     ) {
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
                     } else {
@@ -334,6 +339,7 @@ class IrInlineCodegen(
             maskStartIndex,
             maskStartIndex + maskValues.size,
             skipLineNumbers = codegen.isNoLineNumberScope,
+            skipParameterLocalVariables = isDefaultStubCallToImplementation,
         ) //with captured
 
         val remapper = LocalVarRemapper(parameters, initialFrameSize)

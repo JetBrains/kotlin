@@ -9,6 +9,9 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.utils.printer.escapedInKotlinLiteral
+import org.jetbrains.kotlin.analysis.utils.printer.renderKotlinCharLiteral
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -73,6 +76,7 @@ internal fun createValueArgumentListStub(parent: StubElement<*>, args: Map<Name,
  *
  * [containerClassId] is the class the value is declared in, if any; see [createFloatingPointStub] for its meaning.
  */
+@OptIn(KaImplementationDetail::class)
 internal fun createValueStub(parent: StubElement<*>, value: ConstantValue<*>, containerClassId: ClassId?) {
     when (value) {
         is BooleanValue -> createConstantStub(parent, ConstantValueKind.BOOLEAN_CONSTANT, value.value.toString())
@@ -93,7 +97,7 @@ internal fun createValueStub(parent: StubElement<*>, value: ConstantValue<*>, co
             containerClassId,
         )
 
-        is CharValue -> createConstantStub(parent, ConstantValueKind.CHARACTER_CONSTANT, renderCharacterLiteral(value.value))
+        is CharValue -> createConstantStub(parent, ConstantValueKind.CHARACTER_CONSTANT, renderKotlinCharLiteral(value.value))
         is NullValue -> createConstantStub(parent, ConstantValueKind.NULL, "null")
         is StringValue -> createStringTemplateStub(parent, value.value)
         is EnumValue -> createReferenceChainStub(parent, value.enumClassId.segments() + value.enumEntryName)
@@ -185,6 +189,7 @@ private fun createDivisionStub(parent: StubElement<*>, dividend: String, divisor
     createConstantStub(binaryExpression, ConstantValueKind.FLOAT_CONSTANT, divisor)
 }
 
+@OptIn(KaImplementationDetail::class)
 private fun createStringTemplateStub(parent: StubElement<*>, value: String) {
     val template = KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(parent = parent, elementType = KtNodeTypes.STRING_TEMPLATE)
     val literal = StringBuilder()
@@ -201,7 +206,7 @@ private fun createStringTemplateStub(parent: StubElement<*>, value: String) {
     }
 
     for (character in value) {
-        val escaped = character.escapedIn(quote = '"')
+        val escaped = character.escapedInKotlinLiteral(quote = '"')
         if (escaped == null) {
             literal.append(character)
         } else {
@@ -324,42 +329,6 @@ private fun createQualifiedStub(
     createSelector(qualifiedExpression)
 }
 
-private fun renderCharacterLiteral(value: Char): String = "'" + (value.escapedIn(quote = '\'') ?: value) + "'"
-
-/**
- * The escape sequence for [this] character inside a literal delimited by [quote], or `null` if the character
- * can be rendered as is.
- *
- * Non-printable characters have to be escaped as the decompiled text is expected to be readable,
- * and some of them (e.g., a line separator) would break the literal.
- */
-private fun Char.escapedIn(quote: Char): String? = when (this) {
-    '\\' -> ESCAPE + '\\'
-    quote -> ESCAPE + quote
-    '$' -> ESCAPE + '$'
-    '\n' -> ESCAPE + 'n'
-    '\r' -> ESCAPE + 'r'
-    '\t' -> ESCAPE + 't'
-    '\b' -> ESCAPE + 'b'
-    else -> if (isPrintable()) null else ESCAPE + UNICODE_ESCAPE_MARKER + "%04X".format(code)
-}
-
-/**
- * Mirrors the printability check of [org.jetbrains.kotlin.constant.CharValue].
- */
-private fun Char.isPrintable(): Boolean = when (Character.getType(this).toByte()) {
-    Character.UNASSIGNED,
-    Character.LINE_SEPARATOR,
-    Character.PARAGRAPH_SEPARATOR,
-    Character.CONTROL,
-    Character.FORMAT,
-    Character.PRIVATE_USE,
-    Character.SURROGATE,
-        -> false
-
-    else -> true
-}
-
 private fun ClassId.segments(): List<Name> = asSingleFqName().pathSegments()
 
 private fun String.ref(): StringRef = StringRef.fromString(this)!!
@@ -369,5 +338,3 @@ private val POSITIVE_INFINITY_NAME = Name.identifier("POSITIVE_INFINITY")
 private val NEGATIVE_INFINITY_NAME = Name.identifier("NEGATIVE_INFINITY")
 
 private const val FLOAT_SUFFIX = "F"
-private const val ESCAPE = "\\"
-private const val UNICODE_ESCAPE_MARKER = 'u'

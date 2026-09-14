@@ -46,6 +46,13 @@ class SwiftExportDependencySelectorTests {
             override fun getModuleIdentifier() = moduleVersion(group, name, version).module
             override fun getDisplayName() = "$group:$name:$version"
         },
+        rootComponentId = object : ModuleComponentIdentifier {
+            override fun getGroup() = group
+            override fun getModule() = name
+            override fun getVersion() = version
+            override fun getModuleIdentifier() = moduleVersion(group, name, version).module
+            override fun getDisplayName() = "$group:$name:$version"
+        },
         moduleVersion = moduleVersion(group, name, version),
     )
 
@@ -62,12 +69,13 @@ class SwiftExportDependencySelectorTests {
         val resolvable = root.configurations.detachedConfiguration(
             root.dependencies.project(mapOf("path" to path, "configuration" to "forTest"))
         )
-        val selected = resolvable.incoming.resolutionResult.root.dependencies
+        val dependencyResult = resolvable.incoming.resolutionResult.root.dependencies
             .filterIsInstance<ResolvedDependencyResult>()
             .single()
-            .selected
+        val selected = dependencyResult.selected
         return SwiftExportResolvedComponent(
             id = selected.id,
+            rootComponentId = dependencyResult.resolvedVariant.owner,
             moduleVersion = publishedAs?.let { (group, module) -> moduleVersion(group, module, "1.0") },
         )
     }
@@ -167,7 +175,11 @@ class SwiftExportDependencySelectorTests {
 
     @Test
     fun `an unknown component identifier matches nothing`() {
-        val component = SwiftExportResolvedComponent(ComponentIdentifier { "opaque" }, moduleVersion = null)
+        val component = SwiftExportResolvedComponent(
+            id = { "opaque" },
+            rootComponentId = { "opaque" },
+            moduleVersion = null
+        )
 
         assertFalse(SwiftExportDependencySelector.Module(group = "org.example", name = "foo").matches(component))
         assertFalse(SwiftExportDependencySelector.ProjectPath(":foo").matches(component))

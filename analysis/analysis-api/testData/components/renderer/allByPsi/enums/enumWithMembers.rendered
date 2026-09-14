@@ -1,0 +1,24 @@
+enum class Planet(m: Double, r: Double) {
+  EARTH {
+    override fun sayHello()
+  },
+  MERCURY {
+    override fun sayHello()
+  },
+  VENERA {
+    override fun sayHello()
+  };
+
+  abstract fun sayHello()
+
+  companion object {
+    const val G: Double
+  }
+
+  internal val r: Double
+
+  val g: Double
+
+  val m: Double
+}
+

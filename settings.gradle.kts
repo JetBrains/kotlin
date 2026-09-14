@@ -542,6 +542,7 @@ include(
 )
 
 include(
+    ":compiler:test-coverage",
     ":compiler:test-infrastructure",
     ":compiler:test-infrastructure:grouping-test-engine",
     ":compiler:test-infrastructure-utils",

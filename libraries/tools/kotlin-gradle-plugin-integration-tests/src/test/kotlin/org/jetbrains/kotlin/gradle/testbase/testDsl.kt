@@ -301,11 +301,7 @@ private fun TestProject.buildWithAction(
         )
         val gradleRunnerForBuild = gradleRunner
             .also { if (forwardBuildOutput) it.forwardOutput() }
-            .withEnvironment(
-                if (environmentVariables.environmentalVariables.isNotEmpty()) {
-                    System.getenv() + environmentVariables.environmentalVariables
-                } else null
-            )
+            .withEnvironment(environmentVariables.resolve())
             .withDebug(runWithDebug && !connectSubprocessVMToDebugger)
             .withArguments(allBuildArguments)
 
@@ -564,15 +560,48 @@ open class GradleProject(
 }
 
 /**
- * You need at least Gradle "7.0" for supporting environment variables with Gradle runner
+ * You need at least Gradle "7.0" for supporting environment variables with Gradle runner.
+ *
+ * [environmentProvider] receives the environment of the current process and returns the complete environment
+ * for the build, e.g. `EnvironmentalVariables { it - "CI" }`. The default `null` inherits the environment
+ * of the current process unchanged. To add or override variables on top of the current environment,
+ * use the secondary constructors taking a map or pairs.
  */
 class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(
-    val environmentalVariables: Map<String, String> = emptyMap(),
+    private val environmentProvider: ((systemEnvironment: Map<String, String>) -> Map<String, String>)? = null,
 ) {
-    val overridingEnvironmentVariablesInstantiationBacktrace: Throwable? = if (environmentalVariables.isNotEmpty()) Throwable() else null
+    val overridingEnvironmentVariablesInstantiationBacktrace: Throwable? =
+        if (environmentProvider != null) Throwable() else null
+
+    /**
+     * Adds [environmentalVariables] on top of the environment of the current process.
+     */
+    @EnvironmentalVariablesOverride
+    constructor(environmentalVariables: Map<String, String>) : this(
+        // An empty map must not count as an override: it would force a forked daemon and disable `withDebug`
+        if (environmentalVariables.isEmpty()) null else ({ systemEnvironment -> systemEnvironment + environmentalVariables })
+    )
 
     @EnvironmentalVariablesOverride
-    constructor(vararg environmentVariables: Pair<String, String>) : this(mapOf(*environmentVariables))
+    constructor(vararg environmentalVariables: Pair<String, String>) : this(mapOf(*environmentalVariables))
+
+    /**
+     * The complete environment for the build, or `null` to inherit the environment of the current process.
+     */
+    fun resolve(): Map<String, String>? = environmentProvider?.invoke(System.getenv())
+
+    /**
+     * Variables that are added or changed compared to the environment of the current process,
+     * i.e. what has to be passed to a child process that inherits the current environment.
+     * Variables removed by [environmentProvider] cannot be expressed this way and are not included.
+     */
+    val environmentalVariables: Map<String, String>
+        get() {
+            val systemEnvironment = System.getenv()
+            return environmentProvider?.invoke(systemEnvironment)
+                ?.filter { (key, value) -> systemEnvironment[key] != value }
+                .orEmpty()
+        }
 }
 
 @RequiresOptIn("Environmental variables override may lead to interference of parallel builds")

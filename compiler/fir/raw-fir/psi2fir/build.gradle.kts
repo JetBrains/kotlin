@@ -8,6 +8,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
+    id("test-coverage-convention")
     id("require-explicit-types")
 }
 

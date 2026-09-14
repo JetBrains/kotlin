@@ -1,0 +1,5 @@
+val (first, second)
+
+var (mutableFirst, mutableSecond)
+
+val (_, used)

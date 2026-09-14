@@ -57,11 +57,6 @@ open class FirKaptAnalysisHandlerExtension(
             configuration,
         )
 
-        if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
-            logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
-            return false
-        }
-
         optionsBuilder.apply {
             projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
             val contentRoots = configuration.contentRoots
@@ -213,7 +208,7 @@ open class FirKaptAnalysisHandlerExtension(
         val [saveStubsTime] = measureTimeMillis { saveStubs(kaptContext, kaptStubs) }
         logger.info { "Java stub saving took $saveStubsTime ms" }
 
-        val [saveIncrementalDataTime] = measureTimeMillis { saveIncrementalData(kaptContext, converter) }
+        val [saveIncrementalDataTime] = measureTimeMillis { saveIncrementalData(kaptContext) }
         logger.info { "Incremental data saving took $saveIncrementalDataTime ms" }
     }
 
@@ -279,10 +274,7 @@ open class FirKaptAnalysisHandlerExtension(
         logger.info { "Source files: ${sourceFiles}" }
     }
 
-    protected open fun saveIncrementalData(
-        kaptContext: KaptContextForStubGeneration,
-        converter: KaptStubConverter,
-    ) {
+    protected open fun saveIncrementalData(kaptContext: KaptContextForStubGeneration) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
         val reportOutputFiles = kaptContext.configuration.reportOutputFiles

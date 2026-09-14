@@ -3,7 +3,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("list2_testListOptAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList__")
 public fun list2_testListOptAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList__(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

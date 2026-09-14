@@ -56,11 +56,10 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.serialization.modules.SerializersModuleCollector::class, "_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleCollector")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.serialization.encoding.CompositeDecoder.Companion::class, "19KotlinSerialization81_ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder_CompanionC")
 
-import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import kotlinx.serialization.builtins.serializer as kotlinx_serialization_builtins_serializer
 import kotlinx.serialization.decodeFromHexString as kotlinx_serialization_decodeFromHexString
 import kotlinx.serialization.descriptors.elementDescriptors as kotlinx_serialization_descriptors_elementDescriptors
@@ -75,6 +74,24 @@ import kotlinx.serialization.encoding.encodeStructure as kotlinx_serialization_e
 import kotlinx.serialization.findPolymorphicSerializer as kotlinx_serialization_findPolymorphicSerializer
 import kotlinx.serialization.modules.overwriteWith as kotlinx_serialization_modules_overwriteWith
 import kotlinx.serialization.modules.plus as kotlinx_serialization_modules_plus
+
+@ImportedBridge("KotlinSerialization_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder__")
+internal external fun KotlinSerialization_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@ImportedBridge("KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder__")
+internal external fun KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleBuilder__")
+internal external fun KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleBuilder__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__")
+internal external fun KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoder_Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+internal external fun KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoder_Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr, _2: Int, _3: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoder__")
+internal external fun KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoder__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
 
 @ImportedBridge("kotlinx_serialization_BinaryFormat_decodeFromByteArray__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_ExportedKotlinPackages_kotlin_ByteArray____reverse_swift")
 internal external fun kotlinx_serialization_BinaryFormat_decodeFromByteArray__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_ExportedKotlinPackages_kotlin_ByteArray____reverse_swift(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr, bytes: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
@@ -729,6 +746,17 @@ public fun kotlinx_serialization_encoding_AbstractEncoder_serializersModule_get_
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlinx_serialization_encoding_AbstractEncoder_serializersModule_get__reverse_swift(__self)
     return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.serialization.modules.SerializersModule
+}
+
+@ImportedBridge("kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void____reverse_swift")
+internal external fun kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void____reverse_swift(self: kotlin.native.internal.NativePtr, consumeChunk: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.ChunkedDecoder::class, "decodeStringChunked")
+public fun kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void____reverse(self: kotlinx.serialization.encoding.ChunkedDecoder, consumeChunk: Function1<kotlin.String, Unit>): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __consumeChunk = kotlin.native.internal.ref.createRetainedExternalRCRef(consumeChunk)
+    val _result = kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void____reverse_swift(__self, __consumeChunk)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("kotlinx_serialization_encoding_CompositeDecoder_decodeBooleanElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
@@ -1660,6 +1688,14 @@ public fun kotlinx_serialization_modules_SerializersModule_dumpTo__TypesOfArgume
     return run<Unit> { _result }
 }
 
+@ExportedBridge("KotlinSerialization_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__")
+public fun KotlinSerialization_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
+    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
+    val ___1 = interpretObjCPointer<kotlin.String>(_1)
+    val _result = run { (__pointerToBlock as Function1<kotlin.String, Unit>).invoke(___1) }
+    return run { _result; true }
+}
+
 @ExportedBridge("kotlinx_serialization_BinaryFormat_decodeFromByteArray__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_ExportedKotlinPackages_kotlin_ByteArray__")
 public fun kotlinx_serialization_BinaryFormat_decodeFromByteArray__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_ExportedKotlinPackages_kotlin_ByteArray__(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr, bytes: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.BinaryFormat
@@ -2477,10 +2513,11 @@ public fun kotlinx_serialization_descriptors_buildClassSerialDescriptor__TypesOf
     val __serialName = interpretObjCPointer<kotlin.String>(serialName)
     val __typeParameters = interpretObjCPointer<kotlin.collections.List<kotlinx.serialization.descriptors.SerialDescriptor>>(typeParameters).toTypedArray()
     val __builderAction = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(builderAction);
+        val closurePtr = builderAction;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -2495,10 +2532,11 @@ public fun kotlinx_serialization_descriptors_buildSerialDescriptor__TypesOfArgum
     val __kind = kotlin.native.internal.ref.dereferenceExternalRCRef(kind) as kotlinx.serialization.descriptors.SerialKind
     val __typeParameters = interpretObjCPointer<kotlin.collections.List<kotlinx.serialization.descriptors.SerialDescriptor>>(typeParameters).toTypedArray()
     val __builder = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(builder);
+        val closurePtr = builder;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -3483,10 +3521,11 @@ public fun kotlinx_serialization_encoding_AbstractEncoder_serializersModule_get(
 public fun kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__(self: kotlin.native.internal.NativePtr, consumeChunk: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.ChunkedDecoder
     val __consumeChunk = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(consumeChunk);
+        val closurePtr = consumeChunk;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.String ->
             val _arg0 = arg0.objcPtr()
-            val _result = kotlinFun(_arg0)
+            val _result = KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -4142,10 +4181,11 @@ public fun kotlinx_serialization_encoding_decodeStructure__TypesOfArgumentsE__an
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as kotlinx.serialization.encoding.Decoder
     val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlinx.serialization.encoding.CompositeDecoder ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = KotlinSerialization_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder__(closureBox.objcPtr(), _arg0)
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
         }
     }
@@ -4159,10 +4199,11 @@ public fun kotlinx_serialization_encoding_encodeCollection__TypesOfArgumentsE__a
     val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
     val __collectionSize = collectionSize
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlinx.serialization.encoding.CompositeEncoder ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoder__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -4176,12 +4217,13 @@ public fun kotlinx_serialization_encoding_encodeCollection__TypesOfArgumentsE__a
     val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
     val __collection = kotlin.native.internal.ref.dereferenceExternalRCRef(collection) as kotlin.collections.Collection<kotlin.Any?>
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, Int, kotlin.native.internal.NativePtr)->Boolean>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlinx.serialization.encoding.CompositeEncoder, arg1: Int, arg2: kotlin.Any? ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _arg1 = arg1
             val _arg2 = if (arg2 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg2)
-            val _result = kotlinFun(_arg0, _arg1, _arg2)
+            val _result = KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoder_Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(closureBox.objcPtr(), _arg0, _arg1, _arg2)
             run<Unit> { _result }
         }
     }
@@ -4194,10 +4236,11 @@ public fun kotlinx_serialization_encoding_encodeStructure__TypesOfArgumentsE__an
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as kotlinx.serialization.encoding.Encoder
     val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlinx.serialization.encoding.CompositeEncoder ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoder__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -5095,10 +5138,11 @@ public fun kotlinx_serialization_modules_EmptySerializersModule_get(): kotlin.na
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 public fun kotlinx_serialization_modules_SerializersModule__TypesOfArguments__U28ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleBuilderU29202D_U20Swift_Void__(builderAction: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __builderAction = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(builderAction);
+        val closurePtr = builderAction;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlinx.serialization.modules.SerializersModuleBuilder ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = KotlinSerialization_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleBuilder__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }

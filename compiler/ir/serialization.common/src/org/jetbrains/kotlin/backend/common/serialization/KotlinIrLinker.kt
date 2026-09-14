@@ -32,22 +32,18 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.putToMultiMap
 
 abstract class KotlinIrLinker(
-    private val currentModule: ModuleDescriptor?,
     val symbolTable: SymbolTable,
     val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
     constructor(
-        currentModule: ModuleDescriptor?,
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
         deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
     ) : this(
-        currentModule,
         symbolTable,
         errorCallback = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, it) },
         deserializedSymbolPostProcessor
@@ -199,16 +195,11 @@ abstract class KotlinIrLinker(
     }
 
     protected open fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
-    protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
         deserializeOrResolveDeclaration(symbol)
 
     private fun deserializeOrResolveDeclaration(symbol: IrSymbol): IrDeclaration? {
-        if (!symbol.isPublicApi && symbol.hasDescriptor && !platformSpecificSymbol(symbol) &&
-            symbol.descriptor.module !== currentModule
-        ) return null
-
         if (!symbol.isBound) {
             try {
                 if (!findDeserializedDeclarationForSymbol(symbol)) return null

@@ -1,0 +1,60 @@
+@NoArgsConstructor(force = true)
+class WithInitializers {
+  val text: String
+    field = text
+    get
+
+  val initialized: Int
+    field = 5
+    get
+
+  var fromInitBlock: String?
+    field = null
+    get
+    set
+
+  init {
+    <this>.<set-fromInitBlock>(<set-?> = "init:" + <this>.<get-text>())
+  }
+
+  constructor() {
+    super/*Any*/()
+  }
+
+  constructor(text: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@NoArgsConstructor
+class WithReferencedParameter {
+  var inputValue: Int?
+    field = input
+    get
+    set
+
+  constructor() {
+    super/*Any*/()
+  }
+
+  constructor(input: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val withReferencedParameter: WithReferencedParameter = WithReferencedParameter()
+  assertEquals<Int?>(a = null, b = withReferencedParameter.<get-inputValue>())
+  val withInitializers: WithInitializers = WithInitializers()
+  assertEquals<String?>(a = null, b = withInitializers.<get-text>())
+  assertEquals<Int>(a = 0, b = withInitializers.<get-initialized>())
+  assertEquals<String?>(a = null, b = withInitializers.<get-fromInitBlock>())
+  return "OK"
+}
+

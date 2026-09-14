@@ -5,6 +5,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 NSString * foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____reverse_swift(void * self, void * receiver);
 
+_Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
 NSString * Bar_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(void * self, void * receiver);
 
 int32_t Bar_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(void * self, void * receiver);
@@ -33,9 +35,9 @@ _Bool __root___deprecatedSetterProp_set__TypesOfArgumentsE__main_Bar_Swift_Bool_
 
 _Bool __root___errorDeprecatedSetterProp_get__TypesOfArgumentsE__main_Bar__(void * receiver);
 
-_Bool __root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__(_Bool (^receiver)(void));
+_Bool __root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__(void * receiver);
 
-int32_t __root___funExtProp_get__TypesOfArgumentsE__U2829202D_U20Swift_Void__(_Bool (^receiver)(void));
+int32_t __root___funExtProp_get__TypesOfArgumentsE__U2829202D_U20Swift_Void__(void * receiver);
 
 NSString * __root___genericExtFun__TypesOfArgumentsE__main_GenericClass__(void * receiver);
 

@@ -3,14 +3,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-_Bool __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___(void * _Nullable (^block)(NSNumber * _Nullable , void * _Nullable , NSString * _Nullable , NSSet<id> * _Nullable ));
+void * _Nullable ref_types_internal_functional_type_callee_SwiftU2EOptionalU3CdataU2EFooU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Int32__Swift_Optional_data_Bar__Swift_Optional_Swift_String__Swift_Optional_Swift_Set_Swift_AnyHashable____(void * pointerToClosure, NSNumber * _Nullable _1, void * _Nullable _2, NSString * _Nullable _3, NSSet<id> * _Nullable _4);
 
-_Bool __root___consume_block_with_reftype_consumer__TypesOfArguments__U28data_FooU29202D_U20Swift_Void__(_Bool (^block)(void *));
+_Bool ref_types_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_data_Foo__(void * pointerToClosure, void * _1);
 
-void * __root___consume_block_with_reftype_factory__TypesOfArguments__U2829202D_U20data_Foo__(void * (^block)(void));
+void * ref_types_internal_functional_type_callee_dataU2EBar__TypesOfArguments__Swift_UnsafeMutableRawPointer_data_Foo_data_Foo__(void * pointerToClosure, void * _1, void * _2);
 
-void * __root___consume_block_with_reftype_unzip__TypesOfArguments__U28data_BarU29202D_U20data_Foo__(void * (^block)(void *));
+void * ref_types_internal_functional_type_callee_dataU2EFoo__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
 
-void * __root___consume_block_with_reftype_zip__TypesOfArguments__U28data_Foo_U20data_FooU29202D_U20data_Bar__(void * (^block)(void *, void *));
+void * ref_types_internal_functional_type_callee_dataU2EFoo__TypesOfArguments__Swift_UnsafeMutableRawPointer_data_Bar__(void * pointerToClosure, void * _1);
+
+_Bool __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___(void * block);
+
+_Bool __root___consume_block_with_reftype_consumer__TypesOfArguments__U28data_FooU29202D_U20Swift_Void__(void * block);
+
+void * __root___consume_block_with_reftype_factory__TypesOfArguments__U2829202D_U20data_Foo__(void * block);
+
+void * __root___consume_block_with_reftype_unzip__TypesOfArguments__U28data_BarU29202D_U20data_Foo__(void * block);
+
+void * __root___consume_block_with_reftype_zip__TypesOfArguments__U28data_Foo_U20data_FooU29202D_U20data_Bar__(void * block);
 
 NS_ASSUME_NONNULL_END

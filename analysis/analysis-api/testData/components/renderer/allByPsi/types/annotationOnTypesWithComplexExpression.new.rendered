@@ -1,0 +1,4 @@
+@Target(allowedTargets = [AnnotationTarget.TYPE])
+annotation class A(val value: Int)
+
+fun x(): @A(value = 3) Int
