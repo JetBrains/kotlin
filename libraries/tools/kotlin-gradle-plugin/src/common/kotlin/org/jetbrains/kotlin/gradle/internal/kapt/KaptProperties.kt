@@ -32,31 +32,31 @@ internal object KaptProperties {
     )
 
     fun isKaptVerbose(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_VERBOSE, project)
+        it.typedProperty(KAPT_VERBOSE, project)
     }
 
     fun isIncrementalKapt(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_INCREMENTAL_APT, project)
+        it.typedProperty(KAPT_INCREMENTAL_APT, project)
     }
 
     fun isInfoAsWarnings(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_INFO_AS_WARNINGS, project)
+        it.typedProperty(KAPT_INFO_AS_WARNINGS, project)
     }
 
     fun isIncludeCompileClasspath(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_INCLUDE_COMPILE_CLASSPATH, project)
+        it.typedProperty(KAPT_INCLUDE_COMPILE_CLASSPATH, project)
     }
 
     fun isKaptDontWarnAnnotationProcessorDependencies(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_DONT_WARN_ANNOTATION_PROCESSOR_DEPENDENCIES, project)
+        it.typedProperty(KAPT_DONT_WARN_ANNOTATION_PROCESSOR_DEPENDENCIES, project)
     }
 
     fun getClassloadersCacheDisableForProcessors(project: Project): Provider<String> = project.propertiesService.flatMap {
-        it.property(CLASSLOADERS_CACHE_DISABLE_FOR_PROCESSORS, project)
+        it.typedProperty(CLASSLOADERS_CACHE_DISABLE_FOR_PROCESSORS, project)
     }
 
     fun getClassloadersCacheSize(project: Project): Provider<Int> = project.propertiesService.flatMap {
-        it.property(CLASSLOADERS_CACHE_SIZE, project)
+        it.typedProperty(CLASSLOADERS_CACHE_SIZE, project)
     }
 
     fun isIsolateProcessorsFromBuildClasspath(project: Project): Provider<Boolean> = project.propertiesService.flatMap {

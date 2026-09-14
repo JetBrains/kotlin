@@ -103,7 +103,7 @@ internal fun Project.configureComposeMappingFile(
 // Suggested and approved by cmw@google.com :)
 // TODO(b/425875222): Update to use a proper AGP API
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-private inline fun <T, R> uncheckedCast(value: Any): T where T : Artifact.Transformable, T : Artifact.Single<R> =
+private inline fun <T, R : FileSystemLocation> uncheckedCast(value: Any): T where T : Artifact.Transformable, T : Artifact.Single<R> =
     value as T
 
 private fun String.capitalize(): String =

@@ -19,7 +19,6 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.onlyJars
@@ -52,7 +51,7 @@ class JvmBinariesDslTest {
         assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
 
         val mainJvmCompilation = project.multiplatformExtension.jvm().compilations
-            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJvmCompilation
+            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
         runTask.assertClasspathContains(mainJvmCompilation.output.allOutputs)
         runTask.assertClasspathContains(mainJvmCompilation.runtimeDependencyFiles)
     }
@@ -78,7 +77,7 @@ class JvmBinariesDslTest {
         assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
 
         val mainJvmCompilation = project.multiplatformExtension.jvm("desktop").compilations
-            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJvmCompilation
+            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
         runTask.assertClasspathContains(mainJvmCompilation.output.allOutputs)
         runTask.assertClasspathContains(mainJvmCompilation.runtimeDependencyFiles)
     }
@@ -107,7 +106,7 @@ class JvmBinariesDslTest {
         val mainJvmCompilation = project.multiplatformExtension
             .jvm()
             .compilations
-            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJvmCompilation
+            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         with(scriptsTask) {
             assertEquals("foo.MainKt", mainClass.get())
@@ -286,7 +285,7 @@ class JvmBinariesDslTest {
         assertEquals("foo.MainKt", runTask.mainClass.get())
         assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
         val testCompilation = project.multiplatformExtension.jvm().compilations
-            .getByName(KotlinCompilation.TEST_COMPILATION_NAME) as KotlinJvmCompilation
+            .getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         runTask.assertClasspathContains(testCompilation.output.allOutputs)
         runTask.assertClasspathContains(testCompilation.runtimeDependencyFiles)
         assertNotNull(project.tasks.findByName("jvmTestJar"))
@@ -323,7 +322,7 @@ class JvmBinariesDslTest {
         assertEquals("foo.MainKt", runTask.mainClass.get())
         assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
         val testCompilation = project.multiplatformExtension.jvm().compilations
-            .getByName("integrationTest") as KotlinJvmCompilation
+            .getByName("integrationTest")
         runTask.assertClasspathContains(testCompilation.output.allOutputs)
         runTask.assertClasspathContains(testCompilation.runtimeDependencyFiles)
         assertNotNull(project.tasks.findByName("jvmIntegrationTestJar"))
@@ -353,11 +352,11 @@ class JvmBinariesDslTest {
         val testJvmCompilation = project.multiplatformExtension
             .jvm()
             .compilations
-            .getByName(KotlinCompilation.TEST_COMPILATION_NAME) as KotlinJvmCompilation
+            .getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val mainJvmCompilation = project.multiplatformExtension
             .jvm()
             .compilations
-            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJvmCompilation
+            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         with(scriptsTask) {
             assertEquals("foo.MainKt", mainClass.get())
