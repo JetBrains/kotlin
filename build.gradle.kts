@@ -343,6 +343,14 @@ tasks {
         dependsOn(":js:js.tests:jsES6Test")
     }
 
+    testLifecycleTask("jsES5InlineAnonymousFunctionsTest", QualityGate.Nightly) {
+        dependsOn(":js:js.tests:jsES5InlineAnonymousFunctionsTest")
+    }
+
+    testLifecycleTask("jsES6InlineAnonymousFunctionsTest", QualityGate.Nightly) {
+        dependsOn(":js:js.tests:jsES6InlineAnonymousFunctionsTest")
+    }
+
     testLifecycleTask("jsKlibCompatibilityTest", QualityGate.Master) {
         dependsOn(":js:js.tests:klib-compatibility:testMinimalInAggregate")
     }

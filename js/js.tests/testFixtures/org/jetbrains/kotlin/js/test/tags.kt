@@ -12,3 +12,16 @@ import org.junit.jupiter.api.Tag
  */
 @Tag("es6")
 annotation class JsEs6Test
+
+/**
+ * Used to mark tests that should only be run in nightly configuration.
+ */
+@Tag("jsNightlyOnly")
+annotation class JsNightlyOnlyTest
+
+/**
+ * Tests marked with this annotation test compilation with the `-Xir-generate-inline-anonymous-functions` flag.
+ */
+@Tag("jsInlineAnonymousFunctions")
+@JsNightlyOnlyTest
+annotation class JsInlineAnonymousFunctionsTest
