@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.kapt
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.*
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -46,9 +43,9 @@ internal fun compileForStubGeneration(
 
     val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
     val backendInput = fir2IrOutput.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
-    backendInput.configuration.put(JvmBackendPipelinePhase.customClassBuilderFactory, builderFactory)
+    backendInput.configuration.put(JvmLoweringsPipelinePhase.customClassBuilderFactory, builderFactory)
 
-    val generationState = JvmBackendPipelinePhase.executePhase(backendInput).outputs.singleOrNull() ?: return null
+    val generationState = JvmBackendPipelinePhase.executePhase(JvmLoweringsPipelinePhase.executePhase(backendInput)).outputs.singleOrNull() ?: return null
 
     return KaptContextForStubGeneration(
         options, withJdk, logger, builderFactory.compiledClasses, builderFactory.origins,
