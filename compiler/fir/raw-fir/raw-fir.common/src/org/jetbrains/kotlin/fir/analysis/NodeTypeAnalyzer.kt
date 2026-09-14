@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
+import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -106,14 +107,12 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         if (toTokenId() == KtNodeTypes.FUNCTION_ID) {
             return getParent()?.getLabelName()
         }
-        var result: String? = null
         this.forEachChildren {
-            if (result != null) return@forEachChildren
             when (it.toTokenId()) {
-                KtNodeTypes.LABEL_QUALIFIER_ID -> result = it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
+                KtNodeTypes.LABEL_QUALIFIER_ID -> return it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
             }
         }
-        return result
+        return null
     }
 
     fun unquoteIdentifier(quoted: String): String {
@@ -167,14 +166,7 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     }
 
     fun Node.getChildNodeByTokenId(tokenId: Int): Node? {
-        var result: Node? = null
-        forEachChildren { node ->
-            if (result != null) return@forEachChildren
-            when (node.toTokenId()) {
-                tokenId -> result = node
-            }
-        }
-        return result
+        return getChildrenAsArray().firstOrNull { it?.toTokenId() == tokenId }
     }
 
     fun Node?.getChildNodesByTokenId(tokenId: Int): List<Node> {
@@ -279,9 +271,27 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
 
     abstract fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration
 
-    open fun Node.forEachChildren(f: (Node) -> Unit) {}
-    open fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
-        return mutableListOf()
+    abstract fun Node?.getChildrenAsArray(): Array<out Node?>
+    inline fun Node.forEachChildren(f: (Node) -> Unit) {
+        val kidsArray = this.getChildrenAsArray()
+        for (kid in kidsArray) {
+            if (kid == null) break
+            if (ignoredTokensId.contains(kid.toTokenId())) continue
+            f(kid)
+        }
+    }
+
+    inline fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
+        val kidsArray = this.getChildrenAsArray()
+
+        val container = mutableListOf<T>()
+        for (kid in kidsArray) {
+            if (kid == null) break
+            if (ignoredTokensId.contains(kid.toTokenId())) continue
+            f(kid, container)
+        }
+
+        return container
     }
 
     abstract val Node?.receiverExpression: Node?
@@ -533,4 +543,11 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
 
     fun Node.toTokenId(): Int = elementType.typeToTokenId()
     abstract fun Type.typeToTokenId(): Int
+
+    companion object {
+        val ignoredTokensId: HashSet<Int> = hashSetOf(
+            KtTokens.EOL_COMMENT_ID, KtTokens.BLOCK_COMMENT_ID, KtTokens.DOC_COMMENT_ID, KtTokens.SHEBANG_COMMENT_ID,
+            KtTokens.WHITE_SPACE_ID, KtTokens.SEMICOLON_ID, SyntaxElementTypesWithIds.NO_ID,
+        )
+    }
 }

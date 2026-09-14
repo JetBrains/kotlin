@@ -325,15 +325,13 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     }
 
     private fun convertImportAlias(importAlias: Node): Pair<String, KtSourceElement>? {
-        var result: Pair<String, KtSourceElement>? = null
         importAlias.forEachChildren {
-            if (result != null) return@forEachChildren
             when (it.toTokenId()) {
-                KtTokens.IDENTIFIER_ID -> result = Pair(it.asText, it.toFirSourceElement())
+                KtTokens.IDENTIFIER_ID -> return Pair(it.asText, it.toFirSourceElement())
             }
         }
 
-        return result
+        return null
     }
 
     /**
@@ -2650,16 +2648,14 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRefContents
      */
     private fun convertReceiverType(receiverType: Node): FirTypeRef {
-        var result: FirTypeRef? = null
         receiverType.forEachChildren {
-            if (result != null) return@forEachChildren
             when (it.toTokenId()) {
-                KtNodeTypes.TYPE_REFERENCE_ID -> result = convertType(it)
+                KtNodeTypes.TYPE_REFERENCE_ID -> return convertType(it)
             }
         }
 
         //TODO specify error
-        return result ?: throw Exception()
+        throw Exception()
     }
 
     /**
@@ -3127,14 +3123,6 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         return with(analyzer) { typeToTokenId() }
     }
 
-    override fun Node.forEachChildren(f: (Node) -> Unit) {
-        return with(analyzer) { forEachChildren(f) }
-    }
-
-    override fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
-        return with(analyzer) { forEachChildrenReturnList(f) }
-    }
-
     override fun Node.getParent(): Node? {
         return with(analyzer) { getParent() }
     }
@@ -3148,6 +3136,10 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
 
     override fun KtSourceElement.isChildInParentheses(): Boolean {
         return with(analyzer) { isChildInParentheses()}
+    }
+
+    override fun Node?.getChildrenAsArray(): Array<out Node?> {
+        return with(analyzer) { getChildrenAsArray() }
     }
 
     private fun Node.isExpression(): Boolean = toTokenId().isExpression()

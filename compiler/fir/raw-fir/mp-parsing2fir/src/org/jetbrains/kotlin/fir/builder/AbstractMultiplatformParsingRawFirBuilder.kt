@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.platform.syntax.SyntaxElementType
-import com.intellij.platform.syntax.SyntaxElementTypeSet
-import com.intellij.platform.syntax.element.SyntaxTokenTypes.BAD_CHARACTER
 import com.intellij.platform.syntax.element.SyntaxTokenTypes.ERROR_ELEMENT
-import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
@@ -18,11 +15,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
-import org.jetbrains.kotlin.kmp.lexer.KtTokens.COMMENTS
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.DOT
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.SAFE_ACCESS
-import org.jetbrains.kotlin.kmp.lexer.KtTokens.SEMICOLON
-import org.jetbrains.kotlin.kmp.lexer.KtTokens.WHITE_SPACE
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
@@ -33,12 +27,6 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
     val treeStructure: KotlinLightTreeStructure,
     context: Context<LightNode> = Context(),
 ) : AbstractTreeRawFirBuilder<LightNode, SyntaxElementType>(baseSession, context) {
-    companion object {
-        protected val ignoredTokens: SyntaxElementTypeSet = COMMENTS + syntaxElementTypeSetOf(
-            WHITE_SPACE, SEMICOLON, ERROR_ELEMENT, BAD_CHARACTER,
-        )
-    }
-
     protected val tree: LightSyntaxTree
         get() = treeStructure.tree
 
@@ -78,31 +66,27 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
     override val LightNode?.receiverExpression: LightNode?
         get() {
             var candidate: LightNode? = null
-            var result: LightNode? = null
             this?.forEachChildren {
-                if (result != null) return@forEachChildren
                 when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> result = if (candidate?.tokenType != ERROR_ELEMENT) candidate else null
+                    DOT, SAFE_ACCESS -> return if (candidate?.tokenType != ERROR_ELEMENT) candidate else null
                     else -> candidate = it
                 }
             }
-            return result
+            return null
         }
 
     override val LightNode?.selectorExpression: LightNode?
         get() {
             var isSelector = false
-            var result: LightNode? = null
             this?.forEachChildren {
-                if (result != null) return@forEachChildren
                 when (it.tokenType) {
                     DOT, SAFE_ACCESS -> isSelector = true
                     else -> if (isSelector) {
-                        result = if (it.tokenType != ERROR_ELEMENT) it else null
+                        return if (it.tokenType != ERROR_ELEMENT) it else null
                     }
                 }
             }
-            return result
+            return null
         }
 
     override val LightNode?.indexExpressions: List<LightNode>?
@@ -118,23 +102,7 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         return tree.getChildren(this)
     }
 
-    override fun LightNode.forEachChildren(f: (LightNode) -> Unit) {
-        val kids = tree.getChildren(this)
-        for (kid in kids) {
-            if (ignoredTokens.contains(kid.tokenType)) continue
-            f(kid)
-        }
-    }
-
-    override fun <T> LightNode.forEachChildrenReturnList(f: (LightNode, MutableList<T>) -> Unit): MutableList<T> {
-        val kids = tree.getChildren(this)
-
-        val container = mutableListOf<T>()
-        for (kid in kids) {
-            if (ignoredTokens.contains(kid.tokenType)) continue
-            f(kid, container)
-        }
-
-        return container
+    override fun LightNode?.getChildrenAsArray(): Array<out LightNode?> {
+        return this?.getChildren().orEmpty().toTypedArray()
     }
 }
