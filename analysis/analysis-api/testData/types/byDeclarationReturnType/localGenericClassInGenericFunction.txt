@@ -7,55 +7,39 @@ KaUsualClassType:
       name: Bar
       symbol: KaNamedClassSymbol(<local>/Bar)
       typeArguments: [
-        KaTypeParameterType:
+        KaUsualClassType:
           abbreviation: null
           annotations: []
-          name: F
-          symbol: KaTypeParameterSymbol:
-            anchorPsi: KtTypeParameter
-            annotations: []
-            isActual: false
-            isExpect: false
-            isExternal: false
-            isReified: false
-            location: LOCAL
-            modality: FINAL
-            name: F
-            origin: SOURCE
-            psi: KtTypeParameter
-            realPsi: KtTypeParameter
-            upperBounds: []
-            variance: INVARIANT
-            visibility: LOCAL
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
           isMarkedNullable: false
-          isNullable: true
+          isNullable: false
           hasFlexibleNullability: false
       ]
   ]
   symbol: KaNamedClassSymbol(<local>/Bar)
   typeArguments: [
-    KaTypeParameterType:
+    KaUsualClassType:
       abbreviation: null
       annotations: []
-      name: F
-      symbol: KaTypeParameterSymbol:
-        anchorPsi: KtTypeParameter
-        annotations: []
-        isActual: false
-        isExpect: false
-        isExternal: false
-        isReified: false
-        location: LOCAL
-        modality: FINAL
-        name: F
-        origin: SOURCE
-        psi: KtTypeParameter
-        realPsi: KtTypeParameter
-        upperBounds: []
-        variance: INVARIANT
-        visibility: LOCAL
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
       isMarkedNullable: false
-      isNullable: true
+      isNullable: false
       hasFlexibleNullability: false
   ]
   isMarkedNullable: false
@@ -63,4 +47,4 @@ KaUsualClassType:
   hasFlexibleNullability: false
 
 Rendered type:
-Bar<F>
+Bar<kotlin.Int>
