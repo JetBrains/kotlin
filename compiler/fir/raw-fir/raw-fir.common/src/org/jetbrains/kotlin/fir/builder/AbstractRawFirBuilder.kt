@@ -271,7 +271,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         return this
     }
 
-    override fun generateConstantExpressionByLiteral(expression: Node): FirExpression {
+    fun generateConstantExpressionByLiteral(expression: Node): FirExpression {
         val type = expression.elementType
         val text: String = expression.asText
         val sourceElement = expression.toFirSourceElement()
@@ -908,7 +908,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    override fun generateDataClassMembers(
+    fun generateDataClassMembers(
         source: Node,
         classBuilder: FirRegularClassBuilder,
         firPrimaryConstructor: FirConstructor,

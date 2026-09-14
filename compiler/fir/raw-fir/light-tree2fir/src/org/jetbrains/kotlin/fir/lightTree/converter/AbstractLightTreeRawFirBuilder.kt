@@ -9,7 +9,6 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
@@ -24,12 +23,6 @@ abstract class AbstractLightTreeRawFirBuilder(
     val tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context<LighterASTNode> = Context()
 ) : AbstractTreeRawFirBuilder<LighterASTNode, IElementType>(baseSession, context) {
-    companion object {
-        protected val ignoredTokens: TokenSet = TokenSet.orSet(
-            COMMENTS,
-            TokenSet.create(WHITE_SPACE, SEMICOLON, TokenType.ERROR_ELEMENT, TokenType.BAD_CHARACTER),
-        )
-    }
 
     override fun LighterASTNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtLightSourceElement {
         val startOffset = tree.getStartOffset(this)
@@ -51,10 +44,6 @@ abstract class AbstractLightTreeRawFirBuilder(
 
     override fun LighterASTNode.getChildren(): List<LighterASTNode> {
         return getChildren(tree)
-    }
-
-    override fun LighterASTNode.getChildNodeByType(type: IElementType): LighterASTNode? {
-        return getChildrenAsArray().firstOrNull { it?.tokenType == type }
     }
 
     override val LighterASTNode?.receiverExpression: LighterASTNode?

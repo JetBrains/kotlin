@@ -1798,18 +1798,10 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     override val Node.asText: String
         get() = with(analyzer) { asText }
 
-    override fun Node.getChildNodeByType(type: Type): Node? {
-        return with(analyzer) { getChildNodeByType(type) }
-    }
-
     override val Node?.receiverExpression: Node?
         get() = with(analyzer) { receiverExpression }
     override val Node?.selectorExpression: Node?
         get() = with(analyzer) { selectorExpression }
-
-    override fun generateConstantExpressionByLiteral(expression: Node): FirExpression {
-        return analyzer.generateConstantExpressionByLiteral(expression)
-    }
 
     override fun Type.typeToTokenId(): Int {
         return with(analyzer) { typeToTokenId() }
