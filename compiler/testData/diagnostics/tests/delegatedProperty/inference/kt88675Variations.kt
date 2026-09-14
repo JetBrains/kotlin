@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +SyntheticTypeVariablesForCstOverTypeVariables
 // ISSUE: KT-88675, KT-88681
 // WITH_STDLIB
@@ -204,8 +204,8 @@ object Contexts {
 
 // Started to crash in 2.5 only
 object FinalClassBound {
-    operator fun <T : MyArtifact, L : Collection<T>> L.provideDelegate(thisRef: Any?, property: Any): L = this
-    operator fun <T : MyArtifact, L : Collection<T>> L.getValue(thisRef: Any?, property: Any): L = this
+    operator fun <T : <!FINAL_UPPER_BOUND("MyArtifact")!>MyArtifact<!>, L : Collection<T>> L.provideDelegate(thisRef: Any?, property: Any): L = this
+    operator fun <T : <!FINAL_UPPER_BOUND("MyArtifact")!>MyArtifact<!>, L : Collection<T>> L.getValue(thisRef: Any?, property: Any): L = this
 
     val artifacts by if (c) strings.map { MyArtifact(it) } else emptyList()
     val probe: List<MyArtifact> = artifacts
@@ -230,3 +230,8 @@ object InvariantBound {
     val probe: Inv<String> = invariant
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, integerLiteral, interfaceDeclaration, javaFunction, lambdaLiteral, localProperty,
+nestedClass, nullableType, objectDeclaration, operator, out, primaryConstructor, propertyDeclaration, propertyDelegate,
+propertyWithExtensionReceiver, safeCall, setter, starProjection, stringLiteral, thisExpression, tryExpression,
+typeConstraint, typeParameter, whenExpression */
