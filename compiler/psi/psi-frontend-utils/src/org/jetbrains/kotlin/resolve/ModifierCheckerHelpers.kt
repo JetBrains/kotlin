@@ -303,6 +303,11 @@ val possibleTargetPredicateMap = mapOf(
     VALUE_KEYWORD to or(
         always(KotlinTarget.CLASS_ONLY),
         ifSupported(LanguageFeature.FullValueClasses, KotlinTarget.STANDALONE_OBJECT)
+    ),
+    COPY_KEYWORD to always(
+        KotlinTarget.FUNCTION,
+        KotlinTarget.VALUE_PARAMETER,
+        KotlinTarget.PROPERTY,
     )
 )
 

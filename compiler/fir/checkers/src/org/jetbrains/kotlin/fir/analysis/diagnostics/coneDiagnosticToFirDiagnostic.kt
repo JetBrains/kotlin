@@ -722,6 +722,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
         val incompatibleBound = this.bound.substituteTypeVariableTypes(this.containingCandidate, session.typeContext)
         FirErrors.UNRESOLVED_COLLECTION_LITERAL.createOn(source, incompatibleBound, session)
     }
+    is ConeCopyFunExplicitReturn -> FirErrors.COPY_FUN_WITH_RETURN_TYPE_OR_EXPRESSION_BODY.createOn(source, session)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 

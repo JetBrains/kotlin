@@ -1507,6 +1507,12 @@ private fun KaDiagnosticConverterBuilder.addConversions28() {
             token,
         )
     }
+    add(FirErrors.COPY_VAL) { firDiagnostic ->
+        CopyValImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions29() {
@@ -1522,6 +1528,12 @@ private fun KaDiagnosticConverterBuilder.addConversions29() {
             firDiagnostic.b,
             firDiagnostic.c,
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.d),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.COPY_VAR_UNSUPPORTED) { firDiagnostic ->
+        CopyVarUnsupportedImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -2368,6 +2380,12 @@ private fun KaDiagnosticConverterBuilder.addConversions49() {
             firDiagnostic.a,
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic.c,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.COPY_FUN_WITH_RETURN_TYPE_OR_EXPRESSION_BODY) { firDiagnostic ->
+        CopyFunWithReturnTypeOrExpressionBodyImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

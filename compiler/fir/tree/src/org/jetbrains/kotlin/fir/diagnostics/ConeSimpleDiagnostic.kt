@@ -134,6 +134,10 @@ object ConeSmartcastToTypeVariable : ConeDiagnostic {
         get() = "Type variable survived until DFA"
 }
 
+object ConeCopyFunExplicitReturn : ConeDiagnostic {
+    override val reason: String get() = "Copy fun with explicit return type or expression body"
+}
+
 enum class DiagnosticKind {
     ExpressionExpected,
     NotLoopLabel,

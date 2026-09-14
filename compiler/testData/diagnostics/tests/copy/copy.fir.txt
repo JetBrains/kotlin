@@ -1,0 +1,105 @@
+FILE: copy.kt
+    public final class Person : R|kotlin/Any| {
+        public constructor(copy name: R|kotlin/String|, copy title: R|kotlin/String?|): R|Person| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final copy var name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+            public copy set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final copy var title: R|kotlin/String?| = R|<local>/title|
+            public get(): R|kotlin/String?|
+            public copy set(value: R|kotlin/String?|): R|kotlin/Unit|
+
+        public final copy var visibleName: R|kotlin/String| = String(hello)
+            public get(): R|kotlin/String|
+            public copy set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final copy fun f(): R|Person| {
+             {
+            }
+
+            ^f this@R|/Person|
+        }
+
+        public final copy fun f1(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
+             {
+                ^f1 this@R|/Person|.R|/Person.f|()
+            }
+
+            ^f1 this@R|/Person|
+        }
+
+        public final copy fun f2(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
+             {
+            }
+
+            ^f2 this@R|/Person|
+        }
+
+        public final copy fun f3(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
+             {
+            }
+
+            ^f3 this@R|/Person|
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            lval h: R|(Person) -> kotlin/Int| = fun <anonymous>(copy x: R|Person|): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(0)
+            }
+
+        }
+
+    }
+    public final copy fun R|Person|.g(): R|Person| {
+         {
+        }
+
+        ^g this@R|/g|
+    }
+    public final copy fun R|Person|.g1(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
+         {
+            ^g1 this@R|/g1|.R|/g|()
+        }
+
+        ^g1 this@R|/g1|
+    }
+    public final copy fun R|Person|.g2(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
+         {
+        }
+
+        ^g2 this@R|/g2|
+    }
+    public final copy fun R|Person|.g3(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
+         {
+        }
+
+        ^g3 this@R|/g3|
+    }
+    public final copy fun g4(): <ERROR TYPE REF: empty body> {
+         {
+        }
+
+        ^g4 this#
+    }
+    public final copy fun g5(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
+         {
+            ^g5 R|kotlin/TODO|()
+        }
+
+        ^g5 this#
+    }
+    public final copy fun g6(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
+         {
+        }
+
+        ^g6 this#
+    }
+    public final copy fun g7(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
+         {
+        }
+
+        ^g7 this#
+    }

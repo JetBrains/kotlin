@@ -1160,5 +1160,10 @@ object FirErrors : KtDiagnosticsContainer() {
     val COMPANION_EXTENSION_RECEIVER_ANNOTATED: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_RECEIVER_ANNOTATED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val COMPANION_EXTENSION_NULLABLE_RECEIVER: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_NULLABLE_RECEIVER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
+    // Copy vars and funs
+    val COPY_VAR_UNSUPPORTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("COPY_VAR_UNSUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val COPY_VAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("COPY_VAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val COPY_FUN_WITH_RETURN_TYPE_OR_EXPRESSION_BODY: KtDiagnosticFactory0 = KtDiagnosticFactory0("COPY_FUN_WITH_RETURN_TYPE_OR_EXPRESSION_BODY", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

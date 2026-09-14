@@ -2505,6 +2505,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
         val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
     }
+
+    val Copy by object : DiagnosticGroup("Copy vars and funs") {
+        val COPY_VAR_UNSUPPORTED by error<PsiElement>()
+        val COPY_VAL by error<PsiElement>()
+        val COPY_FUN_WITH_RETURN_TYPE_OR_EXPRESSION_BODY by error<PsiElement>()
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

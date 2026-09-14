@@ -2266,22 +2266,16 @@ open class PsiRawFirBuilder(
             val isCompanionBlockMember = isDirectlyInsideCompanionBlock
 
             withContainerSymbol(functionSymbol, isLocalFunction) {
-                val typeReference = function.typeReference
-                val returnType = if (function.hasBlockBody()) {
-                    typeReference.toFirOrUnitType()
-                } else {
-                    typeReference.toFirOrImplicitType()
-                }
-
                 val receiverTypeCalculator: (() -> FirTypeRef)? = function.receiverTypeReference?.let {
                     { it.toFirType() }
                 }
+                val receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
 
                 val labelName: String?
 
                 val functionBuilder = if (isAnonymousFunction) {
                     FirAnonymousFunctionBuilder().apply {
-                        receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
+                        this.receiverParameter = receiverParameter
                         symbol = functionSymbol as FirAnonymousFunctionSymbol
                         isLambda = false
                         hasExplicitParameterList = true
@@ -2314,7 +2308,7 @@ open class PsiRawFirBuilder(
                     }
                 } else {
                     FirNamedFunctionBuilder().apply {
-                        receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
+                        this.receiverParameter = receiverParameter
                         name = function.nameAsSafeName
                         labelName = context.getLastLabel(function)?.name ?: runIf(!name.isSpecial) { name.identifier }
                         symbol = functionSymbol as FirNamedFunctionSymbol
@@ -2341,6 +2335,49 @@ open class PsiRawFirBuilder(
 
                 val target = FirFunctionTarget(labelName, isLambda = false)
                 val functionSource = function.toFirSourceElement()
+
+                val potentialDispatchReceiver = context.dispatchReceiverTypesStack.lastOrNull()
+                val firValueParameters = function.valueParameters.map {
+                    it.toFirValueParameter(
+                        null,
+                        functionSymbol,
+                        if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION,
+                    )
+                }
+
+                val [copyReference, copyTypeRef] = when {
+                    functionBuilder.isCopy -> {
+                        val copyReturnTypeRef = when {
+                            receiverParameter != null -> receiverParameter.typeRef
+                            potentialDispatchReceiver != null -> potentialDispatchReceiver.toFirResolvedTypeRef()
+                            else -> FirImplicitTypeRefImplWithoutSource // will generate NO_THIS later
+                        }
+                        buildThisReceiverExpression {
+                            calleeReference = buildExplicitThisReference { }
+                        } to copyReturnTypeRef
+                    }
+                    firValueParameters.count { it.isCopy } == 1 -> {
+                        val copyParameter = firValueParameters.single { it.isCopy }
+                        buildPropertyAccessExpression {
+                            calleeReference = buildPropertyFromParameterResolvedNamedReference { resolvedSymbol = copyParameter.symbol }
+                        } to copyParameter.returnTypeRef
+                    }
+                    else -> null to null
+                }
+
+                val returnTypeReference = function.typeReference
+                val returnType = when {
+                    copyTypeRef != null -> when {
+                        returnTypeReference == null && function.hasBlockBody() -> copyTypeRef
+                        else -> buildErrorTypeRef {
+                            source = returnTypeReference?.toFirSourceElement() ?: functionSource
+                            diagnostic = ConeCopyFunExplicitReturn
+                        }
+                    }
+                    function.hasBlockBody() -> returnTypeReference.toFirOrUnitType()
+                    else -> returnTypeReference.toFirOrImplicitType()
+                }
+
                 val firFunction = functionBuilder.apply {
                     source = functionSource
                     moduleData = baseModuleData
@@ -2352,20 +2389,29 @@ open class PsiRawFirBuilder(
 
                     function.extractTypeParametersTo(this, functionSymbol)
                     contextParameters.addContextParameters(function.modifierList?.contextParameterLists.orEmpty(), functionSymbol)
-                    for (valueParameter in function.valueParameters) {
-                        valueParameters += valueParameter.toFirValueParameter(
-                            null,
-                            functionSymbol,
-                            if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION,
-                        )
-                    }
+                    valueParameters.addAll(firValueParameters)
 
                     withCapturedTypeParameters(true, functionSource, typeParameters) {
                         val outerContractDescription = function.obtainContractDescription()
                         val [body, innerContractDescription] = withForcedLocalContext {
                             function.buildFirBody()
                         }
-                        this.body = body
+                        val extendedBody = when {
+                            body == null -> body
+                            copyReference == null -> body
+                            isAnonymousFunction -> buildBlock {
+                                statements += body
+                                statements += copyReference
+                            }
+                            else -> buildBlock {
+                                statements += body
+                                statements += buildReturnExpression {
+                                    this.target = target
+                                    result = copyReference
+                                }
+                            }
+                        }
+                        this.body = extendedBody
                         val contractDescription = outerContractDescription ?: innerContractDescription
                         contractDescription?.let {
                             if (this is FirNamedFunctionBuilder) {

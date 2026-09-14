@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifierList
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifierList
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
+import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import kotlin.collections.plusAssign
 
 class LightTreeRawFirDeclarationBuilder(
     session: FirSession,
@@ -1998,6 +2000,7 @@ class LightTreeRawFirDeclarationBuilder(
         var isReturnType = false
         var receiverTypeNode: LighterASTNode? = null
         var returnType: FirTypeRef? = null
+        var originalReturnType: FirTypeRef? = null
         val typeConstraints = mutableListOf<TypeConstraint>()
         var block: LighterASTNode? = null
         var expression: LighterASTNode? = null
@@ -2029,7 +2032,7 @@ class LightTreeRawFirDeclarationBuilder(
                     TYPE_PARAMETER_LIST -> typeParameterList = it
                     VALUE_PARAMETER_LIST -> valueParametersList = it //must convert later, because it can contain "return"
                     COLON -> isReturnType = true
-                    TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverTypeNode = it
+                    TYPE_REFERENCE -> if (isReturnType) { returnType = convertType(it) ; originalReturnType = returnType } else receiverTypeNode = it
                     TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
                     CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
                     BLOCK -> block = it
@@ -2040,17 +2043,12 @@ class LightTreeRawFirDeclarationBuilder(
 
             val calculatedModifiers = modifiers ?: ModifierList()
 
-            if (returnType == null) {
-                returnType =
-                    if (block != null || !hasEqToken) implicitUnitType
-                    else implicitType
-            }
-
             val receiverTypeCalculator = receiverTypeNode?.let { { convertType(it) } }
+            val receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
             val functionBuilder = if (isAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
                     source = functionSource
-                    receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
+                    this.receiverParameter = receiverParameter
                     symbol = functionSymbol as FirAnonymousFunctionSymbol
                     isLambda = false
                     hasExplicitParameterList = true
@@ -2089,7 +2087,7 @@ class LightTreeRawFirDeclarationBuilder(
                 target = FirFunctionTarget(labelName, isLambda = false)
                 FirNamedFunctionBuilder().apply {
                     source = functionSource
-                    receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
+                    this.receiverParameter = receiverParameter
                     name = functionName
                     this.isLocal = context.inLocalContext
                     status = FirDeclarationStatusImpl(
@@ -2117,6 +2115,48 @@ class LightTreeRawFirDeclarationBuilder(
             val firTypeParameters = mutableListOf<FirTypeParameter>()
             typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, functionSymbol) }
 
+            val potentialDispatchReceiver = context.dispatchReceiverTypesStack.lastOrNull()
+            val firValueParameters = valueParametersList?.let { list ->
+                convertValueParameters(
+                    list,
+                    functionSymbol,
+                    if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION
+                ).map { it.firValueParameter }
+            }
+
+            val [copyReference, copyTypeRef] = when {
+                functionBuilder.isCopy -> {
+                    val copyReturnTypeRef = when {
+                        receiverParameter != null -> receiverParameter.typeRef
+                        potentialDispatchReceiver != null -> potentialDispatchReceiver.toFirResolvedTypeRef()
+                        else -> FirImplicitTypeRefImplWithoutSource // will generate NO_THIS later
+                    }
+                    buildThisReceiverExpression {
+                        calleeReference = buildExplicitThisReference { }
+                    } to copyReturnTypeRef
+                }
+                firValueParameters.orEmpty().count { it.isCopy } == 1 -> {
+                    val copyParameter = firValueParameters.orEmpty().single { it.isCopy }
+                    buildPropertyAccessExpression {
+                        calleeReference = buildPropertyFromParameterResolvedNamedReference { resolvedSymbol = copyParameter.symbol }
+                    } to copyParameter.returnTypeRef
+                }
+                else -> null to null
+            }
+
+            returnType = when {
+                copyTypeRef != null -> when {
+                    originalReturnType == null && block != null -> copyTypeRef
+                    else -> buildErrorTypeRef {
+                        source = returnType?.source ?: functionSource
+                        diagnostic = ConeCopyFunExplicitReturn
+                    }
+                }
+                returnType != null -> returnType
+                block != null || !hasEqToken -> implicitUnitType
+                else -> implicitType
+            }
+
             val function = functionBuilder.apply {
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
@@ -2129,22 +2169,34 @@ class LightTreeRawFirDeclarationBuilder(
                 withCapturedTypeParameters(true, functionSource, typeParameters) {
                     contextParameters.addContextParameters(modifiers?.contextLists, functionSymbol)
 
-                    valueParametersList?.let { list ->
-                        valueParameters += convertValueParameters(
-                            list,
-                            functionSymbol,
-                            if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION
-                        ).map { it.firValueParameter }
+                    firValueParameters?.let {
+                        valueParameters.addAll(firValueParameters)
                     }
 
                     val allowLegacyContractDescription = outerContractDescription == null
-                    val bodyWithContractDescription = withForcedLocalContext(
+                    val [body, innerContractDescription] = withForcedLocalContext(
                         forceKeepingTheBodyInHeaderMode = functionBuilder.status.isInline || functionBuilder.returnTypeRef is FirImplicitTypeRef
                     ) {
                         convertFunctionBody(block, expression, allowLegacyContractDescription)
                     }
-                    this.body = bodyWithContractDescription.first
-                    val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
+                    val extendedBody = when {
+                        body == null -> body
+                        copyReference == null -> body
+                        isAnonymousFunction -> buildBlock {
+                            statements += body
+                            statements += copyReference
+                        }
+                        else -> buildBlock {
+                            statements += body
+                            statements += buildReturnExpression {
+                                this.target = target
+                                result = copyReference
+                            }
+                        }
+                    }
+
+                    this.body = extendedBody
+                    val contractDescription = outerContractDescription ?: innerContractDescription
                     contractDescription?.let {
                         if (this is FirNamedFunctionBuilder) {
                             this.contractDescription = it
