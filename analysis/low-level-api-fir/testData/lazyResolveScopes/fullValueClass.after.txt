@@ -13,7 +13,7 @@ public final [ResolvedTo(BODY_RESOLVE)] val doubled: R|kotlin/Int|
         ^ this@R|lowlevel/Point|.R|lowlevel/Point.sum|(this@R|lowlevel/Point|.R|lowlevel/Point.x|)
     }
 
-public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(RAW_FIR)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
 public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
