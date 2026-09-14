@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -188,3 +189,10 @@ class WasmBackendContext(
 
     val wasmUseStackSwitching = configuration.wasmUseStackSwitchingProposal
 }
+
+internal val WasmBackendContext.suspendCoroutineUninterceptedOrReturnByMode: IrSimpleFunctionSymbol
+    get() = if (wasmUseStackSwitching) {
+        symbols.coroutinesStackSwitchingIntrinsics!!.suspendCoroutineUninterceptedOrReturnStackSwitching
+    } else {
+        symbols.coroutinesStateMachineIntrinsics!!.suspendCoroutineUninterceptedOrReturnStateMachine
+    }
