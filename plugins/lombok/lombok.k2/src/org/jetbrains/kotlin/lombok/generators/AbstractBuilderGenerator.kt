@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.generators
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirSession
@@ -378,6 +379,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             isVar = false
                             symbol = FirFieldSymbol(CallableId(builderSymbol.classId, it))
                             dispatchReceiverType = builderSymbol.defaultType()
+                            source = item.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
                         }.symbol
                     } else {
                         val substitutedType = substitutor.substituteOrSelf(item.returnTypeRef.coneType)
@@ -398,6 +400,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         ) {
                             modality = Modality.FINAL
                             visibility = Visibilities.Private
+                            item.source?.let { itemSource ->
+                                source = itemSource.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
+                            }
                         }.symbol
                     }
                 }
@@ -413,6 +418,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         ) {
                             modality = Modality.FINAL
                             visibility = Visibilities.Private
+                            item.source?.let { itemSource ->
+                                source = itemSource.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
+                            }
                         }.symbol
                     }
                 }
@@ -733,7 +741,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 modality = Modality.OPEN,
                 createKey = {
                     BuilderGeneratorKey(BuilderDeclarationType.Function.Setter)
-                }
+                },
+                source = item.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default),
             )
         }
     }
@@ -856,6 +865,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 visibility = visibility,
                 modality = Modality.OPEN,
                 createKey = { BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.AddSingle(item.name)) },
+                source = item.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default),
             )
         }
 
@@ -897,6 +907,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 visibility = visibility,
                 modality = Modality.OPEN,
                 createKey = { BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.AddAll(item.name)) },
+                source = item.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default),
             )
         }
 
@@ -909,6 +920,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 visibility = visibility,
                 modality = Modality.OPEN,
                 createKey = { BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.Clear(item.name)) },
+                source = item.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default),
             )
         }
     }
