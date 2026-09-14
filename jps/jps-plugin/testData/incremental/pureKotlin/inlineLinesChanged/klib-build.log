@@ -2,5 +2,7 @@
 
 Compiling files:
   src/inline.kt
+  src/useF.kt
+  src/useG.kt
 End of files
 Exit code: OK

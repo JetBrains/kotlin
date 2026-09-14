@@ -86,7 +86,7 @@ class RegularInlineFunTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("KT-89077: JS: changing an inline function body in a klib dependency does not recompile its call site")
+    @DisplayName("KT-89077: JS: changing an inline function body in a klib dependency must recompile its call site")
     @TestMetadata("ic-scenarios/regular-inline-fun/basic-change/lib")
     fun testJsInlineFunBodyChangeRecompilesCallSite(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jsScenario(strategyConfig) {
@@ -95,7 +95,7 @@ class RegularInlineFunTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("KT-89077: Wasm: changing an inline function body in a klib dependency does not recompile its call site")
+    @DisplayName("KT-89077: Wasm: changing an inline function body in a klib dependency must recompile its call site")
     @TestMetadata("ic-scenarios/regular-inline-fun/basic-change/lib")
     fun testWasmInlineFunBodyChangeRecompilesCallSite(strategyConfig: CompilerExecutionStrategyConfiguration) {
         wasmScenario(strategyConfig) {
@@ -115,9 +115,6 @@ class RegularInlineFunTest : BaseCompilationTest() {
         lib.compile {
             assertCompiledSources("com/example/ictest/inlineFun.kt")
         }
-        app.compile {
-            // TODO(KT-89077): `callSite.kt` is not recompiled across the klib dependency
-            assertNoCompiledSources()
-        }
+        app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
     }
 }
