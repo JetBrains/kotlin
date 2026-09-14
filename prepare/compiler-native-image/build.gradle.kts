@@ -271,8 +271,6 @@ fun AbstractArchiveTask.configureNativeImageArchive() {
     }
     archiveFileName.set("$nativeImageArchiveBaseName.$nativeImageArchiveExtension")
     destinationDirectory.set(layout.buildDirectory.map { it.dir("archives") })
-    isPreserveFileTimestamps = false
-    isReproducibleFileOrder = true
 }
 
 val kotlincNativeImageArchive = when {
