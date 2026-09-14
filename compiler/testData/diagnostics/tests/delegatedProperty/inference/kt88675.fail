@@ -1,1 +1,0 @@
-java.lang.AssertionError: Not singleClassifierType and not intersection subType: TypeVariable(_CST_0)
