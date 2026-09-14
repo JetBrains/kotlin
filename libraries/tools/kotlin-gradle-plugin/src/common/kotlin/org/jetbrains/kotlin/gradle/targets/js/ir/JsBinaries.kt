@@ -11,6 +11,7 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
+import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -268,7 +270,7 @@ open class Executable(
         )
 }
 
-class ExecutableWasm(
+open class ExecutableWasm(
     compilation: KotlinJsIrCompilation,
     name: String,
     mode: KotlinJsBinaryMode,
@@ -319,7 +321,9 @@ class ExecutableWasm(
         it.outputDirectory.file(mainFileName.get())
     }
 
-    override val mainWasmFile: Provider<RegularFile> = if (mode == KotlinJsBinaryMode.PRODUCTION) {
+    override val mainWasmFile: Provider<RegularFile> = wasmFileFromJsFileByMode()
+
+    internal fun wasmFileFromJsFileByMode(): Provider<RegularFile> = if (mode == KotlinJsBinaryMode.PRODUCTION) {
         wasmFileFromJsFile(mainOptimizedFile)
     } else {
         wasmFileFromJsFile(mainFile)
@@ -335,6 +339,38 @@ class ExecutableWasm(
 
     private fun optimizeTaskName(): String =
         "${linkTaskName}Optimize"
+}
+
+/**
+ * Executable binary of the Wasm WASI target.
+ *
+ * In addition to [ExecutableWasm], it can be turned into a WebAssembly component with [componentTask].
+ */
+@ExperimentalWasmDsl
+internal class ExecutableWasmWasi(
+    compilation: KotlinJsIrCompilation,
+    name: String,
+    mode: KotlinJsBinaryMode,
+) : ExecutableWasm(
+    compilation,
+    name,
+    mode
+) {
+    /**
+     * Produces a Wasm component out of this binary with `wasm-tools`.
+     */
+    val componentTask: TaskProvider<WasmComponentizeTask> =
+        WasmComponentizeTask.register(compilation, componentTaskName()) {
+            inputFile.set(wasmFileFromJsFileByMode())
+            outputDirectory.set(outputDirBase.map { it.dir(COMPONENT_DIRECTORY_NAME) })
+        }
+
+    override val mainWasmFile: Provider<RegularFile> = componentTask.flatMap {
+        wasmFileFromJsFile(it.outputDirectory.file(mainFileName))
+    }
+
+    private fun componentTaskName(): String =
+        "${linkTaskName}Componentize"
 }
 
 open class Library(
@@ -417,3 +453,5 @@ class LibraryWasm(
 
 
 internal const val COMPILE_SYNC = "compileSync"
+
+internal const val COMPONENT_DIRECTORY_NAME = "component"

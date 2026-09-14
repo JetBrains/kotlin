@@ -23,17 +23,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CheckXcodeTargetsConfigurati
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SetUpSwiftExportAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.SetupKotlinArchiveAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DeprecatedMppGradlePropertiesMigrationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataForKMPSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.ExportRootModuleCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.ExportTargetPublicationCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MultiplatformPublishingSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.SetupRootPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformResourcesPublicationExtensionAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformJvmResourcesPublicationAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.archive.SetupKotlinArchiveAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.SetupRootPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibConsumptionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UklibPublicationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
@@ -55,6 +55,8 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeToolchainProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryPreparationSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryTransformRegisteringSetupAction
+import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitPreparationSetupAction
+import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitTransformRegisteringSetupAction
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.PublishSharedPackageJsonSideEffect
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.RegisterIsAllGradleProjectsEvaluatedListener
@@ -144,7 +146,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, WasmBinaryPreparationSetupAction)
         register(project, ConfigureKotlinPlaywrightTestRunner)
         register(project, PublishSharedPackageJsonSideEffect)
-
+        register(project, WitTransformRegisteringSetupAction)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
@@ -157,6 +159,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinCreateCompilationArchivesTask)
         register(project, KotlinJvmCompilationWireJavaSourcesSideEffect)
         register(project, WasmBinaryTransformRegisteringSetupAction)
+        register(project, WitPreparationSetupAction)
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
