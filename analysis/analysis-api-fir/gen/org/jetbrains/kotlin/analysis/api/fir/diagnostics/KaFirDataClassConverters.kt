@@ -7739,6 +7739,13 @@ private fun KaDiagnosticConverterBuilder.addConversions170() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions171() {
+    add(FirErrors.MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE) { firDiagnostic ->
+        MissingDependencyClassInParameterWithDefaultValueImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS.errorFactory) { firDiagnostic ->
         NullableSupertypeThroughTypealiasErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,

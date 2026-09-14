@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-87904
 // WITH_STDLIB
 // See also compiler/testData/codegen/boxJvm/inlineClasses/inaccessibleTypeInDefaultArg.kt
@@ -20,8 +21,8 @@ fun dependencyFunction(parameter: AnInlineClass = AnInlineClass("default")) {
 // FILE: use.kt
 
 fun main() {
-    DependencyClass()
-    dependencyFunction()
+    <!MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE!>DependencyClass<!>()
+    <!MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE!>dependencyFunction<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration, value */

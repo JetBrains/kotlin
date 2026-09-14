@@ -577,6 +577,7 @@ enum class LanguageFeature(
     ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-416"),
     EnforceNamedArgumentsOnJavaAnnotationInAccessors(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-418"),
     JsIntegerDivisionCheck(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-17719"),
+    ForbidUsingParameterWithDefaultValueTypesWithInaccessibleContent(KOTLIN_2_6, enabledInProgressiveMode = true, "KT-87904"),
 
     // End of 2.* language features --------------------------------------------------
 
