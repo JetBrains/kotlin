@@ -54,7 +54,7 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
     // so configuring the DSL from there publishes nothing.
     val swiftExportConfiguration = exportExtension.swiftExportConfiguration
     if (swiftExportConfiguration.moduleName.isPresent || swiftExportConfiguration.rootPackage.isPresent) {
-        SwiftExportDslMetrics.collectMetrics(
+        SwiftExportDslMetrics.collectModuleMetrics(
             project,
             moduleNameOverridden = swiftExportConfiguration.moduleName.isPresent,
             rootPackageOverridden = swiftExportConfiguration.rootPackage.isPresent,
@@ -81,6 +81,10 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
 
     // The targets are awaited above, so the DSL is finalised by now and the activation is order-independent.
     if (!multiplatformExtension.isSwiftExportXcodeIntegrationActivated()) return@KotlinProjectSetupCoroutine
+
+    swiftExportConfiguration.activatedXcodeIntegration?.let { activatedXcodeIntegration ->
+        SwiftExportDslMetrics.collectXcodeIntegrationMetrics(project, activatedXcodeIntegration)
+    }
 
     initSwiftExportClasspathConfigurations()
     registerSwiftExportPipeline(legacySwiftExportExtension, exportExtension)
