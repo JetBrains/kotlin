@@ -11,9 +11,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.artifacts.component.ComponentSelector
 import org.gradle.api.artifacts.result.*
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.cache.KotlinGradleTaskExecutionCache
-import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpModuleIdentifier
 import org.jetbrains.kotlin.tooling.core.withClosure
 
@@ -73,13 +71,12 @@ internal tailrec fun ResolvedVariantResult.lastExternalVariantOrSelf(): Resolved
 internal fun LazyResolvedConfigurationComponent.resolvedDependenciesByKmpModuleId(
     cache: KotlinGradleTaskExecutionCache,
     projectId: String,
-    buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
 ): Map<KmpModuleIdentifier, Set<ResolvedDependencyResult>> =
     cache.getOrCompute("$projectId/$configurationName/resolvedDependenciesByKmpModuleId") {
         groupByNotNullToSet(
             keySelector = {
                 if (it !is ResolvedDependencyResult) return@groupByNotNullToSet null
-                KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor)
+                KmpModuleIdentifier.from(it.selected)
             },
             valueTransform = { it as? ResolvedDependencyResult },
         )
