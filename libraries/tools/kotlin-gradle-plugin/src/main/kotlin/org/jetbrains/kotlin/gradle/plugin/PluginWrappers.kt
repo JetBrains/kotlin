@@ -64,8 +64,6 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
 
 private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
-    factories[MavenPublicationComponentAccessor.Factory::class] =
-        MavenPublicationComponentAccessorG76.Factory()
     factories[JavaExecTaskParametersCompatibility.Factory::class] =
         JavaExecTaskParametersCompatibilityG76.Factory()
     factories[ProblemsReporter.Factory::class] =
