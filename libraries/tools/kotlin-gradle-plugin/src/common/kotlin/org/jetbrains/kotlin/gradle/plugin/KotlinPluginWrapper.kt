@@ -206,11 +206,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            JavaExecTaskParametersCompatibility.Factory::class,
-            DefaultJavaExecTaskParametersCompatibility.Factory()
-        )
-
-        factories.putIfAbsent(
             CopySpecAccessor.Factory::class,
             DefaultCopySpecAccessor.Factory(),
         )
