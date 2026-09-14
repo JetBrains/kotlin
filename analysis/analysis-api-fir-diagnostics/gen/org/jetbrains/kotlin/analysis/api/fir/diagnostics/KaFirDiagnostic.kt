@@ -166,6 +166,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IeWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<IeWarning>
+            get() = IeWarning::class
+
+        public val reason: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface IllegalConstExpression : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<IllegalConstExpression>
             get() = IllegalConstExpression::class
