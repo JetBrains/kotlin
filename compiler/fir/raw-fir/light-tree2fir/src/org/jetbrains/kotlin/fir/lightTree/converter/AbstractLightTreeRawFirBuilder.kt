@@ -60,31 +60,27 @@ abstract class AbstractLightTreeRawFirBuilder(
     override val LighterASTNode?.receiverExpression: LighterASTNode?
         get() {
             var candidate: LighterASTNode? = null
-            var result: LighterASTNode? = null
             this?.forEachChildren {
-                if (result != null) return@forEachChildren
                 when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> result = if (candidate?.elementType != TokenType.ERROR_ELEMENT) candidate else null
+                    DOT, SAFE_ACCESS -> return if (candidate?.elementType != TokenType.ERROR_ELEMENT) candidate else null
                     else -> candidate = it
                 }
             }
-            return result
+            return null
         }
 
     override val LighterASTNode?.selectorExpression: LighterASTNode?
         get() {
             var isSelector = false
-            var result: LighterASTNode? = null
             this?.forEachChildren {
-                if (result != null) return@forEachChildren
                 when (it.tokenType) {
                     DOT, SAFE_ACCESS -> isSelector = true
                     else -> if (isSelector) {
-                        result = if (it.elementType != TokenType.ERROR_ELEMENT) it else null
+                        return if (it.elementType != TokenType.ERROR_ELEMENT) it else null
                     }
                 }
             }
-            return result
+            return null
         }
 
     override val LighterASTNode?.indexExpressions: List<LighterASTNode>?
@@ -94,33 +90,11 @@ abstract class AbstractLightTreeRawFirBuilder(
         return tree.getParent(this)
     }
 
-    fun LighterASTNode?.getChildrenAsArray(): Array<out LighterASTNode?> {
+    override fun LighterASTNode?.getChildrenAsArray(): Array<out LighterASTNode?> {
         if (this == null) return arrayOf()
 
         val kidsRef = Ref<Array<LighterASTNode?>>()
         tree.getChildren(this, kidsRef)
         return kidsRef.get()
-    }
-
-    override fun LighterASTNode.forEachChildren(f: (LighterASTNode) -> Unit) {
-        val kidsArray = this.getChildrenAsArray()
-        for (kid in kidsArray) {
-            if (kid == null) break
-            if (ignoredTokens.contains(kid.tokenType)) continue
-            f(kid)
-        }
-    }
-
-    override fun <T> LighterASTNode.forEachChildrenReturnList(f: (LighterASTNode, MutableList<T>) -> Unit): MutableList<T> {
-        val kidsArray = this.getChildrenAsArray()
-
-        val container = mutableListOf<T>()
-        for (kid in kidsArray) {
-            if (kid == null) break
-            if (ignoredTokens.contains(kid.tokenType)) continue
-            f(kid, container)
-        }
-
-        return container
     }
 }
