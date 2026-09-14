@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 
 private fun PrimitiveBinaryType?.toLlvmType(llvm: CodegenLlvmHelpers) = when (this) {
-    null -> llvm.pointerType
+    null -> llvm.refPointerType
 
     PrimitiveBinaryType.BOOLEAN -> llvm.int1Type
     PrimitiveBinaryType.BYTE -> llvm.int8Type
@@ -25,6 +25,10 @@ private fun PrimitiveBinaryType?.toLlvmType(llvm: CodegenLlvmHelpers) = when (th
     PrimitiveBinaryType.VECTOR128 -> llvm.vector128Type
     PrimitiveBinaryType.POINTER -> llvm.pointerType
 }
+
+internal val RuntimeAware.refPointerType: LLVMTypeRef get() = runtime.refPointerType
+internal val RuntimeAware.objHeaderPtrType: LLVMTypeRef get() = runtime.objHeaderPtrType
+internal val RuntimeAware.kNullRef: LLVMValueRef get() = runtime.kNullRef
 
 internal fun IrType.toLLVMType(llvm: CodegenLlvmHelpers): LLVMTypeRef =
         llvm.runtime.calculatedLLVMTypes.getOrPut(this) { computePrimitiveBinaryTypeOrNull().toLlvmType(llvm) }

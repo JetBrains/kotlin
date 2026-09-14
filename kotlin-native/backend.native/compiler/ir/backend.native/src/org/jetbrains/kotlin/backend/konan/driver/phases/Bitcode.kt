@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import kotlinx.cinterop.toKString
 import llvm.LLVMDumpModule
+import llvm.LLVMGetDataLayout
 import llvm.LLVMIsDeclaration
 import llvm.LLVMModuleRef
+import llvm.LLVMSetDataLayout
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
+import org.jetbrains.kotlin.backend.konan.llvm.Runtime
 import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.valueName
@@ -182,6 +186,14 @@ internal val PrintBitcodePhase = createSimpleNamedCompilerPhase<NativeBackendPha
 )
 
 internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostProcessing() {
+    val bitcodeModule = context.llvmModule
+    val originalDataLayout = LLVMGetDataLayout(bitcodeModule)!!.toKString()
+    if (context.config.lateShadowStack) {
+        // Object references stay in their own address space until the late shadow stack pass lowers them.
+        // Making it non-integral forbids the optimizer to turn references into integers and back,
+        // which would hide them from the pass.
+        LLVMSetDataLayout(bitcodeModule, "$originalDataLayout-ni:${Runtime.GC_ADDRESS_SPACE}")
+    }
     val optimizationConfig = createLTOFinalPipelineConfig(
             context,
             context.llvm.targetTriple,
@@ -223,5 +235,9 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         if (context.config.lateShadowStack) {
             runAndMeasurePhase(BuildShadowStackPhaseInCompiler)
         }
+    }
+    if (context.config.lateShadowStack) {
+        // No optimization runs after the pass, which has lowered the references in all functions.
+        LLVMSetDataLayout(bitcodeModule, originalDataLayout)
     }
 }

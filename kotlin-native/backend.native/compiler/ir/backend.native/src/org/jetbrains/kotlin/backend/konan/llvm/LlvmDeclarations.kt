@@ -432,8 +432,11 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     || declaration.isCFunctionOrGlobalAccessor()) return
 
             val symbolName = declaration.computeSymbolName(context, forImplementation = true)
-            val proto = LlvmFunctionProto(declaration, symbolName, this, LLVMLinkage.LLVMExternalLinkage)
-            llvm.externalFunction(proto)
+            val proto = LlvmFunctionProto(
+                    declaration, symbolName, this, LLVMLinkage.LLVMExternalLinkage,
+                    isExternalNative = context.config.lateShadowStack
+            )
+            llvm.externalFunction(proto, isKotlinCode = false)
         } else {
             if (!declaration.shouldGenerateBody())
                 return

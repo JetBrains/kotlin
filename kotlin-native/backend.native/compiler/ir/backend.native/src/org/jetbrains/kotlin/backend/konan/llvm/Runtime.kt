@@ -40,7 +40,14 @@ internal class Runtime(
     private fun createOpaqueStructType(name: String): LLVMTypeRef =
             LLVMStructCreateNamed(llvmContext, name) ?: error("failed to create struct $name")
 
+    companion object {
+        const val GC_ADDRESS_SPACE = 1
+    }
+
     val pointerType = LLVMPointerTypeInContext(llvmContext, 0)!!
+    val refPointerType = if (phaseContext.config.lateShadowStack) LLVMPointerTypeInContext(llvmContext, GC_ADDRESS_SPACE)!! else pointerType
+    val objHeaderPtrType = refPointerType
+    val kNullRef = if (phaseContext.config.lateShadowStack) LLVMConstNull(refPointerType)!! else LLVMConstNull(pointerType)!!
     val typeInfoType = getStructType("TypeInfo")
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
     val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")
