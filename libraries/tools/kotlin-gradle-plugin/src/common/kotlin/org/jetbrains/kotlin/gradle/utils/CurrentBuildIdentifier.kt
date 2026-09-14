@@ -10,17 +10,13 @@ import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.provider.Provider
 import org.gradle.internal.build.BuildState
-import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 
 internal fun Project.currentBuildId(): BuildIdentifier =
     (project as ProjectInternal).services.get(BuildState::class.java).buildIdentifier
 
 internal val Project.currentBuild: CurrentBuildIdentifier by projectStoredProperty {
-    CurrentBuildIdentifierImpl(this.currentBuildId(), variantImplementationFactoryProvider())
+    CurrentBuildIdentifierImpl(this.currentBuildId())
 }
 
 /**
@@ -40,7 +36,6 @@ internal operator fun CurrentBuildIdentifier.contains(component: ResolvedCompone
 
 private class CurrentBuildIdentifierImpl(
     private val currentBuildIdentifier: BuildIdentifier,
-    private val buildIdentifierCompatAccessor: Provider<BuildIdentifierAccessor.Factory>,
 ) : CurrentBuildIdentifier {
     override fun contains(project: Project): Boolean {
         return project.currentBuildId() == currentBuildIdentifier
@@ -51,7 +46,7 @@ private class CurrentBuildIdentifierImpl(
     }
 
     override fun toString(): String {
-        return "CurrentBuildIdentifier(${currentBuildIdentifier.compatAccessor(buildIdentifierCompatAccessor).buildPath})"
+        return "CurrentBuildIdentifier(${currentBuildIdentifier.buildPath})"
     }
 
     override fun equals(other: Any?): Boolean {
