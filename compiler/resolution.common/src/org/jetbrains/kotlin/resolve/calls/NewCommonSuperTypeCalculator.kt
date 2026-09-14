@@ -58,6 +58,14 @@ object NewCommonSuperTypeCalculator {
             }
         }
 
+        // Avoid creating synthetic variables for flexible bounds which would result in two different variables.
+        // Instead, just add flexible lower constraints when necessary.
+        if (thereIsFlexibleTypes && !isTopLevelType && c.supportsSyntheticCstTypeVariables() &&
+            lowers.all { it.isStubTypeForVariableInSubtypingOrCaptured() }
+        ) {
+            return c.createSyntheticCstTypeVariable(lowerBounds = types)
+        }
+
         val stateStubTypesEqualToAnything = c.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
         val stateStubTypesNotEqual = c.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
 
@@ -222,8 +230,11 @@ object NewCommonSuperTypeCalculator {
 
         val nonTypeVariables = types.filter { !it.isStubTypeForVariableInSubtypingOrCaptured() }
 
-        assert(nonTypeVariables.isNotEmpty()) {
-            "There should be at least one non-stub type to compute common supertype but there are: $types"
+        if (nonTypeVariables.isEmpty()) {
+            check(c.supportsSyntheticCstTypeVariables()) {
+                "CST over not-fixed type variables only is only defined with synthetic type variables"
+            }
+            return c.createSyntheticCstTypeVariable(lowerBounds = types)
         }
 
         val [builderInferenceStubTypes, nonStubTypes] = nonTypeVariables.partition { it.isStubTypeForBuilderInference() }
@@ -359,18 +370,22 @@ object NewCommonSuperTypeCalculator {
                 // to check subtyping. It'll be fixed but for a while we do this uncapturing here
                 val typeArgument = uncaptureFromSubtyping(typeArgumentFromSupertype)
 
-                val type = typeArgument.getType()
-                when {
-                    type == null -> {
-                        thereIsStar = true
-                        null
-                    }
-
-                    type.lowerBoundIfFlexible().isStubTypeForVariableInSubtyping() -> null
-
-                    else -> typeArgument
+                if (typeArgument.getType() == null) {
+                    thereIsStar = true
+                    null
+                } else {
+                    typeArgument
                 }
             }
+
+            // TODO: review
+            // Not-fixed type variables (subtyping stub types here) can only be represented by a synthetic type variable over a common
+            // supertype (see commonSuperTypeForNotNullTypes), so they are kept at effectively covariant and invariant positions only
+            // and dropped at contravariant ones as before, where the arguments are intersected
+            val properProjections = typeProjections.filter { !it.getType()!!.isNotFixedTypeVariable() }
+            val projections =
+                if (c.supportsSyntheticCstTypeVariables() && !isContravariantPosition(parameter, properProjections)) typeProjections
+                else properProjections
 
             // This is used for folding recursive types like Inv<Inv<*>> into Inv<*>
             fun collapseRecursiveArgumentIfPossible(argument: TypeArgumentMarker): TypeArgumentMarker {
@@ -384,15 +399,41 @@ object NewCommonSuperTypeCalculator {
             }
 
             val argument =
-                if (thereIsStar || typeProjections.isEmpty() || checkRecursion(types, typeProjections, parameter)) {
+                if (thereIsStar || projections.isEmpty() || checkRecursion(types, projections, parameter)) {
                     c.createStarProjection(parameter)
                 } else {
-                    collapseRecursiveArgumentIfPossible(calculateArgument(parameter, typeProjections, depth))
+                    collapseRecursiveArgumentIfPossible(calculateArgument(parameter, projections, depth))
                 }
 
             arguments.add(argument)
         }
         return c.createSimpleType(constructor, arguments, nullable = false, isExtensionFunction = types.all { it.isExtensionFunction() })
+    }
+
+    // TODO: review
+    // Whether calculateArgument intersects the arguments: a contravariant parameter, or `in` projections without `out` ones
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun isContravariantPosition(parameter: TypeParameterMarker, projections: List<TypeArgumentMarker>): Boolean =
+        when (parameter.getVariance()) {
+            TypeVariance.IN -> true
+            TypeVariance.OUT -> false
+            TypeVariance.INV ->
+                projections.any { it.getVariance() == TypeVariance.IN } && projections.none { it.getVariance() == TypeVariance.OUT }
+        }
+
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun KotlinTypeMarker.isNotFixedTypeVariable(): Boolean = lowerBoundIfFlexible().isStubTypeForVariableInSubtyping()
+
+    // TODO: review
+    // The deep counterpart of isNotFixedTypeVariable: `List<TV>` contains a not-fixed type variable
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun KotlinTypeMarker.containsNotFixedTypeVariable(): Boolean {
+        if (isNotFixedTypeVariable()) return true
+        val rigidType = asRigidType()
+            ?: return lowerBoundIfFlexible().containsNotFixedTypeVariable() || upperBoundIfFlexible().containsNotFixedTypeVariable()
+        val constructor = rigidType.typeConstructor()
+        if (constructor.isIntersection()) return constructor.supertypes().any { it.containsNotFixedTypeVariable() }
+        return (0 until rigidType.argumentsCount()).any { rigidType.getArgument(it).getType()?.containsNotFixedTypeVariable() == true }
     }
 
     context(c: TypeSystemCommonSuperTypesContext)
@@ -523,6 +564,7 @@ object NewCommonSuperTypeCalculator {
         // CS(Inv<X>, Inv<Y>) =
         //                     Inv<X>            if X == Y with `stubTypesEqualToAnything = false`
         //                     Inv<CS(X, Y)>     if CS(X, Y) == X == Y with stubTypesEqualToAnything = true and ImprovedVarianceInCst is enabled
+        //                                       (without synthetic type variables for not-fixed type variables, see below)
         //                     Inv<out CS(X, Y)> otherwise
         if (asOut) {
             val argumentTypes = arguments.map { it.getType()!! }
@@ -532,9 +574,34 @@ object NewCommonSuperTypeCalculator {
                 return commonSuperType(argumentTypes, depth + 1).asTypeArgument()
             }
 
-            val equalToEachOtherType = arguments.firstOrNull { potentialSuperType ->
+            // TODO: review
+            // An `in` projection does not reach this branch: with an `out` one it gives a star projection, without it the position
+            // is contravariant (asOut == false), so the arguments are either invariant or out-projected
+            if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                check(arguments.none { it.getVariance() == TypeVariance.IN })
+            }
+            val anyIsOut = arguments.any { it.getVariance() == TypeVariance.OUT }
+
+            // TODO: review
+            // With synthetic type variables (see commonSuperTypeForNotNullTypes), an out-projected argument makes the result
+            // out-projected whatever the other arguments are, so the position is treated like a covariant one and the not-fixed
+            // variables are folded into the common supertype: `Inv<out A>`, `Inv<TV>` gives `Inv<out _CST_0>` like `Out<A>`, `Out<TV>`
+            if (c.supportsSyntheticCstTypeVariables() && anyIsOut) {
+                return c.createTypeArgument(commonSuperType(argumentTypes, depth + 1), TypeVariance.OUT)
+            }
+
+            // TODO: review
+            // Otherwise a not-fixed type variable is equal to anything here, and the (invariant) position is determined by the
+            // arguments that contain no such variable: `Inv<TV>`, `Inv<B>` and
+            // `Inv<TV1>`, `Inv<TV2>`, `Inv<B>` give `Inv<B>` (TV == B follows by incorporation), `Inv<List<TV>>`, `Inv<List<B>>`
+            // gives `Inv<List<B>>`. When no such argument is equal to all the others (`Inv<TV1>`, `Inv<TV2>` or `Inv<TV>`, `Inv<A>`,
+            // `Inv<B>`), the common supertype is out-projected: a synthetic type variable must not equate the variables
+            val stubTypesEqualToAnything = c.supportsSyntheticCstTypeVariables()
+            val candidates =
+                if (stubTypesEqualToAnything) arguments.filter { !it.getType()!!.containsNotFixedTypeVariable() } else arguments
+            val equalToEachOtherType = candidates.firstOrNull { potentialSuperType ->
                 arguments.all {
-                    AbstractTypeChecker.equalTypes(c, it.getType()!!, potentialSuperType.getType()!!, stubTypesEqualToAnything = false)
+                    AbstractTypeChecker.equalTypes(c, it.getType()!!, potentialSuperType.getType()!!, stubTypesEqualToAnything)
                 }
             }
 
@@ -546,6 +613,7 @@ object NewCommonSuperTypeCalculator {
                 // where the only stub types we can encounter here are 'stub types for type variables in subtyping'
                 // from ResultTypeResolver.
                 val variance = if (
+                    !stubTypesEqualToAnything &&
                     c.supportsImprovedVarianceInCst() &&
                     argumentTypes.all { AbstractTypeChecker.equalTypes(c, it, cst, stubTypesEqualToAnything = true) }
                 ) {
@@ -555,8 +623,7 @@ object NewCommonSuperTypeCalculator {
                 }
                 c.createTypeArgument(cst, variance)
             } else {
-                val thereIsNotInv = arguments.any { it.getVariance() != TypeVariance.INV }
-                c.createTypeArgument(equalToEachOtherType.getType()!!, if (thereIsNotInv) TypeVariance.OUT else TypeVariance.INV)
+                c.createTypeArgument(equalToEachOtherType.getType()!!, if (anyIsOut) TypeVariance.OUT else TypeVariance.INV)
             }
         } else {
             val type = c.intersectTypes(arguments.map { it.getType()!! })

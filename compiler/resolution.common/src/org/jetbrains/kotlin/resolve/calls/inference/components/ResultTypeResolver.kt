@@ -304,11 +304,30 @@ class ResultTypeResolver(
     private fun isSuitableType(resultType: KotlinTypeMarker, variableWithConstraints: VariableWithConstraints): Boolean {
         val filteredConstraints = variableWithConstraints.constraints.filter { it.isProperConstraint() }
 
+        // Before/without CST variables (see TypeSystemCommonSuperTypesContext.createSyntheticCstTypeVariable), both filteredConstraints
+        // and result type were either not containing type variables, or result type contained trivial star projection or just the same
+        // type variable as at a single lower bound.
+        // Once CST variables are introduced, the result type might become List<_CST_0> while some of the lower constraints might still
+        // be List<Tv>. So, when checking List<Tv> <: List<_CST_0>, we actually need to ensure that Tv <: _CST_0.
+        //
+        // Anyway, it feels generally correct and safe to always check constraints through the system, but we leave it for simple cases
+        // as it was before just for compatibility/safety. Also, the loop below is anyway rather questionable itself.
+        val checkConstraintsThroughSystem = c.supportsSyntheticCstTypeVariables()
+
         // TODO(KT-68213) this loop is only used for checking of incompatible ILT approximations in K1
         // It shouldn't be necessary in K2
         // but removing it breaks compiler/fir/analysis-tests/testData/resolve/inference/kt53494.kt
         for (constraint in filteredConstraints) {
-            if (!checkConstraint(constraint.type, constraint.kind, resultType)) return false
+            val isSatisfied = if (checkConstraintsThroughSystem) {
+                when (constraint.kind) {
+                    ConstraintKind.EQUALITY -> c.isEqualityConstraintCompatible(constraint.type, resultType)
+                    ConstraintKind.LOWER -> c.isSubtypeConstraintCompatible(constraint.type, resultType)
+                    ConstraintKind.UPPER -> c.isSubtypeConstraintCompatible(resultType, constraint.type)
+                }
+            } else {
+                checkConstraint(constraint.type, constraint.kind, resultType)
+            }
+            if (!isSatisfied) return false
         }
 
         // if resultType is not Nothing

@@ -1,4 +1,4 @@
-// LANGUAGE: +EliminateSecondKindIncorporation
+// LANGUAGE: +EliminateSecondKindIncorporation +SyntheticTypeVariablesForCstOverTypeVariables
 // WITH_STDLIB
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTIC_ARGUMENTS
@@ -31,15 +31,15 @@ fun testWithSemifixation() {
         x = mySetOf1("1")
         x = mySetOf2("2")
         x.size
-    }.x.iterator().next().<!UNRESOLVED_REFERENCE("length;  on receiver of type 'Any?'")!>length<!> // Should work?
+    }.x.iterator().next().length // works: the element type is preserved via the synthetic _CST_ variable
 }
 
 fun testWithUpperBound() {
-    <!TYPE_MISMATCH("Collection<Any>; Set<*>")!><!UPPER_BOUND_VIOLATED("Collection<Any>; Set<*>; Z (of fun <Z : Collection<Any>> buildBoundedBox)")!>buildBoundedBox<!> {
+    buildBoundedBox {
         x = mySetOf1("1")
         x = mySetOf2("2")
-        <!TYPE_MISMATCH("Collection<Any>; Set<*>")!>x<!>.size
-    }<!>.x.iterator().next().<!UNRESOLVED_REFERENCE("length;  on receiver of type 'Any?'")!>length<!> // Z has a declared upper bound, which should not be preferred to the lower bounds
+        x.size
+    }.x.iterator().next().length // Z has a declared upper bound, which should not be preferred to the lower bounds
 }
 
 // TODO: review
@@ -47,9 +47,9 @@ fun testWithUpperBound() {
 fun testWithFlexibleType() {
     buildBox {
         x = mySetOf1("1")
-        x = java.util.Collections.<!CANNOT_INFER_PARAMETER_TYPE("T")!>emptySet<!>()
+        x = java.util.Collections.emptySet()
         x.size
-    }.x.iterator().next().<!UNRESOLVED_REFERENCE("length;  on receiver of type 'Any?'")!>length<!>
+    }.x.iterator().next().length
 }
 
 // TODO: review
@@ -58,8 +58,8 @@ fun testInvariant() {
     buildBox {
         x = myMutableSetOf1("1")
         x = myMutableSetOf2("2")
-        x.add(<!MEMBER_PROJECTED_OUT("MutableSet<*>; star; fun add(element: E): Boolean")!>"3"<!>)
-    }.x.iterator().next().<!UNRESOLVED_REFERENCE("length;  on receiver of type 'Any?'")!>length<!>
+        x.add(<!MEMBER_PROJECTED_OUT("MutableSet<out String>; out; fun add(element: E): Boolean")!>"3"<!>)
+    }.x.iterator().next().length
 }
 
 // TODO: review
@@ -68,8 +68,8 @@ fun testInvariantNested() {
     buildBox {
         x = myMutableSetOfLists1("1")
         x = myMutableSetOfLists2("2")
-        x.add(listOf("3"))
-    }.x.iterator().next().iterator().next().<!UNRESOLVED_REFERENCE("length;  on receiver of type 'Any?'")!>length<!>
+        x.add(<!MEMBER_PROJECTED_OUT("MutableSet<out List<String>>; out; fun add(element: E): Boolean")!>listOf("3")<!>)
+    }.x.iterator().next().iterator().next().length
 }
 
 // TODO: review

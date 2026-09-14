@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +SyntheticTypeVariablesForCstOverTypeVariables
 // ISSUE: KT-88675, KT-88681
 // WITH_STDLIB
 // RENDER_DIAGNOSTIC_ARGUMENTS
@@ -17,7 +18,7 @@ object NullableAnyBound {
     operator fun <T : Any?, L : Collection<T>> L.getValue(thisRef: Any?, property: Any): L = this
 
     val artifacts by if (c) strings.map { MyArtifact(it) } else emptyList()
-    val probe: List<MyArtifact> = <!INITIALIZER_TYPE_MISMATCH("List<MyArtifact>; List<*>")!>artifacts<!>
+    val probe: List<MyArtifact> = artifacts
 }
 
 object StarBound {
@@ -25,7 +26,7 @@ object StarBound {
     operator fun <L> L.getValue(thisRef: Any?, property: Any): L = this
 
     val artifacts by if (c) strings.map { MyArtifact(it) } else emptyList()
-    val probe: List<MyArtifact> = <!INITIALIZER_TYPE_MISMATCH("List<MyArtifact>; List<*>")!>artifacts<!>
+    val probe: List<MyArtifact> = artifacts
 }
 
 object NoBound {
@@ -33,18 +34,18 @@ object NoBound {
     operator fun <L> L.getValue(thisRef: Any?, property: Any): L = this
 
     val artifacts by if (c) strings.map { MyArtifact(it) } else emptyList()
-    val probe: List<MyArtifact> = <!INITIALIZER_TYPE_MISMATCH("List<MyArtifact>; List<*>")!>artifacts<!>
+    val probe: List<MyArtifact> = artifacts
 
     val lengths by if (c) listOf("x").map { it.length } else emptyList()
-    val probeLength: Int = lengths.<!INITIALIZER_TYPE_MISMATCH("Int; Any?")!>first<!>()
+    val probeLength: Int = lengths.first()
 }
 
 object BoundOnlyOnGetValue {
     operator fun <T, L : Collection<T>> L.provideDelegate(thisRef: Any?, property: Any): L = this
     operator fun <T : Artifact, L : Collection<T>> L.getValue(thisRef: Any?, property: Any): L = this
 
-    val artifacts <!DELEGATE_SPECIAL_FUNCTION_MISSING("getValue(BoundOnlyOnGetValue, KProperty1<BoundOnlyOnGetValue, List<*>>); List<MyArtifact>; delegate")!>by<!> <!ARGUMENT_TYPE_MISMATCH("CapturedType(*); Artifact")!>if (c) strings.map { MyArtifact(it) } else emptyList()<!>
-    val probe: List<MyArtifact> = <!INITIALIZER_TYPE_MISMATCH("List<MyArtifact>; List<*>")!>artifacts<!>
+    val artifacts by if (c) strings.map { MyArtifact(it) } else emptyList()
+    val probe: List<MyArtifact> = artifacts
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression,
