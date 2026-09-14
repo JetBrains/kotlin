@@ -25,7 +25,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesApi(project(":analysis:decompiled:decompiler"))
-    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 

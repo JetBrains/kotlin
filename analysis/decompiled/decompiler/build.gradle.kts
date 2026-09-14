@@ -9,8 +9,6 @@ dependencies {
     api(project(":compiler:psi:psi-impl"))
     api(project(":core:deserialization.common"))
     api(project(":core:deserialization.common.jvm"))
-    implementation(project(":analysis:analysis-internal-utils"))
-    implementation(project(":analysis:analysis-api"))
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common"))
