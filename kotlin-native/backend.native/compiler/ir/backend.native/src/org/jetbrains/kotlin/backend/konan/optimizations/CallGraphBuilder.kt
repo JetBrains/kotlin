@@ -19,8 +19,8 @@ internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.Functi
 
     override val directEdges: List<DataFlowIR.FunctionSymbol.Declared> by lazy {
         graph.directEdges[symbol]!!.callSites
-                .filter { !it.isVirtual }
-                .map { it.actualCallee }
+                .filterIsInstance<CallSite.Static>()
+                .flatMap { it.callees }
                 .filterIsInstance<DataFlowIR.FunctionSymbol.Declared>()
                 .filter { graph.directEdges.containsKey(it) }
     }
@@ -29,17 +29,28 @@ internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.Functi
         graph.reversedEdges[symbol]!!
     }
 
-    class CallSite(val call: DataFlowIR.Node.Call, val node: DataFlowIR.Node, val isVirtual: Boolean, val actualCallee: DataFlowIR.FunctionSymbol)
+    sealed class CallSite(
+            val call: DataFlowIR.Node.Call,
+            val node: DataFlowIR.Node,
+    ) {
+        class Virtual(call: DataFlowIR.Node.Call, node: DataFlowIR.Node, val callee: DataFlowIR.FunctionSymbol) : CallSite(call, node)
+
+        // A call site unfolded to several possible callees (a devirtualized one, or a virtual one unfolded by the type hierarchy)
+        // is represented as a single instance listing all of them in [callees].
+        class Static(
+                call: DataFlowIR.Node.Call, node: DataFlowIR.Node, val callees: List<DataFlowIR.FunctionSymbol>
+        ) : CallSite(call, node)
+    }
 
     val callSites = mutableListOf<CallSite>()
 }
 
-internal class CallGraph(val directEdges: Map<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>,
-                         val reversedEdges: Map<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>,
-                         val rootExternalFunctions: List<DataFlowIR.FunctionSymbol>,
-                         val rootSet: Set<DataFlowIR.FunctionSymbol.Declared>)
-    : DirectedGraph<DataFlowIR.FunctionSymbol.Declared, CallGraphNode> {
-
+internal class CallGraph(
+        val directEdges: Map<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>,
+        val reversedEdges: MutableMap<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>,
+        val rootExternalFunctions: List<DataFlowIR.FunctionSymbol>,
+        val rootSet: Set<DataFlowIR.FunctionSymbol.Declared>,
+) : DirectedGraph<DataFlowIR.FunctionSymbol.Declared, CallGraphNode> {
     override val nodes get() = directEdges.values
 
     override fun get(key: DataFlowIR.FunctionSymbol.Declared) = directEdges[key]!!
@@ -49,7 +60,11 @@ internal class CallGraph(val directEdges: Map<DataFlowIR.FunctionSymbol.Declared
     }
 
     fun addReversedEdge(caller: DataFlowIR.FunctionSymbol.Declared, callee: DataFlowIR.FunctionSymbol.Declared) {
-        reversedEdges[callee]!!.add(caller)
+        val callers = reversedEdges.getOrPut(callee) { mutableListOf() }
+        // All edges from a single caller are added consecutively (while handling that caller's call sites),
+        // so comparing with the last element is enough to keep the list free of duplicates.
+        if (callers.lastOrNull() != caller)
+            callers.add(caller)
     }
 }
 
@@ -66,43 +81,31 @@ internal class CallGraphBuilder(
     private val wholeRootSet = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
     private val callGraph = CallGraph(directEdges, reversedEdges, externalRootFunctions, wholeRootSet)
 
-    private data class HandleFunctionParams(val caller: DataFlowIR.FunctionSymbol.Declared?,
-                                            val calleeFunction: DataFlowIR.Function)
-
     private val functionStack = FunctionStack()
 
     private inner class FunctionStack {
-        private val stack = mutableListOf<HandleFunctionParams>()
+        private val stack = mutableListOf<DataFlowIR.Function>()
 
         fun push(caller: DataFlowIR.FunctionSymbol.Declared?, callee: DataFlowIR.Function) {
-            // If the caller is null, callee is a root fn. If we've seen it previously, there's no need to push it onto the stack
-            // again as:
-            //   1. It is already included in the Call Graph we're building, and,
-            //   2. There's no caller to add a reverse edge.
-            //
-            // That said, if the caller is non-null, we need to add a reverse edge irrespective of whether we've seen the callee
-            // previously, and that would require pushing the caller-callee pair onto the fn stack.
-            //
-            // By performing this eager check, we avoid large number of HandleFunctionParams allocations.
-            if (caller != null || !directEdges.containsKey(callee.symbol)) {
-                stack.push(HandleFunctionParams(caller, callee))
-            }
+            val calleeSymbol = callee.symbol as DataFlowIR.FunctionSymbol.Declared
+            // The reversed edge is recorded right away, so the callee only needs to be pushed
+            // if it hasn't been included in the Call Graph yet.
+            if (caller != null)
+                callGraph.addReversedEdge(caller, calleeSymbol)
+            if (!directEdges.containsKey(calleeSymbol))
+                stack.push(callee)
         }
 
         fun process() {
             while (stack.isNotEmpty()) {
-                val (caller, calleeFunction) = stack.pop()
+                val calleeFunction = stack.pop()
                 val callee = calleeFunction.symbol as DataFlowIR.FunctionSymbol.Declared
 
                 // If the same callee was put on the stack multiple times in one go, and at least one was popped and included
                 // in the Call Graph, any op on it (current and future) is a no-op. Skip such callees.
-                val newFunction = !directEdges.containsKey(callee)
-                if (newFunction)
-                    addNode(callee)
-                if (caller != null)
-                    callGraph.addReversedEdge(caller, callee)
-                if (newFunction)
-                    handleFunction(callee, calleeFunction)
+                if (directEdges.containsKey(callee)) continue
+                addNode(callee)
+                handleFunction(callee, calleeFunction)
             }
         }
     }
@@ -117,7 +120,8 @@ internal class CallGraphBuilder(
 
     private fun addNode(symbol: DataFlowIR.FunctionSymbol.Declared) {
         directEdges[symbol] = CallGraphNode(callGraph, symbol)
-        reversedEdges[symbol] = mutableListOf()
+        // Reversed edges to this node might have been recorded before the node itself was added.
+        reversedEdges.getOrPut(symbol) { mutableListOf() }
     }
 
     private inline fun DataFlowIR.FunctionBody.forEachCallSite(block: (DataFlowIR.Node.Call, DataFlowIR.Node) -> Unit): Unit =
@@ -156,12 +160,19 @@ internal class CallGraphBuilder(
                 }
             }
 
-    private fun staticCall(caller: DataFlowIR.FunctionSymbol.Declared, call: DataFlowIR.Node.Call, node: DataFlowIR.Node, callee: DataFlowIR.FunctionSymbol) {
-        val callSite = CallGraphNode.CallSite(call, node, false, callee)
-        val function = moduleDFG.functions[callee]
-        callGraph.addEdge(caller, callSite)
-        if (function != null)
-            functionStack.push(caller, function)
+    private fun staticCall(
+            caller: DataFlowIR.FunctionSymbol.Declared,
+            call: DataFlowIR.Node.Call,
+            node: DataFlowIR.Node,
+            callees: List<DataFlowIR.FunctionSymbol>,
+    ) {
+        if (callees.isEmpty()) return
+        callGraph.addEdge(caller, CallGraphNode.CallSite.Static(call, node, callees))
+        for (callee in callees) {
+            val function = moduleDFG.functions[callee]
+            if (function != null)
+                functionStack.push(caller, function)
+        }
     }
 
     private fun handleRoot(symbol: DataFlowIR.FunctionSymbol) {
@@ -179,15 +190,13 @@ internal class CallGraphBuilder(
         body.forEachCallSite { call, node ->
             val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.irCallSite?.devirtualizedCallSite
             when {
-                call !is DataFlowIR.Node.VirtualCall -> staticCall(symbol, call, node, call.callee)
+                call !is DataFlowIR.Node.VirtualCall -> staticCall(symbol, call, node, listOf(call.callee))
 
                 devirtualizedCallSite != null -> {
                     if (devirtualizedCallSite.possibleCallees.size <= devirtualizedCallSitesUnfoldFactor)
-                        devirtualizedCallSite.possibleCallees.forEach {
-                            staticCall(symbol, call, node, it.callee)
-                        }
+                        staticCall(symbol, call, node, devirtualizedCallSite.possibleCallees.map { it.callee })
                     else {
-                        val callSite = CallGraphNode.CallSite(call, node, true, call.callee)
+                        val callSite = CallGraphNode.CallSite.Virtual(call, node, call.callee)
                         callGraph.addEdge(symbol, callSite)
 
                         devirtualizedCallSite.possibleCallees.forEach { handleRoot(it.callee) }
@@ -219,9 +228,9 @@ internal class CallGraphBuilder(
                         allPossibleCallees.add(actualCallee)
                     }
                     if (allPossibleCallees.size <= nonDevirtualizedCallSitesUnfoldFactor)
-                        allPossibleCallees.forEach { staticCall(symbol, call, node, it) }
+                        staticCall(symbol, call, node, allPossibleCallees)
                     else {
-                        val callSite = CallGraphNode.CallSite(call, node, true, call.callee)
+                        val callSite = CallGraphNode.CallSite.Virtual(call, node, call.callee)
                         callGraph.addEdge(symbol, callSite)
 
                         allPossibleCallees.forEach { handleRoot(it) }
