@@ -50,11 +50,6 @@ kotlin {
 
 registerKotlinSourceForVersionRange(
     GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_811,
-)
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
     GradlePluginVariant.GRADLE_96,
 )
 
