@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -33,7 +34,7 @@ standardPublicJars()
 
 tasks.compileKotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xjvm-default=all")
+        jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
     }
 }
 

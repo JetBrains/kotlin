@@ -39,7 +39,9 @@ enum class GradlePluginVariant(
             ?: error("Compatible kotlinx-serialization-json should only be used for ${GRADLE_MIN.name} plugin variant and not with ${this.name}")
 
     companion object {
-        const val COMPILE_KOTLIN_VERSION = "1.8"
+        // While Gradle 8.14 official LV is 1.8 - it uses Kotlin compiler version 2.0.21
+        // which should be able to read Kotlin metadata from LV 2.1
+        const val COMPILE_KOTLIN_VERSION = "2.1"
         const val GRADLE_COMMON_COMPILE_API_VERSION = "9.7.0"
 
         val MIDDLE_GRADLE_VARIANT_FOR_TESTS = GradlePluginVariant.values().run { this[size / 2] }

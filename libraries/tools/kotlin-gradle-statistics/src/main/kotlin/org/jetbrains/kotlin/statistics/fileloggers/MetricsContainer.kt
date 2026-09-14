@@ -36,7 +36,7 @@ class MetricsContainer(
         }
     }
 
-    private val metricsLock = Object()
+    private val metricsLock = Any()
 
     private val numericalMetrics = TreeMap<MetricDescriptor, IMetricContainer<Long>>()
 

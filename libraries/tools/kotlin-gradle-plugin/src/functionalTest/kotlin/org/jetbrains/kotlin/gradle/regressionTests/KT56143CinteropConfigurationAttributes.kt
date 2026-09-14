@@ -75,13 +75,13 @@ class KT56143CinteropConfigurationAttributes {
         project.evaluate()
 
         val variantADependencies = project.locateOrCreateCInteropDependencyConfiguration(
-            project.variantA.compilations.main as KotlinNativeCompilation
+            project.variantA.compilations.main
         )
         assertEquals("a", variantADependencies.attributes.getAttribute(targetAttribute))
         assertEquals("compilation:a", variantADependencies.attributes.getAttribute(compilationAttribute))
 
         val variantBDependencies = project.locateOrCreateCInteropDependencyConfiguration(
-            project.variantB.compilations.main as KotlinNativeCompilation
+            project.variantB.compilations.main
         )
         assertEquals("b", variantBDependencies.attributes.getAttribute(targetAttribute))
         assertEquals("compilation:b", variantBDependencies.attributes.getAttribute(compilationAttribute))
