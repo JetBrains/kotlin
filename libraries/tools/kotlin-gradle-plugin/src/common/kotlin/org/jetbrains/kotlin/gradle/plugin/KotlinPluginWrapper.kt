@@ -206,11 +206,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            MavenPublicationComponentAccessor.Factory::class,
-            DefaultMavenPublicationComponentAccessorFactory()
-        )
-
-        factories.putIfAbsent(
             JavaExecTaskParametersCompatibility.Factory::class,
             DefaultJavaExecTaskParametersCompatibility.Factory()
         )

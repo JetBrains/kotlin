@@ -69,10 +69,6 @@ private fun Project.registerVariantImplementations() {
         ProblemsReporterG82.Factory()
     factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
         CompilerDiagnosticsProblemsReporterG82.Factory()
-    if (gradleVersion < GradleVersion.version("8.3")) { // for versions higher than 8.3 use common implementation
-        factories[MavenPublicationComponentAccessor.Factory::class] =
-            MavenPublicationComponentAccessorG82.Factory()
-    }
     factories[CopySpecAccessor.Factory::class] = CopySpecAccessorG85.Factory()
     factories[ProjectDependencyAccessor.Factory::class] = ProjectDependencyAccessorG88.Factory()
     factories[BuildNeededDependentTasksWiringProvider.Factory::class] = BuildNeededDependentTaskWiringProviderG95.Factory()
