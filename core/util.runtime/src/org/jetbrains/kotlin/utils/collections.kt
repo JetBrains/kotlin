@@ -126,3 +126,5 @@ fun <E : Any> MutableList<E?>.setSize(newSize: Int) {
         }
     }
 }
+
+inline fun <E> buildSmartList(build: MutableList<E>.() -> Unit): List<E> = SmartList<E>().apply(build)
