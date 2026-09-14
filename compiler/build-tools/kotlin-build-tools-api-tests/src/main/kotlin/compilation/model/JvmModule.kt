@@ -22,10 +22,27 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.snapshotBasedIcConfiguration
 import java.io.File
+import java.io.StringWriter
+import java.nio.charset.StandardCharsets
 import java.nio.file.Path
+import java.util.Locale
+import javax.tools.Diagnostic
+import javax.tools.DiagnosticCollector
+import javax.tools.JavaFileObject
+import javax.tools.ToolProvider
 import kotlin.io.path.createParentDirectories
+import kotlin.io.path.extension
 import kotlin.io.path.pathString
 import kotlin.io.path.walk
+import kotlin.reflect.KClass
+
+data class JvmModuleCacheKey(
+    val moduleClass: KClass<*>,
+    val moduleName: String,
+    val dependencies: List<DependencyScenarioDslCacheKey>,
+    val compilationArguments: (JvmCompilationOperation.Builder) -> Unit,
+    val compileJavaSources: Boolean,
+) : DependencyScenarioDslCacheKey
 
 class JvmModule(
     private val kotlinToolchain: KotlinToolchains,
@@ -38,6 +55,7 @@ class JvmModule(
     private val snapshotConfig: SnapshotConfig,
     moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
     private val stdlibLocation: List<Path>,
+    val compileJavaSources: Boolean = false,
 ) : AbstractModule<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>(
     project,
     moduleName,
@@ -46,6 +64,14 @@ class JvmModule(
     defaultStrategyConfig,
     moduleCompilationConfigAction,
 ) {
+    override val scenarioDslCacheKey: DependencyScenarioDslCacheKey =
+        JvmModuleCacheKey(
+            this::class,
+            moduleName,
+            dependencies.map { it.scenarioDslCacheKey },
+            moduleCompilationConfigAction,
+            compileJavaSources,
+        )
 
 
     /**
@@ -85,8 +111,47 @@ class JvmModule(
 
         return compilationOperation.let {
             compilationAction(it)
-            buildSession.executeOperation(it, strategyConfig, kotlinLogger)
+            val result = buildSession.executeOperation(it, strategyConfig, kotlinLogger)
+            if (compileJavaSources && result == CompilationResult.COMPILATION_SUCCESS) {
+                val javaFiles = sourcesDirectory.walk().filter { file -> file.extension == "java" }.map { file -> file.toFile() }.toList()
+                if (javaFiles.isNotEmpty() && !compileJavaSourcesWithJavac(javaFiles, kotlinLogger)) {
+                    return@let CompilationResult.COMPILATION_ERROR
+                }
+            }
+            result
         }
+    }
+
+    private fun compileJavaSourcesWithJavac(javaFiles: List<File>, kotlinLogger: TestKotlinLogger): Boolean {
+        val compiler = ToolProvider.getSystemJavaCompiler()
+            ?: error("System Java compiler not found. Ensure running on a JDK.")
+        val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
+        val classpathEntries = (compileClasspath.plusElement(outputDirectory)).joinToString(File.pathSeparator) { path -> path.pathString }
+        val options = listOf("-d", outputDirectory.pathString, "-cp", classpathEntries, "-encoding", "UTF-8")
+
+        val compilerOutput = StringWriter()
+        val success = compiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, StandardCharsets.UTF_8).use { fileManager ->
+            val compilationUnits = fileManager.getJavaFileObjectsFromFiles(javaFiles)
+            compiler.getTask(compilerOutput, fileManager, diagnosticCollector, options, null, compilationUnits).call()
+                ?: error("The Java compiler returned no result for the module '$moduleName'")
+        }
+
+        for (diagnostic in diagnosticCollector.diagnostics) {
+            val message = diagnostic.render()
+            when (diagnostic.kind) {
+                Diagnostic.Kind.ERROR -> kotlinLogger.error(message)
+                Diagnostic.Kind.WARNING, Diagnostic.Kind.MANDATORY_WARNING -> kotlinLogger.warn(message)
+                else -> kotlinLogger.info(message)
+            }
+        }
+        val uncategorizedOutput = compilerOutput.toString()
+        if (uncategorizedOutput.isNotBlank()) {
+            kotlinLogger.info("javac: $uncategorizedOutput")
+        }
+        if (!success) {
+            kotlinLogger.error("Java compilation of the module '$moduleName' failed, see the javac diagnostics above")
+        }
+        return success
     }
 
     private fun generateClasspathSnapshot(dependency: Dependency): Path {
@@ -152,6 +217,11 @@ class JvmModule(
     }
 
     private companion object {
+        private fun Diagnostic<out JavaFileObject>.render(): String {
+            val position = source?.let { source -> "${source.name}:$lineNumber:$columnNumber: " } ?: ""
+            return "javac: $position${getMessage(Locale.ENGLISH)}"
+        }
+
         val javaExe: File
             get() {
                 val javaHome = System.getProperty("java.home")

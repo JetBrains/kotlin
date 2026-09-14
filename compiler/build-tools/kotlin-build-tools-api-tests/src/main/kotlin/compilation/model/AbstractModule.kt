@@ -86,7 +86,7 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
     override val icCachesDir: Path
         get() = icWorkingDir.resolve("caches")
 
-    override val scenarioDslCacheKey =
+    override val scenarioDslCacheKey: DependencyScenarioDslCacheKey =
         AbstractModuleCacheKey(
             this::class,
             moduleName,

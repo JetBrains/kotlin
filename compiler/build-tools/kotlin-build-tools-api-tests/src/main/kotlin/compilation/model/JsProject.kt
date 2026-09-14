@@ -32,8 +32,10 @@ class JsProject(
         dependencies: List<Dependency>,
         snapshotConfig: SnapshotConfig,
         stdlibClasspath: List<Path>?,
+        compileJavaSources: Boolean,
         moduleCompilationConfigAction: (JsKlibCompilationOperation.Builder) -> Unit,
     ): JsModule {
+        require(!compileJavaSources) { "Compiling Java sources is not supported for Kotlin/JS modules" }
         val moduleDirectory = projectDirectory.resolve(moduleName)
         val sanitizedModuleName = moduleName.replace(invalidModuleNameCharactersRegex, "_")
         val module = JsModule(
