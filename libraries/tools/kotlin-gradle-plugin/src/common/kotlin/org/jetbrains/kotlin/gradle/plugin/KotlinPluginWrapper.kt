@@ -206,11 +206,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            BuildIdentifierAccessor.Factory::class,
-            DefaultBuildIdentifierAccessor.Factory(),
-        )
-
-        factories.putIfAbsent(
             ProjectDependencyAccessor.Factory::class,
             DefaultProjectDependencyAccessor.Factory()
         )

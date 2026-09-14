@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.artifacts.component.ComponentSelector
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.cache.KotlinGradleTaskExecutionCache
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationComponent
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.dependencyArtifactsOrNull
@@ -38,7 +36,6 @@ internal data class SourceSetVisibilityResult(
 
 internal class SourceSetVisibilityProvider(
     private val projectId: String,
-    private val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
     private val resolveWithLenientPSMResolutionScheme: Boolean,
     private val allowMatchingByRequestedCoordinates: Boolean,
     private val cache: KotlinGradleTaskExecutionCache,
@@ -77,7 +74,7 @@ internal class SourceSetVisibilityProvider(
     ): Set<String>? {
         val resolvedPlatformDependencies = buildList {
             resolvedDependenciesConfiguration
-                .resolvedDependenciesByKmpModuleId(cache, projectId, buildIdentifierAccessor)
+                .resolvedDependenciesByKmpModuleId(cache, projectId)
                 .get(resolvedRootMppDependencyIdentifier)
                 .orEmpty()
                 .let(::addAll)
@@ -163,7 +160,7 @@ internal class SourceSetVisibilityProvider(
 
                 val dependency = resolvedHostSpecificMetadataConfiguration
                     .allResolvedDependencies
-                    .find { KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor) == resolvedRootMppDependencyIdentifier }
+                    .find { KmpModuleIdentifier.from(it.selected) == resolvedRootMppDependencyIdentifier }
                     ?: return@getOrCompute null
 
                 val metadataArtifact = resolvedHostSpecificMetadataConfiguration
@@ -210,7 +207,6 @@ internal class SourceSetVisibilityProvider(
 
         val resolvedRootMppDependencyIdentifier = KmpModuleIdentifier.from(
             resolvedRootMppDependency.selected,
-            buildIdentifierAccessor
         )
 
         val platformCompilationsByResolvedVariantName = mutableMapOf<String, PlatformCompilationData>()

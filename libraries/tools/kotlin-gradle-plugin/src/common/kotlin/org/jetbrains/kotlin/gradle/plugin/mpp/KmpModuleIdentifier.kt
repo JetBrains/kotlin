@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import java.io.Serializable
 
 
@@ -39,7 +36,6 @@ internal data class KmpModuleIdentifier(
     companion object {
         fun from(
             component: ResolvedComponentResult,
-            buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
         ): KmpModuleIdentifier {
             val gradleGroupAndName = try {
                 component.moduleVersion?.let { GradleGroupAndName(it.group, it.name) }
@@ -50,7 +46,7 @@ internal data class KmpModuleIdentifier(
             val componentId = when (val id = component.id) {
                 is ProjectComponentIdentifier -> ProjectComponentId(
                     projectPath = id.projectPath,
-                    buildPath = id.build.compatAccessor(buildIdentifierAccessor).buildPath
+                    buildPath = id.build.buildPath
                 )
                 is ModuleComponentIdentifier -> ModuleComponentId(
                     group = id.group,
