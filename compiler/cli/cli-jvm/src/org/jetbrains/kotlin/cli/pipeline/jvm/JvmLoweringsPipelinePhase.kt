@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,15 +8,12 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.BackendInput
 import org.jetbrains.kotlin.cli.common.buildFile
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmConfigurationUpdater.getBuildFilePaths
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.JvmBackendClassResolver
@@ -36,13 +33,11 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
 
-object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBackendPipelineArtifact>(
-    name = "JvmBackendPipelineStep",
-    postActions = setOf(
-        CheckCompilationErrors.CheckDiagnosticCollector
-    )
+object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmLoweredIrPipelineArtifact>(
+    name = JvmLoweringsPipelinePhase::class.java.name,
+    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBackendPipelineArtifact {
+    override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmLoweredIrPipelineArtifact {
         (val fir2IrResult = result, val configuration, val environment, val allSourceFiles = sourceFiles, val mainClassFqName) = input
         val moduleDescriptor = fir2IrResult.irModuleFragment.descriptor
         val diagnosticsCollector = configuration.diagnosticsCollector
@@ -53,7 +48,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
             fir2IrResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
         )
         val baseBackendInput = with(fir2IrResult) {
-            BackendInput(
+            JvmIrCodegenFactory.BackendInput(
                 irModuleFragment, irBuiltIns, symbolTable, components.irProviders,
                 debuggerExtensions = null, jvmBackendExtension, pluginContext
             )
@@ -101,32 +96,16 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
             )
         }
 
-        val outputs = ArrayList<GenerationState>(chunk.size)
-
-        for (input in codegenInputs) {
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            outputs += runCodegen(
-                input,
-                input.state,
-                codegenFactory,
-                diagnosticsCollector,
-                input.state.configuration,
-                reportDiagnosticsToMessageCollector = false, // diagnostics will be reported in CheckCompilationErrors.CheckDiagnosticCollector
-            )
-        }
-
-        return JvmBackendPipelineArtifact(configuration, environment, mainClassFqName, outputs)
+        return JvmLoweredIrPipelineArtifact(configuration, environment, mainClassFqName, codegenInputs)
     }
 
-    val customClassBuilderFactory = CompilerConfigurationKey.create<ClassBuilderFactory>("customClassBuilderFactory")
-
-    fun runLowerings(
+    private fun runLowerings(
         project: Project,
         configuration: CompilerConfiguration,
         moduleDescriptor: ModuleDescriptor,
         module: Module?,
         codegenFactory: JvmIrCodegenFactory,
-        backendInput: BackendInput,
+        backendInput: JvmIrCodegenFactory.BackendInput,
         diagnosticsReporter: BaseDiagnosticsCollector,
         backendClassResolver: JvmBackendClassResolver,
     ): JvmIrCodegenFactory.CodegenInput {
@@ -148,29 +127,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
         }
     }
 
-    fun runCodegen(
-        codegenInput: JvmIrCodegenFactory.CodegenInput,
-        state: GenerationState,
-        codegenFactory: JvmIrCodegenFactory,
-        diagnosticsReporter: BaseDiagnosticsCollector,
-        configuration: CompilerConfiguration,
-        reportDiagnosticsToMessageCollector: Boolean,
-    ): GenerationState {
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-        codegenFactory.invokeCodegen(codegenInput)
-
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-        if (reportDiagnosticsToMessageCollector) {
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, configuration)
-        }
-
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        return state
-    }
-
-    fun Module.getSourceFiles(
+    private fun Module.getSourceFiles(
         allSourceFiles: List<KtFile>,
         localFileSystem: VirtualFileSystem?,
         multiModuleChunk: Boolean,
@@ -180,7 +137,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
             // filter out source files from other modules
             assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
             val [moduleSourceDirs, moduleSourceFiles] =
-                getBuildFilePaths(buildFile, getSourceFiles())
+                JvmConfigurationUpdater.getBuildFilePaths(buildFile, getSourceFiles())
                     .mapNotNull(localFileSystem!!::findFileByPath)
                     .partition(VirtualFile::isDirectory)
 
@@ -194,4 +151,6 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
             allSourceFiles
         }
     }
+
+    val customClassBuilderFactory = CompilerConfigurationKey.create<ClassBuilderFactory>("customClassBuilderFactory")
 }
