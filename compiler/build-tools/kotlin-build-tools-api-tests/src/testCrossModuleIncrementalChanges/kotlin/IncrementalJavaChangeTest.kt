@@ -34,13 +34,15 @@ class IncrementalJavaChangeTest : BaseCompilationTest() {
     @TestMetadata("incrementalMultiprojectJava")
     fun testAbiChangeInLib_changeMethodSignature(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val lib = module("incrementalMultiprojectJava/lib", compileJavaSources = true, icOptionsConfigAction = disablePreciseJavaTracking)
-            val app = module("incrementalMultiprojectJava/app", dependencies = listOf(lib), icOptionsConfigAction = disablePreciseJavaTracking)
+            val lib =
+                module("incrementalMultiprojectJava/lib", compileJavaSources = true, icOptionsConfigAction = disablePreciseJavaTracking)
+            val app =
+                module("incrementalMultiprojectJava/app", dependencies = listOf(lib), icOptionsConfigAction = disablePreciseJavaTracking)
 
             lib.changeFile(javaClassFile) { it.replace("String getString", "Object getString") }
 
             lib.compile {
-                assertCompiledSources("src/main/kotlin/bar/useJavaClassSameModule.kt")
+                assertCompiledSources("src/main/kotlin/bar/useJavaClassLib.kt")
             }
             app.compile {
                 assertCompiledSources(
@@ -56,13 +58,15 @@ class IncrementalJavaChangeTest : BaseCompilationTest() {
     @TestMetadata("incrementalMultiprojectJava")
     fun testNonAbiChangeInLib_changeMethodBody(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val lib = module("incrementalMultiprojectJava/lib", compileJavaSources = true, icOptionsConfigAction = disablePreciseJavaTracking)
-            val app = module("incrementalMultiprojectJava/app", dependencies = listOf(lib), icOptionsConfigAction = disablePreciseJavaTracking)
+            val lib =
+                module("incrementalMultiprojectJava/lib", compileJavaSources = true, icOptionsConfigAction = disablePreciseJavaTracking)
+            val app =
+                module("incrementalMultiprojectJava/app", dependencies = listOf(lib), icOptionsConfigAction = disablePreciseJavaTracking)
 
             lib.changeFile(javaClassFile) { it.replace("Hello, World!", "Hello, World!!!!") }
 
             lib.compile {
-                assertCompiledSources("src/main/kotlin/bar/useJavaClassSameModule.kt")
+                assertCompiledSources("src/main/kotlin/bar/useJavaClassLib.kt")
             }
             app.compile {
                 assertNoCompiledSources()
