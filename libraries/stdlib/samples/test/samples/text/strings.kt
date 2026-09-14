@@ -163,6 +163,28 @@ class Strings {
     }
 
     @Sample
+    fun filterTo() {
+        val text = "a1b2c3d4"
+        val letters = StringBuilder()
+        val digits = StringBuilder()
+        assertPrints(letters, "")
+
+        text.filterTo(letters) { it.isLetter() }
+        text.filterNotTo(digits) { it.isLetter() }
+
+        assertPrints(letters, "abcd")
+        assertPrints(digits, "1234")
+    }
+
+    @Sample
+    fun find() {
+        val text = "a1b2c3d4e5"
+        assertPrints(text.find { it.isDigit() }, "1")
+        assertPrints(text.find { it.isUpperCase() }, "null")
+        assertPrints("".find { it.isLowerCase() }, "null")
+    }
+
+    @Sample
     fun findLast() {
         val text = "a1b2c3d4e5"
 
@@ -184,6 +206,28 @@ class Strings {
         val stringB = "zyx"
         val result = stringA.zip(stringB) { a, b -> "$a$b" }
         assertPrints(result, "[az, by, cx]")
+    }
+
+    @Sample
+    fun zipWithNext() {
+        val text = "abbcccd"
+        val pairs = text.zipWithNext()
+        assertPrints(pairs, "[(a, b), (b, b), (b, c), (c, c), (c, c), (c, d)]")
+    }
+
+    @Sample
+    fun zipWithNextToFindRepeats() {
+        val text = "abbcccd"
+        val repeatedPositions = text.zipWithNext { a, b -> a == b }
+        assertPrints(repeatedPositions, "[false, true, false, true, true, false]")
+    }
+
+    @Sample
+    fun mapNotNull() {
+        val text = "1a2b3c4"
+        val digits = text.mapNotNull { it.digitToIntOrNull() }
+        assertPrints(digits, "[1, 2, 3, 4]")
+        assertPrints(digits.sum(), "10")
     }
 
     @Sample
