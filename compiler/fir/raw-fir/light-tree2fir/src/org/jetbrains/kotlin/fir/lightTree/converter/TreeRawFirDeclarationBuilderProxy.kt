@@ -811,6 +811,34 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
+    private fun isClassLocal(classNode: Node, getParent: Node.() -> Node?): Boolean {
+        if (classNode.getParent()?.getParent()?.toTokenId() == KtNodeTypes.SCRIPT_ID) return false
+        var currentNode: Node? = classNode
+        while (currentNode != null) {
+            val tokenType = currentNode.toTokenId()
+            val parent = currentNode.getParent()
+            val parentTokenType = parent?.toTokenId()
+            if (tokenType == KtNodeTypes.PROPERTY_ID || tokenType == KtNodeTypes.FUNCTION_ID) {
+                val grandParent = parent?.getParent()
+                when (parentTokenType) {
+                    KtNodeTypes.FILE_ID -> return true
+                    KtNodeTypes.CLASS_BODY_ID if !(grandParent?.toTokenId() == KtNodeTypes.OBJECT_DECLARATION_ID && grandParent.getParent()?.toTokenId() == KtNodeTypes.OBJECT_LITERAL_ID)
+                        -> return true
+                    KtNodeTypes.BLOCK_ID if grandParent?.toTokenId() == KtNodeTypes.SCRIPT_ID -> return true
+                }
+            }
+            // NB: enum entry nested classes are considered local by FIR design (see discussion in KT-45115)
+            if (parentTokenType == KtNodeTypes.ENUM_ENTRY_ID) {
+                return true
+            }
+            if (tokenType == KtNodeTypes.BLOCK_ID) {
+                return true
+            }
+            currentNode = parent
+        }
+        return false
+    }
+
     /**
      * see PsiRawFirBuilder.Visitor.visitObjectLiteralExpression
      *
@@ -2276,6 +2304,18 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
+    private fun isCallableLocal(callableNode: Node, getParent: Node.() -> Node?): Boolean {
+        val parentNode = callableNode.getParent()
+        return when (parentNode?.toTokenId()) {
+            KtNodeTypes.FILE_ID, KtNodeTypes.CLASS_BODY_ID -> false
+            KtNodeTypes.BLOCK_ID -> when (parentNode.getParent()?.toTokenId()) {
+                KtNodeTypes.SCRIPT_ID -> false
+                else -> true
+            }
+            else -> true
+        }
+    }
+
     /**
      * see PsiRawFirBuilder.Visitor.buildFirBody
      *
@@ -3106,18 +3146,10 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     override val Node.asText: String
         get() = with(analyzer) { asText }
 
-    override fun Node.getChildNodeByType(type: Type): Node? {
-        return with(analyzer) { getChildNodeByType(type) }
-    }
-
     override val Node?.receiverExpression: Node?
         get() = with(analyzer) { receiverExpression }
     override val Node?.selectorExpression: Node?
         get() = with(analyzer) { selectorExpression }
-
-    override fun generateConstantExpressionByLiteral(expression: Node): FirExpression {
-        return analyzer.generateConstantExpressionByLiteral(expression)
-    }
 
     override fun Type.typeToTokenId(): Int {
         return with(analyzer) { typeToTokenId() }

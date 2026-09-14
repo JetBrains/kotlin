@@ -59,10 +59,6 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
     override val LightNode.asText: String
         get() = tree.getText(this).toString()
 
-    override fun LightNode.getChildNodeByType(type: SyntaxElementType): LightNode? {
-        return tree.getChildren(this).firstOrNull { it.tokenType == type }
-    }
-
     override val LightNode?.receiverExpression: LightNode?
         get() {
             var candidate: LightNode? = null
