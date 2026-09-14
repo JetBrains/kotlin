@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
@@ -703,8 +704,7 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
@@ -734,8 +734,7 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
@@ -776,8 +775,7 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
@@ -818,8 +816,7 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
@@ -864,8 +861,7 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
@@ -917,8 +913,7 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         assertTrue(actualModules.isEmpty(), "No modules should be exported for JVM dependencies")
     }
@@ -952,8 +947,7 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
@@ -1008,8 +1002,7 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
@@ -1058,8 +1051,7 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
@@ -1123,8 +1115,7 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+        val actualModules = project.realizeSwiftModules()
 
         val expectedModules = setOf(
             ExportedSwiftModuleForAssertion(
@@ -1953,7 +1944,7 @@ class ExportExtensionSwiftExportTests {
 
     /** The export graph diagnostics are reported when the `swiftModules` provider is realized, not during configuration. */
     private fun Project.realizeSwiftModules(): List<SwiftExportedModule> =
-        tasks.withType(SwiftExportTask::class.java).single().parameters.swiftModules.get()
+        tasks.withType(SwiftExportTask::class.java).single().resolveSwiftExportedModules(project::reportDiagnostic)
 
     /**
      * Outside a real build the diagnostics collector turns a FATAL diagnostic into an exception right away, and

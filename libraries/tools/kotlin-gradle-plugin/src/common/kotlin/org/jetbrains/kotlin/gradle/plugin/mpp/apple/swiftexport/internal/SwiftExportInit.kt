@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
@@ -102,6 +103,12 @@ internal val String.normalizedSwiftExportModuleName: String
 
 internal fun Project.validateSwiftExportModuleName(moduleName: String) =
     kotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(this, moduleName)
+
+internal fun validateSwiftExportModuleName(moduleName: String, reportDiagnostic: (ToolingDiagnostic) -> Unit) {
+    if (!moduleName.matches(Regex(SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN))) {
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName))
+    }
+}
 
 internal fun KotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(project: Project, moduleName: String) {
     if (!moduleName.matches(Regex(SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN))) {

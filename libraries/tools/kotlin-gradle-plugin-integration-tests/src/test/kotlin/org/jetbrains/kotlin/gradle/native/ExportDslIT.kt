@@ -272,8 +272,6 @@ class ExportDslIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertHasDiagnostic(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
-                // The build fails before the Swift Export tool is handed the modules.
-                assertTasksAreNotInTaskGraph(":iosArm64DebugSwiftExport")
             }
         }
     }

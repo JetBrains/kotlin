@@ -125,6 +125,110 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
         )
     }
 
+    @DisplayName(
+        "Swift Export metadata consumed from a direct unpublished dependency with moduleName override"
+    )
+    @GradleTest
+    fun directUnpublishedDependencyWithModuleNameOverride(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = false,
+            moduleNameOverride = "Foo",
+        )
+    }
+
+    @DisplayName(
+        "Swift Export metadata consumed from a direct unpublished dependency with rootPackage override"
+    )
+    @GradleTest
+    fun directUnpublishedDependencyWithRootPackageOverride(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = false,
+            rootPackageOverride = "com.foo.bar",
+        )
+    }
+
+    @DisplayName(
+        "Swift Export metadata consumed from a direct unpublished dependency with no overrides"
+    )
+    @GradleTest
+    fun directUnpublishedDependencyWithNoOverrides(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = false,
+        )
+    }
+
+    @DisplayName(
+        "Swift Export metadata consumed from a direct unpublished dependency with moduleName and rootPackage overrides"
+    )
+    @GradleTest
+    fun directUnpublishedDependencyWithModuleNameAndRootPackageOverrides(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = false,
+            moduleNameOverride = "Bar",
+            rootPackageOverride = "com.bar.baz",
+        )
+    }
+
+    @DisplayName(
+        "Swift Export metadata consumed from a transitive unpublished dependency with moduleName and rootPackage overrides"
+    )
+    @GradleTest
+    fun transitiveUnpublishedDependencyWithModuleNameAndRootPackageOverrides(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = false,
+            moduleNameOverride = "Bar",
+            rootPackageOverride = "com.bar.baz",
+            transitiveModuleNameOverride = "Baz",
+            transitiveRootPackageOverride = "com.foo.bar.baz",
+        )
+    }
+
+    @DisplayName(
+        "Swift Export metadata consumed from a transitive published dependency with moduleName and rootPackage overrides, " +
+                "via a direct unpublished dependency"
+    )
+    @GradleTest
+    fun directUnpublishedDependencyWithTransitivePublishedDependencyWithModuleNameAndRootPackageOverrides(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = false,
+            moduleNameOverride = "Bar",
+            rootPackageOverride = "com.bar.baz",
+            transitivePublished = true,
+            transitiveModuleNameOverride = "Baz",
+            transitiveRootPackageOverride = "com.foo.bar.baz",
+        )
+    }
+
     private fun testSwiftExportMetadataConsumption(
         gradleVersion: GradleVersion,
         testBuildDir: Path,
@@ -253,16 +357,10 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                     applyMultiplatform {
                         iosArm64()
 
-                        val subprojectDependency = if (publishedSubproject != null) {
-                            publishedSubproject.rootCoordinate
-                        } else {
-                            project(":subproject")
-                        }
-
                         export.swift {
                             xcodeIntegration {
                                 if (configModuleNameOverride != null) {
-                                    configure(subprojectDependency) {
+                                    configure(publishedSubproject?.rootCoordinate ?: project(":subproject")) {
                                         moduleName.set(configModuleNameOverride)
                                     }
                                 }
@@ -273,7 +371,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                             compileStubSourceWithSourceSetName()
 
                             dependencies {
-                                api(subprojectDependency)
+                                api(publishedSubproject?.rootCoordinate ?: project(":subproject"))
                             }
                         }
                     }
