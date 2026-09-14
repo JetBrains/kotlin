@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.AbstractMap
 import kotlin.collections.AbstractSet
-import kotlin.collections.ArrayList
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.ExperimentalExtendedContracts
 import kotlin.contracts.InvocationKind
@@ -59,6 +58,24 @@ inline fun <reified T> Iterable<*>.filterIsInstanceWithChecker(additionalChecker
         }
     }
     return result
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun <reified T> requireIsInstance(obj: Any) {
+    contract {
+        returns() implies (obj is T)
+    }
+
+    require(obj is T) { "Expected ${T::class} instead of ${obj::class} for $obj" }
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun <reified T> checkIsInstance(obj: Any) {
+    contract {
+        returns() implies (obj is T)
+    }
+
+    check(obj is T) { "Expected ${T::class} instead of ${obj::class} for $obj" }
 }
 
 fun <T> Iterator<T>.nextOrNull(): T? = if (hasNext()) next() else null

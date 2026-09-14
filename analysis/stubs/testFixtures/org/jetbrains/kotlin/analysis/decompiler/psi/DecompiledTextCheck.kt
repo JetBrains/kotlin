@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import com.intellij.psi.PsiErrorElement
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
 import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 
 /**
  * Dumps the decompiled text of [files] and validates that it has no syntax errors.

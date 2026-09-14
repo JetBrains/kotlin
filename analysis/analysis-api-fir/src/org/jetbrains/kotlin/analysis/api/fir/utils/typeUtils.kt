@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.asKaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.fir.FirSession
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.convertVariance
 import org.jetbrains.kotlin.util.bfs
+import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 
 /**
  * Returns whether [subclass] is a strict subtype of [superclass]. Resolves [subclass] to [FirResolvePhase.SUPER_TYPES].
