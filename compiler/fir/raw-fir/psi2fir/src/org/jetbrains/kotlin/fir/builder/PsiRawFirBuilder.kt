@@ -102,10 +102,6 @@ open class PsiRawFirBuilder(
         return this.toKtPsiSourceElement(actualKind)
     }
 
-    override fun KtSourceElement.toNode(): PsiElement {
-        return (this as KtPsiSourceElement).psi
-    }
-
     override val PsiElement.elementType: IElementType
         get() {
             val stubBasedElement = this as? StubBasedPsiElement<*>
@@ -117,7 +113,7 @@ open class PsiRawFirBuilder(
     override val PsiElement.asText: String
         get() = text
 
-    override fun PsiElement.getChildNodeByType(type: IElementType): PsiElement? {
+    private fun PsiElement.getChildNodeByType(type: IElementType): PsiElement? {
         return children.firstOrNull { it.node.elementType == type }
     }
 
