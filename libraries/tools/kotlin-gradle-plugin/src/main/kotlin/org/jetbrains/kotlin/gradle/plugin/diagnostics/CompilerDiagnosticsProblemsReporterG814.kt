@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
-internal abstract class CompilerDiagnosticsProblemsReporterG813 @Inject constructor(
+internal abstract class CompilerDiagnosticsProblemsReporterG814 @Inject constructor(
     private val problems: Problems,
 ) : CompilerDiagnosticsProblemsReporter {
     private val logger: Logger = Logging.getLogger(this.javaClass)
@@ -55,7 +55,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG813 @Inject construc
 
     class Factory : CompilerDiagnosticsProblemsReporter.Factory {
         override fun getInstance(objects: ObjectFactory): CompilerDiagnosticsProblemsReporter {
-            return objects.newInstance<CompilerDiagnosticsProblemsReporterG813>()
+            return objects.newInstance<CompilerDiagnosticsProblemsReporterG814>()
         }
     }
 }

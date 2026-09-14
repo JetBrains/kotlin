@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import java.io.File
-import kotlin.jvm.optionals.getOrNull
 
 /**
  * We have to handle the returned provider lazily, because the publication's artifactId
@@ -359,7 +358,11 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
             "compileOnly"("org.jetbrains.kotlin:kotlin-stdlib:${GradlePluginVariant.GRADLE_MIN.bundledKotlinVersion}.0")
             // Decoupling gradle-api artifact from current project Gradle version. Later would be useful for
             // gradle plugin variants
-            "compileOnly"("dev.gradleplugins:gradle-api:${GradlePluginVariant.GRADLE_MIN.gradleApiVersion}")
+            "compileOnly"("org.gradle.experimental:gradle-public-api:${GradlePluginVariant.GRADLE_MIN.gradleApiVersion}") {
+                capabilities {
+                    requireCapability("org.gradle.experimental:gradle-public-api-internal")
+                }
+            }
             if (this@reconfigureMainSourcesSetForGradlePlugin.name !in testPlugins) {
                 "api"(project(":kotlin-gradle-plugin-api"))
             }
@@ -589,28 +592,12 @@ private fun Project.createGradlePluginVariant(
 
     dependencies {
         variantSourceSet.compileOnlyConfigurationName("org.jetbrains.kotlin:kotlin-stdlib:${GradlePluginVariant.GRADLE_MIN.bundledKotlinVersion}.0")
-        when {
-            variant >= GradlePluginVariant.GRADLE_96 -> {
-                variantSourceSet.compileOnlyConfigurationName("org.gradle.experimental:gradle-public-api:${variant.gradleApiVersion}") {
-                    capabilities {
-                        requireCapability("org.gradle.experimental:gradle-public-api-internal")
-                    }
-                }
-            }
-            variant == GradlePluginVariant.GRADLE_813 -> {
-                // Workaround until 'dev.gradleplugins:gradle-api:8.13' will be published
-                variantSourceSet.compileOnlyConfigurationName("org.jetbrains.intellij.deps:gradle-api:${variant.gradleApiVersion}")
-                variantSourceSet.compileOnlyConfigurationName("javax.inject:javax.inject:1")
-                val catalogs = this@createGradlePluginVariant.extensions.getByType<VersionCatalogsExtension>()
-                // 'libs' version catalog is not available in GradlePluginTests
-                catalogs.find("libs").getOrNull()?.let { libsCatalog ->
-                    variantSourceSet.compileOnlyConfigurationName(libsCatalog.findLibrary("slf4j.api").get())
-                } ?: this@createGradlePluginVariant.logger.warn("Could not find 'libs' version catalog!")
-            }
-            else -> {
-                variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
+        variantSourceSet.compileOnlyConfigurationName("org.gradle.experimental:gradle-public-api:${variant.gradleApiVersion}") {
+            capabilities {
+                requireCapability("org.gradle.experimental:gradle-public-api-internal")
             }
         }
+
         if (this@createGradlePluginVariant.name !in testPlugins) {
             variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api"))
         }
@@ -947,7 +934,6 @@ fun Project.createGradlePluginVariants(
     publishShadowedJar: Boolean,
 ) {
     listOf(
-        GradlePluginVariant.GRADLE_813,
         GradlePluginVariant.GRADLE_96,
     ).forEach { variant ->
         createGradlePluginVariant(
