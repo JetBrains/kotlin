@@ -63,8 +63,6 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
 
 private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
-    factories[MavenPublicationComponentAccessor.Factory::class] =
-        MavenPublicationComponentAccessorG81.Factory()
     factories[ProblemsReporter.Factory::class] =
         ProblemsReporterG81.Factory()
     factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
