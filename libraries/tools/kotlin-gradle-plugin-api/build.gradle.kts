@@ -1,5 +1,3 @@
-import gradle.GradlePluginVariant
-
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -54,11 +52,6 @@ tasks {
         inputJar.value(jar.flatMap { it.archiveFile })
     }
 }
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_88,
-)
 
 generatedSourcesTask(
     taskName = "generateKotlinVersionConstant",

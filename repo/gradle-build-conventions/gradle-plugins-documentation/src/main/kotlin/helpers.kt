@@ -29,14 +29,7 @@ import java.io.File
 // Workaround for https://github.com/Kotlin/dokka/issues/2097
 // Gradle 7.6 javadoc does not have published 'package-list' file
 internal fun DokkaExternalDocumentationLinkSpec.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
-    if (pluginVariant == GradlePluginVariant.GRADLE_MIN ||
-        pluginVariant == GradlePluginVariant.GRADLE_81 ||
-        pluginVariant == GradlePluginVariant.GRADLE_82 ||
-        pluginVariant == GradlePluginVariant.GRADLE_85 ||
-        pluginVariant == GradlePluginVariant.GRADLE_86 ||
-        pluginVariant == GradlePluginVariant.GRADLE_88 ||
-        pluginVariant == GradlePluginVariant.GRADLE_811
-    ) {
+    if (pluginVariant == GradlePluginVariant.GRADLE_MIN) {
         packageListUrl("${pluginVariant.gradleApiJavadocUrl}element-list")
     }
 }

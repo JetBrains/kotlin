@@ -31,12 +31,6 @@ enum class GradlePluginVariant(
      * Tests rely on these entries being sorted
      */
     GRADLE_MIN("main", "7.6", "7.6", "https://docs.gradle.org/7.6.1/javadoc/", "1.7", "1.4.1"),
-    GRADLE_81("gradle81", "8.1", "8.1", "https://docs.gradle.org/8.1.1/javadoc/", "1.8"),
-    GRADLE_82("gradle82", "8.2", "8.2", "https://docs.gradle.org/8.2.1/javadoc/", "1.8"),
-    GRADLE_85("gradle85", "8.5", "8.5", "https://docs.gradle.org/8.5/javadoc/", "1.9"),
-    GRADLE_86("gradle86", "8.6", "8.6", "https://docs.gradle.org/8.6/javadoc/", "1.9"),
-    GRADLE_88("gradle88", "8.8", "8.8", "https://docs.gradle.org/8.8/javadoc/", "1.9"),
-    GRADLE_811("gradle811", "8.11", "8.11", "https://docs.gradle.org/8.11/javadoc/", "2.0"),
     GRADLE_813("gradle813", "8.13", "8.13", "https://docs.gradle.org/8.13/javadoc/", "2.0"),
     GRADLE_96("gradle96", "9.6", "9.6.0","https://docs.gradle.org/current/javadoc/", "2.2"),
     ;
