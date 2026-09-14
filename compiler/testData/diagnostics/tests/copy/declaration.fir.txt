@@ -1,6 +1,6 @@
-FILE: copy.kt
+FILE: declaration.kt
     public final class Person : R|kotlin/Any| {
-        public constructor(copy name: R|kotlin/String|, copy title: R|kotlin/String?|): R|Person| {
+        public constructor(name: R|kotlin/String|, title: R|kotlin/String?|): R|Person| {
             super<R|kotlin/Any|>()
         }
 

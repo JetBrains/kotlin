@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedT
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -817,9 +818,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             if (!choosingOptionForAugmentedAssignment) {
                 dataFlowAnalyzer.exitFunctionCall(result, data.forceFullCompletion)
             }
+
+            val reference = result.calleeReference
             @OptIn(FirExtensionApiInternals::class)
             if (callRefinementExtensions != null) {
-                val reference = result.calleeReference
                 if (reference is FirResolvedNamedReference) {
                     val callData = reference.resolvedSymbol.fir.originalCallDataForPluginRefinedCall
                     if (callData != null) {
@@ -836,6 +838,17 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     return arrayOfCallTransformer.transformFunctionCall(result, session)
                 }
             }
+
+            val referencedSymbol = reference.symbol
+            if (referencedSymbol is FirFunctionSymbol<*> && (referencedSymbol.fir.isCopy || referencedSymbol.valueParameterSymbols.any { it.fir.isCopy })) {
+                return buildCopyFunCallExpression {
+                    source = result.source
+                    originalExpression = result
+                    coneTypeOrNull = builtinTypes.unitType.coneType
+                }
+            }
+
+
             return result.addSmartcastIfNeeded(data)
         }
 

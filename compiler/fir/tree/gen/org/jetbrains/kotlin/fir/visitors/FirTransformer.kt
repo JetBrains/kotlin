@@ -851,6 +851,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformSmartCastExpression(smartCastExpression, data)
     }
 
+    open fun transformCopyFunCallExpression(copyFunCallExpression: FirCopyFunCallExpression, data: D): FirStatement {
+        return transformElement(copyFunCallExpression, data)
+    }
+
+    final override fun visitCopyFunCallExpression(copyFunCallExpression: FirCopyFunCallExpression, data: D): FirStatement {
+        return transformCopyFunCallExpression(copyFunCallExpression, data)
+    }
+
     open fun transformSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: D): FirStatement {
         return transformElement(safeCallExpression, data)
     }

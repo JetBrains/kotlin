@@ -1225,6 +1225,11 @@ object FirTree : AbstractFirTreeBuilder() {
         +field(smartcastStabilityType)
     }
 
+    val copyFunCallExpression: Element by element(Expression) {
+        parent(expression)
+        +field("originalExpression", expression, withReplace = true, withTransform = true)
+    }
+
     val safeCallExpression: Element by element(Expression) {
         parent(expression)
 

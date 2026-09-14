@@ -797,7 +797,7 @@ open class PsiRawFirBuilder(
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
-                isCopy = hasModifier(COPY_KEYWORD)
+                isCopy = hasModifier(COPY_KEYWORD) && valueParameterDeclaration != ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
                 valueParameterKind = if (valueParameterDeclaration == ValueParameterDeclaration.CONTEXT_PARAMETER) {
                     FirValueParameterKind.ContextParameter
                 } else {

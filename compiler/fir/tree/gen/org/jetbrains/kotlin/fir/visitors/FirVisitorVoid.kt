@@ -851,6 +851,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(smartCastExpression)
     }
 
+    final override fun visitCopyFunCallExpression(copyFunCallExpression: FirCopyFunCallExpression, data: Nothing?) {
+        visitCopyFunCallExpression(copyFunCallExpression)
+    }
+
+    open fun visitCopyFunCallExpression(copyFunCallExpression: FirCopyFunCallExpression) {
+        visitElement(copyFunCallExpression)
+    }
+
     final override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: Nothing?) {
         visitSafeCallExpression(safeCallExpression)
     }

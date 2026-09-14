@@ -332,6 +332,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: D): R =
         visitElement(smartCastExpression, data)
 
+    open fun visitCopyFunCallExpression(copyFunCallExpression: FirCopyFunCallExpression, data: D): R =
+        visitElement(copyFunCallExpression, data)
+
     open fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: D): R =
         visitElement(safeCallExpression, data)
 

@@ -389,6 +389,10 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             withCopy()
         }
 
+        builder(copyFunCallExpression) {
+            withCopy()
+        }
+
         builder(inaccessibleReceiverExpression) {
             withCopy()
         }

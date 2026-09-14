@@ -83,7 +83,7 @@ class ValueParameter(
             moduleData = this@ValueParameter.moduleData
             origin = FirDeclarationOrigin.Source
             isVararg = modifiers.hasVararg()
-            isCopy = modifiers.hasCopy()
+            isCopy = modifiers.hasCopy() && !isFromPrimaryConstructor
             returnTypeRef = if (isVararg && this@ValueParameter.returnTypeRef is FirErrorTypeRef) {
                 this@ValueParameter.returnTypeRef.wrapIntoArray()
             } else {

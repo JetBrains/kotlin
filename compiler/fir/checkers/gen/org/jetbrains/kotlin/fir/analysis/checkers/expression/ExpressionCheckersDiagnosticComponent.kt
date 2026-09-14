@@ -131,6 +131,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allSmartCastExpressionCheckers.check(smartCastExpression, data)
     }
 
+    override fun visitCopyFunCallExpression(copyFunCallExpression: FirCopyFunCallExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(copyFunCallExpression, data)
+    }
+
     override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: CheckerContext) {
         checkers.allEqualityOperatorCallCheckers.check(equalityOperatorCall, data)
     }

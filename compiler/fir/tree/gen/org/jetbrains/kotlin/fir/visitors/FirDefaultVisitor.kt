@@ -161,6 +161,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: D): R =
         visitExpression(smartCastExpression, data)
 
+    override fun visitCopyFunCallExpression(copyFunCallExpression: FirCopyFunCallExpression, data: D): R =
+        visitExpression(copyFunCallExpression, data)
+
     override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: D): R =
         visitExpression(safeCallExpression, data)
 

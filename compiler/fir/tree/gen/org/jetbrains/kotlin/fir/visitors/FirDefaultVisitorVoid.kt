@@ -207,6 +207,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitExpression(smartCastExpression)
     }
 
+    override fun visitCopyFunCallExpression(copyFunCallExpression: FirCopyFunCallExpression) {
+        visitExpression(copyFunCallExpression)
+    }
+
     override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
         visitExpression(safeCallExpression)
     }
