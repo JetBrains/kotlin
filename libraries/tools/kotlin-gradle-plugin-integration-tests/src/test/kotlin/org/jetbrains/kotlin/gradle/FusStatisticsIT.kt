@@ -13,7 +13,9 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.version
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
@@ -675,6 +677,62 @@ class FusStatisticsIT : KGPBaseTest() {
             validateFusDirectory(":linkDebugFrameworkIosArm64") { fusDirectory ->
                 fusDirectory.assertFusReportDoesNotContain(
                     "ENABLED_SWIFT_EXPORT=true",
+                )
+            }
+        }
+    }
+
+    // Swift export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("native swift export - overridden module options are reported")
+    @GradleTest
+    @NativeGradlePluginTests
+    @OptIn(ExperimentalExportDsl::class, ExperimentalSwiftExportDsl::class)
+    fun testSwiftExportDslModuleOptionsOverridesIsReported(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    rootPackage.set("com.example")
+                }
+            }
+
+            // Check that overriding both moduleName and rootPackage via the export { swift { } } DSL is reported.
+            validateFusDirectory("help") { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES", listOf("moduleName", "rootPackage")
+                )
+            }
+        }
+    }
+
+    // Swift export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("native swift export - module options are not reported without an override")
+    @GradleTest
+    @NativeGradlePluginTests
+    @OptIn(ExperimentalExportDsl::class, ExperimentalSwiftExportDsl::class)
+    fun testSwiftExportDslModuleOptionsOverridesIsNotReportedWithoutNeed(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+            }
+
+            // Check that we do not generate the metric when the export { swift { } } DSL is not used.
+            validateFusDirectory("help") { fusDirectory ->
+                fusDirectory.assertFusReportDoesNotContain(
+                    "SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES",
                 )
             }
         }
