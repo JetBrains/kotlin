@@ -277,7 +277,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             }
             is ConeCapturedTypeConstructor -> supertypes.orEmpty()
             is ConeIntersectionType -> intersectedTypes
-            is ConeUnionType -> if (primaryType?.canBeNull(session) == true) {
+            is ConeUnionType -> if (primaryType.canBeNull(session)) {
                 [session.builtinTypes.nullableAnyType.coneType]
             } else {
                 [session.builtinTypes.anyType.coneType]

@@ -364,7 +364,7 @@ annotation class DelicateUnionConstructor
  * - [primaryType] can be nullable, no entry of [richErrorTypes] can be nullable.
  */
 class ConeUnionType @DelicateUnionConstructor constructor(
-    val primaryType: ConeKotlinType?,
+    val primaryType: ConeKotlinType,
     val richErrorTypes: List<ConeKotlinType>,
     override val attributes: ConeAttributes,
 ) : ConeSimpleKotlinType(), ConeTypeConstructorMarker {

@@ -93,18 +93,17 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
     }
 
     private fun ConeUnionType.substituteUnionType(): ConeKotlinType? {
-        val substitutedPrimaryType = substituteOrNull(primaryType)
-
-        val substitutedRichErrorTypes = ArrayList<ConeKotlinType>(richErrorTypes.size)
         var somethingIsSubstituted = false
-        for (type in richErrorTypes) {
-            val substitutedType = substituteOrNull(type)?.also {
+        val substitutedPrimaryType = substituteOrNull(primaryType)?.also { somethingIsSubstituted = true}
+            ?: primaryType
+
+        val substitutedRichErrorTypes = richErrorTypes.map {
+            substituteOrNull(it)?.also {
                 somethingIsSubstituted = true
-            } ?: type
-            substitutedRichErrorTypes += substitutedType
+            } ?: it
         }
 
-        if (!somethingIsSubstituted && substitutedPrimaryType == null) return null
+        if (!somethingIsSubstituted) return null
 
         return ConeTypeUnifier.unify(substitutedPrimaryType, substitutedRichErrorTypes, attributes, typeContext)
     }

@@ -172,7 +172,7 @@ private fun ConeKotlinType.contradictsWith(requiredVariance: Variance, session: 
             return this.intersectedTypes.any { it.contradictsWith(requiredVariance, session) }
         }
         is ConeUnionType -> {
-            return primaryType?.contradictsWith(requiredVariance, session) == true ||
+            return primaryType.contradictsWith(requiredVariance, session) ||
                     richErrorTypes.any { it.contradictsWith(requiredVariance, session) }
         }
         is ConeCapturedType -> {

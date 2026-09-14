@@ -376,7 +376,7 @@ open class ConeTypeRenderer(
 
     protected open fun render(type: ConeUnionType) {
         builder.append("union(")
-        type.primaryType?.let {
+        type.primaryType.takeUnless { it.isNothing }?.let {
             this.render(it)
             builder.append(" | ")
         }

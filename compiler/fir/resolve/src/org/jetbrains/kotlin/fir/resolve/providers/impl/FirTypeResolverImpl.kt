@@ -656,7 +656,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 } else if (typeRef.isMarkedNullable) {
                     session.builtinTypes.nullableNothingType.coneType
                 } else {
-                    null
+                    session.builtinTypes.nothingType.coneType
                 }
 
                 FirTypeResolutionResult(

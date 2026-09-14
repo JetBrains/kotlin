@@ -61,7 +61,7 @@ fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): Lis
             is ConeClassLikeType -> lookupTags.addIfNotNull(unwrappedType.lookupTag)
             is ConeIntersectionType -> unwrappedType.intersectedTypes.forEach { it.collectClassIds() }
             is ConeUnionType -> {
-                unwrappedType.primaryType?.collectClassIds()
+                unwrappedType.primaryType.collectClassIds()
                 unwrappedType.richErrorTypes.forEach { it.collectClassIds() }
             }
 

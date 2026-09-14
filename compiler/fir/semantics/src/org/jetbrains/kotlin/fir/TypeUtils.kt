@@ -40,7 +40,7 @@ fun ConeKotlinType?.collectUpperBounds(typeContext: ConeTypeContext): Set<ConeCl
             is ConeDefinitelyNotNullType -> collect(type.original)
             is ConeIntersectionType -> type.intersectedTypes.forEach(::collect)
             is ConeUnionType -> {
-                type.primaryType?.let { collect(it) }
+                collect(type.primaryType)
                 type.richErrorTypes.forEach { collect(it) }
             }
             is ConeFlexibleType -> collect(type.upperBound)

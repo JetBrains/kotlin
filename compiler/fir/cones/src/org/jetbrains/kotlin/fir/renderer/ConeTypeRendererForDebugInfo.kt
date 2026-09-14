@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeUnionType
+import org.jetbrains.kotlin.fir.types.isNothing
 
 open class ConeTypeRendererForDebugInfo protected constructor(
     renderCapturedDetails: Boolean = false,
@@ -47,7 +48,7 @@ open class ConeTypeRendererForDebugInfo protected constructor(
     }
 
     override fun render(type: ConeUnionType) {
-        type.primaryType?.let {
+        type.primaryType.takeUnless { it.isNothing }?.let {
             this.render(it)
             builder.append(" | ")
         }

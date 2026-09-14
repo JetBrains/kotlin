@@ -946,7 +946,7 @@ fun ConeKotlinType.forEachClassId(f: (ClassId) -> Unit) {
         is ConeCapturedType -> constructor.supertypes?.forEach { it.forEachClassId(f) }
         is ConeIntersectionType -> intersectedTypes.forEach { it.forEachClassId(f) }
         is ConeUnionType -> {
-            primaryType?.forEachClassId(f)
+            primaryType.forEachClassId(f)
             richErrorTypes.forEach { it.forEachClassId(f) }
         }
         is ConeTypeParameterType -> lookupTag.symbol.resolvedBounds.forEach { it.coneType.forEachClassId(f) }

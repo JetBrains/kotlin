@@ -9,7 +9,11 @@ fun foo(
     c: String? | Foo | Bar,
     d: (String | Foo)?,
     e: Foo | Bar,
-    f: (Foo | Bar)?
+    f: (Foo | Bar)?,
+    g: String | (Nothing | Foo),
+    h: String | (Foo | Bar)?,
+    i: Foo | Foo,
+    j: Nothing? | Foo,
 ){
 }
 

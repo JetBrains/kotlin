@@ -206,7 +206,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
                 }
             }
             is ConeUnionType -> {
-                type.primaryType?.let { checkVarianceConflict(it, variance, typeRef, containingType, source, isInAbbreviation) }
+                checkVarianceConflict(type.primaryType, variance, typeRef, containingType, source, isInAbbreviation)
                 type.richErrorTypes.forEach {
                     checkVarianceConflict(it, variance, typeRef, containingType, source, isInAbbreviation)
                 }

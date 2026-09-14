@@ -613,7 +613,7 @@ private object CheckDslScopeViolation {
             is ConeDefinitelyNotNullType -> collectDslMarkerAnnotations(originalType.original)
             is ConeIntersectionType -> originalType.intersectedTypes.forEach { collectDslMarkerAnnotations(it) }
             is ConeUnionType -> {
-                originalType.primaryType?.let { collectDslMarkerAnnotations(it) }
+                collectDslMarkerAnnotations(originalType.primaryType)
                 originalType.richErrorTypes.forEach { collectDslMarkerAnnotations(it) }
             }
             is ConeClassLikeType -> {

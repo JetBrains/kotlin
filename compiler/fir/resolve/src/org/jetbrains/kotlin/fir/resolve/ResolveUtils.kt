@@ -628,7 +628,7 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
     val safeReceiverType = when (kind) {
         FirSafeCallKind.NullSafe -> receiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
         FirSafeCallKind.ErrorSafe -> if (receiverType is ConeUnionType) {
-            receiverType.primaryType ?: session.builtinTypes.nothingType.coneType
+            receiverType.primaryType
         } else {
             receiverType
         }

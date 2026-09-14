@@ -297,14 +297,12 @@ fun <T : ConeKotlinType> T.withNullability(
         }
 
         is ConeUnionType -> {
-            val newPrimaryType = if (nullable && primaryType == null) {
-                typeContext.session.builtinTypes.nullableNothingType.coneType
-            } else {
-                primaryType?.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes)
-            }
-
             @OptIn(DelicateUnionConstructor::class)
-            ConeUnionType(newPrimaryType, richErrorTypes, attributes)
+            ConeUnionType(
+                primaryType.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes),
+                richErrorTypes,
+                attributes
+            )
         }
 
         is ConeStubTypeForTypeVariableInSubtyping -> ConeStubTypeForTypeVariableInSubtyping(constructor, nullable)
@@ -1061,7 +1059,7 @@ fun ConeKotlinType.canBeNull(
         }
         is ConeStubType -> isMarkedNullable || constructor.variable.defaultType.canBeNull(session, considerTypeVariableBounds, visited)
         is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session, considerTypeVariableBounds, visited) }
-        is ConeUnionType -> primaryType?.canBeNull(session, considerTypeVariableBounds, visited) == true
+        is ConeUnionType -> primaryType.canBeNull(session, considerTypeVariableBounds, visited)
         is ConeCapturedType -> isMarkedNullable || constructor.supertypes?.all { it.canBeNull(session, considerTypeVariableBounds, visited) } == true
         is ConeErrorType -> nullable != false
         is ConeLookupTagBasedType -> isMarkedNullable || fullyExpandedType(session).isMarkedNullable
