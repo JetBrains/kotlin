@@ -33,8 +33,3 @@ public fun ExceptionAttachmentBuilder.withKaModuleEntry(name: String, module: Ka
         withKaModuleEntry("${name}contextModule", module.contextModule)
     }
 }
-
-@KaImplementationDetail
-public fun ExceptionAttachmentBuilder.withClassEntry(name: String, element: Any?) {
-    withEntry(name, element) { it::class.java.name }
-}

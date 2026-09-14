@@ -6,21 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.util
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
-
-@KaImplementationDetail
-public fun unexpectedElementError(elementName: String, element: Any?): Nothing {
-    errorWithAttachment("Unexpected $elementName ${element?.let { it::class.simpleName }}") {
-        withEntry(elementName, element) { element.toString() }
-    }
-}
-
-@KaImplementationDetail
-public inline fun <reified ELEMENT> unexpectedElementError(element: Any?): Nothing {
-    unexpectedElementError(ELEMENT::class.simpleName ?: ELEMENT::class.java.name, element)
-}
 
 @KaImplementationDetail
 @OptIn(ExperimentalContracts::class)
