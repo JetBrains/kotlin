@@ -206,16 +206,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            ProjectIsolationStartParameterAccessor.Factory::class,
-            DefaultProjectIsolationStartParameterAccessor.Factory()
-        )
-
-        factories.putIfAbsent(
-            ConfigurationCacheStartParameterAccessor.Factory::class,
-            DefaultConfigurationCacheStartParameterAccessorVariantFactory()
-        )
-
-        factories.putIfAbsent(
             MavenPublicationComponentAccessor.Factory::class,
             DefaultMavenPublicationComponentAccessorFactory()
         )
