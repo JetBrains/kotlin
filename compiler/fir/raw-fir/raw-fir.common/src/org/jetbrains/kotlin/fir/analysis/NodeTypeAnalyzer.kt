@@ -9,70 +9,19 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirLoopTarget
-import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.ForbiddenLabelKind
 import org.jetbrains.kotlin.fir.builder.DestructuringKind
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.builder.FirAnonymousObjectBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirErrorPrimaryConstructorBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
-import org.jetbrains.kotlin.fir.declarations.destructuringDeclarationContainerVariable
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeMultipleLabelsAreForbidden
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeUnderscoreIsReserved
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.expressions.buildConstOrErrorExpression
-import org.jetbrains.kotlin.fir.expressions.builder.FirLoopBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.FirLoopJumpBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildImplicitInvokeCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildStringConcatenationCall
+import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
@@ -80,13 +29,12 @@ import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.types.ConstantValueKind
-import kotlin.collections.plusAssign
 
+// May be merged with AbstractRawFirBuilder (was needed as a separate entity when it was an interface and used by delegation)
 abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     abstract val implicitType: FirImplicitTypeRef
     abstract val implicitUnitType: FirImplicitBuiltinTypeRef
@@ -95,7 +43,6 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     abstract val implicitAnnotationType: FirImplicitBuiltinTypeRef
 
     abstract fun Node.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
-    abstract fun KtSourceElement.toNode(): Node
     abstract val Node.elementType: Type
     abstract val Node.asText: String
 
@@ -115,7 +62,7 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         return null
     }
 
-    fun unquoteIdentifier(quoted: String): String {
+    private fun unquoteIdentifier(quoted: String): String {
         if (quoted.indexOf('`') < 0) {
             return quoted
         }
@@ -128,90 +75,12 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     }
 
     abstract fun Node.getReferencedNameAsName(): Name
-    abstract fun Node.getChildNodeByType(type: Type): Node?
-    open fun Node.getChildren(): List<Node> =
-        throw UnsupportedOperationException("Not supported in PsiRawFirBuilder")
-
-    fun Node.getFirstChild(): Node? = getChildren().firstOrNull()
 
     open fun Node.getParent(): Node? =
         throw UnsupportedOperationException("Not supported in PsiRawFirBuilder")
 
-    fun isClassLocal(classNode: Node, getParent: Node.() -> Node?): Boolean {
-        if (classNode.getParent()?.getParent()?.toTokenId() == KtNodeTypes.SCRIPT_ID) return false
-        var currentNode: Node? = classNode
-        while (currentNode != null) {
-            val tokenType = currentNode.toTokenId()
-            val parent = currentNode.getParent()
-            val parentTokenType = parent?.toTokenId()
-            if (tokenType == KtNodeTypes.PROPERTY_ID || tokenType == KtNodeTypes.FUNCTION_ID) {
-                val grandParent = parent?.getParent()
-                when (parentTokenType) {
-                    KtNodeTypes.FILE_ID -> return true
-                    KtNodeTypes.CLASS_BODY_ID if !(grandParent?.toTokenId() == KtNodeTypes.OBJECT_DECLARATION_ID && grandParent.getParent()?.toTokenId() == KtNodeTypes.OBJECT_LITERAL_ID)
-                        -> return true
-                    KtNodeTypes.BLOCK_ID if grandParent?.toTokenId() == KtNodeTypes.SCRIPT_ID -> return true
-                }
-            }
-            // NB: enum entry nested classes are considered local by FIR design (see discussion in KT-45115)
-            if (parentTokenType == KtNodeTypes.ENUM_ENTRY_ID) {
-                return true
-            }
-            if (tokenType == KtNodeTypes.BLOCK_ID) {
-                return true
-            }
-            currentNode = parent
-        }
-        return false
-    }
-
-    fun Node.getChildNodeByTokenId(tokenId: Int): Node? {
-        return getChildrenAsArray().firstOrNull { it?.toTokenId() == tokenId }
-    }
-
-    fun Node?.getChildNodesByTokenId(tokenId: Int): List<Node> {
-        return this?.forEachChildrenReturnList { node, container ->
-            when (node.toTokenId()) {
-                tokenId -> container += node
-            }
-        } ?: emptyList()
-    }
-
-    fun Node.getFirstChildExpression(): Node? {
-        return getChildren().firstOrNull { it.toTokenId().isExpression() }
-    }
-
-    fun Node.getLastChildExpression(): Node? {
-        return getChildren().lastOrNull { it.toTokenId().isExpression() }
-    }
-
-    fun Node.getFirstChildExpressionUnwrapped(): Node? {
-        val expression = getFirstChildExpression() ?: return null
-        return if (expression.toTokenId() == KtNodeTypes.PARENTHESIZED_ID) {
-            expression.getFirstChildExpressionUnwrapped()
-        } else {
-            expression
-        }
-    }
-
-    fun Node.getOperationTokenId(): Int {
-        return getChildren().first().toTokenId()
-    }
-
     abstract fun callableIdForName(name: Name): CallableId
     abstract fun destructuringKindOf(hasSquareBrackets: Boolean, isFullForm: Boolean): DestructuringKind
-
-    fun isCallableLocal(callableNode: Node, getParent: Node.() -> Node?): Boolean {
-        val parentNode = callableNode.getParent()
-        return when (parentNode?.toTokenId()) {
-            KtNodeTypes.FILE_ID, KtNodeTypes.CLASS_BODY_ID -> false
-            KtNodeTypes.BLOCK_ID -> when (parentNode.getParent()?.toTokenId()) {
-                KtNodeTypes.SCRIPT_ID -> false
-                else -> true
-            }
-            else -> true
-        }
-    }
 
     fun Node.toDelegatedSelfType(firClass: FirRegularClassBuilder): FirResolvedTypeRef =
         toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
@@ -308,16 +177,6 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
     }
 
-    abstract fun generateDataClassMembers(
-        source: Node,
-        classBuilder: FirRegularClassBuilder,
-        firPrimaryConstructor: FirConstructor,
-        zippedParameters: List<Pair<Node, FirProperty>>,
-        packageFqName: FqName,
-        classFqName: FqName,
-        addValueParameterAnnotations: FirValueParameterBuilder.(Node) -> Unit,
-    )
-
     fun constructorTypeParametersFromConstructedClass(ownerTypeParameters: List<FirTypeParameterRef>): List<FirTypeParameterRef> {
         return ownerTypeParameters.mapNotNull {
             val declaredTypeParameter = (it as? FirTypeParameter) ?: return@mapNotNull null
@@ -354,7 +213,7 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         forbiddenLabelKind: ForbiddenLabelKind?,
         forbiddenLabelSource: KtSourceElement?,
     ): FirElement {
-        if (element == null) return org.jetbrains.kotlin.fir.expressions.buildErrorExpression(
+        if (element == null) return buildErrorExpression(
             elementSource,
             ConeSyntaxDiagnostic("Empty label")
         )
@@ -538,8 +397,6 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         prefix: Boolean,
         convert: Node.() -> FirExpression,
     ): FirExpression
-
-    abstract fun generateConstantExpressionByLiteral(expression: Node): FirExpression
 
     fun Node.toTokenId(): Int = elementType.typeToTokenId()
     abstract fun Type.typeToTokenId(): Int
