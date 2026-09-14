@@ -159,7 +159,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     val expressionConverter: TreeRawFirExpressionBuilderProxy<Node, Type>,
     val headerMode: Boolean,
     val baseScopeProvider: FirScopeProvider,
-) : TreeDeclarationConverter<Node>, AbstractTreeRawFirBuilder<Node, Type>(session, context) {
+) : AbstractTreeRawFirBuilder<Node, Type>(session, context) {
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parsePreamble]
@@ -229,9 +229,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlockExpression
      */
-    override fun convertBlockExpression(
+    fun convertBlockExpression(
         node: Node,
-        convertOnlyFirstStatement: Boolean,
+        convertOnlyFirstStatement: Boolean = false,
     ): FirBlock {
         return convertBlockExpressionWithoutBuilding(node, convertOnlyFirstStatement = convertOnlyFirstStatement).build()
     }
@@ -239,10 +239,10 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @param convertOnlyFirstStatement Convert only the first statement of the block, which can be a contract, for header generation.
      */
-    override fun convertBlockExpressionWithoutBuilding(
+    fun convertBlockExpressionWithoutBuilding(
         block: Node,
-        kind: KtFakeSourceElementKind?,
-        convertOnlyFirstStatement: Boolean,
+        kind: KtFakeSourceElementKind? = null,
+        convertOnlyFirstStatement: Boolean = false,
     ): FirBlockBuilder {
         val firStatements = block.forEachChildrenReturnList { node, container ->
             if (!convertOnlyFirstStatement || container.isEmpty()) {
@@ -462,7 +462,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotationOrList
      */
-    override fun convertAnnotationTo(node: Node, list: MutableList<in FirAnnotationCall>) {
+    fun convertAnnotationTo(node: Node, list: MutableList<in FirAnnotationCall>) {
         var annotationTarget: AnnotationUseSiteTarget? = null
         node.forEachChildren { child ->
             when (child.toTokenId()) {
@@ -508,10 +508,10 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotation
      * can be treated as unescapedAnnotation
      */
-    override fun convertAnnotationEntry(
+    fun convertAnnotationEntry(
         node: Node,
-        defaultAnnotationUseSiteTarget: AnnotationUseSiteTarget?,
-        diagnostic: ConeDiagnostic?,
+        defaultAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null,
+        diagnostic: ConeDiagnostic? = null,
     ): FirAnnotationCall = context.withForcedLocalContext {
         var annotationUseSiteTarget: AnnotationUseSiteTarget? = null
         lateinit var constructorCalleePair: Pair<FirTypeRef, List<FirExpression>>
@@ -567,7 +567,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      */
-    override fun convertClass(node: Node): FirRegularClass {
+    fun convertClass(node: Node): FirRegularClass {
         var modifiers: ModifierList<Node>? = null
         var classKind: ClassKind = ClassKind.CLASS
         var identifier: String? = null
@@ -811,7 +811,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
-    private fun isClassLocal(classNode: Node, getParent: Node.() -> Node?): Boolean {
+    private inline fun isClassLocal(classNode: Node, getParent: Node.() -> Node?): Boolean {
         if (classNode.getParent()?.getParent()?.toTokenId() == KtNodeTypes.SCRIPT_ID) return false
         var currentNode: Node? = classNode
         while (currentNode != null) {
@@ -844,7 +844,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
      *
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseObjectLiteral
      */
-    override fun convertObjectLiteral(node: Node): FirAnonymousObjectExpression {
+    fun convertObjectLiteral(node: Node): FirAnonymousObjectExpression {
         return context.withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
             var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
             buildAnonymousObjectExpression {
@@ -1483,7 +1483,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeAlias
      */
-    override fun convertTypeAlias(node: Node): FirTypeAlias {
+    fun convertTypeAlias(node: Node): FirTypeAlias {
         var modifiers: ModifierList<Node>? = null
         var identifier: String? = null
         lateinit var typeRefNode: Node
@@ -1544,7 +1544,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
-    override fun convertPropertyDeclaration(node: Node, classWrapper: ClassWrapper<Node>?): FirProperty {
+    fun convertPropertyDeclaration(node: Node, classWrapper: ClassWrapper<Node>? = null): FirProperty {
         var modifiers: ModifierList<Node>? = null
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -1774,7 +1774,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * see PsiRawFirBuilder.Visitor.visitDestructuringDeclaration
      */
-    override fun convertDestructingDeclaration(node: Node): DestructuringDeclaration {
+    fun convertDestructingDeclaration(node: Node): DestructuringDeclaration {
         val annotations = mutableListOf<FirAnnotationCall>()
         var isVar = false
         var hasSquareBrackets = false
@@ -2123,7 +2123,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunction
      */
-    override fun convertFunctionDeclaration(node: Node): FirStatement {
+    fun convertFunctionDeclaration(node: Node): FirStatement {
         var modifiers: ModifierList<Node>? = null
         var identifier: String? = null
         var valueParametersList: Node? = null
@@ -2371,9 +2371,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlock
      */
-    override fun convertBlock(
+    fun convertBlock(
         node: Node?,
-        convertOnlyFirstStatement: Boolean,
+        convertOnlyFirstStatement: Boolean = false,
     ): FirBlock {
         if (node == null) return buildEmptyExpressionBlock()
         if (node.toTokenId() != KtNodeTypes.BLOCK_ID) {
@@ -2595,7 +2595,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRef
      */
-    override fun convertType(type: Node): FirTypeRef {
+    fun convertType(type: Node): FirTypeRef {
         val typeRefSource = type.toFirSourceElement()
 
         // There can be MODIFIER_LIST children on the TYPE_REFERENCE node AND the descendant NULLABLE_TYPE nodes.
@@ -2788,7 +2788,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentList
      */
-    override fun convertTypeArguments(typeArguments: Node, allowedUnderscoredTypeArgument: Boolean): List<FirTypeProjection> {
+    fun convertTypeArguments(typeArguments: Node, allowedUnderscoredTypeArgument: Boolean): List<FirTypeProjection> {
         return typeArguments.forEachChildrenReturnList { node, container ->
             when (node.toTokenId()) {
                 KtNodeTypes.TYPE_PROJECTION_ID -> container += convertTypeProjection(node, allowedUnderscoredTypeArgument)
@@ -2903,11 +2903,11 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameterList
      */
-    override fun convertValueParameters(
+    fun convertValueParameters(
         valueParameters: Node,
         functionSymbol: FirFunctionSymbol<*>,
         valueParameterDeclaration: ValueParameterDeclaration,
-        additionalAnnotations: List<FirAnnotation>
+        additionalAnnotations: List<FirAnnotation> = emptyList()
     ): List<ValueParameter<Node>> {
         return valueParameters.forEachChildrenReturnList { node, container ->
             when (node.toTokenId()) {
@@ -2924,11 +2924,11 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameter
      */
-    override fun convertValueParameter(
+    fun convertValueParameter(
         valueParameter: Node,
         containingDeclarationSymbol: FirBasedSymbol<*>?,
         valueParameterDeclaration: ValueParameterDeclaration,
-        additionalAnnotations: List<FirAnnotation>
+        additionalAnnotations: List<FirAnnotation> = emptyList()
     ): ValueParameter<Node> {
         var modifiers: ModifierList<Node>? = null
         var isVal = false

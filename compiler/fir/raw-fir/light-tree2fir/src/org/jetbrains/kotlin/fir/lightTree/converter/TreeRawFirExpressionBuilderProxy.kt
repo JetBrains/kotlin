@@ -58,7 +58,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     session: FirSession,
     val headerMode: Boolean,
 ) : AbstractTreeRawFirBuilder<Node, Type>(session, context) {
-    lateinit var declarationBuilder: TreeDeclarationConverter<Node>
+    lateinit var declarationBuilder: TreeRawFirDeclarationBuilderProxy<Node, Type>
 
     internal inline fun <reified R : FirExpression> getAsFirExpression(
         expression: Node,
