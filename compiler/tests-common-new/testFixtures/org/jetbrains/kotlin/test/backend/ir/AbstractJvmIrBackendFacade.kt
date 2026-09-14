@@ -84,17 +84,3 @@ abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBacken
         )
     }
 }
-
-class JvmIrBackendFacade(testServices: TestServices) : AbstractJvmIrBackendFacade(testServices) {
-    override fun produceGenerationState(inputArtifact: IrBackendInput): GenerationState {
-        checkTestInfrastructure(inputArtifact is JvmIrBackendInput) {
-            "JvmIrBackendFacade expects IrBackendInput.JvmIrBackendInput as input"
-        }
-        val state = inputArtifact.state
-        inputArtifact.codegenFactory.generateModule(state, inputArtifact.backendInput)
-        return state
-    }
-
-    override val IrBackendInput.sourceFiles: Collection<KtSourceFile>
-        get() = (this as JvmIrBackendInput).sourceFiles
-}
