@@ -26,7 +26,6 @@ import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.registerArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
@@ -318,7 +317,7 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
             val binChildSpec = project.copySpec()
             binChildSpec.into(jvmBinarySpec.executableDir)
             binChildSpec.from(createStartScriptsTask)
-            binChildSpec.compatAccessor(project).filePermission("rwxr-xr-x")
+            binChildSpec.filePermissions { it.unix("rwxr-xr-x") }
             val childSpec = project.copySpec()
             childSpec.from(project.file("src/dist"))
             childSpec.with(libChildSpec)

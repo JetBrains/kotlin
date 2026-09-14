@@ -69,7 +69,6 @@ private fun Project.registerVariantImplementations() {
         ProblemsReporterG82.Factory()
     factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
         CompilerDiagnosticsProblemsReporterG82.Factory()
-    factories[CopySpecAccessor.Factory::class] = CopySpecAccessorG85.Factory()
     factories[ProjectDependencyAccessor.Factory::class] = ProjectDependencyAccessorG88.Factory()
     factories[BuildNeededDependentTasksWiringProvider.Factory::class] = BuildNeededDependentTaskWiringProviderG95.Factory()
 }
