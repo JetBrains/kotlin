@@ -1824,14 +1824,6 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         TODO("Not yet implemented")
     }
 
-    override fun Node.forEachChildren(f: (Node) -> Unit) {
-        return with(analyzer) { forEachChildren(f) }
-    }
-
-    override fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
-        return with(analyzer) { forEachChildrenReturnList(f) }
-    }
-
     override fun Node.getParent(): Node? {
         return with(analyzer) { getParent() }
     }
@@ -1845,5 +1837,9 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
 
     override fun KtSourceElement.isChildInParentheses(): Boolean {
         return with(analyzer) { isChildInParentheses()}
+    }
+
+    override fun Node?.getChildrenAsArray(): Array<out Node?> {
+        return with(analyzer) { getChildrenAsArray() }
     }
 }
