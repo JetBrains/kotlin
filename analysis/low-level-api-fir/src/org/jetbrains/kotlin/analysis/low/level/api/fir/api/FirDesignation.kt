@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.impl.base.util.unexpectedElementError
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
@@ -35,10 +34,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.*
 
 /**
  * This class describes where locates [target] element and its essential [path].

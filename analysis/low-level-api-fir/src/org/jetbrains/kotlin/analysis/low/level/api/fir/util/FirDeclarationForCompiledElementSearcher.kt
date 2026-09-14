@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
-import org.jetbrains.kotlin.analysis.api.impl.base.util.withClassEntry
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
@@ -13,8 +12,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByClassIdWithoutDependencies
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByPsiWithoutDependencies
 import org.jetbrains.kotlin.fir.declarations.*
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.withClassEntry
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 /**
