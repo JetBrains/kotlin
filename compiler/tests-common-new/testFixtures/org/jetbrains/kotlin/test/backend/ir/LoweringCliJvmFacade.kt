@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmLoweredIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmLoweringsPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
+import org.jetbrains.kotlin.codegen.state.AllowedOnlyInTestsAPI
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -61,4 +62,20 @@ class LoweredJvmCliBasedOutputArtifact(val cliArtifact: JvmLoweredIrPipelineArti
 
     private val lastInput: JvmIrCodegenFactory.CodegenInput
         get() = cliArtifact.codegenInputs.last()
+
+    fun createCliArtifactWithNewDiagnosticCollector(newDiagnosticsCollector: BaseDiagnosticsCollector): JvmLoweredIrPipelineArtifact {
+        val newConfiguration = cliArtifact.configuration.copy().apply {
+            this.diagnosticsCollector = newDiagnosticsCollector
+        }
+        return JvmLoweredIrPipelineArtifact(
+            newConfiguration,
+            cliArtifact.environment,
+            cliArtifact.mainClassFqName,
+            cliArtifact.codegenInputs.onEach {
+                @OptIn(AllowedOnlyInTestsAPI::class)
+                it.replaceConfigurationAndDiagnosticReporter(newConfiguration, newDiagnosticsCollector)
+            },
+            cliArtifact.sourceFiles,
+        )
+    }
 }
