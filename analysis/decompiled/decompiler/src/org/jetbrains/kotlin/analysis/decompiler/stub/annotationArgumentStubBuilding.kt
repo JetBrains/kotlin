@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.utils.printer.escapedInKotlinLiteral
-import org.jetbrains.kotlin.analysis.utils.printer.renderKotlinCharLiteral
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -20,6 +17,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.utils.escapedInKotlinLiteral
+import org.jetbrains.kotlin.utils.renderKotlinCharLiteral
 
 /**
  * Whether stubs can be built for the arguments by [createValueArgumentListStub].
@@ -74,7 +73,6 @@ internal fun createValueArgumentListStub(parent: StubElement<*>, args: Map<Name,
  *
  * [containerClassId] is the class the value is declared in, if any; see [createFloatingPointStub] for its meaning.
  */
-@OptIn(KaImplementationDetail::class)
 internal fun createValueStub(parent: StubElement<*>, value: ConstantValue<*>, containerClassId: ClassId?) {
     when (value) {
         is BooleanValue -> createConstantStub(parent, ConstantValueKind.BOOLEAN_CONSTANT, value.value.toString())
@@ -187,7 +185,6 @@ private fun createDivisionStub(parent: StubElement<*>, dividend: String, divisor
     createConstantStub(binaryExpression, ConstantValueKind.FLOAT_CONSTANT, divisor)
 }
 
-@OptIn(KaImplementationDetail::class)
 private fun createStringTemplateStub(parent: StubElement<*>, value: String) {
     val template = KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(parent = parent, elementType = KtNodeTypes.STRING_TEMPLATE)
     val literal = StringBuilder()

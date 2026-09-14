@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.rendering.*
-import org.jetbrains.kotlin.analysis.utils.printer.renderKotlinCharLiteral
-import org.jetbrains.kotlin.analysis.utils.printer.renderKotlinStringLiteral
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.renderKotlinCharLiteral
+import org.jetbrains.kotlin.utils.renderKotlinStringLiteral
 
 internal fun KaRendererBuilder.pushAnnotationRenderers() {
     push(AnnotationsRenderer)
