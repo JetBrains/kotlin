@@ -10,6 +10,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.problems.ProblemSpec
 import org.gradle.api.problems.Problems
+import org.gradle.api.problems.Severity
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
@@ -55,6 +56,12 @@ internal abstract class ProblemsReporterG813 @Inject constructor(
                 }
             }
     }
+
+    private val KotlinToolingDiagnosticsSeverity.problemSeverity: Severity
+        get() = when (this) {
+            KotlinToolingDiagnosticsSeverity.WARNING -> Severity.WARNING
+            else -> Severity.ERROR
+        }
 
     class Factory : ProblemsReporter.Factory {
         override fun getInstance(objects: ObjectFactory): ProblemsReporter = objects.newInstance<ProblemsReporterG813>()

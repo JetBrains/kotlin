@@ -53,11 +53,6 @@ registerKotlinSourceForVersionRange(
     GradlePluginVariant.GRADLE_96,
 )
 
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_86,
-    GradlePluginVariant.GRADLE_96,
-)
-
 binaryCompatibilityValidator {
     targets.configureEach {
         ignoredPackages.addAll(
