@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Architecture
@@ -24,6 +25,7 @@ private val TARGET_FAMILY = "targetFamily"
 private val TARGET_ARCHITECTURE = "targetArchitecture"
 private val IS_APPLE_TARGET = "isAppleTarget"
 private val SUPPORTS_CORE_SYMBOLICATION = "targetSupportsCoreSymbolication"
+private val LATE_SHADOW_STACK = "lateShadowStack"
 private val CACHE_MODE_NAMES = CacheMode.Alias.entries.map { it.name }
 private val TEST_MODE_NAMES = TestMode.entries.map { it.name }
 private val OPTIMIZATION_MODE_NAMES = OptimizationMode.entries.map { it.name }
@@ -84,6 +86,8 @@ internal fun Settings.evaluate(registeredDirectives: RegisteredDirectives, direc
                 TARGET_ARCHITECTURE -> get<KotlinNativeTargets>().testTarget.architecture.name to ARCHITECTURE_NAMES
                 IS_APPLE_TARGET -> get<KotlinNativeTargets>().testTarget.family.isAppleFamily.toString() to BOOLEAN_NAMES
                 SUPPORTS_CORE_SYMBOLICATION -> get<KotlinNativeTargets>().testTarget.supportsCoreSymbolication().toString() to BOOLEAN_NAMES
+                LATE_SHADOW_STACK ->
+                    (get<ExplicitBinaryOptions>().getOrNull<Boolean>(BinaryOptions.lateShadowStack) == true).toString() to BOOLEAN_NAMES
                 else -> throw AssertionError("ClassLevelProperty name: $propName is not yet supported in IGNORE_NATIVE* test directives.")
             } ?: (null to null)
             val valueFromTestDirective = matchResult.groups[2]?.value!!

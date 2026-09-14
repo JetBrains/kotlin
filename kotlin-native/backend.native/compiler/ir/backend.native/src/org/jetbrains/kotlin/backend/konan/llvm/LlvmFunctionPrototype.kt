@@ -9,9 +9,11 @@ import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
+import org.jetbrains.kotlin.backend.konan.lower.StaticInitializersOrigins
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -105,28 +107,47 @@ private fun addDeclarationAttributesAtIndex(context: LLVMContextRef, function: L
     }
 }
 
-internal fun ContextUtils.getLlvmFunctionReturnType(function: IrSimpleFunction): LlvmRetType {
+internal fun ContextUtils.getLlvmFunctionReturnType(function: IrSimpleFunction, isExternalNative: Boolean = false): LlvmRetType {
     val returnType = when {
         function.isSuspend -> error("Suspend functions should be lowered out at this point, but ${function.render()} is still here")
         function.returnType.isVoidAsReturnType() -> LlvmRetType(llvm.voidType, isObjectType = false)
-        else -> LlvmRetType(
-                function.returnType.toLLVMType(llvm),
-                argumentAbiInfo.defaultParameterAttributesForIrType(function.returnType),
-                isObjectType = function.returnType.binaryTypeIsReference()
-        )
+        else -> {
+            val isObjectType = function.returnType.binaryTypeIsReference()
+            val llvmType = if (isExternalNative && isObjectType && generationState.config.lateShadowStack) {
+                llvm.pointerType
+            } else {
+                function.returnType.toLLVMType(llvm)
+            }
+            LlvmRetType(
+                    llvmType,
+                    argumentAbiInfo.defaultParameterAttributesForIrType(function.returnType),
+                    isObjectType = isObjectType
+            )
+        }
     }
     return returnType
 }
 
-internal fun LlvmFunctionSignature(irFunction: IrSimpleFunction, contextUtils: ContextUtils): LlvmFunctionSignature {
-    val returnType = contextUtils.getLlvmFunctionReturnType(irFunction)
+internal fun LlvmFunctionSignature(
+        irFunction: IrSimpleFunction,
+        contextUtils: ContextUtils,
+        isExternalNative: Boolean = false,
+): LlvmFunctionSignature {
+    val returnType = contextUtils.getLlvmFunctionReturnType(irFunction, isExternalNative)
     val parameterTypes = ArrayList(irFunction.parameters.map {
-        LlvmParamType(it.type.toLLVMType(contextUtils.llvm), contextUtils.argumentAbiInfo.defaultParameterAttributesForIrType(it.type))
+        val isObjectType = it.type.binaryTypeIsReference()
+        val llvmType = if (isExternalNative && isObjectType && contextUtils.generationState.config.lateShadowStack) {
+            contextUtils.llvm.pointerType
+        } else {
+            it.type.toLLVMType(contextUtils.llvm)
+        }
+        LlvmParamType(llvmType, contextUtils.argumentAbiInfo.defaultParameterAttributesForIrType(it.type))
     })
 
     require(!irFunction.isSuspend) { "Suspend functions should be lowered out at this point" }
 
-    if (returnType.isObjectType)
+    val needsReturnSlot = returnType.isObjectType
+    if (needsReturnSlot)
         parameterTypes.add(LlvmParamType(contextUtils.llvm.pointerType))
 
     return LlvmFunctionSignature(
@@ -189,9 +210,15 @@ internal class LlvmFunctionProto(
         val linkage: LLVMLinkage,
         val independent: Boolean = false,
 ) {
-    constructor(irFunction: IrSimpleFunction, symbolName: String, contextUtils: ContextUtils, linkage: LLVMLinkage) : this(
+    constructor(
+            irFunction: IrSimpleFunction,
+            symbolName: String,
+            contextUtils: ContextUtils,
+            linkage: LLVMLinkage,
+            isExternalNative: Boolean = false,
+    ) : this(
             name = symbolName,
-            signature = LlvmFunctionSignature(irFunction, contextUtils),
+            signature = LlvmFunctionSignature(irFunction, contextUtils, isExternalNative),
             origin = FunctionOrigin.OwnedBy(irFunction),
             linkage = linkage,
             independent = irFunction.hasAnnotation(RuntimeNames.independent)
@@ -200,10 +227,17 @@ internal class LlvmFunctionProto(
     /**
      * Given the current [context], it creates a new function definition within the [llvmModule] module.
      */
-    fun createLlvmFunction(context: NativeBackendContext, llvmModule: LLVMModuleRef): LlvmFunction.Definition {
+    fun createLlvmFunction(
+            context: NativeBackendContext,
+            llvmModule: LLVMModuleRef,
+            isKotlinCode: Boolean = true,
+    ): LlvmFunction.Definition {
         val function = LLVMAddFunction(llvmModule, name, signature.llvmFunctionType)!!
         addDefaultLlvmFunctionAttributes(context, function)
         addTargetCpuAndFeaturesAttributes(context, function)
+        if (isKotlinCode) {
+            addKotlinGcFrameAttribute(context, function)
+        }
         signature.addFunctionAttributes(function)
         LLVMSetLinkage(function, linkage)
         return LlvmFunction.Definition(function, signature)
@@ -222,6 +256,19 @@ private fun mustNotInline(context: NativeBackendContext, irFunction: IrSimpleFun
     }
     if (irFunction.symbol == context.symbols.entryPoint) {
         return true
+    }
+    if (context.config.lateShadowStack) {
+        if (irFunction.annotations.hasAnnotation(RuntimeNames.exportForCppRuntime) ||
+            irFunction.annotations.hasAnnotation(RuntimeNames.cnameAnnotation)
+        ) {
+            return true
+        }
+        if (irFunction.origin == StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER ||
+            irFunction.origin == StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER ||
+            irFunction.origin == StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER
+        ) {
+            return true
+        }
     }
 
     return false

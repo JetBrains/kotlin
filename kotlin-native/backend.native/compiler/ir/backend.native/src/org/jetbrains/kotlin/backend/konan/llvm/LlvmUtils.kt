@@ -96,13 +96,18 @@ internal val RuntimeAware.kTypeInfo: LLVMTypeRef
 internal val RuntimeAware.kObjHeader: LLVMTypeRef
     get() = runtime.objHeaderType
 internal val RuntimeAware.kObjHeaderPtrReturnType: LlvmRetType
-    get() = LlvmRetType(runtime.pointerType, isObjectType = true)
+    get() = LlvmRetType(runtime.objHeaderPtrType, isObjectType = true)
 internal val RuntimeAware.kArrayHeader: LLVMTypeRef
     get() = runtime.arrayHeaderType
 
 // Nothing type has no values, but we do generate unreachable code and thus need some fake value:
 internal val RuntimeAware.kNothingFakeValue: LLVMValueRef
-    get() = LLVMGetUndef(runtime.pointerType)!!
+    get() = LLVMGetUndef(runtime.objHeaderPtrType)!!
+
+internal fun ConstPointer.addrspacecast(toType: LLVMTypeRef): ConstPointer {
+    if (LLVMTypeOf(this.llvm) == toType) return this
+    return constPointer(LLVMConstAddrSpaceCast(this.llvm, toType)!!)
+}
 
 fun extractConstUnsignedInt(value: LLVMValueRef): Long {
     assert(LLVMIsConstant(value) != 0)
