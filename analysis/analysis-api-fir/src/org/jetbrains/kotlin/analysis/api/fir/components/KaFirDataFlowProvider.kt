@@ -129,6 +129,7 @@ internal class KaFirDataFlowProvider(
 
         return when (val firExpression = wholeExpression.getOrBuildFir(analysisSession.resolutionFacade)) {
             is FirQualifiedAccessExpression -> firExpression
+            is FirCopyFunCallExpression -> firExpression.originalExpression
             is FirSafeCallExpression -> firExpression.selector as? FirQualifiedAccessExpression
             is FirSmartCastExpression -> firExpression.originalExpression as? FirQualifiedAccessExpression
             else -> null
