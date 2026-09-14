@@ -77,11 +77,6 @@ val AssignVar.assignedValue: Node
 val AssignVar.assignedValueOrNull: Node?
     get() = args.getOrNull(assignedValueIndex)
 
-val Pi.value: Node
-    get() = args[valueIndex]
-val Pi.valueOrNull: Node?
-    get() = args.getOrNull(valueIndex)
-
 val Phi.block: BlockEntry
     get() = args[blockIndex] as BlockEntry
 val Phi.blockOrNull: BlockEntry?
@@ -337,14 +332,6 @@ interface ArgumentAccessor {
 
     val AssignVar.assignedValueOrNull: Node?
         get() = args.getOrNull(assignedValueIndex)
-
-    
-
-    val Pi.value: Node
-        get() = args[valueIndex]
-
-    val Pi.valueOrNull: Node?
-        get() = args.getOrNull(valueIndex)
 
     
 
@@ -673,16 +660,6 @@ interface ArgumentUpdater : ArgumentAccessor, ArgumentUpdaterBase {
     override var AssignVar.assignedValueOrNull: Node?
         get() = args.getOrNull(assignedValueIndex)
         set(value) { args[assignedValueIndex] = value }
-
-    
-
-    override var Pi.value: Node
-        get() = args[valueIndex]
-        set(value) { args[valueIndex] = value }
-
-    override var Pi.valueOrNull: Node?
-        get() = args.getOrNull(valueIndex)
-        set(value) { args[valueIndex] = value }
 
     
 

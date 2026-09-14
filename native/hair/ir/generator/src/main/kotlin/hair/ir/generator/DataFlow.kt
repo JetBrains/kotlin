@@ -16,11 +16,6 @@ object DataFlow : ModelDSL() {
         param("assignedValue")
     }
 
-    val pi by node(ControlFlow.blockBody) {
-        interfaces(valueNode)
-        param("value")
-    }
-
     val phi by node {
         interfaces(valueNode)
         param("block", ControlFlow.blockEntry)

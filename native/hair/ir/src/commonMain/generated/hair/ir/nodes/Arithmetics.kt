@@ -199,7 +199,7 @@ class Rem internal constructor(form: Form, lhs: Node?, rhs: Node?) : ArithBinary
 }
 
 
-class Neg internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)), ValueNode {
+class Neg internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)) {
     val operandIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {

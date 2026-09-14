@@ -44,7 +44,6 @@ object Arithmetics : ModelDSL() {
     val rem by node(arithBinaryOp)
 
     val neg by node {
-        interfaces(DataFlow.valueNode)
         param("operand")
     }
 
