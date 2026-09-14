@@ -288,7 +288,7 @@ private fun SimpleKType.toFlexibleArrayType(
     ) as FlexibleKType
 
 private fun Type.argumentsMakeSenseOnlyForMutableContainer(mutableType: SimpleKType?): Boolean =
-    this is ParameterizedType && actualTypeArguments.last().let {
+    this is ParameterizedType && actualTypeArguments.lastOrNull().let {
         it is WildcardType && it.lowerBounds.size == 1
     } && mutableType != null && (mutableType.classifier as KClass<*>).typeParameters.last().variance == KVariance.OUT
 
