@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.commonizer.cli
 
 import org.jetbrains.kotlin.commonizer.CommonizerLogLevel
-import org.jetbrains.kotlin.util.Logger
 import kotlin.system.exitProcess
 
+interface Logger {
+    fun log(message: String)
+    fun warning(message: String)
+    fun error(message: String)
+}
 
-internal class CliLoggerAdapter(
+internal class CliLogger(
     private val level: CommonizerLogLevel,
     indentSize: Int = 0
 ) : Logger {
@@ -21,12 +25,6 @@ internal class CliLoggerAdapter(
     override fun warning(message: String) = printlnIndented("Warning: $message", *CommonizerLogLevel.values())
 
     override fun error(message: String) = printlnIndented("Error: $message\n", *CommonizerLogLevel.values())
-
-    @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
-    override fun fatal(message: String): Nothing {
-        error(message)
-        exitProcess(1)
-    }
 
     private fun printlnIndented(text: String, vararg levels: CommonizerLogLevel) {
         if (level in levels) {

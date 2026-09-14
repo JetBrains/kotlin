@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.commonizer.konan
 
 import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
+import org.jetbrains.kotlin.commonizer.cli.Logger
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadataVersion
-import org.jetbrains.kotlin.util.Logger
 
 internal class DefaultModulesProvider private constructor(
     libraries: Collection<NativeLibrary>,
