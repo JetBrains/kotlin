@@ -191,11 +191,12 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     abstract fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration
 
     abstract fun Node?.getChildrenAsArray(): Array<out Node?>
+
     inline fun Node.forEachChildren(f: (Node) -> Unit) {
         val kidsArray = this.getChildrenAsArray()
         for (kid in kidsArray) {
             if (kid == null) break
-            if (ignoredTokensId.contains(kid.toTokenId())) continue
+            if (shouldIgnoreToken(kid)) continue
             f(kid)
         }
     }
@@ -206,11 +207,24 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         val container = mutableListOf<T>()
         for (kid in kidsArray) {
             if (kid == null) break
-            if (ignoredTokensId.contains(kid.toTokenId())) continue
+            if (shouldIgnoreToken(kid)) continue
             f(kid, container)
         }
 
         return container
+    }
+
+    fun shouldIgnoreToken(kid: Node): Boolean {
+        return when (kid.toTokenId()) {
+            KtTokens.EOL_COMMENT_ID,
+            KtTokens.BLOCK_COMMENT_ID,
+            KtTokens.DOC_COMMENT_ID,
+            KtTokens.SHEBANG_COMMENT_ID,
+            KtTokens.WHITE_SPACE_ID,
+            KtTokens.SEMICOLON_ID,
+            SyntaxElementTypesWithIds.NO_ID -> true
+            else -> false
+        }
     }
 
     abstract val Node?.receiverExpression: Node?
@@ -450,11 +464,4 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
 
     fun Node.toTokenId(): Int = elementType.typeToTokenId()
     abstract fun Type.typeToTokenId(): Int
-
-    companion object {
-        val ignoredTokensId: HashSet<Int> = hashSetOf(
-            KtTokens.EOL_COMMENT_ID, KtTokens.BLOCK_COMMENT_ID, KtTokens.DOC_COMMENT_ID, KtTokens.SHEBANG_COMMENT_ID,
-            KtTokens.WHITE_SPACE_ID, KtTokens.SEMICOLON_ID, SyntaxElementTypesWithIds.NO_ID,
-        )
-    }
 }
