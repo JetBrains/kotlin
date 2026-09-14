@@ -1,3 +1,5 @@
+// IGNORE_WITH_INLINE_ANONYMOUS_FUNCTIONS: JS_IR, JS_IR_ES6
+
 fun demo(f: () -> String) = f()
 
 // EXPECT_GENERATED_JS: function=test$lambda expect=deadCodeElimination.out.js TARGET_BACKENDS=JS_IR
