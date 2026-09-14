@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporterG82
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG82
 import org.jetbrains.kotlin.gradle.plugin.internal.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.gradleVersion
 
 private const val PLUGIN_VARIANT_NAME = "gradle82"
 
@@ -65,8 +61,6 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
 
 private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
-    factories[ProblemsReporter.Factory::class] =
-        ProblemsReporterG82.Factory()
     factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
         CompilerDiagnosticsProblemsReporterG82.Factory()
     factories[BuildNeededDependentTasksWiringProvider.Factory::class] = BuildNeededDependentTaskWiringProviderG95.Factory()
