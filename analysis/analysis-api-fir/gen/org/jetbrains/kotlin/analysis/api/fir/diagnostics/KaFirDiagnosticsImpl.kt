@@ -143,6 +143,12 @@ internal class OtherErrorWithReasonImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OtherErrorWithReason
 
+internal class IeWarningImpl(
+    override val reason: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.IeWarning
+
 internal class IllegalConstExpressionImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

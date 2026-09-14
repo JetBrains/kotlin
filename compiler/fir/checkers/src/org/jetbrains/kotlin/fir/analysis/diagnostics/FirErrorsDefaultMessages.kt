@@ -425,6 +425,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED
@@ -4239,5 +4240,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_ERROR_SUPERTYPE, "'NonError' cannot be used as explicit supertype.")
         map.put(NON_ERROR_GET_CLASS_CALL, "Class literal on 'NonError' is not supported.")
         map.put(ACTUAL_TYPEALIAS_TO_NON_ERROR, "'actual typealias' cannot expand to 'NonError'.")
+        map.put(
+            IE_WARNING,
+            "''{0}''",
+            STRING,
+        )
     }
 }
