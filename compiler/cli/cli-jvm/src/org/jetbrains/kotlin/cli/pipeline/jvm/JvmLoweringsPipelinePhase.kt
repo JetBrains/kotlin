@@ -96,7 +96,7 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
             )
         }
 
-        return JvmLoweredIrPipelineArtifact(configuration, environment, mainClassFqName, codegenInputs)
+        return JvmLoweredIrPipelineArtifact(configuration, environment, mainClassFqName, codegenInputs, input.sourceFiles)
     }
 
     private fun runLowerings(

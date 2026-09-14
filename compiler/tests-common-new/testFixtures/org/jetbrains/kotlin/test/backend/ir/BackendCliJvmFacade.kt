@@ -7,31 +7,24 @@ package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmLoweringsPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.test.checkTestInfrastructure
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 
 class BackendCliJvmFacade(testServices: TestServices) : AbstractJvmIrBackendFacade(testServices) {
     override fun produceGenerationState(inputArtifact: IrBackendInput): GenerationState {
-        checkTestInfrastructure(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
-            "BackendCliJvmFacade expects Fir2IrCliBasedJvmOutputArtifact as input, but ${inputArtifact::class} was found"
-        }
-        checkTestInfrastructure(inputArtifact.cliArtifact is JvmFir2IrPipelineArtifact) {
-            "BackendCliJvmFacade expects JvmFir2IrPipelineArtifact as input, but ${inputArtifact.cliArtifact::class} was found"
+        checkTestInfrastructure(inputArtifact is LoweredJvmCliBasedOutputArtifact) {
+            "BackendCliJvmFacade expects LoweredJvmCliBasedOutputArtifact as input, but ${inputArtifact::class} was found"
         }
         val input = inputArtifact.cliArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
-        val loweredOutput = JvmLoweringsPipelinePhase.executePhase(input)
-        val output = JvmBackendPipelinePhase.executePhase(loweredOutput).let(JvmWriteOutputsPhase::executePhase)
+        val output = JvmBackendPipelinePhase.executePhase(input).let(JvmWriteOutputsPhase::executePhase)
         return output.outputs.single()
     }
 
     @Suppress("UNCHECKED_CAST")
     override val IrBackendInput.sourceFiles: Collection<KtSourceFile>
-        get() = (this as Fir2IrCliBasedOutputArtifact<JvmFir2IrPipelineArtifact>).cliArtifact.sourceFiles
+        get() = (this as LoweredJvmCliBasedOutputArtifact).cliArtifact.sourceFiles
 }
