@@ -2,7 +2,8 @@
 // ISSUE: KT-81777, KT-76150
 // IGNORE_PHASE_VERIFICATION: invalid code inside annotations
 // WITH_STDLIB
-// LANGUAGE_FEATURE_TOGGLED: CollectionLiterals
+// LANGUAGE: -CollectionLiterals
+// LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
 
 @Repeatable
 annotation class AnnoString(val args: Array<String>)
@@ -36,7 +37,7 @@ fun testWithCallables() = Unit
 
 annotation class AnnoWrong(val block: Int)
 
-@AnnoWrong(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[{ if (true) "a" else "b" }]<!>)
+@AnnoWrong(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL, UNSUPPORTED_FEATURE!>[{ if (true) "a" else "b" }]<!>)
 fun testWrong() = Unit
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, callableReference, collectionLiteral,
