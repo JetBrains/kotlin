@@ -199,6 +199,12 @@ public class LLSerializationDiagnosticsTestGenerated extends AbstractLLSerializa
     }
 
     @Test
+    @TestMetadata("ProtoUnknownFields.kt")
+    public void testProtoUnknownFields() {
+      run("ProtoUnknownFields.kt");
+    }
+
+    @Test
     @TestMetadata("ProtobufFieldNumbers.kt")
     public void testProtobufFieldNumbers() {
       run("ProtobufFieldNumbers.kt");
