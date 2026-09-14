@@ -23,7 +23,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.jvm.toolchain.JavaToolchainService
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
@@ -351,10 +350,6 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
     }
 
     private fun applyDistributionPluginIfMissing() {
-        when {
-            GradleVersion.current() >= GradleVersion.version("8.13") -> if (!pluginManager.hasPlugin("distribution-base"))
-                pluginManager.apply("distribution-base")
-            else -> if (!pluginManager.hasPlugin("distribution")) pluginManager.apply("distribution")
-        }
+        if (!pluginManager.hasPlugin("distribution-base")) pluginManager.apply("distribution-base")
     }
 }

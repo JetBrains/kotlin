@@ -162,27 +162,13 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:
             // when this OperationCompletionListener is called services can be already closed for Gradle 8,
             // so there is a change that no VariantImplementationFactory will be found
-            val fusService = if (GradleVersion.current().baseVersion >= GradleVersion.version("8.9")) {
-                FlowActionBuildFusService.registerIfAbsentImpl(
-                    project,
-                    buildUidService,
-                    generalConfigurationMetricsProvider,
-                    buildFinishBuildService
-                )
-            } else if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
-                ConfigurationMetricParameterFlowActionBuildFusService.registerIfAbsentImpl(
-                    project,
-                    buildUidService,
-                    generalConfigurationMetricsProvider,
-                )
-            } else {
-                CloseActionBuildFusService.registerIfAbsentImpl(
-                    project,
-                    buildUidService,
-                    generalConfigurationMetricsProvider,
-                    pluginVersion
-                )
-            }
+            val fusService = FlowActionBuildFusService.registerIfAbsentImpl(
+                project,
+                buildUidService,
+                generalConfigurationMetricsProvider,
+                buildFinishBuildService
+            )
+
             //DO NOT call buildService.get() before all parameters.configurationMetrics are set.
             // buildService.get() call will cause parameters calculation and configuration cache storage.
 

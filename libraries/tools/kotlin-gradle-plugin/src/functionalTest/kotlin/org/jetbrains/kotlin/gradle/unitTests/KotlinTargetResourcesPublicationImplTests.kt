@@ -170,9 +170,7 @@ class KotlinTargetResourcesPublicationImplTests {
 
     @Test
     fun `test resolution - doesn't emit diagnostic with variant reselection - when Gradle version is above 7_6`() {
-        buildProjectWithMPP(
-            preApplyCode = { overriddenGradleVersionForTests = GradleVersion.version("7.6.1") }
-        ) {
+        buildProjectWithMPP {
             kotlin {
                 linuxArm64()
                 resourcesPublicationExtension?.resolveResources(linuxArm64())

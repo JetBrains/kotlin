@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.registerPackageG
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.syntheticImportProjectProductTypeFromFrameworkTypes
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMMetadataProvider
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.existsCompat
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -284,7 +283,7 @@ internal constructor(
     @get:SkipWhenEmpty
     val inputFrameworkFiles: Collection<File>
         get() = groupedFrameworkFiles.values.flatten().map { it.file }.filter {
-            it.existsCompat()
+            it.exists()
         }
 
     /**

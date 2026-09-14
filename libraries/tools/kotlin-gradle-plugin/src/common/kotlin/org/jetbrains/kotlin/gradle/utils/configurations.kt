@@ -23,7 +23,6 @@ const val IMPLEMENTATION = "implementation"
 const val API = "api"
 const val RUNTIME_ONLY = "runtimeOnly"
 const val RUNTIME = "runtime"
-private val gradleVersionWithNewApi = GradleVersion.version("8.4")
 
 internal fun ConfigurationContainer.createResolvable(
     name: String,
@@ -64,15 +63,7 @@ internal fun ConfigurationContainer.detachedResolvable(vararg dependencies: Depe
 internal fun ConfigurationContainer.createConsumable(
     name: String,
     configuration: Configuration.() -> Unit = {}
-): NamedDomainObjectProvider<out Configuration> =
-    if (GradleVersion.current() >= gradleVersionWithNewApi) {
-        consumable(name, configuration)
-    } else {
-        register(name) {
-            it.isCanBeResolved = false
-            configuration(it)
-        }
-    }
+): NamedDomainObjectProvider<out Configuration> = consumable(name, configuration)
 
 internal fun ConfigurationContainer.findConsumable(name: String): Configuration? = findByName(name)?.apply {
     if (isCanBeResolved && isCanBeConsumed) {
@@ -97,16 +88,7 @@ internal fun ConfigurationContainer.maybeCreateConsumableCompat(
 internal fun ConfigurationContainer.createDependencyScope(
     name: String,
     configuration: Configuration.() -> Unit = {},
-): NamedDomainObjectProvider<out Configuration> =
-    if (GradleVersion.current() >= gradleVersionWithNewApi) {
-        dependencyScope(name, configuration)
-    } else {
-        register(name) {
-            it.isCanBeResolved = false
-            it.isCanBeConsumed = false
-            configuration(it)
-        }
-    }
+): NamedDomainObjectProvider<out Configuration> = dependencyScope(name, configuration)
 
 internal fun ConfigurationContainer.findDependencyScope(name: String): Configuration? = findByName(name)?.apply {
     if (isCanBeResolved && isCanBeConsumed) {
