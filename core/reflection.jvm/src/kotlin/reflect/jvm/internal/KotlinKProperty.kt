@@ -115,6 +115,8 @@ internal abstract class KotlinKProperty<out V>(
 
     override val annotations: List<Annotation>
         get() {
+            if (!kmProperty.hasAnnotationsInBytecode) return emptyList()
+
             if (isLocalDelegated || container.jClass.isAnnotation) {
                 // Annotations on local delegated properties and annotation constructor properties are present only in the metadata.
                 return kmProperty.annotations.map { it.toAnnotation(container.jClass.safeClassLoader) }
@@ -172,9 +174,10 @@ internal abstract class KotlinKProperty<out V>(
             error("Property accessors can only be bound by copying the corresponding property")
 
         override val annotations: List<Annotation>
-            get() =
-                if (property.isLocalDelegated) emptyList()
-                else (caller.member as? Method)?.annotations?.toList().orEmpty().unwrapKotlinRepeatableAnnotations()
+            get() {
+                if (property.isLocalDelegated || accessor?.hasAnnotationsInBytecode != true) return emptyList()
+                return (caller.member as? Method)?.annotations?.toList().orEmpty().unwrapKotlinRepeatableAnnotations()
+            }
     }
 
     abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {
