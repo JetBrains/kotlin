@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // See KT-14705
 
-enum class En { A, B, С }
+enum class En { A, B, C }
 
 fun foo() {
     // nullable variable
@@ -10,7 +10,7 @@ fun foo() {
         when (en2) {
             En.A -> {}
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
     }
 
@@ -20,7 +20,7 @@ fun foo() {
         when (en1) {
             En.A -> {}
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
     }
 }
