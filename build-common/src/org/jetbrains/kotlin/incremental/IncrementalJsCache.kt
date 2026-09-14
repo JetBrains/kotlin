@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import org.jetbrains.kotlin.incremental.storage.*
+import org.jetbrains.kotlin.library.impl.IrArrayReader
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
@@ -74,12 +75,10 @@ open class IncrementalJsCache(
     }
 
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
-        val translatedFiles = incrementalResults.packageParts
-
-        for ([srcFile, data] in translatedFiles) {
+        for ([srcFile, newData] in incrementalResults.packageParts) {
             dirtySources.remove(srcFile)
             val oldProtoMap = translationResults[srcFile]?.metadata?.let { protoData(srcFile, it) } ?: emptyMap()
-            val newProtoMap = protoData(srcFile, data.metadata)
+            val newProtoMap = protoData(srcFile, newData.metadata)
 
             for ([classId, protoData] in newProtoMap) {
                 registerOutputForFile(srcFile, classId.asSingleFqName())
@@ -93,18 +92,41 @@ open class IncrementalJsCache(
                 changesCollector.collectProtoChanges(oldProtoMap[classId], newProtoMap[classId])
             }
 
-            translationResults.put(srcFile, data.metadata)
+            translationResults.put(srcFile, newData.metadata)
         }
 
-        for ([srcFile, irData] in incrementalResults.irFileData) {
-            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos = debugInfo, fileEntries, ids) = irData
+        for ([srcFile, newIrData] in incrementalResults.irFileData) {
+            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos = debugInfo, fileEntries, ids) = newIrData
             irTranslationResults.put(
                 srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries, ids
             )
         }
 
-        for ([srcFile, irData] in incrementalResults.irInlineFileData) {
-            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos = debugInfo, fileEntries, ids) = irData
+        for ([srcFile, newIrData] in incrementalResults.irInlineFileData) {
+            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos = debugInfo, fileEntries, ids) = newIrData
+
+            val oldData = irInlineTranslationResults[srcFile]
+            val oldBodies = IrArrayReader(oldData?.bodies ?: byteArrayOf(0, 0, 0, 0))
+            val oldIds = oldData?.ids ?: emptyList()
+            val oldInlineFunctions: Map<CallableId, ByteArray> = buildMap {
+                for (i in oldIds.indices) {
+                    put(oldIds[i], oldBodies.tableItemBytes(i))
+                }
+            }
+
+            val newBodies = IrArrayReader(bodies)
+            val newInlineFunctions: Map<CallableId, ByteArray> = buildMap {
+                for (i in newIrData.ids.indices) {
+                    put(newIrData.ids[i], newBodies.tableItemBytes(i))
+                }
+            }
+
+            (newInlineFunctions.keys + oldInlineFunctions.keys).forEach { callableId ->
+                val scope = callableId.classId?.asSingleFqName() ?: callableId.packageName
+                val name = callableId.callableName.asString()
+                changesCollector.collectMemberIfValueWasChanged(scope, name, oldInlineFunctions[callableId], newInlineFunctions[callableId])
+            }
+
             irInlineTranslationResults.put(
                 srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries, ids
             )
