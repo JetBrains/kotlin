@@ -2,6 +2,8 @@
 
 Compiling files:
   src/inline.kt
+  src/useGetter.kt
+  src/useSetter.kt
 End of files
 Exit code: OK
 
@@ -9,5 +11,7 @@ Exit code: OK
 
 Compiling files:
   src/inline.kt
+  src/useGetter.kt
+  src/useSetter.kt
 End of files
 Exit code: OK
