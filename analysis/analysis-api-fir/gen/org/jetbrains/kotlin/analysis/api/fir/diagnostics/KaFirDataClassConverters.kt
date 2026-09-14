@@ -1634,6 +1634,13 @@ private fun KaDiagnosticConverterBuilder.addConversions31() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions32() {
+    add(FirErrors.IE_WARNING) { firDiagnostic ->
+        IeWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.ERROR_FROM_JAVA_RESOLUTION) { firDiagnostic ->
         ErrorFromJavaResolutionImpl(
             firDiagnostic as KtDiagnosticWithSource,

@@ -87,6 +87,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         RedundantCallOfConversionMethodChecker,
         FirImplicitPropertyTypeMakesBehaviorOrderDependantChecker,
         FirUnsupportedCollectionLiteralWithCollectionLiteralResolutionChecker,
+        IeChecker,
     )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(
