@@ -128,6 +128,9 @@ class NativeSecondStageCompilationConfig(
             produce == CompilerOutputKind.STATIC -> "${it.name} sanitizer is unsupported for static library"
             produce == CompilerOutputKind.FRAMEWORK && produceStaticFramework -> "${it.name} sanitizer is unsupported for static framework"
             it.toObsoleteKind() !in target.supportedSanitizers() -> "${it.name} sanitizer is unsupported on ${target.name}"
+            // The sanitizer would run while object accesses are still in the address space of the late shadow stack pass,
+            // which it does not instrument.
+            configuration.get(BinaryOptions.lateShadowStack) == true -> "${it.name} sanitizer is unsupported with lateShadowStack"
             else -> null
         }?.let { message ->
             configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, message)
@@ -500,6 +503,8 @@ class NativeSecondStageCompilationConfig(
     // By default use the new C++ passes.
     val runLLVMPassesInCompiler = configuration.get(BinaryOptions.runLLVMPassesInCompiler) ?: false
 
+    val lateShadowStack: Boolean = configuration.get(BinaryOptions.lateShadowStack) ?: false
+
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")
@@ -528,6 +533,8 @@ class NativeSecondStageCompilationConfig(
             append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
         if (assertsEnabled != defaultAsserts)
             append("-asserts${if (assertsEnabled) "ENABLE" else "DISABLE"}")
+        if (lateShadowStack)
+            append("-late_shadow_stack")
     }
 
     private val systemCacheFlavorString = buildString {

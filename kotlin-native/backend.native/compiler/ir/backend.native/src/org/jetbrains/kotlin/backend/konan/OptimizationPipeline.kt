@@ -396,6 +396,12 @@ class RemoveRedundantSafepointsPipeline(config: LlvmPipelineConfig, performanceM
     }
 }
 
+class BuildShadowStackPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, performanceManager, logger) {
+    override val pipelineName = "llvm-build-shadow-stack"
+    override val passes = listOf("kotlin-build-shadow-stack")
+}
+
 class ModuleCallsCheckerPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-calls-checker-module"
