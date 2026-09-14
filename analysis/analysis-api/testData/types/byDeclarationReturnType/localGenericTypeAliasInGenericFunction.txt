@@ -11,7 +11,7 @@ KaUsualClassType:
           KaTypeParameterType:
             abbreviation: null
             annotations: []
-            name: F
+            name: T
             symbol: KaTypeParameterSymbol:
               anchorPsi: KtTypeParameter
               annotations: []
@@ -19,9 +19,9 @@ KaUsualClassType:
               isExpect: false
               isExternal: false
               isReified: false
-              location: LOCAL
+              location: CLASS
               modality: FINAL
-              name: F
+              name: T
               origin: SOURCE
               psi: KtTypeParameter
               realPsi: KtTypeParameter
@@ -52,7 +52,7 @@ KaUsualClassType:
         KaTypeParameterType:
           abbreviation: null
           annotations: []
-          name: F
+          name: T
           symbol: KaTypeParameterSymbol:
             anchorPsi: KtTypeParameter
             annotations: []
@@ -60,9 +60,9 @@ KaUsualClassType:
             isExpect: false
             isExternal: false
             isReified: false
-            location: LOCAL
+            location: CLASS
             modality: FINAL
-            name: F
+            name: T
             origin: SOURCE
             psi: KtTypeParameter
             realPsi: KtTypeParameter
@@ -79,7 +79,7 @@ KaUsualClassType:
     KaTypeParameterType:
       abbreviation: null
       annotations: []
-      name: F
+      name: T
       symbol: KaTypeParameterSymbol:
         anchorPsi: KtTypeParameter
         annotations: []
@@ -87,9 +87,9 @@ KaUsualClassType:
         isExpect: false
         isExternal: false
         isReified: false
-        location: LOCAL
+        location: CLASS
         modality: FINAL
-        name: F
+        name: T
         origin: SOURCE
         psi: KtTypeParameter
         realPsi: KtTypeParameter
@@ -105,4 +105,4 @@ KaUsualClassType:
   hasFlexibleNullability: false
 
 Rendered type:
-LocalClass<F>.LocalTypeAlias?
+LocalClass<T>.LocalTypeAlias?

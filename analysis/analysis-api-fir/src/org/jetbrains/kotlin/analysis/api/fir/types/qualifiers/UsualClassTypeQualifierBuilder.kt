@@ -54,7 +54,16 @@ internal object UsualClassTypeQualifierBuilder {
         val ownTypeParametersCountsByDesignation = designation.mapIndexed { index, designationClass ->
             if (shouldRegisterTypeParametersForDesignationPart(index)) designationClass.numberOfOwnParameters() else 0
         }
-        var restTypeArguments = coneType.typeArguments.asList()
+
+        /**
+         * A local or inner class owns the type parameters of its containers on top of its own ones,
+         * see [org.jetbrains.kotlin.fir.builder.Context.appendOuterTypeParameters].
+         * The cone type has an argument for each of them, ordered from the innermost declaration outwards.
+         * The arguments the designation accounts for are the leading ones, defined by [ownTypeParametersCountsByDesignation];
+         * the rest are arguments of designation parts that do not render arguments, plus parameters captured from containing *functions*,
+         * so they are cut off right away.
+         */
+        var restTypeArguments = coneType.typeArguments.asList().take(ownTypeParametersCountsByDesignation.sum())
 
         // The designation is ordered outermost-first and the arguments innermost-first, so every part takes its own
         // ones from the back of what is left.

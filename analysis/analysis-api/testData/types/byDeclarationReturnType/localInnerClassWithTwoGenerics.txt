@@ -10,7 +10,7 @@ KaUsualClassType:
         KaTypeParameterType:
           abbreviation: null
           annotations: []
-          name: AA1
+          name: CC1
           symbol: KaTypeParameterSymbol:
             anchorPsi: KtTypeParameter
             annotations: []
@@ -20,7 +20,7 @@ KaUsualClassType:
             isReified: false
             location: CLASS
             modality: FINAL
-            name: AA1
+            name: CC1
             origin: SOURCE
             psi: KtTypeParameter
             realPsi: KtTypeParameter
@@ -33,7 +33,7 @@ KaUsualClassType:
         KaTypeParameterType:
           abbreviation: null
           annotations: []
-          name: AA2
+          name: CC2
           symbol: KaTypeParameterSymbol:
             anchorPsi: KtTypeParameter
             annotations: []
@@ -43,7 +43,7 @@ KaUsualClassType:
             isReified: false
             location: CLASS
             modality: FINAL
-            name: AA2
+            name: CC2
             origin: SOURCE
             psi: KtTypeParameter
             realPsi: KtTypeParameter
@@ -61,7 +61,7 @@ KaUsualClassType:
         KaTypeParameterType:
           abbreviation: null
           annotations: []
-          name: BB1
+          name: FOO1
           symbol: KaTypeParameterSymbol:
             anchorPsi: KtTypeParameter
             annotations: []
@@ -69,9 +69,9 @@ KaUsualClassType:
             isExpect: false
             isExternal: false
             isReified: false
-            location: CLASS
+            location: LOCAL
             modality: FINAL
-            name: BB1
+            name: FOO1
             origin: SOURCE
             psi: KtTypeParameter
             realPsi: KtTypeParameter
@@ -81,28 +81,20 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: true
           hasFlexibleNullability: false
-        KaTypeParameterType:
+        KaUsualClassType:
           abbreviation: null
           annotations: []
-          name: BB2
-          symbol: KaTypeParameterSymbol:
-            anchorPsi: KtTypeParameter
-            annotations: []
-            isActual: false
-            isExpect: false
-            isExternal: false
-            isReified: false
-            location: CLASS
-            modality: FINAL
-            name: BB2
-            origin: SOURCE
-            psi: KtTypeParameter
-            realPsi: KtTypeParameter
-            upperBounds: []
-            variance: INVARIANT
-            visibility: LOCAL
+          classId: kotlin/String
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
           isMarkedNullable: false
-          isNullable: true
+          isNullable: false
           hasFlexibleNullability: false
       ]
   ]
@@ -111,7 +103,7 @@ KaUsualClassType:
     KaTypeParameterType:
       abbreviation: null
       annotations: []
-      name: BB1
+      name: FOO1
       symbol: KaTypeParameterSymbol:
         anchorPsi: KtTypeParameter
         annotations: []
@@ -119,9 +111,9 @@ KaUsualClassType:
         isExpect: false
         isExternal: false
         isReified: false
-        location: CLASS
+        location: LOCAL
         modality: FINAL
-        name: BB1
+        name: FOO1
         origin: SOURCE
         psi: KtTypeParameter
         realPsi: KtTypeParameter
@@ -131,28 +123,20 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: true
       hasFlexibleNullability: false
-    KaTypeParameterType:
+    KaUsualClassType:
       abbreviation: null
       annotations: []
-      name: BB2
-      symbol: KaTypeParameterSymbol:
-        anchorPsi: KtTypeParameter
-        annotations: []
-        isActual: false
-        isExpect: false
-        isExternal: false
-        isReified: false
-        location: CLASS
-        modality: FINAL
-        name: BB2
-        origin: SOURCE
-        psi: KtTypeParameter
-        realPsi: KtTypeParameter
-        upperBounds: []
-        variance: INVARIANT
-        visibility: LOCAL
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
       isMarkedNullable: false
-      isNullable: true
+      isNullable: false
       hasFlexibleNullability: false
   ]
   isMarkedNullable: true
@@ -160,4 +144,4 @@ KaUsualClassType:
   hasFlexibleNullability: false
 
 Rendered type:
-C<AA1, AA2>.D<BB1, BB2>?
+C<CC1, CC2>.D<FOO1, kotlin.String>?

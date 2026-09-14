@@ -639,7 +639,7 @@ KaNamedFunctionSymbol:
     typeArguments: [
       KaTypeParameterType:
         annotations: []
-        type: E
+        type: H
     ]
     type: <local>/LocalClass<H, G, F, E>
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
@@ -1141,7 +1141,7 @@ KaNamedFunctionSymbol:
     typeArguments: [
       KaTypeParameterType:
         annotations: []
-        type: D
+        type: N
     ]
     type: <local>/LocalClass<N, M, L, K, C, D>
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
