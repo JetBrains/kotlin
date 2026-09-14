@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -95,6 +96,7 @@ fun createJavaOrKotlinMemberFunction(
     symbol: FirNamedFunctionSymbol? = null,
     typeParameters: Collection<FirTypeParameter> = emptyList(),
     isOverride: Boolean = false,
+    source: KtSourceElement? = null,
 ): FirNamedFunctionSymbol {
     return if (owner.hasJavaOrigin) {
         owner.createJavaMethod(
@@ -107,6 +109,7 @@ fun createJavaOrKotlinMemberFunction(
             methodSymbol = symbol,
             methodTypeParameters = typeParameters,
             isOverride = isOverride,
+            source = source,
         ).symbol
     } else {
         extension.createMemberFunction(
@@ -125,6 +128,12 @@ fun createJavaOrKotlinMemberFunction(
             status {
                 this@status.isOverride = isOverride
             }
+
+            // `DeclarationBuildingContext.source` falls back to a fake element over the owner's source only while it
+            // stays uninitialized, so assigning `null` would strip the source rather than keep that fallback.
+            if (source != null) {
+                this.source = source
+            }
         }.symbol
     }
 }
@@ -140,6 +149,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     methodSymbol: FirNamedFunctionSymbol? = null,
     methodTypeParameters: Collection<FirTypeParameter> = emptyList(),
     isOverride: Boolean = false,
+    source: KtSourceElement? = null,
 ): FirJavaMethod {
     return buildJavaMethod {
         containingClassSymbol = this@createJavaMethod
@@ -154,6 +164,7 @@ fun FirClassSymbol<*>.createJavaMethod(
         }
         isFromSource = true
         typeParameters += methodTypeParameters
+        this.source = source
 
         for (valueParameter in valueParameters) {
             this.valueParameters += buildJavaValueParameter {
