@@ -54,3 +54,26 @@ internal abstract class CompilerDiagnosticsProblemsReporterG88 @Inject construct
         }
     }
 }
+
+// Create own implementation of ProblemGroup as there is no factory method to create it
+internal class KgpProblemGroup(val group: DiagnosticGroup) : ProblemGroup {
+    override fun getName() = group.groupId
+    override fun getDisplayName() = group.displayName
+    override fun getParent() = group.parent?.let { KgpProblemGroup(it) }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ProblemGroup) return false
+
+        if (getName() != other.name) return false
+        if (getParent() != other.parent) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = getName().hashCode()
+        result = 31 * result + (getParent()?.hashCode() ?: 0)
+        return result
+    }
+}
