@@ -27,6 +27,7 @@ ktor = "3.3.1"
 kotlinx-bcv = "0.17.0"
 kotlinx-benchmark = "0.4.16"
 gson = "2.11.0"
+icu4j = "78.3"
 jetbrains-ideaExt = "1.4.1"
 jackson = "2.21.1"
 jgit = "7.3.0.202506031305-r"
@@ -160,6 +161,7 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version.ref = "failureaccess" }
+icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j" }
 vavr = { module = "io.vavr:vavr", version.ref = "vavr" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
