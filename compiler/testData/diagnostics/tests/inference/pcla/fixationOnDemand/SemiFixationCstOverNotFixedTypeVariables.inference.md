@@ -178,30 +178,29 @@ mySetOf2#(String(2))
 x#
 ```
 
-#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Set<*>`
+#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Set<String>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/Set<*>` _from Fix variable Z_
+1. New `TypeVariable(_CST_0)`
+2. `TypeVariable(E1) <: TypeVariable(_CST_0)` _from Synthetic CST variable bound_
+3. Combine `kotlin/String <: TypeVariable(E1)` with `TypeVariable(E1) <: TypeVariable(_CST_0)`
+    1. `kotlin/String <: TypeVariable(_CST_0)`
+4. `TypeVariable(E2) <: TypeVariable(_CST_0)` _from Synthetic CST variable bound_
+5. `TypeVariable(Z) == kotlin/collections/Set<TypeVariable(_CST_0)>` _from Fix variable Z_
 
-### Call 4
+### Call 8
 
 ```
-buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-    x# = mySetOf1#(String(1))
-    x# = mySetOf2#(String(2))
-    x#.size#
-}
-)
+this@R|special/anonymous|.R?C|/Box.x|.size#
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /buildBox` --- `fun <Z> buildBox(block: Box<Z>.() -> Unit): Box<Z>`
-##### Continue Call Completion:
+#### Candidate 1: `FirRegularPropertySymbol kotlin/collections/Set.size` --- `val size: Int`
+##### Call Completion:
 
-1. `kotlin/Unit <: kotlin/Unit` _from LambdaArgument_
-2. Choose `TypeVariable(E1)` with `Readiness(
+1. Choose `TypeVariable(_CST_0)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
@@ -214,87 +213,3 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-    1. `TypeVariable(Z)` is `Readiness(
-       	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
-       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
-       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	 true HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-       )`
-    2. `TypeVariable(E2)` is `Readiness(
-       	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
-       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
-       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-       )`
-3. `TypeVariable(E1) == kotlin/String` _from Fix variable E1_
-4. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)` _from Fix variable E1_
-5. Choose `TypeVariable(E2)` with `Readiness(
-   	 true ALLOWED
-   	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	false HAS_PROPER_EQUALITY_CONSTRAINT
-   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-    1. `TypeVariable(Z)` is `Readiness(
-       	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
-       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
-       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	 true HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-       )`
-6. `TypeVariable(E2) == kotlin/String` _from Fix variable E2_
-7. Choose `TypeVariable(Z)` with `Readiness(
-   	 true ALLOWED
-   	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	 true HAS_PROPER_EQUALITY_CONSTRAINT
-   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-8. `TypeVariable(Z) == kotlin/collections/Set<*>` _from Fix variable Z_

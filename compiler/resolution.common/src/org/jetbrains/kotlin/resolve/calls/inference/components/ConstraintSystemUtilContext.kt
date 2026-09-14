@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
@@ -51,6 +50,13 @@ interface ConstraintSystemUtilContext {
         argument: PostponedAtomWithRevisableExpectedType,
         index: Int
     ): TypeVariableMarker
+
+    /**
+     * Creates a synthetic type variable standing for a common supertype of not-fixed type variables
+     * (see TypeSystemCommonSuperTypesContext.createSyntheticCstTypeVariable). Only implemented in K2.
+     */
+    fun createTypeVariableForCstResult(index: Int): TypeVariableMarker =
+        error("Synthetic type variables for common supertypes are only supported in K2")
 
     val isForcedAllowForkingInferenceSystem get() = false
 }
