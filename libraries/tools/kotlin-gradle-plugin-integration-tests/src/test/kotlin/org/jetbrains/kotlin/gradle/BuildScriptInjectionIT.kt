@@ -80,7 +80,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.tasks.register(taskName) {
                     it.doLast {
-                        assertEquals("org.junit.Assert", Class.forName("org.junit.Assert").name)
+                        assertEquals(taskName, it.name)
                     }
                 }
             }

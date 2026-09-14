@@ -377,12 +377,8 @@ val kgpTestingUtilities = configurations.detachedConfiguration(
     it.isTransitive = false
 }
 
-// Keep compatible with the embedded Kotlin version in the oldest supported Gradle version (7.6.3).
-val buildScriptInjectionKotlinTestVersion = "1.7.10"
 val buildScriptInjectionTestDependencies = configurations.detachedConfiguration(
-    dependencies.create("org.jetbrains.kotlin:kotlin-test:$buildScriptInjectionKotlinTestVersion"),
-    dependencies.create("org.jetbrains.kotlin:kotlin-test-junit:$buildScriptInjectionKotlinTestVersion"),
-    dependencies.create(libs.junit4.get()),
+    dependencies.create(dependencies.project(":kotlin-test")),
 ).apply {
     isTransitive = false
 }
