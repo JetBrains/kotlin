@@ -14,7 +14,7 @@ import org.gradle.api.problems.Severity
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
-internal abstract class ProblemsReporterG813 @Inject constructor(
+internal abstract class ProblemsReporterG814 @Inject constructor(
     private val problems: Problems
 ) : ProblemsReporter {
     private val logger: Logger by lazy { Logging.getLogger(this.javaClass) }
@@ -64,6 +64,6 @@ internal abstract class ProblemsReporterG813 @Inject constructor(
         }
 
     class Factory : ProblemsReporter.Factory {
-        override fun getInstance(objects: ObjectFactory): ProblemsReporter = objects.newInstance<ProblemsReporterG813>()
+        override fun getInstance(objects: ObjectFactory): ProblemsReporter = objects.newInstance<ProblemsReporterG814>()
     }
 }
