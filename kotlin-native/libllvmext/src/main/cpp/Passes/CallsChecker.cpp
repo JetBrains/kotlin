@@ -223,6 +223,8 @@ static constexpr StringRef GoodFunctionNames[] = {
     "os_signpost_id_make_with_pointer",
     "protocol_getName",
 
+    "Kotlin_gc_*",
+
     "llvm.abs.*",
     "llvm.assume",
     "llvm.ceil.*",

@@ -4,6 +4,7 @@
 
 #include "KotlinPlugin.h"
 
+#include "Passes/BuildShadowStack.h"
 #include "Passes/CallsChecker.h"
 #include "Passes/HideSymbols.h"
 #include "Passes/PrepareStackProtector.h"
@@ -77,6 +78,10 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                   }
                   if (parsePass(Name, "kotlin-calls-checker-module")) {
                     PM.addPass(ModuleCallsCheckerPass());
+                    return true;
+                  }
+                  if (parsePass(Name, "kotlin-build-shadow-stack")) {
+                    PM.addPass(BuildShadowStackPass());
                     return true;
                   }
                   return false;
