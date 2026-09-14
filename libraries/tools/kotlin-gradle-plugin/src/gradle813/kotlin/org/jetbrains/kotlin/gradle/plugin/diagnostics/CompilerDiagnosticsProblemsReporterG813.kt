@@ -10,6 +10,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.problems.ProblemId
 import org.gradle.api.problems.Problems
+import org.gradle.api.problems.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
@@ -44,6 +45,12 @@ internal abstract class CompilerDiagnosticsProblemsReporterG813 @Inject construc
         } catch (e: NoSuchMethodError) {
             logger.error("Can't invoke reporter method:", e)
         }
+    }
+
+    private fun CompilerMessageRenderer.Severity.toGradleSeverity(): Severity? = when (this) {
+        CompilerMessageRenderer.Severity.ERROR -> Severity.ERROR
+        CompilerMessageRenderer.Severity.WARNING -> Severity.WARNING
+        CompilerMessageRenderer.Severity.INFO, CompilerMessageRenderer.Severity.DEBUG -> null
     }
 
     class Factory : CompilerDiagnosticsProblemsReporter.Factory {
