@@ -500,6 +500,8 @@ class NativeSecondStageCompilationConfig(
     // By default use the new C++ passes.
     val runLLVMPassesInCompiler = configuration.get(BinaryOptions.runLLVMPassesInCompiler) ?: false
 
+    val lateShadowStack: Boolean = configuration.get(BinaryOptions.lateShadowStack) ?: false
+
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")
@@ -528,6 +530,8 @@ class NativeSecondStageCompilationConfig(
             append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
         if (assertsEnabled != defaultAsserts)
             append("-asserts${if (assertsEnabled) "ENABLE" else "DISABLE"}")
+        if (lateShadowStack)
+            append("-late_shadow_stack")
     }
 
     private val systemCacheFlavorString = buildString {
