@@ -692,6 +692,12 @@ include(
     ":native:swift:swift-export-standalone-integration-tests:coroutines",
 )
 
+// Swift Import modules
+if (buildProperties.isSwiftImportEnabled.get()) {
+    include(":native:swift:kir")
+    include(":native:swift:kir:tree-generator")
+}
+
 include(":native:swift:swift-export-embeddable")
 
 // TypeScript Export modules
