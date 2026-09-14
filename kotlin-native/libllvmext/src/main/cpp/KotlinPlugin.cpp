@@ -9,6 +9,7 @@
 #include "Passes/PrepareStackProtector.h"
 #include "Passes/PrepareThreadSanitizer.h"
 #include "Passes/RemoveRedundantSafepoints.h"
+#include "Passes/BuildShadowStack.h"
 
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Support/Error.h"
@@ -77,6 +78,10 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                   }
                   if (parsePass(Name, "kotlin-calls-checker-module")) {
                     PM.addPass(ModuleCallsCheckerPass());
+                    return true;
+                  }
+                  if (parsePass(Name, "kotlin-build-shadow-stack")) {
+                    PM.addPass(BuildShadowStackPass());
                     return true;
                   }
                   return false;
