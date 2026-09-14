@@ -63,6 +63,7 @@ data class JvmLoweredIrPipelineArtifact(
     val environment: VfsBasedProjectEnvironment,
     val mainClassFqName: FqName?,
     val codegenInputs: List<JvmIrCodegenFactory.CodegenInput>,
+    val sourceFiles: List<KtSourceFile>,
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JvmLoweredIrPipelineArtifact {
