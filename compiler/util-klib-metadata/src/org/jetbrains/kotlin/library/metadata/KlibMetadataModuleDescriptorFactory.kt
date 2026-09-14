@@ -8,12 +8,9 @@ package org.jetbrains.kotlin.library.metadata
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -44,20 +41,6 @@ interface KlibMetadataModuleDescriptorFactory {
     ): ModuleDescriptorImpl = createDescriptorOptionalBuiltIns(
         library, languageVersionSettings, storageManager, null, LookupTracker.DO_NOTHING
     )
-
-    @Deprecated(
-        "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882.",
-        level = DeprecationLevel.HIDDEN
-    )
-    @Suppress("DEPRECATION_ERROR")
-    fun createDescriptorOptionalBuiltIns(
-        library: KotlinLibrary,
-        languageVersionSettings: LanguageVersionSettings,
-        storageManager: StorageManager,
-        builtIns: KotlinBuiltIns?,
-        packageAccessHandler: PackageAccessHandler?,
-        lookupTracker: LookupTracker
-    ): ModuleDescriptorImpl = createDescriptorOptionalBuiltIns(library, languageVersionSettings, storageManager, builtIns, lookupTracker)
 
     fun createDescriptorOptionalBuiltIns(
         library: KotlinLibrary,
