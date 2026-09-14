@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
@@ -19,7 +18,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.services.BuildServiceSpec
-import org.gradle.util.GradleVersion
 import kotlin.reflect.KClass
 
 internal val Project.compositeBuildRootGradle: Gradle get() = generateSequence(project.gradle) { it.parent }.last()
@@ -51,15 +49,6 @@ internal val ComponentIdentifier.buildOrNull: BuildIdentifier?
  */
 internal val ComponentIdentifier.projectPathOrNull: String?
     get() = (this as? ProjectComponentIdentifier)?.projectPath
-
-internal val ProjectDependency.projectPathCompat: String
-    get() = if (GradleVersion.current().baseVersion >= GradleVersion.version("8.11")) {
-        path
-    } else {
-        // FIXME: replace with propper Compatibility service [VariantImplementationFactories]
-        val dependencyProject = this.javaClass.getMethod("getDependencyProject").invoke(this) as Project
-        dependencyProject.path
-    }
 
 /**
  * Getting value from [AttributeContainer.getAttribute] that came from external places

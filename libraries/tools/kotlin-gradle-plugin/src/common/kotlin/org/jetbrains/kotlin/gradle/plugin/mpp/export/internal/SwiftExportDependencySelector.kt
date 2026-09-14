@@ -13,10 +13,6 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.plugin.internal.ProjectByPath
-import org.jetbrains.kotlin.gradle.plugin.internal.ProjectDependencyAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.utils.projectPathOrNull
 
 /**
@@ -73,8 +69,6 @@ internal sealed interface SwiftExportDependencySelector {
  */
 internal class SwiftExportDependencySelectorFactory(
     private val dependencyHandler: DependencyHandler,
-    private val projectDependencyAccessorFactory: Provider<ProjectDependencyAccessor.Factory>,
-    private val projectByPath: ProjectByPath,
 ) {
     fun fromNotation(dependency: Any): SwiftExportDependencySelector {
         if (dependency is Project) return SwiftExportDependencySelector.ProjectPath(dependency.path)
@@ -82,9 +76,7 @@ internal class SwiftExportDependencySelectorFactory(
         return if (created is ProjectDependency) created.pathSelector() else created.moduleSelector()
     }
 
-    private fun ProjectDependency.pathSelector() = SwiftExportDependencySelector.ProjectPath(
-        compatAccessor(projectDependencyAccessorFactory, projectByPath).dependencyProject().path
-    )
+    private fun ProjectDependency.pathSelector() = SwiftExportDependencySelector.ProjectPath(path)
 
     private fun Dependency.moduleSelector(): SwiftExportDependencySelector.Module {
         val group = group ?: throw InvalidUserDataException(
@@ -97,6 +89,4 @@ internal class SwiftExportDependencySelectorFactory(
 
 internal fun Project.swiftExportDependencySelectorFactory() = SwiftExportDependencySelectorFactory(
     dependencyHandler = dependencies,
-    projectDependencyAccessorFactory = variantImplementationFactoryProvider<ProjectDependencyAccessor.Factory>(),
-    projectByPath = ::project,
 )
