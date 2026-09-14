@@ -34,7 +34,7 @@ import org.jetbrains.org.objectweb.asm.Type
 class GenerationState(
     val project: Project,
     val module: ModuleDescriptor,
-    val configuration: CompilerConfiguration,
+    configuration: CompilerConfiguration,
     builderFactory: ClassBuilderFactory = ClassBuilderFactories.BINARIES,
     val generateDeclaredClassFilter: GenerateClassFilter? = null,
     val targetId: TargetId? = null,
@@ -43,8 +43,10 @@ class GenerationState(
     diagnosticReporter: DiagnosticReporter? = null,
     compiledCodeProvider: CompiledCodeProvider = CompiledCodeProvider.Empty
 ) {
-    val diagnosticReporter: DiagnosticReporter =
-        diagnosticReporter ?: DiagnosticsCollectorImpl()
+    var diagnosticReporter: DiagnosticReporter = diagnosticReporter ?: DiagnosticsCollectorImpl()
+        private set
+    var configuration: CompilerConfiguration = configuration
+        private set
 
     abstract class GenerateClassFilter {
         abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
@@ -97,4 +99,13 @@ class GenerationState(
     lateinit var isDeclarationGeneratedForCompilerPlugin: (IrDeclaration) -> Boolean
 
     val newFragmentCaptureParameters: MutableList<Triple<String, KotlinType, DeclarationDescriptor>> = mutableListOf()
+
+    @AllowedOnlyInTestsAPI
+    fun replaceConfigurationAndDiagnosticReporter(newConfiguration: CompilerConfiguration, newDiagnosticReporter: DiagnosticReporter) {
+        configuration = newConfiguration
+        diagnosticReporter = newDiagnosticReporter
+    }
 }
+
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+annotation class AllowedOnlyInTestsAPI

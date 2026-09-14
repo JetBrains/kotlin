@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
@@ -48,6 +49,13 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
         configureIrHandlersStep {
             useHandlers(
                 ::IrDiagnosticsHandler,
+                ::NoIrCompilationErrorsHandler
+            )
+        }
+
+        configureLoweredIrHandlersStep {
+            useHandlers(
+                IrDiagnosticsHandler.forLoweredIr,
                 ::NoIrCompilationErrorsHandler
             )
         }

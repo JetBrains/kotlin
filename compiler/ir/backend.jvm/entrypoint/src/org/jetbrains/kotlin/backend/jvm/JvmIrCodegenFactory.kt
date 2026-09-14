@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
 import org.jetbrains.kotlin.codegen.loadCompiledModule
+import org.jetbrains.kotlin.codegen.state.AllowedOnlyInTestsAPI
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrProvider
@@ -80,7 +82,13 @@ class JvmIrCodegenFactory(
         val module: IrModuleFragment,
         val allBuiltins: List<IrFile>,
         val intrinsicExtensions: List<JvmIrIntrinsicExtension>,
-    )
+    ) {
+        @AllowedOnlyInTestsAPI
+        fun replaceConfigurationAndDiagnosticReporter(newConfiguration: CompilerConfiguration, newDiagnosticReporter: DiagnosticReporter) {
+            state.replaceConfigurationAndDiagnosticReporter(newConfiguration, newDiagnosticReporter)
+            context.replaceDiagnosticReporter(newDiagnosticReporter)
+        }
+    }
 
     private val CompilerConfiguration.filteredExtensions: List<IrGenerationExtension>
         get() = this.getCompilerExtensions(IrGenerationExtension)
