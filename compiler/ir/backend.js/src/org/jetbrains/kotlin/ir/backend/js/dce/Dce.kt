@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.js.config.dceUnusedProperties
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun eliminateDeadDeclarations(
@@ -46,6 +47,16 @@ fun eliminateDeadDeclarations(
         module.files.forEach {
             it.acceptVoid(uselessDeclarationsProcessor)
             context.polyfills.saveOnlyIntersectionOfNextDeclarationsFor(it, usefulDeclarationProcessor.usefulPolyfilledDeclarations)
+        }
+    }
+
+    if (context.configuration.dceUnusedProperties) {
+        val setFieldRemover = SetFieldRemover(context, usefulDeclarations)
+
+        modules.forEach { module ->
+            module.files.forEach {
+                it.transform(setFieldRemover, null)
+            }
         }
     }
 }
