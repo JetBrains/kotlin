@@ -1,0 +1,237 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassWithDelegation.kt
+    public final? value [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}] class Wrapper : Comparable<Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.value] value: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.name] name: String): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<Int> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final? value [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}] class Wrapper : Comparable<Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.value] value: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.name] name: String): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<Int> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}] class Wrapper : Comparable<Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.value] value: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.name] name: String): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<Int> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final? value [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}] class Wrapper : Comparable<Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.value] value: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.name] name: String): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<Int> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final? value [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}] class Wrapper : R|kotlin/Comparable<kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.value] value: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.name] name: String): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<R|kotlin/Int|> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final? value [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}] class Wrapper : R|kotlin/Comparable<kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.value] value: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Wrapper.name] name: String): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<R|kotlin/Int|> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final value [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/Int), (name, kotlin/String)])] class Wrapper : R|kotlin/Comparable<kotlin/Int>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.value] value: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.name] name: R|kotlin/String|): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<R|kotlin/Int|> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/Int), (name, kotlin/String)])] class Wrapper : R|kotlin/Comparable<kotlin/Int>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.value] value: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.name] name: R|kotlin/String|): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<R|kotlin/Int|> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final value [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/Int), (name, kotlin/String)])] class Wrapper : R|kotlin/Comparable<kotlin/Int>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.value] value: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.name] name: R|kotlin/String|): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<R|kotlin/Int|> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/Int), (name, kotlin/String)])] class Wrapper : R|kotlin/Comparable<kotlin/Int>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.value] value: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.name] name: R|kotlin/String|): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<R|kotlin/Int|> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final value [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/Int), (name, kotlin/String)])] class Wrapper : R|kotlin/Comparable<kotlin/Int>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.value] value: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.name] name: R|kotlin/String|): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<R|kotlin/Int|> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/Int), (name, kotlin/String)])] class Wrapper : R|kotlin/Comparable<kotlin/Int>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.value] value: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Wrapper.name] name: R|kotlin/String|): R|pack/Wrapper| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Comparable<R|kotlin/Int|> = LAZY_EXPRESSION
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Wrapper] get(): String
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithDelegation.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/Int), (name, kotlin/String)])] class Wrapper : R|kotlin/Comparable<kotlin/Int>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Wrapper.value] value: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Wrapper.name] name: R|kotlin/String|): R|pack/Wrapper| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|kotlin/Comparable<kotlin/Int>| = R|<local>/value|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Wrapper] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Wrapper] get(): R|kotlin/String|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassWithDelegation.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=pack/Wrapper.$$delegate_0}, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/Int), (name, kotlin/String)])] class Wrapper : R|kotlin/Comparable<kotlin/Int>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Wrapper.value] value: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Wrapper.name] name: R|kotlin/String|): R|pack/Wrapper| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|kotlin/Comparable<kotlin/Int>| = R|<local>/value|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Wrapper] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Wrapper] get(): R|kotlin/String|
+
+    }

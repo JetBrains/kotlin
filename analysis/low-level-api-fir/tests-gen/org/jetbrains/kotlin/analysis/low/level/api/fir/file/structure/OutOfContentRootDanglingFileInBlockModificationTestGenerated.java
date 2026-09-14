@@ -70,6 +70,18 @@ public class OutOfContentRootDanglingFileInBlockModificationTestGenerated extend
   }
 
   @Test
+  @TestMetadata("fullValueClassGetterBody.kt")
+  public void testFullValueClassGetterBody() {
+    run("fullValueClassGetterBody.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassMemberFunctionBody.kt")
+  public void testFullValueClassMemberFunctionBody() {
+    run("fullValueClassMemberFunctionBody.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithDefaultParameters.kt")
   public void testFunctionWithDefaultParameters() {
     run("functionWithDefaultParameters.kt");

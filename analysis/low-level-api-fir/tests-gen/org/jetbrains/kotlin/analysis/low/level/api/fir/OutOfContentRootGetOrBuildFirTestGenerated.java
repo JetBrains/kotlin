@@ -1332,6 +1332,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("entryInFullValueClassDestructuring.kt")
+    public void testEntryInFullValueClassDestructuring() {
+      run("entryInFullValueClassDestructuring.kt");
+    }
+
+    @Test
     @TestMetadata("entryUnderscoreInDestructuringDeclaration.kt")
     public void testEntryUnderscoreInDestructuringDeclaration() {
       run("entryUnderscoreInDestructuringDeclaration.kt");
@@ -1341,6 +1347,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("entryUnderscoreInDestructuringDeclarationParameterInLambda.kt")
     public void testEntryUnderscoreInDestructuringDeclarationParameterInLambda() {
       run("entryUnderscoreInDestructuringDeclarationParameterInLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassDestructuring.kt")
+    public void testFullValueClassDestructuring() {
+      run("fullValueClassDestructuring.kt");
     }
   }
 
@@ -2445,6 +2457,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("fileAnnotationList.kt")
     public void testFileAnnotationList() {
       run("fileAnnotationList.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClass.kt")
+    public void testFullValueClass() {
+      run("fullValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueObject.kt")
+    public void testFullValueObject() {
+      run("fullValueObject.kt");
     }
 
     @Test

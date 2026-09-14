@@ -1,0 +1,26 @@
+BODY_RESOLVE:
+TARGET: public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+    public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val sum: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val x: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val y: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] y: R|kotlin/Int|): R|library/Point|
+
+}
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval point: R|library/Point|
+    }

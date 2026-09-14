@@ -1,0 +1,377 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.inner] inner: Inner, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: Inner?): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.inner] inner: Inner, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: Inner?): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.inner] inner: Inner, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: Inner?): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final? value [ResolvedTo(COMPANION_GENERATION)] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.inner] inner: Inner, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: Inner?): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final? value [ResolvedTo(SUPER_TYPES)] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.inner] inner: Inner, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: Inner?): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final? value [ResolvedTo(TYPES)] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.inner] inner: Inner, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: Inner?): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inner, pack/Inner), (nullableInner, pack/Inner?)])] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Outer] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.inner] inner: R|pack/Inner|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: R|pack/Inner?|): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inner, pack/Inner), (nullableInner, pack/Inner?)])] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Outer] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.inner] inner: R|pack/Inner|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: R|pack/Inner?|): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inner, pack/Inner), (nullableInner, pack/Inner?)])] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Outer] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.inner] inner: R|pack/Inner|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: R|pack/Inner?|): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inner, pack/Inner), (nullableInner, pack/Inner?)])] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Outer] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.inner] inner: R|pack/Inner|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: R|pack/Inner?|): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inner, pack/Inner), (nullableInner, pack/Inner?)])] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Outer] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.inner] inner: R|pack/Inner|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: R|pack/Inner?|): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inner, pack/Inner), (nullableInner, pack/Inner?)])] class Outer : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Outer] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.inner] inner: R|pack/Inner|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: R|pack/Inner?|): R|pack/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val inner: Inner = R|<local>/inner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val nullableInner: Inner? = R|<local>/nullableInner|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] get(): Inner?
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithAnotherFullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Inner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.first] first: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inner.second] second: Int): R|pack/Inner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] get(): Int
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inner, pack/Inner), (nullableInner, pack/Inner?)])] class Outer : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Outer.inner] inner: R|pack/Inner|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: R|pack/Inner?|): R|pack/Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val inner: R|pack/Inner| = R|<local>/inner|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] get(): R|pack/Inner|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val nullableInner: R|pack/Inner?| = R|<local>/nullableInner|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] get(): R|pack/Inner?|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassWithAnotherFullValueClass.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, kotlin/String), (second, kotlin/Int)])] class Inner : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inner.first] first: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inner.second] second: R|kotlin/Int|): R|pack/Inner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|kotlin/String| = R|<local>/first|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner] get(): R|kotlin/Int|
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(inner, pack/Inner), (nullableInner, pack/Inner?)])] class Outer : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Outer.inner] inner: R|pack/Inner|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Outer.nullableInner] nullableInner: R|pack/Inner?|): R|pack/Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val inner: R|pack/Inner| = R|<local>/inner|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] get(): R|pack/Inner|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val nullableInner: R|pack/Inner?| = R|<local>/nullableInner|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] get(): R|pack/Inner?|
+
+    }

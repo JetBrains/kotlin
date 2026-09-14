@@ -1,0 +1,26 @@
+public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+public final [ResolvedTo(BODY_RESOLVE)] fun sum([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Int| {
+    ^sum this@R|lowlevel/Point|.R|lowlevel/Point.x|.R|kotlin/Int.plus|(this@R|lowlevel/Point|.R|lowlevel/Point.y|).R|kotlin/Int.plus|(R|<local>/i|)
+}
+
+public final [ResolvedTo(BODY_RESOLVE)] val doubled: R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int| {
+        ^ this@R|lowlevel/Point|.R|lowlevel/Point.sum|(this@R|lowlevel/Point|.R|lowlevel/Point.x|)
+    }
+
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(RAW_FIR)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|

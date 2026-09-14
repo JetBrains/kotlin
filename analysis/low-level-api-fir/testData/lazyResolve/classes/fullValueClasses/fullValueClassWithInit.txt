@@ -1,0 +1,241 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassWithInit.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final? value [ResolvedTo(COMPANION_GENERATION)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final? value [ResolvedTo(SUPER_TYPES)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final? value [ResolvedTo(TYPES)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInit.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            [ResolvedTo(BODY_RESOLVE)] lval sum: R|kotlin/Int| = this@R|pack/Point|.R|pack/Point.x|.R|kotlin/Int.plus|(this@R|pack/Point|.R|pack/Point.y|)
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassWithInit.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            [ResolvedTo(BODY_RESOLVE)] lval sum: R|kotlin/Int| = this@R|pack/Point|.R|pack/Point.x|.R|kotlin/Int.plus|(this@R|pack/Point|.R|pack/Point.y|)
+        }
+
+    }

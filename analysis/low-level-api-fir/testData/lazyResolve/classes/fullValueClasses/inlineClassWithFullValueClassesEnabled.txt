@@ -1,0 +1,167 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] inlineClassWithFullValueClassesEnabled.kt
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPANION_GENERATION)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(SUPER_TYPES)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final? value [ResolvedTo(TYPES)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.value] value: Int): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] get(): R|kotlin/Int|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] inlineClassWithFullValueClassesEnabled.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] get(): R|kotlin/Int|
+
+    }

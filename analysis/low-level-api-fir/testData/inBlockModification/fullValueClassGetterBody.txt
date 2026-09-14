@@ -1,0 +1,9 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] val sum: R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int| {
+        ^ this@R|/Point|.R|/Point.x|.R|kotlin/Int.plus|(this@R|/Point|.R|/Point.y|)
+    }
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val sum: R|kotlin/Int|
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Point] get(): R|kotlin/Int| { LAZY_BLOCK }
