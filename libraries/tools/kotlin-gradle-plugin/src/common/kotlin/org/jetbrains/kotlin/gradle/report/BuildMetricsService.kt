@@ -43,13 +43,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.BuildReportsService.Companion.getStartParameters
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import java.lang.management.ManagementFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -378,12 +378,11 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
 
         private fun setupTags(project: Project): ArrayList<StatTag> {
-            val gradle = project.gradle
             val additionalTags = ArrayList<StatTag>()
             if (project.isConfigurationCacheEnabled) {
                 additionalTags.add(StatTag.CONFIGURATION_CACHE)
             }
-            if (gradle.startParameter.isBuildCacheEnabled) {
+            if (project.gradle.startParameter.isBuildCacheEnabled) {
                 additionalTags.add(StatTag.BUILD_CACHE)
             }
             val debugConfiguration = "-agentlib:"

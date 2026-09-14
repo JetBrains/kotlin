@@ -65,10 +65,6 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
 
 private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
-    factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
-        ConfigurationCacheStartParameterAccessorG82.Factory()
-    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
-        ProjectIsolationStartParameterAccessorG82.Factory()
     factories[ProblemsReporter.Factory::class] =
         ProblemsReporterG82.Factory()
     factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
