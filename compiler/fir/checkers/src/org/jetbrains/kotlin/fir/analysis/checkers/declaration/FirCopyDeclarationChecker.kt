@@ -17,10 +17,16 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 
 object FirCopyDeclarationChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirCallableDeclaration) {
+        if (declaration.isCopy && (declaration.isCompanionExtension || declaration.isCompanionBlockMember)) {
+            reporter.reportOn(declaration.source, FirErrors.COPY_VAR_UNSUPPORTED)
+        }
+
         if (declaration is FirVariable) {
             if (!declaration.isCopy) return
             if (declaration.isVal && declaration !is FirValueParameter) {

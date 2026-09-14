@@ -22,7 +22,7 @@ abstract class FirCopyFunCallExpression : FirExpression() {
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
-    abstract val originalExpression: FirExpression
+    abstract val originalExpression: FirFunctionCall
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitCopyFunCallExpression(this, data)
@@ -35,7 +35,7 @@ abstract class FirCopyFunCallExpression : FirExpression() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract fun replaceOriginalExpression(newOriginalExpression: FirExpression)
+    abstract fun replaceOriginalExpression(newOriginalExpression: FirFunctionCall)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCopyFunCallExpression
 

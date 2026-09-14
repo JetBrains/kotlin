@@ -8376,6 +8376,20 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CopyPathUnsupportedExpression : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<CopyPathUnsupportedExpression>
+            get() = CopyPathUnsupportedExpression::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CopyPathWrongStep : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<CopyPathWrongStep>
+            get() = CopyPathWrongStep::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<OverrideCannotBeStatic>
             get() = OverrideCannotBeStatic::class

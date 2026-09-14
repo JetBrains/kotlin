@@ -1165,6 +1165,8 @@ object FirErrors : KtDiagnosticsContainer() {
     val COPY_VAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("COPY_VAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val COPY_FUN_WITH_RETURN_TYPE_OR_EXPRESSION_BODY: KtDiagnosticFactory0 = KtDiagnosticFactory0("COPY_FUN_WITH_RETURN_TYPE_OR_EXPRESSION_BODY", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val COPY_FUN_TOO_MANY_ARGS: KtDiagnosticFactory0 = KtDiagnosticFactory0("COPY_FUN_TOO_MANY_ARGS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val COPY_PATH_UNSUPPORTED_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("COPY_PATH_UNSUPPORTED_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val COPY_PATH_WRONG_STEP: KtDiagnosticFactory0 = KtDiagnosticFactory0("COPY_PATH_WRONG_STEP", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

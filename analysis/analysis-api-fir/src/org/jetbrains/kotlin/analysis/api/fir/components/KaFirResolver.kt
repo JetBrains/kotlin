@@ -310,6 +310,7 @@ internal class KaFirResolver(
         is FirResolvedReifiedParameterReference -> toKaSymbolResolutionAttempt()
         is FirVariableAssignment -> lValue.unwrapExpression().toKaSymbolResolutionAttempt(psi)
         is FirSmartCastExpression -> originalExpression.toKaSymbolResolutionAttempt(psi)
+        is FirCopyFunCallExpression -> originalExpression.toKaSymbolResolutionAttempt(psi)
         is FirSafeCallExpression -> unwrapSelector().toKaSymbolResolutionAttempt(psi)
         is FirResolvedQualifier if psi is KtSimpleNameExpression -> toKaSymbolResolutionAttempt(psi)
         is FirPackageDirective if psi is KtSimpleNameExpression -> toKaSymbolResolutionAttempt(psi)
@@ -692,6 +693,10 @@ internal class KaFirResolver(
                 psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall
             )
 
+            is FirCopyFunCallExpression -> originalExpression.toKaResolutionAttempt(
+                psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall
+            )
+
             is FirWhileLoop if psi is KtForExpression -> resolveForLoopCall(this, psi)
             is FirProperty if psi is KtPropertyDelegate -> resolveDelegatedPropertyCall(this, psi)
 
@@ -754,6 +759,7 @@ internal class KaFirResolver(
     private fun FirSafeCallExpression.unwrapSelector(): FirElement {
         fun FirElement.findNestedQualifiedAccess(): FirQualifiedAccessExpression? = when (this) {
             is FirSmartCastExpression -> originalExpression.findNestedQualifiedAccess()
+            is FirCopyFunCallExpression -> originalExpression.findNestedQualifiedAccess()
             is FirImplicitInvokeCall -> this
             is FirQualifiedAccessExpression -> explicitReceiver?.findNestedQualifiedAccess() ?: this
             else -> null
@@ -1010,6 +1016,18 @@ internal class KaFirResolver(
         resolveFragmentOfCall: Boolean,
     ): KaCallResolutionAttempt? {
         if (fir is FirSmartCastExpression) {
+            return (fir.originalExpression as? FirResolvable)?.let {
+                createKaCallResolutionAttempt(
+                    psi = psi,
+                    fir = it,
+                    calleeReference = calleeReference,
+                    candidate = candidate,
+                    resolveFragmentOfCall = resolveFragmentOfCall,
+                )
+            }
+        }
+
+        if (fir is FirCopyFunCallExpression) {
             return (fir.originalExpression as? FirResolvable)?.let {
                 createKaCallResolutionAttempt(
                     psi = psi,
@@ -1885,6 +1903,8 @@ internal class KaFirResolver(
                 }
             }
 
+            is FirCopyFunCallExpression -> originalExpression.toKaReceiverValue()
+
             is FirThisReceiverExpression if isImplicit -> {
                 val symbol = when (val firSymbol = calleeReference.boundSymbol) {
                     is FirClassSymbol<*> -> firSymbol.toKaSymbol()
@@ -2444,6 +2464,8 @@ internal class KaFirResolver(
             is FirFunctionTypeConversionExpression ->
                 expression.realPsi as? KtExpression
             is FirSmartCastExpression ->
+                originalExpression.realPsi as? KtExpression
+            is FirCopyFunCallExpression ->
                 originalExpression.realPsi as? KtExpression
             is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
                 realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()

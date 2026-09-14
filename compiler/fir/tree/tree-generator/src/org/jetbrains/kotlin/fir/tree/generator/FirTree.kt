@@ -1227,7 +1227,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val copyFunCallExpression: Element by element(Expression) {
         parent(expression)
-        +field("originalExpression", expression, withReplace = true, withTransform = true)
+        +field("originalExpression", functionCall, withReplace = true, withTransform = true)
     }
 
     val safeCallExpression: Element by element(Expression) {

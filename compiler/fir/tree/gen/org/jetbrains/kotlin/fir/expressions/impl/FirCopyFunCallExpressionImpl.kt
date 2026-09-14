@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirCopyFunCallExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -28,7 +28,7 @@ internal class FirCopyFunCallExpressionImpl(
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override var originalExpression: FirExpression,
+    override var originalExpression: FirFunctionCall,
 ) : FirCopyFunCallExpression() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -60,7 +60,7 @@ internal class FirCopyFunCallExpressionImpl(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
-    override fun replaceOriginalExpression(newOriginalExpression: FirExpression) {
+    override fun replaceOriginalExpression(newOriginalExpression: FirFunctionCall) {
         originalExpression = newOriginalExpression
     }
 }

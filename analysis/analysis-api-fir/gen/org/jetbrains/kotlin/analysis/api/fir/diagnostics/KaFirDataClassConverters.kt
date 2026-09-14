@@ -2009,6 +2009,12 @@ private fun KaDiagnosticConverterBuilder.addConversions39() {
             token,
         )
     }
+    add(FirErrors.COPY_PATH_WRONG_STEP) { firDiagnostic ->
+        CopyPathWrongStepImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions40() {
@@ -3550,6 +3556,12 @@ private fun KaDiagnosticConverterBuilder.addConversions75() {
             firDiagnostic.b.source!!.psi as KtExpression,
             firDiagnostic.c,
             firDiagnostic.d,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.COPY_PATH_UNSUPPORTED_EXPRESSION) { firDiagnostic ->
+        CopyPathUnsupportedExpressionImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

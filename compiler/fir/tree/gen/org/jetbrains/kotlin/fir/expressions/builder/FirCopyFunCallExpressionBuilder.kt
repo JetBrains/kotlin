@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirCopyFunCallExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirCopyFunCallExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -27,7 +27,7 @@ class FirCopyFunCallExpressionBuilder : FirAnnotationContainerBuilder, FirExpres
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = []
-    lateinit var originalExpression: FirExpression
+    lateinit var originalExpression: FirFunctionCall
 
     override fun build(): FirCopyFunCallExpression {
         return FirCopyFunCallExpressionImpl(
