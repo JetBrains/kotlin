@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.test.NonGroupingTestRunner.Companion.shouldRun
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.services.TestPhase
 
 sealed class TestStep<InputArtifact, OutputArtifact>
         where InputArtifact : ResultingArtifact<InputArtifact>,
@@ -71,7 +72,8 @@ sealed class TestStep<InputArtifact, OutputArtifact>
 
         class HandlersStep<InputArtifact : ResultingArtifact<InputArtifact>>(
             override val inputArtifactKind: TestArtifactKind<InputArtifact>,
-            override val handlers: List<AnalysisHandler<InputArtifact>>
+            override val handlers: List<AnalysisHandler<InputArtifact>>,
+            val stepPhase: TestPhase?,
         ) : NonGroupingStep<InputArtifact, Nothing>(), TestStep.HandlersStep<InputArtifact> {
             init {
                 for (handler in handlers) {
@@ -96,7 +98,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                         try {
                             outputHandler.processModule(module, inputArtifact)
                         } catch (e: Throwable) {
-                            exceptions += WrappedException.FromHandler(e, module, outputHandler)
+                            exceptions += WrappedException.FromHandler(e, module, outputHandler, stepPhase)
                             if (outputHandler.failureDisablesNextSteps) {
                                 shouldRunNextSteps = false
                             }

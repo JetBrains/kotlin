@@ -106,7 +106,7 @@ open class AbstractReplViaApiDiagnosticsTest : AbstractKotlinCompilerTest() {
                 ::ReplConfigurator
             )
             facadeStep(::FirReplCompilerFacade)
-            namedHandlersStep("ReplDiagnosticHandlerStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST) {
+            namedHandlersStep("ReplDiagnosticHandlerStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST, stepPhase = null) {
                 useHandlers(::ReplCompilerDiagnosticsHandler)
             }
 
@@ -143,7 +143,7 @@ open class AbstractReplViaApiEvaluationTest : AbstractReplViaApiDiagnosticsTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            namedHandlersStep("ReplEvaluationStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST) {
+            namedHandlersStep("ReplEvaluationStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST, stepPhase = null) {
                 useHandlers(::ReplRunViaApiChecker)
             }
         }

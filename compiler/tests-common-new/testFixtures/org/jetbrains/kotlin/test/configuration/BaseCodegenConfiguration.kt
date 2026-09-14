@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.TestStepBuilder
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.LoweringCliJvmFacade
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.directives.*
@@ -61,6 +62,8 @@ fun TestConfigurationBuilder.setupJvmPipelineStepsWithoutCompilationErrorHandler
     firHandlersStep(init = {})
     facadeStep(::Fir2IrCliJvmFacade)
     irHandlersStep(init = {})
+    facadeStep(::LoweringCliJvmFacade)
+    loweredIrHandlersStep(init = {})
     facadeStep(::BackendCliJvmFacade)
     jvmArtifactsHandlersStep(init = {})
 }
@@ -73,6 +76,7 @@ fun TestConfigurationBuilder.setupJvmPipelineSteps(parser: FirParser) {
     setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser)
     configureFirHandlersStep { commonFirHandlersForCodegenTest() }
     configureIrHandlersStep { commonIrHandlersForCodegenTest() }
+    configureLoweredIrHandlersStep { commonLoweredIrHandlersForCodegenTest() }
     configureJvmArtifactsHandlersStep { useHandlers(::NoJvmSpecificCompilationErrorsHandler) }
 }
 
@@ -172,6 +176,9 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
     configureIrHandlersStep {
         commonIrHandlersForCodegenTest()
     }
+    configureLoweredIrHandlersStep {
+        commonLoweredIrHandlersForCodegenTest()
+    }
     configureJvmArtifactsHandlersStep {
         commonBackendHandlersForCodegenTest()
     }
@@ -186,10 +193,13 @@ fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<FirOutputArtifact, Fron
     )
 }
 
-/**
- * Adds a handler which checks that there are no compilation errors reported at the K2 frontend step
- */
 fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<IrBackendInput, BackendKinds.IrBackend>.commonIrHandlersForCodegenTest() {
+    useHandlers(
+        ::NoIrCompilationErrorsHandler,
+    )
+}
+
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<IrBackendInput, BackendKinds.IrBackend>.commonLoweredIrHandlersForCodegenTest() {
     useHandlers(
         ::NoIrCompilationErrorsHandler,
     )

@@ -11,6 +11,15 @@ import org.jetbrains.kotlin.name.Name
 
 var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copyByDefault = false)
 
+/**
+ * Suppression names from source annotations attached to an element that cannot carry IR annotations itself.
+ *
+ * FIR attaches annotations to expressions, while not every corresponding IR element implements
+ * [org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer]. Retaining the names lets backend diagnostics honor
+ * expression-level `@Suppress` annotations.
+ */
+var IrElement.sourceSuppressedDiagnosticNames: Set<String>? by irAttribute(copyByDefault = true)
+
 var IrClass.capturedFields: Collection<IrField>? by irAttribute(copyByDefault = false)
 
 /**

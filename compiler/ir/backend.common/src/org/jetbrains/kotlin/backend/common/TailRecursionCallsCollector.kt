@@ -18,17 +18,25 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isClassWithFqName
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
-data class TailCalls(val ir: Set<IrCall>, val fromManyFunctions: Boolean)
+data class TailCalls(
+    val ir: Set<IrCall>,
+    val fromManyFunctions: Boolean,
+    val nonTailCalls: Set<IrCall> = emptySet(),
+    val callsInTry: Set<IrCall> = emptySet(),
+)
 
 /**
  * Collects calls to be treated as tail recursion.
@@ -42,37 +50,75 @@ data class TailCalls(val ir: Set<IrCall>, val fromManyFunctions: Boolean)
 fun collectTailRecursionCalls(
     irFunction: IrFunction,
     followFunctionReference: (IrFunctionReference) -> Boolean,
-    followRichFunctionReference: (IrRichFunctionReference) -> Boolean
+    followRichFunctionReference: (IrRichFunctionReference) -> Boolean,
+    collectNonTailCallsInNestedFunctions: Boolean = false,
 ): TailCalls {
     if ((irFunction as? IrSimpleFunction)?.isTailrec != true) {
         return TailCalls(emptySet(), false)
     }
 
-    class VisitorState(val isTailExpression: Boolean, val inOtherFunction: Boolean)
+    class VisitorState(
+        val isTailExpression: Boolean,
+        val inOtherFunction: Boolean,
+        val inTryExpression: Boolean = false,
+    )
 
     val isUnitReturn = irFunction.returnType.isUnit()
     val result = mutableSetOf<IrCall>()
+    val nonTailCalls = mutableSetOf<IrCall>()
+    val callsInTry = mutableSetOf<IrCall>()
     var someCallsAreInOtherFunctions = false
     val visitor = object : IrVisitor<Unit, VisitorState>() {
         override fun visitElement(element: IrElement, data: VisitorState) {
-            element.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
+            element.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction, data.inTryExpression))
         }
 
         override fun visitFunction(declaration: IrFunction, data: VisitorState) {
-            // Ignore local functions.
+            if (collectNonTailCallsInNestedFunctions) {
+                // Tailrec lowering cannot transform calls from nested declarations or default values,
+                // but the checker must diagnose them.
+                declaration.parameters.forEach { parameter ->
+                    parameter.defaultValue?.accept(
+                        this,
+                        VisitorState(isTailExpression = false, inOtherFunction = true, data.inTryExpression),
+                    )
+                }
+                declaration.body?.accept(
+                    this,
+                    VisitorState(isTailExpression = false, inOtherFunction = true, data.inTryExpression),
+                )
+            }
         }
 
         override fun visitClass(declaration: IrClass, data: VisitorState) {
-            // Ignore local classes.
+            if (collectNonTailCallsInNestedFunctions) {
+                // Tailrec lowering cannot transform calls from local classes, but the checker must diagnose them.
+                declaration.acceptChildren(
+                    this,
+                    VisitorState(isTailExpression = false, inOtherFunction = true, data.inTryExpression),
+                )
+            }
         }
 
         override fun visitTry(aTry: IrTry, data: VisitorState) {
             // We do not support tail calls in try-catch-finally, for simplicity of the mental model
-            // very few cases there would be real tail-calls, and it's often not so easy for the user to see why
+            // very few cases there would be real tail-calls, and it's often not so easy for the user to see why.
+            // Still visit the expression so that the checker can report the more specific diagnostic.
+            aTry.acceptChildren(
+                this,
+                VisitorState(isTailExpression = false, data.inOtherFunction, inTryExpression = true),
+            )
         }
 
         override fun visitReturn(expression: IrReturn, data: VisitorState) {
-            expression.value.accept(this, VisitorState(expression.returnTargetSymbol == irFunction.symbol, data.inOtherFunction))
+            expression.value.accept(
+                this,
+                VisitorState(
+                    expression.returnTargetSymbol == irFunction.symbol,
+                    data.inOtherFunction,
+                    data.inTryExpression,
+                ),
+            )
         }
 
         override fun visitExpressionBody(body: IrExpressionBody, data: VisitorState) =
@@ -85,7 +131,10 @@ fun collectTailRecursionCalls(
             visitStatementContainer(expression, data)
 
         private fun visitStatementContainer(expression: IrStatementContainer, data: VisitorState) {
+            var canContinue = true
             expression.statements.forEachIndexed { index, irStatement ->
+                if (!canContinue) return@forEachIndexed
+
                 val isTailStatement = if (index == expression.statements.lastIndex) {
                     // The last statement defines the result of the container expression, so it has the same kind.
                     data.isTailExpression
@@ -95,8 +144,15 @@ fun collectTailRecursionCalls(
                         it is IrReturn && it.returnTargetSymbol == irFunction.symbol && it.value.isUnitRead()
                     }
                 }
-                irStatement.accept(this, VisitorState(isTailStatement, data.inOtherFunction))
+                irStatement.accept(this, VisitorState(isTailStatement, data.inOtherFunction, data.inTryExpression))
+                canContinue = irStatement.canCompleteNormally()
             }
+        }
+
+        private fun IrStatement.canCompleteNormally(): Boolean = when (this) {
+            is IrVariable -> initializer?.type?.isNothing() != true
+            is IrExpression -> !type.isNothing()
+            else -> true
         }
 
         private fun IrExpression.isUnitRead(): Boolean =
@@ -104,7 +160,7 @@ fun collectTailRecursionCalls(
 
         override fun visitWhen(expression: IrWhen, data: VisitorState) {
             expression.branches.forEach {
-                it.condition.accept(this, VisitorState(isTailExpression = false, data.inOtherFunction))
+                it.condition.accept(this, VisitorState(isTailExpression = false, data.inOtherFunction, data.inTryExpression))
                 it.result.accept(this, data)
             }
         }
@@ -112,21 +168,24 @@ fun collectTailRecursionCalls(
         override fun visitTypeOperator(expression: IrTypeOperatorCall, data: VisitorState) {
             val isTailExpression = data.isTailExpression &&
                     (expression.operator == IrTypeOperator.IMPLICIT_CAST || expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT)
-            expression.acceptChildren(this, VisitorState(isTailExpression, data.inOtherFunction))
+            expression.acceptChildren(this, VisitorState(isTailExpression, data.inOtherFunction, data.inTryExpression))
         }
 
         override fun visitCall(expression: IrCall, data: VisitorState) {
-            expression.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
+            expression.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction, data.inTryExpression))
 
             // TODO: the frontend generates diagnostics on calls that are not optimized. This may or may not
             //   match what the backend does here. It'd be great to validate that the two are in agreement.
-            if (!data.isTailExpression || expression.symbol != irFunction.symbol) {
+            if (expression.symbol != irFunction.symbol) {
                 return
             }
             // TODO: check type arguments
 
+            // Keep the diagnostic precedence in sync with FirTailrecFunctionChecker: calls with default arguments
+            // or another dispatch receiver are non-tail calls even when they occur inside a try expression.
             if (irFunction.overriddenSymbols.isNotEmpty() && expression.usesDefaultArguments()) {
                 // Overridden functions using default arguments at tail call are not included: KT-4285
+                nonTailCalls.add(expression)
                 return
             }
 
@@ -142,6 +201,16 @@ fun collectTailRecursionCalls(
                 //   }
                 // TODO: KT-15341 - if the tailrec function is neither `override` nor `open`, this is fine actually?
                 //   Probably requires editing the frontend too.
+                nonTailCalls.add(expression)
+                return
+            }
+
+            if (data.inTryExpression) {
+                callsInTry.add(expression)
+                return
+            }
+            if (!data.isTailExpression) {
+                nonTailCalls.add(expression)
                 return
             }
 
@@ -152,30 +221,41 @@ fun collectTailRecursionCalls(
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: VisitorState) {
-            expression.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
+            expression.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction, data.inTryExpression))
             // This should match inline lambdas:
             //   tailrec fun foo() {
             //     run { return foo() } // non-local return from `foo`, so this *is* a tail call
             //   }
             // Whether crossinline lambdas are matched is unimportant, as they can't contain any returns
             // from `foo` anyway.
-            if (followFunctionReference(expression)) {
+            if (followFunctionReference(expression) || collectNonTailCallsInNestedFunctions) {
                 // If control reaches end of lambda, it will *not* end the current function by default,
                 // so the lambda's body itself is not a tail statement.
-                expression.symbol.owner.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = true))
+                expression.symbol.owner.body?.accept(
+                    this,
+                    VisitorState(isTailExpression = false, inOtherFunction = true, data.inTryExpression),
+                )
             }
         }
 
         override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: VisitorState) {
-            expression.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
-            if (followRichFunctionReference(expression)) {
+            expression.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction, data.inTryExpression))
+            if (followRichFunctionReference(expression) || collectNonTailCallsInNestedFunctions) {
                 // If control reaches end of lambda, it will *not* end the current function by default,
                 // so the lambda's body itself is not a tail statement.
-                expression.invokeFunction.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = true))
+                expression.invokeFunction.body?.accept(
+                    this,
+                    VisitorState(isTailExpression = false, inOtherFunction = true, data.inTryExpression),
+                )
             }
         }
     }
 
+    irFunction.parameters.forEach { parameter ->
+        if (collectNonTailCallsInNestedFunctions) {
+            parameter.defaultValue?.accept(visitor, VisitorState(isTailExpression = false, inOtherFunction = true))
+        }
+    }
     irFunction.body?.accept(visitor, VisitorState(isTailExpression = true, inOtherFunction = false))
-    return TailCalls(result, someCallsAreInOtherFunctions)
+    return TailCalls(result, someCallsAreInOtherFunctions, nonTailCalls, callsInTry)
 }

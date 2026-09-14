@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrNoExpectSymbolsHandler
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
+import org.jetbrains.kotlin.test.backend.ir.LoweringCliJvmFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
 import org.jetbrains.kotlin.test.configuration.configureDumpHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.configureJvmBoxCodegenSettings
@@ -79,6 +81,9 @@ abstract class AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(val 
         irHandlersStep {
             useHandlers(::IrNoExpectSymbolsHandler)
         }
+
+        facadeStep(::LoweringCliJvmFacade)
+        loweredIrHandlersStep {}
 
         facadeStep(::BackendCliJvmFacade)
 

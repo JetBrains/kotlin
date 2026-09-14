@@ -64,7 +64,7 @@ class PhasedPipelineChecker(
                     TestPhase.FIR2IR
                 is BackendKind -> {
                     require(this is IrPreSerializationLoweringFacade)
-                    TestPhase.BACKEND
+                    TestPhase.LOWERINGS
                 }
                 is ArtifactKinds.KLib -> {
                     require(this is DeserializerFacade)
@@ -212,7 +212,7 @@ class PhasedPipelineChecker(
                     processFailure(exception.failedModule, exception.facade.toPhase(), exception)
                 is WrappedException.WrappedExceptionWithoutModule -> nonSuppressibleFailures
                 is WrappedException.FromHandler ->
-                    processFailure(exception.failedModule, exception.handler.toPhase(), exception)
+                    processFailure(exception.failedModule, exception.phase ?: exception.handler.toPhase(), exception)
                 is WrappedException.FromGroupingFacade,
                 is WrappedException.FromGroupingHandler ->
                     processFailure(module = null, TestPhase.BACKEND, exception)

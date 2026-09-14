@@ -1,5 +1,8 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters
+// LATEST_LV_DIFFERENCE
+// ^^^ AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest does not invoke Fir2IR and IR Lowerings
+//     so cannot emit IR diagnostics
 val t = context(a: () -> Unit) <!NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION!>inline<!> fun () { runNotInlined (a) }
 fun runNotInlined(a: () -> Unit){}
 

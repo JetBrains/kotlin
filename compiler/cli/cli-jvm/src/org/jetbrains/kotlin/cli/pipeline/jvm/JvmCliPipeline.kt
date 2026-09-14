@@ -31,6 +31,7 @@ class JvmCliPipeline(override val defaultPerformanceManager: PerformanceManager)
                 FrontendFilesForPluginsGenerationPipelinePhase() then
                 JvmSerializeCommonMetadataPipelinePhase then
                 JvmFir2IrPipelinePhase then
+                JvmLoweringsPipelinePhase then
                 JvmBackendPipelinePhase then
                 JvmWriteOutputsPhase
 
