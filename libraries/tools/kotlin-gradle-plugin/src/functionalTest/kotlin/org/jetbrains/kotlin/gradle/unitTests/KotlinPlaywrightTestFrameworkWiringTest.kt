@@ -292,9 +292,9 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             )
 
             assertEquals(
-                installTask.nodeJsVersion.get(),
-                NodeJsVersion(wasmNodeEnv.version.get()),
-                "Expected wasm node version for playwright browsers installer"
+                installTask.nodeExecutable.get(),
+                wasmNodeEnv.executable.get(),
+                "Expected wasm node executable for playwright browsers installer"
             )
 
             installTask.assertDependsOn(project.tasks.getByName("kotlinWasmToolingSetup"))
