@@ -72,6 +72,12 @@ public class OutOfContentRootLazyDeclarationResolveForTypeAnnotationsTestGenerat
     }
 
     @Test
+    @TestMetadata("fullValueClassParameterTypeCollisionAndAnnotations.kt")
+    public void testFullValueClassParameterTypeCollisionAndAnnotations() {
+      run("fullValueClassParameterTypeCollisionAndAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClassAsAnnotationArgument.kt")
     public void testNestedClassAsAnnotationArgument() {
       run("nestedClassAsAnnotationArgument.kt");

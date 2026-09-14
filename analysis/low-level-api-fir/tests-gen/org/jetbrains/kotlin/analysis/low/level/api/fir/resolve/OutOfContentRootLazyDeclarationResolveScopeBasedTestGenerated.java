@@ -88,6 +88,12 @@ public class OutOfContentRootLazyDeclarationResolveScopeBasedTestGenerated exten
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("intersectionOverride.kt")
   public void testIntersectionOverride() {
     run("intersectionOverride.kt");

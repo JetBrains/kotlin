@@ -1,0 +1,31 @@
+BODY_RESOLVE:
+TARGET: public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSyntheticHashCode.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/String|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/String| = R|<local>/y|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/String|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassSyntheticHashCode.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/String|): R|pack/Point| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val y: R|kotlin/String| = R|<local>/y|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/String|
+
+    }

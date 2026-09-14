@@ -1,0 +1,36 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] fullValueClass.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] x: Int, [ResolvedTo(RAW_FIR)] y: Int): R|foo/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] get(): Int
+
+        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] value: Int): R|foo/Point| {
+            LAZY_this<R|foo/Point|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val sum: Int
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun scaled([ResolvedTo(RAW_FIR)] factor: Int): Point { LAZY_BLOCK }
+
+    }

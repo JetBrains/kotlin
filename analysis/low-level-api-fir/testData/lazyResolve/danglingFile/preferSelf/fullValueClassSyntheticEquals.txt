@@ -1,0 +1,72 @@
+BODY_RESOLVE:
+TARGET: public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(RAW_FIR)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassSyntheticEquals.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? value [ResolvedTo(RAW_FIR)] class Point : InterfaceWithParameter<Point> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TopLevel.Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TopLevel.Point.y] y: Int): R|one/TopLevel.Point| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithParameter<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|one/InterfaceWithParameter<one/TopLevel.Point>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TopLevel.Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/TopLevel.Point.y] y: R|kotlin/Int|): R|one/TopLevel.Point| {
+                LAZY_super<<implicit>>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithParameter<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fake.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|one/InterfaceWithParameter<one/TopLevel.Point>| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/TopLevel.Point.x] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/TopLevel.Point.y] y: R|kotlin/Int|): R|one/TopLevel.Point| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface InterfaceWithParameter<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    }

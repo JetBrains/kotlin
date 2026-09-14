@@ -1,0 +1,66 @@
+@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyValueClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyValueClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
+  context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyValueClass.MyValueClass
+  anchor -> [FirConstructorSymbol one/two/MyValueClass.MyValueClass]
+
+@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyValueClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>
+  context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyValueClass.MyValueClass
+  anchor -> [FirConstructorSymbol one/two/MyValueClass.MyValueClass]
+
+@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int
+  context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyValueClass.MyValueClass
+  anchor -> [FirConstructorSymbol one/two/MyValueClass.MyValueClass]
+
+FILE: [ResolvedTo(IMPORTS)] fullValueClassParameterTypeCollisionAndAnnotationsScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassParameterTypeCollisionAndAnnotationsScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-fullValueClassParameterTypeCollisionAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-fullValueClassParameterTypeCollisionAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? value [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol one.two.<script-fullValueClassParameterTypeCollisionAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] class MyValueClass : R|kotlin/Any| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=one/two/MyValueClass.prop] prop: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyValueClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyValueClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(TYPES)] [CorrespondingProperty=one/two/MyValueClass.second] second: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyValueClass.MyClass<kotlin/Int>|): R|one/two/MyValueClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: @R|one/two/Anno|[Unresolved](LAZY_EXPRESSION) MyClass<R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyValueClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>|> = R|<local>/prop|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyValueClass] get(): @R|one/two/Anno|[Unresolved](LAZY_EXPRESSION) MyClass<R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyValueClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>|>
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: @R|one/two/Anno|[Unresolved](LAZY_EXPRESSION) MyClass<R|kotlin/Int|> = R|<local>/second|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyValueClass] get(): @R|one/two/Anno|[Unresolved](LAZY_EXPRESSION) MyClass<R|kotlin/Int|>
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-fullValueClassParameterTypeCollisionAndAnnotationsScript.kts>] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyValueClass.MyClass<B>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-fullValueClassParameterTypeCollisionAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|one/two/MyValueClass.Companion| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            }
+
+        }

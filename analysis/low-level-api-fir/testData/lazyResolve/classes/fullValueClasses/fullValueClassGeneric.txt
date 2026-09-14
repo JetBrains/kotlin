@@ -1,0 +1,209 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassGeneric.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.second] second: T): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.second] second: T): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Pair<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.second] second: T): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final? value [ResolvedTo(COMPANION_GENERATION)] class Pair<[ResolvedTo(COMPANION_GENERATION)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(COMPANION_GENERATION)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.second] second: T): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final? value [ResolvedTo(SUPER_TYPES)] class Pair<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.second] second: T): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final? value [ResolvedTo(TYPES)] class Pair<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Pair.second] second: T): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class Pair<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Pair] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.second] second: R|T|): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class Pair<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Pair] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.second] second: R|T|): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class Pair<[ResolvedTo(CONTRACTS)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Pair] constructor<[ResolvedTo(CONTRACTS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.second] second: R|T|): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class Pair<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Pair] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.second] second: R|T|): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class Pair<[ResolvedTo(CONSTANT_EVALUATION)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Pair] constructor<[ResolvedTo(CONSTANT_EVALUATION)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.second] second: R|T|): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class Pair<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Pair] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Pair.second] second: R|T|): R|pack/Pair<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): T
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassGeneric.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class Pair<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Pair.first] first: R|T|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Pair.second] second: R|T|): R|pack/Pair<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|T| = R|<local>/first|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] get(): R|T|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|T| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] get(): R|T|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassGeneric.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class Pair<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Pair.first] first: R|T|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Pair.second] second: R|T|): R|pack/Pair<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|T| = R|<local>/first|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] get(): R|T|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|T| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] get(): R|T|
+
+    }

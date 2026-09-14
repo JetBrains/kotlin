@@ -1,0 +1,18 @@
+BODY_RESOLVE:
+TARGET: public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] object Empty : R|library/Result| {
+    public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
+
+    public open [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val code: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Empty] get(): R|kotlin/Int|
+
+}
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        Q|library/Empty|
+    }
