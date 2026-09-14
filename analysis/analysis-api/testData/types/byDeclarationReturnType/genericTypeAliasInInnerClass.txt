@@ -7,6 +7,14 @@ KaUsualClassType:
       KaResolvedClassTypeQualifier:
         name: A
         symbol: KaNamedClassSymbol(A)
+        typeArguments: []
+      KaResolvedClassTypeQualifier:
+        name: B
+        symbol: KaNamedClassSymbol(A.B)
+        typeArguments: []
+      KaResolvedClassTypeQualifier:
+        name: TA
+        symbol: KaTypeAliasSymbol(A.B.TA)
         typeArguments: [
           KaUsualClassType:
             abbreviation: null
@@ -24,17 +32,25 @@ KaUsualClassType:
             isNullable: false
             hasFlexibleNullability: false
         ]
-      KaResolvedClassTypeQualifier:
-        name: B
-        symbol: KaNamedClassSymbol(A.B)
-        typeArguments: []
-      KaResolvedClassTypeQualifier:
-        name: TA
-        symbol: KaTypeAliasSymbol(A.B.TA)
-        typeArguments: []
     ]
     symbol: KaTypeAliasSymbol(A.B.TA)
-    typeArguments: []
+    typeArguments: [
+      KaUsualClassType:
+        abbreviation: null
+        annotations: []
+        classId: kotlin/Int
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Int
+            symbol: KaNamedClassSymbol(kotlin/Int)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
+    ]
     isMarkedNullable: true
     isNullable: true
     hasFlexibleNullability: false
@@ -85,4 +101,4 @@ KaUsualClassType:
   hasFlexibleNullability: false
 
 Rendered type:
-A<kotlin.Int>.B.TA?
+A.B.TA<kotlin.Int>?
