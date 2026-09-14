@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.*
-import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.backend.ir.AbstractJvmIrBackendFacade
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -92,7 +92,7 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val IGNORE_ERRORS by directive(
         description = """
-            If this directive is enabled then ${JvmIrBackendFacade::class} won't produce any binaries for test
+            If this directive is enabled then ${AbstractJvmIrBackendFacade::class} won't produce any binaries for test
               if there are errors in it
         """.trimIndent()
     )
