@@ -225,6 +225,26 @@ val FirPropertySymbol.hasBackingField: Boolean
         return fir.hasBackingField
     }
 
+/**
+ * Some properties have a backing field only as an implementation detail. For these properties,
+ * annotations cannot be added which target the backing field. Use this extension to determine
+ * if a property's backing field can be annotated.
+ */
+val FirProperty.hasAnnotatableBackingField: Boolean
+    get() = hasBackingField && !(isVal && isLateInit)
+
+/**
+ * Some properties have a backing field only as an implementation detail. For these properties,
+ * annotations cannot be added which target the backing field. Use this extension to determine
+ * if a property's backing field can be annotated.
+ */
+val FirPropertySymbol.hasAnnotatableBackingField: Boolean
+    get() {
+        // Phase must be consistent with "hasBackingField" extension.
+        lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        return fir.hasAnnotatableBackingField
+    }
+
 fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstraint> {
     return when (this) {
         is FirRegularClass -> danglingTypeConstraints
