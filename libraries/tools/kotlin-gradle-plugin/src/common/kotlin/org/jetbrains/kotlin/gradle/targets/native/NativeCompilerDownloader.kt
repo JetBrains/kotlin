@@ -61,7 +61,7 @@ class NativeCompilerDownloader(
 
         internal fun getCompilerDirectory(
             project: Project,
-            konanDataDirProperty: Provider<File?>
+            konanDataDirProperty: Provider<File>
         ): File {
             return DependencyDirectories
                 .getLocalKonanDir(konanDataDirProperty.orNull?.absolutePath)
