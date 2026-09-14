@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:OptIn(KtImplementationDetail::class)
@@ -7,12 +7,9 @@
 package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.stubs.StubTreeLoader
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.stubs.CompiledStubsTestEngine.compute
-import org.jetbrains.kotlin.analysis.stubs.CompiledStubsTestEngine.validate
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
@@ -22,6 +19,7 @@ import org.jetbrains.kotlin.test.directives.model.suppressIf
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 
 object CompiledStubsTestEngine : StubsTestEngine() {
     override val additionalDirectives: List<DirectivesContainer>

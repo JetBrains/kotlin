@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeParameter
 import com.intellij.psi.impl.compiled.ClsElementImpl
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment

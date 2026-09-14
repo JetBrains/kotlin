@@ -29,12 +29,13 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.findSyntheticJavaPropertyAccessor
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalClass
@@ -86,6 +87,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 
 internal class KaFirJavaInteroperabilityComponent(
     override val analysisSessionProvider: () -> KaFirSession,

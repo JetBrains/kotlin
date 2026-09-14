@@ -7,7 +7,6 @@
 package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.validateTree
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.junit.jupiter.api.Test
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
