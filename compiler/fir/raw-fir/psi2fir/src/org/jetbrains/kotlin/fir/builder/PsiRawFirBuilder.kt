@@ -2359,7 +2359,10 @@ open class PsiRawFirBuilder(
                     firValueParameters.count { it.isCopy } == 1 -> {
                         val copyParameter = firValueParameters.single { it.isCopy }
                         buildPropertyAccessExpression {
-                            calleeReference = buildPropertyFromParameterResolvedNamedReference { resolvedSymbol = copyParameter.symbol }
+                            calleeReference = buildPropertyFromParameterResolvedNamedReference {
+                                name = copyParameter.name
+                                resolvedSymbol = copyParameter.symbol
+                            }
                         } to copyParameter.returnTypeRef
                     }
                     else -> null to null
@@ -2539,7 +2542,7 @@ open class PsiRawFirBuilder(
                             }
                         }.build()
 
-                        if (destructuringVariables.isNotEmpty()) {
+                        val afterDestructuring = if (destructuringVariables.isNotEmpty()) {
                             // Destructured variables must be in a separate block so that they can be shadowed.
                             buildBlock {
                                 source = bodyBlock.source?.realElement()
@@ -2549,6 +2552,25 @@ open class PsiRawFirBuilder(
                         } else {
                             bodyBlock
                         }
+
+                        val copyParameter = valueParameters.firstOrNull { it.isCopy }
+                        val afterDestructuringAndCopy = if (copyParameter != null) {
+                            buildBlock {
+                                source = bodyBlock.source?.realElement()
+                                statements.add(afterDestructuring)
+                                val returnCopy = buildPropertyAccessExpression {
+                                    calleeReference = buildPropertyFromParameterResolvedNamedReference {
+                                        name = copyParameter.name
+                                        resolvedSymbol = copyParameter.symbol
+                                    }
+                                }
+                                statements.add(returnCopy)
+                            }
+                        } else {
+                            afterDestructuring
+                        }
+
+                        afterDestructuringAndCopy
                     }
                 }
                 context.firFunctionTargets.removeLast()

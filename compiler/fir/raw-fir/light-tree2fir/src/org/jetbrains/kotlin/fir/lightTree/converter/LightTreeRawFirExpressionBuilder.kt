@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.buildErrorNamedReferenceWithNoName
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
+import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
@@ -264,7 +265,7 @@ class LightTreeRawFirExpressionBuilder(
                         }
                     }.build()
 
-                    if (destructuringStatements.isNotEmpty()) {
+                    val afterDestructuring = if (destructuringStatements.isNotEmpty()) {
                         // Destructured variables must be in a separate block so that they can be shadowed.
                         buildBlock {
                             source = bodyBlock.source?.realElement()
@@ -274,6 +275,25 @@ class LightTreeRawFirExpressionBuilder(
                     } else {
                         bodyBlock
                     }
+
+                    val copyParameter = valueParameters.firstOrNull { it.isCopy }
+                    val afterDestructuringAndCopy = if (copyParameter != null) {
+                        buildBlock {
+                            source = bodyBlock.source?.realElement()
+                            statements.add(afterDestructuring)
+                            val returnCopy = buildPropertyAccessExpression {
+                                calleeReference = buildPropertyFromParameterResolvedNamedReference {
+                                    name = copyParameter.name
+                                    resolvedSymbol = copyParameter.symbol
+                                }
+                            }
+                            statements.add(returnCopy)
+                        }
+                    } else {
+                        afterDestructuring
+                    }
+
+                    afterDestructuringAndCopy
                 } else {
                     buildSingleExpressionBlock(buildErrorExpression(expressionSource, ConeSyntaxDiagnostic("Lambda has no body")))
                 }

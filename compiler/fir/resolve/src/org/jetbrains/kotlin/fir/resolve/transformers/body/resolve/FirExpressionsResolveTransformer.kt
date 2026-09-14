@@ -848,7 +848,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
             }
 
-
             return result.addSmartcastIfNeeded(data)
         }
 

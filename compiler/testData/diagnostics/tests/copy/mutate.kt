@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// FIR_DUMP
 
 fun <A> A.mutate(block: (A) -> A): A = block(this)
 
@@ -14,11 +15,14 @@ copy fun Person.g() { }
 fun test(p: Person) {
     p.mutate(Person::f)
     p.mutate(Person::g)
-    // p.mutate { p -> p }
-    // p.mutate { copy p -> }
-    // p.mutate { copy p ->
-    //   p.name = "you"
-    // }
+    p.mutate { p -> p }
+    p.mutate { copy p -> }
+    p.mutate { copy p ->
+      p.name = "you"
+    }
+    p.mutate { p ->
+      <!RETURN_TYPE_MISMATCH!><!COPY_PATH_WRONG_STEP!>p<!>.name = "you"<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
