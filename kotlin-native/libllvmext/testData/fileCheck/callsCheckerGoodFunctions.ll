@@ -7,6 +7,7 @@
 
 declare double @sin(double)
 declare double @sinBad(double)
+declare void @Kotlin_gc_frameEnter()
 
 ; CHECK: define void @f(double %0) {
 define void @f(double %0) {
@@ -19,6 +20,9 @@ define void @f(double %0) {
 ; llvm.sin.* is a good intrinsics family, call uninstrumented
 ; CHECK-NEXT: call double @llvm.sin.f64(double %0)
   call double @llvm.sin.f64(double %0)
+; Kotlin_gc_* markers are lowered by kotlin-build-shadow-stack, call uninstrumented
+; CHECK-NEXT: call void @Kotlin_gc_frameEnter()
+  call void @Kotlin_gc_frameEnter()
 ; CHECK-NEXT: ret void
   ret void
 ; CHECK-NEXT: }{{$}}
