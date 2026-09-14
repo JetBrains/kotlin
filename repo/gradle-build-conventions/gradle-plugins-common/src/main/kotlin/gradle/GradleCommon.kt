@@ -947,12 +947,6 @@ fun Project.createGradlePluginVariants(
     publishShadowedJar: Boolean,
 ) {
     listOf(
-        GradlePluginVariant.GRADLE_81,
-        GradlePluginVariant.GRADLE_82,
-        GradlePluginVariant.GRADLE_85,
-        GradlePluginVariant.GRADLE_86,
-        GradlePluginVariant.GRADLE_88,
-        GradlePluginVariant.GRADLE_811,
         GradlePluginVariant.GRADLE_813,
         GradlePluginVariant.GRADLE_96,
     ).forEach { variant ->
