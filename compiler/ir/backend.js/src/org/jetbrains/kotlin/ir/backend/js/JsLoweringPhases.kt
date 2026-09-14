@@ -162,7 +162,6 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::ObjectDeclarationLowering,
     ::JsStaticInitializersDeclarationLowering,
     ::JsStaticInitializersUsageLowering,
-    ::JsStaticInitializersGetFieldUsageLowering,
     ::JsInitializersLowering,
     ::JsInitializersCleanupLowering,
     ::createKotlinNothingValueExceptionPhase,
