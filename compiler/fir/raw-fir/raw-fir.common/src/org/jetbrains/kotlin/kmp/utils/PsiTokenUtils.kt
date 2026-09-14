@@ -16,18 +16,18 @@ import org.jetbrains.kotlin.lexer.KtToken
  * If the element type is not Kotlin-based, the result is [org.jetbrains.kotlin.lexer.KtTokens.INVALID_Id].
  */
 fun IElementType.kmpId(): Int =
-    if (this is KtToken) tokenId else IdStorage.map[this] ?: org.jetbrains.kotlin.lexer.KtTokens.INVALID_Id
+    if (this is KtToken) tokenId else IdStorage.map[index.toInt()]
 
 private object IdStorage {
-    val map = hashMapOf<IElementType, Int>()
+    val map = IntArray(Short.MAX_VALUE.toInt())
 
     init {
         var id = org.jetbrains.kotlin.kmp.parser.KtNodeTypes.FILE_ID
         KtNodeTypes::class.java.declaredFields.forEach {
             if (it.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
-            map[it.get(null) as IElementType] = id++
+            map[(it.get(null) as IElementType).index.toInt()] = id++
         }
-        map[org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT] = KtTokens.DOC_COMMENT_ID
-        map[org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE] = KtTokens.WHITE_SPACE_ID
+        map[org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT.index.toInt()] = KtTokens.DOC_COMMENT_ID
+        map[org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE.index.toInt()] = KtTokens.WHITE_SPACE_ID
     }
 }
