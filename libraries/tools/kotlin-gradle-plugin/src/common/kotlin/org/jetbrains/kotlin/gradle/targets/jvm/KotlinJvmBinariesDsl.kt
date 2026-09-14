@@ -27,7 +27,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.registerArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
@@ -230,7 +229,7 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
         runTask.classpath(runTask.project.calculateRunClasspath(jvmBinarySpec, jvmCompilation, compilationJarTask))
         runTask.mainModule.set(jvmBinarySpec.mainModule)
         runTask.mainClass.set(jvmBinarySpec.mainClass)
-        runTask.compatibilityWrapper().setJvmArgumentsConvention(jvmBinarySpec.applicationDefaultJvmArgs)
+        runTask.jvmArguments.convention(jvmBinarySpec.applicationDefaultJvmArgs)
 
         val javaPluginExtension = runTask.project.extensions.getByType(JavaPluginExtension::class.java)
         runTask.modularity.inferModulePath.convention(javaPluginExtension.modularity.inferModulePath)
