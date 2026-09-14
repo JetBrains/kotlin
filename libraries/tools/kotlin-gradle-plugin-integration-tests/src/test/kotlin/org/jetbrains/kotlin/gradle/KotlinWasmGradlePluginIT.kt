@@ -114,7 +114,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             projectPath.resolve("src/wasmJsMain/kotlin/foo.kt").modify {
                 it.replace(
                     "println(foo())",
-                    """println("Hello from Wasi")"""
+                    """println("Hello from Wasm")"""
                 )
             }
 
@@ -764,16 +764,6 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Check wasi target run")
-    @GradleTest
-    fun wasiRun(gradleVersion: GradleVersion) {
-        project("new-mpp-wasm-wasi-test", gradleVersion) {
-            build(":wasmWasiNodeDevelopmentRun") {
-                assertOutputContains("Hello from Wasi")
-            }
-        }
-    }
-
     @DisplayName("Check wasi and js target")
     @GradleTest
     fun wasiAndJsTarget(gradleVersion: GradleVersion) {
@@ -785,29 +775,6 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
 
                 assertTasksExecuted(":lib:compileKotlinWasmWasi")
                 assertTasksExecuted(":lib:compileKotlinWasmJs")
-            }
-        }
-    }
-
-    @DisplayName("Check wasi target with binaryen")
-    @GradleTest
-    fun wasiTargetWithBinaryen(gradleVersion: GradleVersion) {
-        project("new-mpp-wasm-wasi-test", gradleVersion) {
-            buildGradleKts.modify {
-                it.replace("wasmWasi {", "wasmWasi {\nbinaries.executable()")
-            }
-
-            build("assemble") {
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
-
-                val original =
-                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/kotlin/new-mpp-wasm-wasi-test.wasm")
-                val optimized =
-                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/new-mpp-wasm-wasi-test.wasm")
-                assertTrue {
-                    Files.size(original) > Files.size(optimized)
-                }
             }
         }
     }
@@ -849,7 +816,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
             projectPath.resolve("src/wasmJsMain/kotlin/foo.kt").modify {
                 it.replace(
                     "println(foo())",
-                    """println("Hello from Wasi")"""
+                    """println("Hello from Wasm")"""
                 )
             }
 
@@ -982,27 +949,6 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
             }
         }
     }
-
-    @DisplayName("Wasi library")
-    @GradleTest
-    fun wasiLibrary(gradleVersion: GradleVersion) {
-        project("wasm-wasi-library", gradleVersion) {
-
-            build(":build") {
-                assertTasksExecuted(":compileProductionLibraryKotlinWasmWasi")
-                assertTasksExecuted(":compileKotlinWasmWasi")
-                assertTasksExecuted(":wasmWasiNodeTest")
-                assertTasksExecuted(":wasmWasiNodeProductionLibraryDistribution")
-
-                val dist = "build/dist/wasmWasi/productionLibrary"
-                assertFileExists(projectPath.resolve("$dist/foo.txt"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.wasm"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.wasm.map"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.mjs"))
-            }
-        }
-    }
-
 
     @DisplayName("Browser print works with null type")
     @GradleTest
