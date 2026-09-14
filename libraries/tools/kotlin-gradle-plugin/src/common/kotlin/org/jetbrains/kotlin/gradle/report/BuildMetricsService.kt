@@ -12,6 +12,7 @@ import com.gradle.develocity.agent.gradle.adapters.enterprise.GradleEnterpriseEx
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -43,13 +44,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.BuildReportsService.Companion.getStartParameters
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import java.lang.management.ManagementFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -275,7 +276,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 } ?: log.debug("Http report is disabled")
                 it.parameters.projectDir.set(project.layout.projectDirectory)
                 //init gradle tags for build scan and http reports
-                it.parameters.buildConfigurationTags.value(setupTags(project))
+                it.parameters.buildConfigurationTags.value(setupTags(project.gradle))
             }.also {
                 subscribeForTaskEvents(project, it)
 
@@ -308,7 +309,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         ): BuildScanAdapter? {
             buildMetricServiceProvider.get().parameters.reportingSettings.orNull?.buildScanReportSettings ?: return null
 
-            val rootProject = if (project.isProjectIsolationEnabled) {
+            val rootProject = if (project.gradle.isProjectIsolationEnabled) {
                 project
             } else {
                 project.rootProject
@@ -321,7 +322,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             val buildScan = develocityAdapters?.buildScan
 
             when {
-                buildScan == null && project.isProjectIsolationEnabled ->
+                buildScan == null && project.gradle.isProjectIsolationEnabled ->
                     log.warn(
                         "Build report creation in the build scan format is not yet supported when the isolated projects feature is enabled." +
                                 " Follow https://youtrack.jetbrains.com/issue/KT-68847 for the updates." +
@@ -377,10 +378,9 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 }
             }
 
-        private fun setupTags(project: Project): ArrayList<StatTag> {
-            val gradle = project.gradle
+        private fun setupTags(gradle: Gradle): ArrayList<StatTag> {
             val additionalTags = ArrayList<StatTag>()
-            if (project.isConfigurationCacheEnabled) {
+            if (gradle.isConfigurationCacheEnabled) {
                 additionalTags.add(StatTag.CONFIGURATION_CACHE)
             }
             if (gradle.startParameter.isBuildCacheEnabled) {

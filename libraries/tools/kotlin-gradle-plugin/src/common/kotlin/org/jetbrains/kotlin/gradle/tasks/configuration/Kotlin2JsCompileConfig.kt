@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_MODULE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.WASM_TARGET
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.utils.moduleName
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 
@@ -33,7 +33,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
         val libraryFilterCachingService = LibraryFilterCachingService.registerIfAbsent(project)
 
         val incrementalModuleInfoProvider =
-            if (project.isProjectIsolationEnabled) {
+            if (project.gradle.isProjectIsolationEnabled) {
                 // Can't use if IP is enabled. As a temp workaround, disable the service.
                 // https://youtrack.jetbrains.com/issue/KT-80262/Update-JS-IC-implementation-to-support-Project-Isolation
                 null

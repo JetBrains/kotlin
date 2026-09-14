@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationRequested
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationRequested
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
@@ -129,9 +129,9 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             buildFinishBuildService: Provider<BuildFinishBuildService>?,
         ): Provider<out BuildFusService<out Parameters>> {
 
-            val isProjectIsolationEnabled = project.isProjectIsolationEnabled
-            val isConfigurationCacheRequested = project.isConfigurationCacheRequested
-            val isProjectIsolationRequested = project.isProjectIsolationRequested
+            val isProjectIsolationEnabled = project.gradle.isProjectIsolationEnabled
+            val isConfigurationCacheRequested = project.gradle.isConfigurationCacheRequested
+            val isProjectIsolationRequested = project.gradle.isProjectIsolationRequested
 
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")

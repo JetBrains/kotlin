@@ -19,7 +19,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.util.Optional
 import javax.inject.Inject
@@ -44,7 +44,7 @@ internal val AddBuildListenerForXcodeSetupAction = KotlinProjectSetupAction acti
     when {
         !useXcodeMessageStyle.get() -> {}
         dataflowApiSupported() -> project.objects.newInstance<XcodeBuildFlowManager>().subscribeForBuildResult()
-        !isConfigurationCacheEnabled -> gradle.addBuildListener(XcodeBuildErrorListener)
+        !gradle.isConfigurationCacheEnabled -> gradle.addBuildListener(XcodeBuildErrorListener)
     }
 }
 

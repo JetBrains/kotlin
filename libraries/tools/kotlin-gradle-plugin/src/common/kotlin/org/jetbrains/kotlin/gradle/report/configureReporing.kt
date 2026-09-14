@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_JSON_DIR
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
 
@@ -37,7 +37,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
             else -> BuildReportMode.VERBOSE
         }
 
-    val defaultReportDir = if (project.isProjectIsolationEnabled) {
+    val defaultReportDir = if (project.gradle.isProjectIsolationEnabled) {
         // TODO: it's a workaround for KT-52963, should be reworked – KT-55763
         project.rootDir.resolve("build")
     } else {

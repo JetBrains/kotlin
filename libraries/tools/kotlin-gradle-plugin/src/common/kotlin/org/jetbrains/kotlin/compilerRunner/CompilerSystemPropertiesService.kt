@@ -14,7 +14,7 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 
@@ -65,7 +65,7 @@ internal abstract class CompilerSystemPropertiesService : BuildService<CompilerS
             "${CompilerSystemPropertiesService::class.java.canonicalName}_${CompilerSystemPropertiesService::class.java.classLoader.hashCode()}",
             CompilerSystemPropertiesService::class.java
         ) { service ->
-            if (project.isConfigurationCacheEnabled) {
+            if (project.gradle.isConfigurationCacheEnabled) {
                 service.parameters.properties.set(
                     CompilerSystemProperties.values()
                         .filterNot { it.alwaysDirectAccess }
