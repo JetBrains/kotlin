@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
+import org.jetbrains.kotlin.ir.backend.js.isIdempotentInit
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.staticInitFunction
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -117,6 +118,9 @@ abstract class WebStaticInitializersUsageLowering(
             when (declaration) {
                 // Do not insert call to a static_init into static_init itself
                 is IrSimpleFunction if declaration == staticInitFunction -> continue
+                // Do not insert a call to static_init into its own idempotent initializer-running helper,
+                // for the same reason: it already runs strictly after the guard check and state flip.
+                is IrSimpleFunction if declaration.isIdempotentInit == true -> continue
                 // Do not insert a call to a static_init into an enum constructor, since it would be only accessible from static_init.
                 // Redundant re-entrance into static_init pollutes stepping.
                 is IrConstructor if (container.isEnumClass || container.isEnumEntry) -> continue

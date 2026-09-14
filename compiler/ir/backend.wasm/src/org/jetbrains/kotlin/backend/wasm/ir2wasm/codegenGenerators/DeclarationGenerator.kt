@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSuspendLambdaMergingLowering
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.isIdempotentInit
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.originalFqName
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -216,6 +217,10 @@ class DeclarationGenerator(
 
         if (declaration.symbol in backendContext.jsCalledFunctions) {
             function.functionAnnotations.add(WasmFunctionAnnotation.JsCalled)
+        }
+
+        if (declaration is IrSimpleFunction && declaration.isIdempotentInit == true) {
+            function.functionAnnotations.add(WasmFunctionAnnotation.Idempotent)
         }
 
         if (declaration is IrConstructor) {

@@ -104,14 +104,17 @@ abstract class PropertyLazyInitLowering(
 
         return initializationGenerator.createStaticInitFunction(
             name = Name.special("<init properties $fileName>"),
+            nameHelper = Name.special("<init properties $fileName helper>"),
             klass = null,
             origin = JsIrBuilder.SYNTHESIZED_DECLARATION,
             stateField = initializedField,
             initializers = statements,
         ).apply {
-            file.declarations.add(this)
-            parent = file
-        }
+            file.declarations.add(first)
+            file.declarations.add(second)
+            first.parent = file
+            second.parent = file
+        }.first
     }
 
     companion object {

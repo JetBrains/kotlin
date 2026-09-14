@@ -57,6 +57,10 @@ sealed class WasmFunctionAnnotation {
     data object JsCalled : WasmFunctionAnnotation() {
         override val sectionName = "binaryen.js.called"
     }
+
+    data object Idempotent : WasmFunctionAnnotation() {
+        override val sectionName = "binaryen.idempotent"
+    }
 }
 
 sealed class WasmFunction(

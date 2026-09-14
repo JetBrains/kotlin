@@ -454,6 +454,7 @@ enum class WasmOp(
     // ============================================================
     // Pseudo-instructions for code metadata annotations
     // These carry annotation data inline and are filtered out during emission
+    PSEUDO_ANNOTATION_IDEMPOTENT("<annotation-idempotent>", WASM_OP_PSEUDO_OPCODE),
     PSEUDO_ANNOTATION_BRANCH_HINT("<annotation-branch-hint>", WASM_OP_PSEUDO_OPCODE,
                                   // 0=unlikely, 1=likely
                                   CONST_U8),

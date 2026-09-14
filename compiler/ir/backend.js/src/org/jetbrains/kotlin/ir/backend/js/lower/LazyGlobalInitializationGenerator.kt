@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.isIdempotentInit
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.builders.*
@@ -34,8 +35,8 @@ abstract class LazyGlobalInitializationGenerator {
     protected abstract val backendContext: JsCommonBackendContext
 
     private object InitializationState {
-        const val UNINITIALIZED: Int = 1
-        const val INITIALIZED: Int = 0
+        const val UNINITIALIZED: Int = 0
+        const val INITIALIZED: Int = 1
         const val ERROR: Int = 2
     }
 
@@ -55,7 +56,8 @@ abstract class LazyGlobalInitializationGenerator {
         return listOf(
             state,
             irIfThen(
-                irNot(irGet(state)), // state == InitializationState.INITIALIZED
+                irEqeqeq(irGet(state), irInt(InitializationState.INITIALIZED)),
+//                irNot(irGet(state)), // state == InitializationState.INITIALIZED
                 irReturnUnit()
             ),
             irIfThen(
@@ -87,13 +89,14 @@ abstract class LazyGlobalInitializationGenerator {
 
     internal fun createStaticInitFunction(
         name: Name,
+        nameHelper: Name,
         klass: IrClass?,
         origin: IrDeclarationOrigin,
         stateField: IrField,
         initializers: List<IrStatement>,
         visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
         beforeAll: IrBlockBuilder.() -> Unit = {},
-    ): IrSimpleFunction {
+    ): Pair<IrSimpleFunction, IrSimpleFunction> {
         val initFunction = backendContext.irFactory.buildFun {
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
@@ -102,19 +105,35 @@ abstract class LazyGlobalInitializationGenerator {
             this.visibility = visibility
             returnType = backendContext.irBuiltIns.unitType
         }
+        val initFunctionHelper = backendContext.irFactory.buildFun {
+            startOffset = UNDEFINED_OFFSET
+            endOffset = UNDEFINED_OFFSET
+            this.origin = origin
+            this.name = nameHelper
+            this.visibility = visibility
+            returnType = backendContext.irBuiltIns.unitType
+        }
+        initFunctionHelper.apply {
+            isIdempotentInit = true
+            val builder = backendContext.createIrBuilder(symbol)
+            body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
+                with(builder) {
+                    statements += irSetField(null, stateField, irInt(InitializationState.INITIALIZED))
+                    statements += irComposite {
+                        beforeAll()
+                        for (initializer in initializers) {
+                            initializer.setDeclarationsParent(initFunctionHelper)
+                        }
+                        +initializers
+                    }
+                }
+            }
+        }
         return initFunction.apply {
             val builder = backendContext.createIrBuilder(symbol)
             body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
                 with(builder) {
                     statements += generateStaticInitializationStateChecks(irGetField(null, stateField), klass)
-                    statements += irSetField(null, stateField, irInt(InitializationState.INITIALIZED))
-                    val allInitializers = irComposite {
-                        beforeAll()
-                        for (initializer in initializers) {
-                            initializer.setDeclarationsParent(initFunction)
-                        }
-                        +initializers
-                    }
                     val catchParameter = scope.createTemporaryVariableDeclaration(
                         irType = catchParameterType,
                         nameHint = "reason",
@@ -130,10 +149,15 @@ abstract class LazyGlobalInitializationGenerator {
                             arguments[1] = undefinedOrNull()
                         }
                     }
-                    statements += irTry(context.irBuiltIns.unitType, allInitializers, listOf(irCatch(catchParameter, catchResult)), null)
+                    statements += irTry(
+                        context.irBuiltIns.unitType,
+                        irCall(initFunctionHelper.symbol),
+                        listOf(irCatch(catchParameter, catchResult)),
+                        null,
+                    )
                 }
             }
-        }
+        } to initFunctionHelper
     }
 }
 

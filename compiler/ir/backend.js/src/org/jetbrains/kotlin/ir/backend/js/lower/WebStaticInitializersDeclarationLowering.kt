@@ -191,8 +191,9 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             ).apply {
                 parent = container
             }
-            val initFunction = initializationGenerator.createStaticInitFunction(
+            val [initFunction, helper] = initializationGenerator.createStaticInitFunction(
                 name = Name.identifier(STATIC_INIT_FUNCTION_NAME),
+                nameHelper = Name.identifier(STATIC_INIT_FUNCTION_NAME + "_helper"),
                 klass = container,
                 origin = STATIC_CLASS_INITIALIZER,
                 stateField = stateField,
@@ -207,8 +208,10 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
                     }
                 }
             }.apply {
-                parent = container
+                first.parent = container
+                second.parent = container
             }
+            container.declarations.add(0, helper)
             stateField to initFunction
         }
 

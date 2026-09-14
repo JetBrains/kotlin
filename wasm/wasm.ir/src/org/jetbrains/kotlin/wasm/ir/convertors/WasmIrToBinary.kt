@@ -55,6 +55,7 @@ private enum class AnnotationKind(val sectionName: String) {
     BRANCH_HINT("metadata.code.branch_hint"),
     TRACE_INST("metadata.code.trace_inst"),
     JS_CALLED("binaryen.js.called"),
+    IDEMPOTENT("binaryen.idempotent"),
 }
 
 /**
@@ -284,7 +285,8 @@ class WasmIrToBinary(
                                 AnnotationKind.TRACE_INST -> {
                                     b.writeVarInt32(resolved.value)
                                 }
-                                AnnotationKind.JS_CALLED -> {}
+                                AnnotationKind.JS_CALLED,
+                                AnnotationKind.IDEMPOTENT -> {}
                             }
                         }
                     }
@@ -716,6 +718,7 @@ class WasmIrToBinary(
                 val annotations = currentFunctionAnnotations ?: mutableListOf<ResolvedAnnotation>().also { currentFunctionAnnotations = it }
                 val kind = when (annotation) {
                     WasmFunctionAnnotation.JsCalled -> AnnotationKind.JS_CALLED
+                    WasmFunctionAnnotation.Idempotent -> AnnotationKind.IDEMPOTENT
                 }
                 annotations.add(ResolvedAnnotation(kind, 0))
             }
