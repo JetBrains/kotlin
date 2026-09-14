@@ -8,6 +8,8 @@ plugins {
 description = "Common klib metadata reader and writer"
 
 dependencies {
+    compileOnly(intellijCore())
+
     compileOnly(project(":core:descriptors"))
 
     compileOnly(project(":compiler:config.jvm"))

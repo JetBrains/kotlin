@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.fir.session.KlibIcData
+import org.jetbrains.kotlin.library.metadata.KlibIcData
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
@@ -233,7 +233,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 resolvedLibraries, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
-                icData = incrementalDataProvider?.let(::KlibIcData),
+                icData = incrementalDataProvider?.toKlibIcData(),
             )
         } else {
             prepareJsSessions(
@@ -241,7 +241,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 resolvedLibraries, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
-                icData = incrementalDataProvider?.let(::KlibIcData),
+                icData = incrementalDataProvider?.toKlibIcData(),
             )
         }
 
@@ -250,5 +250,9 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         }
 
         return outputs
+    }
+
+    private fun IncrementalDataProvider.toKlibIcData(): KlibIcData {
+        return KlibIcData(compiledPackageParts.mapValues { [file, result] -> result.metadata })
     }
 }
