@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
 import org.jetbrains.kotlin.gradle.utils.isAllGradleProjectsEvaluated
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
-import org.jetbrains.kotlin.gradle.utils.projectPathCompat
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import kotlin.collections.forEach
@@ -101,7 +100,7 @@ private fun Configuration.filterOutNonResolvableDependenciesForStandardKmpResolu
     dependencies.addAllLater(project.provider {
         val directDependencies = consumableConfiguration.allDependencies.groupBy {
             when (it) {
-                is ProjectDependency -> "project_" + it.projectPathCompat
+                is ProjectDependency -> "project_" + it.path
                 is ModuleDependency -> "module_${it.group}:${it.name}"
                 else -> "unknown" // group all unknown deps, and don't filter them out
             }

@@ -6,26 +6,15 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 
 internal object ModuleIds {
-    suspend fun fromDependency(project: Project, dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
-        is ProjectDependency -> {
-            val dependencyProject = dependency.compatAccessor(project).dependencyProject()
-            idOfRootModuleSafe(dependencyProject)
-        }
-        else -> ModuleDependencyIdentifier(dependency.group, dependency.name)
-    }
-
     private suspend fun fromComponentId(
         thisProject: Project,
         componentIdentifier: ComponentIdentifier
