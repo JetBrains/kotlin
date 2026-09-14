@@ -17,7 +17,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
-import org.jetbrains.kotlin.gradle.plugin.statistics.ConfigurationMetricParameterFlowActionBuildFusService
 import org.jetbrains.kotlin.gradle.plugin.statistics.FlowActionBuildFusService
 import org.jetbrains.kotlin.gradle.plugin.statistics.MetricContainer
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
@@ -46,14 +45,6 @@ internal abstract class StatisticsBuildFlowManager @Inject constructor(
         }
     }
 
-    fun subscribeForBuildResult() {
-        flowScope.always(
-            BuildFinishFlowAction::class.java
-        ) { spec ->
-            spec.parameters.buildFailed.set(flowProviders.buildWorkResult.map { it.failure.isPresent })
-        }
-    }
-
     fun subscribeForBuildScan(buildScan: BuildScanAdapter) {
         flowScope.always(
             BuildScanFlowAction::class.java
@@ -74,23 +65,6 @@ internal class BuildScanFlowAction : FlowAction<BuildScanFlowAction.Parameters> 
 
     override fun execute(parameters: Parameters) {
         parameters.buildMetricService.orNull?.addBuildScanReport(parameters.buildScan.orNull)
-    }
-}
-
-internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Parameters> {
-    interface Parameters : FlowParameters {
-        @get:ServiceReference
-        val buildFusServiceProperty: Property<ConfigurationMetricParameterFlowActionBuildFusService>
-
-        @get:Input
-        val buildFailed: Property<Boolean>
-    }
-
-    override fun execute(parameters: Parameters) {
-        parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
-            parameters.buildFailed.get(),
-            parameters.buildFusServiceProperty.orNull?.parameters?.configurationMetrics?.orNull ?: emptyList()
-        )
     }
 }
 
