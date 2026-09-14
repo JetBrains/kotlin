@@ -3032,6 +3032,7 @@ public class org/jetbrains/kotlin/gradle/targets/js/ir/Executable : org/jetbrain
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/ExecutableWasm : org/jetbrains/kotlin/gradle/targets/js/ir/Executable, org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;)V
+	public final fun getComponentTask ()Lorg/gradle/api/tasks/TaskProvider;
 	public fun getMainOptimizedFile ()Lorg/gradle/api/provider/Provider;
 	public fun getMainWasmFile ()Lorg/gradle/api/provider/Provider;
 	public fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
@@ -5527,6 +5528,23 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/Binaryen
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenSetupTask$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/component/WasmComponentExec : org/gradle/api/DefaultTask {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/component/WasmComponentExec$Companion;
+	public static final field WASM_TOOLS_EXECUTABLE Ljava/lang/String;
+	public abstract fun getComponentFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getEmbedArguments ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getExecutable ()Lorg/gradle/api/provider/Property;
+	public abstract fun getInputFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getNewArguments ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getWitDirectory ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public final fun run ()V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/component/WasmComponentExec$Companion {
+	public final fun register (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
+	public static synthetic fun register$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/component/WasmComponentExec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
+import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentExec
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -330,6 +331,27 @@ class ExecutableWasm(
         wasmFileFromJsFile(mainFile)
     }
 
+    private val _componentTask: TaskProvider<WasmComponentExec>? =
+        if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
+            WasmComponentExec.register(compilation, componentTaskName()) {
+                val componentOutputDir = outputDirBase.map { it.dir(COMPONENT) }
+
+                inputFile.set(mainWasmFile)
+                componentFile.set(componentOutputDir.zip(mainWasmFile) { dir, file -> dir.file("${file.asFile.name}") })
+            }
+        } else {
+            null
+        }
+
+    /**
+     * Produces a Wasm component out of this binary with `wasm-tools`.
+     *
+     * Available only for the main compilation of the Wasm WASI target.
+     */
+    val componentTask: TaskProvider<WasmComponentExec>
+        get() = _componentTask
+            ?: throw IllegalStateException("Wasm component can be produced only for the main compilation of the Wasm WASI target")
+
     @InternalKotlinGradlePluginApi
     override val wasmBinaryConfigurationName: String
         get() = super.wasmBinaryConfigurationName
@@ -340,6 +362,9 @@ class ExecutableWasm(
 
     private fun optimizeTaskName(): String =
         "${linkTaskName}Optimize"
+
+    private fun componentTaskName(): String =
+        "${linkTaskName}Component"
 }
 
 open class Library(
@@ -424,3 +449,5 @@ class LibraryWasm(
 
 
 internal const val COMPILE_SYNC = "compileSync"
+
+internal const val COMPONENT = "component"
