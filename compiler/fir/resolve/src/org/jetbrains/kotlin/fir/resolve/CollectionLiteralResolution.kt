@@ -48,15 +48,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 context(context: ResolutionContext, outerCandidateContext: CollectionLiteralOuterCandidateContext)
 fun runCollectionLiteralResolution(
     atom: ConeCollectionLiteralAtom,
-    precalculatedBounds: CollectionLiteralBounds?,
+    precalculatedBounds: CollectionLiteralBounds,
 ) {
     val originalExpression = atom.expression
     val classForResolution = when (precalculatedBounds) {
         is CollectionLiteralBounds.SingleBound -> precalculatedBounds.bound
         is CollectionLiteralBounds.NonTvExpected -> precalculatedBounds.bound
-        // it means CL is here through regular resolve of postponed atoms with all input types known
-        null -> atom.expectedType?.getClassRepresentativeForCollectionLiteralResolution()
-        else -> null
+        is CollectionLiteralBounds.Ambiguity, is CollectionLiteralBounds.FallbackOnly -> null
     }
 
     val resolvedThroughRegularStrategies = tryAllCLResolutionStrategies {

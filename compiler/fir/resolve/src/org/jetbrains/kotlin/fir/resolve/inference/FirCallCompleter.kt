@@ -379,12 +379,20 @@ class FirCallCompleter(
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
 
         val postponedAtomAnalyzer = object : ConstraintSystemCompleter.PostponedAtomAnalyzer {
-            override fun analyze(
-                postponedResolvedAtom: ConePostponedResolvedAtom,
-                withPCLASession: Boolean,
-                precalculatedBoundsForCL: CollectionLiteralBounds?,
-            ) {
-                analyzer.analyze(candidate.system, postponedResolvedAtom, candidate, withPCLASession, precalculatedBoundsForCL)
+            override fun analyze(atom: ConeFunctionTypeRelatedPostponedResolvedAtom, withPCLASession: Boolean) {
+                analyzer.analyze(candidate.system, atom, candidate, withPCLASession)
+            }
+
+            override fun analyze(atom: ConeSimpleNameForContextSensitiveResolution) {
+                analyzer.analyze(atom, candidate)
+            }
+
+            override fun analyze(atom: ConeContextSensitiveAlternativeForQualifierAtom) {
+                analyzer.analyze(atom, candidate)
+            }
+
+            override fun analyze(bounds: CollectionLiteralBounds) {
+                analyzer.analyze(bounds, candidate)
             }
         }
         completer.complete(
