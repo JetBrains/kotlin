@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.commonizer.utils
 
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.util.Logger
+import org.jetbrains.kotlin.commonizer.cli.Logger
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 

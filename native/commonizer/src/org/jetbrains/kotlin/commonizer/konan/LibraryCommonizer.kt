@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.commonizer.konan
 
 import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.cli.Logger
 import org.jetbrains.kotlin.commonizer.cli.errorAndExitJvmProcess
 import org.jetbrains.kotlin.commonizer.repository.Repository
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.commonizer.utils.progress
-import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal class LibraryCommonizer internal constructor(

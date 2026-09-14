@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.metadata.*
 import org.jetbrains.kotlin.commonizer.CommonizerLogLevel
 import org.jetbrains.kotlin.commonizer.CompiledDependency
-import org.jetbrains.kotlin.commonizer.cli.CliLoggerAdapter
+import org.jetbrains.kotlin.commonizer.cli.CliLogger
 import org.jetbrains.kotlin.commonizer.konan.DefaultModulesProvider
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
 import org.jetbrains.kotlin.config.*
@@ -74,7 +74,7 @@ fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
 
     val stdlib = kotlinLoaderResult.librariesStdlibFirst.firstOrNull() ?: error("No stdlib found")
-    val dummyLogger = CliLoggerAdapter(CommonizerLogLevel.Quiet, 2)
+    val dummyLogger = CliLogger(CommonizerLogLevel.Quiet, 2)
     val stdlibModuleProvider = DefaultModulesProvider.forDependencies(listOf(NativeLibrary(stdlib)), dummyLogger)
 
     return NamedMetadata(stdlib.moduleName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))

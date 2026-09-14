@@ -42,7 +42,6 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
-import org.jetbrains.kotlin.util.Logger as KLogger
 
 /**
  * [LLLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.BINARIES][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.BINARIES].
@@ -177,25 +176,6 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
     }
 
     private val LOG = Logger.getInstance(LLBinaryOriginLibrarySymbolProviderFactory::class.java)
-
-    private object IntellijLogBasedLogger : KLogger {
-        override fun log(message: String) {
-            LOG.info(message)
-        }
-
-        override fun error(message: String) {
-            LOG.error(message)
-        }
-
-        override fun warning(message: String) {
-            LOG.warn(message)
-        }
-
-        @Deprecated(KLogger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(KLogger.FATAL_REPLACEMENT))
-        override fun fatal(message: String): Nothing {
-            throw IllegalStateException(message)
-        }
-    }
 }
 
 /**
