@@ -110,8 +110,6 @@ kotlin {
         watchosDeviceArm64()
         @Suppress("DEPRECATION", "DEPRECATION_ERROR") macosX64()
         @Suppress("DEPRECATION", "DEPRECATION_ERROR") iosX64()
-        @Suppress("DEPRECATION", "DEPRECATION_ERROR") watchosX64()
-        @Suppress("DEPRECATION", "DEPRECATION_ERROR") tvosX64()
         @Suppress("DEPRECATION") linuxArm32Hfp()
     }
 
