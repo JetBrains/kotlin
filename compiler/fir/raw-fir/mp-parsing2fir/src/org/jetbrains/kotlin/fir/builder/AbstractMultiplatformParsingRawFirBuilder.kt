@@ -62,31 +62,27 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
     override val LightNode?.receiverExpression: LightNode?
         get() {
             var candidate: LightNode? = null
-            var result: LightNode? = null
             this?.forEachChildren {
-                if (result != null) return@forEachChildren
                 when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> result = if (candidate?.tokenType != ERROR_ELEMENT) candidate else null
+                    DOT, SAFE_ACCESS -> return if (candidate?.tokenType != ERROR_ELEMENT) candidate else null
                     else -> candidate = it
                 }
             }
-            return result
+            return null
         }
 
     override val LightNode?.selectorExpression: LightNode?
         get() {
             var isSelector = false
-            var result: LightNode? = null
             this?.forEachChildren {
-                if (result != null) return@forEachChildren
                 when (it.tokenType) {
                     DOT, SAFE_ACCESS -> isSelector = true
                     else -> if (isSelector) {
-                        result = if (it.tokenType != ERROR_ELEMENT) it else null
+                        return if (it.tokenType != ERROR_ELEMENT) it else null
                     }
                 }
             }
-            return result
+            return null
         }
 
     override val LightNode?.indexExpressions: List<LightNode>?
