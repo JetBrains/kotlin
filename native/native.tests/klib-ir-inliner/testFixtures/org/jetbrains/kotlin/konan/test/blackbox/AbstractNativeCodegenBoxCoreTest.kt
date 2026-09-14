@@ -104,7 +104,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
         groupingStage {
             useConfigurators(::NativeSecondStageEnvironmentConfigurator)
 
-            facadeStep(NativeCompilerSecondStageFacade::Grouping.bind(currentCustomNativeCompilerSettings))
+            facadeStep(NativeCompilerSecondStageFacade::Grouping.bind(currentCustomNativeCompilerSettings, false))
             handlersStep(ArtifactKinds.Native, CompilationStage.SECOND) {
                 useHandlers(::NativeBoxRunnerGroupingStage, ::FileCheckHandler)
             }
