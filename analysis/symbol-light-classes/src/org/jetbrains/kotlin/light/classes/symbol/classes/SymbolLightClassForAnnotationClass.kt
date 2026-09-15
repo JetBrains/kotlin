@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.*
+import com.intellij.psi.CommonClassNames
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -18,11 +21,9 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
     constructor(
         useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
-        manager: PsiManager
     ) : super(
         useSiteModule = useSiteModule,
         classSymbol = classSymbol,
-        manager = manager,
     ) {
         require(classSymbol.classKind == KaClassKind.ANNOTATION_CLASS)
     }
@@ -35,12 +36,10 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
-        manager = manager,
     )
 
     override fun classKind(): KaClassKind = KaClassKind.ANNOTATION_CLASS
@@ -70,6 +69,5 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = symbolPointer,
         useSiteModule = useSiteModule,
-        manager = manager,
     )
 }

@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
@@ -23,23 +26,19 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
     constructor(
         useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
-        manager: PsiManager,
     ) : super(
         useSiteModule = useSiteModule,
         classSymbol = classSymbol,
-        manager = manager,
     )
 
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         symbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
-        manager = manager
     )
 
     protected val isLocal: Boolean get() = withClassSymbol { it.isLocal }

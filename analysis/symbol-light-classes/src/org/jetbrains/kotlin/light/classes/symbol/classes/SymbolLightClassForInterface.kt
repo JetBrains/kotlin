@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -23,11 +22,9 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     constructor(
         useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
-        manager: PsiManager
     ) : super(
         useSiteModule = useSiteModule,
         classSymbol = classSymbol,
-        manager = manager,
     ) {
         require(classSymbol.classKind == KaClassKind.INTERFACE)
     }
@@ -40,12 +37,10 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
-        manager = manager,
     )
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
@@ -64,7 +59,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean = true
 
     override fun copy(): SymbolLightClassForInterface =
-        SymbolLightClassForInterface(classOrObjectDeclaration, symbolPointer, useSiteModule, manager)
+        SymbolLightClassForInterface(classOrObjectDeclaration, symbolPointer, useSiteModule)
 
     private val _extendsList: PsiReferenceList by lazyPub {
         withClassSymbol { classSymbol ->

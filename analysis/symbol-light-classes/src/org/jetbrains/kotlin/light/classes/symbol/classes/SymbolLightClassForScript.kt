@@ -78,7 +78,7 @@ internal class SymbolLightClassForScript private constructor(
 
     override fun getOwnInnerClasses(): List<SymbolLightClassBase> = cachedValue {
         symbolPointer.withSymbol(useSiteModule) { scriptSymbol ->
-            createInnerClasses(scriptSymbol, manager, this@SymbolLightClassForScript, classOrObject = null)
+            createInnerClasses(scriptSymbol, this@SymbolLightClassForScript, classOrObject = null)
         }
     }
 

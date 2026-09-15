@@ -25,11 +25,9 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
     constructor(
         useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
-        manager: PsiManager,
     ) : super(
         useSiteModule = useSiteModule,
         classSymbol = classSymbol,
-        manager = manager,
     ) {
         val classKind = classSymbol.classKind
         require(classKind == KaClassKind.INTERFACE || classKind == KaClassKind.ANNOTATION_CLASS)
@@ -42,7 +40,6 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         classOrObjectDeclaration = classOrObject,
         classSymbolPointer = classOrObject.createSymbolPointer(useSiteModule),
         useSiteModule = useSiteModule,
-        manager = classOrObject.manager,
     ) {
         require(classOrObject is KtClass && (classOrObject.isInterface() || classOrObject.isAnnotation()))
     }
@@ -51,12 +48,10 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
-        manager = manager,
     )
 
     protected open fun computeModifierList(): PsiModifierList? = SymbolLightClassModifierList(
