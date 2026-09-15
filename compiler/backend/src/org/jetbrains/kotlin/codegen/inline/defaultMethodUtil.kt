@@ -31,16 +31,17 @@ private data class Condition(
     val mask: Int, val constant: Int,
     val maskInstruction: VarInsnNode,
     val jumpInstruction: JumpInsnNode,
-    val varInsNode: VarInsnNode?
+    val varInsNode: VarInsnNode?,
+    val varIndex: Int,
 ) {
     val expandNotDelete = mask and constant != 0
-    val varIndex = varInsNode?.`var` ?: 0
 }
 
 class ExtractedDefaultLambda(val type: Type, val capturedArgs: Array<Type>, val offset: Int, val needReification: Boolean)
 
 fun expandMaskConditionsAndUpdateVariableNodes(
     node: MethodNode,
+    varIndicesOfMaskableParameters: List<Int>,
     maskStartIndex: Int,
     masks: List<Int>,
     methodHandlerIndex: Int,
@@ -62,18 +63,24 @@ fun expandMaskConditionsAndUpdateVariableNodes(
         true
     }
 
+    val toDelete = linkedSetOf<AbstractInsnNode>()
+
     val conditions = maskProcessingHeader.filterIsInstance<VarInsnNode>().mapNotNull {
         if (isMaskIndex(it.`var`) &&
             it.next?.next?.opcode == Opcodes.IAND &&
             it.next.next.next?.opcode == Opcodes.IFEQ
         ) {
             val jumpInstruction = it.next?.next?.next as JumpInsnNode
+            val maskIndex = it.`var` - maskStartIndex
+            val maskConstant = getConstant(it.next)
+            val indexInMaskableParameters = maskConstant.countTrailingZeroBits() + maskIndex * 32
             Condition(
-                masks[it.`var` - maskStartIndex],
-                getConstant(it.next),
+                masks[maskIndex],
+                maskConstant,
                 it,
                 jumpInstruction,
-                jumpInstruction.label.previous as VarInsnNode
+                jumpInstruction.label.previous as? VarInsnNode,
+                varIndicesOfMaskableParameters[indexInMaskableParameters],
             )
         } else if (methodHandlerIndex == it.`var` &&
             it.next?.opcode == Opcodes.IFNULL &&
@@ -81,11 +88,12 @@ fun expandMaskConditionsAndUpdateVariableNodes(
         ) {
             //Always delete method handle for now
             //This logic should be updated when method handles would be supported
-            Condition(0, 0, it, it.next as JumpInsnNode, null)
+            val jumpInstruction = it.next as JumpInsnNode
+            InsnSequence(it, jumpInstruction.label).forEach { insn -> toDelete.add(insn) }
+            null
         } else null
     }.toList()
 
-    val toDelete = linkedSetOf<AbstractInsnNode>()
     val toInsert = arrayListOf<Pair<AbstractInsnNode, AbstractInsnNode>>()
 
     val extractable = conditions.filter { it.expandNotDelete && it.varIndex in validOffsets }
