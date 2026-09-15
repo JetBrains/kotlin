@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.library.metadata.impl
 
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.konan.K1KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -56,7 +57,7 @@ class KotlinResolvedModuleDescriptors(
 
 @K1Deprecation
 class KlibResolvedModuleDescriptorsFactoryImpl(
-        val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
+        val moduleDescriptorFactory: K1KlibMetadataModuleDescriptorFactoryImpl
 ) {
 
     /**

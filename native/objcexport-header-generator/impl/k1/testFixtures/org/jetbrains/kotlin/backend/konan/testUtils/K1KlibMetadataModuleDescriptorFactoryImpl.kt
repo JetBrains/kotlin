@@ -3,16 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.library.metadata.impl
+package org.jetbrains.kotlin.backend.konan.testUtils
 
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
-import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
@@ -34,15 +34,13 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-class KlibMetadataModuleDescriptorFactoryImpl(
-    override val createBuiltIns: (StorageManager) -> KotlinBuiltIns,
-    @OptIn(K1Deprecation::class)
-    override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
-    val fictitiousClassDescriptorFactories: List<ClassDescriptorFactory> = emptyList(),
-) : KlibMetadataModuleDescriptorFactory {
+@K1Deprecation
+class K1KlibMetadataModuleDescriptorFactoryImpl {
+    private val createBuiltIns: (StorageManager) -> KotlinBuiltIns = ::KonanBuiltIns
 
-    override fun createDescriptorOptionalBuiltIns(
+    private val flexibleTypeDeserializer: FlexibleTypeDeserializer = DynamicTypeDeserializer
+
+    private fun createDescriptorOptionalBuiltIns(
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
@@ -123,7 +121,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             moduleDescriptor, configuration, compositePackageFragmentAddend, lookupTracker)
     }
 
-    fun initializePackageFragmentProvider(
+    private fun initializePackageFragmentProvider(
         provider: PackageFragmentProviderImpl,
         @OptIn(K1Deprecation::class)
         fragmentsToInitialize: List<DeserializedPackageFragment>,
@@ -145,7 +143,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
 
         @OptIn(K1Deprecation::class)
         val enumEntriesDeserializationSupport = object : EnumEntriesDeserializationSupport {
-            override fun canSynthesizeEnumEntries(): Boolean = moduleDescriptor.platform.isJvm()
+            override fun canSynthesizeEnumEntries(): Boolean = false
         }
 
         @OptIn(K1Deprecation::class)
@@ -160,10 +158,10 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             ErrorReporter.DO_NOTHING,
             lookupTracker,
             flexibleTypeDeserializer,
-            fictitiousClassDescriptorFactories,
+            emptyList(),
             notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),
-            additionalClassPartsProvider = additionalClassPartsProvider,
+            additionalClassPartsProvider = AdditionalClassPartsProvider.None,
             extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
             samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
             enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,
@@ -181,6 +179,14 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             )
         } ?: provider
     }
+
+    fun createDescriptorAndNewBuiltIns(
+        library: KotlinLibrary,
+        languageVersionSettings: LanguageVersionSettings,
+        storageManager: StorageManager,
+    ): ModuleDescriptorImpl = createDescriptorOptionalBuiltIns(
+        library, languageVersionSettings, storageManager, null, LookupTracker.DO_NOTHING
+    )
 }
 
 
