@@ -1,5 +1,5 @@
 // LANGUAGE: -StrictEquals +StrictEqualsForStructuralClasses +FullValueClasses
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 value class A(val x: Int)
 value class B(val y: Int) {
@@ -9,9 +9,9 @@ interface C
 value class D(val t: Int) : C
 
 fun test(a: A, b: B, c: C, d: D, d2: D): Boolean {
-    if (<!EQUALITY_NOT_APPLICABLE!>a != b<!>) return true
-    if (<!EQUALITY_NOT_APPLICABLE!>a == c<!>) return false
-    if (<!EQUALITY_NOT_APPLICABLE!>c == a<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>a != b<!>) return true
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>a == c<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>c == a<!>) return false
     if (c != d) return false
     if (d == c) return true
     if (d2 != d) return false
@@ -22,7 +22,7 @@ fun testAfterSmartCast(a: A, d: D, nAny: Any?) {
     if (nAny == a) return
     if (a == nAny) return
     if (nAny is A && a == nAny) return
-    if (nAny is B && (<!EQUALITY_NOT_APPLICABLE_WARNING!>nAny == a<!> || <!EQUALITY_NOT_APPLICABLE_WARNING!>a == nAny<!>)) return
+    if (nAny is B && (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>nAny == a<!> || <!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>a == nAny<!>)) return
     if (d == nAny) return
     if (nAny is C && d != nAny) return
 }

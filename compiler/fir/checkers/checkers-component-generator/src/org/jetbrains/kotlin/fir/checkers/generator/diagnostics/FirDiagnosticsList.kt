@@ -2132,6 +2132,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("leftType")
             parameter<ConeKotlinType>("rightType")
         }
+        val INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON by warning<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
         val FORBIDDEN_IDENTITY_EQUALS by error<KtElement> {
             parameter<ConeKotlinType>("leftType")
             parameter<ConeKotlinType>("rightType")

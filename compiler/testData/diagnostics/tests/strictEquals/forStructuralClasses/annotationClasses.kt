@@ -7,9 +7,9 @@ interface C
 annotation class G<T>(val t: Int)
 
 fun test(a: A, b: B, c: C, ann: Annotation, any: Any): Boolean {
-    if (a != b) return true
-    if (a == c) return false
-    if (c == a) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>a != b<!>) return true
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>a == c<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>c == a<!>) return false
     if (a == ann) return false
     if (ann != a) return false
     if (a == any) return true
@@ -20,9 +20,9 @@ fun testAfterSmartCast(a: A, nAny: Any?) {
     if (nAny == a) return
     if (a == nAny) return
     if (nAny is A && a == nAny) return
-    if (nAny is B && (nAny == a || a == nAny)) return
+    if (nAny is B && (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>nAny == a<!> || <!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>a == nAny<!>)) return
     if (nAny is Annotation && a != nAny) return
-    if (nAny is C && a == nAny) return
+    if (nAny is C && <!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>a == nAny<!>) return
 }
 
 fun testGeneric(gi: G<Int>, gi2: G<Int>, gs: G<String>, ann: Annotation) {

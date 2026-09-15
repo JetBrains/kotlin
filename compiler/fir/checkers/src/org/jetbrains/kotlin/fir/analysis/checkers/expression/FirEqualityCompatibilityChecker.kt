@@ -92,7 +92,10 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     context(context: CheckerContext)
     private fun checkEqualityApplicability(l: TypeInfo, r: TypeInfo): Applicability {
         val oneIsBuiltin = l.isBuiltin || r.isBuiltin
-        val oneIsIdentityLess = l.isIdentityLess(context.session) || r.isIdentityLess(context.session)
+        val oneIsInlineValue = l.isInlineValueClass || r.isInlineValueClass
+        val oneIsStructuralFinal = l.isStructuralClass && l.isFinal || r.isStructuralClass && r.isFinal
+
+        val shouldReportAsPerRules1 by lazy { shouldReportAsPerRules1(l, r) }
 
         // The compiler should only check comparisons
         // when builtins are involved.
@@ -100,7 +103,10 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         // the list of special fqNames described in RULES1
 
         return when {
-            (oneIsBuiltin || oneIsIdentityLess) && shouldReportAsPerRules1(l, r) -> getInapplicabilityFor(l, r)
+            (oneIsBuiltin || oneIsInlineValue) && shouldReportAsPerRules1 -> getInapplicabilityFor(l, r)
+            LanguageFeature.StrictEqualsForStructuralClasses.isEnabled() && oneIsStructuralFinal && shouldReportAsPerRules1 -> {
+                Applicability.INAPPLICABLE_AS_STRUCTURAL_CLASSES
+            }
             else -> checkEqualityApplicabilityByEqualityBounds(l, r)
         }
     }
@@ -161,6 +167,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         GENERALLY_INAPPLICABLE,
         INAPPLICABLE_AS_ENUMS,
         INAPPLICABLE_AS_IDENTITY_LESS,
+        INAPPLICABLE_AS_STRUCTURAL_CLASSES,
 
         /**
          * `RHS` and `EB(LHS)` are incompatible
@@ -277,6 +284,12 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             getEnumInapplicabilityDiagnostic(l, r, forceWarning),
             lUserType,
             rUserType
+        )
+        Applicability.INAPPLICABLE_AS_STRUCTURAL_CLASSES -> reportOn(
+            expression.source,
+            FirErrors.INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON,
+            lUserType,
+            rUserType,
         )
         Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_LEFT -> reportOn(
             expression.source,

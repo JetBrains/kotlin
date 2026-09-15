@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +FullValueClasses
+// LANGUAGE: +FullValueClasses -StrictEquals
 // WITH_STDLIB
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
@@ -26,7 +26,7 @@ fun test(fn: Foo?) {
     val a3 = <!FORBIDDEN_IDENTITY_EQUALS!>any === Foo<!> || <!FORBIDDEN_IDENTITY_EQUALS!>Foo !== any<!>
     val a4 = <!FORBIDDEN_IDENTITY_EQUALS!>fn === Foo<!> || <!FORBIDDEN_IDENTITY_EQUALS!>fn !== Foo<!>
 
-    val b1 = <!EQUALITY_NOT_APPLICABLE!>Foo == Bar<!>
+    val b1 = Foo == Bar
 
     val b2 = Foo == Foo
     val b3 = fn == Foo
