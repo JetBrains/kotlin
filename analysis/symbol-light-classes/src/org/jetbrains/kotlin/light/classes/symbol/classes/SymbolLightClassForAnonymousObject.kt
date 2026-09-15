@@ -23,20 +23,20 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike<KaAnonymousObjectSymbol>, PsiAnonymousClass {
     constructor(
         anonymousObjectDeclaration: KtClassOrObject,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
     ) : this(
         classOrObjectDeclaration = anonymousObjectDeclaration,
-        classSymbolPointer = anonymousObjectDeclaration.createSymbolPointer(ktModule),
-        ktModule = ktModule,
+        classSymbolPointer = anonymousObjectDeclaration.createSymbolPointer(useSiteModule),
+        useSiteModule = useSiteModule,
         manager = anonymousObjectDeclaration.manager,
     )
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaAnonymousObjectSymbol>,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         manager: PsiManager,
-    ) : super(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+    ) : super(classOrObjectDeclaration, classSymbolPointer, useSiteModule, manager)
 
     private val _baseClassType: PsiClassType by lazyPub {
         extendsListTypes.firstOrNull()

@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLightClassForNamedClassLike {
     constructor(
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager,
     ) : super(
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
         manager = manager,
     ) {
@@ -37,11 +37,11 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
 
     constructor(
         classOrObject: KtClassOrObject,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
-        classSymbolPointer = classOrObject.createSymbolPointer(ktModule),
-        ktModule = ktModule,
+        classSymbolPointer = classOrObject.createSymbolPointer(useSiteModule),
+        useSiteModule = useSiteModule,
         manager = classOrObject.manager,
     ) {
         require(classOrObject is KtClass && (classOrObject.isInterface() || classOrObject.isAnnotation()))
@@ -50,12 +50,12 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         manager = manager,
     )
 
