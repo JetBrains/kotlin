@@ -1,5 +1,7 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// KT-89290
+// KT-89290, KT-89375
+// IGNORE_BACKEND: NATIVE
+// ^^^ KT-89375 Native: companion block members are not initialized when observed from an anonymous initializer
 
 class AnonymousInitializerOwner {
     companion {
