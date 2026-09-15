@@ -148,8 +148,7 @@ MODULE_FRAGMENT name:<lib2>
                     BLOCK_BODY
                       BLOCK type=kotlin.Nothing origin=INLINE_ARGS_CONTAINER
                         VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.String [val]
-                          TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                            CONST String type=kotlin.String value="Never would be implemented"
+                          CONST String type=kotlin.String value="Never would be implemented"
                         RETURNABLE_BLOCK type=kotlin.Nothing origin=null
                           INLINED_BLOCK type=kotlin.Nothing origin=null
                             inlinedFunctionSymbol: kotlin/TODO|TODO(kotlin.String){}[0]
@@ -275,11 +274,9 @@ MODULE_FRAGMENT name:<lib3>
             CALL 'kotlin.math/tanh|tanh(kotlin.Double){}[0]' type=kotlin.Double origin=null
               ARG 1: BLOCK type=kotlin.Double origin=INLINE_ARGS_CONTAINER
                 VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Double [val]
-                  TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                    CONST Double type=kotlin.Double value=3.141592653589793
+                  CONST Double type=kotlin.Double value=3.141592653589793
                 VAR IR_TEMPORARY_VARIABLE name:tmp2 type:kotlin.Int [val]
-                  TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                    GET_VAR 'default: kotlin.Int declared in lib3.IImpl.interfaceFun' type=kotlin.Int origin=null
+                  GET_VAR 'default: kotlin.Int declared in lib3.IImpl.interfaceFun' type=kotlin.Int origin=null
                 RETURNABLE_BLOCK type=kotlin.Double origin=null
                   INLINED_BLOCK type=kotlin.Double origin=null
                     inlinedFunctionSymbol: kotlin/Double.times|times(kotlin.Int){}[0]
@@ -289,11 +286,10 @@ MODULE_FRAGMENT name:<lib3>
                     VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:other type:kotlin.Int [val]
                       GET_VAR 'val tmp2: kotlin.Int [val] declared in lib3.IImpl.interfaceFun' type=kotlin.Int origin=null
                     RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                      TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                        CALL 'kotlin/Double.times|times(kotlin.Double){}[0]' type=kotlin.Double origin=MUL
-                          ARG 1: GET_VAR 'val this: kotlin.Double [val] declared in lib3.IImpl.interfaceFun' type=kotlin.Double origin=null
-                          ARG 2: CALL 'kotlin/Int.toDouble|toDouble(){}[0]' type=kotlin.Double origin=null
-                            ARG 1: GET_VAR 'val other: kotlin.Int [val] declared in lib3.IImpl.interfaceFun' type=kotlin.Int origin=null
+                      CALL 'kotlin/Double.times|times(kotlin.Double){}[0]' type=kotlin.Double origin=MUL
+                        ARG 1: GET_VAR 'val this: kotlin.Double [val] declared in lib3.IImpl.interfaceFun' type=kotlin.Double origin=null
+                        ARG 2: CALL 'kotlin/Int.toDouble|toDouble(){}[0]' type=kotlin.Double origin=null
+                          ARG 1: GET_VAR 'val other: kotlin.Int [val] declared in lib3.IImpl.interfaceFun' type=kotlin.Int origin=null
     FUN name:doStuff signature:lib3/doStuff|doStuff(){}[0] visibility:public modality:FINAL returnType:kotlin.Unit [inline]
       annotations:
         Suppress(1 = ["NOTHING_TO_INLINE"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
@@ -303,8 +299,7 @@ MODULE_FRAGMENT name:<lib3>
           ARG 1: CONST Int type=kotlin.Int value=42
         BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
           VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Boolean [val]
-            TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-              CALL 'lib1/getBoolean|getBoolean(){}[0]' type=kotlin.Boolean origin=null
+            CALL 'lib1/getBoolean|getBoolean(){}[0]' type=kotlin.Boolean origin=null
           RETURNABLE_BLOCK type=kotlin.Unit origin=null
             INLINED_BLOCK type=kotlin.Unit origin=null
               inlinedFunctionSymbol: kotlin/check|check(kotlin.Boolean){}[0]
@@ -364,10 +359,9 @@ MODULE_FRAGMENT name:<lib3>
                 GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
         BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
           VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Boolean [val]
-            TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-              CALL 'kotlin.collections/HashSet.isEmpty|isEmpty(){}[0]' type=kotlin.Boolean origin=null
-                ARG 1: CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=GET_PROPERTY
-                  ARG 1: GET_OBJECT 'lib2/SealedInterface.Object|null[0]' type=lib2.SealedInterface.Object
+            CALL 'kotlin.collections/HashSet.isEmpty|isEmpty(){}[0]' type=kotlin.Boolean origin=null
+              ARG 1: CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=GET_PROPERTY
+                ARG 1: GET_OBJECT 'lib2/SealedInterface.Object|null[0]' type=lib2.SealedInterface.Object
           RETURNABLE_BLOCK type=kotlin.Unit origin=null
             INLINED_BLOCK type=kotlin.Unit origin=null
               inlinedFunctionSymbol: kotlin/check|check(kotlin.Boolean){}[0]
