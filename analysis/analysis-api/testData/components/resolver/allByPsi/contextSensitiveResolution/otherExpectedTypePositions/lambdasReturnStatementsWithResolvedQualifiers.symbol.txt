@@ -466,7 +466,6 @@ KtContainerNode(397,415): '@myRunWithMySealed'
 KtLabelReferenceExpression(397,415): '@myRunWithMySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed
@@ -547,7 +546,6 @@ KtContainerNode(480,498): '@myRunWithMySealed'
 KtLabelReferenceExpression(480,498): '@myRunWithMySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed
@@ -697,7 +695,6 @@ KtContainerNode(569,575): '@myRun'
 KtLabelReferenceExpression(569,575): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed
@@ -799,7 +796,6 @@ KtContainerNode(644,650): '@myRun'
 KtLabelReferenceExpression(644,650): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed
@@ -904,7 +900,6 @@ KtContainerNode(735,741): '@myRun'
 KtLabelReferenceExpression(735,741): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed
@@ -987,7 +982,6 @@ KtContainerNode(794,800): '@myRun'
 KtLabelReferenceExpression(794,800): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): ERROR CLASS: CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y
@@ -1068,7 +1062,6 @@ KtContainerNode(852,858): '@myRun'
 KtLabelReferenceExpression(852,858): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed.X

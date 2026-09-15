@@ -85,7 +85,6 @@ KtNameReferenceExpression(40,44): 'list'
 KtOperationReferenceExpression(45,47): '+='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
@@ -249,7 +248,6 @@ KtConstantExpression(164,165): '1'
 KtOperationReferenceExpression(168,170): '+='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
@@ -294,7 +292,6 @@ KtConstantExpression(183,184): '2'
 KtOperationReferenceExpression(187,189): '+='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
@@ -420,7 +417,6 @@ KtPrefixExpression(245,254): '--list[i]'
 KtOperationReferenceExpression(245,247): '--'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int,
@@ -477,7 +473,6 @@ KtPrefixExpression(266,277): '++(list[2])'
 KtOperationReferenceExpression(266,268): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int,

@@ -55,7 +55,6 @@ KtNameReferenceExpression(59,60): 'a'
 KtOperationReferenceExpression(61,63): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(64,70): 'String'
@@ -94,7 +93,6 @@ KtNameReferenceExpression(75,76): 'a'
 KtOperationReferenceExpression(77,80): '!is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(81,87): 'String'
@@ -133,7 +131,6 @@ KtNameReferenceExpression(143,144): 'a'
 KtOperationReferenceExpression(145,147): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(148,154): 'String'
@@ -172,7 +169,6 @@ KtNameReferenceExpression(159,160): 'a'
 KtOperationReferenceExpression(161,164): 'as?'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(165,171): 'String'
