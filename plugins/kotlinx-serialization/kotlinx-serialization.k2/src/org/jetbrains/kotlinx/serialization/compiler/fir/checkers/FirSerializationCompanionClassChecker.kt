@@ -107,7 +107,6 @@ internal fun CheckerContext.checkCompanionSerializerClash(
                     && receiverParam?.let { isAnyKSerializer(it) } != false)
         }
         if (!allNonDispatchParametersMatch()) continue
-        if (!isAnyKSerializer(functionSymbol.resolvedReturnType)) continue
 
         reporter.reportOn(
             functionSymbol.source,

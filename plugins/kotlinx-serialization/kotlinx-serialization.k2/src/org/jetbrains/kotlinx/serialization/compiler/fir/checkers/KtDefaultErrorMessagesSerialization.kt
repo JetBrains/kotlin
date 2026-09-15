@@ -66,7 +66,7 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
         )
         map.put(
             FirSerializationErrors.SERIALIZER_FUNCTION_CLASH_IN_COMPANION,
-            "Function ''{0}()'' clashes with the one that the serialization plugin generates here, " +
+            "Function ''{0}'' clashes with the one that the serialization plugin generates here, " +
                     "which makes the generated function unreachable. Rename this function or change its signature.",
             CommonRenderers.STRING
         )

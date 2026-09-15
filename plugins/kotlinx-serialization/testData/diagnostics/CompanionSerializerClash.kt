@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -84,5 +85,12 @@ typealias SerializerAlias<T> = KSerializer<T>
 data class ClashingViaTypealias(val fields: String) {
     companion object {
         <!SERIALIZER_FUNCTION_CLASH_IN_COMPANION!>fun serializer(): SerializerAlias<ClashingViaTypealias> = TODO()<!>
+    }
+}
+
+@Serializable
+data class SerializerFunctionWithDifferentSignature(val x: Int) {
+    companion object {
+        <!SERIALIZER_FUNCTION_CLASH_IN_COMPANION!>fun serializer(): Double = 0.1<!>
     }
 }
