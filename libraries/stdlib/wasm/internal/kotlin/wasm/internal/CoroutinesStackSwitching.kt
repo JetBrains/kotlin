@@ -49,7 +49,8 @@ internal fun nullContrefIntrinsic(): typedcontref<(Any?) -> Unit>? {
     implementedAsIntrinsic
 }
 
-internal suspend fun <T> getBlockKotlinContinuation(): CoroutineImplStackSwitching<T, T> {
+@UsedFromCompilerGeneratedCode
+internal suspend fun <T> getBlockKotlinContinuationStackSwitching(): CoroutineImplStackSwitching<T, T> {
     val completion = getContinuation<T>()
     val wasmContBox = WasmContinuationBox(nullContrefIntrinsic())
     val blockKotlinContinuation = CoroutineImplStackSwitching<T, T>(completion, wasmContBox)
@@ -57,31 +58,20 @@ internal suspend fun <T> getBlockKotlinContinuation(): CoroutineImplStackSwitchi
     return blockKotlinContinuation
 }
 
+@UsedFromCompilerGeneratedCode
 @Suppress("UNCHECKED_CAST")
-internal fun <T> getBlockKotlinContinuationResult(blockKotlinContinuation: CoroutineImplStackSwitching<T, T>): T {
-    val e = blockKotlinContinuation.exception
-    if (e != null) throw e
-    return blockKotlinContinuation.result as T
-}
+internal suspend fun <T> processSuspendBlockResultStackSwitching(blockResult: Any?, blockKotlinContinuation: Continuation<T>): Any? {
+    if (blockResult !== COROUTINE_SUSPENDED) return blockResult
 
-internal fun <T> checkNotPendingSuspend(blockKotlinContinuation: CoroutineImplStackSwitching<T, T>) {
+    blockKotlinContinuation as CoroutineImplStackSwitching<T, T>
     if (blockKotlinContinuation.pendingSuspend) {
         blockKotlinContinuation.pendingSuspend = false
         suspendIntrinsic(blockKotlinContinuation.wasmContBox)
     }
-}
 
-@UsedFromCompilerGeneratedCode
-@Suppress("UNCHECKED_CAST")
-internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching(block: (Continuation<T>) -> Any?): T {
-    val blockKotlinContinuation = getBlockKotlinContinuation<T>()
-
-    val blockResult = block(blockKotlinContinuation)
-    if (blockResult !== COROUTINE_SUSPENDED) return blockResult as T
-
-    checkNotPendingSuspend(blockKotlinContinuation)
-
-    return getBlockKotlinContinuationResult(blockKotlinContinuation)
+    val e = blockKotlinContinuation.exception
+    if (e != null) throw e
+    return blockKotlinContinuation.result
 }
 
 @Suppress("UNUSED_PARAMETER")

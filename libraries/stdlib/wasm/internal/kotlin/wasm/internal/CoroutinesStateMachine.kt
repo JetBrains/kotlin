@@ -10,8 +10,13 @@ package kotlin.wasm.internal
 import kotlin.coroutines.Continuation
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
-// Is replaced by Stack Switching intrinsic when -Xwasm-use-stack-switching-proposal passed
+// Are replaced with Stack Switching intrinsics when -Xwasm-use-stack-switching-proposal passed.
+@Suppress("UNUSED_PARAMETER")
 @PublishedApi
-@UsedFromCompilerGeneratedCode
-internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsic(block: (Continuation<T>) -> Any?): T =
-    returnIfSuspended<T>(block(getContinuation<T>()))
+internal suspend fun <T> getBlockKotlinContinuation(): Continuation<T> =
+    getContinuation<T>()
+
+@Suppress("UNUSED_PARAMETER", "UNCHECKED_CAST")
+@PublishedApi
+internal suspend fun <T> processSuspendBlockResult(result: Any?, blockContinuation: Continuation<T>): T =
+    result as T
