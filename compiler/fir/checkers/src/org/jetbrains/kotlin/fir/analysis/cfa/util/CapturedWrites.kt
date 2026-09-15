@@ -25,11 +25,11 @@ value class VariableWriteData(val value: PersistentMap<FirPropertySymbol, Persis
     operator fun get(symbol: FirPropertySymbol): PersistentSet<CFGNode<*>>? = value[symbol]
 
     operator fun plus(other: VariableWriteData): VariableWriteData {
-        return VariableWriteData(value.merge(other.value, PersistentSet<CFGNode<*>>::addingAll))
+        return VariableWriteData(value.merging(other.value, PersistentSet<CFGNode<*>>::addingAll))
     }
 
     operator fun minus(other: VariableWriteData): VariableWriteData {
-        return VariableWriteData(value.merge(other.value, PersistentSet<CFGNode<*>>::removingAll))
+        return VariableWriteData(value.merging(other.value, PersistentSet<CFGNode<*>>::removingAll))
     }
 
     fun add(symbol: FirPropertySymbol, node: CFGNode<*>): VariableWriteData {
@@ -55,7 +55,7 @@ internal fun PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>.add
     symbol: FirPropertySymbol,
     node: CFGNode<*>,
 ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
-    return transformValues { oldData ->
+    return transformingValues { oldData ->
         oldData.putting(type, oldData[type]?.add(symbol, node) ?: VariableWriteData(symbol, node))
     }
 }
@@ -63,7 +63,7 @@ internal fun PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>.add
 internal fun PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>.remove(
     symbol: FirPropertySymbol,
 ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
-    return transformValues { oldData ->
+    return transformingValues { oldData ->
         oldData.mutate {
             for ([type, writes] in oldData) {
                 when (val value = writes.remove(symbol)) {
@@ -79,7 +79,7 @@ internal fun PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>.ove
     symbol: FirPropertySymbol,
     nodes: PersistentSet<CFGNode<*>>,
 ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
-    return transformValues {
+    return transformingValues {
         val data = when (val data = it[PropertyAccessType.InPlace]) {
             null -> VariableWriteData(symbol, nodes)
             else -> VariableWriteData(data.value.putting(symbol, nodes))
@@ -102,7 +102,7 @@ internal class FindCapturedWrites(
         b: ControlFlowInfo<PropertyAccessType, VariableWriteData>,
         node: CFGNode<*>,
     ): ControlFlowInfo<PropertyAccessType, VariableWriteData> {
-        return a.merge(b, VariableWriteData::plus)
+        return a.merging(b, VariableWriteData::plus)
     }
 
     override fun visitEdge(
@@ -154,7 +154,7 @@ internal class FindVisibleWrites(
         b: ControlFlowInfo<PropertyAccessType, VariableWriteData>,
         node: CFGNode<*>,
     ): ControlFlowInfo<PropertyAccessType, VariableWriteData> {
-        return a.merge(b, VariableWriteData::plus)
+        return a.merging(b, VariableWriteData::plus)
     }
 
     override fun visitEdge(
@@ -176,13 +176,13 @@ internal class FindVisibleWrites(
                 val capturedWrites = futureWrites[from]
                 if (capturedWrites != null) {
                     val parentInfo = super.visitEdge(from, to, metadata, capturedWrites)
-                    result = result.merge(parentInfo) { a, b -> mergeInfo(a, b, to) }
+                    result = result.merging(parentInfo) { a, b -> mergeInfo(a, b, to) }
                 }
                 if (excludeLocalInPlaceWrites) {
                     val localWrites = futureWrites[to]
                     if (localWrites != null) {
                         val localInfo = super.visitEdge(from, to, metadata, localWrites)
-                        result = result.merge(localInfo) { a, b -> a.merge(b, VariableWriteData::minus) }
+                        result = result.merging(localInfo) { a, b -> a.merging(b, VariableWriteData::minus) }
                     }
                 }
             }
@@ -193,7 +193,7 @@ internal class FindVisibleWrites(
                     if (fromGraph != subGraph.nearestNonInPlaceGraph()) {
                         val node = subGraph.enterNode
                         val nodeData = super.visitEdge(from, node, metadata, futureWrites[node] ?: continue)
-                        result = result.merge(nodeData) { a, b -> mergeInfo(a, b, to) }
+                        result = result.merging(nodeData) { a, b -> mergeInfo(a, b, to) }
                     }
                 }
             }
