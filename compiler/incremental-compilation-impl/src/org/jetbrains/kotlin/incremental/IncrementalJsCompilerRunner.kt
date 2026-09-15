@@ -134,6 +134,11 @@ class IncrementalJsCompilerRunner(
         }
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
 
+        if (!caches.platformCache.hasInlineFunctionHashes()) {
+            reporter.info { "Inline function snapshots are missing from the incremental cache" }
+            return CompilationMode.Rebuild(BuildAttribute.IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE)
+        }
+
         val dirtyFiles = dirtyFilesProvider.getInitializedDirtyFiles(caches, changedFiles)
 
         val libs = parseLibrariesArgument(args.libraries)
@@ -263,6 +268,11 @@ class IncrementalJsCompilerRunner(
         val newDirtySources = HashSet<File>()
 
         private val translatedFiles = HashMap<File, TranslationResultValue>()
+        private val inlineFunctionHashes = HashMap<File, Map<InlineFunctionSymbol, Long>>()
+
+        override fun checkInlineFunctionChanges(sourceFile: File, hashes: Map<InlineFunctionSymbol, Long>) {
+            inlineFunctionHashes[sourceFile] = hashes
+        }
 
         override fun checkProtoChanges(sourceFile: File, packagePartMetadata: ByteArray) {
             translatedFiles[sourceFile] = TranslationResultValue(packagePartMetadata)
@@ -272,6 +282,7 @@ class IncrementalJsCompilerRunner(
             val changesCollector = ChangesCollector()
             // todo: split compare and update (or cache comparing)
             caches.platformCache.compare(translatedFiles, changesCollector)
+            caches.platformCache.compareInlineFunctionHashes(inlineFunctionHashes, changesCollector)
             (val dirtyLookupSymbols, val dirtyClassFqNames = dirtyClassesFqNames) = changesCollector.getChangedAndImpactedSymbols(
                 listOf(
                     caches.platformCache

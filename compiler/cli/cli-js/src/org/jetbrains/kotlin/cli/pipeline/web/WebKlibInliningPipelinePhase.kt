@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.cli.pipeline.web
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.incrementalCompilation
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaseConfig
@@ -24,9 +27,13 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectInlineFunctionHashes
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.js.shouldGoToNextIcRound
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
+import java.io.File
 
 object WebKlibInliningPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifact, WebFir2IrPipelineArtifact>(
     name = "WebKlibInliningPipelinePhase",
@@ -64,6 +71,25 @@ object WebKlibInliningPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifact, W
         fir2IrResult: Fir2IrActualizedResult,
     ) {
         if (!configuration.incrementalCompilation) return
+        val module = fir2IrResult.irModuleFragment
+        val inlineIntraModule =
+            configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)
+        val inlineHashes = if (inlineIntraModule) {
+            collectInlineFunctionHashes(
+                module,
+                NonLinkingIrInlineFunctionDeserializer(fir2IrResult.irBuiltIns, PublicIdSignatureComputer(JsManglerIr)),
+            )
+        } else {
+            module.files.associateWith { emptyMap() }
+        }
+        val consumer = configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]
+        val nextRoundChecker = configuration[JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER]
+        for ([irFile, hashes] in inlineHashes) {
+            val sourceFile = File(irFile.fileEntry.name)
+            consumer?.processInlineFunctionHashes(sourceFile, hashes)
+            nextRoundChecker?.checkInlineFunctionChanges(sourceFile, hashes)
+        }
+
         // TODO: During checking the next round, fir serializer may throw an exception, e.g.
         //      during annotation serialization when it cannot find the removed constant
         //      (see ConstantValueUtils.kt:convertToConstantValues())

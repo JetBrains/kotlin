@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
+import org.jetbrains.kotlin.incremental.js.InlineFunctionSymbol
 import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import org.jetbrains.kotlin.incremental.storage.*
@@ -52,8 +53,20 @@ open class IncrementalJsCache(
     override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile, icContext))
     private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, protoData, icContext))
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, icContext))
+    private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, icContext))
 
     private val dirtySources = hashSetOf<File>()
+
+    fun hasInlineFunctionHashes(): Boolean = translationResults.keys.all { inlineFunctions[it] != null }
+
+    fun compareInlineFunctionHashes(
+        hashesBySource: Map<File, Map<InlineFunctionSymbol, Long>>,
+        changesCollector: ChangesCollector,
+    ) {
+        for ([source, hashes] in hashesBySource) {
+            inlineFunctions.compare(source, hashes, changesCollector)
+        }
+    }
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         super.markDirty(removedAndCompiledSources)
@@ -73,6 +86,11 @@ open class IncrementalJsCache(
 
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
         val translatedFiles = incrementalResults.packageParts
+
+        compareInlineFunctionHashes(incrementalResults.inlineFunctionHashes, changesCollector)
+        for ([source, hashes] in incrementalResults.inlineFunctionHashes) {
+            inlineFunctions[source] = hashes
+        }
 
         for ([srcFile, data] in translatedFiles) {
             dirtySources.remove(srcFile)
@@ -109,6 +127,8 @@ open class IncrementalJsCache(
 
     override fun clearCacheForRemovedClasses(changesCollector: ChangesCollector) {
         dirtySources.forEach {
+            inlineFunctions.compare(it, emptyMap(), changesCollector)
+            inlineFunctions.remove(it)
             translationResults.remove(it, changesCollector)
             irTranslationResults.remove(it)
         }
@@ -136,6 +156,37 @@ open class IncrementalJsCache(
                 }
             }
         }
+}
+
+private object InlineFunctionSymbolExternalizer : DataExternalizer<InlineFunctionSymbol> {
+    override fun save(output: DataOutput, value: InlineFunctionSymbol) {
+        output.writeString(value.scope)
+        output.writeString(value.name)
+    }
+
+    override fun read(input: DataInput): InlineFunctionSymbol = InlineFunctionSymbol(input.readString(), input.readString())
+}
+
+private class InlineFunctionsMap(storageFile: File, icContext: IncrementalCompilationContext) :
+    AbstractBasicMap<File, Map<InlineFunctionSymbol, Long>>(
+        storageFile,
+        icContext.fileDescriptorForSourceFiles,
+        MapExternalizer(InlineFunctionSymbolExternalizer, LongExternalizer),
+        icContext,
+    ) {
+    fun compare(source: File, newHashes: Map<InlineFunctionSymbol, Long>, changesCollector: ChangesCollector) {
+        val oldHashes = this[source].orEmpty()
+        for (symbol in oldHashes.keys + newHashes.keys) {
+            changesCollector.collectMemberIfValueWasChanged(
+                FqName(symbol.scope), symbol.name, oldHashes[symbol], newHashes[symbol]
+            )
+        }
+    }
+
+    @TestOnly
+    override fun dumpValue(value: Map<InlineFunctionSymbol, Long>): String =
+        value.entries.sortedWith(compareBy({ it.key.scope }, { it.key.name }))
+            .joinToString { [symbol, hash] -> "${symbol.scope}#${symbol.name}: $hash" }
 }
 
 private object TranslationResultValueExternalizer : DataExternalizer<TranslationResultValue> {

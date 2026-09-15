@@ -18,7 +18,11 @@ package org.jetbrains.kotlin.incremental.js
 
 import java.io.File
 
+data class InlineFunctionSymbol(val scope: String, val name: String)
+
 interface IncrementalResultsConsumer {
+    fun processInlineFunctionHashes(sourceFile: File, hashes: Map<InlineFunctionSymbol, Long>)
+
     /** processes new package part metadata and binary tree for compiled source file */
     fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray)
 
@@ -38,11 +42,20 @@ interface IncrementalResultsConsumer {
 }
 
 interface IncrementalNextRoundChecker {
+    fun checkInlineFunctionChanges(sourceFile: File, hashes: Map<InlineFunctionSymbol, Long>)
+
     fun checkProtoChanges(sourceFile: File, packagePartMetadata: ByteArray)
     fun shouldGoToNextRound(): Boolean
 }
 
 open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
+    val inlineFunctionHashes: Map<File, Map<InlineFunctionSymbol, Long>>
+        field = hashMapOf<File, Map<InlineFunctionSymbol, Long>>()
+
+    override fun processInlineFunctionHashes(sourceFile: File, hashes: Map<InlineFunctionSymbol, Long>) {
+        inlineFunctionHashes[sourceFile] = hashes
+    }
+
     val packageParts: Map<File, TranslationResultValue>
         field = hashMapOf<File, TranslationResultValue>()
 

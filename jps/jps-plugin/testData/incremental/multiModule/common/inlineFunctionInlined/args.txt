@@ -1,1 +1,1 @@
--XXLanguage:-IrIntraModuleInlinerBeforeKlibSerialization
+-XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization

@@ -2,5 +2,7 @@
 
 Compiling files:
   module1/src/a.kt
+  module2/src/b.kt
+  module3/src/c.kt
 End of files
 Exit code: OK
