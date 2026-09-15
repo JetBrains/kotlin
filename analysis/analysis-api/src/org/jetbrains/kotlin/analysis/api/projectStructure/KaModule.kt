@@ -382,16 +382,6 @@ public interface KaScriptDependencyModule : KaModule {
 @SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaDanglingFileModule : KaModule {
     /**
-     * The dangling file.
-     */
-    @Deprecated(
-        "Use 'files' instead.",
-        ReplaceWith("files.single()", imports = ["kotlin.collections.single"])
-    )
-    public val file: KtFile
-        get() = files.first()
-
-    /**
      * All dangling files analyzed together, as a single module.
      *
      * Throws an exception when the files are no longer valid (see [isValid]).

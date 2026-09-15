@@ -54,7 +54,7 @@ internal class KaFirPropertySetterSymbol(
     override val isOverride: Boolean
         get() = isOverrideImpl
 
-    @Deprecated("Use `isCustom` instead", replaceWith = ReplaceWith("isCustom"))
+    @Deprecated("Use `isNotDefault` instead", replaceWith = ReplaceWith("isNotDefault"))
     override val hasBody: Boolean
         get() = hasBodyImpl
 

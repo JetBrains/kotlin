@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.LLFirSessionCacheStorage
 import java.io.BufferedWriter
-import kotlin.uuid.ExperimentalUuidApi
 
 /**
  * [LLSessionStructureWriter] writes a GraphML graph of [LLFirSession]s which is used to visualize and analyze the structure of cached
@@ -52,7 +51,6 @@ object LLSessionStructureWriter {
         writeGraph(graph, writer)
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     private fun writeGraph(graph: LLSessionStructureGraph, writer: BufferedWriter) {
         with(writer) {
             appendLine("""<?xml version="1.0" encoding="UTF-8"?>""")

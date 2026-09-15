@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.rendering
 
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.rendering.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
@@ -366,7 +365,6 @@ private object DynamicTypeRenderer : KaPieceRenderer<KaDynamicType>(KaPiece.Dyna
 }
 
 private object ErrorTypeRenderer : KaPieceRenderer<KaErrorType>(KaPiece.ErrorType) {
-    @OptIn(KaNonPublicApi::class)
     context(session: KaSession, context: KaRenderingContext, output: KaRenderingOutput)
     override fun render(value: KaErrorType, next: () -> Unit): Boolean {
         renderTypeAnnotations(value)

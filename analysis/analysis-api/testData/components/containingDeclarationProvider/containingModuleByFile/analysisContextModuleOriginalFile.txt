@@ -1,2 +1,2 @@
 File: main.kt
-Module: Sources of main (KaSourceModuleImpl)
+Module: Temporary file (KaDanglingFileModuleImpl)

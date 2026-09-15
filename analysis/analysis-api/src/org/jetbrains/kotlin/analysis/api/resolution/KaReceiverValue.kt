@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.psi.KtExpression
  * A [receiver](https://kotlin.github.io/analysis-api/receivers.html) value of a call, which represents either an
  * [explicit][KaExplicitReceiverValue], [implicit][KaImplicitReceiverValue], or [smart-casted][KaSmartCastedReceiverValue] receiver.
  */
-@OptIn(KaImplementationDetail::class)
 public sealed interface KaReceiverValue : KaLifetimeOwner {
     /**
      * The inferred [KaType] of the receiver. This is a smart-casted type in the case of a smart cast on the receiver.

@@ -56,12 +56,9 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         return KaDanglingFileResolutionMode.PREFER_SELF
     }
 
-    @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+    @OptIn(KaExperimentalApi::class)
     private fun computeContextModule(file: KtFile): KaModule {
         val originalFile = file.copyOrigin
-
-        @Suppress("DEPRECATION")
-        originalFile?.virtualFile?.analysisContextModule?.let { return it }
 
         file.contextModule?.let { return it }
 
@@ -86,15 +83,6 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         return context.language == KotlinLanguage.INSTANCE || context is PsiDirectory
     }
 }
-
-@KaPlatformInterface
-@OptIn(KaExperimentalApi::class)
-@Deprecated("Use 'explicitModule' instead.")
-public var KtCodeFragment.forcedSpecialModule: KaDanglingFileModule?
-    get() = explicitModule as? KaDanglingFileModule
-    set(value) {
-        explicitModule = value
-    }
 
 /**
  * Whether [KaDanglingFileResolutionMode] for dangling files should be automatically calculated by [KaDanglingFileResolutionModeProvider]

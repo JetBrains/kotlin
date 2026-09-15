@@ -131,7 +131,6 @@ org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter.ONLY_EXTE
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.collectDiagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnostics(KaDiagnosticCheckerFilter)
-org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.directDiagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.KaEvaluator
@@ -142,7 +141,6 @@ org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider.com
 org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider.isStableForSmartCasting
 org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider.isUsedAsExpression
 org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider.isUsedAsResultOfLambda
-org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider.targetSymbol
 org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider
 org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.expectedType
 org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.expressionType
@@ -259,8 +257,6 @@ org.jetbrains.kotlin.analysis.api.components.KaResolver.tryResolveCall()
 org.jetbrains.kotlin.analysis.api.components.KaResolver.tryResolveCall()
 org.jetbrains.kotlin.analysis.api.components.KaResolver.tryResolveCall()
 org.jetbrains.kotlin.analysis.api.components.KaResolver.tryResolveSymbols()
-org.jetbrains.kotlin.analysis.api.components.KaResolver.usesContextSensitiveResolution
-org.jetbrains.kotlin.analysis.api.components.KaResolver.usesContextSensitiveResolution
 org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
 org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus.ExplicitlyIgnorable
 org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus.MustUse
@@ -474,8 +470,6 @@ org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.approximateToDenotab
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.approximateToDenotableSupertype(KtElement)
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.approximateToDenotableSupertypeOrSelf(Boolean)
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.approximateToDenotableSupertypeOrSelf(KtElement)
-org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.approximateToSuperPublicDenotable(Boolean)
-org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.approximateToSuperPublicDenotableOrSelf(Boolean)
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.arrayElementType
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.augmentedByWarningLevelAnnotations
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.builtinTypes
@@ -509,7 +503,6 @@ org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker.isVisibl
 org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker
 org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker.createUseSiteVisibilityChecker(KaFileSymbol, KtExpression?, PsiElement)
 org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker.isPublicApi(KaDeclarationSymbol)
-org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker.isVisible(KaDeclarationSymbol, KaFileSymbol, KtExpression?, PsiElement)
 org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker.isVisibleInClass(KaClassSymbol)
 org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase.BooleanCase
@@ -549,23 +542,9 @@ org.jetbrains.kotlin.analysis.api.components.allOverriddenSymbols
 org.jetbrains.kotlin.analysis.api.components.allSupertypes
 org.jetbrains.kotlin.analysis.api.components.allSupertypes(Boolean)
 org.jetbrains.kotlin.analysis.api.components.analysisScope
-org.jetbrains.kotlin.analysis.api.components.applicableAnnotationTargets
-org.jetbrains.kotlin.analysis.api.components.approximateToDenotableSubtype()
-org.jetbrains.kotlin.analysis.api.components.approximateToDenotableSubtypeOrSelf()
-org.jetbrains.kotlin.analysis.api.components.approximateToDenotableSupertype(Boolean)
-org.jetbrains.kotlin.analysis.api.components.approximateToDenotableSupertype(KtElement)
-org.jetbrains.kotlin.analysis.api.components.approximateToDenotableSupertypeOrSelf(Boolean)
-org.jetbrains.kotlin.analysis.api.components.approximateToDenotableSupertypeOrSelf(KtElement)
-org.jetbrains.kotlin.analysis.api.components.approximateToSuperPublicDenotable(Boolean)
-org.jetbrains.kotlin.analysis.api.components.approximateToSuperPublicDenotableOrSelf(Boolean)
 org.jetbrains.kotlin.analysis.api.components.arrayElementType
 org.jetbrains.kotlin.analysis.api.components.asCompositeScope()
-org.jetbrains.kotlin.analysis.api.components.asKaType(PsiElement)
 org.jetbrains.kotlin.analysis.api.components.asPsiType(PsiElement, Boolean, KaTypeMappingMode, Boolean, Boolean?, Boolean, Boolean)
-org.jetbrains.kotlin.analysis.api.components.asSignature()
-org.jetbrains.kotlin.analysis.api.components.asSignature()
-org.jetbrains.kotlin.analysis.api.components.asSignature()
-org.jetbrains.kotlin.analysis.api.components.augmentedByWarningLevelAnnotations
 org.jetbrains.kotlin.analysis.api.components.buildArrayType(KaType, KaArrayTypeBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.components.buildClassType(ClassId, KaClassTypeBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.components.buildClassType(KaClassLikeSymbol, KaClassTypeBuilder.() -> Unit)
@@ -574,12 +553,9 @@ org.jetbrains.kotlin.analysis.api.components.buildSubstitutor(KaSubstitutorBuild
 org.jetbrains.kotlin.analysis.api.components.buildSubstitutor(KaSubstitutorBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType(KaTypeParameterSymbol, KaTypeParameterTypeBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.components.buildVarargArrayType(KaType)
-org.jetbrains.kotlin.analysis.api.components.builtinFunctionTypeFamilies
 org.jetbrains.kotlin.analysis.api.components.builtinTypes
 org.jetbrains.kotlin.analysis.api.components.callableSymbol
 org.jetbrains.kotlin.analysis.api.components.canBeAnalysed()
-org.jetbrains.kotlin.analysis.api.components.canBeOperator
-org.jetbrains.kotlin.analysis.api.components.collectCallCandidates()
 org.jetbrains.kotlin.analysis.api.components.collectDiagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.collectImplicitReceiverTypes(KtElement)
 org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings(KtFile, TextRange, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
@@ -588,40 +564,20 @@ org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
 org.jetbrains.kotlin.analysis.api.components.combinedMemberScope
 org.jetbrains.kotlin.analysis.api.components.commonSupertype
 org.jetbrains.kotlin.analysis.api.components.commonSupertype
-org.jetbrains.kotlin.analysis.api.components.compile(KtFile, KaCompilationOptions)
-org.jetbrains.kotlin.analysis.api.components.compilerPluginGeneratedDeclarations
 org.jetbrains.kotlin.analysis.api.components.compositeScope((KaScopeKind) -> Boolean)
-org.jetbrains.kotlin.analysis.api.components.computeExitPointSnapshot(List<KtExpression>)
 org.jetbrains.kotlin.analysis.api.components.computeMissingCases()
 org.jetbrains.kotlin.analysis.api.components.constructedClass
 org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 org.jetbrains.kotlin.analysis.api.components.containingFile
-org.jetbrains.kotlin.analysis.api.components.containingFileAnnotations
-org.jetbrains.kotlin.analysis.api.components.containingJvmClassName
 org.jetbrains.kotlin.analysis.api.components.containingModule
 org.jetbrains.kotlin.analysis.api.components.containingSymbol
-org.jetbrains.kotlin.analysis.api.components.contextSensitiveResolutionStatus
-org.jetbrains.kotlin.analysis.api.components.copy(KaClassTypeBuilder.() -> Unit)
-org.jetbrains.kotlin.analysis.api.components.copy(KaClassTypeBuilder.() -> Unit)
-org.jetbrains.kotlin.analysis.api.components.copy(KaFunctionTypeBuilder.() -> Unit)
-org.jetbrains.kotlin.analysis.api.components.copy(KaTypeParameterTypeBuilder.() -> Unit)
-org.jetbrains.kotlin.analysis.api.components.createCompilationOptions(KaCompilationOptionsBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.components.createExtensionCandidateChecker(KtFile, KtSimpleNameExpression, KtExpression?)
-org.jetbrains.kotlin.analysis.api.components.createInheritanceTypeSubstitutor(KaClassSymbol, KaClassSymbol)
-org.jetbrains.kotlin.analysis.api.components.createSubstitutor(Map<KaTypeParameterSymbol, KaType>)
 org.jetbrains.kotlin.analysis.api.components.createSubtypingUnificationSubstitutor(KaType, KaType, KaUnificationSubstitutorPolicy)
 org.jetbrains.kotlin.analysis.api.components.createSubtypingUnificationSubstitutor(List<Pair<KaType, KaType>>, (KaTypeParameterSymbol) -> Boolean)
 org.jetbrains.kotlin.analysis.api.components.createSubtypingUnificationSubstitutor(List<Pair<KaType, KaType>>, KaUnificationSubstitutorPolicy)
-org.jetbrains.kotlin.analysis.api.components.createUseSiteVisibilityChecker(KaFileSymbol, KtExpression?, PsiElement)
-org.jetbrains.kotlin.analysis.api.components.declarationScope
 org.jetbrains.kotlin.analysis.api.components.declaredMemberScope
-org.jetbrains.kotlin.analysis.api.components.defaultAnnotationTargets
-org.jetbrains.kotlin.analysis.api.components.defaultInitializer
 org.jetbrains.kotlin.analysis.api.components.defaultType
-org.jetbrains.kotlin.analysis.api.components.defaultTypeWithStarProjections
 org.jetbrains.kotlin.analysis.api.components.delegatedMemberScope
-org.jetbrains.kotlin.analysis.api.components.deprecation
-org.jetbrains.kotlin.analysis.api.components.diagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.diagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.diagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.directDiagnostics(KaDiagnosticCheckerFilter)
@@ -630,27 +586,16 @@ org.jetbrains.kotlin.analysis.api.components.directSupertypes(Boolean)
 org.jetbrains.kotlin.analysis.api.components.directlyOverriddenSymbols
 org.jetbrains.kotlin.analysis.api.components.dispatchReceiverType
 org.jetbrains.kotlin.analysis.api.components.evaluate()
-org.jetbrains.kotlin.analysis.api.components.evaluateAsAnnotationValue()
 org.jetbrains.kotlin.analysis.api.components.expandedSymbol
 org.jetbrains.kotlin.analysis.api.components.expectedType
 org.jetbrains.kotlin.analysis.api.components.expressionType
 org.jetbrains.kotlin.analysis.api.components.fakeOverrideOriginal
 org.jetbrains.kotlin.analysis.api.components.fileScope
-org.jetbrains.kotlin.analysis.api.components.findKDoc()
-org.jetbrains.kotlin.analysis.api.components.findKDoc()
 org.jetbrains.kotlin.analysis.api.components.fullyExpandedType
 org.jetbrains.kotlin.analysis.api.components.functionType
-org.jetbrains.kotlin.analysis.api.components.functionTypeFamily
 org.jetbrains.kotlin.analysis.api.components.functionalInterface
-org.jetbrains.kotlin.analysis.api.components.functionalInterfaceFunction
-org.jetbrains.kotlin.analysis.api.components.functionalInterfaceFunction
-org.jetbrains.kotlin.analysis.api.components.getExpectsForActual()
 org.jetbrains.kotlin.analysis.api.components.hasCommonSubtypeWith(KaType)
-org.jetbrains.kotlin.analysis.api.components.hasConflictingSignatureWith(KaFunctionSymbol, TargetPlatform)
 org.jetbrains.kotlin.analysis.api.components.hasFlexibleNullability
-org.jetbrains.kotlin.analysis.api.components.implementationState(KaClassSymbol)
-org.jetbrains.kotlin.analysis.api.components.implicitReceiverSmartCasts
-org.jetbrains.kotlin.analysis.api.components.importableFqName
 org.jetbrains.kotlin.analysis.api.components.importingScopeContext
 org.jetbrains.kotlin.analysis.api.components.intersectionOverriddenSymbols
 org.jetbrains.kotlin.analysis.api.components.isAnyType
@@ -659,21 +604,17 @@ org.jetbrains.kotlin.analysis.api.components.isBooleanType
 org.jetbrains.kotlin.analysis.api.components.isByteType
 org.jetbrains.kotlin.analysis.api.components.isCharSequenceType
 org.jetbrains.kotlin.analysis.api.components.isCharType
-org.jetbrains.kotlin.analysis.api.components.isClassFile
 org.jetbrains.kotlin.analysis.api.components.isClassType(ClassId)
 org.jetbrains.kotlin.analysis.api.components.isDefinitelyNotNull
 org.jetbrains.kotlin.analysis.api.components.isDefinitelyNull
 org.jetbrains.kotlin.analysis.api.components.isDenotable
-org.jetbrains.kotlin.analysis.api.components.isDeprecated
 org.jetbrains.kotlin.analysis.api.components.isDirectSubClassOf(KaClassSymbol)
 org.jetbrains.kotlin.analysis.api.components.isDoubleType
 org.jetbrains.kotlin.analysis.api.components.isFloatType
-org.jetbrains.kotlin.analysis.api.components.isFromResolveExtension
 org.jetbrains.kotlin.analysis.api.components.isFunctionType
 org.jetbrains.kotlin.analysis.api.components.isFunctionalInterface
 org.jetbrains.kotlin.analysis.api.components.isImplicitReferenceToCompanion
 org.jetbrains.kotlin.analysis.api.components.isImplicitReferenceToCompanion()
-org.jetbrains.kotlin.analysis.api.components.isInline
 org.jetbrains.kotlin.analysis.api.components.isIntType
 org.jetbrains.kotlin.analysis.api.components.isKFunctionType
 org.jetbrains.kotlin.analysis.api.components.isKSuspendFunctionType
@@ -683,11 +624,8 @@ org.jetbrains.kotlin.analysis.api.components.isNestedArray
 org.jetbrains.kotlin.analysis.api.components.isNothingType
 org.jetbrains.kotlin.analysis.api.components.isNullable
 org.jetbrains.kotlin.analysis.api.components.isPrimitive
-org.jetbrains.kotlin.analysis.api.components.isPrimitiveBacked
 org.jetbrains.kotlin.analysis.api.components.isPublicApi(KaDeclarationSymbol)
-org.jetbrains.kotlin.analysis.api.components.isResolveExtensionFile
 org.jetbrains.kotlin.analysis.api.components.isShortType
-org.jetbrains.kotlin.analysis.api.components.isStableForSmartCasting
 org.jetbrains.kotlin.analysis.api.components.isStringType
 org.jetbrains.kotlin.analysis.api.components.isSubClassOf(KaClassSymbol)
 org.jetbrains.kotlin.analysis.api.components.isSubtypeOf(ClassId, KaSubtypingErrorTypePolicy)
@@ -700,97 +638,30 @@ org.jetbrains.kotlin.analysis.api.components.isULongType
 org.jetbrains.kotlin.analysis.api.components.isUShortType
 org.jetbrains.kotlin.analysis.api.components.isUnitType
 org.jetbrains.kotlin.analysis.api.components.isUsedAsExpression
-org.jetbrains.kotlin.analysis.api.components.isUsedAsResultOfLambda
-org.jetbrains.kotlin.analysis.api.components.isVisibleInClass(KaClassSymbol)
 org.jetbrains.kotlin.analysis.api.components.javaGetterName
 org.jetbrains.kotlin.analysis.api.components.javaSetterName
-org.jetbrains.kotlin.analysis.api.components.klibSourceFileName
 org.jetbrains.kotlin.analysis.api.components.lowerBoundIfFlexible()
-org.jetbrains.kotlin.analysis.api.components.mapToJvmTypeDescriptor()
 org.jetbrains.kotlin.analysis.api.components.memberScope
-org.jetbrains.kotlin.analysis.api.components.modify(KaCompilationOptionsBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.components.namedClassSymbol
-org.jetbrains.kotlin.analysis.api.components.originalConstructorIfTypeAliased
 org.jetbrains.kotlin.analysis.api.components.packageScope
 org.jetbrains.kotlin.analysis.api.components.receiverType
-org.jetbrains.kotlin.analysis.api.components.render(KaDeclarationRenderer)
-org.jetbrains.kotlin.analysis.api.components.render(KaTypeRenderer, Variance)
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveCall()
-org.jetbrains.kotlin.analysis.api.components.resolveExtensionNavigationElements
-org.jetbrains.kotlin.analysis.api.components.resolveExtensionScopeWithTopLevelDeclarations
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbol()
-org.jetbrains.kotlin.analysis.api.components.resolveSymbols()
 org.jetbrains.kotlin.analysis.api.components.resolveToCall()
 org.jetbrains.kotlin.analysis.api.components.resolveToCallCandidates()
 org.jetbrains.kotlin.analysis.api.components.resolveToSymbol()
 org.jetbrains.kotlin.analysis.api.components.resolveToSymbols()
 org.jetbrains.kotlin.analysis.api.components.returnType
 org.jetbrains.kotlin.analysis.api.components.returnType
-org.jetbrains.kotlin.analysis.api.components.returnValueStatus
 org.jetbrains.kotlin.analysis.api.components.samConstructor
-org.jetbrains.kotlin.analysis.api.components.scope
 org.jetbrains.kotlin.analysis.api.components.scopeContext(KtElement)
 org.jetbrains.kotlin.analysis.api.components.sealedClassInheritors
 org.jetbrains.kotlin.analysis.api.components.semanticallyEquals(KaType, KaSubtypingErrorTypePolicy)
 org.jetbrains.kotlin.analysis.api.components.smartCastInfo
 org.jetbrains.kotlin.analysis.api.components.staticDeclaredMemberScope
 org.jetbrains.kotlin.analysis.api.components.staticMemberScope
-org.jetbrains.kotlin.analysis.api.components.substitute(KaSubstitutor)
-org.jetbrains.kotlin.analysis.api.components.substitute(KaSubstitutor)
-org.jetbrains.kotlin.analysis.api.components.substitute(KaSubstitutor)
-org.jetbrains.kotlin.analysis.api.components.syntheticJavaPropertiesScope
-org.jetbrains.kotlin.analysis.api.components.targetSymbol
-org.jetbrains.kotlin.analysis.api.components.tryResolveCall()
-org.jetbrains.kotlin.analysis.api.components.tryResolveCall()
-org.jetbrains.kotlin.analysis.api.components.tryResolveCall()
-org.jetbrains.kotlin.analysis.api.components.tryResolveSymbols()
 org.jetbrains.kotlin.analysis.api.components.type
-org.jetbrains.kotlin.analysis.api.components.typeCreator
 org.jetbrains.kotlin.analysis.api.components.upperBoundIfFlexible()
-org.jetbrains.kotlin.analysis.api.components.usesContextSensitiveResolution
-org.jetbrains.kotlin.analysis.api.components.usesContextSensitiveResolution
-org.jetbrains.kotlin.analysis.api.components.varargArrayType
 org.jetbrains.kotlin.analysis.api.components.withNullability(Boolean)
 org.jetbrains.kotlin.analysis.api.getModule(PsiElement)
-org.jetbrains.kotlin.analysis.api.restore()
 org.jetbrains.kotlin.analysis.api.restoreSymbol()
 org.jetbrains.kotlin.analysis.api.useSiteModule
 org.jetbrains.kotlin.analysis.api.useSiteSession

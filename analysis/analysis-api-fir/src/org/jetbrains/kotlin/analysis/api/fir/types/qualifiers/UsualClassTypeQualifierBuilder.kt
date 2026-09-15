@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -74,7 +73,6 @@ internal object UsualClassTypeQualifierBuilder {
         val designation = mutableListOf<FirClassLikeDeclaration>(this)
         var currentClass = containingClassLookUp?.toRegularClassSymbol(moduleData.session)?.fir
 
-        @OptIn(LookupTagInternals::class)
         while (containingClassLookUp != null && currentClass?.isLocal == true) {
             designation.add(currentClass)
             containingClassLookUp = currentClass.containingClassForLocal()

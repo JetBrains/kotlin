@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.signatures.asSignature as asSignatureEndpoint
 import org.jetbrains.kotlin.analysis.api.signatures.substitute as substituteEndpoint
 
-@OptIn(KaExperimentalApi::class)
 internal class KaSignatureSubstitutorBridge(
     override val analysisSessionProvider: () -> KaSession,
 ) : KaBaseSessionComponent<KaSession>(), KaSignatureSubstitutor {

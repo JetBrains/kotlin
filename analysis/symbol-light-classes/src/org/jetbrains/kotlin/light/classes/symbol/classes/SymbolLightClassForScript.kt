@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
@@ -29,7 +28,6 @@ internal class SymbolLightClassForScript private constructor(
     private val symbolPointer: KaSymbolPointer<KaScriptSymbol>,
     ktModule: KaModule,
 ) : KtLightClassForScript, SymbolLightClassBase(ktModule, script.manager) {
-    @OptIn(KaImplementationDetail::class)
     internal constructor(
         script: KtScript,
         ktModule: KaModule,
