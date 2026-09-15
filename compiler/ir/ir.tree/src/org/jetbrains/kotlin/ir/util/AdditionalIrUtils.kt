@@ -146,6 +146,19 @@ fun IrAnnotation.isAnnotationWithEqualFqName(fqName: FqName): Boolean = when {
 
 val IrAnnotation.classId: ClassId get() = classSymbol.classIdWhenAvailable!!
 
+fun IrClass.hasEqualClassId(classId: ClassId): Boolean {
+    fun compare(declaration: IrDeclarationWithName, packageFqName: FqName, relativeName: FqName): Boolean {
+        if (declaration.name != relativeName.shortName()) return false
+        return when (val parent = declaration.parent) {
+            is IrPackageFragment -> parent.packageFqName == packageFqName && relativeName.parent().isRoot
+            is IrClass -> !relativeName.parent().isRoot && compare(parent, packageFqName, relativeName.parent())
+            else -> false
+        }
+    }
+
+    return compare(this, classId.packageFqName, classId.relativeClassName)
+}
+
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
 
