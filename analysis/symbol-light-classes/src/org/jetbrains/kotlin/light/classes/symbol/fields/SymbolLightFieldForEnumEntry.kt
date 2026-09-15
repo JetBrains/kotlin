@@ -10,10 +10,9 @@ import com.intellij.psi.impl.source.PsiImmediateClassType
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.symbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.asJava.classes.cannotModify
-import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.LightTypeElementWithParent
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
@@ -24,17 +23,19 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnum
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class SymbolLightFieldForEnumEntry(
     private val enumEntry: KtEnumEntry,
     private val enumEntryName: String,
+    override val symbolPointer: KaSymbolPointer<KaEnumEntrySymbol>,
     containingClass: SymbolLightClassForClassOrObject,
-) : SymbolLightField(containingClass = containingClass, lightMemberOrigin = null), PsiEnumConstant {
+) : SymbolLightField<KaEnumEntrySymbol>(containingClass = containingClass, lightMemberOrigin = null), PsiEnumConstant {
     internal inline fun <T> withEnumEntrySymbol(crossinline action: context(KaSession) (KaEnumEntrySymbol) -> T): T =
-        analyzeForLightClasses(useSiteModule) {
-            action(enumEntry.symbol)
+        symbolPointer.withSymbol(useSiteModule) {
+            action(it)
         }
 
     override fun getModifierList(): PsiModifierList = cachedValue {
@@ -44,9 +45,7 @@ internal class SymbolLightFieldForEnumEntry(
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     useSiteModule = useSiteModule,
-                    annotatedSymbolPointer = analyzeForLightClasses(useSiteModule) {
-                        enumEntry.symbol.createPointer()
-                    },
+                    annotatedSymbolPointer = symbolPointer
                 )
             ),
         )

@@ -6,29 +6,35 @@
 package org.jetbrains.kotlin.light.classes.symbol.records
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
+@OptIn(KaImplementationDetail::class)
 internal class SymbolLightRecordHeader(
     override val kotlinOrigin: KtPrimaryConstructor?,
+    override val symbolPointer: KaSymbolPointer<KaConstructorSymbol>,
     private val containingClass: SymbolLightClassForClassOrObject,
-) : KtLightElementBase(parent = containingClass), PsiRecordHeader, KtLightElement<KtPrimaryConstructor, PsiRecordHeader> {
+    override val useSiteModule: KaModule,
+) : KtLightElementBase(parent = containingClass), PsiRecordHeader, KtLightElement<KtPrimaryConstructor, PsiRecordHeader>,
+    KaSymbolJavaView<KaConstructorSymbol> {
     override fun getRecordComponents(): Array<PsiRecordComponent> =
         cachedValue { createRecordComponents() }.toArrayIfNotEmptyOrDefault(PsiRecordComponent.EMPTY_ARRAY)
 
     override fun getContainingClass(): PsiClass = containingClass
 
     private fun createRecordComponents(): List<PsiRecordComponent> {
-        return containingClass.withClassSymbol { classSymbol ->
-            val primaryConstructorSymbol = classSymbol.declaredMemberScope.constructors.singleOrNull { it.isPrimary }
-                ?: return@withClassSymbol emptyList()
-
-            val components = primaryConstructorSymbol.valueParameters.mapNotNull { parameterSymbol ->
+        return symbolPointer.withSymbol(useSiteModule) { primaryConstructorSymbol ->
+            primaryConstructorSymbol.valueParameters.mapNotNull { parameterSymbol ->
                 val backingFieldSymbol = parameterSymbol.primaryConstructorProperty?.backingFieldSymbol
                     ?: return@mapNotNull null
                 SymbolLightRecordComponent(
@@ -38,10 +44,9 @@ internal class SymbolLightRecordHeader(
                     containingClass = containingClass,
                 )
             }
-
-            components
         }
     }
+
 
     override fun accept(visitor: PsiElementVisitor) {
         if (visitor is JavaElementVisitor) {

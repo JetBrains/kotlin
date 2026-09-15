@@ -10,12 +10,15 @@ import com.intellij.psi.*
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
 import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
@@ -23,9 +26,12 @@ import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtParameter
 
-internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLightMethodBase) : PsiVariable, NavigationItem,
-    KtLightElement<KtParameter, PsiParameter>, KtLightParameter, KtLightElementBase(containingDeclaration) {
-    val useSiteModule: KaModule get() = method.useSiteModule
+@OptIn(KaImplementationDetail::class)
+internal abstract class SymbolLightParameterBase<out SType : KaSymbol>(
+    containingDeclaration: SymbolLightMethodBase
+) : PsiVariable, NavigationItem, KtLightElement<KtParameter, PsiParameter>, KtLightParameter, KtLightElementBase(containingDeclaration),
+    KaSymbolJavaView<SType> {
+    override val useSiteModule: KaModule get() = method.useSiteModule
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>
         get() = invalidAccess()
