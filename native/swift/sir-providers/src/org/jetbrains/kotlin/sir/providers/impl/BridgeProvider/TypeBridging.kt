@@ -603,10 +603,11 @@ internal sealed interface Bridge {
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
-                val structType = SirNominalType(swiftType.typedStruct, listOf(swiftType.elementType))
-                val structFqName = typeNamer.swiftFqName(structType)
-                val elementMetaFqName = typeNamer.swiftFqName(SirType.Metatype(swiftType.elementType.nonOptional()))
-                return "$structFqName(rawCollection: $valueExpression, conformsTo: $elementMetaFqName.self)"
+                return "{ fatalError() }()"
+//                val structType = SirNominalType(swiftType.typedStruct, listOf(swiftType.elementType))
+//                val structFqName = typeNamer.swiftFqName(structType)
+//                val elementMetaFqName = typeNamer.swiftFqName(SirType.Metatype(swiftType.elementType.nonOptional()))
+//                return "$structFqName(rawCollection: $valueExpression, conformsTo: $elementMetaFqName.self)"
             }
         }
     }

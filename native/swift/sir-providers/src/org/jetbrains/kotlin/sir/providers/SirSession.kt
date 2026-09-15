@@ -263,6 +263,7 @@ public sealed interface SirTranslationResult {
         public val auxExtension: SirExtension,
         public val samConverter: SirDeclaration?,
         public val sealedType: SirScopeDefiningDeclaration?,
+        public val typedListDeclarations: Triple<SirProtocol, SirExtension, SirStruct>?,
     ) : SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
         // `declaration` MUST stay first: callers use `allDeclarations.firstIsInstanceOrNull<SirProtocol>()`
@@ -278,6 +279,9 @@ public sealed interface SirTranslationResult {
                 auxExtension,
                 samConverter,
                 sealedType,
+                typedListDeclarations?.first,
+                typedListDeclarations?.second,
+                typedListDeclarations?.third,
             )
     }
 
