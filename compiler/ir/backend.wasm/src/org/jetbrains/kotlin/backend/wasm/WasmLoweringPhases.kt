@@ -79,6 +79,7 @@ fun wasmLoweringsOfTheFirstPhase(
             this += ::createUpgradeCallableReferences
         }
         this += loweringsOfTheFirstPhase(languageVersionSettings)
+        this += ::WasmTailrecCheckerLowering
     }
     return createModulePhases(*phases.toTypedArray())
 }
