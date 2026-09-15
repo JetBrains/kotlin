@@ -86,6 +86,11 @@ private fun FirRegularClass.classModifiers(): Set<ClassModifier> = buildSet {
     }
 }
 
+fun FirRegularClass.uninstantiableClassModifier(): ClassModifier? =
+    classModifiers().firstOrNull { it in UNINSTANTIABLE_CLASS_MODIFIERS }
+
+private val UNINSTANTIABLE_CLASS_MODIFIERS = setOf(ClassModifier.INNER, ClassModifier.ABSTRACT, ClassModifier.SEALED)
+
 private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo> = buildMap {
     val logInfo = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
