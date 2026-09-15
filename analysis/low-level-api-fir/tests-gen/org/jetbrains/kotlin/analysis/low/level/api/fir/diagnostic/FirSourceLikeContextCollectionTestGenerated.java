@@ -251,6 +251,18 @@ public class FirSourceLikeContextCollectionTestGenerated extends AbstractFirSour
   }
 
   @Test
+  @TestMetadata("explicitBackingField.kt")
+  public void testExplicitBackingField() {
+    run("explicitBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitBackingFieldScript.kts")
+  public void testExplicitBackingFieldScript() {
+    run("explicitBackingFieldScript.kts");
+  }
+
+  @Test
   @TestMetadata("fullValueClass.kt")
   public void testFullValueClass() {
     run("fullValueClass.kt");

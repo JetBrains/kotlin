@@ -707,6 +707,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       }
 
       @Test
+      @TestMetadata("localFunctionInExplicitBackingField.kt")
+      public void testLocalFunctionInExplicitBackingField() {
+        run("localFunctionInExplicitBackingField.kt");
+      }
+
+      @Test
       @TestMetadata("localFunctionLambdaParameterClosure.kt")
       public void testLocalFunctionLambdaParameterClosure() {
         run("localFunctionLambdaParameterClosure.kt");
@@ -886,6 +892,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       @TestMetadata("lambdaContent.kt")
       public void testLambdaContent() {
         run("lambdaContent.kt");
+      }
+
+      @Test
+      @TestMetadata("localFunctionInExplicitBackingField.kt")
+      public void testLocalFunctionInExplicitBackingField() {
+        run("localFunctionInExplicitBackingField.kt");
       }
 
       @Test

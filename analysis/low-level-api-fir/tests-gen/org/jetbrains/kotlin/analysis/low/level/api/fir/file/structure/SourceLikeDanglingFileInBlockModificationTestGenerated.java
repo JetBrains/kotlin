@@ -334,6 +334,18 @@ public class SourceLikeDanglingFileInBlockModificationTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("memberGetterWithTypeWithBodyNearExplicitBackingField.kt")
+  public void testMemberGetterWithTypeWithBodyNearExplicitBackingField() {
+    run("memberGetterWithTypeWithBodyNearExplicitBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("memberGetterWithTypeWithBodyNearExplicitBackingFieldScript.kts")
+  public void testMemberGetterWithTypeWithBodyNearExplicitBackingFieldScript() {
+    run("memberGetterWithTypeWithBodyNearExplicitBackingFieldScript.kts");
+  }
+
+  @Test
   @TestMetadata("memberGetterWithTypeWithBodyScript.kts")
   public void testMemberGetterWithTypeWithBodyScript() {
     run("memberGetterWithTypeWithBodyScript.kts");
@@ -421,6 +433,18 @@ public class SourceLikeDanglingFileInBlockModificationTestGenerated extends Abst
   @TestMetadata("memberPropertyWithTypeInErrorDelegateScript.kts")
   public void testMemberPropertyWithTypeInErrorDelegateScript() {
     run("memberPropertyWithTypeInErrorDelegateScript.kts");
+  }
+
+  @Test
+  @TestMetadata("memberPropertyWithTypeInExplicitBackingFieldInitializer.kt")
+  public void testMemberPropertyWithTypeInExplicitBackingFieldInitializer() {
+    run("memberPropertyWithTypeInExplicitBackingFieldInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("memberPropertyWithTypeInExplicitBackingFieldInitializerScript.kts")
+  public void testMemberPropertyWithTypeInExplicitBackingFieldInitializerScript() {
+    run("memberPropertyWithTypeInExplicitBackingFieldInitializerScript.kts");
   }
 
   @Test
@@ -820,6 +844,18 @@ public class SourceLikeDanglingFileInBlockModificationTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyNearExplicitBackingField.kt")
+  public void testTopLevelGetterWithTypeWithBodyNearExplicitBackingField() {
+    run("topLevelGetterWithTypeWithBodyNearExplicitBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyNearExplicitBackingFieldScript.kts")
+  public void testTopLevelGetterWithTypeWithBodyNearExplicitBackingFieldScript() {
+    run("topLevelGetterWithTypeWithBodyNearExplicitBackingFieldScript.kts");
+  }
+
+  @Test
   @TestMetadata("topLevelGetterWithTypeWithBodyNearField.kt")
   public void testTopLevelGetterWithTypeWithBodyNearField() {
     run("topLevelGetterWithTypeWithBodyNearField.kt");
@@ -931,6 +967,18 @@ public class SourceLikeDanglingFileInBlockModificationTestGenerated extends Abst
   @TestMetadata("topLevelPropertyWithTypeInErrorDelegateScript.kts")
   public void testTopLevelPropertyWithTypeInErrorDelegateScript() {
     run("topLevelPropertyWithTypeInErrorDelegateScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelPropertyWithTypeInExplicitBackingFieldInitializer.kt")
+  public void testTopLevelPropertyWithTypeInExplicitBackingFieldInitializer() {
+    run("topLevelPropertyWithTypeInExplicitBackingFieldInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelPropertyWithTypeInExplicitBackingFieldInitializerScript.kts")
+  public void testTopLevelPropertyWithTypeInExplicitBackingFieldInitializerScript() {
+    run("topLevelPropertyWithTypeInExplicitBackingFieldInitializerScript.kts");
   }
 
   @Test
