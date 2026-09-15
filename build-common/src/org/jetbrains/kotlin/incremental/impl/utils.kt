@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.incremental.impl
 
+import com.google.common.hash.Hashing
 import org.jetbrains.kotlin.incremental.md5
+
+
+private val fingerprint = Hashing.farmHashFingerprint64()
 
 fun ByteArray.hashToLong(): Long {
     // Note: The returned type `Long` is 64-bit, but we currently don't have a good 64-bit hash function.
     // The method below uses `md5` which is 128-bit and converts it to `Long`.
-    return md5()
+    return fingerprint.hashBytes(this).asLong()
 }
