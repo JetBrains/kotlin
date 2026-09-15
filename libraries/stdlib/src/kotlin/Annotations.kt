@@ -10,6 +10,7 @@ package kotlin
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlin.annotation.AnnotationRetention.SOURCE
 import kotlin.annotation.AnnotationTarget.*
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
 /**
  * Marks the annotated declaration as deprecated.
@@ -93,22 +94,21 @@ public enum class DeprecationLevel {
 }
 
 /**
- * Signifies that the annotated functional type represents an extension function.
+ * Signifies that the annotated functional type represents an extension function in compiled code.
  */
 @Target(TYPE)
 @MustBeDocumented
 public annotation class ExtensionFunctionType
 
 /**
- * Signifies that the annotated functional type has the prefix of size `count` for context receivers.
+ * Signifies that the annotated functional type has the prefix of size `count` for context parameters in compiled code.
  * Thus, `@ContextFunctionTypeParams(2) @ExtensionFunctionType Function4<String, Int, Double, Byte, Unit>` is a normalized representation of
  * `context(String, Int) Double.(Byte) -> Unit`.
  *
- * Just the same as @ExtensionFunctionType, this annotation is not assumed to be used in source code, preferring the explicit function type
+ * Just like [ExtensionFunctionType], this annotation is not meant to be used in source code, preferring the explicit function type
  * syntax, like in the example above.
  *
- * There's no need in any additional opt-in limitations because this annotation might only be referenced by users
- * who turned on an experimental `-Xcontext-receivers` compiler flag, for which there are no backward/forward compatibilities guarantees.
+ * Usage of this annotation is guarded by the context parameters language feature which became stable in 2.4.
  */
 @Target(TYPE)
 @MustBeDocumented

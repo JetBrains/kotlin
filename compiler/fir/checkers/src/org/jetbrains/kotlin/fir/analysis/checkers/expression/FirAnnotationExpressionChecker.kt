@@ -309,7 +309,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         annotationClassId: ClassId?,
     ) {
         if (annotationClassId != StandardClassIds.Annotations.ContextFunctionTypeParams) return
-        source.requireFeatureSupport(LanguageFeature.ContextReceivers)
+        source.requireFeatureSupport(LanguageFeature.ContextParameters)
     }
 
     private fun FirFunctionCall.unwrapArgumentsOfArrayOfCall(): List<FirExpression> {
