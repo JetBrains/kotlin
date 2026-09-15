@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 
 import org.jetbrains.kotlin.analysis.api.expressions.expressionType
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.JavaInteroperabilityComponentTestUtils.render
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
@@ -33,6 +34,9 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
         val renderer = KaDebugRenderer(renderTypeByProperties = true)
 
         lateinit var beforeString: String
+        lateinit var beforeStringPretty: String
+        lateinit var afterString: String
+        lateinit var afterStringPretty: String
         lateinit var typePointer: KaTypePointer<*>
 
         analyzeForTest(mainFile) {
@@ -43,19 +47,31 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
             }
 
             beforeString = renderer.renderType(useSiteSession, type)
+            beforeStringPretty = type.render()
             typePointer = type.createPointer()
         }
 
-        val afterString = analyzeForTest(restoreAt) {
+        analyzeForTest(restoreAt) {
             val restoredType = typePointer.restore()
             if (restoredType != null) {
-                renderer.renderType(useSiteSession, restoredType)
+                afterString = renderer.renderType(useSiteSession, restoredType)
+                afterStringPretty = restoredType.render()
             } else {
-                "Type pointer restoration failed"
+                afterString = "Type pointer restoration failed"
+                afterStringPretty = afterString
             }
         }
 
-        val actualText = if (beforeString == afterString) {
+        val isRestoredEqually = beforeString == afterString
+        val actualText = buildOutputString(isRestoredEqually, beforeString, afterString)
+        val actualTextPretty = buildOutputString(isRestoredEqually, beforeStringPretty, afterStringPretty)
+
+        testServices.assertions.assertEqualsToTestOutputFile(actualText)
+        testServices.assertions.assertEqualsToTestOutputFile(actualTextPretty, extension = ".pretty.txt")
+    }
+
+    private fun buildOutputString(restoredEqually: Boolean, beforeString: String, afterString: String): String {
+        return if (restoredEqually) {
             buildString {
                 appendLine("Restored type is the same as the original one").appendLine()
                 append(beforeString)
@@ -69,7 +85,5 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
                 append(afterString)
             }
         }
-
-        testServices.assertions.assertEqualsToTestOutputFile(actualText)
     }
 }

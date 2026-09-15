@@ -4,4 +4,4 @@ annotation class Anno
 @Target(AnnotationTarget.TYPE)
 annotation class AnnoWithArgs(val x: String)
 
-fun test(value: <expr>@Anno @AnnoWithArgs("") List<@Anno @AnnoWithArgs("") String></expr>) {}
+fun test(block: <expr>context (@Anno @AnnoWithArgs("") String) (String) -> Int?</expr>) {}
