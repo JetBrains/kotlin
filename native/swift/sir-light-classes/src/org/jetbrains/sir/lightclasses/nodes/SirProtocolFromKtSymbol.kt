@@ -5,6 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -56,7 +57,14 @@ internal open class SirProtocolFromKtSymbol(
     }
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
-        if (isUnavailable) translatedProtocols else translatedProtocols + existentialMarker
+        buildList {
+            addAll(translatedProtocols)
+            val typedListDeclarations = typedListDeclarations
+            if (typedListDeclarations is SirTypedListDeclarations.Concrete) {
+                addAll(typedListDeclarations.typedListProtocols)
+            }
+            if (!isUnavailable) add(existentialMarker)
+        }
     }
 
     internal val translatedProtocols: List<SirProtocolFromKtSymbol> by lazyWithSessions {
@@ -90,6 +98,7 @@ internal open class SirProtocolFromKtSymbol(
                 it !is SirOperatorAuxiliaryDeclaration // FIXME: rectify where auxiliary declarations should go.
             })
             addAll(sealedTypeFunctions)
+            addIfNotNull((typedListDeclarations as? SirTypedListDeclarations.Concrete)?.elementTypeAlias)
         }
     }
 
@@ -148,6 +157,10 @@ internal open class SirProtocolFromKtSymbol(
 
     internal val sealedTypeFunctions by lazyWithSessions {
         createSirSealedTypeFunctions(this).onEach { it.parent = this }
+    }
+
+    internal val typedListDeclarations: SirTypedListDeclarations? by lazyWithSessions {
+        createSirTypedListDeclarations(this)
     }
 
     override val bridges: List<SirBridge> = emptyList()
