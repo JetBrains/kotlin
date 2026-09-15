@@ -163,6 +163,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("externalSerializerWithConcreteSupertype.kt")
+    public void testExternalSerializerWithConcreteSupertype() {
+      run("externalSerializerWithConcreteSupertype.kt");
+    }
+
+    @Test
     @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
     public void testGeneratedClassifiersViaLibraryDependency() {
       run("generatedClassifiersViaLibraryDependency.kt");
