@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
+import org.jetbrains.kotlin.light.classes.symbol.utils.withSymbol
 
 internal open class SymbolLightValueParameter(
     parameterSymbol: KaValueParameterSymbol,
