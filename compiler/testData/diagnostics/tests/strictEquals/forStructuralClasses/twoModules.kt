@@ -54,17 +54,17 @@ annotation class AnnotationPlain(val x: Int)
 // FILE: m2.kt
 
 fun testValueClasses(vp: ValuePlain, ve: ValueExplicit, vs: ValueSub, u: Unrelated, s: Sup): Boolean {
-    if (<!EQUALITY_NOT_APPLICABLE!>vp != ve<!>) return true
-    if (<!EQUALITY_NOT_APPLICABLE!>vp == u<!>) return false
-    if (<!EQUALITY_NOT_APPLICABLE!>u == ve<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>vp != ve<!>) return true
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>vp == u<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>u == ve<!>) return false
     if (s != vs) return false
     if (vs == s) return true
     return true
 }
 
 fun testValueObjects(u: Unrelated): Boolean {
-    if (<!EQUALITY_NOT_APPLICABLE!>ValueObjectPlain != ValueObjectExplicit<!>) return true
-    if (<!EQUALITY_NOT_APPLICABLE!>ValueObjectPlain == u<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>ValueObjectPlain != ValueObjectExplicit<!>) return true
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>ValueObjectPlain == u<!>) return false
     return true
 }
 
@@ -75,10 +75,10 @@ fun testAbstractValueClasses(
     vp: ValuePlain,
     u: Unrelated,
 ): Boolean {
-    if (<!EQUALITY_NOT_APPLICABLE_WARNING!>ap != ae<!>) return true
+    if (ap != ae) return true
     if (ap == u) return false
     if (ap == ai) return true
-    if (<!EQUALITY_NOT_APPLICABLE!>ap == vp<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>ap == vp<!>) return false
     return true
 }
 
@@ -105,24 +105,24 @@ fun testSilentToday(
     u: Unrelated,
     s: Sup,
 ): Boolean {
-    if (dp != de) return true
-    if (dp == u) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>dp != de<!>) return true
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>dp == u<!>) return false
     if (s != ds) return false
-    if (DataObjectPlain == u) return false
-    if (DataObjectNotGenerated != DataObjectPlain) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>DataObjectPlain == u<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>DataObjectNotGenerated != DataObjectPlain<!>) return false
     if (s == DataObjectSub) return true
-    if (ann == dp) return false
-    if (ann == u) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>ann == dp<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>ann == u<!>) return false
     return true
 }
 
 fun testAfterSmartCast(vp: ValuePlain, ep: EnumPlain, dp: DataPlain, nAny: Any?) {
     if (vp == nAny) return
-    if (nAny is ValueExplicit && <!EQUALITY_NOT_APPLICABLE_WARNING!>vp == nAny<!>) return
+    if (nAny is ValueExplicit && <!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>vp == nAny<!>) return
     if (ep == nAny) return
     if (nAny is EnumSub && <!INCOMPATIBLE_ENUM_COMPARISON!>ep == nAny<!>) return
     if (dp == nAny) return
-    if (nAny is DataExplicit && dp == nAny) return
+    if (nAny is DataExplicit && <!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>dp == nAny<!>) return
 }
 
 /* GENERATED_FIR_TAGS: andExpression, annotationDeclaration, classDeclaration, data, enumDeclaration, enumEntry,

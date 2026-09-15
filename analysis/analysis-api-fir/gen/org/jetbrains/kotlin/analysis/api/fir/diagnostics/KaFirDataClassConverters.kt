@@ -3870,6 +3870,14 @@ private fun KaDiagnosticConverterBuilder.addConversions85() {
             token,
         )
     }
+    add(FirErrors.INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON) { firDiagnostic ->
+        IncompatibleStructuralClassComparisonImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.REDUNDANT_RETURN) { firDiagnostic ->
         RedundantReturnImpl(
             firDiagnostic as KtDiagnosticWithSource,

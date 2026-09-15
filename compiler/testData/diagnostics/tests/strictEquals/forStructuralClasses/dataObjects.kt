@@ -9,9 +9,9 @@ sealed class C
 data object D : C()
 
 fun test(b: B, c: C, d: D): Boolean {
-    if (A != b) return true
-    if (A == c) return false
-    if (c == A) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>A != b<!>) return true
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>A == c<!>) return false
+    if (<!INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON!>c == A<!>) return false
     if (c != d) return false
     if (d == c) return true
     if (D != d) return false

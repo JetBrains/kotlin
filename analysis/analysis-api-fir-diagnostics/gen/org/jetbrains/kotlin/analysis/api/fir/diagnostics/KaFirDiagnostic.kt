@@ -7221,6 +7221,16 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IncompatibleStructuralClassComparison : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IncompatibleStructuralClassComparison>
+            get() = IncompatibleStructuralClassComparison::class
+
+        public val leftType: KaType
+        public val rightType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ForbiddenIdentityEquals : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<ForbiddenIdentityEquals>
             get() = ForbiddenIdentityEquals::class
