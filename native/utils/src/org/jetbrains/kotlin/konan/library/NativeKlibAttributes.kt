@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
  * Indicates whether this [Klib] belongs to the Kotlin/Native distribution.
  */
 var Klib.isFromKotlinNativeDistribution: Boolean by klibFlag()
-    // TODO (KT-61096): After moving, make the setter to be internal.
-    set
+    internal set
 
 /**
  * Indicates whether this [Klib] was implicitly loaded from the Kotlin/Native distribution.
@@ -27,8 +26,7 @@ var Klib.isFromKotlinNativeDistribution: Boolean by klibFlag()
  *    but not vice versa.
  */
 var Klib.isImplicitlyLoadedFromKotlinNativeDistribution: Boolean by klibFlag()
-    // TODO (KT-61096): After moving, make the setter to be internal.
-    set
+    internal set
 
 /**
  * Indicates whether this [Klib] is explicitly specified by the user in compiler's CLI arguments.
