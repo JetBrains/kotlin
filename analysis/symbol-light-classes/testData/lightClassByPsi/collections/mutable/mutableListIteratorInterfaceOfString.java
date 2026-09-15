@@ -1,10 +1,4 @@
 public abstract class CListIterator /* test.CListIterator*/ implements test.IMutableListIterator {
-  @java.lang.Override()
-  public abstract void remove();//  remove()
-
-  @java.lang.Override()
-  public final void remove();//  remove()
-
   public  CListIterator();//  .ctor()
 }
 

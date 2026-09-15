@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsPro
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.MethodAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
+import org.jetbrains.kotlin.light.classes.symbol.classes.isJavaLangObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -115,9 +116,6 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
                 typeFromJava.isTypeParameter()
         return if (shouldTryToUnbox) candidateType.unboxedOrSelf() else candidateType
     }
-
-    private fun PsiType.isJavaLangObject(): Boolean =
-        this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
 
     private fun PsiType.unboxedOrSelf(): PsiType =
         PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
