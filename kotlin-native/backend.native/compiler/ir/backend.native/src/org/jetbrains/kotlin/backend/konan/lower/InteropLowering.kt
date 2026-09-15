@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
-import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
@@ -134,7 +135,7 @@ private abstract class BaseInteropIrTransformer(
             override val typeSystem: IrTypeSystemContext get() = context.typeSystem
 
             val klib: KotlinLibrary? get() {
-                return (element as? IrCall)?.symbol?.owner?.konanLibrary
+                return (element as? IrCall)?.symbol?.owner?.moduleFragment?.kotlinLibrary
             }
 
             override val language: String
@@ -818,7 +819,7 @@ private class InteropTransformerPart2(
     private fun tryGenerateInteropConstantRead(expression: IrCall): IrExpression? {
         val function = expression.symbol.owner
 
-        if (!function.isFromCInteropLibrary()) return null
+        if (function.moduleFragment.kotlinLibrary?.isCInteropLibrary() != true) return null
         if (!function.isGetter) return null
 
         val constantProperty = function.correspondingPropertySymbol?.owner?.takeIf { it.isConst } ?: return null
@@ -834,7 +835,7 @@ private class InteropTransformerPart2(
         val function = expression.symbol.owner
 
         val exceptionMode = ForeignExceptionMode.byValue(
-                function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
+                function.moduleFragment.kotlinLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )
         return builder.generateExpressionWithStubs(expression) {
             generateCCall(
@@ -851,7 +852,7 @@ private class InteropTransformerPart2(
         val function = expression.symbol.owner
 
         val exceptionMode = ForeignExceptionMode.byValue(
-                function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
+                function.moduleFragment.kotlinLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )
         return builder.generateExpressionWithStubs(expression) {
             generateCGlobalDirectAccess(expression, builder, exceptionMode)

@@ -11,6 +11,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
@@ -479,7 +480,7 @@ internal class CodeGeneratorVisitor(
     override fun visitFile(declaration: IrFile) {
         @Suppress("UNCHECKED_CAST")
         using(FileScope(declaration, declaration.fileEntry)) {
-            runAndProcessInitializers(declaration.konanLibrary) {
+            runAndProcessInitializers(declaration.module.kotlinLibrary) {
                 declaration.acceptChildrenVoid(this)
                 codegen.processBindClassToObjCNameAnnotations(declaration)
             }
@@ -789,7 +790,7 @@ internal class CodeGeneratorVisitor(
             }
 
             using(ClassScope(declaration)) {
-                runAndProcessInitializers(declaration.konanLibrary) {
+                runAndProcessInitializers(declaration.moduleFragment.kotlinLibrary) {
                     declaration.declarations.forEach {
                         it.acceptVoid(this)
                     }

@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.ExpressionBodyTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
 import org.jetbrains.kotlin.backend.konan.llvm.storageKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -129,7 +129,7 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
 
         val builder = context.irBuiltIns.createIrBuilder((container as IrSymbolOwner).symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
 
-        if (container is IrClass && !container.isInterface && container.konanLibrary?.newCompanionInitializationEnabled == true) {
+        if (container is IrClass && !container.isInterface && container.moduleFragment.kotlinLibrary?.newCompanionInitializationEnabled == true) {
             // Implemented as defined in
             // https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-5.html#jvms-5.5
             // Next, if C is a class rather than an interface, then let SC be its superclass and let SI1, ..., SIn be all
