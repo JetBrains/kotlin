@@ -164,8 +164,7 @@ class KotlinArchiveConsumptionCompatibilityIT : KGPBaseTest() {
     }
 
     companion object {
-        // TODO: change to 2.4.20, once it is released
-        private const val TESTED_KOTLIN_VERSION = "2.4.20-RC"
+        private const val TESTED_KOTLIN_VERSION = "2.4.20"
 
         private val consumerCallingJvmDeclarations = "fun consume() {\n    commonMain()\n    jvmMain()\n}"
 
