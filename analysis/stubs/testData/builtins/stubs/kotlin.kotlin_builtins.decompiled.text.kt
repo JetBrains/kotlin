@@ -685,6 +685,14 @@ public final annotation class EqualityBound public constructor(
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])
 @kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "2.5")
+public final annotation class ExperimentalCollectionLiteralsApi public constructor() : kotlin.Annotation {
+}
+
+@kotlin.RequiresOptIn(level = kotlin.RequiresOptIn.Level.ERROR)
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])
+@kotlin.annotation.MustBeDocumented
 @kotlin.SinceKotlin(version = "1.3")
 public final annotation class ExperimentalStdlibApi public constructor() : kotlin.Annotation {
 }
