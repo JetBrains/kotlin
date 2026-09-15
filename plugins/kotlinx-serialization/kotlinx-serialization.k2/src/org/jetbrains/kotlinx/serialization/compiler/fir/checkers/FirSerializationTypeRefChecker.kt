@@ -18,13 +18,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.fir.getSerializableWith
 import org.jetbrains.kotlinx.serialization.compiler.fir.hasSerializableOrMetaAnnotation
 
 /**
- * `@Serializable(with = ...)` written on a *type* is only honoured for the types of serializable properties, where
+ * `@Serializable(with = ...)` written on a *type* is only recognized for the types of serializable properties, where
  * [FirSerializationPluginClassChecker] picks it up and the backend passes the serializer on. Anywhere else — a function
  * signature, a local variable, a top-level property — it is silently ignored: `serializer<T>()` and the reflective
  * lookup do not see type annotations. Code like
@@ -44,13 +43,13 @@ object FirSerializationTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind
         // Types inferred for a call, e.g. the type argument of `decodeFromString`, inherit the annotations of the
         // expected type. Those are not places the user can fix, so only report where the annotation is written.
         if (typeRef.source?.kind !is KtRealSourceElementKind) return
-        if (isHonouredPosition()) return
+        if (isRecognizedPosition()) return
 
         reporter.reportOn(typeRef.source, FirSerializationErrors.SERIALIZABLE_WITH_ON_TYPE_HAS_NO_EFFECT)
     }
 
     context(context: CheckerContext)
-    private fun isHonouredPosition(): Boolean {
+    private fun isRecognizedPosition(): Boolean {
         val containingClassSymbol = when (val innermost = context.containingDeclarations.lastOrNull()) {
             // `typealias S = @Serializable(SomeSerializer::class) Other` is the documented way to bind a serializer to
             // a type one does not own: the annotation survives the expansion and is picked up at every use site.

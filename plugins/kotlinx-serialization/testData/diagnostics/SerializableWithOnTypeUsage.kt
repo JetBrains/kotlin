@@ -29,7 +29,7 @@ fun local() {
 
 val topLevel: <!SERIALIZABLE_WITH_ON_TYPE_HAS_NO_EFFECT!>@Serializable(with = ClassASerializer::class) ClassA<!> = ClassA()
 
-// Honoured positions — the plugin does pass the serializer on for these.
+// Acknowledged positions — the plugin does pass the serializer on for these.
 @Serializable
 class Holder(
     val fromCtor: @Serializable(with = ClassASerializer::class) ClassA,
@@ -42,7 +42,7 @@ class Holder(
 class PlainHolder(val a: <!SERIALIZABLE_WITH_ON_TYPE_HAS_NO_EFFECT!>@Serializable(with = ClassASerializer::class) ClassA<!>)
 
 // Binding a serializer through a typealias is the documented way to handle a type one does not own; the annotation
-// survives the expansion and is honoured at every use site.
+// survives the expansion and is recognized at every use site.
 typealias ClassAAlias = @Serializable(with = ClassASerializer::class) ClassA
 
 typealias NestedInAlias = List<@Serializable(with = ClassASerializer::class) ClassA>
