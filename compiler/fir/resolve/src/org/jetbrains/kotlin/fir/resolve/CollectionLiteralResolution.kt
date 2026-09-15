@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
@@ -333,6 +334,16 @@ private class CollectionLiteralResolutionStrategyForStdlibType(context: Resoluti
 
 context(context: ResolutionContext)
 fun <T : Any> tryAllCLResolutionStrategies(attempt: CollectionLiteralResolutionStrategy.() -> T?): T? {
-    CollectionLiteralResolutionStrategyThroughCompanion(context).attempt()?.let { return it }
-    return CollectionLiteralResolutionStrategyForStdlibType(context).attempt()
+    return if (LanguageFeature.CollectionLiterals.isEnabled()) {
+        CollectionLiteralResolutionStrategyThroughCompanion(context).attempt()
+            ?: CollectionLiteralResolutionStrategyForStdlibType(context).attempt()
+    } else {
+        // In the case of `+CollectionLiteralsBasedAnnotationResolution -CollectionLiterals`, let's prefer factory functions
+        // rather than proper `of` operators. This is mostly done to make collection literals in annotations work:
+        // otherwise, they'd resolve to `*Array.of` operators, and we'd report opt-in errors for them.
+        assert(LanguageFeature.CollectionLiteralsBasedAnnotationResolution.isEnabled())
+
+        CollectionLiteralResolutionStrategyForStdlibType(context).attempt()
+            ?: CollectionLiteralResolutionStrategyThroughCompanion(context).attempt()
+    }
 }
