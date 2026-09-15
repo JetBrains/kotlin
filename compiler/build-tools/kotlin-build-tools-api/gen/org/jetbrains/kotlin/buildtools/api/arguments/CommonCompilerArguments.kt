@@ -342,6 +342,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_DISABLE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
+     * Disables `NormalizeNaNValuesInConstContext` language feature.`
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_DO_NOT_NORMALIZE_NAN_VALUES_IN_CONST_CONTEXT: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_DO_NOT_NORMALIZE_NAN_VALUES_IN_CONST_CONTEXT", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Disable automatic sorting of source files.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
