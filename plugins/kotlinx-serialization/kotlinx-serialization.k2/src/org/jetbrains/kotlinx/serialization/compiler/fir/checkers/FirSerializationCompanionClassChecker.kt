@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
@@ -83,23 +84,29 @@ internal fun CheckerContext.checkCompanionSerializerClash(
         else -> classSymbol.resolvedCompanionObjectSymbol ?: return
     }
 
-    val generatedNames = buildSet {
-        add(SerialEntityNames.SERIALIZER_PROVIDER_NAME)
-        if (classSymbol.keepGeneratedSerializer(session)) add(SerialEntityNames.GENERATED_SERIALIZER_PROVIDER_NAME)
+    val keepGeneratedSerializer = classSymbol.keepGeneratedSerializer(session)
+    fun FirFunctionSymbol<*>.hasGeneratedName(): Boolean {
+        return name == SerialEntityNames.SERIALIZER_PROVIDER_NAME ||
+                (keepGeneratedSerializer && name == SerialEntityNames.GENERATED_SERIALIZER_PROVIDER_NAME)
     }
 
     for (functionSymbol in containerSymbol.declaredFunctions(session)) {
-        if (functionSymbol.name !in generatedNames) continue
+        if (!functionSymbol.hasGeneratedName()) continue
+
         if (functionSymbol.origin != FirDeclarationOrigin.Source) continue
         // The backend matches one serializer parameter per type parameter of the serializable class, counting every
         // parameter but the dispatch receiver — so an extension or context receiver makes the signature not match.
-        val nonDispatchParameterTypes = buildList {
-            functionSymbol.contextParameterSymbols.mapTo(this) { it.resolvedReturnType }
-            functionSymbol.resolvedReceiverType?.let { add(it) }
-            functionSymbol.valueParameterSymbols.mapTo(this) { it.resolvedReturnType }
+        fun allNonDispatchParametersMatch(): Boolean {
+            val ctxParams = functionSymbol.contextParameterSymbols
+            val valueParams = functionSymbol.valueParameterSymbols
+            val receiverParam = functionSymbol.resolvedReceiverType
+            val paramsCount = ctxParams.size + valueParams.size + if (receiverParam != null) 1 else 0
+            return classSymbol.typeParameterSymbols.size == paramsCount
+                    && (ctxParams.all { isAnyKSerializer(it.resolvedReturnType) }
+                    && valueParams.all { isAnyKSerializer(it.resolvedReturnType) }
+                    && receiverParam?.let { isAnyKSerializer(it) } != false)
         }
-        if (nonDispatchParameterTypes.size != classSymbol.typeParameterSymbols.size) continue
-        if (!nonDispatchParameterTypes.all { isAnyKSerializer(it) }) continue
+        if (!allNonDispatchParametersMatch()) continue
         if (!isAnyKSerializer(functionSymbol.resolvedReturnType)) continue
 
         reporter.reportOn(
