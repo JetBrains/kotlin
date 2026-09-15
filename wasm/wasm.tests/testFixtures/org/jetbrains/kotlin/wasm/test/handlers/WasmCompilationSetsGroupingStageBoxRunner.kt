@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -48,8 +47,10 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
 
     override fun shouldUseBoxExportMode(): Boolean {
         val inputs = testServices.groupingStageInputs
-        // Global invariant: a batch of a single test is always run as a standalone box-export test,
-        // regardless of why it ended up alone in the batch (isolated, or merely a unique batch token).
+        // This predicate is considered only for driverless artifacts; the base runner always honors a grouped
+        // driver's artifact metadata and keeps such an artifact on the unit-test path.
+        // A driverless batch of a single test is run as a standalone box-export test regardless of why it ended up
+        // alone (isolated, or merely a unique batch token).
         // Single-test box tests without RUN_UNIT_TESTS are compiled without the `@Test` launcher
         // (see `WasmJsLauncherAdditionalSourceProvider`), so they must be executed by calling
         // `jsModule.box()` and asserting "OK", rather than driving the unit-test runner.
@@ -62,13 +63,18 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
     override fun runTestCode(
         artifact: BinaryArtifacts.Wasm,
         useUnitTestRunnerOnly: Boolean,
-        outputCollector: MutableList<String>?,
+        outputCollector: MutableList<WasmVMOutput>?,
     ): List<Throwable> {
         check(artifact is WasmCompilationSetsBinaryArtifact) {
             "Unexpected artifact type: ${artifact::class}"
         }
         return if (isWasiTarget) {
-            wasiBoxRunner.runWasmCode(artifact, useUnitTestRunnerOnly, outputCollector, throwOnExceptions = false)
+            wasiBoxRunner.runWasmCode(
+                artifact,
+                useUnitTestRunnerOnly,
+                outputCollector,
+                throwOnExceptions = false,
+            )
         } else {
             wasmBoxRunner.runWasmCode(artifact, useUnitTestRunnerOnly, outputCollector, throwOnExceptions = false)
         }

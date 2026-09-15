@@ -7,29 +7,20 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import jetbrains.buildServer.messages.serviceMessages.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.test.report.TestReport
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.text.ParseException
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestReportParseState as State
 
-class TestReport(
-    val passedTests: Collection<TestName>,
-    val failedTests: Collection<TestName>,
-    val ignoredTests: Collection<TestName>
-) {
-    fun isEmpty(): Boolean = passedTests.isEmpty() && failedTests.isEmpty() && ignoredTests.isEmpty()
-
-    override fun toString(): String = """
-        TestReport:
-         * Passed:  $passedTests
-         * Failed:  $failedTests
-         * Ignored: $ignoredTests
-    """.trimIndent()
-}
-
 interface TestOutputFilter {
     fun filter(testOutput: String): FilteredOutput
 
-    data class FilteredOutput(val filteredOutput: String, val testReport: TestReport?)
+    data class FilteredOutput(
+        val filteredOutput: String,
+        val testReport: TestReport<TestName>?,
+        /** Number of test outcome messages, including repeated reports for the same test name. */
+        val reportedTestCount: Int? = null,
+    )
 
     companion object {
         val NO_FILTERING = object : TestOutputFilter {
@@ -68,7 +59,8 @@ object TCTestOutputFilter : TestOutputFilter {
 
         return TestOutputFilter.FilteredOutput(
             filteredOutput = callback.nonTestOutput.toString(),
-            testReport = TestReport(callback.passedTests, callback.failedTests, callback.ignoredTests)
+            testReport = TestReport(callback.passedTests, callback.failedTests, callback.ignoredTests),
+            reportedTestCount = callback.reportedTestCount,
         )
     }
 }
@@ -86,9 +78,10 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
     private var afterMessage = false
     private var state: State = State.Begin
 
-    val passedTests = mutableListOf<TestName>()
-    val failedTests = mutableListOf<TestName>()
-    val ignoredTests = mutableListOf<TestName>()
+    val passedTests = mutableSetOf<TestName>()
+    val failedTests = mutableSetOf<TestName>()
+    val ignoredTests = mutableSetOf<TestName>()
+    var reportedTestCount = 0
 
     val nonTestOutput = StringBuilder()
     val errors = mutableListOf<String>()
@@ -132,7 +125,10 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
             is TestIgnored -> when (state) {
                 is State.TestSuiteStarted,
                 is State.TestIgnored,
-                is State.TestFinished -> State.TestIgnored(state.testSuite, message.simpleTestName).also { ignoredTests += it.testName }
+                is State.TestFinished -> State.TestIgnored(state.testSuite, message.simpleTestName).also {
+                    ignoredTests += it.testName
+                    reportedTestCount++
+                }
                 else -> unexpectedMessage()
             }
             is TestStarted -> when (state) {
@@ -144,12 +140,18 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
             is TestFailed -> when (val s = state) {
                 is State.TestStarted -> {
                     nonTestOutput.append(message.stacktrace)
-                    State.TestFailed(s.testSuite, message.simpleTestName).also { failedTests += it.testName }
+                    State.TestFailed(s.testSuite, message.simpleTestName).also {
+                        failedTests += it.testName
+                        reportedTestCount++
+                    }
                 }
                 else -> unexpectedMessage()
             }
             is TestFinished -> when (state) {
-                is State.TestStarted -> State.TestFinished(state.testSuite, message.simpleTestName).also { passedTests += it.testName }
+                is State.TestStarted -> State.TestFinished(state.testSuite, message.simpleTestName).also {
+                    passedTests += it.testName
+                    reportedTestCount++
+                }
                 is State.TestFailed -> State.TestFinished(state.testSuite, message.simpleTestName)
                 else -> unexpectedMessage()
             }
@@ -174,7 +176,10 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
 
     fun finish() {
         // The last test state is "TestStarted" this likely means that the test process terminated during test execution (SIGSEGV, etc).
-        (state as? State.TestStarted)?.let { failedTests += it.testName }
+        (state as? State.TestStarted)?.let {
+            failedTests += it.testName
+            reportedTestCount++
+        }
     }
 }
 

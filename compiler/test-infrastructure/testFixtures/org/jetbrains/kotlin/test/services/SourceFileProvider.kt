@@ -51,6 +51,7 @@ abstract class SourceFileProvider : TestService {
 }
 
 val TestServices.sourceFileProvider: SourceFileProvider by TestServices.testServiceAccessor()
+val TestServices.sourceFileProviderOrNull: SourceFileProvider? by TestServices.nullableTestServiceAccessor()
 
 class SourceFileProviderImpl(
     val testServices: TestServices,

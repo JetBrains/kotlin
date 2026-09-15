@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.SourceContentView
+import org.jetbrains.kotlin.test.services.sourceProviders.getSourceContent
 import java.io.File
 
 internal interface WasmArtifactsCollector {
@@ -22,11 +25,19 @@ internal interface WasmArtifactsCollector {
             m.files.forEach { file: TestFile ->
                 val name = file.name
                 when {
+                    // Module files are compiler inputs, so preserve the transformed source view used to build the
+                    // artifact. Files next to the test data below are not TestFiles and cannot have preprocessors.
                     name.endsWith(".js") ->
-                        jsFiles += AdditionalFile(file.name, file.originalContent)
+                        jsFiles += AdditionalFile(
+                            file.name,
+                            getSourceContent(file, SourceContentView.TRANSFORMED, testServices.sourceFileProvider),
+                        )
 
                     name.endsWith(".mjs") -> {
-                        mjsFiles += AdditionalFile(file.name, file.originalContent)
+                        mjsFiles += AdditionalFile(
+                            file.name,
+                            getSourceContent(file, SourceContentView.TRANSFORMED, testServices.sourceFileProvider),
+                        )
                         if (name == "entry.mjs") {
                             entryMjs = name
                         }
@@ -38,6 +49,8 @@ internal interface WasmArtifactsCollector {
         originalFile.parentFile.resolve(originalFile.nameWithoutExtension + ".js")
             .takeIf { it.exists() }
             ?.let {
+                // These companion files are external disk inputs rather than module TestFiles; raw disk content is
+                // their only available source view.
                 jsFiles += AdditionalFile(it.name, it.readText())
             }
 
