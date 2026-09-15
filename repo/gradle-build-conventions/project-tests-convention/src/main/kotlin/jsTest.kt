@@ -4,9 +4,11 @@
  */
 
 import com.github.gradle.node.NodeExtension
+import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.newInstance
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.build.d8.D8Extension
 
@@ -29,11 +31,12 @@ fun ProjectTestsExtension.jsTestTask(
 ) {
 
     val project = this@jsTestTask.project
-/*
-    with(project.the<D8Extension>()) {
-        setupV8()
+    val buildFeatures = project.serviceOf<BuildFeatures>()
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        with(project.the<D8Extension>()) {
+            setupV8()
+        }
     }
-*/
 
     val node = project.the<NodeExtension>()
     systemProperty("kotlin.js.test.root.out.dir", "${node.nodeProjectDir.get().asFile}/")

@@ -4,12 +4,14 @@
  */
 
 import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
@@ -183,30 +185,31 @@ fun Test.withStdlibWeb() {
 }
 
 fun Test.withJsRuntime() {
-    /*
-    addClasspathProperty(
-        configurationElements(
-            "stdlibJsRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib", "distJsKlib")) }
-        ), TestCompilePaths.KOTLIN_JS_STDLIB_KLIB_PATH
-    )
-    addClasspathProperty(
-        configurationElements(
-            "stdlibJsMinimalRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib-js-ir-minimal-for-test", "jsRuntimeElements")) },
-            attributes = {
-                @OptIn(ExperimentalKotlinGradlePluginApi::class)
-                attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging::class.java, KlibPackaging.NON_PACKED))
-            }
-        ), TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
-    )
-    addClasspathProperty(
-        configurationElements(
-            "testJsRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-test", "jsRuntimeElements")) }
-        ), TestCompilePaths.KOTLIN_JS_KOTLIN_TEST_KLIB_PATH
-    )
-    */
+    val buildFeatures = project.serviceOf<BuildFeatures>()
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        addClasspathProperty(
+            configurationElements(
+                "stdlibJsRuntimeForTests",
+                dependencies = { add(project.dependencies.project(":kotlin-stdlib", "distJsKlib")) }
+            ), TestCompilePaths.KOTLIN_JS_STDLIB_KLIB_PATH
+        )
+        addClasspathProperty(
+            configurationElements(
+                "stdlibJsMinimalRuntimeForTests",
+                dependencies = { add(project.dependencies.project(":kotlin-stdlib-js-ir-minimal-for-test", "jsRuntimeElements")) },
+                attributes = {
+                    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+                    attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging::class.java, KlibPackaging.NON_PACKED))
+                }
+            ), TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
+        )
+        addClasspathProperty(
+            configurationElements(
+                "testJsRuntimeForTests",
+                dependencies = { add(project.dependencies.project(":kotlin-test", "jsRuntimeElements")) }
+            ), TestCompilePaths.KOTLIN_JS_KOTLIN_TEST_KLIB_PATH
+        )
+    }
 }
 
 fun Test.withWasmRuntime() {
@@ -287,38 +290,39 @@ fun Test.withTestScriptDefinition() {
 }
 
 fun Test.withPluginSandboxAnnotations() {
-    /*
-    addClasspathProperty(
-        configurationElements(
-            "pluginSandboxAnnotationsJar",
-            dependencies = { add(project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations")) }
-        ), TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH
-    )
-    addClasspathProperty(
-        configurationElements(
-            "pluginSandboxAnnotationsJsKlib",
-            dependencies = { add(
-                project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations", "jsRuntimeElements")
-            )},
-            attributes = {
-                attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_RUNTIME))
-                attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-            }
-        ), TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH
-    )
-    addClasspathProperty(
-        configurationElements(
-            "pluginSandboxAnnotationsWasmKlib",
-            dependencies = {
-                add(project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations", "wasmJsRuntimeElements"))
-            },
-            attributes = {
-                attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_RUNTIME))
-                attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
-            }
-        ), TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_WASM_KLIB_PATH
-    )
-    */
+    val buildFeatures = project.serviceOf<BuildFeatures>()
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        addClasspathProperty(
+            configurationElements(
+                "pluginSandboxAnnotationsJar",
+                dependencies = { add(project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations")) }
+            ), TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH
+        )
+        addClasspathProperty(
+            configurationElements(
+                "pluginSandboxAnnotationsJsKlib",
+                dependencies = { add(
+                    project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations", "jsRuntimeElements")
+                )},
+                attributes = {
+                    attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_RUNTIME))
+                    attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+                }
+            ), TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH
+        )
+        addClasspathProperty(
+            configurationElements(
+                "pluginSandboxAnnotationsWasmKlib",
+                dependencies = {
+                    add(project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations", "wasmJsRuntimeElements"))
+                },
+                attributes = {
+                    attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_RUNTIME))
+                    attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
+                }
+            ), TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_WASM_KLIB_PATH
+        )
+    }
 }
 
 fun Test.withPluginSandboxJar() {

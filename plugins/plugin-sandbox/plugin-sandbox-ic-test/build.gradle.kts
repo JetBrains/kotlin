@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.support.serviceOf
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -44,9 +46,12 @@ sourceSets {
 projectTests {
     testTask(maxHeapSize = testMaxHeapSizeLarge) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
-/*        wasmNodeJsKotlinBuild {
-            setupNodeJs(nodejsVersion)
-        }*/
+        val buildFeatures = project.serviceOf<BuildFeatures>()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            wasmNodeJsKotlinBuild {
+                setupNodeJs(nodejsVersion)
+            }
+        }
         addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
     }
 
