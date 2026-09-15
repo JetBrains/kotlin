@@ -10,11 +10,20 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
-fun FirNamedFunctionSymbol.isArrayOfFunction(): Boolean {
+private fun FirNamedFunctionSymbol.isArrayOfFunction(): Boolean {
     return callableId in ArrayFqNames.ARRAY_OF_CALLABLE_IDS
+}
+
+fun FirNamedFunctionSymbol.isArrayOfOrArrayDotOfFunction(): Boolean {
+    return callableId in ArrayFqNames.ARRAY_OF_CALLABLE_IDS || callableId in ArrayFqNames.ARRAY_DOT_OF_CALLABLE_IDS
 }
 
 fun FirFunctionCall.isArrayOfCall(): Boolean {
     val symbol = (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol ?: return false
     return symbol.isArrayOfFunction()
+}
+
+fun FirFunctionCall.isArrayOfOrArrayDotOfCall(): Boolean {
+    val symbol = (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol ?: return false
+    return symbol.isArrayOfOrArrayDotOfFunction()
 }

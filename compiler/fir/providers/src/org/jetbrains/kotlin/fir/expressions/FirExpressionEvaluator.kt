@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.isArrayOfFunction
+import org.jetbrains.kotlin.fir.declarations.isArrayOfOrArrayDotOfFunction
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -529,7 +529,7 @@ object FirExpressionEvaluator {
         }
 
         private fun visitNamedFunction(functionCall: FirFunctionCall, symbol: FirNamedFunctionSymbol): FirEvaluatorResult {
-            if (symbol.isArrayOfFunction()) return visitArrayOfCall(functionCall)
+            if (symbol.isArrayOfOrArrayDotOfFunction()) return visitArrayOfCall(functionCall)
             if (!functionCall.isCompileTimeBuiltinCall(session)) return NotConst(functionCall.source)
 
             val receivers = listOfNotNull(functionCall.dispatchReceiver, functionCall.extensionReceiver)
