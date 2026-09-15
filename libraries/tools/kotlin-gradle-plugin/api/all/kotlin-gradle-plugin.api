@@ -4053,11 +4053,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/PackageJsonKt {
 	public static final fun fromSrcPackageJson (Ljava/io/File;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/PackageJson;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/js/npm/PackageJsonTypeAdapter : com/google/gson/TypeAdapterFactory {
-	public fun <init> ()V
-	public fun create (Lcom/google/gson/Gson;Lcom/google/gson/reflect/TypeToken;)Lcom/google/gson/TypeAdapter;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/PeerNpmDependencyExtension : org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmDependencyExtension {
 }
 
@@ -4461,6 +4456,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinTestRunn
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/CustomLauncher {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/CustomLauncher$Companion;
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/CustomLauncher;
@@ -4475,7 +4471,23 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/CustomLa
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/CustomLauncher$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/CustomLauncher$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/CustomLauncher;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/CustomLauncher;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/CustomLauncher$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/util/List;)V
 	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -4486,6 +4498,36 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaCli
 	public final fun getArgs ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConsoleProcessor {

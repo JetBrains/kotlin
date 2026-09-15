@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
-import com.google.gson.GsonBuilder
 import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
@@ -16,6 +15,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.internal.logging.progress.ProgressLogger
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -714,11 +714,7 @@ internal fun writeConfig(
         confWriter.println()
 
         confWriter.print("config.set(")
-        GsonBuilder()
-            .setPrettyPrinting()
-            .disableHtmlEscaping()
-            .create()
-            .toJson(config, confWriter)
+        confWriter.print(karmaConfigToJson(config))
         confWriter.println(");")
 
         newConfJsWriters.forEach { it(confWriter) }
@@ -735,3 +731,6 @@ private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3
 
 private val PROXY_FALSE_WARN = "\"/\" is proxied, you should probably change urlRoot to avoid conflicts".toRegex()
 private val WEBPACK_OUTPUT_WARN = "All files matched by \".+\" were excluded or matched by prior matchers\\.".toRegex()
+
+internal fun karmaConfigToJson(config: KarmaConfig): String =
+    KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(KarmaConfig.serializer(), config)
