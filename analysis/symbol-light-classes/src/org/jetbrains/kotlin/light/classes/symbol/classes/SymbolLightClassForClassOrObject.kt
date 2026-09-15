@@ -58,11 +58,9 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     constructor(
         useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
-        manager: PsiManager,
     ) : super(
         useSiteModule = useSiteModule,
         classSymbol = classSymbol,
-        manager = manager,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
         isKotlinValueClass = classSymbol.isInline
@@ -75,7 +73,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classOrObjectDeclaration = classOrObject,
         classSymbolPointer = classOrObject.createSymbolPointer(useSiteModule),
         useSiteModule = useSiteModule,
-        manager = classOrObject.manager,
         isKotlinValueClass = classOrObject.hasModifier(KtTokens.VALUE_KEYWORD) || classOrObject.hasModifier(KtTokens.INLINE_KEYWORD),
     ) {
         require(classOrObject !is KtClass || !classOrObject.isInterface() && !classOrObject.isAnnotation())
@@ -85,13 +82,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        manager: PsiManager,
         isKotlinValueClass: Boolean,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
-        manager = manager,
     ) {
         this.isKotlinValueClass = isKotlinValueClass
     }
@@ -380,7 +375,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = symbolPointer,
         useSiteModule = useSiteModule,
-        manager = manager,
         isKotlinValueClass = isKotlinValueClass,
     )
 }
