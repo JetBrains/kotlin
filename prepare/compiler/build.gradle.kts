@@ -132,6 +132,24 @@ configurations.all {
     }
 }
 
+// The resolved (transitive) runtime classpath of the BTA implementation,
+// used to generate the classpath metadata file for the dist
+val buildToolsRuntime = configurations.create("buildToolsRuntime") {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+    resolutionStrategy.dependencySubstitution {
+        // the compiler depends on an older version of kotlin-reflect, but the dist ships the current one,
+        // which is backwards compatible, so it may be safely used in the BTA implementation runtime classpath
+        substitute(module("org.jetbrains.kotlin:kotlin-reflect"))
+            .using(project(":kotlin-reflect"))
+    }
+}
+
 dependencies {
     api(kotlinStdlib("jdk8"))
     api(project(":kotlin-script-runtime"))
@@ -164,6 +182,7 @@ dependencies {
     distBuildToolsProjects.forEach {
         libraries(project(it)) { isTransitive = false }
     }
+    buildToolsRuntime(project(":compiler:build-tools:kotlin-build-tools-impl"))
     distCompilerPluginProjects.forEach {
         compilerPlugins(project(it)) { isTransitive = false }
     }
@@ -350,6 +369,30 @@ val proguard = tasks.register<CacheableProguardTask>("proguard") {
 val pack: TaskProvider<out DefaultTask> = if (kotlinBuildProperties.proguard) proguard else packCompiler
 val distDir = rootProject.extra["distDir"] as String
 
+val buildToolsClasspathMetadata = tasks.register("buildToolsClasspathMetadata") {
+    description = "Generates the metadata file listing the dist-relative classpath of the Build Tools API implementation"
+    val resolvedArtifacts = buildToolsRuntime.incoming.artifacts.resolvedArtifacts
+    val outputFile = layout.buildDirectory.file("kotlin-build-tools-classpath.txt")
+    val versionsToStrip = listOf(version.toString(), bootstrapKotlinVersion)
+    inputs.files(buildToolsRuntime).withNormalizer(ClasspathNormalizer::class)
+    outputs.file(outputFile)
+    doLast {
+        val lines = resolvedArtifacts.get().map { artifact ->
+            var name = artifact.file.name
+            for (versionToStrip in versionsToStrip) {
+                name = name.replace("-$versionToStrip", "")
+            }
+            val componentId = artifact.id.componentIdentifier
+            // third-party kotlinx dependencies are copied to the dist via librariesStripVersion with this rename
+            if (componentId is ModuleComponentIdentifier && componentId.group == "org.jetbrains.kotlinx") {
+                name = name.replace(Regex("-\\d.*\\.jar$"), ".jar")
+            }
+            "lib/$name"
+        }.distinct().sorted()
+        outputFile.get().asFile.writeText(lines.joinToString("\n", postfix = "\n"))
+    }
+}
+
 val jar = runtimeJar {
     dependsOn(pack)
     dependsOn(compilerVersion)
@@ -406,6 +449,7 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
     val compilerPluginsFiles = files(compilerPlugins)
     into("lib") {
         from(librariesFiles)
+        from(buildToolsClasspathMetadata)
         from(librariesKotlinTestFiles)
         from(librariesStripVersionFiles) {
             rename {

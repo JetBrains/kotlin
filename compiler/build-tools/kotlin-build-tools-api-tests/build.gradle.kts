@@ -205,6 +205,7 @@ val businessLogicTestSuits = setOf(
     "testArgumentParsingWarnings",
     "testClasspathMetadata",
     "testBuildSession",
+    "testLoadFromDist",
 )
 
 val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
@@ -358,6 +359,15 @@ testing {
                         "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptMyExtensionTemplate.class",
                         "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptDefinition.class",
                     )
+                }
+            }
+        }
+
+        named<JvmTestSuite>("testLoadFromDist") {
+            targets.all {
+                testTask.configure {
+                    @OptIn(KotlinCompilerDistUsage::class)
+                    withDist()
                 }
             }
         }

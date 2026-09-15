@@ -21,6 +21,9 @@ import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.readLines
 
 /**
  * The main entry point to the Build Tools API.
@@ -151,6 +154,12 @@ public interface KotlinToolchains {
 
     public companion object {
         /**
+         * The name of the classpath metadata file inside the `lib` directory of a Kotlin distribution,
+         * listing the files required to load the Build Tools API implementation.
+         */
+        private const val BUILD_TOOLS_CLASSPATH_FILE: String = "kotlin-build-tools-classpath.txt"
+
+        /**
          * Create an instance of [KotlinToolchains] using the given [classLoader].
          *
          * Make sure that the classloader has access to a Build Tools API implementation,
@@ -203,6 +212,39 @@ public interface KotlinToolchains {
         @JvmStatic
         public fun loadImplementation(classpath: List<Path>): KotlinToolchains =
             loadImplementation(URLClassLoader(classpath.map { it.toUri().toURL() }.toTypedArray(), SharedApiClassesClassLoader()))
+
+        /**
+         * Create an instance of [KotlinToolchains] loaded in an isolated classloader from the given [kotlinDist].
+         *
+         * The returned [KotlinToolchains] instance will be loaded by a classloader with the following properties:
+         * * BTA API classes will be loaded from the classloader that loaded the [KotlinToolchains] interface
+         * * BTA implementation classes will be loaded from a classloader with the given [classpath], which should contain all the
+         * dependencies of the BTA implementation, such as the Kotlin compiler.
+         *
+         * The obtained `KotlinToolchains` instance should be cached for future use to avoid re-loading the BTA implementation.
+         *
+         * @param kotlinDist a [Path] to a directory containing exploded Kotlin distribution
+         * @since 2.5.0
+         */
+        @JvmStatic
+        public fun loadImplementation(kotlinDist: Path): KotlinToolchains {
+            require(kotlinDist.isDirectory()) { "Kotlin distribution directory does not exist: $kotlinDist" }
+            val kotlincDir = kotlinDist.resolve("kotlinc").takeIf { it.isDirectory() } ?: kotlinDist
+            val metadataFile = kotlincDir.resolve("lib").resolve(BUILD_TOOLS_CLASSPATH_FILE)
+            require(metadataFile.isRegularFile()) {
+                "The Kotlin distribution at $kotlincDir does not contain the lib/$BUILD_TOOLS_CLASSPATH_FILE classpath metadata file. " +
+                        "Loading the Build Tools API implementation from a Kotlin distribution requires a distribution of Kotlin 2.5.0 or newer."
+            }
+            val classpath = metadataFile.readLines()
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+                .map { kotlincDir.resolve(it) }
+                .filter { it.isRegularFile() }
+            require(classpath.isNotEmpty()) {
+                "The Kotlin distribution at $kotlincDir does not contain any of the files listed in lib/$BUILD_TOOLS_CLASSPATH_FILE"
+            }
+            return loadImplementation(classpath)
+        }
 
         /**
          * Returns the version of the Build Tools API library.
