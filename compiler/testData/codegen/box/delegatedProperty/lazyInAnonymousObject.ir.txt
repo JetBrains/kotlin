@@ -56,13 +56,13 @@ FILE fqName:<root> fileName:/lazyInAnonymousObject.kt
                         ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:suffix$delegate type:kotlin.Lazy<kotlin.String?> visibility:private [final] declared in <root>.Config.createMatcher.<no name provided>' type=kotlin.Lazy<kotlin.String?> origin=null
                           receiver: GET_VAR '<this>: <root>.Config.createMatcher.<no name provided> declared in <root>.Config.createMatcher.<no name provided>.<get-suffix>' type=<root>.Config.createMatcher.<no name provided> origin=IMPLICIT_ARGUMENT
                         ARG thisRef: GET_VAR '<this>: <root>.Config.createMatcher.<no name provided> declared in <root>.Config.createMatcher.<no name provided>.<get-suffix>' type=<root>.Config.createMatcher.<no name provided> origin=null
-                        ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Config, kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final suffix: kotlin.String? declared in <root>.Config.createMatcher.<no name provided>'
+                        ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Config.createMatcher.<no name provided>, kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final suffix: kotlin.String? declared in <root>.Config.createMatcher.<no name provided>'
                           getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:suffix visibility:local modality:FINAL returnType:kotlin.String?
-                            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Config
+                            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Config.createMatcher.<no name provided>
                             BLOCK_BODY
-                              RETURN type=kotlin.Nothing from='local final fun suffix (p0: <root>.Config): kotlin.String? declared in <root>.Config.createMatcher.<no name provided>.<get-suffix>'
+                              RETURN type=kotlin.Nothing from='local final fun suffix (p0: <root>.Config.createMatcher.<no name provided>): kotlin.String? declared in <root>.Config.createMatcher.<no name provided>.<get-suffix>'
                                 CALL 'private final fun <get-suffix> (): kotlin.String? declared in <root>.Config.createMatcher.<no name provided>' type=kotlin.String? origin=null
-                                  ARG <this>: GET_VAR 'p0: <root>.Config declared in <root>.Config.createMatcher.<no name provided>.<get-suffix>.suffix' type=<root>.Config origin=null
+                                  ARG <this>: GET_VAR 'p0: <root>.Config.createMatcher.<no name provided> declared in <root>.Config.createMatcher.<no name provided>.<get-suffix>.suffix' type=<root>.Config.createMatcher.<no name provided> origin=null
               CONSTRUCTOR visibility:public returnType:<root>.Config.createMatcher.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

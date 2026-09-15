@@ -81,9 +81,6 @@ class BodyResolveContext(
     val topContainerForTypeResolution: FirDeclaration?
         get() = containers.lastOrNull { it is FirTypeParameterRefsOwner && it !is FirAnonymousFunction }
 
-    @set:PrivateForInline
-    var containingRegularClass: FirRegularClass? = null
-
     val containerIfAny: FirDeclaration?
         get() = containers.lastOrNull()
 
@@ -196,19 +193,6 @@ class BodyResolveContext(
             f()
         } finally {
             containers.removeLast()
-        }
-    }
-
-    @PrivateForInline
-    private inline fun <T> withContainerRegularClass(declaration: FirRegularClass, f: () -> T): T {
-        val oldContainingClass = containingRegularClass
-        containers.add(declaration)
-        containingRegularClass = declaration
-        return try {
-            f()
-        } finally {
-            containers.removeLast()
-            containingRegularClass = oldContainingClass
         }
     }
 
@@ -533,7 +517,7 @@ class BodyResolveContext(
         storeClassOrTypealiasIfNotNested(regularClass, holder.session)
         return withSwitchedTowerDataModeForStaticNestedClass(regularClass) {
             withScopesForClass(regularClass) {
-                withContainerRegularClass(regularClass, f)
+                withContainer(regularClass, f)
             }
         }
     }

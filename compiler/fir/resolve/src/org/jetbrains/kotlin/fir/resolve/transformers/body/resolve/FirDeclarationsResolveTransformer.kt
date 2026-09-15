@@ -340,7 +340,7 @@ open class FirDeclarationsResolveTransformer(
         if (property.returnTypeRef is FirResolvedTypeRef) {
             val typeArguments = (type as ConeClassLikeType).typeArguments
             val extensionType = property.receiverParameter?.typeRef?.coneType
-            val dispatchType = context.containingRegularClass?.let { containingClass ->
+            val dispatchType = context.containingClassDeclarations.lastOrNull()?.let { containingClass ->
                 containingClass.symbol.constructStarProjectedType(containingClass.typeParameters.size)
             }
             propertyReferenceAccess.replaceConeTypeOrNull(
