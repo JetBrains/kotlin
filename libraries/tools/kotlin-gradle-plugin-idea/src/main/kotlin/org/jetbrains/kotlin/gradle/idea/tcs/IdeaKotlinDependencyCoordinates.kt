@@ -96,7 +96,9 @@ class IdeaKotlinBinaryCoordinates(
     val displayString: String
         get() {
             val classifyingCapabilities =
-                capabilities.filter { capability -> capability.group == group && capability.name.startsWith(module) }
+                capabilities.filter { capability ->
+                    capability.group == group && capability.name.startsWith(module) && capability.name != module
+                }
             return when {
                 classifyingCapabilities.size == 1 -> buildString {
                     append(classifyingCapabilities.single())
