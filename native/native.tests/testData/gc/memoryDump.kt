@@ -76,3 +76,60 @@ fun dumpToFile() {
 
     fclose(file)
 }
+
+@OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
+private fun dumpAndMeasureBytes(options: MemoryDumpOptions?): Long {
+    val file = requireNotNull(tmpfile()) { "Could not open temporary file" }
+    val fd = fileno(file)
+    assertTrue(fd > -1, "Failed to obtain a temporary file descriptor")
+    val local = Data()
+    val success = if (options == null) {
+        Debugging.dumpMemory(fd.toLong())
+    } else {
+        Debugging.dumpMemory(fd.toLong(), options)
+    }
+    assertTrue(success)
+    val size = lseek(fd, 0, SEEK_END)
+    fclose(file)
+    return size.toLong()
+}
+
+@Test
+@OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
+fun dumpOmitPayloadsIsSmaller() {
+    val full = dumpAndMeasureBytes(null)
+    val omitted = dumpAndMeasureBytes(MemoryDumpOptions(omitPayloads = true))
+    assertTrue(omitted < full, "omitted dump ($omitted) should be smaller than full dump ($full)")
+}
+
+@Test
+@OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
+fun dumpGzipHasMagic() {
+    val file = requireNotNull(tmpfile()) { "Could not open temporary file" }
+    val fd = fileno(file)
+    assertTrue(fd > -1, "Failed to obtain a temporary file descriptor")
+    val local = Data()
+    assertTrue(Debugging.dumpMemory(fd.toLong(), MemoryDumpOptions(gzip = true)))
+    assertTrue(hasGzipMagic(fd))
+    fclose(file)
+}
+
+@Test
+@OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
+fun dumpOmitPayloadsAndGzip() {
+    val file = requireNotNull(tmpfile()) { "Could not open temporary file" }
+    val fd = fileno(file)
+    assertTrue(fd > -1, "Failed to obtain a temporary file descriptor")
+    val local = Data()
+    assertTrue(Debugging.dumpMemory(fd.toLong(), MemoryDumpOptions(omitPayloads = true, gzip = true)))
+    assertTrue(hasGzipMagic(fd))
+    fclose(file)
+}
+
+@OptIn(ExperimentalForeignApi::class)
+private fun hasGzipMagic(fd: Int): Boolean = memScoped {
+    lseek(fd, 0, SEEK_SET)
+    val buf = allocArray<UByteVar>(2)
+    val n = read(fd, buf, 2.convert())
+    n.toLong() == 2L && buf[0] == 0x1fu.toUByte() && buf[1] == 0x8bu.toUByte()
+}

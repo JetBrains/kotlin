@@ -6,6 +6,13 @@
 #include "Memory.h"
 #include "mm/MemoryPrivate.hpp"
 
+#ifndef KONAN_WINDOWS
+#include <errno.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#endif
+
 #include "alloc/Allocator.hpp"
 #include "CallsChecker.hpp"
 #include "Exceptions.h"
@@ -230,18 +237,60 @@ extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
     mm::GlobalData::Instance().gcScheduler().schedule();
 }
 
-extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd) {
+namespace {
+
+bool dumpMemoryFromRuntime(int fd, bool omitPayloads, bool gzip, bool shortenPause) {
+    mm::DumpGuard dumpGuard;
+    if (!dumpGuard) {
+        return false;
+    }
+
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     threadData->suspensionData().requestThreadsSuspension("Memory dump");
-    CallsCheckerIgnoreGuard guard;
+    CallsCheckerIgnoreGuard ignoreGuard;
     // We're in the runnable state, but everything else (including the GC thread) will be suspended.
     // It's fine to wait for that suspension and execute long-running operations (I/O) here.
     mm::WaitForThreadsSuspension();
-    bool success = mm::DumpMemory(fd);
+
+#if !KONAN_WINDOWS
+    if (shortenPause) {
+        pid_t pid = fork();
+        if (pid == 0) {
+            bool success = mm::DumpMemory(fd, omitPayloads, gzip);
+            _exit(success ? 0 : 1);
+        }
+        if (pid > 0) {
+            // Resume mutators immediately; the child writes the dump from a COW snapshot.
+            // Keep gcLock until waitpid returns so the parent GC cannot mutate pages
+            // the child is still reading.
+            mm::ResumeThreads();
+            int status = 0;
+            if (waitpid(pid, &status, 0) < 0) {
+                RuntimeLogError({kotlin::logging::Tag::kMemoryDump}, "waitpid failed: %s", strerror(errno));
+                return false;
+            }
+            return WIFEXITED(status) && WEXITSTATUS(status) == 0;
+        }
+        RuntimeLogError({kotlin::logging::Tag::kMemoryDump}, "fork failed: %s", strerror(errno));
+        // Fall through to an in-process dump.
+    }
+#endif
+    bool success = mm::DumpMemory(fd, omitPayloads, gzip);
     mm::ResumeThreads();
     return success;
+}
+
+} // namespace
+
+extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd) {
+    return dumpMemoryFromRuntime(fd, false, false, /* shortenPause */ false);
+}
+
+extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryWithOptions(
+        ObjHeader*, int fd, bool omitPayloads, bool gzip) {
+    return dumpMemoryFromRuntime(fd, omitPayloads, gzip, /* shortenPause */ true);
 }
 
 extern "C" void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, KBoolean value) {

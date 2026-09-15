@@ -118,3 +118,13 @@
 - thread_id (id): thread ID
 - object_id (id): object ID
 ```
+
+## Optional wrappers
+
+The dump body above is format `1.0.8`. Implementations may wrap the entire file in a
+single gzip member (`1f 8b` magic). `kdumputil` decompresses such files automatically.
+
+When primitive-array payloads are omitted, the ARRAY record still stores `count`, but
+the following size field is `0` and `element_data` is empty. Object arrays and
+native-pointer arrays are never omitted. `kdumputil` zero-fills omitted primitive
+arrays when converting to hprof.
