@@ -238,6 +238,8 @@ where advanced options include:
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
   -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
+  -Xstrict-equality-for-structural-classes
+                             Report warnings on inapplicable equalities with data, value, and enum classes.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases.
