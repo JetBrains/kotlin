@@ -683,6 +683,7 @@ object AbstractTypeChecker {
         if (superTypeConstructor.isUnion()) {
             val superTypePrimaryType = superTypeConstructor.getPrimaryTypeOfUnion()!!
 
+            // TODO(KT-89099): if we decide to normalize nullable rich error types before subtyping
             if (!AbstractNullabilityChecker.isSubtypeOfAny(state, subType)) {
                 if (AbstractNullabilityChecker.isSubtypeOfAny(state, superTypePrimaryType)) return false
 
