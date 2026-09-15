@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,7 +34,6 @@ public interface KaContractConstantValue : KaLifetimeOwner {
  * Represents parameter that can be passed to `value` argument of [kotlin.contracts.ContractBuilder.callsInPlace] or [kotlin.contracts.ContractBuilder.holdsIn].
  */
 @KaExperimentalApi
-@OptIn(KaImplementationDetail::class)
 public sealed interface KaContractParameterValue : KaLifetimeOwner {
     /**
      * A symbol to which this parameter points.

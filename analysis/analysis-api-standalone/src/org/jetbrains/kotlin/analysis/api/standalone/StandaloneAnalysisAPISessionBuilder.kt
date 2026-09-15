@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory
@@ -180,7 +179,6 @@ public class StandaloneAnalysisAPISessionBuilder(
             )
 
             if (!isCacheCleanerEnabled) {
-                @OptIn(KaImplementationDetail::class)
                 project.picoContainer.unregisterComponent(KaFirCacheCleaner::class.java)
             }
         }
@@ -263,7 +261,6 @@ internal object StandaloneSessionServiceRegistrar : AnalysisApiSimpleServiceRegi
         }
     }
 
-    @OptIn(KaImplementationDetail::class)
     override fun registerProjectServices(project: MockProject) {
         project.apply {
             registerService(KotlinLifetimeTokenFactory::class.java, KotlinAlwaysAccessibleLifetimeTokenFactory::class.java)

@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -264,7 +262,6 @@ internal fun <T : KaFunctionSymbol> createMethodsJvmOverloadsAware(
  * - A default value inherited from an *overridden* function is intentionally ignored: `@JvmOverloads` has no effect on
  *   an override, the overloads belong to the base declaration.
  */
-@OptIn(KaContextParameterApi::class)
 context(_: KaSession)
 internal fun defaultParameterValueMask(declaration: KaFunctionSymbol): BitSet {
     val valueParameters = declaration.valueParameters
@@ -722,7 +719,6 @@ internal fun addPropertyBackingFields(
     }
     val containerIsObject = containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject
     fun addPropertyBackingField(propertySymbol: KaPropertySymbol) {
-        @OptIn(KaExperimentalApi::class)
         val isStatic = forceIsStaticTo ?: (containerIsObject || propertySymbol.isCompanion)
         createAndAddField(
             lightClass = lightClass,

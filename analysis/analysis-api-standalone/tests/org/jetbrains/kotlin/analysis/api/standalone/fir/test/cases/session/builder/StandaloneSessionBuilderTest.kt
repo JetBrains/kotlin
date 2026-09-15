@@ -14,9 +14,7 @@ import com.intellij.psi.PsiTypes
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.components.resolveToSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
@@ -525,11 +523,9 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     private fun getJarRootVirtualFile(jar: Path, session: StandaloneAnalysisAPISession): VirtualFile =
         StandaloneProjectFactory.getVirtualFilesForLibraryRoots(listOf(jar), session.coreApplicationEnvironment).single()
 
-    @OptIn(KaImplementationDetail::class)
     private fun findFirstFileInJar(jarRoot: VirtualFile): VirtualFile =
         LibraryUtils.getAllVirtualFilesFromRoot(jarRoot, includeRoot = false).first()
 
-    @OptIn(KaPlatformInterface::class)
     private fun assertLibraryScopeKindAndContainment(
         module: KaLibraryModule,
         expectedDescriptionPrefix: String,

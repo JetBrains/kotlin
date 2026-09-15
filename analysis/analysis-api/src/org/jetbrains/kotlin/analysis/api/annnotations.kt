@@ -126,7 +126,6 @@ internal annotation class KaNoContextParameterBridgeRequired
     AnnotationTarget.PROPERTY,
     AnnotationTarget.FUNCTION,
 )
-@OptIn(KaContextParameterApi::class)
 internal annotation class KaCustomContextParameterBridge
 
 /**

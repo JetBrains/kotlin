@@ -458,7 +458,6 @@ private class CollectingIrGenerationExtension(private val annotationToCheckCalls
         }
 
         private fun IrAnnotationContainer.containsAnnotationToCheckCalls() =
-            @OptIn(UnsafeDuringIrConstructionAPI::class)
             annotations.any { it.classId == annotationClassId }
     }
 }

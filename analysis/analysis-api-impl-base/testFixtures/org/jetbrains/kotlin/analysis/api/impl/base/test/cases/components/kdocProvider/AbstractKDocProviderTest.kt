@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.kdocProvider
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.kdoc.findKDoc
@@ -34,7 +33,6 @@ abstract class AbstractKDocProviderTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    @OptIn(KaExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyze(mainModule.ktModule) {
             copyAwareAnalyzeForTest(mainFile) { contextFile ->

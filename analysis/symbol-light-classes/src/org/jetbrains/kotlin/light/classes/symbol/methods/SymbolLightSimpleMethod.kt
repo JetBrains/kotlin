@@ -9,7 +9,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
@@ -100,7 +99,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             } else {
                 isTopLevel
                         || containingClass is SymbolLightClassForInterfaceDefaultImpls
-                        || withFunctionSymbol { @OptIn(KaExperimentalApi::class) (it.isCompanion || it.hasJvmStaticAnnotation()) }
+                        || withFunctionSymbol { (it.isCompanion || it.hasJvmStaticAnnotation()) }
             }
 
             mapOf(modifier to isStatic)

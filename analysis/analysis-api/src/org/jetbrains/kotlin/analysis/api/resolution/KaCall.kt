@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 /**
  * A call to a function, a simple/compound access to a property, or a simple/compound access through `get` and `set` convention.
  */
-@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 public sealed interface KaCall : KaLifetimeOwner
 
 /**

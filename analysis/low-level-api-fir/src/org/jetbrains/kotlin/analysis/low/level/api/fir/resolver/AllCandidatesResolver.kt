@@ -19,18 +19,13 @@ import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.fullyProcessCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.initTypeAndObjectAccess
-import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -130,7 +125,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         }
     }
 
-    @OptIn(PrivateForInline::class, SymbolInternals::class)
+    @OptIn(PrivateForInline::class)
     private fun initializeBodyResolveContext(resolutionFacade: LLResolutionFacade, element: KtElement) {
         val firFile = element.containingKtFile.getOrBuildFirFile(resolutionFacade)
 

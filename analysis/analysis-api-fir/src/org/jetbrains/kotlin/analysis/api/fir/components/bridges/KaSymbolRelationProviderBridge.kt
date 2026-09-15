@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.originalConstructorIfTypeAliase
 import org.jetbrains.kotlin.analysis.api.symbols.samConstructor as samConstructorEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.sealedClassInheritors as sealedClassInheritorsEndpoint
 
-@OptIn(KaExperimentalApi::class)
 internal class KaSymbolRelationProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaSymbolRelationProvider, KaFirSessionComponent {
@@ -101,7 +100,6 @@ internal class KaSymbolRelationProviderBridge(
         context(analysisSession) { hasConflictingSignatureWithEndpoint(other, targetPlatform) }
 }
 
-@OptIn(KaExperimentalApi::class)
 private fun KaEndpointCallableImplementationState.toLegacyImplementationState(): KaCallableImplementationState = when (this) {
     // The engine produces shared impl instances (KaCallable*ImplementationStateImpl) that implement both the new endpoint
     // and the legacy supporting type, so narrowing back to the legacy surface preserves identity and rendering.

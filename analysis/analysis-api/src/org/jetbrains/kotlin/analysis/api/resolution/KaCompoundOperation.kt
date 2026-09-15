@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.psi.KtExpression
  * The left-hand operand (the variable or array element expression) is represented in the call variants, [KaVariableAccessCall] and
  * [KaCompoundArrayAccessCall], which contain the [KaCompoundOperation].
  */
-@OptIn(KaImplementationDetail::class)
 public sealed interface KaCompoundOperation : KaLifetimeOwner {
     /**
      * The function that computes the value for this compound access. For example, if the access is `+=`, this is the resolved `plus`
