@@ -52,7 +52,8 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xcollection-literals")
     freeCompilerArgs.add("-Xcontext-sensitive-resolution")
     addReturnValueCheckerInfo()
-    if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
+    // TODO(KT-89534): uncomment after bootstrap compiler update
+    // if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
     if (this is KotlinJvmCompilerOptions) {
         suppressRedundantCliArgumentWarning()
@@ -61,6 +62,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
 
 fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
     freeCompilerArgs.add("-Xreturn-value-checker=full")
+    allWarningsAsErrors = false // TODO(KT-89534): after bootstrap, rename Xreturn-value-checker and remove this line
 }
 
 /**
@@ -248,6 +250,7 @@ kotlin {
                                 "-Xexpect-actual-classes",
                             )
                         )
+                        allWarningsAsErrors = false // TODO(KT-89534): after bootstrap, rename Xreturn-value-checker and remove this line
                     }
                 }
             }
@@ -255,11 +258,27 @@ kotlin {
                 associateWith(main)
                 associateWith(mainJdk7)
                 associateWith(mainJdk8)
+                // TODO(KT-89534): after bootstrap, rename Xreturn-value-checker and remove this block
+                // ------------>8-------------
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        allWarningsAsErrors = false
+                    }
+                }
+                // ------------8<-------------
             }
             create("recursiveDeletionTest") {
                 associateWith(main)
                 associateWith(mainJdk7)
                 associateWith(mainJdk8)
+                // TODO(KT-89534): after bootstrap, rename Xreturn-value-checker and remove this block
+                // -----------8<------------
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        allWarningsAsErrors = false
+                    }
+                }
+                // ----------->8------------
             }
         }
     }
