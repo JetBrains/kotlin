@@ -1,10 +1,24 @@
-expression: array
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: [
-    out KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/String
-  ]
-  type: kotlin/Array<out kotlin/String>
+expression:
+  array
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      out KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+    ]
+    type: kotlin/Array<out kotlin/String>
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      out KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+    ]
+    type: kotlin/Array<out kotlin/String>

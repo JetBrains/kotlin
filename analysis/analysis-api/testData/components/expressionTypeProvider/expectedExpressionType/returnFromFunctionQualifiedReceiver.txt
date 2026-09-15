@@ -1,2 +1,8 @@
-expression: xfd
-expected type: null
+expression:
+  xfd
+
+expectedType:
+  null
+
+inferredExpectedType:
+  null

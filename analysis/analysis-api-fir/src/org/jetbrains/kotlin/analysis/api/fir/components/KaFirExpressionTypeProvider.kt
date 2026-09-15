@@ -386,7 +386,11 @@ internal class KaFirExpressionTypeProvider(
         return firFunction.constructFunctionType(firFunction.specialFunctionTypeKind(resolutionFacade.useSiteFirSession)).asKaType()
     }
 
-    override fun expectedType(element: PsiElement): KaType? = element.withPsiValidityAssertion {
+    // Shares the implementation with 'inferredExpectedType' until 'expectedType' is reworked
+    // to only report declaration-based expectations (KT-87415).
+    override fun expectedType(element: PsiElement): KaType? = inferredExpectedType(element)
+
+    override fun inferredExpectedType(element: PsiElement): KaType? = element.withPsiValidityAssertion {
         val unwrapped = element.unwrap()
         val expectedType = getExpectedTypeByReturnExpression(unwrapped)
             ?: getExpectedTypeByIfOrBooleanCondition(unwrapped)
@@ -423,7 +427,7 @@ internal class KaFirExpressionTypeProvider(
             currentExpression in collectionLiteral.getInnerExpressions()
         } ?: return null
 
-        val collectionLiteralType = expectedType(collectionLiteral) ?: return null
+        val collectionLiteralType = inferredExpectedType(collectionLiteral) ?: return null
         return with(analysisSession) { collectionLiteralType.arrayElementType }
     }
 
@@ -447,7 +451,7 @@ internal class KaFirExpressionTypeProvider(
         val call = expression.getFunctionCallAsWithThisAsParameter()?.call ?: return null
         if (call.getOrBuildFir(resolutionFacade)?.unwrapSafeCall() !is FirCollectionLiteral) return null
 
-        val arrayType = expectedType(call) ?: return null
+        val arrayType = inferredExpectedType(call) ?: return null
         return with(analysisSession) { arrayType.arrayElementType }
     }
 
@@ -655,10 +659,10 @@ internal class KaFirExpressionTypeProvider(
 
         val functionLiteral = blockExpression.parent as? KtFunctionLiteral
         return if (functionLiteral != null) {
-            val functionType = expectedType(functionLiteral) as? KaFunctionType
+            val functionType = inferredExpectedType(functionLiteral) as? KaFunctionType
             functionType?.returnType
         } else {
-            expectedType(blockExpression)
+            inferredExpectedType(blockExpression)
         }
     }
 
@@ -666,7 +670,7 @@ internal class KaFirExpressionTypeProvider(
         val ifExpression = expression.unwrapQualified<KtIfExpression> { ifExpression, currentExpression ->
             currentExpression == ifExpression.then || currentExpression == ifExpression.`else`
         } ?: return null
-        expectedType(ifExpression)?.let { return it }
+        inferredExpectedType(ifExpression)?.let { return it }
 
         // if `KtIfExpression` doesn't have an expected type, get the expected type of the current branch from the other branch
         val otherBranch = (if (expression == ifExpression.then) ifExpression.`else` else ifExpression.then) ?: return null
@@ -678,7 +682,7 @@ internal class KaFirExpressionTypeProvider(
             currentExpression == whenEntry.expression
         } ?: return null
         val whenExpression = whenEntry.parent as? KtWhenExpression ?: return null
-        expectedType(whenExpression)?.let { return it }
+        inferredExpectedType(whenExpression)?.let { return it }
 
         // if `KtWhenExpression` doesn't have an expected type, get the expected type of the current entry from the other entries
         val entryExpressions = whenExpression.entries
@@ -692,7 +696,7 @@ internal class KaFirExpressionTypeProvider(
         val tryExpression = expression.unwrapQualified<KtTryExpression> { tryExpression, currentExpression ->
             currentExpression == tryExpression.tryBlock
         } ?: return null
-        return expectedType(tryExpression)
+        return inferredExpectedType(tryExpression)
     }
 
     private fun getExpectedTypeOfElvisOperand(expression: PsiElement): KaType? {
@@ -700,7 +704,7 @@ internal class KaFirExpressionTypeProvider(
             binaryExpression.operationToken == KtTokens.ELVIS && (operand == binaryExpression.left || operand == binaryExpression.right)
         } ?: return null
         if (expression !is KtExpression) return null
-        val type = expectedType(binaryExpression) ?: getElvisOperandExpectedTypeByOtherOperand(expression, binaryExpression)
+        val type = inferredExpectedType(binaryExpression) ?: getElvisOperandExpectedTypeByOtherOperand(expression, binaryExpression)
 
         return type?.applyIf(expression == binaryExpression.left) { withNullability(nullable = true) }
     }

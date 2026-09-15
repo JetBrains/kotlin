@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.expressions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
@@ -70,6 +71,29 @@ public val PsiElement.expectedType: KaType?
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.expressionTypeProvider.expectedType(this)
+    }
+
+/**
+ * The [KaType] the compiler demands for the given [PsiElement] at its position in code after resolution and inference of the surrounding
+ * code have completed, or `null` if the element is not an expression or nothing is demanded from it.
+ *
+ * Unlike a purely declaration-based expectation, the result reflects the final inference results: parameter types are substituted with
+ * the inferred type arguments of the resolved call, return types of enclosing declarations may themselves be inferred from their bodies,
+ * and when no other expectation exists, the actual types of sibling expressions serve as a fallback (e.g., the type of the other branch
+ * for an `if` branch, or the type of the other operand for an elvis operand).
+ *
+ * Currently, [expectedType] behaves in the same way. As part of [KT-87415](https://youtrack.jetbrains.com/issue/KT-87415), it is planned
+ * to be re-implemented to only report expectations coming from declarations and explicit syntax, while [inferredExpectedType] will keep
+ * reporting what the fully resolved code demands.
+ *
+ * See [expressionType] for a discussion about the expression type vs. the expected type.
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val PsiElement.inferredExpectedType: KaType?
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.expressionTypeProvider.inferredExpectedType(this)
     }
 
 /**

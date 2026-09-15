@@ -1,5 +1,14 @@
-expression: av
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/Boolean
+expression:
+  av
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
