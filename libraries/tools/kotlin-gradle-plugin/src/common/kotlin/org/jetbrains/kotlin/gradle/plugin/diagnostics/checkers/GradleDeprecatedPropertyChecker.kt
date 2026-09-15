@@ -141,7 +141,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
                     "$KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES, " +
                     "$KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION or " +
                     "$KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION instead. " +
-                    "See https://kotl.in/KT-87522 for details.",
+                    "See https://youtrack.jetbrains.com/issue/KT-87522 for details.",
         ), // since 2.5.0
     )
 
