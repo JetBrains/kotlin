@@ -151,6 +151,11 @@ val ScriptCompilationConfigurationKeys.resultField by PropertiesCollection.key<S
 val ScriptCompilationConfigurationKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
 
 /**
+ * The repositories to resolve the [DependencyCoordinates] of the script in
+ */
+val ScriptCompilationConfigurationKeys.dependencyRepositories by PropertiesCollection.key<List<DependencyRepository>>()
+
+/**
  * The list of compiler options that will be applied on script compilation, the syntax is the same as for CLI compiler
  */
 val ScriptCompilationConfigurationKeys.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
