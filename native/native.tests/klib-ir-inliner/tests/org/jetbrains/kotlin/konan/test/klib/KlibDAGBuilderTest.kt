@@ -55,10 +55,10 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         assertTrue(stdlib.isNativeStdlib)
 
         val dag = KlibDAGBuilder(libraries) { true }.build()
-        assertEquals(1, dag.libraries.size)
-        assertEquals(stdlib, dag.libraries.single())
+        assertEquals(1, dag.librariesReverseTopoSorted.size)
+        assertEquals(stdlib, dag.librariesReverseTopoSorted.single())
 
-        val stdlibNode = dag[dag.libraries.single()]
+        val stdlibNode = dag[dag.librariesReverseTopoSorted.single()]
         assertEquals(stdlib, stdlibNode.library)
         assertTrue(stdlibNode.directDependencies.isEmpty())
         assertTrue(stdlibNode.allDependencies.isEmpty())
@@ -92,12 +92,12 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         val dag = KlibDAGBuilder(libraries) { true }.build()
 
         // Direct dependencies computed by signatures.
-        val directDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.libraries.associateWith {
+        val directDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.librariesReverseTopoSorted.associateWith {
             dag[it].directDependencies
         }
 
         // All dependencies computed by signatures.
-        val allDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.libraries.associateWith {
+        val allDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.librariesReverseTopoSorted.associateWith {
             dag[it].allDependencies
         }
 
@@ -181,10 +181,10 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
         if (contractedDag) {
             // Only the necessary (used) libraries should be present in the DAG.
-            assertEquals(userProjectModules.modules.size + /* stdlib */ 1, dag.libraries.size)
+            assertEquals(userProjectModules.modules.size + /* stdlib */ 1, dag.librariesReverseTopoSorted.size)
         } else {
             // All libraries should be present in the DAG.
-            assertEquals(allLibraries.size, dag.libraries.size)
+            assertEquals(allLibraries.size, dag.librariesReverseTopoSorted.size)
         }
 
         // Check serialization/deserialization.
@@ -315,7 +315,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         val libraries = loadLibraries(stdlib = false, others = moduleNameToLibraryPath.values)
 
         val dag = KlibDAGBuilder(libraries) { true }.build()
-        val anyLibraryNode: KlibDAGNode = dag[dag.libraries.first()]
+        val anyLibraryNode: KlibDAGNode = dag[dag.librariesReverseTopoSorted.first()]
         anyLibraryNode.directDependencies // that should be successful
 
         try {
@@ -369,7 +369,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         val libraries: List<KotlinLibrary> = loadLibraries(platformLibs = true)
 
         val dag: KlibDAG = KlibDAGBuilder(libraries) { true }.build()
-        assertEquals(libraries.size, dag.libraries.size)
+        assertEquals(libraries.size, dag.librariesReverseTopoSorted.size)
 
         val serializedOriginal: SerializedKlibDAG = dag.serialize()
         assertEquals(libraries.size, serializedOriginal.dag.size)
@@ -384,8 +384,8 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
         // Pass the exact number of libraries:
         val deserializedDag: KlibDAG = serializedDagWithOnlyStdlibAndPosix.deserialize(libraries.filter { it.path.isStdlibOrPosix() })
-        assertEquals(2, deserializedDag.libraries.size)
-        assertTrue(deserializedDag.libraries.all { it.canonicalPath.isStdlibOrPosix() })
+        assertEquals(2, deserializedDag.librariesReverseTopoSorted.size)
+        assertTrue(deserializedDag.librariesReverseTopoSorted.all { it.canonicalPath.isStdlibOrPosix() })
 
         // Pass more libraries as the input that there are actually required:
         try {
@@ -504,7 +504,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
     private fun assertLosslessDeserialization(dag: KlibDAG) {
         val serializedOnce = dag.serialize()
-        val serializedTwice = serializedOnce.deserialize(dag.libraries).serialize()
+        val serializedTwice = serializedOnce.deserialize(dag.librariesReverseTopoSorted).serialize()
 
         assertEquals(serializedOnce, serializedTwice)
     }

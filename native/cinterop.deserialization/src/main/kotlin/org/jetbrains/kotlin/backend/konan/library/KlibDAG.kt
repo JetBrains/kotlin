@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
 import kotlin.io.path.pathString
@@ -33,7 +34,7 @@ import kotlin.io.path.pathString
  * of IR linker. This class may not be needed in the future if we decide to move the caches orchestration
  * from the compiler to the BTA.
  */
-class KlibDAG(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
+class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
     init {
         // Sanity check.
         for (node in dag.values) {
@@ -45,20 +46,28 @@ class KlibDAG(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
         }
     }
 
-    val libraries: Set<KotlinLibrary>
-        get() = dag.keys
+    private val serializedDag: SerializedKlibDAG by lazy {
+        SerializedKlibDAG(
+            dag.values.associate { node ->
+                node.library.canonicalPath to node.directDependencies.mapToSetOrEmpty { it.canonicalPath }
+            }
+        )
+    }
+
+    val librariesReverseTopoSorted: List<KotlinLibrary> by lazy {
+        DFS.topologicalOrder(dag.keys) { library -> dag.getValue(library).directDependencies }.reversed()
+    }
 
     operator fun get(library: KotlinLibrary): KlibDAGNode =
         dag[library] ?: error("No such library in Klib DAG: $library")
 
+    fun getDirectDependencies(library: KotlinLibrary): Set<KotlinLibrary> = this[library].directDependencies
+    fun getAllDependencies(library: KotlinLibrary): Set<KotlinLibrary> = this[library].allDependencies
+
     /**
      * Serialize this DAG to [SerializedKlibDAG].
      */
-    fun serialize(): SerializedKlibDAG = SerializedKlibDAG(
-        dag.values.associate { node ->
-            node.library.canonicalPath to node.directDependencies.mapToSetOrEmpty { it.canonicalPath }
-        }
-    )
+    fun serialize(): SerializedKlibDAG = serializedDag
 }
 
 /**
