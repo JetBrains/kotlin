@@ -206,46 +206,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            ProjectIsolationStartParameterAccessor.Factory::class,
-            DefaultProjectIsolationStartParameterAccessor.Factory()
-        )
-
-        factories.putIfAbsent(
-            CompatibilityConventionRegistrar.Factory::class,
-            DefaultCompatibilityConventionRegistrar.Factory()
-        )
-
-        factories.putIfAbsent(
-            ConfigurationCacheStartParameterAccessor.Factory::class,
-            DefaultConfigurationCacheStartParameterAccessorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            MavenPublicationComponentAccessor.Factory::class,
-            DefaultMavenPublicationComponentAccessorFactory()
-        )
-
-        factories.putIfAbsent(
-            JavaExecTaskParametersCompatibility.Factory::class,
-            DefaultJavaExecTaskParametersCompatibility.Factory()
-        )
-
-        factories.putIfAbsent(
-            CopySpecAccessor.Factory::class,
-            DefaultCopySpecAccessor.Factory(),
-        )
-
-        factories.putIfAbsent(
-            BuildIdentifierAccessor.Factory::class,
-            DefaultBuildIdentifierAccessor.Factory(),
-        )
-
-        factories.putIfAbsent(
-            ProjectDependencyAccessor.Factory::class,
-            DefaultProjectDependencyAccessor.Factory()
-        )
-
-        factories.putIfAbsent(
             BuildNeededDependentTasksWiringProvider.Factory::class,
             DefaultBuildNeededDependentTaskWiringProvider.Factory()
         )

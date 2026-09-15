@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 
-import org.jetbrains.kotlin.gradle.plugin.KOTLIN_DSL_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityConventionRegistrar
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.utils.*
 
@@ -20,7 +18,5 @@ internal object GradleConventionAddKotlinSourcesToAndroidSourceSetConfigurator :
         target: KotlinAndroidTarget,
         kotlinSourceSet: KotlinSourceSet,
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
-    ) {
-        target.project.compatibilityConventionRegistrar.addConvention(androidSourceSet, KOTLIN_DSL_NAME, kotlinSourceSet)
-    }
+    ) {}
 }

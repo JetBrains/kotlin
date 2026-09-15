@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_MODULE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.WASM_TARGET
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.utils.moduleName
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 

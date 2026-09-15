@@ -48,31 +48,6 @@ kotlin {
     }
 }
 
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_82,
-)
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_86,
-)
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_811,
-)
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_96,
-)
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_86,
-    GradlePluginVariant.GRADLE_96,
-)
-
 binaryCompatibilityValidator {
     targets.configureEach {
         ignoredPackages.addAll(

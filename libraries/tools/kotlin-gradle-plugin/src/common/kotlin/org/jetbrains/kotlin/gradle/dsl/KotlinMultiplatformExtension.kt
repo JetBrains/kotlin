@@ -292,8 +292,7 @@ internal constructor(
     internal val swiftExportInternal: SwiftExportExtension by lazy {
         project.objects.SwiftExportExtension(
             project.dependencies,
-            project.variantImplementationFactoryProvider(),
-        ) { path -> project.project(path) }
+        )
     }
 
     /**

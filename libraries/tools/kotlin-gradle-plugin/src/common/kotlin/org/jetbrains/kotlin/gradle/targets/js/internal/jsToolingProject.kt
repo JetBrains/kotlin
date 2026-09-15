@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 
 /**
  * Returns the project to use for JS and WasmJS tooling plugins.

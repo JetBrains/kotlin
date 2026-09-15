@@ -930,19 +930,10 @@ internal object KotlinToolingDiagnostics {
             jvmTarget: String,
             severity: KotlinToolingDiagnosticsSeverity,
         ) = build(severity = severity) {
-            val gradleErrorMessage = if (severity == WARNING &&
-                GradleVersion.current() < GradleVersion.version("8.0")
-            ) {
-                "This will become an error in Gradle 8.0."
-            } else {
-                ""
-            }
-
             title("Inconsistent JVM Target Compatibility Between Java and Kotlin Tasks")
                 .description {
                     """
                     Inconsistent JVM-target compatibility detected for tasks '$javaTaskName' ($targetCompatibility) and '$kotlinTaskName' ($jvmTarget).
-                    $gradleErrorMessage
                     """.trimIndent()
                 }
                 .solution {
@@ -2327,28 +2318,12 @@ internal object KotlinToolingDiagnostics {
                             "|- ${meta.type} version: ${meta.version.version}"
                         }
 
-                        /**
-                         * Before Gradle 8.2, it was impossible to override the values of the API/language version because the kotlin-dsl plugin
-                         * configured them in an afterEvaluate block
-                         */
-                        val shouldUseAfterEvaluate = GradleVersion.current() < GradleVersion.version("8.2")
-
                         val accessorsSnippet = versionMetadata.joinToString("\n") { meta ->
-                            val nestedLevel = if (shouldUseAfterEvaluate) 12 else 8
+                            val nestedLevel = 8
                             "|${" ".repeat(nestedLevel)}${meta.accessor}.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.$nonDeprecatedVersion)"
                         }
 
-                        val configureSnippet = if (shouldUseAfterEvaluate) {
-                            """
-                            |afterEvaluate { // this code can be unwrapped from afterEvaluate after upgrading to Gradle 8.2 or newer
-                            |    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-                            |        compilerOptions {
-                                         $accessorsSnippet
-                            |        }
-                            |    }
-                            |}
-                            """.trimMargin()
-                        } else {
+                        val configureSnippet =
                             """
                             |tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
                             |    compilerOptions {
@@ -2356,7 +2331,6 @@ internal object KotlinToolingDiagnostics {
                             |    }
                             |}
                             """.trimMargin()
-                        }
 
                         """
                             |The Kotlin Gradle plugin detected incompatible Kotlin ${if (isPlural) "versions" else "version"} in the `kotlin-dsl` plugin. This may lead to a compilation failure.

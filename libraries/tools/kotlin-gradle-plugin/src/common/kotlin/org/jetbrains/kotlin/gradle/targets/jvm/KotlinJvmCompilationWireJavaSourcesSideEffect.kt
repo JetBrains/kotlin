@@ -12,7 +12,6 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
-import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityConventionRegistrar
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -82,15 +81,9 @@ internal fun setupJavaSourceSetSourcesAndResources(
 }
 
 internal fun SourceSet.configureKotlinConventions(
-    project: Project,
     kotlinCompilation: KotlinCompilation<*>
 ) {
     val kotlinSourceSetDslName = kotlinCompilation.target.kotlinSourceSetDslName
-    project.compatibilityConventionRegistrar.addConvention(
-        this,
-        kotlinSourceSetDslName,
-        kotlinCompilation.defaultSourceSet
-    )
     addExtension(kotlinSourceSetDslName, kotlinCompilation.defaultSourceSet.kotlin)
 }
 

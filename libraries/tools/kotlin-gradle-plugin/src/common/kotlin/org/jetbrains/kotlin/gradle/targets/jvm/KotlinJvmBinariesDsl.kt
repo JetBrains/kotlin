@@ -23,11 +23,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.jvm.toolchain.JavaToolchainService
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.registerArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
@@ -230,7 +227,7 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
         runTask.classpath(runTask.project.calculateRunClasspath(jvmBinarySpec, jvmCompilation, compilationJarTask))
         runTask.mainModule.set(jvmBinarySpec.mainModule)
         runTask.mainClass.set(jvmBinarySpec.mainClass)
-        runTask.compatibilityWrapper().setJvmArgumentsConvention(jvmBinarySpec.applicationDefaultJvmArgs)
+        runTask.jvmArguments.convention(jvmBinarySpec.applicationDefaultJvmArgs)
 
         val javaPluginExtension = runTask.project.extensions.getByType(JavaPluginExtension::class.java)
         runTask.modularity.inferModulePath.convention(javaPluginExtension.modularity.inferModulePath)
@@ -319,7 +316,7 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
             val binChildSpec = project.copySpec()
             binChildSpec.into(jvmBinarySpec.executableDir)
             binChildSpec.from(createStartScriptsTask)
-            binChildSpec.compatAccessor(project).filePermission("rwxr-xr-x")
+            binChildSpec.filePermissions { it.unix("rwxr-xr-x") }
             val childSpec = project.copySpec()
             childSpec.from(project.file("src/dist"))
             childSpec.with(libChildSpec)
@@ -353,10 +350,6 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
     }
 
     private fun applyDistributionPluginIfMissing() {
-        when {
-            GradleVersion.current() >= GradleVersion.version("8.13") -> if (!pluginManager.hasPlugin("distribution-base"))
-                pluginManager.apply("distribution-base")
-            else -> if (!pluginManager.hasPlugin("distribution")) pluginManager.apply("distribution")
-        }
+        if (!pluginManager.hasPlugin("distribution-base")) pluginManager.apply("distribution-base")
     }
 }

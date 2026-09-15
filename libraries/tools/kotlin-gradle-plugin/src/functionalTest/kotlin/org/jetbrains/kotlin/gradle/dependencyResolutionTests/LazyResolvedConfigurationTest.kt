@@ -15,10 +15,8 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.component.external.model.DefaultModuleComponentSelector
 import org.jetbrains.kotlin.gradle.cache.kotlinGradleTaskExecutionCache
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -286,7 +284,6 @@ class LazyResolvedConfigurationTest {
         val resolvedDependencies = project.commonMainCompileDependencies().resolvedDependenciesByKmpModuleId(
             cache = project.kotlinGradleTaskExecutionCache.get(),
             projectId = project.path,
-            buildIdentifierAccessor = project.variantImplementationFactoryProvider<BuildIdentifierAccessor.Factory>(),
         )
 
         assertEquals(

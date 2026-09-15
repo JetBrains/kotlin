@@ -8,15 +8,17 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.problems.ProblemId
 import org.gradle.api.problems.Problems
+import org.gradle.api.problems.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
-internal abstract class CompilerDiagnosticsProblemsReporterG811 @Inject constructor(
+internal abstract class CompilerDiagnosticsProblemsReporterG813 @Inject constructor(
     private val problems: Problems,
 ) : CompilerDiagnosticsProblemsReporter {
-    private val logger: Logger by lazy { Logging.getLogger(this.javaClass) }
+    private val logger: Logger = Logging.getLogger(this.javaClass)
 
     override fun reportCompilerMessage(
         severity: CompilerMessageRenderer.Severity,
@@ -26,14 +28,15 @@ internal abstract class CompilerDiagnosticsProblemsReporterG811 @Inject construc
     ) {
         val gradleSeverity = severity.toGradleSeverity() ?: return
         val diagnosticGroup = severity.toDiagnosticGroup()
+        val problemId = ProblemId.create(
+            severity.resolvedProblemId(diagnosticId),
+            severity.resolvedDisplayName(diagnosticId),
+            diagnosticGroup.toProblemGroup(),
+        )
+
         try {
-            problems.reporter.reporting {
+            problems.reporter.report(problemId) {
                 it
-                    .id(
-                        severity.resolvedProblemId(diagnosticId),
-                        severity.resolvedDisplayName(diagnosticId),
-                        KgpProblemGroup(diagnosticGroup),
-                    )
                     .contextualLabel(severity.toDisplayName())
                     .details(message)
                     .severity(gradleSeverity)
@@ -44,9 +47,15 @@ internal abstract class CompilerDiagnosticsProblemsReporterG811 @Inject construc
         }
     }
 
+    private fun CompilerMessageRenderer.Severity.toGradleSeverity(): Severity? = when (this) {
+        CompilerMessageRenderer.Severity.ERROR -> Severity.ERROR
+        CompilerMessageRenderer.Severity.WARNING -> Severity.WARNING
+        CompilerMessageRenderer.Severity.INFO, CompilerMessageRenderer.Severity.DEBUG -> null
+    }
+
     class Factory : CompilerDiagnosticsProblemsReporter.Factory {
         override fun getInstance(objects: ObjectFactory): CompilerDiagnosticsProblemsReporter {
-            return objects.newInstance<CompilerDiagnosticsProblemsReporterG811>()
+            return objects.newInstance<CompilerDiagnosticsProblemsReporterG813>()
         }
     }
 }

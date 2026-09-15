@@ -14,7 +14,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.provider.SetProperty
-import org.gradle.util.GradleVersion
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normalizeForFlagFile
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
@@ -78,8 +77,7 @@ abstract class GradleCompileTaskProvider @Inject constructor(
     @get:Internal
     internal val warningModeIsAll: Provider<Boolean> = objectFactory
         .property(
-            project.gradle.startParameter.warningMode == WarningMode.All &&
-                GradleVersion.current().baseVersion >= GradleVersion.version("9.3")
+            project.gradle.startParameter.warningMode == WarningMode.All
         )
 
     @get:Internal

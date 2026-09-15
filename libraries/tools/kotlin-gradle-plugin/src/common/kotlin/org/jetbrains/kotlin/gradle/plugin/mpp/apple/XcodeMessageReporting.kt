@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
-import org.gradle.BuildAdapter
-import org.gradle.BuildResult
+
 import org.gradle.api.Project
 import org.gradle.api.flow.FlowAction
 import org.gradle.api.flow.FlowParameters
@@ -15,11 +14,9 @@ import org.gradle.api.flow.FlowScope
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.util.Optional
 import javax.inject.Inject
@@ -43,12 +40,9 @@ private val Project.isXcodeTasksRequested: Provider<Boolean>
 internal val AddBuildListenerForXcodeSetupAction = KotlinProjectSetupAction action@{
     when {
         !useXcodeMessageStyle.get() -> {}
-        dataflowApiSupported() -> project.objects.newInstance<XcodeBuildFlowManager>().subscribeForBuildResult()
-        !isConfigurationCacheEnabled -> gradle.addBuildListener(XcodeBuildErrorListener)
+        else -> project.objects.newInstance<XcodeBuildFlowManager>().subscribeForBuildResult()
     }
 }
-
-private fun dataflowApiSupported() = GradleVersion.current().baseVersion >= GradleVersion.version("8.1")
 
 internal abstract class XcodeBuildFlowManager @Inject constructor(
     private val flowScope: FlowScope,
@@ -73,13 +67,6 @@ internal class XcodeBuildFinishedAction : FlowAction<XcodeBuildFinishedAction.Pa
 
     override fun execute(parameters: Parameters) {
         reportBuildError(parameters.failure.get().orElse(null))
-    }
-}
-
-private object XcodeBuildErrorListener : BuildAdapter() {
-    @Suppress("OVERRIDE_DEPRECATION") // Listener is added only for old Gradle versions
-    override fun buildFinished(result: BuildResult) {
-        reportBuildError(result.failure)
     }
 }
 

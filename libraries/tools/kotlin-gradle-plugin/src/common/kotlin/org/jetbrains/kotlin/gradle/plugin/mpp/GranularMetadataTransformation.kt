@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
@@ -169,9 +168,6 @@ internal class GranularMetadataTransformation(
         val allowMatchingByRequestedCoordinates: Boolean,
 
         @get:Internal
-        val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
-
-        @get:Internal
         val cache: Provider<out KotlinGradleTaskExecutionCache>
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
@@ -193,7 +189,6 @@ internal class GranularMetadataTransformation(
             computeTransformedLibraryChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryChecksum,
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
             allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get(),
-            buildIdentifierAccessor = project.variantImplementationFactoryProvider<BuildIdentifierAccessor.Factory>(),
             cache = project.kotlinGradleTaskExecutionCache
         )
     }
@@ -208,7 +203,6 @@ internal class GranularMetadataTransformation(
 
     private val sourceSetVisibilityProvider = SourceSetVisibilityProvider(
         projectId = params.projectId,
-        buildIdentifierAccessor = params.buildIdentifierAccessor,
         resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs,
         allowMatchingByRequestedCoordinates = params.allowMatchingByRequestedCoordinates,
         cache = params.cache.get()
@@ -219,7 +213,7 @@ internal class GranularMetadataTransformation(
     internal val visibleSourceSetsByKmpModuleIdentifier: Map<KmpModuleIdentifier, Set<String>> by lazy {
         metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
-            .groupBy { KmpModuleIdentifier.from(it.dependency, params.buildIdentifierAccessor) }
+            .groupBy { KmpModuleIdentifier.from(it.dependency) }
             .mapValues { (_, visibleSourceSets) -> visibleSourceSets.flatMap { it.allVisibleSourceSetNames }.toSet() }
     }
 
@@ -242,7 +236,7 @@ internal class GranularMetadataTransformation(
             val resolvedDependency: ResolvedDependencyResult = resolvedDependencyQueue.poll()
             val selectedComponent = resolvedDependency.selected
             val componentId = selectedComponent.id
-            val kmpModuleIdentifier = KmpModuleIdentifier.from(selectedComponent, params.buildIdentifierAccessor)
+            val kmpModuleIdentifier = KmpModuleIdentifier.from(selectedComponent)
 
             if (!visitedDependencies.add(componentId)) {
                 /* Already processed this dependency */
