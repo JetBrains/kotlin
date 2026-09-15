@@ -31,15 +31,13 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
             VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:a type:kotlin.Int [val]
               CONST[203, 204] Int type=kotlin.Int value=1
             RETURN[213, 213] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-              TYPE_OP[208, 213] type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                CALL[208, 213] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=PLUS
-                  ARG 1: GET_VAR[208, 209] 'val a: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
-                  ARG 2: CONST[212, 213] Int type=kotlin.Int value=1
+              CALL[208, 213] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=PLUS
+                ARG 1: GET_VAR[208, 209] 'val a: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+                ARG 2: CONST[212, 213] Int type=kotlin.Int value=1
       TYPE_OP[83, 89] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK[83, 89] type=kotlin.Int origin=INLINE_ARGS_CONTAINER
           VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-            TYPE_OP[87, 88] type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-              CONST[87, 88] Int type=kotlin.Int value=5
+            CONST[87, 88] Int type=kotlin.Int value=5
           RETURNABLE_BLOCK[83, 89] type=kotlin.Int origin=null
             INLINED_BLOCK[83, 89]->[186, 213] type=kotlin.Int origin=null
               inlinedFunctionSymbol: public final fun foo (a: kotlin.Int): kotlin.Int declared in <root>
@@ -47,15 +45,13 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
               VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:a type:kotlin.Int [val]
                 GET_VAR[-1, -1] 'val tmp_0: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
               RETURN[213, 213] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                TYPE_OP[208, 213] type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  CALL[208, 213] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=PLUS
-                    ARG 1: GET_VAR[208, 209] 'val a: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
-                    ARG 2: CONST[212, 213] Int type=kotlin.Int value=1
+                CALL[208, 213] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=PLUS
+                  ARG 1: GET_VAR[208, 209] 'val a: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+                  ARG 2: CONST[212, 213] Int type=kotlin.Int value=1
       TYPE_OP[94, 101] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK[94, 101] type=kotlin.Int origin=INLINE_ARGS_CONTAINER
           VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
-            TYPE_OP[98, 100] type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-              CONST[98, 100] Int type=kotlin.Int value=10
+            CONST[98, 100] Int type=kotlin.Int value=10
           RETURNABLE_BLOCK[94, 101] type=kotlin.Int origin=null
             INLINED_BLOCK[94, 101]->[221, 256] type=kotlin.Int origin=null
               inlinedFunctionSymbol: public final fun bar (b: kotlin.Int, c: kotlin.Int): kotlin.Int declared in <root>
@@ -65,18 +61,15 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
               VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:c type:kotlin.Int [val]
                 CONST[246, 247] Int type=kotlin.Int value=2
               RETURN[256, 256] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                TYPE_OP[251, 256] type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  CALL[251, 256] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=PLUS
-                    ARG 1: GET_VAR[251, 252] 'val b: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
-                    ARG 2: GET_VAR[255, 256] 'val c: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+                CALL[251, 256] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=PLUS
+                  ARG 1: GET_VAR[251, 252] 'val b: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+                  ARG 2: GET_VAR[255, 256] 'val c: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
       TYPE_OP[106, 117] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK[106, 117] type=kotlin.Int origin=INLINE_ARGS_CONTAINER
           VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
-            TYPE_OP[110, 112] type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-              CONST[110, 112] Int type=kotlin.Int value=10
+            CONST[110, 112] Int type=kotlin.Int value=10
           VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
-            TYPE_OP[114, 116] type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-              CONST[114, 116] Int type=kotlin.Int value=20
+            CONST[114, 116] Int type=kotlin.Int value=20
           RETURNABLE_BLOCK[106, 117] type=kotlin.Int origin=null
             INLINED_BLOCK[106, 117]->[221, 256] type=kotlin.Int origin=null
               inlinedFunctionSymbol: public final fun bar (b: kotlin.Int, c: kotlin.Int): kotlin.Int declared in <root>
@@ -86,9 +79,8 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
               VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:c type:kotlin.Int [val]
                 GET_VAR[-1, -1] 'val tmp_3: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
               RETURN[256, 256] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                TYPE_OP[251, 256] type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  CALL[251, 256] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=PLUS
-                    ARG 1: GET_VAR[251, 252] 'val b: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
-                    ARG 2: GET_VAR[255, 256] 'val c: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+                CALL[251, 256] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=PLUS
+                  ARG 1: GET_VAR[251, 252] 'val b: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+                  ARG 2: GET_VAR[255, 256] 'val c: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
       RETURN[122, 133] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST[129, 133] String type=kotlin.String value="OK"
