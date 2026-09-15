@@ -1,0 +1,104 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.builder
+
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.element.SyntaxTokenTypes.ERROR_ELEMENT
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.isExpression
+import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
+import org.jetbrains.kotlin.kmp.lexer.KtTokens
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.DOT
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.SAFE_ACCESS
+import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
+
+@Suppress("UnstableApiUsage")
+abstract class AbstractMultiplatformParsingRawFirBuilder(
+    baseSession: FirSession,
+    val treeStructure: KotlinLightTreeStructure,
+    context: Context<LightNode> = Context(),
+) : AbstractTreeRawFirBuilder<LightNode, SyntaxElementType>(baseSession, context) {
+    protected val tree: LightSyntaxTree
+        get() = treeStructure.tree
+
+    override val LightNode.elementType: SyntaxElementType
+        get() = tree.getType(this)
+
+    override fun SyntaxElementType.typeToTokenId(): Int {
+        val nodeTypeId = KtNodeTypes.getElementTypeId(this)
+        if (nodeTypeId != 0) return nodeTypeId
+        return KtTokens.getElementTypeId(this)
+    }
+
+    override fun KtSourceElement.isChildInParentheses(): Boolean =
+        (treeStructure.getParent(lighterASTNode) as? KotlinLightAstNode)?.node?.tokenType == KtNodeTypes.PARENTHESIZED
+
+    override fun LightNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtSourceElement {
+        val startOffset = tree.getStartOffset(this)
+        val endOffset = tree.getEndOffset(this)
+        val lighterNode = KotlinLightAstNode(tree, this)
+        return KtLightSourceElement(lighterNode, startOffset, endOffset, treeStructure, kind ?: KtRealSourceElementKind)
+    }
+
+    override fun KtSourceElement.toNode(): LightNode {
+        return ((this as KtLightSourceElement).lighterASTNode as KotlinLightAstNode).node
+    }
+
+    val LightNode.tokenType: SyntaxElementType
+        get() = tree.getType(this)
+
+    override val LightNode.asText: String
+        get() = tree.getText(this).toString()
+
+    override val LightNode?.receiverExpression: LightNode?
+        get() {
+            var candidate: LightNode? = null
+            this?.forEachChildren {
+                when (it.tokenType) {
+                    DOT, SAFE_ACCESS -> return if (candidate?.tokenType != ERROR_ELEMENT) candidate else null
+                    else -> candidate = it
+                }
+            }
+            return null
+        }
+
+    override val LightNode?.selectorExpression: LightNode?
+        get() {
+            var isSelector = false
+            this?.forEachChildren {
+                when (it.tokenType) {
+                    DOT, SAFE_ACCESS -> isSelector = true
+                    else -> if (isSelector) {
+                        return if (it.tokenType != ERROR_ELEMENT) it else null
+                    }
+                }
+            }
+            return null
+        }
+
+    override val LightNode?.indexExpressions: List<LightNode>?
+        get() = this?.getLastChildExpression()?.let {
+            tree.getChildren(it).filter { it.toTokenId().isExpression() }
+        }
+
+    override fun LightNode.getParent(): LightNode? {
+        return tree.getParent(this)
+    }
+
+    override fun LightNode.getChildren(): List<LightNode> {
+        return tree.getChildren(this)
+    }
+
+    override fun LightNode?.getChildrenAsArray(): Array<out LightNode?> {
+        return this?.getChildren().orEmpty().toTypedArray()
+    }
+}
