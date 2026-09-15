@@ -12,7 +12,6 @@ import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
-import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -39,23 +38,18 @@ internal open class SymbolLightSimpleMethod protected constructor(
     private val isTopLevel: Boolean,
     valueParameterPickMask: BitSet?,
     private val suppressStatic: Boolean,
-    isJvmExposedBoxed: Boolean,
+    generationMode: MethodGenerationMode,
 ) : SymbolLightMethod<KaNamedFunctionSymbol>(
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
     valueParameterPickMask = valueParameterPickMask,
-    isJvmExposedBoxed = isJvmExposedBoxed,
+    generationMode = generationMode,
 ) {
     private val _name: String by lazyPub {
         withFunctionSymbol { functionSymbol ->
-            val defaultName = functionSymbol.name.asString()
-            if (isJvmExposedBoxed) {
-                computeJvmExposeBoxedMethodName(functionSymbol, defaultName)
-            } else {
-                functionSymbol.javaMethodName ?: defaultName
-            }
+            computeMethodName(functionSymbol, defaultName = functionSymbol.name.asString())
         }
     }
 
@@ -276,7 +270,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     isTopLevel = isTopLevel,
                 )
 
-                val generationResult = methodGeneration(
+                val generationMode = methodGeneration(
                     exposeBoxedMode = exposeBoxedMode,
                     hasValueClassInParameterType = hasValueClassInParameterType,
                     hasValueClassInReturnType = hasValueClassInReturnType,
@@ -285,9 +279,20 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     isSuspend = isSuspend,
                     isOverridable = isOverridable,
                     isEffectivelyPrivate = isEffectivelyPrivate,
+                ) ?: return@createMethodsJvmOverloadsAware
+
+                result += SymbolLightSimpleMethod(
+                    functionSymbol = functionSymbol,
+                    lightMemberOrigin = lightMemberOrigin,
+                    containingClass = containingClass,
+                    methodIndex = methodIndex,
+                    isTopLevel = isTopLevel,
+                    valueParameterPickMask = valueParameterPickMask,
+                    suppressStatic = suppressStatic,
+                    generationMode = generationMode,
                 )
 
-                if (generationResult.isBoxedMethodRequired) {
+                if (generationMode is MethodGenerationMode.Boxed && generationMode.isRegularMethodRequired) {
                     result += SymbolLightSimpleMethod(
                         functionSymbol = functionSymbol,
                         lightMemberOrigin = lightMemberOrigin,
@@ -296,20 +301,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
                         isTopLevel = isTopLevel,
                         valueParameterPickMask = valueParameterPickMask,
                         suppressStatic = suppressStatic,
-                        isJvmExposedBoxed = true,
-                    )
-                }
-
-                if (generationResult.isRegularMethodRequired) {
-                    result += SymbolLightSimpleMethod(
-                        functionSymbol = functionSymbol,
-                        lightMemberOrigin = lightMemberOrigin,
-                        containingClass = containingClass,
-                        methodIndex = methodIndex,
-                        isTopLevel = isTopLevel,
-                        valueParameterPickMask = valueParameterPickMask,
-                        suppressStatic = suppressStatic,
-                        isJvmExposedBoxed = false,
+                        generationMode = MethodGenerationMode.Regular(),
                     )
                 }
             }
