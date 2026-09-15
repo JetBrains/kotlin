@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
 import org.junit.jupiter.api.Test
 
-// TODO (KT-61096): Remove this obsolete test runner together with the KLIB resolver.
-class KlibResolverTest : AbstractNativeSimpleTest() {
+class KlibLoadingSanityTest : AbstractNativeSimpleTest() {
     @Test
     fun `Compiler ignores dependency versions in manifest`() {
         val modules = newSourceModules {
