@@ -143,6 +143,14 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             // Create static constructors (when `staticName` is specified) inside companions.
             val outerClass = classSymbol.classId.outerClassId?.toSymbol(session) as? FirRegularClassSymbol ?: return
             constructorInfo = getConstructorInfo(outerClass) ?: return
+
+            // Only that static factory belongs to a companion object. Without a `staticName` the annotation asks for
+            // a plain constructor, which is the outer class's own. Generating it here as well gave the companion
+            // object a second `()V` constructor next to the one it already has - its own for a generated companion
+            // object, the implicit one for a declared one - which the JVM backend met as
+            // `CONFLICTING_JVM_DECLARATIONS` (KT-89371).
+            if (constructorInfo.staticName == null) return
+
             targetClassSymbol = outerClass
         } else {
             constructorInfo = getConstructorInfo(classSymbol) ?: return
