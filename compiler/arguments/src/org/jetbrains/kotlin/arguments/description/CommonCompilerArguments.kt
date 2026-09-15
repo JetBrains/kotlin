@@ -1355,6 +1355,21 @@ Warning: this flag is not intended for production use. If you want to configure 
     }
 
     compilerArgument {
+        name = "Xstrict-equality-for-structural-classes"
+        description = """
+            Report warnings on inapplicable equalities with data, value, and enum classes.
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.StrictEqualsForStructuralClasses),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
+        )
+    }
+
+    compilerArgument {
         name = "Xintrinsic-const-evaluation"
         description = """
             Enables `IntrinsicConstEvaluation` language feature.`

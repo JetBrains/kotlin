@@ -122,6 +122,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_SKIP_METADATA_VERSION_CHECK
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_SKIP_PRERELEASE_CHECK
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_STDLIB_COMPILATION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_SUPPRESS_VERSION_WARNINGS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_SUPPRESS_WARNING
@@ -297,6 +298,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_SKIP_METADATA_VERSION_CHECK in this) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK)}
     if (X_SKIP_PRERELEASE_CHECK in this) { arguments.skipPrereleaseCheck = get(X_SKIP_PRERELEASE_CHECK)}
     if (X_STDLIB_COMPILATION in this) { arguments.stdlibCompilation = get(X_STDLIB_COMPILATION)}
+    if (X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES in this) { arguments.strictEqualityForStructuralClasses = get(X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES)}
     try { if (X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR in this) { arguments.setUsingReflection("suppressApiVersionGreaterThanLanguageVersionError", get(X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_SUPPRESS_VERSION_WARNINGS in this) { arguments.suppressVersionWarnings = get(X_SUPPRESS_VERSION_WARNINGS)}
     try { if (X_SUPPRESS_WARNING in this) { arguments.setUsingReflection("suppressedDiagnostics", get(X_SUPPRESS_WARNING).toTypedArray())} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_WARNING. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
@@ -413,6 +415,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_SKIP_METADATA_VERSION_CHECK] = arguments.skipMetadataVersionCheck } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_PRERELEASE_CHECK] = arguments.skipPrereleaseCheck } catch (_: NoSuchMethodError) {  }
     try { this[X_STDLIB_COMPILATION] = arguments.stdlibCompilation } catch (_: NoSuchMethodError) {  }
+    try { this[X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES] = arguments.strictEqualityForStructuralClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR] = arguments.getUsingReflection<Boolean>("suppressApiVersionGreaterThanLanguageVersionError") } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_VERSION_WARNINGS] = arguments.suppressVersionWarnings } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_WARNING] = arguments.getUsingReflection<Array<String>>("suppressedDiagnostics").toListOrEmpty() } catch (_: NoSuchMethodError) {  }
@@ -515,6 +518,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_SKIP_METADATA_VERSION_CHECK in this) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK)}
     if (X_SKIP_PRERELEASE_CHECK in this) { arguments.skipPrereleaseCheck = get(X_SKIP_PRERELEASE_CHECK)}
     if (X_STDLIB_COMPILATION in this) { arguments.stdlibCompilation = get(X_STDLIB_COMPILATION)}
+    if (X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES in this) { arguments.strictEqualityForStructuralClasses = get(X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES)}
     try { if (X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR in this) { arguments.setUsingReflection("suppressApiVersionGreaterThanLanguageVersionError", get(X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_SUPPRESS_VERSION_WARNINGS in this) { arguments.suppressVersionWarnings = get(X_SUPPRESS_VERSION_WARNINGS)}
     try { if (X_SUPPRESS_WARNING in this) { arguments.setUsingReflection("suppressedDiagnostics", get(X_SUPPRESS_WARNING).toTypedArray())} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_WARNING. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
@@ -821,6 +825,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_STDLIB_COMPILATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_STDLIB_COMPILATION")
+
+    public val X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES")
 
     public val X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR:
         CommonCompilerArgument<Boolean> =
