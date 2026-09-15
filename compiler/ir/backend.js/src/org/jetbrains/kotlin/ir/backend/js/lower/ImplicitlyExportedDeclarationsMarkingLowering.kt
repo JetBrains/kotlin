@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 /**
  * Adds `@JsImplicitExport` annotation to declarations which are not exported but are used inside other exported declarations as a type.
  */
-@PhasePrerequisites(PrepareSuspendFunctionsForExportLowering::class)
 class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
     private val jsExportCtor by lazy(LazyThreadSafetyMode.NONE) { context.symbols.jsExportAnnotationSymbol.constructors.single() }
