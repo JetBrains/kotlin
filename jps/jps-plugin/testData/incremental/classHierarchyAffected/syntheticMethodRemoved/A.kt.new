@@ -1,0 +1,6 @@
+package foo
+
+interface A {
+
+    fun <T> createB(items: Collection<T>, renderer: B.Presentation.(T) -> Unit): B
+}

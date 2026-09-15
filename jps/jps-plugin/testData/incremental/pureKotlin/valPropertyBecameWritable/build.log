@@ -1,0 +1,22 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/Foo.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/foo.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/AppKt.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/app.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Smart cast to 'Int' is impossible, because 'bar' is a mutable property that could be mutated concurrently.
