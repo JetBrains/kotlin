@@ -10,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
+import org.jetbrains.kotlin.backend.common.warnAboutSoftDeprecatedAbiVersions
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
@@ -72,6 +73,7 @@ fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
         .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = true) }
         // TODO (KT-76785): Handling of duplicated names is a workaround that needs to be removed in the future.
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
+        .warnAboutSoftDeprecatedAbiVersions(configuration)
 
     val stdlib = kotlinLoaderResult.librariesStdlibFirst.firstOrNull() ?: error("No stdlib found")
     val dummyLogger = CliLoggerAdapter(CommonizerLogLevel.Quiet, 2)
