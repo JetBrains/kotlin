@@ -78,7 +78,8 @@ public interface KaKDocProvider : KaSessionComponent {
      * 2. If the symbol is a callable, walk its [KaCallableSymbol.allOverriddenSymbols] in order and
      * recursively call [findKDoc] on each of them. Return the first non-null result.
      *
-     * 3. Resolve the symbol's `expect` declarations via [getExpectsForActual]. Recursively call [findKDoc]
+     * 3. Resolve the symbol's `expect` declarations via
+     * [getExpectsForActual][org.jetbrains.kotlin.analysis.api.symbols.getExpectsForActual]. Recursively call [findKDoc]
      * on the first (non-null) element of the list. Return the first non-null result.
      *
      *  4. In all other cases this method returns `null`.
@@ -160,7 +161,8 @@ public fun KtDeclaration.findKDoc(): KDocCommentDescriptor? {
  * 2. If the symbol is a callable, walk its [KaCallableSymbol.allOverriddenSymbols] in order and
  * recursively call [findKDoc] on each of them. Return the first non-null result.
  *
- * 3. Resolve the symbol's `expect` declarations via [getExpectsForActual]. Recursively call [findKDoc]
+ * 3. Resolve the symbol's `expect` declarations via
+ * [getExpectsForActual][org.jetbrains.kotlin.analysis.api.symbols.getExpectsForActual]. Recursively call [findKDoc]
  * on the first (non-null) element of the list. Return the first non-null result.
  *
  *  4. In all other cases this method returns `null`.

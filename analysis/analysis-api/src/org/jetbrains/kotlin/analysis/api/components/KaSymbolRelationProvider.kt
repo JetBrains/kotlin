@@ -536,40 +536,6 @@ public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
     get() = with(session) { samConstructor }
 
 /**
- * The single abstract function of a [functional interface](https://kotlinlang.org/docs/fun-interfaces.html), or `null` if this class
- * is not a functional interface.
- *
- * A functional interface has exactly one abstract function. In Kotlin, it must be declared with the `fun` modifier.
- * The function may be inherited from a parent interface.
- *
- * #### Example
- *
- * ```kotlin
- * fun interface MyPredicate {
- *     fun test(value: Int): Boolean
- * }
- * ```
- *
- * For `MyPredicate`, [functionalInterfaceFunction] is the symbol for the `test` function.
- *
- * @see KaNamedClassSymbol.isFun
- * @see samConstructor
- */
-@KaExperimentalApi
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "this.functionalInterfaceFunction",
-        "org.jetbrains.kotlin.analysis.api.symbols.functionalInterfaceFunction",
-    ),
-    level = DeprecationLevel.ERROR,
-)
-@KaContextParameterApi
-context(session: KaSession)
-public val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol?
-    get() = with(session) { functionalInterfaceFunction }
-
-/**
  * The [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
  *
  * #### Example
@@ -606,57 +572,6 @@ context(session: KaSession)
 public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
     @Suppress("DEPRECATION_ERROR")
     get() = with(session) { constructedClass }
-
-/**
- * The single abstract function of the [functional interface][functionalInterface] that this SAM constructor creates.
- *
- * #### Example
- *
- * ```kotlin
- * fun interface MyPredicate {
- *     fun test(value: Int): Boolean
- * }
- *
- * val p = MyPredicate { it > 0 }  // MyPredicate is a SAM constructor call
- * ```
- *
- * For the `MyPredicate` SAM constructor symbol, [functionalInterfaceFunction] is the symbol for the `test` function.
- *
- * @see KaClassLikeSymbol.functionalInterfaceFunction
- * @see functionalInterface
- */
-@KaExperimentalApi
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "this.functionalInterfaceFunction",
-        "org.jetbrains.kotlin.analysis.api.symbols.functionalInterfaceFunction",
-    ),
-    level = DeprecationLevel.ERROR,
-)
-@KaContextParameterApi
-context(session: KaSession)
-public val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
-    get() = with(session) { functionalInterfaceFunction }
-
-/**
- * The original [KaConstructorSymbol] for a [type-aliased constructor][KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR], or `null` otherwise.
- *
- * Currently, this property is marked as experimental because it might be joined with [fakeOverrideOriginal] in the future.
- */
-@KaExperimentalApi
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "this.originalConstructorIfTypeAliased",
-        "org.jetbrains.kotlin.analysis.api.symbols.originalConstructorIfTypeAliased",
-    ),
-    level = DeprecationLevel.ERROR,
-)
-@KaContextParameterApi
-context(session: KaSession)
-public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSymbol?
-    get() = with(session) { originalConstructorIfTypeAliased }
 
 /**
  * All explicitly declared (non-fake) callable symbols overridden by this callable symbol.
@@ -848,38 +763,6 @@ public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol
     get() = with(session) { intersectionOverriddenSymbols }
 
 /**
- * Returns the [KaCallableImplementationState] of the given [KaCallableSymbol] in the context of [implementerClassSymbol].
- *
- * Returns `null` if:
- * - The symbol is a top-level callable;
- * - The symbol is declared in a class or interface that is not a supertype of [implementerClassSymbol];
- * - If the symbol is non-implementable (for example, it is a [KaConstructorSymbol], or a [KaValueParameterSymbol]).
- *
- * The implementation state describes whether a callable is already implemented, has an inherited
- * implementation, can be overridden, or must be explicitly overridden in the given class.
- *
- * @see KaCallableImplementationState
- */
-@KaExperimentalApi
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "this.implementationState(implementerClassSymbol)",
-        "org.jetbrains.kotlin.analysis.api.symbols.implementationState",
-    ),
-    level = DeprecationLevel.ERROR,
-)
-@KaContextParameterApi
-context(session: KaSession)
-public fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState? {
-    return with(session) {
-        implementationState(
-            implementerClassSymbol = implementerClassSymbol,
-        )
-    }
-}
-
-/**
  * The original declared symbol for this callable symbol, after unwrapping fake override [KaCallableSymbol]s if needed.
  *
  * In a class scope, a symbol may be derived from symbols declared in super classes. For example, consider the following:
@@ -916,27 +799,6 @@ public fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassS
 context(session: KaSession)
 public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
     get() = with(session) { fakeOverrideOriginal }
-
-/**
- * Returns an `expect` symbol for the given `actual` symbol, if it is available. The function may return multiple `expect` symbols in
- * case of ambiguity errors.
- **/
-@KaExperimentalApi
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "this.getExpectsForActual()",
-        "org.jetbrains.kotlin.analysis.api.symbols.getExpectsForActual",
-    ),
-    level = DeprecationLevel.ERROR,
-)
-@KaContextParameterApi
-context(session: KaSession)
-public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> {
-    return with(session) {
-        getExpectsForActual()
-    }
-}
 
 /**
  * The inheritors of the given sealed class.

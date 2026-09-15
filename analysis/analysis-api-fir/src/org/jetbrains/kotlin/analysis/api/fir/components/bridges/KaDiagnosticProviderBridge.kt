@@ -31,9 +31,6 @@ internal class KaDiagnosticProviderBridge(
     private val proxy: KaInternalsDiagnosticProvider
         get() = analysisSession.diagnosticProvider
 
-    override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> =
-        query(isRecursive = false, filter).toList()
-
     override fun KtElement.directDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> =
         query(isRecursive = false, filter).toList()
 
