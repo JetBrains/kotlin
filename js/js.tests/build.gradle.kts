@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.util.*
 
 plugins {
@@ -149,11 +148,19 @@ projectTests {
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsTest", tag = "!es6", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsTest", tag = "!es6 & !jsNightlyOnly", skipInLocalBuild = true) {
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsES6Test", tag = "es6", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsES6Test", tag = "es6 & !jsNightlyOnly", skipInLocalBuild = true) {
+        setUpJsBoxTests()
+    }
+
+    jsTestTask(taskName = "jsES5InlineAnonymousFunctionsTest", tag = "!es6 & jsInlineAnonymousFunctions", skipInLocalBuild = true) {
+        setUpJsBoxTests()
+    }
+
+    jsTestTask(taskName = "jsES6InlineAnonymousFunctionsTest", tag = "es6 & jsInlineAnonymousFunctions", skipInLocalBuild = true) {
         setUpJsBoxTests()
     }
 

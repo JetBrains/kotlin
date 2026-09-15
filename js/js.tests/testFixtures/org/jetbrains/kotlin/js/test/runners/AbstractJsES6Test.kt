@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
@@ -33,14 +34,29 @@ abstract class AbstractJsES6Test(
 }
 
 
-abstract class AbstractJsES6BoxTest : AbstractJsES6Test(
+abstract class AbstractJsES6BoxTest(
+    testGroupOutputDirPrefix: String = "es6Box/",
+) : AbstractJsES6Test(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
-    testGroupOutputDirPrefix = "es6Box/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
 )
 
-abstract class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
+abstract class AbstractJsES6BoxWithInlineAnonymousFunctionsTest : AbstractJsES6BoxTest(
+    testGroupOutputDirPrefix = "es6BoxWithInlineAnonymousFunctions/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +GENERATE_INLINE_ANONYMOUS_FUNCTIONS
+        }
+    }
+}
+
+abstract class AbstractJsES6CodegenBoxTest(
+    testGroupOutputDirPrefix: String = "codegen/es6Box/"
+) : AbstractJsES6Test(
     pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "codegen/es6Box/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -58,10 +74,34 @@ abstract class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
     }
 }
 
-abstract class AbstractJsES6CodegenInlineTest : AbstractJsES6Test(
+abstract class AbstractJsES6CodegenBoxWithInlineAnonymousFunctionsTest : AbstractJsES6CodegenBoxTest(
+    testGroupOutputDirPrefix = "codegen/es6BoxWithInlineAnonymousFunctions/",
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +GENERATE_INLINE_ANONYMOUS_FUNCTIONS
+        }
+    }
+}
+
+abstract class AbstractJsES6CodegenInlineTest(
+    testGroupOutputDirPrefix: String = "codegen/es6BoxInline/",
+) : AbstractJsES6Test(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
-    testGroupOutputDirPrefix = "codegen/es6BoxInline/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
 )
+
+abstract class AbstractJsES6CodegenBoxInlineWithInlineAnonymousFunctionsTest : AbstractJsES6CodegenInlineTest(
+    testGroupOutputDirPrefix = "codegenes6BoxInlineWithInlineAnonymousFunctions/",
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +GENERATE_INLINE_ANONYMOUS_FUNCTIONS
+        }
+    }
+}
 
 abstract class AbstractJsES6CodegenWasmJsInteropTest : AbstractJsES6Test(
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop",

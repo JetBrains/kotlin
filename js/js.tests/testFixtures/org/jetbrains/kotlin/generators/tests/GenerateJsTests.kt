@@ -9,10 +9,11 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.js.test.JsEs6Test
+import org.jetbrains.kotlin.js.test.JsInlineAnonymousFunctionsTest
 import org.jetbrains.kotlin.js.test.runners.*
 import org.jetbrains.kotlin.js.test.runners.tsexport.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
-import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
     val testsRoot = args[0]
@@ -34,7 +35,7 @@ fun main(args: Array<String>) {
             testClass<AbstractJsPartialLinkageNoICTestCase> {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
-            testClass<AbstractJsPartialLinkageNoICES6TestCase>(annotations = listOf(*es6())) {
+            testClass<AbstractJsPartialLinkageNoICES6TestCase>(annotations = listOf(es6())) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
         }
@@ -59,11 +60,11 @@ fun main(args: Array<String>) {
                 model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
-            testClass<AbstractJsES6InvalidationPerFileTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6InvalidationPerFileTest>(annotations = listOf(es6())) {
                 model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
-            testClass<AbstractJsES6InvalidationPerModuleTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6InvalidationPerModuleTest>(annotations = listOf(es6())) {
                 model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
@@ -97,7 +98,15 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 
-            testClass<AbstractJsES6BoxTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6BoxTest>(annotations = listOf(es6())) {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
+
+            testClass<AbstractJsBoxWithInlineAnonymousFunctionsTest>(annotations = listOf(inlineAnonymousFunctions())) {
+                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
+            }
+
+            testClass<AbstractJsES6BoxWithInlineAnonymousFunctionsTest>(annotations = listOf(es6(), inlineAnonymousFunctions())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
         }
@@ -111,11 +120,11 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractJsES6TypeScriptExportTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6TypeScriptExportTest>(annotations = listOf(es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractJsES6TypeScriptWholeFileExportTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6TypeScriptWholeFileExportTest>(annotations = listOf(es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
@@ -123,7 +132,7 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractJsES6AnalysisApiTypeScriptExportTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6AnalysisApiTypeScriptExportTest>(annotations = listOf(es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
@@ -131,7 +140,7 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractJsES6AnalysisApiTypeScriptWholeFileExportTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6AnalysisApiTypeScriptWholeFileExportTest>(annotations = listOf(es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
         }
@@ -151,7 +160,15 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
+            testClass<AbstractJsCodegenBoxWithInlineAnonymousFunctionsTest>(annotations = listOf(inlineAnonymousFunctions())) {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
             testClass<AbstractJsCodegenBoxInlineTest> {
+                model("boxInline")
+            }
+
+            testClass<AbstractJsCodegenBoxInlineWithInlineAnonymousFunctionsTest>(annotations = listOf(inlineAnonymousFunctions())) {
                 model("boxInline")
             }
 
@@ -159,8 +176,12 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
-            testClass<AbstractJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6CodegenBoxTest>(annotations = listOf(es6())) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
+            }
+
+            testClass<AbstractJsES6CodegenBoxWithInlineAnonymousFunctionsTest>(annotations = listOf(es6(), inlineAnonymousFunctions())) {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
             testClass<AbstractJsCodegenSplittingTest> {
@@ -168,7 +189,16 @@ fun main(args: Array<String>) {
                 model("boxInline")
             }
 
-            testClass<AbstractJsES6CodegenInlineTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6CodegenInlineTest>(annotations = listOf(es6())) {
+                model("boxInline")
+            }
+
+            testClass<AbstractJsES6CodegenBoxInlineWithInlineAnonymousFunctionsTest>(
+                annotations = listOf(
+                    es6(),
+                    inlineAnonymousFunctions(),
+                )
+            ) {
                 model("boxInline")
             }
 
@@ -176,7 +206,7 @@ fun main(args: Array<String>) {
                 model("boxWasmJsInterop")
             }
 
-            testClass<AbstractJsES6CodegenWasmJsInteropTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6CodegenWasmJsInteropTest>(annotations = listOf(es6())) {
                 model("boxWasmJsInterop")
             }
 
@@ -188,6 +218,10 @@ fun main(args: Array<String>) {
 
         testGroup(testsRoot, "compiler/testData/debug", testRunnerMethodName = "runTest0") {
             testClass<AbstractJsSteppingTest> {
+                model("stepping")
+            }
+
+            testClass<AbstractJsSteppingWithInlineAnonymousFunctionsTest>(annotations = listOf(inlineAnonymousFunctions())) {
                 model("stepping")
             }
 
@@ -262,6 +296,6 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun es6() = arrayOf(
-    annotation(Tag::class.java, "es6")
-)
+private fun es6() = annotation<JsEs6Test>()
+
+private fun inlineAnonymousFunctions() = annotation<JsInlineAnonymousFunctionsTest>()

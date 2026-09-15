@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
@@ -92,11 +93,24 @@ abstract class AbstractPsiJsBoxTest : AbstractJsTest(
     parser = FirParser.Psi,
 )
 
-abstract class AbstractLightTreeJsBoxTest : AbstractJsTest(
+abstract class AbstractLightTreeJsBoxTest(
+    testGroupOutputDirPrefix: String = "lightTreeBox/",
+) : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
-    testGroupOutputDirPrefix = "lightTreeBox/",
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
     parser = FirParser.LightTree,
 )
+
+abstract class AbstractJsBoxWithInlineAnonymousFunctionsTest(
+    testGroupOutputDirPrefix: String = "boxWithInlineAnonymousFunctions/",
+) : AbstractLightTreeJsBoxTest(testGroupOutputDirPrefix) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +GENERATE_INLINE_ANONYMOUS_FUNCTIONS
+        }
+    }
+}
 
 abstract class AbstractJsCodegenBoxTestBase(
     pathToTestDir: String = "compiler/testData/codegen/box/",
@@ -118,9 +132,11 @@ abstract class AbstractJsCodegenBoxTestBase(
     }
 }
 
-abstract class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
+abstract class AbstractJsCodegenBoxTest(
+    testGroupOutputDirPrefix: String = "codegen/box/",
+) : AbstractJsCodegenBoxTestBase(
     pathToTestDir = "compiler/testData/codegen/box",
-    testGroupOutputDirPrefix = "codegen/box/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -128,13 +144,37 @@ abstract class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
     }
 }
 
-abstract class AbstractJsCodegenBoxInlineTest : AbstractJsCodegenBoxTestBase(
+abstract class AbstractJsCodegenBoxWithInlineAnonymousFunctionsTest(
+    testGroupOutputDirPrefix: String = "codegen/boxWithInlineAnonymousFunctions/",
+) : AbstractJsCodegenBoxTest(testGroupOutputDirPrefix) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +GENERATE_INLINE_ANONYMOUS_FUNCTIONS
+        }
+    }
+}
+
+abstract class AbstractJsCodegenBoxInlineTest(
+    testGroupOutputDirPrefix: String = "codegen/boxInline/",
+) : AbstractJsCodegenBoxTestBase(
     pathToTestDir = "compiler/testData/codegen/boxInline",
-    testGroupOutputDirPrefix = "codegen/boxInline/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureLoweredIrDumpHandlers()
+    }
+}
+
+abstract class AbstractJsCodegenBoxInlineWithInlineAnonymousFunctionsTest(
+    testGroupOutputDirPrefix: String = "codegen/boxInlineWithInlineAnonymousFunctions/",
+) : AbstractJsCodegenBoxInlineTest(testGroupOutputDirPrefix) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +GENERATE_INLINE_ANONYMOUS_FUNCTIONS
+        }
     }
 }
 
@@ -230,6 +270,17 @@ abstract class AbstractJsSteppingTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureSteppingTests()
+    }
+}
+
+abstract class AbstractJsSteppingWithInlineAnonymousFunctionsTest(
+    testGroupOutputDirPrefix: String = "debug/steppingWithinlineAnonymousFunctions/",
+) : AbstractJsSteppingTest(testGroupOutputDirPrefix) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +GENERATE_INLINE_ANONYMOUS_FUNCTIONS
+        }
     }
 }
 
