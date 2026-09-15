@@ -33,20 +33,22 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
         val taskPath: Property<String>
 
         /**
-         * The `test-inventory.tsv` file the watched task declares as an output.
+         * The `test-executions.json` file the watched task declares as an output: the executed tests
+         * with their suite nesting preserved, which is what replaying them to TeamCity as suite and
+         * test service messages needs.
          *
          * Passed as a *parameter* on purpose: build service parameters are stored in the configuration
          * cache, while build service state is not, so anything kept in a field would silently be empty
          * on a configuration cache hit.
          */
-        val inventoryFile: Property<File>
+        val executionsFile: Property<File>
     }
 
     private val log = Logging.getLogger(javaClass)
 
     // Resolved once: 'parameters' are final by the time the first event arrives.
     private val taskPath: String by lazy { parameters.taskPath.get() }
-    private val inventoryFile: File by lazy { parameters.inventoryFile.get() }
+    private val executionsFile: File by lazy { parameters.executionsFile.get() }
 
     // Note: 'onFinish' receives the general 'FinishEvent'. Only task events are of interest here,
     // so everything else (e.g. transform or test events) is filtered out.
@@ -60,12 +62,12 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
         val fromCache = result is TaskSuccessResult && result.isFromCache
         val upToDate = result is TaskSuccessResult && result.isUpToDate
 
-        // TODO: perform the actual build cache / TeamCity compatibility check here. The inventory file
-        // is readable at this point even when the task was served from the build cache: it is a declared
-        // output of the task, so Gradle restores it along with the rest of the task's outputs.
+        // TODO: replay the recorded tests to TeamCity here. The executions file is readable at this
+        // point even when the task was served from the build cache: it is a declared output of the
+        // task, so Gradle restores it along with the rest of the task's outputs.
         log.info(
             "Test task $taskPath finished: fromCache=$fromCache, upToDate=$upToDate, " +
-                    "inventory=$inventoryFile (exists=${inventoryFile.isFile})"
+                    "executions=$executionsFile (exists=${executionsFile.isFile})"
         )
     }
 }
