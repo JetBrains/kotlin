@@ -17,7 +17,7 @@ fun foo(
     k: <!OTHER_ERROR!>String | (String | Foo)<!>,
     l: <!OTHER_ERROR!>String | Foo?<!>,
     m: <!OTHER_ERROR!>String | Int<!>,
-    n: String | <!OTHER_ERROR!>(Foo | Int)<!>,
+    n: <!OTHER_ERROR!>String | <!OTHER_ERROR!>(Foo | Int)<!><!>,
 ){
 }
 

@@ -11,5 +11,5 @@ FILE: unionTypeSmoke.kt
         }
 
     }
-    public final fun foo(a: R|union(kotlin/String | Foo)|, b: R|union(kotlin/String | Foo | Bar)|, c: R|union(kotlin/String? | Foo | Bar)|, d: R|union(kotlin/String? | Foo)|, e: R|union(Foo | Bar)|, f: R|union(kotlin/Nothing? | Foo | Bar)|, g: R|union(kotlin/String | Foo)|, h: <ERROR TYPE REF: Nullable nested union type>, i: R|union(Foo)|, j: R|Foo?|, k: <ERROR TYPE REF: Non error component in nested union type>, l: <ERROR TYPE REF: Nullable error component>, m: <ERROR TYPE REF: Non-rich error component must appear first>, n: R|union(kotlin/String | Foo | kotlin/Int)|): R|kotlin/Unit| {
+    public final fun foo(a: R|union(kotlin/String | Foo)|, b: R|union(kotlin/String | Foo | Bar)|, c: R|union(kotlin/String? | Foo | Bar)|, d: R|union(kotlin/String? | Foo)|, e: R|union(Foo | Bar)|, f: R|union(kotlin/Nothing? | Foo | Bar)|, g: R|union(kotlin/String | Foo)|, h: <ERROR TYPE REF: Nullable nested union type>, i: R|union(Foo)|, j: R|Foo?|, k: <ERROR TYPE REF: Non error component in nested union type>, l: <ERROR TYPE REF: Nullable error component>, m: <ERROR TYPE REF: Non-rich error component must appear first>, n: <ERROR TYPE REF: Non-rich error component must appear first>): R|kotlin/Unit| {
     }
