@@ -735,12 +735,12 @@ private fun ObjCExportCodeGenerator.emitCollectionConverters() {
     fun importConverter(name: String): ConstPointer =
             llvm.externalNativeRuntimeFunction(name, kotlinToObjCFunctionType).toConstPointer()
 
-    bindObjCExportConvertToRetained(
+    tryBindObjCExportConvertToRetained(
             irBuiltIns.listClass.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSArrayFromKList")
     )
 
-    bindObjCExportConvertToRetained(
+    tryBindObjCExportConvertToRetained(
             irBuiltIns.mutableListClass.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSMutableArrayFromKList")
     )
@@ -1943,4 +1943,16 @@ private fun ObjCExportCodeGeneratorBase.bindObjCExportConvertToRetained(
     } catch (_: WritableTypeInfoOverrideError) {
         // ObjCExport never tried to catch this error, so ignore.
     }
+}
+
+ /**
+ * Used for classes with a custom Swift Export binding.
+ * It will only call [bindObjCExportConvertToRetained] if the binding doesn't exist yet.
+ */
+private fun ObjCExportCodeGeneratorBase.tryBindObjCExportConvertToRetained(
+        irClass: IrClass,
+        convertToRetained: ConstPointer,
+) {
+    if (codegen.staticData.getGlobal(irBuiltIns.listClass.owner.writableTypeInfoSymbolName) != null) return
+    bindObjCExportConvertToRetained(irClass, convertToRetained)
 }
