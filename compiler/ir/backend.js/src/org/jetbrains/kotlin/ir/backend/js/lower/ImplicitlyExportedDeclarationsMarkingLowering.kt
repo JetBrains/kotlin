@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 /**
@@ -60,6 +61,10 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
             return null
         }
         if (!declaration.isExported(context)) return null
+
+        declaration.annotations = declaration.annotations.memoryOptimizedMapNotNull { annotation ->
+            annotation.takeUnless { it.isAnnotation(JsAnnotations.jsImplicitExportFqn) }
+        }
 
         when (declaration) {
             is IrFunction -> declaration.collectImplicitlyExportedDeclarations()
