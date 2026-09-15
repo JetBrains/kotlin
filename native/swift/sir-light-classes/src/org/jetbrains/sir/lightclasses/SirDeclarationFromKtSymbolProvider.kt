@@ -53,6 +53,10 @@ public class SirDeclarationFromKtSymbolProvider(
                             auxExtension = protocol.auxExtension,
                             samConverter = protocol.samConverter,
                             sealedType = protocol.sealedType,
+                            typedListDeclarations = protocol.typedListDeclarations?.let {
+                                if (it !is SirTypedListDeclarations.Generic) return@let null
+                                Triple(it.typedListProtocol, it.typedListExtension, it.typedListStruct)
+                            },
                         )
                     }
                     KaClassKind.ENUM_CLASS -> {
