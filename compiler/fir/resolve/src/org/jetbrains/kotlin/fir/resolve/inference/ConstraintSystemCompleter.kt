@@ -129,13 +129,16 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
             // TODO: This is very slow, KT-59680
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
+            val postponedAtomsDependingOnFunctionType = postponedArguments.filterIsInstance<ConeFunctionTypeRelatedPostponedResolvedAtom>()
 
             // Obsolete step for @OverloadResolutionByLambdaReturnType
-            if (!isEagerLambdaAnalysisEnabled && completionMode.isUntilFirstLambda() && hasLambdaToAnalyze(postponedArguments)) return
+            if (!isEagerLambdaAnalysisEnabled && completionMode.isUntilFirstLambda() &&
+                hasLambdaToAnalyze(postponedAtomsDependingOnFunctionType)
+            ) {
+                return
+            }
 
             if (analyzeContextSensitiveResolutionAlternatives(postponedArguments, analyzer)) continue
-
-            val postponedAtomsDependingOnFunctionType = postponedArguments.filterIsInstance<ConeFunctionTypeRelatedPostponedResolvedAtom>()
 
             // Stage 1: analyze lambdas and callable references with fixed parameter types
             if (analyzeArgumentWithFixedParameterTypes(postponedAtomsDependingOnFunctionType) {
@@ -146,10 +149,13 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             // Stage 1 for context-sensitive names: analyze the ones with a fixed expected type
             // (collection literals with a fixed expected type are analyzed by their own step below)
             // NB: This part will go away once the CLs and CSR are unified.
-            if (analyzeArgumentWithFixedParameterTypes(postponedArguments.filterIsInstance<ConeSimpleNameForContextSensitiveResolution>()) {
-                    analyzer.analyze(it)
-                }
-            ) continue
+            val nameWithFixedExpectedType = postponedArguments
+                .filterIsInstance<ConeSimpleNameForContextSensitiveResolution>()
+                .firstOrNull { containsOnlyFixedVariables(it.expectedType) }
+            if (nameWithFixedExpectedType != null) {
+                analyzer.analyze(nameWithFixedExpectedType)
+                continue
+            }
 
             val variableForFixation = findFirstVariableForFixation(
                 topLevelAtoms,
