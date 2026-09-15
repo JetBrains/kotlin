@@ -1,0 +1,50 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class PrimaryClaims {
+    // source: 'valueClassSecondaryConstructorNoArg.kt'
+    private final field a: int
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.UInt): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.UInt, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    private synthetic method <init>(p0: int, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic final static method box-impl(p0: int): PrimaryClaims
+    public synthetic static method constructor-impl$default(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): int
+    public synthetic static method constructor-impl$default(p0: int, p1: java.lang.String, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): int
+    public static method constructor-impl(p0: int): int
+    public static method constructor-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getA(): kotlin.UInt
+    public final method getA-pVg5ArA(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class SecondaryClaims {
+    // source: 'valueClassSecondaryConstructorNoArg.kt'
+    private final field a: int
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.UInt): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.UInt, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    private synthetic method <init>(p0: int, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic final static method box-impl(p0: int): SecondaryClaims
+    public synthetic static method constructor-impl$default(p0: int, p1: java.lang.String, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): int
+    public static method constructor-impl(p0: int): int
+    public static method constructor-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getA(): kotlin.UInt
+    public final method getA-pVg5ArA(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
