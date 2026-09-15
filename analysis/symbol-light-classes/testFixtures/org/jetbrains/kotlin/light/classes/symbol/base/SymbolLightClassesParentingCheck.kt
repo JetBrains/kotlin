@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.ElementBase
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -20,8 +21,9 @@ internal object SymbolLightClassesParentingCheckDirectives : SimpleDirectivesCon
 
 /**
  * Traverses [lightClasses] and checks that every visited light element is properly connected to its parent:
- * the element's `parent`/`context` matches the enclosing element, members are reachable from their containing class,
- * annotations are reachable from their owner, and [ElementBase.getElementIcon] is overridden instead of inherited.
+ * the element's `parent`/`context` matches the enclosing element, its `containingFile` is the enclosing element's one,
+ * members are reachable from their containing class, annotations are reachable from their owner,
+ * and [ElementBase.getElementIcon] is overridden instead of inherited.
  *
  * The check renders nothing, so it produces no test output file.
  */
@@ -209,7 +211,8 @@ private fun createLightElementsVisitor(
         }
 
         override fun visitMethod(method: PsiMethod) {
-            if (method is SyntheticElement) return
+            // Only synthetic methods of SLC (e.g., stubs for mapped Java collections) are expected to be attached to the light class
+            if (method is SyntheticElement && method !is SymbolLightMethodBase) return
 
             checkParentAndVisitChildren(method) { visitor ->
                 annotations.forEach { it.accept(visitor) }
@@ -256,6 +259,7 @@ private fun createLightElementsVisitor(
             // NB: we deliberately put these retrievals before the bail-out below so that we can catch any potential exceptions.
             val context = declaration.context
             val parent = declaration.parent
+            val containingFile = declaration.containingFile
             // NB: for a legitimate `null` parent case, e.g., an anonymous object as a return value of reified inline function,
             // it will not have an expected parent from the stack, and we can bail out early here.
             val expectedParent = declarationStack.lastOrNull() ?: return
@@ -275,6 +279,14 @@ private fun createLightElementsVisitor(
 
             assertions.assertNotEquals(parent, declaration) {
                 "Declaration and parent should not be the same for ${declaration::class.simpleName} with text ${declaration.text}"
+            }
+
+            assertions.assertNotNull(containingFile) {
+                "Containing file should not be null for ${declaration::class} with text ${declaration.text}"
+            }
+
+            assertions.assertEquals(expectedParent.containingFile, containingFile) {
+                "Unexpected containing file for ${declaration::class} with text ${declaration.text}"
             }
         }
 

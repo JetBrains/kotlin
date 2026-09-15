@@ -9,7 +9,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -59,7 +58,6 @@ internal class SymbolLightClassForFacade(
 
     private val firstFileInFacade: KtFile get() = files.first()
 
-    @OptIn(KaImplementationDetail::class)
     override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this,
@@ -164,6 +162,7 @@ internal class SymbolLightClassForFacade(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getImplementsList(): LightEmptyImplementsList = object : LightEmptyImplementsList(manager) {
         override fun getParent(): PsiElement = this@SymbolLightClassForFacade
+        override fun getContainingFile(): PsiFile = this@SymbolLightClassForFacade.containingFile
         override fun getElementIcon(flags: Int): Icon? = null
     }
 
