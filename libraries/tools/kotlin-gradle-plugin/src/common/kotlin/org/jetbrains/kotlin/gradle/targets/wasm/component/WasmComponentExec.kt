@@ -220,3 +220,5 @@ internal constructor() : DefaultTask() {
         }
     }
 }
+
+internal const val WIT_DIRECTORY_NAME = "wit"

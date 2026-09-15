@@ -73,3 +73,5 @@ internal abstract class WitExtractionTransform @Inject constructor(
     private fun outputDirectoryName(klib: File): String =
         "${klib.name}-$WIT_DIRECTORY_NAME"
 }
+
+internal const val KOTLIN_WIT_ARTIFACT = "kotlin-wasm-wit"
