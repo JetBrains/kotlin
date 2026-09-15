@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// LANGUAGE_FEATURE_TOGGLED: CollectionLiterals
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -CollectionLiterals
+// LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
 
 annotation class VarargIntAnno(vararg val v: Int)
 annotation class IntArrayAnno(val v: IntArray)
