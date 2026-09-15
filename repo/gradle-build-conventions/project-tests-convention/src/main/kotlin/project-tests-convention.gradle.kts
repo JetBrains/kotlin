@@ -4,6 +4,7 @@ val extension = extensions.create("projectTests", ProjectTestsExtension::class)
 tasks.register("checkBuild")
 
 configureTestRuntime()
+configureTestSharding()
 configureTestSemaphore()
 configureTestCaching()
 configureTestTaskDisabling()
