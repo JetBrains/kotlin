@@ -57,7 +57,6 @@ fun fail() : String {
 // test.kt:17 fail
 // test.kt:8 box
 // test.kt:17 fail
-// test.kt:8 box
 // test.kt:10 box
 
 // EXPECTATIONS WASM
