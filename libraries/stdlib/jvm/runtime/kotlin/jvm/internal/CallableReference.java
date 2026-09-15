@@ -220,4 +220,9 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
     public KClass<?> getCompanionExtensionClass() {
         return getReflected().getCompanionExtensionClass();
     }
+
+    @Override
+    public KDeclarationContainer getContainer() {
+        return getOwner();
+    }
 }
