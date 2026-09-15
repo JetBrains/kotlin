@@ -30,10 +30,6 @@ import javax.inject.Inject
  * `wasm-tools component embed` run, each run taking the result of the previous one as its input,
  * and the last result is converted into a component by a single `wasm-tools component new` run:
  *
- * ```
- * inputFile --embed(witDirectory[0])--> ... --embed(witDirectory[n])--> new --> componentFile
- * ```
- *
  * Every WIT project is resolved independently, so it must be self-contained:
  * one root package declaring a world plus all packages it references under `deps`.
  *
@@ -42,9 +38,6 @@ import javax.inject.Inject
  * while imports which the module does not use are dropped.
  *
  * Intermediate modules are stored in the temporary directory of the task.
- *
- * `wasm-tools` is expected to be available in `PATH`,
- * otherwise [executable] must point to the `wasm-tools` binary.
  *
  */
 @ExperimentalWasmDsl
@@ -57,9 +50,6 @@ internal constructor() : DefaultTask() {
     @get:Inject
     internal abstract val fs: FileSystemOperations
 
-    /**
-     * `wasm-tools` executable, `wasm-tools` from `PATH` by default.
-     */
     @get:Input
     abstract val executable: Property<String>
 
@@ -123,7 +113,9 @@ internal constructor() : DefaultTask() {
         val witProjects = witProjects().takeIf { it.isNotEmpty() } ?: return
 
         val embedded = witProjects.foldIndexed(inputModule) { index: Int, acc: File, witProject: File ->
-            val newOutput = embedDir.resolve("$index-${witProject.name}").resolve(inputModule.name)
+            val newOutput = embedDir
+                .resolve("$index-${witProject.parentFile.name}-${witProject.name}")
+                .resolve(inputModule.name)
             newOutput.parentFile.mkdirs()
 
             logger.debug(
@@ -212,8 +204,8 @@ internal constructor() : DefaultTask() {
                 name,
             ) {
                 it.executable.convention(WASM_TOOLS_EXECUTABLE)
-                it.witDirectory.from(witDirectories)
                 it.witDirectory.from(project.layout.projectDirectory.dir(WIT_DIRECTORY_NAME))
+                it.witDirectory.from(witDirectories)
                 it.configuration()
             }
         }

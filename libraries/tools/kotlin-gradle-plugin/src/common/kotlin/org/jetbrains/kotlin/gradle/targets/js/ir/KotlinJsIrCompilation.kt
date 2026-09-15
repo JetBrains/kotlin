@@ -36,12 +36,10 @@ open class KotlinJsIrCompilation @Inject internal constructor(
     var wasmTarget: WasmTarget? = null
         internal set
 
-    @InternalKotlinGradlePluginApi
-    val witConfigurationName
+    internal val witConfigurationName
         get() = compilation.disambiguateName("wit")
 
-    @InternalKotlinGradlePluginApi
-    val witOutputConfigurationName
+    internal val witOutputConfigurationName
         get() = compilation.disambiguateName("witOutput")
 }
 
