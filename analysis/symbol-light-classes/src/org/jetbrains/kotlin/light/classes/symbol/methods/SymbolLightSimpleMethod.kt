@@ -261,7 +261,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
 
             val isSuspend = functionSymbol.isSuspend
             val isOverridable = functionSymbol.isOverridable()
-            val isEffectivelyPrivate = isEffectivelyPrivate(functionSymbol)
+            val isEffectivelyPrivate = functionSymbol.isEffectivelyPrivate()
             createMethodsJvmOverloadsAware(
                 declaration = functionSymbol,
                 methodIndexBase = methodIndex,

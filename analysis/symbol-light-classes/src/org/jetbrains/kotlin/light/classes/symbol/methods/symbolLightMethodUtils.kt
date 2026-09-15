@@ -70,23 +70,23 @@ internal class MethodGenerationResult(val isRegularMethodRequired: Boolean, val 
 }
 
 /**
- * Whether [symbol] is effectively private: either it is inaccessible outside its own declaration (e.g., it is `private`, or it is an
- * anonymous object like the body of an enum entry), or it is a member (transitively) of such a class.
+ * Whether this declaration is effectively private: either it is inaccessible outside its own declaration (e.g., it is `private`, or it is
+ * an anonymous object like the body of an enum entry), or it is a member (transitively) of such a class.
  *
  * Mirrors `org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate` used by the JVM backend so that
  * light classes do not autogenerate `@JvmExposeBoxed` boxed variants for declarations that cannot be
  * accessed from Java anyway.
  */
 context(_: KaSession)
-internal fun isEffectivelyPrivate(symbol: KaDeclarationSymbol): Boolean {
-    val isAccessible = when (symbol.visibility) {
+internal fun KaDeclarationSymbol.isEffectivelyPrivate(): Boolean {
+    val isAccessible = when (visibility) {
         KaSymbolVisibility.PUBLIC, KaSymbolVisibility.PROTECTED, KaSymbolVisibility.INTERNAL -> true
         else -> false
     }
     if (!isAccessible) return true
 
-    val containingClass = symbol.containingDeclaration as? KaClassSymbol ?: return false
-    return isEffectivelyPrivate(containingClass)
+    val containingClass = containingDeclaration as? KaClassSymbol ?: return false
+    return containingClass.isEffectivelyPrivate()
 }
 
 /**
