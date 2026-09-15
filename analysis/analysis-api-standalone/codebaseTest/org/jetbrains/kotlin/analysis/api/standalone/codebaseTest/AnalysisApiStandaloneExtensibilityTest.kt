@@ -3,19 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.codebaseTest
+package org.jetbrains.kotlin.analysis.api.standalone.codebaseTest
 
 import org.jetbrains.kotlin.AbstractAnalysisApiExtensibilityTest
 import org.junit.jupiter.api.Test
 
-
-class AnalysisApiExtensibilityTest : AbstractAnalysisApiExtensibilityTest() {
+class AnalysisApiStandaloneExtensibilityTest : AbstractAnalysisApiExtensibilityTest() {
     @Test
     fun testExtensibility() = doTest()
 
-    override val sourceDirectories = listOf(
+    override val sourceDirectories: List<SourceDirectory.ForValidation> = listOf(
         SourceDirectory.ForValidation(
-            sourcePaths = listOf("src/org/jetbrains/kotlin/analysis/api"),
+            sourcePaths = listOf(
+                "src/org/jetbrains/kotlin/analysis",
+            ),
         )
     )
 }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
  * Each analyzed project is supposed to have a single [StandaloneAnalysisAPISession] instance
  * that represents the given project structure.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface StandaloneAnalysisAPISession {
     public val application: Application
 
