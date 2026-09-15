@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
+import org.jetbrains.kotlin.scripting.resolve.importedScriptsHashesFrom
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileBasedScriptSource
@@ -47,6 +48,7 @@ fun ScriptCompilationConfiguration.refineAllForK2(
             if (resolvedScripts.isNullOrEmpty()) it.asSuccess()
             else it.with {
                 resolvedImportScripts(resolvedScripts)
+                importedScriptsHashesFrom(resolvedScripts)
             }.asSuccess()
         }
 
