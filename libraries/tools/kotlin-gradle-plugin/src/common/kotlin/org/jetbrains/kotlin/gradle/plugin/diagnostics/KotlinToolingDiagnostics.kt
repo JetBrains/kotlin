@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
@@ -477,6 +478,30 @@ internal object KotlinToolingDiagnostics {
                 .solution("Upgrade Kotlin or downgrade the associated dependency")
                 .documentationLink(URI("https://kotl.in/kar"))
         }
+    }
+
+    internal object IncompleteKotlinArchivePublication : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(missingTargetNames: Collection<String>, hostName: String) =
+            build {
+                val targetsList = missingTargetNames.sorted().joinToString(separator = "\n* ", prefix = "* ")
+
+                title("Kotlin Archive publication is incomplete")
+                    .description(
+                        """
+                        |The Kotlin Archive keeps all targets in one artifact, so it must be built on a host that supports all of them.
+                        |These targets are not publishable on the current host platform ($hostName), and would be missing from the archive:
+                        |$targetsList
+                        """.trimMargin()
+                    )
+                    .solutions {
+                        listOf(
+                            "Run the publish task on a host platform that supports all targets of the project.",
+                            "If you need it for testing purposes, and plan to publish only to local repositories, add " +
+                                    "'$KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION=true' to your local Gradle properties.",
+                        )
+                    }
+                    .documentationLink(URI("https://kotl.in/kar"))
+            }
     }
 
     object NewNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
