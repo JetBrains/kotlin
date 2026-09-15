@@ -115,6 +115,18 @@ public object KotlinRuntimeSupportModule : SirModule() {
         protocols.add(kotlinBridgeable)
     }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
 
+    public val list: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "List"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
+
+    public val mutableList: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "MutableList"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
+
     // TODO: Remove temp TypedList types KT-88831
     public val typedList: SirProtocol = buildProtocol {
         origin = KotlinRuntimeElement()

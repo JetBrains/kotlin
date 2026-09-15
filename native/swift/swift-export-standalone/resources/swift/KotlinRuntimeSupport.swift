@@ -349,10 +349,10 @@ public extension TypedCollection {
     }
 }
 
-struct TypedCollectionImpl<Element> : TypedCollection { // TODO: Remove Impl test KT-88831
-    let __rawCollection: KotlinRuntime.KotlinBase
-    let __conformsTo: ((AnyClass?) -> Bool)
-}
+// struct TypedCollectionImpl<Element> : TypedCollection { // TODO: Remove Impl test KT-88831
+//     let __rawCollection: KotlinRuntime.KotlinBase
+//     let __conformsTo: ((AnyClass?) -> Bool)
+// }
 
 public protocol TypedList<Element> : List, TypedCollection {
     associatedtype Iterator = IndexingIterator<Self>
@@ -371,15 +371,15 @@ public extension TypedList {
     }
 }
 
-public struct TypedListImpl<Element> : TypedList { // TODO: Remove Impl test KT-88831
-    public let __rawCollection: KotlinRuntime.KotlinBase
-    public let __conformsTo: ((AnyClass?) -> Bool)
-
-    package init<ElementType>(rawCollection: KotlinRuntime.KotlinBase, conformsTo: ElementType.Type) {
-        self.__rawCollection = rawCollection
-        self.__conformsTo = { wrapperClass in wrapperClass is ElementType }
-    }
-}
+// public struct TypedListImpl<Element> : TypedList { // TODO: Remove Impl test KT-88831
+//     public let __rawCollection: KotlinRuntime.KotlinBase
+//     public let __conformsTo: ((AnyClass?) -> Bool)
+//
+//     package init<ElementType>(rawCollection: KotlinRuntime.KotlinBase, conformsTo: ElementType.Type) {
+//         self.__rawCollection = rawCollection
+//         self.__conformsTo = { wrapperClass in wrapperClass is ElementType }
+//     }
+// }
 
 public protocol TypedMutableList<Element> : TypedList, MutableList { }
 
@@ -393,12 +393,12 @@ public extension TypedMutableList {
     }
 }
 
-public struct TypedMutableListImpl<Element> : TypedMutableList { // TODO: Remove Impl test KT-88831
-    public let __rawCollection: KotlinRuntime.KotlinBase
-    public let __conformsTo: ((AnyClass?) -> Bool)
-
-    package init<ElementType>(rawCollection: KotlinRuntime.KotlinBase, conformsTo: ElementType.Type) {
-        self.__rawCollection = rawCollection
-        self.__conformsTo = { wrapperClass in wrapperClass is ElementType }
-    }
-}
+// public struct TypedMutableListImpl<Element> : TypedMutableList { // TODO: Remove Impl test KT-88831
+//     public let __rawCollection: KotlinRuntime.KotlinBase
+//     public let __conformsTo: ((AnyClass?) -> Bool)
+//
+//     package init<ElementType>(rawCollection: KotlinRuntime.KotlinBase, conformsTo: ElementType.Type) {
+//         self.__rawCollection = rawCollection
+//         self.__conformsTo = { wrapperClass in wrapperClass is ElementType }
+//     }
+// }

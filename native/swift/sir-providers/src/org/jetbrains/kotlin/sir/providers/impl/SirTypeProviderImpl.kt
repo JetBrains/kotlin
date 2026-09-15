@@ -31,7 +31,6 @@ public class SirTypeProviderImpl(
     private val sirSession: SirSession,
     override val errorTypeStrategy: ErrorTypeStrategy,
     override val unsupportedTypeStrategy: ErrorTypeStrategy,
-    private val collectionsV2: Boolean = false,
 ) : SirTypeProvider {
 
     @ConsistentCopyVisibility
@@ -71,7 +70,7 @@ public class SirTypeProviderImpl(
             .handleImports(ctx.processTypeImports)
 
     private val KaUsualClassType.isCollectionV2Type: Boolean
-        get() = collectionsV2 && classId in listOf(StandardClassIds.List, StandardClassIds.MutableList)
+        get() = sirSession.collectionsV2 && classId in listOf(StandardClassIds.List, StandardClassIds.MutableList)
 
     @OptIn(KaNonPublicApi::class)
     private fun buildSirType(ktType: KaType, ctx: TypeTranslationCtx): SirType {

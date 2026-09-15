@@ -605,9 +605,10 @@ internal sealed interface Bridge {
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
-                val structFqName = typeNamer.swiftFqName(origin.structType)
-                val elementMetaFqName = typeNamer.swiftFqName(SirType.Metatype(origin.elementType.nonOptional()))
-                return "$structFqName(rawCollection: $valueExpression, conformsTo: $elementMetaFqName.self)"
+                return "{ fatalError() }()"
+//                val structFqName = typeNamer.swiftFqName(origin.structType)
+//                val elementMetaFqName = typeNamer.swiftFqName(SirType.Metatype(origin.elementType.nonOptional()))
+//                return "$structFqName(rawCollection: $valueExpression, conformsTo: $elementMetaFqName.self)"
             }
         }
     }
