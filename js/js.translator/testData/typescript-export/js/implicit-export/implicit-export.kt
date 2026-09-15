@@ -128,4 +128,11 @@ class SomeService : Service<SomeService, SomeEvent>
 class SomeEvent : Event<SomeService>
 
 @JsExport
-class SomeServiceRequest : Service<SomeService, SomeEvent>
+class SomeServiceRequest : Service<SomeService, SomeEvent>, IntermediateImplicitExportInterface
+
+// This check is needed for the kotlinx.coroutines Flow export
+@Suppress("INVISIBLE_REFERENCE")
+@JsImplicitExport(true)
+interface IntermediateImplicitExportInterface {
+    fun withDefaultImpl() = "OK"
+}
