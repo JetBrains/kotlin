@@ -93,6 +93,7 @@ abstract class GenerateSupportSources : DefaultTask() {
         val classesThatNeedVar = mutableSetOf<String>()
 
         val kotlinxCinteropBridgeGenerator = HelperFileGenerator("kotlinx" / "cinterop")
+        val kotlinRangesBridgeGenerator = HelperFileGenerator("kotlin" / "ranges")
 
         fun List<String>.toSuppressCall() = when {
             isEmpty() -> null
@@ -105,6 +106,7 @@ abstract class GenerateSupportSources : DefaultTask() {
             var contents = file.readText().replace("""^(package .*)\.raw$""".toRegex(RegexOption.MULTILINE), "$1")
 
             val kotlinxXCinteropFileContents = kotlinxCinteropBridgeGenerator.getBuilderFor(generatedSourceSet)
+            val kotlinRangesFileContents = kotlinRangesBridgeGenerator.getBuilderFor(generatedSourceSet)
 
             for (nextMatch in expectNumberClassPattern.findAll(contents)) {
                 val (entireMatch, name) = nextMatch.groupValues
@@ -124,6 +126,10 @@ abstract class GenerateSupportSources : DefaultTask() {
                 val adjustedContent = similarToContent.replace(similarToName, name)
                     .withAppendixIfMentioned(ranges, similarToSearchIndex) { rangeName ->
                         classesThatNeedRange.add(name)
+
+                        val untilFunction = "expect inline infix fun support.$name.until(to: support.$name): support.${name}Range"
+
+                        kotlinRangesFileContents += untilFunction
                         replace(rangeName, "${name}Range")
                     }
                     .withAppendixIfMentioned(iterators, similarToSearchIndex) { iteratorName ->
@@ -209,6 +215,7 @@ abstract class GenerateSupportSources : DefaultTask() {
             if (!isLeafSourceSet) return@traverseSourceSetsOf
 
             val kotlinxXCinteropFileContents = kotlinxCinteropBridgeGenerator.getBuilderFor(generatedSourceSet)
+            val kotlinRangesFileContents = kotlinRangesBridgeGenerator.getBuilderFor(generatedSourceSet)
 
             for ((name, expansion) in collectAllBuiltinExpansionsInHierarchyOf(sourceSet)) {
                 if (name in classesThatNeedVar) {
@@ -228,10 +235,18 @@ abstract class GenerateSupportSources : DefaultTask() {
                         actual inline fun <T : $expansion> NativePlacement.alloc(value: T): ${expansion}VarOf<T> = error("Should not be called")
                         """.trimIndent()
                 }
+
+                if (name in classesThatNeedRange) {
+                    kotlinRangesFileContents += """
+                        $deprecation
+                        actual inline infix fun $expansion.until(to: $expansion): ${expansion}Range = error("Should not be called")
+                        """.trimIndent()
+                }
             }
         }
 
         kotlinxCinteropBridgeGenerator.write()
+        kotlinRangesBridgeGenerator.write()
     }
 }
 
