@@ -52,7 +52,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xcollection-literals")
     freeCompilerArgs.add("-Xcontext-sensitive-resolution")
     addReturnValueCheckerInfo()
-    if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
+    // if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
     if (this is KotlinJvmCompilerOptions) {
         suppressRedundantCliArgumentWarning()
@@ -61,6 +61,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
 
 fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
     freeCompilerArgs.add("-Xreturn-value-checker=full")
+    allWarningsAsErrors = false // TODO: after bootstrap, rename Xreturn-value-checker and remove this line
 }
 
 /**
@@ -248,6 +249,7 @@ kotlin {
                                 "-Xexpect-actual-classes",
                             )
                         )
+                        allWarningsAsErrors = false // TODO: after bootstrap, rename Xreturn-value-checker and remove this line
                     }
                 }
             }
@@ -255,11 +257,23 @@ kotlin {
                 associateWith(main)
                 associateWith(mainJdk7)
                 associateWith(mainJdk8)
+                // TODO: after bootstrap, rename Xreturn-value-checker and remove this block
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        allWarningsAsErrors = false
+                    }
+                }
             }
             create("recursiveDeletionTest") {
                 associateWith(main)
                 associateWith(mainJdk7)
                 associateWith(mainJdk8)
+                // TODO: after bootstrap, rename Xreturn-value-checker and remove this block
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        allWarningsAsErrors = false
+                    }
+                }
             }
         }
     }

@@ -99,6 +99,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().con
         )
         freeCompilerArgs.add("-Xskip-prerelease-check")
         freeCompilerArgs.add("-Xreturn-value-checker=full")
+        allWarningsAsErrors = false // TODO: after bootstrap, rename Xreturn-value-checker and remove this line
     }
 }
 

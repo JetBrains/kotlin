@@ -121,6 +121,7 @@ kotlin {
                                 "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
                             )
                         )
+                        allWarningsAsErrors = false // TODO: after bootstrap, rename Xreturn-value-checker and remove this line
                     }
                 }
             }
