@@ -2,6 +2,14 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
+        interface IntermediateImplicitExportInterface {
+            withDefaultImpl(): Promise<string>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.IntermediateImplicitExportInterface": unique symbol;
+            };
+        }
+    }
+    namespace foo {
         interface SomeExternalInterface {
         }
     }
@@ -101,17 +109,18 @@ declare namespace JS_TESTS {
         }
         function generateOneMoreChildOfTest(): foo.Test;
         function acceptTest(test: foo.Test): Promise<void>;
-        interface HolderOfParentSuspendFun1<T> {
+        interface HolderOfParentSuspendFun1<T> extends foo.IntermediateImplicitExportInterface {
             parentSuspendFun1(someValue?: string): Promise<T>;
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.HolderOfParentSuspendFun1": unique symbol;
-            };
+            } & foo.IntermediateImplicitExportInterface["__doNotUseOrImplementIt"];
         }
         function getHolderOfParentSuspendFun1(): foo.HolderOfParentSuspendFun1<string>;
         class ExportedChild /* extends foo.NotExportedParent */ implements foo.HolderOfParentSuspendFun1<string> {
             constructor();
             childSuspendFun(): Promise<string>;
             parentSuspendFun1(someValue?: string): Promise<string>;
+            withDefaultImpl(): Promise<string>;
             readonly __doNotUseOrImplementIt: foo.HolderOfParentSuspendFun1<any>["__doNotUseOrImplementIt"];
         }
         namespace ExportedChild {
@@ -124,3 +133,5 @@ declare namespace JS_TESTS {
         function acceptHolderOfParentSuspendFun1(holder: foo.HolderOfParentSuspendFun1<string>): Promise<void>;
     }
 }
+
+
