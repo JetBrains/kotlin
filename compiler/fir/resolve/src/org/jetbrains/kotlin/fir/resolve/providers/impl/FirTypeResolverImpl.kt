@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -648,7 +649,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val coneTypes = typeRef.types.mapTo(mutableListOf()) { it.coneType }
 
                 val firstType = coneTypes.first()
-                val primaryType = if (firstType.toClassLikeSymbol(session).let { it != null && !it.isRichError }) {
+                val primaryType = if (firstType.isNonRichError()) {
                     coneTypes.removeAt(0)
                     firstType.applyIf(typeRef.isMarkedNullable) {
                         withNullability(true, session.typeContext)
@@ -659,15 +660,24 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     session.builtinTypes.nothingType.coneType
                 }
 
+                val diagnostic = runIf(coneTypes.any { it.isNonRichError() }) {
+                    ConeSimpleDiagnostic("Non-rich error component must appear first")
+                }
+
                 FirTypeResolutionResult(
                     ConeTypeUnifier.unify(primaryType, coneTypes, ConeAttributes.Empty, session.typeContext),
-                    diagnostic = null
+                    diagnostic,
                 )
             }
             else -> error(typeRef.render())
         }.also {
             session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, configuration.useSiteFile?.source)
         }
+    }
+
+    private fun ConeKotlinType.isNonRichError(): Boolean {
+        // TODO(KT-89098) check type parameter bounds here, too
+        return toClassLikeSymbol(session).let { it != null && !it.isRichError }
     }
 
     private fun TypeResolutionConfiguration.iterateScopesWithSubstitution(
