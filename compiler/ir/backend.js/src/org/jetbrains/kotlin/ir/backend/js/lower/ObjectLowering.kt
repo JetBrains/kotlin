@@ -14,13 +14,8 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
-import org.jetbrains.kotlin.ir.backend.js.objectInstanceField
-import org.jetbrains.kotlin.ir.backend.js.syntheticPrimaryConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -56,7 +51,7 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
         val parentCompanionGetInstanceFun = if (declaration.isCompanion) {
             var superClass = declaration.parent.safeAs<IrClass>()?.superClass
             var result: IrSimpleFunction? = null
-            while (superClass != null && result == null) {
+            while (superClass != null && result == null && !superClass.isExternal) {
                 val companion = superClass.companionObject()
                 if (companion != null) {
                     result = declaration.factory.stageController.restrictTo(companion) {
