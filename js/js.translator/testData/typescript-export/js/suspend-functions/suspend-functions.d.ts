@@ -2,6 +2,14 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
+        interface IntermediateImplicitExportInterface {
+            withDefaultImpl(): Promise<string>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.IntermediateImplicitExportInterface": unique symbol;
+            };
+        }
+    }
+    namespace foo {
         interface SomeExternalInterface {
         }
     }
@@ -112,7 +120,7 @@ declare namespace JS_TESTS {
             constructor();
             childSuspendFun(): Promise<string>;
             parentSuspendFun1(someValue?: string): Promise<string>;
-            withDefaultImpl($completion: any/* kotlin.coroutines.Continuation<string> */): any;
+            withDefaultImpl(): Promise<string>;
             readonly __doNotUseOrImplementIt: foo.HolderOfParentSuspendFun1<any>["__doNotUseOrImplementIt"];
         }
         namespace ExportedChild {
