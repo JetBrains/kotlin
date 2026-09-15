@@ -87,7 +87,7 @@ class ImplicitValueStorage private constructor(
         value: ImplicitReceiverValue<*>,
     ): PersistentSetMultimap<Name, ImplicitReceiverValue<*>> =
         if (name != null)
-            put(name, value)
+            putting(name, value)
         else
             this
 
@@ -160,7 +160,7 @@ class ImplicitValueStorage private constructor(
         implicitReceiverStack = implicitReceiverStack.map { mapper(it) }.toPersistentList(),
         implicitReceiversByLabel = implicitReceiversByLabel.entries.fold(PersistentSetMultimap()) { accOuterMap, [name, receiverValues] ->
             receiverValues.fold(accOuterMap) { accMap, receiverValue ->
-                accMap.put(name, mapper(receiverValue))
+                accMap.putting(name, mapper(receiverValue))
             }
         },
         implicitValuesBySymbol = implicitValuesBySymbol.mapValues { [_, v] -> mapper(v) }.toPersistentMap(),

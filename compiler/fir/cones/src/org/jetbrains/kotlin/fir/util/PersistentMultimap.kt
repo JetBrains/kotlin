@@ -11,7 +11,7 @@ class PersistentMultimap<K, V> private constructor(private val map: PersistentMa
 
     constructor() : this(persistentMapOf())
 
-    fun put(key: K, value: V): PersistentMultimap<K, V> {
+    fun putting(key: K, value: V): PersistentMultimap<K, V> {
         val collection = map[key] ?: persistentListOf()
         val newSet = collection.adding(value)
         if (newSet === collection) return this
@@ -19,7 +19,7 @@ class PersistentMultimap<K, V> private constructor(private val map: PersistentMa
         return PersistentMultimap(newMap)
     }
 
-    fun remove(key: K, value: V): PersistentMultimap<K, V> {
+    fun removing(key: K, value: V): PersistentMultimap<K, V> {
         val list = map.get(key) ?: return this
         val newSet = list.removing(value)
         if (list === newSet) return this
@@ -42,7 +42,7 @@ class PersistentSetMultimap<K, V> private constructor(private val map: Persisten
 
     constructor() : this(persistentMapOf())
 
-    fun put(key: K, value: V): PersistentSetMultimap<K, V> {
+    fun putting(key: K, value: V): PersistentSetMultimap<K, V> {
         val set = map[key] ?: persistentSetOf()
         val newSet = set.adding(value)
         if (newSet === set) return this
@@ -50,7 +50,7 @@ class PersistentSetMultimap<K, V> private constructor(private val map: Persisten
         return PersistentSetMultimap(newMap)
     }
 
-    fun remove(key: K, value: V): PersistentSetMultimap<K, V> {
+    fun removing(key: K, value: V): PersistentSetMultimap<K, V> {
         val set = map.get(key) ?: return this
         val newSet = set.removing(value)
         if (set === newSet) return this

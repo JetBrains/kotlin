@@ -32,7 +32,7 @@ abstract class PathAwareControlFlowGraphVisitor<K : Any, V : Any>(
 
     @JvmName("mergePathAwareInfo")
     fun mergeInfo(a: PathAwareControlFlowInfo<K, V>, b: PathAwareControlFlowInfo<K, V>, node: CFGNode<*>): PathAwareControlFlowInfo<K, V> =
-        a.merge(b) { left, right -> mergeInfo(left, right, node) }
+        a.merging(b) { left, right -> mergeInfo(left, right, node) }
 
     open fun visitSubGraph(node: CFGNodeWithSubgraphs<*>, graph: ControlFlowGraph): Boolean =
         true // false to skip
@@ -79,12 +79,12 @@ abstract class PathAwareControlFlowGraphVisitor<K : Any, V : Any>(
     ): PathAwareControlFlowInfo<K, V> = data
 }
 
-inline fun <K, V> PersistentMap<K, V>.merge(other: PersistentMap<K, V>, block: (V, V) -> V): PersistentMap<K, V> =
+inline fun <K, V> PersistentMap<K, V>.merging(other: PersistentMap<K, V>, block: (V, V) -> V): PersistentMap<K, V> =
     mutate {
         other.mapValuesTo(it) { [label, rightValue] ->
             this[label]?.let { leftValue -> block(leftValue, rightValue) } ?: rightValue
         }
     }
 
-inline fun <K, V> PersistentMap<K, V>.transformValues(block: (V) -> V): PersistentMap<K, V> =
+inline fun <K, V> PersistentMap<K, V>.transformingValues(block: (V) -> V): PersistentMap<K, V> =
     mutate { mapValuesTo(it) { [_, values] -> block(values) } }

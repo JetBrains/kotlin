@@ -280,7 +280,7 @@ open class FirSupertypeResolverVisitor(
         forStaticNestedClass: Boolean,
     ): PersistentList<FirScope> {
         resolveAllSupertypesForOuterClass(outerClass)
-        return prepareScopes(outerClass, forStaticNestedClass).pushAll(
+        return prepareScopes(outerClass, forStaticNestedClass).pushingAll(
             createOtherScopesForNestedClassesOrCompanion(
                 klass = outerClass,
                 session = session,
@@ -348,7 +348,7 @@ open class FirSupertypeResolverVisitor(
 
         return when {
             forStaticNestedClass -> result
-            else -> result.pushIfNotNull(classLikeDeclaration.typeParametersScope())
+            else -> result.pushingIfNotNull(classLikeDeclaration.typeParametersScope())
         }
     }
 
@@ -912,7 +912,7 @@ sealed class SupertypeComputationStatus {
 
 private typealias ScopePersistentList = PersistentList<FirScope>
 
-private fun <E> PersistentList<E>.push(element: E): PersistentList<E> = addingAt(0, element)
-private fun <E> PersistentList<E>.pushAll(collection: Collection<E>): PersistentList<E> = addingAllAt(0, collection)
+private fun <E> PersistentList<E>.pushing(element: E): PersistentList<E> = addingAt(0, element)
+private fun <E> PersistentList<E>.pushingAll(collection: Collection<E>): PersistentList<E> = addingAllAt(0, collection)
 
-private fun ScopePersistentList.pushIfNotNull(scope: FirScope?): ScopePersistentList = if (scope == null) this else push(scope)
+private fun ScopePersistentList.pushingIfNotNull(scope: FirScope?): ScopePersistentList = if (scope == null) this else pushing(scope)

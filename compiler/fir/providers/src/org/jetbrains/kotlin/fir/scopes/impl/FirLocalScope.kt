@@ -49,7 +49,7 @@ class FirLocalScope private constructor(
 
     fun storeFunction(function: FirNamedFunction, session: FirSession): FirLocalScope {
         return FirLocalScope(
-            properties, functions.put(function.name, function.symbol), classLikeSymbols, session
+            properties, functions.putting(function.name, function.symbol), classLikeSymbols, session
         )
     }
 
