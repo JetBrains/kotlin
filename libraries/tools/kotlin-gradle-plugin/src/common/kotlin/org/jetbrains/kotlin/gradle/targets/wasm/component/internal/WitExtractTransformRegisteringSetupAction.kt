@@ -19,6 +19,6 @@ internal val WitExtractTransformRegisteringSetupAction = KotlinTargetSideEffect 
     project.dependencies.registerTransformForArtifactType(
         WitExtractionTransform::class.java,
         fromArtifactType = KLIB_TYPE,
-        toArtifactType = WIT,
+        toArtifactType = KOTLIN_WIT_ARTIFACT,
     )
 }

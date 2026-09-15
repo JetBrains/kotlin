@@ -10,7 +10,7 @@ import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
-internal const val WIT = "kotlin-wasm-wit"
+internal const val KOTLIN_WIT_ARTIFACT = "kotlin-wasm-wit"
 
 /**
  * Name of the directory with WIT declarations inside a klib and inside a project.
@@ -35,7 +35,7 @@ internal fun witDirectoriesFromRuntimeDependencies(compilation: KotlinJsIrCompil
             .incoming
             .artifactView { view ->
                 view.attributes { attributes ->
-                    attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, WIT)
+                    attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KOTLIN_WIT_ARTIFACT)
                 }
             }
             .files

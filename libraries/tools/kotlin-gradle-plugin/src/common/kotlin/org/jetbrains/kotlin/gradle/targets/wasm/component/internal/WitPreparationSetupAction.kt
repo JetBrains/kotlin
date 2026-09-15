@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.wasm.component.internal
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Category
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
@@ -54,7 +53,7 @@ private fun createWitResolvableConfiguration(
         setInvisibleIfSupported()
         KotlinUsages.configureProducerRuntimeUsage(this, target)
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, WIT)
+        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KOTLIN_WIT_ARTIFACT)
 
         usesPlatformOf(target)
     }
@@ -74,7 +73,7 @@ private fun createWitOutputConsumableConfiguration(
         setInvisibleIfSupported()
         KotlinUsages.configureProducerRuntimeUsage(this, target)
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, WIT)
+        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KOTLIN_WIT_ARTIFACT)
         usesPlatformOf(target)
 
         project.artifacts.add(
