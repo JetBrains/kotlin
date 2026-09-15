@@ -293,7 +293,7 @@ fun TestServices.compiledTestOutputDirectory(
     val pathToTestDir = allDirectives[pathToTestDirDirective].first()
 
     val testGroupOutputDir =
-        File(File(pathToRootOutputDir, prefix), testGroupDirPrefix)
+        File(File(pathToRootOutputDir, prefix), testGroupDirPrefix.split('/').joinToString("/", transform = ::maybeShortenWindowsPathPart))
     val stopFile = ForTestCompileRuntime.transformTestDataPath(pathToTestDir).absoluteFile
     val parentAbsoluteFile = originalFile.parentFile.absoluteFile
     val fullPathSequence = generateSequence(parentAbsoluteFile) { it.parentFile }.toList()
@@ -320,8 +320,33 @@ fun TestServices.compiledTestOutputDirectory(
  *   ...\build\out\WasmJsCodegenBoxTestGenerated2.4\3f2a9d1c\SourceSinkFeedContexts
  */
 private fun maybeShortenWindowsPath(pathParts: List<String>): List<String> {
-    val osName = System.getProperty("os.name") ?: ""
-    if (!osName.startsWith("Windows", ignoreCase = true)) return pathParts
+    if (!isWindows) return pathParts
     if (pathParts.size <= 2) return pathParts
     return listOf(pathParts.joinToString().hashCode().toHexString(), pathParts.last())
 }
+
+/** How many characters [maybeShortenWindowsPathPart] keeps from each end of an overly long path component on Windows. */
+const val WINDOWS_PATH_PART_KEPT_EDGE_LENGTH = 20
+
+/** The longest single path component [maybeShortenWindowsPathPart] leaves untouched on Windows; longer ones are cut down to exactly this length. */
+const val WINDOWS_PATH_PART_MAX_LENGTH = WINDOWS_PATH_PART_KEPT_EDGE_LENGTH + 1 + 8 + 1 + WINDOWS_PATH_PART_KEPT_EDGE_LENGTH
+
+/**
+ * Shorten a single overly long path component (the test group directory or the test file name) on Windows, complementing
+ * [maybeShortenWindowsPath], which only collapses the directories in between. The result keeps both ends of the name for
+ * readability and a hash of the whole name in the middle for uniqueness.
+ *
+ * Example:
+ *   outerClassWithTypeParameterWithUpperBoundAndInlineFunctionWithReifiedTypeParameterWithTwoUpperBounds
+ * becomes:
+ *   outerClassWithTypePa~68365148~erWithTwoUpperBounds
+ */
+fun maybeShortenWindowsPathPart(part: String, onWindows: Boolean = isWindows): String {
+    if (!onWindows) return part
+    if (part.length <= WINDOWS_PATH_PART_MAX_LENGTH) return part
+    val edge = WINDOWS_PATH_PART_KEPT_EDGE_LENGTH
+    return part.take(edge) + "~" + part.hashCode().toHexString() + "~" + part.takeLast(edge)
+}
+
+private val isWindows: Boolean
+    get() = (System.getProperty("os.name") ?: "").startsWith("Windows", ignoreCase = true)
