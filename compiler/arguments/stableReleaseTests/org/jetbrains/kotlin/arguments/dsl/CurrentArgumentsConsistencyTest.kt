@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.arguments.dsl
 
 import org.jetbrains.kotlin.arguments.description.*
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.arguments.stable.description.actualJvmCompilerArgume
 import org.jetbrains.kotlin.arguments.stable.description.actualMetadataArguments as stableMetadataArguments
 import org.jetbrains.kotlin.arguments.stable.description.actualNativeArguments as stableNativeArguments
 import org.jetbrains.kotlin.arguments.stable.description.actualWasmArguments as stableWasmArguments
+import org.jetbrains.kotlin.arguments.stable.dsl.base.KotlinCompilerArgument as StableKotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.stable.dsl.base.KotlinCompilerArgumentsLevel as StableKotlinCompilerArgumentsLevel
 
 class CurrentArgumentsConsistencyTest {
@@ -39,7 +41,7 @@ class CurrentArgumentsConsistencyTest {
             .filterNonDeprecated()
             .forEach { stableArgument ->
                 assertTrue(
-                    actual = currentLevelCompilerArguments.singleOrNull { it.name == stableArgument.name } != null,
+                    actual = currentLevelCompilerArguments.singleOrNullWithFallback(stableArgument) != null,
                     message = "Argument with '${stableArgument.name}' name is not found in current compiler arguments. " +
                             "Only deprecated arguments are allowed to be removed and no modifications to name are allowed."
                 )
@@ -77,7 +79,8 @@ class CurrentArgumentsConsistencyTest {
         stableLevel.arguments
             .filterNonDeprecated()
             .forEach { stableArgument ->
-                val currentArgument = currentLevelCompilerArguments.single { it.name == stableArgument.name }
+                val currentArgument = currentLevelCompilerArguments.singleOrNullWithFallback(stableArgument)
+                assertNotNull(currentArgument, "Current argument not found for stable argument: ${stableArgument.name}")
 
                 assertTrue(
                     actual = stableArgument.description.current == currentArgument.description.current ||
@@ -109,7 +112,7 @@ class CurrentArgumentsConsistencyTest {
         stableLevel.arguments
             .filterNonDeprecated()
             .forEach { stableArgument ->
-                val currentArgument = currentLevelCompilerArguments.singleOrNull { it.name == stableArgument.name }
+                val currentArgument = currentLevelCompilerArguments.singleOrNullWithFallback(stableArgument)
 
                 assertNotNull(
                     currentArgument,
@@ -137,7 +140,8 @@ class CurrentArgumentsConsistencyTest {
         stableLevel.arguments
             .filterNonDeprecated()
             .forEach { stableArgument ->
-                val currentArgument = currentLevelCompilerArguments.single { it.name == stableArgument.name }
+                val currentArgument = currentLevelCompilerArguments.singleOrNullWithFallback(stableArgument)
+                assertNotNull(currentArgument, "Current argument not found for stable argument: ${stableArgument.name}")
 
                 assertTrue(
                     actual = stableArgument.valueDescription.current == currentArgument.valueDescription.current ||
@@ -170,7 +174,7 @@ class CurrentArgumentsConsistencyTest {
         stableLevel.arguments
             .filterNonDeprecated()
             .forEach { stableArgument ->
-                val currentArgument = currentLevelCompilerArguments.find { it.name == stableArgument.name }
+                val currentArgument = currentLevelCompilerArguments.singleOrNullWithFallback(stableArgument)
                 assertNotNull(currentArgument, "Current argument not found for stable argument: ${stableArgument.name}")
 
                 assertEquals(
@@ -187,6 +191,11 @@ class CurrentArgumentsConsistencyTest {
                     )
                 }
             }
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun Set<KotlinCompilerArgument>.singleOrNullWithFallback(argument: StableKotlinCompilerArgument): KotlinCompilerArgument? {
+        return singleOrNull { it.name == argument.name } ?: singleOrNull { it.deprecatedName == argument.name }
     }
 
     companion object {
