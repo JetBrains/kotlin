@@ -910,6 +910,7 @@ public class org/jetbrains/kotlin/psi/KtBackingField : org/jetbrains/kotlin/psi/
 	public fun getFieldKeyword ()Lcom/intellij/psi/PsiElement;
 	public fun getInitializer ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	public fun getNamePlaceholder ()Lcom/intellij/psi/PsiElement;
+	public final fun getProperty ()Lorg/jetbrains/kotlin/psi/KtProperty;
 	public fun getReturnTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 	public fun getTextOffset ()I
 	public fun getTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
