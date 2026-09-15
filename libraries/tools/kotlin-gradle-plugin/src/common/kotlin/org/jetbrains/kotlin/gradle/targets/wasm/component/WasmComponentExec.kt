@@ -17,6 +17,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WIT
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import javax.inject.Inject
@@ -62,6 +63,9 @@ internal constructor() : DefaultTask() {
     /**
      * Directories with all WIT declarations of the component.
      *
+     * By default, it contains the `wit` directories of all external runtime dependencies of the compilation,
+     * extracted from the dependency klibs.
+     *
      * Contents of all these directories are merged into a single directory,
      * which is then passed to the `wasm-tools component embed` command.
      */
@@ -97,7 +101,7 @@ internal constructor() : DefaultTask() {
 
         val embedded = temporaryDir.resolve(inputFile.getFile().name)
 
-        val witDir = temporaryDir.resolve(WIT_DIRECTORY_NAME)
+        val witDir = temporaryDir.resolve(WIT)
 
         fs.delete {
             it.delete(witDir)
@@ -152,20 +156,18 @@ internal constructor() : DefaultTask() {
          */
         const val WASM_TOOLS_EXECUTABLE = "wasm-tools"
 
-        internal const val WIT_DIRECTORY_NAME = "wit"
-
-        @ExperimentalWasmDsl
         fun register(
             compilation: KotlinJsIrCompilation,
             name: String,
             configuration: WasmComponentExec.() -> Unit = {},
         ): TaskProvider<WasmComponentExec> {
             val project = compilation.target.project
+            val witDirectories = project.configurations.named(compilation.witConfigurationName)
             return project.registerTask(
                 name,
             ) {
                 it.executable.convention(WASM_TOOLS_EXECUTABLE)
-                it.witDirectory.convention(project.layout.buildDirectory.dir(WIT_DIRECTORY_NAME))
+                it.witDirectory.from(witDirectories)
                 it.configuration()
             }
         }

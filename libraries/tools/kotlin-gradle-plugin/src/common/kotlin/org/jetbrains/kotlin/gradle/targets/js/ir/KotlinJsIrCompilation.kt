@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -33,6 +35,14 @@ open class KotlinJsIrCompilation @Inject internal constructor(
     // This property is a `var` because @Inject can't inject `null` values and fails with "Null value provided in parameters".
     var wasmTarget: WasmTarget? = null
         internal set
+
+    @InternalKotlinGradlePluginApi
+    val witConfigurationName
+        get() = compilation.disambiguateName("wit")
+
+    @InternalKotlinGradlePluginApi
+    val witOutputConfigurationName
+        get() = compilation.disambiguateName("witOutput")
 }
 
 /**
