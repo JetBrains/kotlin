@@ -1,6 +1,6 @@
 // ISSUE: KT-87399
 // EXPECTED: org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod(xLongPrefixGetter)
-// EXPECTED: org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod(xLongPrefixGetter)
+// EXPECTED: org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod(xLongPrefixSetter)
 
 package a
 

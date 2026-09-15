@@ -13,8 +13,8 @@ import com.intellij.psi.impl.light.AbstractLightClass
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.asJava.toFakeLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -82,7 +82,7 @@ class KtFakeLightMethod private constructor(
 ) : LightMethod(
     ktDeclaration.manager,
     DummyJavaPsiFactory.createDummyVoidMethod(ktDeclaration.project),
-    ktClassOrObject.toFakeLightClass(),
+    KotlinAsJavaSupport.getInstance(ktDeclaration.project).getFakeLightClass(ktClassOrObject),
     KotlinLanguage.INSTANCE
 ), KtLightElement<KtNamedDeclaration, PsiMethod> {
     override val kotlinOrigin get() = ktDeclaration

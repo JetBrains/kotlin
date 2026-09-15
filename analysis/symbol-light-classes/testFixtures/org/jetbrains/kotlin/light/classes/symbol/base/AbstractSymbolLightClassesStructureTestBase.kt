@@ -9,10 +9,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
@@ -143,7 +147,13 @@ open class AbstractSymbolLightClassesStructureTestBase(
             appendLine("name: ${declaration.name}")
             appendLine("qualifier: ${declaration.fqName}")
             append("light: ")
-            val lightClass = declaration.toLightClass()
+            val lightClass = analyze(declaration) {
+                when (val symbol = declaration.symbol) {
+                    is KaClassSymbol -> symbol.asPsiClass()
+                    is KaEnumEntrySymbol -> symbol.initializer?.asPsiClass()
+                    else -> null
+                }
+            }
             if (lightClass != null) {
                 handleClass(lightClass)
             } else {
