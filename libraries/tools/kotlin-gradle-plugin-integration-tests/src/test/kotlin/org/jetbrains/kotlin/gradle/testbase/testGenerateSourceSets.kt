@@ -37,12 +37,19 @@ fun SourceSet.compileJavaSource(
 ) {
     val identifier = "${name}_${project.generateIdentifier()}"
     val identifierPath = project.layout.buildDirectory.dir("generatedJavaSourceDir_${identifier}")
+
+    // TODO: Do not replace this with a SAM lambda until KT-89351 is fixed.
+    @Suppress("ObjectLiteralToLambda")
+    val action = object : org.gradle.api.Action<Any> {
+        override fun execute(t: Any) {
+            identifierPath.get().asFile.resolve("${className}.java").writeText(sourceContent)
+        }
+    }
+
     java.srcDir(
         project.tasks.register("generateJavaSourceIn_${identifier}") { task ->
             task.outputs.dir(identifierPath)
-            task.doLast {
-                identifierPath.get().asFile.resolve("${className}.java").writeText(sourceContent)
-            }
+            task.doLast(action)
         }
     )
 }
