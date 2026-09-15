@@ -134,7 +134,7 @@ internal constructor(
                 toolingInstall.dependsOn(target.nodeJsSetupTaskProvider)
             }
             toolingInstall.group = TASKS_GROUP_NAME
-            toolingInstall.description = "Find, download and link NPM dependencies and projects"
+            toolingInstall.description = "Install NPM dependencies required for Kotlin/Wasm tooling"
 
             toolingInstall.outputs.upToDateWhen {
                 toolingInstall.nodeModules.getFile().exists()
