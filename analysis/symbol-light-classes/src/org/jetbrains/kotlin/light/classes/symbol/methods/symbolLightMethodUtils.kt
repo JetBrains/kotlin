@@ -111,11 +111,11 @@ internal fun methodGeneration(
     isEffectivelyPrivate: Boolean,
 ): MethodGenerationResult {
     // Explicit mode -> a boxed method is requested (even if it is a JVM name clash)
-    val isBoxedAccessorRequestedExplicitly = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
+    val isBoxedMethodRequestedExplicitly = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
             !isEffectivelyPrivate &&
             (hasValueClassInParameterType || hasValueClassInReturnType || isAffectedByValueClass)
 
-    val isRegularAccessorRequired = if (isAffectedByValueClass) {
+    val isRegularMethodRequired = if (isAffectedByValueClass) {
         // JvmName -> unmangled method can be generated
         hasJvmNameAnnotation
     } else {
@@ -123,9 +123,9 @@ internal fun methodGeneration(
         true
     }
 
-    val isBoxedAccessorRequired = when {
+    val isBoxedMethodRequired = when {
         // The check already performed by the explicit mode
-        isBoxedAccessorRequestedExplicitly -> true
+        isBoxedMethodRequestedExplicitly -> true
 
         // Private declarations are inaccessible from Java -> no boxed methods can be auto-generated
         isEffectivelyPrivate -> false
@@ -147,8 +147,8 @@ internal fun methodGeneration(
     }
 
     return MethodGenerationResult(
-        isRegularMethodRequired = isRegularAccessorRequired,
-        isBoxedMethodRequired = isBoxedAccessorRequired,
+        isRegularMethodRequired = isRegularMethodRequired,
+        isBoxedMethodRequired = isBoxedMethodRequired,
     )
 }
 
