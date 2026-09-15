@@ -13,47 +13,24 @@ import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
+import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.StandaloneLibraryScopeConstructionMode
 import java.nio.file.Path
 
-/**
- * The strategy used to build a library module's content scope from its binary roots in Standalone mode.
- *
- * This is the internal representation of the public `StandaloneLibraryScopeConstructionMode` from the Standalone surface. The public type
- * cannot be referenced from this implementation module, so the surface maps its mode to this enum before handing it to the implementation.
- *
- * @see createLibrarySearchScope
- */
-@KaImplementationDetail
-enum class LibraryScopeConstructionMode {
-    /**
-     * Determines containment by walking a file's parents until one of them is a library root.
-     */
-    ParentTraversal,
-
-    /**
-     * Determines containment by matching a file's path segments against a trie built from the library root paths.
-     */
-    Trie,
-
-    /**
-     * Determines containment by checking a file against a precomputed set of all files reachable from the library roots.
-     */
-    Enumeration,
-}
-
+@OptIn(StandaloneWorkaroundApi::class)
 @KaImplementationDetail
 internal fun createLibrarySearchScope(
     binaryRoots: Collection<Path>,
     binaryVirtualFiles: Collection<VirtualFile>,
-    mode: LibraryScopeConstructionMode,
+    mode: StandaloneLibraryScopeConstructionMode,
     environment: CoreApplicationEnvironment,
     project: Project,
 ): GlobalSearchScope =
     when (mode) {
-        LibraryScopeConstructionMode.ParentTraversal ->
+        StandaloneLibraryScopeConstructionMode.ParentTraversal ->
             createParentTraversalLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
 
-        LibraryScopeConstructionMode.Trie ->
+        StandaloneLibraryScopeConstructionMode.Trie ->
             // The trie relies on on-disk paths, so fall back to enumeration when a root lacks one (e.g. in-memory).
             if (binaryVirtualFiles.any { it.toNioPathOrNull() == null }) {
                 createEnumerationLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
@@ -61,11 +38,11 @@ internal fun createLibrarySearchScope(
                 createTrieLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
             }
 
-        LibraryScopeConstructionMode.Enumeration ->
+        StandaloneLibraryScopeConstructionMode.Enumeration ->
             createEnumerationLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
+        else -> error("Unexpected library scope construction mode: $mode")
     }
 
-@OptIn(KaImplementationDetail::class)
 internal fun createParentTraversalLibrarySearchScope(
     binaryRoots: Collection<Path>,
     binaryVirtualFiles: Collection<VirtualFile>,
@@ -98,7 +75,6 @@ private class ParentTraversalLibrarySearchScope(
     override fun toString(): String = "Parent-traversal library search scope over $rootFiles"
 }
 
-@OptIn(KaImplementationDetail::class)
 internal fun createTrieLibrarySearchScope(
     binaryRoots: Collection<Path>,
     binaryVirtualFiles: Collection<VirtualFile>,
@@ -159,7 +135,6 @@ internal fun createEnumerationLibrarySearchScope(
     environment: CoreApplicationEnvironment,
     project: Project,
 ): GlobalSearchScope {
-    @OptIn(KaImplementationDetail::class)
     val virtualFileUrls = buildSet {
         for (root in StandaloneProjectFactory.getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles) {
             LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)

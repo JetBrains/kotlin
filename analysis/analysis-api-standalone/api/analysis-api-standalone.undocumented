@@ -1,25 +1,26 @@
-org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
+org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider.Companion.instance
+org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider.getLibraryModuleBuilder(CoreApplicationEnvironment, Project, Boolean)
+org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider.getLibrarySourceModuleBuilder(Project)
+org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider.getScriptModuleBuilder(Project)
+org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider.getSdkModuleBuilder(CoreApplicationEnvironment, Project)
+org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider.getSourceModuleBuilder(CoreApplicationEnvironment, Project)
+org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider.getStandaloneSessionBuilder(Disposable, Boolean)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession.application
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession.coreApplicationEnvironment
-org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession.modulesWithFiles
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession.project
-org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.application
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.build()
-org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.buildKtModuleProvider(KaModuleContainerBuilder.() -> Unit)
-org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.buildKtModuleProviderByCompilerConfiguration(CompilerConfiguration)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.project
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerApplicationService(Class<T>)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerApplicationService(Class<T>, T)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectExtensionPoint(ExtensionPointName<T>, Class<T>)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectService(Class<T>)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectService(Class<T>, T)
-org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession(Disposable, Boolean, StandaloneAnalysisAPISessionBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainer
 org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder
-org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder.addModule(M)
 org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder.build()
-org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder.platform
+org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder.coreApplicationEnvironment
+org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder.project
 org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder
 org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.addBinaryVirtualFile(VirtualFile)
 org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.addBinaryVirtualFiles(Collection<VirtualFile>)
