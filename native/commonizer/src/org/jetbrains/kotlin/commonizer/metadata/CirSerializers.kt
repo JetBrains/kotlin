@@ -46,28 +46,6 @@ internal fun CirPackage.serializePackage(
     }
 }
 
-internal fun addEmptyFragments(fragments: MutableCollection<KmModuleFragment>) {
-    val existingPackageFqNames: Set<String> = fragments.mapTo(HashSet()) { it.fqName!! }
-
-    val missingPackageFqNames: Set<String> = existingPackageFqNames.flatMapTo(HashSet()) { fqName ->
-        fqName.mapIndexedNotNull { index, ch ->
-            if (ch == '.') {
-                val parentFqName = fqName.substring(0, index)
-                if (parentFqName !in existingPackageFqNames)
-                    return@mapIndexedNotNull parentFqName
-            }
-
-            null
-        }
-    }
-
-    missingPackageFqNames.forEach { fqName ->
-        fragments += KmModuleFragment().also { fragment ->
-            fragment.fqName = fqName
-        }
-    }
-}
-
 internal fun CirClass.serializeClass(
     context: CirTreeSerializationContext,
     className: ClassName,

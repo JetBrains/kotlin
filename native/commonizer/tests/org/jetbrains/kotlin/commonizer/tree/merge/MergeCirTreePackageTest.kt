@@ -13,8 +13,8 @@ class MergeCirTreePackageTest : AbstractMergeCirTreeTest() {
 
     @Test
     fun `test simple package`() {
-        val aTree = createCirTreeFromSourceCode("package test.pkg")
-        val bTree = createCirTreeFromSourceCode("package test.pkg")
+        val aTree = createCirTreeFromSourceCode("package test.pkg\nval x: Int = 1")
+        val bTree = createCirTreeFromSourceCode("package test.pkg\nval x: Int = 1")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val module = merged.assertSingleModule()
         kotlin.test.assertEquals(1, module.packages.size, "Expected 1 package (test.pkg)")
@@ -29,11 +29,11 @@ class MergeCirTreePackageTest : AbstractMergeCirTreeTest() {
 
     @Test
     fun `test missing target declarations`() {
-        val aTree = createCirTreeFromSourceCode("package a")
-        val bTree = createCirTreeFromSourceCode("package b")
+        val aTree = createCirTreeFromSourceCode("package a\nval a: Int = 1")
+        val bTree = createCirTreeFromSourceCode("package b\nval b: Int = 1")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val module = merged.assertSingleModule()
-        kotlin.test.assertEquals(2, module.packages.size, "Expected 3 packages (a, b)")
+        kotlin.test.assertEquals(2, module.packages.size, "Expected 2 packages (a, b)")
 
         val a = module.packages[CirPackageName.create("a")] ?: kotlin.test.fail("Missing a package")
         val b = module.packages[CirPackageName.create("b")] ?: kotlin.test.fail("Missing b package")

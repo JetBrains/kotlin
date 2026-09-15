@@ -10,7 +10,16 @@ class SerializedMetadata(
     val fragments: List<List<ByteArray>>,
     val fragmentNames: List<String>,
     val metadataVersion: IntArray,
-)
+) {
+    init {
+        require(fragments.size == fragmentNames.size) {
+            "The number of package fragments (${fragments.size}) does not match the number of package FQ names (${fragmentNames.size})"
+        }
+        fragments.forEachIndexed { index, fragmentParts ->
+            require(fragmentParts.isNotEmpty()) { "Package '${fragmentNames[index]}' has no package fragments" }
+        }
+    }
+}
 
 class SerializedDeclaration(val id: Int, val bytes: ByteArray) {
     val size = bytes.size
