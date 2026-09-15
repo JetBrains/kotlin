@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.gradle.utils.mapToFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.utils.reportXcodeError
 import java.io.File
 import java.nio.file.Paths

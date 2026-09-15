@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftEx
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.whenSwiftPMImportAvailable
-import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask

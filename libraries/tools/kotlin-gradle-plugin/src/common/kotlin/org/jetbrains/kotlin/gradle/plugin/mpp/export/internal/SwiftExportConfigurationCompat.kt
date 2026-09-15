@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp.export
+package org.jetbrains.kotlin.gradle.plugin.mpp.export.internal
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.model.ObjectFactory
@@ -19,15 +19,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
-import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
 
 /**
- * A common interface for [SwiftExportConfiguration] and [org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension]
- * used during the migration from the latter to the former. Will be removed once the legacy
- * [org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension] is fully deprecated.
+ * A common interface for [SwiftExportConfiguration] and [SwiftExportExtension] used during the migration from the latter to the former.
+ * Will be removed once the legacy [SwiftExportExtension] is fully deprecated.
  */
 internal interface SwiftExportConfigurationCompat {
     /**
