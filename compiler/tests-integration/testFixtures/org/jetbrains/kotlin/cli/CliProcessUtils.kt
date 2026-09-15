@@ -15,11 +15,23 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 object CliProcessUtils {
+    sealed class ExpectedText {
+        abstract fun matches(text: String): Boolean
+
+        data class ExactMatch(val value: String) : ExpectedText() {
+            override fun matches(text: String): Boolean = text.trim() == value.trim()
+        }
+
+        data class Pattern(val value: Regex) : ExpectedText() {
+            override fun matches(text: String): Boolean = value.matches(text.trim())
+        }
+    }
+
     fun runProcess(
         executableName: String,
         vararg args: String,
         expectedStdout: String,
-        expectedStderr: String,
+        expectedStderr: ExpectedText,
         expectedExitCode: Int,
         workDirectory: File? = null,
         environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath),
@@ -31,7 +43,7 @@ object CliProcessUtils {
             executableName = executableName,
             args = args,
             checkStdout = { stdout -> assertEquals(expectedStdout.trim(), stdout.trim()) },
-            checkStderr = { stderr -> assertEquals(expectedStderr.trim(), stderr.trim()) },
+            checkStderr = { stderr -> assertTrue(expectedStderr.matches(stderr)) },
             expectedExitCode = expectedExitCode,
             workDirectory = workDirectory,
             environment = environment,
