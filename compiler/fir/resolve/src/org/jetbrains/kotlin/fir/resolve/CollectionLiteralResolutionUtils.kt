@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -109,10 +110,14 @@ fun CollectionLiteralBounds?.toConeDiagnostic(): ConeDiagnostic {
 
 context(context: ResolutionContext)
 fun buildCollectionLiteralCallForFallback(collectionLiteral: FirCollectionLiteral): FirFunctionCall {
-    val packageName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
-    val functionName = CollectionNames.Factories.LIST_OF
-
-    return context.bodyResolveComponents.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
+    // rhs of elvis here is somewhat redundant, but let's leave it in case `toSymbol` call returns null in some corner cases
+    return tryAllCLResolutionStrategies {
+        prepareRawCall(collectionLiteral, StandardClassIds.List.toSymbol() as? FirRegularClassSymbol)
+    } ?: context.bodyResolveComponents.buildCollectionLiteralCallForStdlibType(
+        StandardNames.COLLECTIONS_PACKAGE_FQ_NAME,
+        CollectionNames.Factories.LIST_OF,
+        collectionLiteral,
+    )
 }
 
 fun BodyResolveComponents.buildCollectionLiteralCallForStdlibType(
