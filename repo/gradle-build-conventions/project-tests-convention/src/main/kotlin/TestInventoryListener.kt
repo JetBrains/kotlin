@@ -18,9 +18,13 @@ import java.io.File
  *  3. duration   - wall-clock execution time in milliseconds.
  *
  * The full name is derived to match TeamCity's test naming so the inventory aligns with the names TeamCity
- * reports for the same tests (see the linked TeamCity Gradle init script on [getTestName]).
+ * reports for the same tests (see [toTestPath]).
  *
  * The format intentionally has no header row, as it is consumed positionally by external tooling.
+ *
+ * Because the suite names and the test name are joined, the nesting cannot be recovered from this file:
+ * the separator may also occur inside a test name. [TestExecutionsListener] keeps the same data with the
+ * nesting preserved, for consumers that need it.
  */
 class TestInventoryListener(private val taskName: String, buildDir: Provider<File>) : TestListener {
     val inventoryFile = buildDir.map { it.resolve("test-inventory").resolve(taskName).resolve("test-inventory.tsv") }
@@ -30,44 +34,9 @@ class TestInventoryListener(private val taskName: String, buildDir: Provider<Fil
         val WHITESPACE = Regex("[\t\r\n]")
     }
 
-    // See https://jetbrains.team/p/tc/repositories/teamcity-gradle/files/a7fe40dfe94c4af5c4407003fb6fecaed4cc6795/gradle-runner-agent/src/main/scripts/init_since_8.gradle
-    private fun TestDescriptor.getTestName(): String {
-        val methodName = name.takeWhile { it !in "([{<" }
-        val testName = if (displayName.startsWith(methodName)) displayName else "$methodName($displayName)"
-        return testName.takeUnless { it == "$methodName()" } ?: methodName
-    }
-
     override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
-        val className = testDescriptor.className
-        val suites = generateSequence(testDescriptor.parent) { it.parent }
-            .map { it.name }
-            .dropWhile { it == className }
-            .filterNot {
-                it.startsWith("Gradle Test Executor") ||
-                        it.startsWith("Gradle Test Run") ||
-                        it.startsWith("Partition") ||
-                        it == taskName ||
-                        it == "$taskName.$className"
-            }
-            .toList()
-            .asReversed()
-
-        val status = when (result.resultType) {
-            TestResult.ResultType.FAILURE -> "Failure"
-            TestResult.ResultType.SUCCESS -> "OK"
-            TestResult.ResultType.SKIPPED -> "Ignored"
-        }
-
-        val duration = result.endTime - result.startTime
-        val testName = testDescriptor.getTestName()
-        val leaf = className?.let { "$it.$testName" } ?: testName
-
-        if (leaf.endsWith("'")) {
-            error("Test $leaf ends with ' (apostrophe) symbol and may be processed incorrectly by TeamCity (TW-101796)")
-        }
-
-        val fullName = (suites + leaf).joinToString(": ").replace(WHITESPACE, " ")
-        records += "$fullName\t$status\t$duration"
+        val fullName = testDescriptor.toTestPath(taskName).joinToTeamCityName().replace(WHITESPACE, " ")
+        records += "$fullName\t${result.statusName()}\t${result.durationMillis}"
     }
 
     override fun afterSuite(suite: TestDescriptor, result: TestResult) {
