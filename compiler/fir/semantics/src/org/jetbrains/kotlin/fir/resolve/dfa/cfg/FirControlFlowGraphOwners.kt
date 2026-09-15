@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
@@ -84,5 +85,20 @@ val FirBasedSymbol<*>.isUsedInControlFlowGraphBuilderForFile: Boolean
 val FirControlFlowGraphOwner.isUsedInControlFlowGraphBuilderForScript: Boolean
     get() = when (this) {
         is FirProperty, is FirField, is FirAnonymousInitializer -> memberShouldHaveGraph
+        else -> false
+    }
+
+/**
+ * Whether this is a container which always gets a graph of its own, so that a missing graph means it is not resolved yet.
+ *
+ * A missing graph is otherwise ambiguous. An owner which never gets one keeps its content in the graph being traversed – a local
+ * property is such an owner, it is a statement of the container graph and gets no graph of its own even with an initializer, so
+ * the traversal has to descend into it. A container keeps its content in its own graph instead, and descending into an unresolved
+ * one would collect properties the traversed graph knows nothing about. In the Analysis API a container is analyzed without its
+ * nested declarations being resolved, so an unresolved nested container is reachable there.
+ */
+val FirElement.isContainerWithOwnGraph: Boolean
+    get() = when (this) {
+        is FirFile, is FirScript, is FirClass -> true
         else -> false
     }

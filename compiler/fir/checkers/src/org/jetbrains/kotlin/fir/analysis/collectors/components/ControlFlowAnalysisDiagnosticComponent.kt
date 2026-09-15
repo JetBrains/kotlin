@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isContainerWithOwnGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClassOrStatic
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForScript
@@ -173,21 +174,6 @@ class ControlFlowAnalysisDiagnosticComponent(
                 else -> element.acceptChildren(this, data)
             }
         }
-
-        /**
-         * Whether this is a container which always gets a graph of its own, so that a missing graph means it is not resolved yet.
-         *
-         * A missing graph is otherwise ambiguous. An owner which never gets one keeps its content in the graph being traversed – a local
-         * property is such an owner, it is a statement of the container graph and gets no graph of its own even with an initializer, so
-         * the traversal has to descend into it. A container keeps its content in its own graph instead, and descending into an unresolved
-         * one would collect properties the traversed graph knows nothing about. In the Analysis API a container is analyzed without its
-         * nested declarations being resolved, so an unresolved nested container is reachable there.
-         */
-        private val FirElement.isContainerWithOwnGraph: Boolean
-            get() = when (this) {
-                is FirFile, is FirScript, is FirClass -> true
-                else -> false
-            }
 
         override fun visitProperty(property: FirProperty, data: Set<ControlFlowGraph>) {
             if (
