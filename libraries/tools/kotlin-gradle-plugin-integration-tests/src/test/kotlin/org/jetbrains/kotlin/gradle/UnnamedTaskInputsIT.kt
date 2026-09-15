@@ -58,7 +58,6 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
     @MppGradlePluginTests
     @DisplayName("MPP")
     @GradleTest
-    @Disabled("TODO KT-???") // TheCallerIniOSMacos.kt: Unresolved reference 'platform'
     fun inputsMpp(gradleVersion: GradleVersion) {
         project(
             "hierarchical-mpp-multi-modules",
