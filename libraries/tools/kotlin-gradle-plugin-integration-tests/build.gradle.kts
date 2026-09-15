@@ -380,6 +380,12 @@ val kgpTestingUtilities = configurations.detachedConfiguration(
     it.isTransitive = false
 }
 
+val buildScriptInjectionTestDependencies = configurations.detachedConfiguration(
+    dependencies.create(dependencies.project(":kotlin-test")),
+).apply {
+    isTransitive = false
+}
+
 tasks.withType<Test>().configureEach {
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
@@ -480,6 +486,7 @@ tasks.withType<Test>().configureEach {
     // This is a classpath that the injections will see
     val buildScriptInjectionsClasspath = files(
         kgpTestingUtilities,
+        buildScriptInjectionTestDependencies,
         kotlin.target.compilations.getByName("test").output.classesDirs,
     )
     doFirst {
