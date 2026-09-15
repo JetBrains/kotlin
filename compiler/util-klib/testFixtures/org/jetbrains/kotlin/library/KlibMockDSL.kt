@@ -96,7 +96,6 @@ class KlibMockDSL(val currentDir: Path, val parent: KlibMockDSL?) {
                 bodies = random.nextBytes(100_000),
                 declarations = random.nextBytes(10_000),
                 debugInfo = random.nextBytes(10_000),
-                backendSpecificMetadata = null, // never written to the disk
                 fileEntries = random.nextBytes(1_000)
             )
         }

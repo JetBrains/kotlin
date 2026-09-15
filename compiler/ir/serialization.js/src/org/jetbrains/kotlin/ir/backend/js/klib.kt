@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrFileMetadata
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectJsExportNames
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
-import org.jetbrains.kotlin.utils.toSmartList
 import java.io.File
 import java.nio.file.Path
 import java.util.*
@@ -51,9 +49,6 @@ val KotlinLibrary.serializedIrFileFingerprints: List<SerializedIrFileFingerprint
 
 val KotlinLibrary.serializedKlibFingerprint: SerializedKlibFingerprint?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT)?.let { SerializedKlibFingerprint.fromString(it) }
-
-internal val SerializedIrFile.fileMetadata: ByteArray
-    get() = backendSpecificMetadata ?: error("Expect file caches to have backendSpecificMetadata, but '$path' doesn't")
 
 /**
  * Note: This function returns the list of the deserialized [IrModuleFragment]s that has exactly the same
@@ -272,7 +267,7 @@ fun serializeModuleIntoKlib(
                     settings = IrSerializationSettings(configuration),
                     irDiagnosticReporter,
                     irBuiltIns,
-                ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList()) }
+                )
             },
             metadataSerializer = metadataSerializer,
             processCompiledFileData = incrementalResultsConsumer?.let { icConsumer ->
@@ -288,7 +283,6 @@ fun serializeModuleIntoKlib(
                             declarations,
                             bodies,
                             fqName.toByteArray(),
-                            fileMetadata,
                             debugInfo,
                             fileEntries,
                         )
@@ -388,7 +382,6 @@ fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): Li
                 bodies,
                 declarations,
                 debugInfo,
-                fileMetadata,
                 fileEntries,
             )
         }

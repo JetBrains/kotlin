@@ -177,10 +177,6 @@ open class IrFileSerializer(
     private var isInsideInline: Boolean = false
     private var fileContainsInline = false
 
-    interface FileBackendSpecificMetadata {
-        fun toByteArray(): ByteArray
-    }
-
     sealed class XStatementOrExpression {
         abstract fun toByteArray(): ByteArray
 
@@ -1472,7 +1468,6 @@ open class IrFileSerializer(
     open fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer): Boolean = false
     open fun keepOrderOfProperties(property: IrProperty): Boolean = !property.isConst
     open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
-    open fun backendSpecificMetadata(irFile: IrFile): FileBackendSpecificMetadata? = null
 
     private fun skipIfPrivate(declaration: IrDeclaration) =
         settings.publicAbiOnly
@@ -1592,7 +1587,6 @@ open class IrFileSerializer(
             bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
             debugInfo = IrStringWriter(protoDebugInfoArray, useVarIntInDataArrays).writeIntoMemory(),
-            backendSpecificMetadata = backendSpecificMetadata(file)?.toByteArray(),
             fileEntries = with(protoIrFileEntryArray) {
                 if (isNotEmpty()) {
                     IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory()
@@ -1634,7 +1628,6 @@ open class IrFileSerializer(
             bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
             debugInfo = IrStringWriter(protoDebugInfoArray, useVarIntInDataArrays).writeIntoMemory(),
-            backendSpecificMetadata = null,
             fileEntries = IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
         )
     }
