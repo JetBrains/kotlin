@@ -693,9 +693,11 @@ with bodies.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @all:Deprecated("")
     @Argument(
         value = "-Xmulti-dollar-interpolation",
         description = "Enable experimental multi-dollar interpolation.",
+        deprecatedVersion = "2.5.0",
     )
     @Enables(LanguageFeature.MultiDollarInterpolation)
     var multiDollarInterpolation: Boolean = false
@@ -759,9 +761,11 @@ with bodies.""",
             field = value
         }
 
+    @all:Deprecated("")
     @Argument(
         value = "-Xnon-local-break-continue",
         description = "Enable experimental non-local break and continue.",
+        deprecatedVersion = "2.5.0",
     )
     @Enables(LanguageFeature.BreakContinueInInlineLambdas)
     var nonLocalBreakContinue: Boolean = false
@@ -1033,9 +1037,11 @@ with bodies.""",
             field = value
         }
 
+    @all:Deprecated("")
     @Argument(
         value = "-Xwhen-guards",
         description = "Enable experimental language support for when guards.",
+        deprecatedVersion = "2.5.0",
     )
     @Enables(LanguageFeature.WhenGuards)
     var whenGuards: Boolean = false

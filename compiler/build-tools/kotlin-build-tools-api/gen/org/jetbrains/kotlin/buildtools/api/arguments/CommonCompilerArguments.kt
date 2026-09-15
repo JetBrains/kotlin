@@ -583,9 +583,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental multi-dollar interpolation.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_MULTI_DOLLAR_INTERPOLATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_MULTI_DOLLAR_INTERPOLATION", KotlinReleaseVersion(2, 0, 20))
 
@@ -639,9 +642,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental non-local break and continue.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_NON_LOCAL_BREAK_CONTINUE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_NON_LOCAL_BREAK_CONTINUE", KotlinReleaseVersion(2, 1, 0))
 
@@ -940,9 +946,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental language support for when guards.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_WHEN_GUARDS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_WHEN_GUARDS", KotlinReleaseVersion(2, 0, 20))
 

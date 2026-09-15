@@ -216,6 +216,7 @@ where advanced options include:
   -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.
   -Xmetadata-version         Change the metadata version of the generated binary files.
   -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. It enables the features that are already on by default in every supported language version.
   -Xmulti-platform           Enable language support for multiplatform projects.
   -Xname-based-destructuring=only-syntax|name-mismatch|complete
                              Enables the following destructuring features:
@@ -225,6 +226,7 @@ where advanced options include:
   -Xnested-type-aliases      Enable experimental language support for nested type aliases.
   -Xno-inline                Disable method inlining.
   -Xnon-local-break-continue Enable experimental non-local break and continue.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. It enables the features that are already on by default in every supported language version.
   -Xphases-to-dump           Dump the backend's state both before and after these phases.
   -Xphases-to-dump-after     Dump the backend's state after these phases.
   -Xphases-to-dump-before    Dump the backend's state before these phases.
@@ -261,6 +263,7 @@ where advanced options include:
                              - `disabled` level suppresses reporting of a warning (similar to -nowarn but more granular)
                              - `warning` level overrides -nowarn and -Werror for this specific warning (the warning will be reported/won't be considered as an error)
   -Xwhen-guards              Enable experimental language support for when guards.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. It enables the features that are already on by default in every supported language version.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

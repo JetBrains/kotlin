@@ -1,7 +1,9 @@
 import gradle.GradlePluginVariant
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.nio.file.Paths
 
 plugins {
@@ -36,10 +38,28 @@ kotlin {
             "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
             "kotlin.io.path.ExperimentalPathApi",
         )
+        // Avoid having to use JvmSerializableLambda in build script injections
+        freeCompilerArgs.add("-Xlambdas=class")
+    }
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        // The test sources use multi-dollar string templates. The feature is stable since 2.2, but
+        // `gradle-plugin-published-compiler-dependency-configuration` pins this module to an older language
+        // version, where the flag is still required. Passing it at 2.2 and above would be reported as
+        // REDUNDANT_CLI_ARG, so add it only while the pinned language version is below 2.2.
+        //
+        // The argument itself is deprecated since 2.5.0 (the feature is on by default in every supported
+        // language version), so it also has to have DEPRECATED_CLI_ARG suppressed for as long as it is needed.
         freeCompilerArgs.addAll(
-            // Avoid having to use JvmSerializableLambda in build script injections
-            "-Xlambdas=class",
-            "-Xmulti-dollar-interpolation",
+            languageVersion.map { languageVersion ->
+                if (languageVersion < @Suppress("DEPRECATION") KotlinVersion.KOTLIN_2_2) {
+                    listOf("-Xmulti-dollar-interpolation", "-Xwarning-level=DEPRECATED_CLI_ARG:disabled")
+                } else {
+                    emptyList()
+                }
+            }
         )
     }
 }
