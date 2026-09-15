@@ -13,7 +13,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderConvertible
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
-import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelectorFactory
@@ -40,13 +39,6 @@ internal const val EXPORT_EXTENSION_NAME = "export"
  *
  * @since 2.5.0
  */
-/*
-We can't mark top level extensions with @ExperimentalExportDsl because
-in buildSrc Gradle always creates accessors for these extensions which cause the opt-in error,
-which cannot be suppressed.
-
-See Gradle issue https://github.com/gradle/gradle/issues/32019
- */
 @KotlinGradlePluginDsl
 abstract class ExportExtension @Inject internal constructor(
     objectFactory: ObjectFactory,
@@ -70,7 +62,7 @@ abstract class ExportExtension @Inject internal constructor(
     /**
      * Configure Swift Export.
      */
-    @ExperimentalExportDsl
+    @ExperimentalSwiftExportDsl
     fun swift(configure: SwiftExportConfigurationDsl.() -> Unit) {
         isSwiftExportConfigured = true
         defaultSwiftExportConfiguration.configure()
@@ -79,7 +71,7 @@ abstract class ExportExtension @Inject internal constructor(
     /**
      * Configure Swift Export.
      */
-    @ExperimentalExportDsl
+    @ExperimentalSwiftExportDsl
     fun swift(configure: Action<SwiftExportConfigurationDsl>) = swift {
         configure.execute(this)
     }
