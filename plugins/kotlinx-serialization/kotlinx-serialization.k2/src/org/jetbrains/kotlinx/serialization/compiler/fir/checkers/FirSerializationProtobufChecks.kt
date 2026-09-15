@@ -167,7 +167,7 @@ internal fun CheckerContext.checkProtobufAnnotationTargets(
         // The value of a oneof group is one of several message types, so anything that maps onto a scalar
         // protobuf field cannot hold it.
         report(
-            SerializationAnnotations.protoOneOfAnnotationClassId,
+            protoOneOfAnnotationClassId,
             "properties of non-scalar types",
             isApplicable = !type.isPrimitiveOrNullablePrimitive
                     && type.classId != StandardClassIds.String
