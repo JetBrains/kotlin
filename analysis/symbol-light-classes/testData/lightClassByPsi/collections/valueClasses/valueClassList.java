@@ -9,9 +9,6 @@ public abstract class CList /* test.CList*/ implements java.util.List<@org.jetbr
   public @org.jetbrains.annotations.NotNull() kotlin.UInt set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
-
-  @java.lang.Override()
   public abstract boolean contains(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  contains(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
@@ -40,9 +37,6 @@ public abstract class CList /* test.CList*/ implements java.util.List<@org.jetbr
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
 
   @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
@@ -95,9 +89,6 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
   public @org.jetbrains.annotations.NotNull() kotlin.UInt set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
-
-  @java.lang.Override()
   public abstract boolean contains(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  contains(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
@@ -129,9 +120,6 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
 
   @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
@@ -187,9 +175,6 @@ public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.an
   public @org.jetbrains.annotations.NotNull() kotlin.UInt set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
-
-  @java.lang.Override()
   public abstract boolean contains(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  contains(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
@@ -221,9 +206,6 @@ public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.an
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
 
   @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)

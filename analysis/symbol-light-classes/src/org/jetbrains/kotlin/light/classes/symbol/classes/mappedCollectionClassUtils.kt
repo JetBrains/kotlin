@@ -388,18 +388,19 @@ private fun createMethodsWithSpecialSignature(
     }
 
     // Remaining cases: one type parameter
-    if (method.name == "remove") {
-        if (method.parameterList.parameters.singleOrNull()?.type == PsiTypes.intType()) {
-            // remove(int) -> final bridge remove(int), abstract removeAt(int)
-            return listOf(
-                method.finalBridge(containingClass, substitutor),
-                method.wrap(containingClass, substitutor, name = "removeAt")
-            )
-        } else if (javaCollectionPsiClass.qualifiedName == CommonClassNames.JAVA_UTIL_ITERATOR) {
-            // skip default method java.util.Iterator#remove()
-            return emptyList()
-        }
+    if (method.name == "remove" && method.parameterList.parameters.singleOrNull()?.type == PsiTypes.intType()) {
+        // remove(int) -> final bridge remove(int), abstract removeAt(int)
+        return listOf(
+            method.finalBridge(containingClass, substitutor),
+            method.wrap(containingClass, substitutor, name = "removeAt")
+        )
     }
+
+    // Only a method with the erased element parameter, like `contains(Object)`, has a Kotlin variant with a different signature.
+    // For example, `get(int)` of `java.util.List` and `remove()` of `java.util.ListIterator` are the same in Kotlin,
+    // unlike `get(Object)` of `java.util.Map` handled above.
+    val javaParameterType = method.parameterList.parameters.singleOrNull()?.type ?: return emptyList()
+    if (!javaParameterType.isJavaLangObject()) return emptyList()
 
     val psiType = substitutor.substitutionMap.values.singleOrNull() ?: return emptyList()
     if (psiType.isTypeParameter()) return emptyList()
@@ -411,6 +412,9 @@ private fun createMethodsWithSpecialSignature(
 
 internal fun PsiType.isTypeParameter(): Boolean =
     this is PsiClassType && this.resolve() is PsiTypeParameter
+
+internal fun PsiType.isJavaLangObject(): Boolean =
+    this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
 
 private fun createJavaUtilMapMethodWithSpecialSignature(
     containingClass: SymbolLightClassForClassOrObject,

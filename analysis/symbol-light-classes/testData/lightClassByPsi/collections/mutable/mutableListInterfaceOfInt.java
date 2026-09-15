@@ -3,9 +3,6 @@ public abstract class CMutableList /* test.CMutableList*/ implements test.IMutab
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
-
-  @java.lang.Override()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.Integer removeAt(int);//  removeAt(int)
 
   @java.lang.Override()
@@ -22,9 +19,6 @@ public abstract class CMutableList /* test.CMutableList*/ implements test.IMutab
 
   @java.lang.Override()
   public abstract int lastIndexOf(int);//  lastIndexOf(int)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
 
   @java.lang.Override()
   public final @org.jetbrains.annotations.NotNull() java.lang.Integer remove(int);//  remove(int)
