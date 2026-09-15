@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.support.serviceOf
+
 /*
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -39,12 +41,15 @@
  * Both tasks inherit `mustRunAfter` from the module's `test` task, ensuring proper execution
  * order when running across modules (e.g., golden modules first).
  */
-tasks.register<CheckTestDataModuleTask>(checkTestDataTaskName) {
-    wireOptions(checkTestDataTaskName)
-}
+val buildFeatures = serviceOf<BuildFeatures>()
+if (!buildFeatures.isolatedProjects.active.get()) {
+    tasks.register<CheckTestDataModuleTask>(checkTestDataTaskName) {
+        wireOptions(checkTestDataTaskName)
+    }
 
-tasks.register<UpdateTestDataModuleTask>(updateTestDataTaskName) {
-    wireOptions(updateTestDataTaskName)
+    tasks.register<UpdateTestDataModuleTask>(updateTestDataTaskName) {
+        wireOptions(updateTestDataTaskName)
+    }
 }
 /**
  * Wires a test-data manager-style [JavaExec] task to mirror the module's regular `test` task

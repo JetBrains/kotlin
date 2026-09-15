@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -13,12 +14,15 @@ plugins {
 kotlin {
     jvm()
 
-    @OptIn(ExperimentalWasmDsl::class)
-    /*wasmJs {
-        browser()
-        //nodejs()
-        d8()
-    }*/
+    val buildFeatures = serviceOf<BuildFeatures>()
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs {
+            browser()
+            nodejs()
+            d8()
+        }
+    }
 
     sourceSets {
         val commonMain = getByName("commonMain") {

@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.support.serviceOf
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -70,9 +72,12 @@ fun Project.customCompilerTest(
         with(binaryenKotlinBuild) {
             setupBinaryen()
         }
-/*        with(wasmNodeJsKotlinBuild) {
-            setupNodeJs(nodejsVersion)
-        }*/
+        val buildFeatures = project.serviceOf<BuildFeatures>()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            with(wasmNodeJsKotlinBuild) {
+                setupNodeJs(nodejsVersion)
+            }
+        }
         body()
     }
 }
