@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -133,10 +134,12 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
                 is KotlinAndroidTarget -> project.whenEvaluated {
                     kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
                 }
-                is KotlinNativeTarget -> {
-                    project.launch {
+                is KotlinTargetWithKotlinArchiveSupport -> project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
+                    if (kotlinTarget is KotlinNativeTarget) {
                         val crossCompilationSupported = kotlinTarget.crossCompilationOnCurrentHostSupported.await()
-                        if (!crossCompilationSupported) return@launch
+                        if (!crossCompilationSupported) return@launchInStage
+                    }
+                    if (!kotlinTarget.isStoredInKotlinArchive.get()) {
                         kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
                     }
                 }
