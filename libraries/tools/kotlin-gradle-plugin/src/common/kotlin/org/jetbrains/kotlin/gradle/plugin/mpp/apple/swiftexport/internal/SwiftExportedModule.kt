@@ -117,7 +117,7 @@ internal fun collectModules(
                 putAll(metadataConfiguration.metadataByComponent(reportDiagnostic))
             }
             if (sharedMetadata != null) {
-                putAll(sharedMetadata.metadataByComponent())
+                putAll(sharedMetadata.metadataByComponent(reportDiagnostic))
             }
         },
         exportConfiguration = exportConfiguration,
@@ -227,14 +227,28 @@ internal fun LazyResolvedConfigurationWithArtifacts.metadataByComponent(
  * Reads the Swift Export metadata shared by same-build subproject dependencies as a secondary variant, keyed by the
  * owning [ProjectComponentIdentifier] so it can be correlated with the klib artifacts the same way the published
  * metadata is (both use [ResolvedArtifactWithVersionIdentifier.rootComponentId], i.e. `resolvedVariant.owner`).
- * Entries with an incompatible [SwiftExportMetadata.schemaVersion] are skipped.
+ * Malformed entries and entries with an incompatible [SwiftExportMetadata.schemaVersion] are skipped.
  */
-private fun KotlinProjectSharedDataProvider<SwiftExportMetadata>.metadataByComponent(): Map<ComponentIdentifier, SwiftExportMetadata> {
+internal fun KotlinProjectSharedDataProvider<SwiftExportMetadata>.metadataByComponent(
+    reportDiagnostic: (ToolingDiagnostic) -> Unit,
+): Map<ComponentIdentifier, SwiftExportMetadata> {
     return buildMap {
         for (dependency in allResolvedDependencies) {
+            val componentOwnerId = dependency.resolvedVariant.owner
+            // getProjectDataFromDependencyOrNull swallows deserialization exceptions and returns null, so no need
+            // to catch errors here.
             val metadata = getProjectDataFromDependencyOrNull(dependency) ?: continue
-            if (metadata.schemaVersion != SWIFT_EXPORT_METADATA_SCHEMA_VERSION) continue
-            put(dependency.resolvedVariant.owner, metadata)
+            if (metadata.schemaVersion != SWIFT_EXPORT_METADATA_SCHEMA_VERSION) {
+                reportDiagnostic(
+                    KotlinToolingDiagnostics.SwiftExportUnsupportedMetadataSchemaVersion(
+                        componentOwnerId.displayName,
+                        metadata.schemaVersion,
+                        SWIFT_EXPORT_METADATA_SCHEMA_VERSION,
+                    )
+                )
+                continue
+            }
+            put(componentOwnerId, metadata)
         }
     }
 }
