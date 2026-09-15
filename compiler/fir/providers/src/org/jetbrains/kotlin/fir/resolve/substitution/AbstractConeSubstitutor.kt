@@ -94,7 +94,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
 
     private fun ConeUnionType.substituteUnionType(): ConeKotlinType? {
         var somethingIsSubstituted = false
-        val substitutedPrimaryType = substituteOrNull(primaryType)?.also { somethingIsSubstituted = true}
+        val substitutedPrimaryType = substituteOrNull(primaryType)?.also { somethingIsSubstituted = true }
             ?: primaryType
 
         val substitutedRichErrorTypes = richErrorTypes.map {

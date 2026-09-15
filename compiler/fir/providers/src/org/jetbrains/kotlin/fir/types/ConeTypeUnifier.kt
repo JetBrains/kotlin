@@ -16,7 +16,7 @@ object ConeTypeUnifier {
         typeContext: ConeTypeContext,
     ): ConeKotlinType {
         return when (primaryType) {
-            is ConeRigidType? -> unify(primaryType, richErrorTypes, attributes, typeContext)
+            is ConeRigidType -> unify(primaryType, richErrorTypes, attributes, typeContext)
             is ConeFlexibleType -> unify(primaryType, richErrorTypes, attributes, typeContext)
         }
     }
