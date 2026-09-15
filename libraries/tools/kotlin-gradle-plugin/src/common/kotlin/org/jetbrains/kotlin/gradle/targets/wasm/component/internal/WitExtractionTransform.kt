@@ -40,7 +40,7 @@ internal abstract class WitExtractionTransform @Inject constructor(
         val klib = inputArtifact.get().asFile
 
         if (klib.isDirectory) {
-            val witDirectory = klib.resolve(WIT)
+            val witDirectory = klib.resolve(WIT_DIRECTORY_NAME)
             if (!witDirectory.isDirectory) return
 
             fileOperations.copy {
@@ -52,7 +52,7 @@ internal abstract class WitExtractionTransform @Inject constructor(
         }
 
         val witFiles = archiveOperations.zipTree(klib)
-            .matching { it.include("$WIT/**") }
+            .matching { it.include("$WIT_DIRECTORY_NAME/**") }
 
         if (witFiles.isEmpty) return
 
@@ -71,5 +71,5 @@ internal abstract class WitExtractionTransform @Inject constructor(
     }
 
     private fun outputDirectoryName(klib: File): String =
-        "${klib.name}-$WIT"
+        "${klib.name}-$WIT_DIRECTORY_NAME"
 }

@@ -17,20 +17,31 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WIT
+import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WIT_DIRECTORY_NAME
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
+import java.io.File
 import javax.inject.Inject
 
 /**
  * Produces a WebAssembly component out of a core Wasm module using `wasm-tools`.
  *
- * The task runs two commands sequentially:
- * - `wasm-tools component embed <witDirectory> <inputFile> -o <embeddedFile>`
- *   embeds the WIT declarations into the core module,
- *   all directories of [witDirectory] are merged into a single one beforehand
- * - `wasm-tools component new <embeddedFile> -o <componentFile>`
- *   converts the core module with embedded declarations into a component
+ * Every WIT project of [witDirectory] is embedded into the module by its own
+ * `wasm-tools component embed` run, each run taking the result of the previous one as its input,
+ * and the last result is converted into a component by a single `wasm-tools component new` run:
+ *
+ * ```
+ * inputFile --embed(witDirectory[0])--> ... --embed(witDirectory[n])--> new --> componentFile
+ * ```
+ *
+ * Every WIT project is resolved independently, so it must be self-contained:
+ * one root package declaring a world plus all packages it references under `deps`.
+ *
+ * Declarations of all runs are merged by `wasm-tools component new` into a single world of the component,
+ * so the module has to export everything that all these worlds export together,
+ * while imports which the module does not use are dropped.
+ *
+ * Intermediate modules are stored in the temporary directory of the task.
  *
  * `wasm-tools` is expected to be available in `PATH`,
  * otherwise [executable] must point to the `wasm-tools` binary.
@@ -61,13 +72,18 @@ internal constructor() : DefaultTask() {
     abstract val inputFile: RegularFileProperty
 
     /**
-     * Directories with all WIT declarations of the component.
+     * WIT projects to be embedded into the component.
      *
-     * By default, it contains the `wit` directories of all external runtime dependencies of the compilation,
-     * extracted from the dependency klibs.
+     * Every directory of this collection is a self-contained WIT project
+     * embedded by its own `wasm-tools component embed` run, one after another.
+     * Directories are never merged with each other,
+     * so packages of different projects never conflict.
      *
-     * Contents of all these directories are merged into a single directory,
-     * which is then passed to the `wasm-tools component embed` command.
+     * By default, it contains the `wit` directories of all runtime dependencies of the compilation,
+     * followed by the `wit` directory of the project itself,
+     * which is therefore embedded last.
+     *
+     * Directories which do not exist or contain no files are skipped.
      */
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -75,7 +91,7 @@ internal constructor() : DefaultTask() {
     abstract val witDirectory: ConfigurableFileCollection
 
     /**
-     * Additional arguments of the `wasm-tools component embed` command.
+     * Additional arguments of every `wasm-tools component embed` run.
      */
     @get:Input
     abstract val embedArguments: ListProperty<String>
@@ -95,33 +111,40 @@ internal constructor() : DefaultTask() {
     @TaskAction
     fun run() {
         val wasmTools = executable.get()
-        val component = componentFile.getFile()
 
-        component.parentFile.mkdirs()
+        val inputModule = inputFile.getFile()
 
-        val embedded = temporaryDir.resolve(inputFile.getFile().name)
-
-        val witDir = temporaryDir.resolve(WIT)
+        val embedDir = temporaryDir.resolve(EMBED_DIRECTORY_NAME)
 
         fs.delete {
-            it.delete(witDir)
+            it.delete(embedDir)
         }
 
-        fs.copy {
-            it.from(witDirectory)
-            it.into(witDir)
-        }
+        val witProjects = witProjects().takeIf { it.isNotEmpty() } ?: return
 
-        execOperations.exec {
-            it.executable = wasmTools
-            it.args = listOf(
-                "component",
-                "embed",
-                witDir.absolutePath,
-                inputFile.getFile().absolutePath
-            ) +
-                    embedArguments.get() +
-                    listOf("-o", embedded.absolutePath)
+        val embedded = witProjects.foldIndexed(inputModule) { index: Int, acc: File, witProject: File ->
+            val newOutput = embedDir.resolve(index.toString()).resolve(inputModule.name)
+            newOutput.parentFile.mkdirs()
+
+            logger.debug(
+                "Embedding WIT project '{}' into '{}'",
+                witProject,
+                acc,
+            )
+
+            execOperations.exec {
+                it.executable = wasmTools
+                it.args = listOf(
+                    "component",
+                    "embed",
+                    witProject.absolutePath,
+                    acc.absolutePath
+                ) +
+                        embedArguments.get() +
+                        listOf("-o", newOutput.absolutePath)
+            }
+
+            newOutput
         }
 
         val adaptFile = temporaryDir
@@ -135,6 +158,7 @@ internal constructor() : DefaultTask() {
                     }
             }
 
+        val component = componentFile.getFile()
         component.parentFile.mkdirs()
         execOperations.exec {
             it.executable = wasmTools
@@ -150,11 +174,30 @@ internal constructor() : DefaultTask() {
         }
     }
 
+    /**
+     * WIT projects of [witDirectory] which can be passed to `wasm-tools component embed`,
+     * in the order they have to be embedded.
+     */
+    private fun witProjects(): List<File> =
+        witDirectory.files
+            .filter { witProject ->
+                val isWitProject = witProject.isDirectory &&
+                        witProject.listFiles().orEmpty().any { it.isFile }
+
+                if (!isWitProject) {
+                    logger.debug("Skipping '{}' as it is not a WIT project", witProject)
+                }
+
+                isWitProject
+            }
+
     companion object {
         /**
          * Default `wasm-tools` executable, resolved from `PATH`.
          */
         const val WASM_TOOLS_EXECUTABLE = "wasm-tools"
+
+        private const val EMBED_DIRECTORY_NAME = "embed"
 
         fun register(
             compilation: KotlinJsIrCompilation,
@@ -168,6 +211,7 @@ internal constructor() : DefaultTask() {
             ) {
                 it.executable.convention(WASM_TOOLS_EXECUTABLE)
                 it.witDirectory.from(witDirectories)
+                it.witDirectory.from(project.layout.projectDirectory.dir(WIT_DIRECTORY_NAME))
                 it.configuration()
             }
         }

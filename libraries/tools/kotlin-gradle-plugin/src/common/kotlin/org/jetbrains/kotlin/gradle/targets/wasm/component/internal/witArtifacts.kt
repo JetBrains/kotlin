@@ -13,13 +13,16 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 internal const val WIT = "kotlin-wasm-wit"
 
 /**
+ * Name of the directory with WIT declarations inside a klib and inside a project.
+ */
+internal const val WIT_DIRECTORY_NAME = "wit"
+
+/**
  * Directories with WIT declarations of all external runtime dependencies of [compilation].
  *
  * Every directory is the `wit` directory of a dependency klib extracted by [WitExtractionTransform],
  * dependencies without such a directory contribute nothing.
  *
- * Project dependencies are not taken into account,
- * their WIT declarations are supposed to be added to the component task directly.
  */
 internal fun witDirectoriesFromRuntimeDependencies(compilation: KotlinJsIrCompilation): FileCollection {
     val project = compilation.project
@@ -31,9 +34,6 @@ internal fun witDirectoriesFromRuntimeDependencies(compilation: KotlinJsIrCompil
         runtimeDependencyConfiguration
             .incoming
             .artifactView { view ->
-//                view.componentFilter { id ->
-//                    id is ModuleComponentIdentifier
-//                }
                 view.attributes { attributes ->
                     attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, WIT)
                 }
