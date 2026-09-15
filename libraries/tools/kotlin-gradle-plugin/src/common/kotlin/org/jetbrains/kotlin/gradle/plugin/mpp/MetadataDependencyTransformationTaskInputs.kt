@@ -38,10 +38,12 @@ internal class MetadataDependencyTransformationTaskInputs(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
-    val projectStructureMetadataFileCollection = kotlinSourceSet
-        .internal
-        .projectStructureMetadataResolvedConfiguration()
-        .files
+    val projectStructureMetadataFileCollection: FileCollection = if (keepProjectDependencies) {
+        kotlinSourceSet
+            .internal
+            .projectStructureMetadataResolvedConfiguration()
+            .files
+    } else project.files()
 
     @Suppress("unused") // Gradle input
     @get:InputFiles
