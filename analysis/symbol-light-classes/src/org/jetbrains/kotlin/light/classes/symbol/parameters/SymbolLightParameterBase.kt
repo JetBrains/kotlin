@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLightMethodBase) : PsiVariable, NavigationItem,
     KtLightElement<KtParameter, PsiParameter>, KtLightParameter, KtLightElementBase(containingDeclaration) {
-    protected val ktModule: KaModule get() = method.ktModule
+    val useSiteModule: KaModule get() = method.useSiteModule
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>
         get() = invalidAccess()

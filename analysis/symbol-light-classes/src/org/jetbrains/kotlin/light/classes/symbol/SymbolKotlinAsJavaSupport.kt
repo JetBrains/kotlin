@@ -36,13 +36,15 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightCla
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
-import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName as computeJavaMethodNameImpl
 import org.jetbrains.kotlin.light.classes.symbol.utils.SafeNestedNullableCaffeineCache
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -53,6 +55,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.time.Duration
 import java.util.*
+import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName as computeJavaMethodNameImpl
 
 private val KMP_CACHE: ThreadLocal<MutableMap<KtElement, KtLightClass?>> = ThreadLocal.withInitial { null }
 
@@ -498,7 +501,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
      */
     override fun getResolutionScope(file: FakeFileForLightClass): GlobalSearchScope {
         val analysisScopesForContextModules = file.classes.mapNotNullTo(mutableSetOf()) { lightClass ->
-            (lightClass as? SymbolLightClassBase)?.ktModule
+            (lightClass as? KaSymbolJavaView<*>)?.useSiteModule
         }.map { module ->
             analyzeForLightClasses(module) {
                 analysisScope

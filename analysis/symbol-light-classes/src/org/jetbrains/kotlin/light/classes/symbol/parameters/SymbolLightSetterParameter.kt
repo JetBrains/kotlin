@@ -26,13 +26,13 @@ internal class SymbolLightSetterParameter(
     }
 
     private val isDefaultSetterParameter: Boolean by lazyPub {
-        containingPropertySymbolPointer.withSymbol(ktModule) {
+        containingPropertySymbolPointer.withSymbol(useSiteModule) {
             it.setter?.isNotDefault != true
         }
     }
 
     override fun typeNullability(): NullabilityAnnotation {
-        val isLateInit = containingPropertySymbolPointer.withSymbol(ktModule) { it.isLateInit }
+        val isLateInit = containingPropertySymbolPointer.withSymbol(useSiteModule) { it.isLateInit }
         return if (isLateInit) NullabilityAnnotation.NON_NULLABLE else super.typeNullability()
     }
 

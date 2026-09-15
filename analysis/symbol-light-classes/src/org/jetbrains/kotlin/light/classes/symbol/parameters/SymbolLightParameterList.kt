@@ -11,7 +11,6 @@ import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiParameterList
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.contextParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -37,7 +36,7 @@ internal class SymbolLightParameterList(
     private val clsDelegate: PsiParameterList by lazyPub {
         val builder = LightParameterListBuilder(manager, language)
 
-        correspondingCallablePointer?.withSymbol(parent.ktModule) { callable ->
+        correspondingCallablePointer?.withSymbol(parent.useSiteModule) { callable ->
             for (parameterSymbol in callable.contextParameters) {
                 builder.addParameter(SymbolLightContextParameter(parameterSymbol, parent))
             }
