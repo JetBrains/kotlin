@@ -1,0 +1,9 @@
+/PrivateCompanion.kt:8:5: warning: The companion object of serializable class 'WithPrivateCompanion' is private, which makes the generated 'Companion.serializer' function inaccessible from other classes, from 'serializer<T>()', and from reflective serializer lookup. Make the companion object non-private.
+
+/PrivateCompanion.kt:15:5: warning: The companion object of serializable class 'WithNamedPrivateCompanion' is private, which makes the generated 'Named.serializer' function inaccessible from other classes, from 'serializer<T>()', and from reflective serializer lookup. Make the companion object non-private.
+
+/PrivateCompanion.kt:26:5: warning: The companion object of serializable class 'InternalClass' is private, which makes the generated 'Companion.serializer' function inaccessible from other classes, from 'serializer<T>()', and from reflective serializer lookup. Make the companion object non-private.
+
+/PrivateCompanion.kt:31:5: warning: The companion object of serializable class 'PublishedInternalClass' is private, which makes the generated 'Companion.serializer' function inaccessible from other classes, from 'serializer<T>()', and from reflective serializer lookup. Make the companion object non-private.
+
+/PrivateCompanion.kt:46:5: warning: The companion object of serializable class 'SealedWithPrivateCompanion' is private, which makes the generated 'Companion.serializer' function inaccessible from other classes, from 'serializer<T>()', and from reflective serializer lookup. Make the companion object non-private.

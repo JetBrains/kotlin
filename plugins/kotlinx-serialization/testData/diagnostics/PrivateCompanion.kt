@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 import kotlinx.serialization.*
 

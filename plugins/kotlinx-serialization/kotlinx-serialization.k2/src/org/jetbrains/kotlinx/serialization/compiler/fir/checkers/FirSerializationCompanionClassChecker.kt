@@ -66,6 +66,7 @@ internal fun CheckerContext.checkPrivateCompanion(
         companionObjectSymbol.source,
         FirSerializationErrors.PRIVATE_COMPANION_OF_SERIALIZABLE,
         classSymbol,
+        companionObjectSymbol,
         positioningStrategy = SourceElementPositioningStrategies.VISIBILITY_MODIFIER
     )
 }

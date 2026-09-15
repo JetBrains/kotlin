@@ -73,9 +73,10 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
         map.put(
             FirSerializationErrors.PRIVATE_COMPANION_OF_SERIALIZABLE,
             "The companion object of serializable class ''{0}'' is private, which makes the generated " +
-                    "''Companion.serializer()'' function inaccessible from other classes, from ''serializer<T>()'', " +
+                    "''{1}.serializer'' function inaccessible from other classes, from ''serializer<T>()'', " +
                     "and from reflective serializer lookup. Make the companion object non-private.",
-            FirDiagnosticRenderers.DECLARATION_NAME
+            FirDiagnosticRenderers.DECLARATION_NAME,
+            FirDiagnosticRenderers.DECLARATION_NAME,
         )
         map.put(
             FirSerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,
