@@ -27,13 +27,13 @@ internal class SymbolLightNoArgConstructor(
     containingClass: SymbolLightClassBase,
     private val visibility: String,
     methodIndex: Int,
-    isJvmExposedBoxed: Boolean,
+    generationMode: MethodGenerationMode,
     private val functionSymbolPointer: KaSymbolPointer<KaConstructorSymbol>? = null,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    isJvmExposedBoxed = isJvmExposedBoxed,
+    generationMode = generationMode,
 ) {
     override fun getName(): String = containingClass.name ?: ""
 
@@ -86,7 +86,7 @@ internal class SymbolLightNoArgConstructor(
 
     override fun equals(other: Any?): Boolean =
         this === other || other is SymbolLightNoArgConstructor &&
-                isJvmExposedBoxed == other.isJvmExposedBoxed &&
+                generationMode == other.generationMode &&
                 containingClass == other.containingClass
 
     override fun hashCode(): Int = containingClass.hashCode()

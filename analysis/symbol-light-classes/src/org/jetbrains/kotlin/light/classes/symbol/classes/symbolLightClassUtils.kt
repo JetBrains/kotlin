@@ -849,7 +849,8 @@ internal fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String
     return mangleInternalName(defaultName, module.stableModuleName ?: module.name)
 }
 
-private val KaAnnotatedSymbol.jvmNameFromAnnotation: String?
+/** The name provided by [JvmName], if any. */
+internal val KaAnnotatedSymbol.jvmNameFromAnnotation: String?
     get() = stringArgumentFromAnnotation(JvmStandardClassIds.Annotations.JvmName)
 
 private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(classId: ClassId): String? {
