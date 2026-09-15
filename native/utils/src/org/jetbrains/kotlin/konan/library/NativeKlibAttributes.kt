@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
 /**
  * Indicates whether this [Klib] belongs to the Kotlin/Native distribution.
  */
-// TODO (KT-61096): Move this attribute to a Native-related module.
 var Klib.isFromKotlinNativeDistribution: Boolean by klibFlag()
     // TODO (KT-61096): After moving, make the setter to be internal.
     set
@@ -27,7 +26,6 @@ var Klib.isFromKotlinNativeDistribution: Boolean by klibFlag()
  * - `isImplicitlyLoadedFromKotlinNativeDistribution == true` assumes that `isFromKotlinNativeDistribution == true`,
  *    but not vice versa.
  */
-// TODO (KT-61096): Move this attribute to a Native-related module.
 var Klib.isImplicitlyLoadedFromKotlinNativeDistribution: Boolean by klibFlag()
     // TODO (KT-61096): After moving, make the setter to be internal.
     set
@@ -36,6 +34,5 @@ var Klib.isImplicitlyLoadedFromKotlinNativeDistribution: Boolean by klibFlag()
  * Indicates whether this [Klib] is explicitly specified by the user in compiler's CLI arguments.
  * The opposite to [isImplicitlyLoadedFromKotlinNativeDistribution].
  */
-// TODO (KT-61096): Move this attribute to a Native-related module.
 val Klib.isExplicitlySpecifiedByUserInCLIArgument: Boolean
     get() = !isImplicitlyLoadedFromKotlinNativeDistribution
