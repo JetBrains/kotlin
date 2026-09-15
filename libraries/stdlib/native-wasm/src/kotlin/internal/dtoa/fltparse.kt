@@ -32,7 +32,7 @@ private const val E_OFFSET = 150
 private val TENS = intArrayOf(
     0x3f800000, 0x41200000, 0x42c80000, 0x447a0000, 0x461c4000,
     0x47c35000, 0x49742400, 0x4b189680, 0x4cbebc20, 0x4e6e6b28, 0x501502f9
-)
+).unsafe()
 
 // Macro replacements as functions
 private inline fun floatToIntBits(flt: Float): UInt = flt.toRawBits().toUInt()
@@ -65,11 +65,11 @@ private fun createFloat(s: String, e: Int): Float {
     var e = e
     /* assumes s is a string with at least one
      * character in it */
-    val def = ULongArray(MAX_ACCURACY_WIDTH_FLOAT)
-    val defBackup = ULongArray(MAX_ACCURACY_WIDTH_FLOAT)
+    val def = ULongArray(MAX_ACCURACY_WIDTH_FLOAT).unsafe()
+    val defBackup = ULongArray(MAX_ACCURACY_WIDTH_FLOAT).unsafe()
 
-    val f: ULongArray
-    var fNoOverflow: ULongArray
+    val f: ULongUnsafeArray
+    var fNoOverflow: ULongUnsafeArray
 
     var overflow: UInt
     var result: Float
@@ -144,7 +144,7 @@ private fun createFloat(s: String, e: Int): Float {
 
 }
 
-private fun createFloat1(f: ULongArray, length: Int, e: Int): Float {
+private fun createFloat1(f: ULongUnsafeArray, length: Int, e: Int): Float {
     val numBits: Int
     val dresult: Double
     var result = 0f
@@ -244,17 +244,17 @@ private fun createFloat1(f: ULongArray, length: Int, e: Int): Float {
  * is currently set such that if the oscillation occurs more than twice
  * then return the original approximation.
  */
-private fun floatAlgorithm(f: ULongArray, length: Int, e: Int, z: Float): Float {
+private fun floatAlgorithm(f: ULongUnsafeArray, length: Int, e: Int, z: Float): Float {
     var z = z
     var m: ULong
     var k: Int
     var comparison: Int
     var comparison2: Int
 
-    var x: ULongArray
-    var y: ULongArray
-    var D: ULongArray
-    var D2: ULongArray
+    var x: ULongUnsafeArray
+    var y: ULongUnsafeArray
+    var D: ULongUnsafeArray
+    var D2: ULongUnsafeArray
 
     var xLength: Int
     var yLength: Int
@@ -264,47 +264,49 @@ private fun floatAlgorithm(f: ULongArray, length: Int, e: Int, z: Float): Float 
     var decApproxCount = 0
     var incApproxCount = 0
 
+    val mArray = ULongArray(1).unsafe()
+
     do {
         m = floatMantissa(z).toULong()
         k = floatExponent(z)
 
         if (e >= 0 && k >= 0) {
             xLength = sizeOfTenToTheE(e) + length
-            x = ULongArray(xLength)
+            x = ULongArray(xLength).unsafe()
             f.copyInto(x, 0, 0, length)
             timesTenToTheEHighPrecision(x, xLength, e)
 
             yLength = (k shr 6) + 2
-            y = ULongArray(yLength)
+            y = ULongArray(yLength).unsafe()
             y[0] = m
             simpleShiftLeftHighPrecision(y, yLength, k)
         } else if (e >= 0) {
             xLength = sizeOfTenToTheE(e) + length + ((-k) shr 6) + 1
-            x = ULongArray(xLength)
+            x = ULongArray(xLength).unsafe()
             f.copyInto(x, 0, 0, length)
             timesTenToTheEHighPrecision(x, xLength, e)
             simpleShiftLeftHighPrecision(x, xLength, -k)
 
             yLength = 1
-            y = ULongArray(1)
+            y = ULongArray(1).unsafe()
             y[0] = m
         } else if (k >= 0) {
             xLength = length
             x = f
 
             yLength = sizeOfTenToTheE(-e) + 2 + (k shr 6)
-            y = ULongArray(yLength)
+            y = ULongArray(yLength).unsafe()
             y[0] = m
             timesTenToTheEHighPrecision(y, yLength, -e)
             simpleShiftLeftHighPrecision(y, yLength, k)
         } else {
             xLength = length + ((-k) shr 6) + 1
-            x = ULongArray(xLength)
+            x = ULongArray(xLength).unsafe()
             f.copyInto(x, 0, 0, length)
             simpleShiftLeftHighPrecision(x, xLength, -k)
 
             yLength = sizeOfTenToTheE(-e) + 1
-            y = ULongArray(yLength)
+            y = ULongArray(yLength).unsafe()
             y[0] = m
             timesTenToTheEHighPrecision(y, yLength, -e)
         }
@@ -312,24 +314,25 @@ private fun floatAlgorithm(f: ULongArray, length: Int, e: Int, z: Float): Float 
         comparison = compareHighPrecision(x, xLength, y, yLength)
         if (comparison > 0) {                       /* x > y */
             DLength = xLength
-            D = ULongArray(DLength)
+            D = ULongArray(DLength).unsafe()
             x.copyInto(D, 0, 0, DLength)
             subtractHighPrecision(D, DLength, y, yLength)
         } else if (comparison != 0) {                       /* y > x */
             DLength = yLength
-            D = ULongArray(DLength)
+            D = ULongArray(DLength).unsafe()
             y.copyInto(D, 0, 0, DLength)
             subtractHighPrecision(D, DLength, x, xLength)
         } else {                       /* y == x */
             DLength = 1
-            D = ULongArray(1)
+            D = ULongArray(1).unsafe()
             D[0] = 0UL
         }
 
         D2Length = DLength + 1
-        D2 = ULongArray(D2Length)
+        D2 = ULongArray(D2Length).unsafe()
         m = m shl 1
-        multiplyHighPrecision(D, DLength, ulongArrayOf(m), 1, D2, D2Length)
+        mArray[0] = m
+        multiplyHighPrecision(D, DLength, mArray, 1, D2, D2Length)
         m = m shr 1
 
         comparison2 = compareHighPrecision(D2, D2Length, y, yLength)

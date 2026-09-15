@@ -36,7 +36,7 @@ private val TENS = doubleArrayOf(
     1.0, 1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5, 1.0e6, 1.0e7, 1.0e8, 1.0e9,
     1.0e10, 1.0e11, 1.0e12, 1.0e13, 1.0e14, 1.0e15, 1.0e16, 1.0e17, 1.0e18,
     1.0e19, 1.0e20, 1.0e21, 1.0e22
-)
+).unsafe()
 
 // Macro replacements as functions
 internal inline fun sizeOfTenToTheE(e: Int): Int = (e / 19) + 1
@@ -48,11 +48,11 @@ private fun createDouble(s: String, e: Int): Double {
     var e = e
     /* assumes s is a string with at least one
     * character in it */
-    val def = ULongArray(MAX_ACCURACY_WIDTH_DOUBLE)
-    val defBackup = ULongArray(MAX_ACCURACY_WIDTH_DOUBLE)
+    val def = ULongArray(MAX_ACCURACY_WIDTH_DOUBLE).unsafe()
+    val defBackup = ULongArray(MAX_ACCURACY_WIDTH_DOUBLE).unsafe()
 
-    val f: ULongArray
-    var fNoOverflow: ULongArray
+    val f: ULongUnsafeArray
+    var fNoOverflow: ULongUnsafeArray
 
     var overflow: UInt
     val result: Double
@@ -132,7 +132,7 @@ private fun createDouble(s: String, e: Int): Double {
 }
 
 
-private fun createDouble1(f: ULongArray, length: Int, e: Int): Double {
+private fun createDouble1(f: ULongUnsafeArray, length: Int, e: Int): Double {
     var numBits: Int
     var result = 0.0
 
@@ -196,17 +196,17 @@ private fun createDouble1(f: ULongArray, length: Int, e: Int): Double {
  * is currently set such that if the oscillation occurs more than twice
  * then return the original approximation.
  */
-private fun doubleAlgorithm(f: ULongArray, length: Int, e: Int, z: Double): Double {
+private fun doubleAlgorithm(f: ULongUnsafeArray, length: Int, e: Int, z: Double): Double {
     var z = z
     var m: ULong
     var k: Int
     var comparison: Int
     var comparison2: Int
 
-    var x: ULongArray
-    var y: ULongArray
-    var D: ULongArray
-    var D2: ULongArray
+    var x: ULongUnsafeArray
+    var y: ULongUnsafeArray
+    var D: ULongUnsafeArray
+    var D2: ULongUnsafeArray
 
     var xLength: Int
     var yLength: Int
@@ -218,47 +218,49 @@ private fun doubleAlgorithm(f: ULongArray, length: Int, e: Int, z: Double): Doub
     decApproxCount = 0
     incApproxCount = 0
 
+    val mArray = ULongArray(1).unsafe()
+
     do {
         m = doubleMantissa(z)
         k = doubleExponent(z)
 
         if (e >= 0 && k >= 0) {
             xLength = sizeOfTenToTheE(e) + length
-            x = ULongArray(xLength)
+            x = ULongArray(xLength).unsafe()
             f.copyInto(x, 0, 0, length)
             timesTenToTheEHighPrecision(x, xLength, e)
 
             yLength = (k shr 6) + 2
-            y = ULongArray(yLength)
+            y = ULongArray(yLength).unsafe()
             y[0] = m
             simpleShiftLeftHighPrecision(y, yLength, k)
         } else if (e >= 0) {
             xLength = sizeOfTenToTheE(e) + length + ((-k) shr 6) + 1
-            x = ULongArray(xLength)
+            x = ULongArray(xLength).unsafe()
             f.copyInto(x, 0, 0, length)
             timesTenToTheEHighPrecision(x, xLength, e)
             simpleShiftLeftHighPrecision(x, xLength, -k)
 
             yLength = 1
-            y = ULongArray(1)
+            y = ULongArray(1).unsafe()
             y[0] = m
         } else if (k >= 0) {
             xLength = length
             x = f
 
             yLength = sizeOfTenToTheE(-e) + 2 + (k shr 6)
-            y = ULongArray(yLength)
+            y = ULongArray(yLength).unsafe()
             y[0] = m
             timesTenToTheEHighPrecision(y, yLength, -e)
             simpleShiftLeftHighPrecision(y, yLength, k)
         } else {
             xLength = length + ((-k) shr 6) + 1
-            x = ULongArray(xLength)
+            x = ULongArray(xLength).unsafe()
             f.copyInto(x, 0, 0, length)
             simpleShiftLeftHighPrecision(x, xLength, -k)
 
             yLength = sizeOfTenToTheE(-e) + 1
-            y = ULongArray(yLength)
+            y = ULongArray(yLength).unsafe()
             y[0] = m
             timesTenToTheEHighPrecision(y, yLength, -e)
         }
@@ -266,24 +268,25 @@ private fun doubleAlgorithm(f: ULongArray, length: Int, e: Int, z: Double): Doub
         comparison = compareHighPrecision(x, xLength, y, yLength)
         if (comparison > 0) {                       /* x > y */
             DLength = xLength
-            D = ULongArray(DLength)
+            D = ULongArray(DLength).unsafe()
             x.copyInto(D, 0, 0, DLength)
             subtractHighPrecision(D, DLength, y, yLength)
         } else if (comparison != 0) {                       /* y > x */
             DLength = yLength
-            D = ULongArray(DLength)
+            D = ULongArray(DLength).unsafe()
             y.copyInto(D, 0, 0, DLength)
             subtractHighPrecision(D, DLength, x, xLength)
         } else {                       /* y == x */
             DLength = 1
-            D = ULongArray(1)
+            D = ULongArray(1).unsafe()
             D[0] = 0UL
         }
 
         D2Length = DLength + 1
-        D2 = ULongArray(D2Length)
+        D2 = ULongArray(D2Length).unsafe()
         m = m shl 1
-        multiplyHighPrecision(D, DLength, ulongArrayOf(m), 1, D2, D2Length)
+        mArray[0] = m
+        multiplyHighPrecision(D, DLength, mArray, 1, D2, D2Length)
         m = m shr 1
 
         comparison2 = compareHighPrecision(D2, D2Length, y, yLength)
@@ -427,11 +430,11 @@ internal fun bigIntDigitGeneratorInstImpl(
     mantissaIsZero: Boolean,
     p: Int,
 ) {
-    val R = ULongArray(RM_SIZE)
-    val S = ULongArray(STemp_SIZE)
-    val mplus = ULongArray(RM_SIZE)
-    val mminus = ULongArray(RM_SIZE)
-    val Temp = ULongArray(STemp_SIZE)
+    val R = ULongArray(RM_SIZE).unsafe()
+    val S = ULongArray(STemp_SIZE).unsafe()
+    val mplus = ULongArray(RM_SIZE).unsafe()
+    val mminus = ULongArray(RM_SIZE).unsafe()
+    val Temp = ULongArray(STemp_SIZE).unsafe()
 
     val fULong = f.toULong()
     if (e >= 0) {
