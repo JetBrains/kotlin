@@ -44,7 +44,8 @@ sealed class HeaderInfo {
 // TODO: Update comments and member names in this file.
 internal class FloatingPointRangeHeaderInfo(
     val start: IrExpression,
-    val endInclusive: IrExpression
+    val end: IrExpression,
+    val isEndInclusive: Boolean = true
 ) : HeaderInfo() {
     // No reverse() in ClosedFloatingPointRange.
     override fun asReversed(): HeaderInfo? = null
@@ -52,7 +53,8 @@ internal class FloatingPointRangeHeaderInfo(
 
 internal class ComparableRangeInfo(
     val start: IrExpression,
-    val endInclusive: IrExpression
+    val end: IrExpression,
+    val isEndInclusive: Boolean = true
 ) : HeaderInfo() {
     override fun asReversed(): HeaderInfo? = null
 }
