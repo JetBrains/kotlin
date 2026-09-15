@@ -17,6 +17,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.targets.wasm.component.WIT_DIRECTORY_NAME
 import java.io.File
 import javax.inject.Inject
 
