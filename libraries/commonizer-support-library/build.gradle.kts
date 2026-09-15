@@ -43,15 +43,9 @@ kotlin {
     macosArm64()
     tvosArm64()
     tvosSimulatorArm64()
-    watchosArm32()
     watchosArm64()
     watchosDeviceArm64()
     watchosSimulatorArm64()
-
-    androidNativeArm32()
-    androidNativeArm64()
-    androidNativeX86()
-    androidNativeX64()
 
     // Non-native targets: no cinterop types exist on these platforms, so the library compiles to
     // an empty klib. The targets are present so that consumers with these targets (e.g. test-utils)
@@ -63,9 +57,10 @@ kotlin {
 
     @Suppress("DEPRECATION")
     "Deprecated but used by Coroutines".run {
-        macosX64()
-        tvosX64()
-        watchosX64()
+        androidNativeArm32()
+        androidNativeArm64()
+        androidNativeX86()
+        androidNativeX64()
     }
 
     @Suppress("DEPRECATION")
