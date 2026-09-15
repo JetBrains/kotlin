@@ -67,9 +67,6 @@ public abstract class MyClass2 /* test.MyClass2*/ implements java.util.Collectio
   public @org.jetbrains.annotations.NotNull() java.lang.String set(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  set(int, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
-
-  @java.lang.Override()
   public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
@@ -98,9 +95,6 @@ public abstract class MyClass2 /* test.MyClass2*/ implements java.util.Collectio
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
 
   @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
