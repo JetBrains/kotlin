@@ -1,0 +1,120 @@
+FILE fqName:<root> fileName:/lazyInAnonymousObject.kt
+  CLASS CLASS name:Config modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Config
+    CONSTRUCTOR visibility:public returnType:<root>.Config [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Config modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:createMatcher visibility:public modality:FINAL returnType:<root>.Matcher
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Config
+      VALUE_PARAMETER kind:Regular name:pattern index:1 type:kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun createMatcher (pattern: kotlin.String): <root>.Matcher declared in <root>.Config'
+          BLOCK type=<root>.Config.createMatcher.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Matcher]
+              thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Config.createMatcher.<no name provided>
+              PROPERTY name:suffix visibility:private modality:FINAL [delegated,val]
+                FIELD PROPERTY_DELEGATE name:suffix$delegate type:kotlin.Lazy<kotlin.String?> visibility:private [final]
+                  EXPRESSION_BODY
+                    CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.String?> origin=null
+                      TYPE_ARG T: kotlin.String?
+                      ARG initializer: FUN_EXPR type=kotlin.Function0<kotlin.String?> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String?
+                          BLOCK_BODY
+                            RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.Config.createMatcher.<no name provided>.suffix$delegate'
+                              CALL 'public final fun takeIf <T> (<this>: T of kotlin.takeIf, predicate: kotlin.Function1<T of kotlin.takeIf, kotlin.Boolean>): T of kotlin.takeIf? declared in kotlin' type=kotlin.String? origin=null
+                                TYPE_ARG T: kotlin.String
+                                ARG <this>: GET_VAR 'pattern: kotlin.String declared in <root>.Config.createMatcher' type=kotlin.String origin=null
+                                ARG predicate: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Boolean> origin=LAMBDA
+                                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+                                    VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
+                                    BLOCK_BODY
+                                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.Boolean declared in <root>.Config.createMatcher.<no name provided>.suffix$delegate.<anonymous>'
+                                        CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                                          ARG arg0: GET_VAR 'it: kotlin.String declared in <root>.Config.createMatcher.<no name provided>.suffix$delegate.<anonymous>.<anonymous>' type=kotlin.String origin=null
+                                          ARG arg1: CONST String type=kotlin.String value="x"
+                FUN DELEGATED_PROPERTY_ACCESSOR name:<get-suffix> visibility:private modality:FINAL returnType:kotlin.String?
+                  VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Config.createMatcher.<no name provided>
+                  correspondingProperty: PROPERTY name:suffix visibility:private modality:FINAL [delegated,val]
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='private final fun <get-suffix> (): kotlin.String? declared in <root>.Config.createMatcher.<no name provided>'
+                      CALL 'public final fun getValue <T> (<this>: kotlin.Lazy<T of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin' type=kotlin.String? origin=null
+                        TYPE_ARG T: kotlin.String?
+                        ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:suffix$delegate type:kotlin.Lazy<kotlin.String?> visibility:private [final] declared in <root>.Config.createMatcher.<no name provided>' type=kotlin.Lazy<kotlin.String?> origin=null
+                          receiver: GET_VAR '<this>: <root>.Config.createMatcher.<no name provided> declared in <root>.Config.createMatcher.<no name provided>.<get-suffix>' type=<root>.Config.createMatcher.<no name provided> origin=IMPLICIT_ARGUMENT
+                        ARG thisRef: GET_VAR '<this>: <root>.Config.createMatcher.<no name provided> declared in <root>.Config.createMatcher.<no name provided>.<get-suffix>' type=<root>.Config.createMatcher.<no name provided> origin=null
+                        ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Config, kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final suffix: kotlin.String? declared in <root>.Config.createMatcher.<no name provided>'
+                          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:suffix visibility:local modality:FINAL returnType:kotlin.String?
+                            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Config
+                            BLOCK_BODY
+                              RETURN type=kotlin.Nothing from='local final fun suffix (p0: <root>.Config): kotlin.String? declared in <root>.Config.createMatcher.<no name provided>.<get-suffix>'
+                                CALL 'private final fun <get-suffix> (): kotlin.String? declared in <root>.Config.createMatcher.<no name provided>' type=kotlin.String? origin=null
+                                  ARG <this>: GET_VAR 'p0: <root>.Config declared in <root>.Config.createMatcher.<no name provided>.<get-suffix>.suffix' type=<root>.Config origin=null
+              CONSTRUCTOR visibility:public returnType:<root>.Config.createMatcher.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Matcher]' type=kotlin.Unit
+              FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+                VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+                overridden:
+                  public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Matcher
+              FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+                VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                overridden:
+                  public open fun hashCode (): kotlin.Int declared in <root>.Matcher
+              FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+                VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                overridden:
+                  public open fun toString (): kotlin.String declared in <root>.Matcher
+              FUN name:check visibility:public modality:OPEN returnType:kotlin.Boolean
+                VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Config.createMatcher.<no name provided>
+                overridden:
+                  public abstract fun check (): kotlin.Boolean declared in <root>.Matcher
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='public open fun check (): kotlin.Boolean declared in <root>.Config.createMatcher.<no name provided>'
+                    CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                      ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                        ARG arg0: CALL 'private final fun <get-suffix> (): kotlin.String? declared in <root>.Config.createMatcher.<no name provided>' type=kotlin.String? origin=GET_PROPERTY
+                          ARG <this>: GET_VAR '<this>: <root>.Config.createMatcher.<no name provided> declared in <root>.Config.createMatcher.<no name provided>.check' type=<root>.Config.createMatcher.<no name provided> origin=IMPLICIT_ARGUMENT
+                        ARG arg1: CONST Null type=kotlin.Nothing? value=null
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Config.createMatcher.<no name provided>' type=<root>.Config.createMatcher.<no name provided> origin=OBJECT_LITERAL
+  CLASS INTERFACE name:Matcher modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Matcher
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:check visibility:public modality:ABSTRACT returnType:kotlin.Boolean
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Matcher
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun check (): kotlin.Boolean declared in <root>.Matcher' type=kotlin.Boolean origin=null
+          ARG <this>: CALL 'public final fun createMatcher (pattern: kotlin.String): <root>.Matcher declared in <root>.Config' type=<root>.Matcher origin=null
+            ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Config' type=<root>.Config origin=null
+            ARG pattern: CONST String type=kotlin.String value="x"
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
