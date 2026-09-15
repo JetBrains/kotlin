@@ -183,6 +183,7 @@ fun Test.withStdlibWeb() {
 }
 
 fun Test.withJsRuntime() {
+    /*
     addClasspathProperty(
         configurationElements(
             "stdlibJsRuntimeForTests",
@@ -205,6 +206,7 @@ fun Test.withJsRuntime() {
             dependencies = { add(project.dependencies.project(":kotlin-test", "jsRuntimeElements")) }
         ), TestCompilePaths.KOTLIN_JS_KOTLIN_TEST_KLIB_PATH
     )
+    */
 }
 
 fun Test.withWasmRuntime() {
@@ -285,6 +287,7 @@ fun Test.withTestScriptDefinition() {
 }
 
 fun Test.withPluginSandboxAnnotations() {
+    /*
     addClasspathProperty(
         configurationElements(
             "pluginSandboxAnnotationsJar",
@@ -315,6 +318,7 @@ fun Test.withPluginSandboxAnnotations() {
             }
         ), TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_WASM_KLIB_PATH
     )
+    */
 }
 
 fun Test.withPluginSandboxJar() {
