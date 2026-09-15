@@ -50,6 +50,7 @@ internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (el
     }
 
     is KtPropertyAccessor -> elementCanBeLazilyResolved(element.property)
+    is KtBackingField -> elementCanBeLazilyResolved(element.property)
     is KtClassOrObject -> element.isTopLevel() || element.getClassId() != null
     is KtTypeAlias -> element.isTopLevel() || element.getClassId() != null
     is KtModifierList -> element.isNonLocalDanglingModifierList()
