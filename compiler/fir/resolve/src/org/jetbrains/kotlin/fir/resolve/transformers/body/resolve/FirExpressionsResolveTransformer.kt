@@ -652,15 +652,21 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
                 val receiver = safeCallExpression.receiver
 
-                dataFlowAnalyzer.enterSafeCallAfterNullCheck(safeCallExpression)
+                // TODO(KT-89100) support error safe calls in DFA
+                if (safeCallExpression.kind == FirSafeCallKind.NullSafe) {
+                    dataFlowAnalyzer.enterSafeCallAfterNullCheck(safeCallExpression)
+                }
 
                 safeCallExpression.apply {
-                    checkedSubjectRef.value.propagateTypeFromOriginalReceiver(receiver, components.session, components.file)
+                    checkedSubjectRef.value.propagateTypeFromOriginalReceiver(receiver, kind, components.session, components.file)
                     transformSelector(this@FirExpressionsResolveTransformer, data)
                     propagateTypeFromQualifiedAccessAfterNullCheck(session, context.file)
                 }
 
-                dataFlowAnalyzer.exitSafeCall(safeCallExpression)
+                // TODO(KT-89100) support error safe calls in DFA
+                if (safeCallExpression.kind == FirSafeCallKind.NullSafe) {
+                    dataFlowAnalyzer.exitSafeCall(safeCallExpression)
+                }
 
                 return safeCallExpression
             }

@@ -49,6 +49,7 @@ val ConeKotlinType.isMarkedNullable: Boolean
         is ConeTypeVariableType -> isMarkedNullable
         is ConeDefinitelyNotNullType -> false
         is ConeIntersectionType -> intersectedTypes.all { it.isMarkedNullable }
+        is ConeUnionType -> primaryType.isMarkedNullable
         is ConeStubType -> isMarkedNullable
     }
 
@@ -79,7 +80,6 @@ inline fun ConeKotlinType.forEachType(
         val next = stack.popLast().let(prepareType)
         action(next)
 
-        @Suppress("SuspiciousWhenOverConeKotlinType")
         when (next) {
             is ConeFlexibleType -> {
                 stack.add(next.lowerBound)
@@ -90,7 +90,16 @@ inline fun ConeKotlinType.forEachType(
 
             is ConeDefinitelyNotNullType -> stack.add(next.original)
             is ConeIntersectionType -> stack.addAll(next.intersectedTypes)
-            else -> next.typeArguments.forEach { if (it is ConeKotlinTypeProjection) stack.add(it.type) }
+            is ConeUnionType -> {
+                stack.add(next.primaryType)
+                stack.addAll(next.richErrorTypes)
+            }
+            is ConeClassLikeType -> next.typeArguments.forEach { if (it is ConeKotlinTypeProjection) stack.add(it.type) }
+            is ConeCapturedType,
+            is ConeIntegerLiteralType,
+            is ConeTypeParameterType,
+            is ConeStubType,
+            is ConeTypeVariableType -> {}
         }
     }
 }
@@ -104,12 +113,18 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
     if (predicate(this)) return true
     visited += this
 
-    @Suppress("SuspiciousWhenOverConeKotlinType")
     return when (this) {
         is ConeFlexibleType -> lowerBound.contains(predicate, visited) || !isTrivial && upperBound.contains(predicate, visited)
         is ConeDefinitelyNotNullType -> original.contains(predicate, visited)
         is ConeIntersectionType -> intersectedTypes.any { it.contains(predicate, visited) }
-        else -> typeArguments.any { it is ConeKotlinTypeProjection && it.type.contains(predicate, visited) }
+        is ConeClassLikeType -> typeArguments.any { it is ConeKotlinTypeProjection && it.type.contains(predicate, visited) }
+        is ConeUnionType -> primaryType.contains(predicate, visited) || richErrorTypes.any { it.contains(predicate, visited) }
+        is ConeCapturedType,
+        is ConeIntegerLiteralType,
+        is ConeTypeParameterType,
+        is ConeStubType,
+        is ConeTypeVariableType -> false
+
     }
 }
 
@@ -216,5 +231,6 @@ fun ConeRigidType.getConstructor(): ConeTypeConstructorMarker {
         is ConeStubType -> this.constructor
         is ConeDefinitelyNotNullType -> original.getConstructor()
         is ConeIntegerLiteralType -> this
+        is ConeUnionType -> this
     }
 }

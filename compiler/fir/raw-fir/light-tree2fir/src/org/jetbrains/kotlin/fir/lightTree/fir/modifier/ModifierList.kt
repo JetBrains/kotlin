@@ -45,6 +45,8 @@ open class ModifierList(var modifiers: Long = ModifierFlag.NONE.value) {
 
     fun isValueClass(): Boolean = hasFlag(ModifierFlag.CLASS_VALUE)
 
+    fun isErrorClass(): Boolean = hasFlag(ModifierFlag.CLASS_ERROR)
+
     fun isInner(): Boolean = hasFlag(ModifierFlag.CLASS_INNER)
 
     fun isCompanion(): Boolean = hasFlag(ModifierFlag.CLASS_COMPANION)

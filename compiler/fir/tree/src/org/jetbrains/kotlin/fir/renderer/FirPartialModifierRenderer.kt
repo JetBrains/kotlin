@@ -39,6 +39,9 @@ class FirPartialModifierRenderer(private val staticPolicy: StaticPolicy) : FirMo
         if (memberDeclaration.status.isFun && !isJavaInterface) {
             renderModifier("fun")
         }
+        if (memberDeclaration.status.isRichError) {
+            renderModifier("error")
+        }
         if (memberDeclaration.isSuspend) {
             renderModifier("suspend")
         }

@@ -133,6 +133,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             } else {
                 constructor.mapTypes { it.withAttributes(coneAttributes) }
             }
+            is ConeUnionType -> if (coneAttributes === constructor.attributes) {
+                constructor
+            } else {
+                constructor.withAttributes(coneAttributes)
+            }
             is ConeCapturedTypeConstructor,
             is ConeIntegerLiteralType,
             is ConeStubTypeConstructor,

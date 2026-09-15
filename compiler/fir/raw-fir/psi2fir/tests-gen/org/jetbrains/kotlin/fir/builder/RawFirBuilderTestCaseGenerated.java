@@ -994,6 +994,38 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
         run("uncompletedTypRefInPrimaryConsturctorValWithVararg.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/richErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class RichErrors {
+      private void run(String fileName) {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/richErrors/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInRichErrors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/richErrors"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("errorClass.kt")
+      public void testErrorClass() {
+        run("errorClass.kt");
+      }
+
+      @Test
+      @TestMetadata("errorSafeCall.kt")
+      public void testErrorSafeCall() {
+        run("errorSafeCall.kt");
+      }
+
+      @Test
+      @TestMetadata("unionTypes.kt")
+      public void testUnionTypes() {
+        run("unionTypes.kt");
+      }
+    }
   }
 
   @Nested

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
+import org.jetbrains.kotlin.fir.types.ConeUnionType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -56,6 +57,7 @@ fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(): FirRe
         }
         is ConeDynamicType,
         is ConeIntersectionType,
+        is ConeUnionType,
         is ConeStubType,
         is ConeTypeVariableType,
         is ConeIntegerLiteralType,

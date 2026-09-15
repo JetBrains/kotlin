@@ -45,7 +45,9 @@ enum class ModifierFlag(val value: Long) {
     VARIANCE_OUT(1L shl 32),
     VARIANCE_INVARIANT(1L shl 33),
     REIFICATION_REIFIED(1L shl 34),
-    CLASS_VALUE(1L shl 35);
+    CLASS_VALUE(1L shl 35),
+    CLASS_ERROR(1L shl 36),
+    ;
 
     companion object {
         val ElementTypeToModifierFlagMap: Map<IElementType, ModifierFlag> = mutableMapOf(
@@ -56,6 +58,7 @@ enum class ModifierFlag(val value: Long) {
             KtTokens.INNER_KEYWORD to CLASS_INNER,
             KtTokens.COMPANION_KEYWORD to CLASS_COMPANION,
             KtTokens.FUN_KEYWORD to CLASS_FUN,
+            KtTokens.ERROR_KEYWORD to CLASS_ERROR,
 
             // Member
             KtTokens.OVERRIDE_KEYWORD to MEMBER_OVERRIDE,

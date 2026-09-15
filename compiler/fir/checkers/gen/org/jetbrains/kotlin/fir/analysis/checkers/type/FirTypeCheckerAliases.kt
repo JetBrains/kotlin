@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirUnionTypeRef
 
 typealias FirTypeRefChecker = FirTypeChecker<FirTypeRef>
 typealias FirResolvedTypeRefChecker = FirTypeChecker<FirResolvedTypeRef>
 typealias FirFunctionTypeRefChecker = FirTypeChecker<FirFunctionTypeRef>
 typealias FirIntersectionTypeRefChecker = FirTypeChecker<FirIntersectionTypeRef>
+typealias FirUnionTypeRefChecker = FirTypeChecker<FirUnionTypeRef>
