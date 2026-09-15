@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.declarations.isArrayOfCall
+import org.jetbrains.kotlin.fir.declarations.isArrayOfOrArrayDotOfCall
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
@@ -30,8 +29,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -221,7 +218,7 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: FirSession): Boolean {
-        if (functionCall.isArrayOfCall()) return functionCall.arguments.all { it.accept(this, data) }
+        if (functionCall.isArrayOfOrArrayDotOfCall()) return functionCall.arguments.all { it.accept(this, data) }
         return visitQualifiedAccessExpression(functionCall, data)
     }
 

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object ArrayFqNames {
     val PRIMITIVE_TYPE_TO_ARRAY: Map<PrimitiveType, Name> = hashMapOf(
@@ -43,4 +45,10 @@ object ArrayFqNames {
     val ARRAY_CALL_FQ_NAMES: Set<FqName> = ARRAY_CALL_NAMES.map { FqName("kotlin." + it.identifier) }.toSet()
 
     val ARRAY_OF_CALLABLE_IDS: Set<CallableId> = ARRAY_CALL_NAMES.map { CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it) }.toSet()
+
+    val ARRAY_DOT_OF_CALLABLE_IDS: Set<CallableId> =
+        StandardClassIds.primitiveArrayTypeByElementType.values
+            .plus(StandardClassIds.unsignedArrayTypeByElementType.values)
+            .plus(StandardClassIds.Array)
+            .map { CallableId(it, OperatorNameConventions.OF) }.toSet()
 }

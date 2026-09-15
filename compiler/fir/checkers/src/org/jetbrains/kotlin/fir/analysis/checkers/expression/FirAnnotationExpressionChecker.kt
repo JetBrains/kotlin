@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirCraParameterKind
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
-import org.jetbrains.kotlin.fir.declarations.isArrayOfCall
+import org.jetbrains.kotlin.fir.declarations.isArrayOfOrArrayDotOfCall
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -112,10 +112,9 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         }
 
         when (expression) {
-            is FirCollectionLiteral -> return checkArguments(expression.arguments)
-                ?.let { Diagnostic(it, expression.source) }
-            is FirFunctionCall if (expression.isArrayOfCall()) -> return checkArguments(expression.unwrapArgumentsOfArrayOfCall())
-                ?.let { Diagnostic(it, expression.source) }
+            is FirCollectionLiteral -> return checkArguments(expression.arguments)?.let { Diagnostic(it, expression.source) }
+            is FirFunctionCall if (expression.isArrayOfOrArrayDotOfCall()) ->
+                return checkArguments(expression.unwrapArgumentsOfArrayOfCall())?.let { Diagnostic(it, expression.source) }
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments) {
                     val unwrappedArg = arg.unwrapArgument()
@@ -261,7 +260,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                 is FirCollectionLiteral -> {
                     checkArgumentsInsideAnnotationCall(unwrappedErrorExpression.arguments, reportAnnotationsOnAnnotationArguments)
                 }
-                is FirFunctionCall if (unwrappedErrorExpression.isArrayOfCall()) -> {
+                is FirFunctionCall if (unwrappedErrorExpression.isArrayOfOrArrayDotOfCall()) -> {
                     checkArgumentsInsideAnnotationCall(
                         unwrappedErrorExpression.unwrapArgumentsOfArrayOfCall(),
                         reportAnnotationsOnAnnotationArguments,
