@@ -236,6 +236,11 @@ fun main(args: Array<String>) {
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
                 )
+                model(
+                    relativeRootPath = "irInliner",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                )
             }
         }
 
