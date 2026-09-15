@@ -35,10 +35,9 @@ internal external class BigInt {
  */
 internal external fun BigInt(value: Number): BigInt
 
-internal inline fun BigInt.toNumber(): Number {
-    val self = this
-    return js("Number(self)").unsafeCast<Number>()
-}
+internal external fun Number(value: dynamic): Number
+
+internal inline fun BigInt.toNumber(): Number = Number(this)
 
 internal inline operator fun BigInt.unaryMinus(): BigInt = jsUnaryMinus(this).unsafeCast<BigInt>()
 
