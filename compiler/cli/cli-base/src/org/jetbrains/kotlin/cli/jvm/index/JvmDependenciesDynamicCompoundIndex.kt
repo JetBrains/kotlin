@@ -44,6 +44,8 @@ class JvmDependenciesDynamicCompoundIndex(private val shouldOnlyFindFirstClass: 
 
     override val indexedRoots: Sequence<JavaRoot> get() = indices.asSequence().flatMap { it.indexedRoots }
 
+    override val version: Int get() = lock.read { indices.size }
+
     override fun findClassVirtualFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
