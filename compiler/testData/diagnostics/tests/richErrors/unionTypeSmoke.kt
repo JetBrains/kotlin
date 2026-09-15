@@ -11,9 +11,11 @@ fun foo(
     e: Foo | Bar,
     f: (Foo | Bar)?,
     g: String | (Nothing | Foo),
-    h: String | (Foo | Bar)?,
+    h: <!OTHER_ERROR!>String | (Foo | Bar)?<!>,
     i: Foo | Foo,
     j: Nothing? | Foo,
+    k: <!OTHER_ERROR!>String | (String | Foo)<!>,
+    l: <!OTHER_ERROR!>String | Foo?<!>,
 ){
 }
 

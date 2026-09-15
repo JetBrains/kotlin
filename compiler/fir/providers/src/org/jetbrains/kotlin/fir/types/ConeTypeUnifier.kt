@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 
 object ConeTypeUnifier {
     fun unify(
@@ -25,7 +24,7 @@ object ConeTypeUnifier {
         primaryType: ConeFlexibleType,
         richErrorTypes: List<ConeKotlinType>,
         attributes: ConeAttributes,
-        typeContext: ConeTypeContext
+        typeContext: ConeTypeContext,
     ): ConeKotlinType {
         val lowerBound = primaryType.lowerBound
         if (lowerBound is ConeUnionType) {
@@ -43,7 +42,7 @@ object ConeTypeUnifier {
         primaryType: ConeRigidType,
         richErrorTypes: List<ConeKotlinType>,
         attributes: ConeAttributes,
-        typeContext: ConeTypeContext
+        typeContext: ConeTypeContext,
     ): ConeKotlinType {
         require(richErrorTypes.isNotEmpty()) { "Empty list of rich error types" }
 
@@ -62,30 +61,38 @@ object ConeTypeUnifier {
         typeContext: ConeTypeContext,
     ): ConeKotlinType {
         require(primaryType !is ConeUnionType) { "Primary type must not be a union type" }
-        var isNullable = false
-
-        fun ConeKotlinType.flattenRecursively(): List<ConeKotlinType> {
-            return if (this is ConeUnionType) {
-                buildList {
-                    addIfNotNull(this@flattenRecursively.primaryType.takeUnless {
-                        if (it.isNullableNothing) isNullable = true
-                        it.isNothingOrNullableNothing
-                    })
-                    this@flattenRecursively.richErrorTypes.flatMapTo(this) { it.flattenRecursively() }
-                }
-            } else {
-                [this]
-            }
-        }
 
         val flattenedErrorTypes = richErrorTypes.flatMap { it.flattenRecursively() }
-        val newPrimaryType = primaryType.applyIf(isNullable) { withNullability(true, typeContext) }
 
-        if (flattenedErrorTypes.size == 1 && newPrimaryType.isNothingOrNullableNothing) {
-            return flattenedErrorTypes.single().withNullability(newPrimaryType.isMarkedNullable, typeContext, attributes)
+        if (flattenedErrorTypes.size == 1 && primaryType.isNothingOrNullableNothing) {
+            return flattenedErrorTypes.single().withNullability(primaryType.isMarkedNullable, typeContext, attributes)
         }
 
-        return ConeUnionType(newPrimaryType, flattenedErrorTypes.distinctBy { it.lookupTagIfAny }, attributes)
+        val unionType = ConeUnionType(primaryType, flattenedErrorTypes.distinctBy { it.lookupTagIfAny }, attributes)
+
+        for (richError in flattenedErrorTypes) {
+            if (richError is ConeErrorType) return ConeErrorType(richError.diagnostic, delegatedType = unionType)
+            if (richError.isMarkedNullable)
+                return ConeErrorType(ConeSimpleDiagnostic("Nullable error component"), delegatedType = unionType)
+        }
+
+        return unionType
     }
 
+    private fun ConeKotlinType.flattenRecursively(): List<ConeKotlinType> {
+        return if (this is ConeUnionType) {
+            if (!primaryType.isNothing) {
+                val diagnostic = ConeSimpleDiagnostic(
+                    when {
+                        primaryType.isNullableNothing -> "Nullable nested union type"
+                        else -> "Non error component in nested union type"
+                    }
+                )
+                return [ConeErrorType(diagnostic, delegatedType = this)]
+            }
+            richErrorTypes.flatMap { it.flattenRecursively() }
+        } else {
+            [this]
+        }
+    }
 }
