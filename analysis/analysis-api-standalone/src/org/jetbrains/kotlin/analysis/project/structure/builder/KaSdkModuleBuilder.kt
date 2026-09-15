@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
 import java.nio.file.Path
@@ -14,6 +15,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KtSdkModuleBuilder : KtLibraryModuleBuilder() {
     public abstract fun addBinaryRootsFromJdkHome(jdkHome: Path, isJre: Boolean)
 }

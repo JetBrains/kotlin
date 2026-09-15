@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
@@ -14,6 +15,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KtLibraryModuleBuilder : KtBinaryModuleBuilder() {
     public lateinit var libraryName: String
     public var librarySources: KaLibrarySourceModule? = null

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.*
  * Provides implementations from the FIR Standalone module to the API one.
  */
 @KaImplementationDetail
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaStandaloneInternalsProvider {
     @KaImplementationDetail
     public companion object {

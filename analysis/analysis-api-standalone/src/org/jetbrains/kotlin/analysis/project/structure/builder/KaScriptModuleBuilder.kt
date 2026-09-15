@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -19,6 +20,7 @@ import kotlin.contracts.contract
 
 @KaExperimentalApi
 @KtModuleBuilderDsl
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KtScriptModuleBuilder : KtModuleBuilder() {
     public lateinit var file: KtFile
 

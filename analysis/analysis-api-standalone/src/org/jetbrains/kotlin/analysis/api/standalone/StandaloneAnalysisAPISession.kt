@@ -9,6 +9,7 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
  *
  * Can be constructed using [buildStandaloneAnalysisAPISession].
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface StandaloneAnalysisAPISession {
     public val coreApplicationEnvironment: CoreApplicationEnvironment
 

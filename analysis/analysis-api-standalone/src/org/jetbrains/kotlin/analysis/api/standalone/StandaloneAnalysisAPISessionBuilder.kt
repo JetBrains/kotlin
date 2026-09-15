@@ -13,6 +13,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder
 import kotlin.contracts.ExperimentalContracts
@@ -24,6 +25,7 @@ import kotlin.contracts.contract
  *
  * @see buildStandaloneAnalysisAPISession
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface StandaloneAnalysisAPISessionBuilder {
     public val application: Application
     public val project: Project

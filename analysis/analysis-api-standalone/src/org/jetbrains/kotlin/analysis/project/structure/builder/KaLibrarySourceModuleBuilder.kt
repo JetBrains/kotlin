@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import kotlin.contracts.ExperimentalContracts
@@ -14,6 +15,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KtLibrarySourceModuleBuilder : KtModuleBuilder() {
     public lateinit var libraryName: String
     public lateinit var binaryLibrary: KaLibraryModule
