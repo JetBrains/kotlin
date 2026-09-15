@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
@@ -88,6 +89,30 @@ class ClassMemberChangesTest : BaseCompilationTest() {
                 // but due to a bug, it does not recompile
                 // After the fix, change it to `assertCompiledSources("Base.kt", "Usage.kt")`
                 assertCompiledSources("Base.kt")
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-11196: Replacing a method with a property should recompile the override that goes through a Java class")
+    @TestMetadata("ic-scenarios/method-to-property-in-java-hierarchy")
+    fun testReplacingMethodWithPropertyInMixedHierarchy(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val mod = module("ic-scenarios/method-to-property-in-java-hierarchy")
+
+            mod.replaceFileWithVersion("Base.kt", "method-to-property")
+
+            mod.compile {
+                // TODO(KT-11196): the change does not propagate through the Java class, so `ChildClass.kt` is never
+                //  rechecked and the build wrongly succeeds, unlike a clean build. Once fixed, it has to `expectFail()`
+                //  with "'getPrefix' overrides nothing" and recompile `ChildClass.kt`.
+                assertCompiledSources("Base.kt")
+            }
+
+            mod.changeFile("ChildClass.kt") { "$it\n" }
+
+            mod.compile {
+                expectFailWithError(".*ChildClass\\.kt:\\d+:\\d+ 'getPrefix' overrides nothing.*".toRegex())
             }
         }
     }

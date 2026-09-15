@@ -1,0 +1,5 @@
+@file:JvmName("RenamedFacade")
+
+package test
+
+fun a() = "aaa"

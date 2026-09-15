@@ -29,6 +29,28 @@ fun CompilationOutcome.expectFailWithError(expectedErrorLines: Set<Regex>) {
  */
 context(module: ModuleContext)
 fun assertClassDeclarationsContain(classFqn: String, expectedDeclarations: Set<String>) {
+    val actualDeclarations = classDeclarations(classFqn)
+    assert((expectedDeclarations - actualDeclarations).isEmpty()) {
+        declarationsMismatchMessage(expectedDeclarations, actualDeclarations)
+    }
+}
+
+/**
+ * Asserts that a given class declares exactly the expected declarations.
+ *
+ * @param classFqn The fully qualified name of the class to inspect.
+ * @param expectedDeclarations The set of expected class declarations.
+ */
+context(module: ModuleContext)
+fun assertClassDeclarations(classFqn: String, expectedDeclarations: Set<String>) {
+    val actualDeclarations = classDeclarations(classFqn)
+    assert(expectedDeclarations == actualDeclarations) {
+        declarationsMismatchMessage(expectedDeclarations, actualDeclarations)
+    }
+}
+
+context(module: ModuleContext)
+private fun classDeclarations(classFqn: String): Set<String> {
     val javaHome = System.getProperty("java.home")
     val javapPath = File(javaHome, "bin/javap").let {
         // in case we got java.home pointing to the JRE part, javap is located in the outer JDK part
@@ -38,11 +60,12 @@ fun assertClassDeclarationsContain(classFqn: String, expectedDeclarations: Set<S
     assert(result.isSuccessful) {
         "Failed to run javap on $classFqn.\n\n${result.output}"
     }
-    val actualDeclarations = result.output.lines().drop(2).dropLast(1).map { it.trim() }.toSet()
-    val diff = expectedDeclarations - actualDeclarations
-    assert(diff.isEmpty()) {
-        val expectedDeclarationsString = expectedDeclarations.joinToString(separator = "\n", prefix = "Expected declarations:\n")
-        val actualDeclarationsString = actualDeclarations.joinToString(separator = "\n", prefix = "Actual declarations:\n")
-        "$expectedDeclarationsString\n\n$actualDeclarationsString"
-    }
+
+    return result.output.lines().map { it.trim() }.filter { it.isNotEmpty() }.drop(2).dropLast(1).toSet()
+}
+
+private fun declarationsMismatchMessage(expectedDeclarations: Set<String>, actualDeclarations: Set<String>): String {
+    val expectedDeclarationsString = expectedDeclarations.joinToString(separator = "\n", prefix = "Expected declarations:\n")
+    val actualDeclarationsString = actualDeclarations.joinToString(separator = "\n", prefix = "Actual declarations:\n")
+    return "$expectedDeclarationsString\n\n$actualDeclarationsString"
 }

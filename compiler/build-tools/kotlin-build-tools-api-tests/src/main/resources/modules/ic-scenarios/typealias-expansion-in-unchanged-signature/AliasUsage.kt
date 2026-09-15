@@ -1,0 +1,7 @@
+package usage
+
+import a.ErrorSink
+
+fun useAlias(sink: ErrorSink) {
+    sink.emit("test")
+}
