@@ -84,15 +84,6 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
     }
 }
 
-@KaPlatformInterface
-@OptIn(KaExperimentalApi::class)
-@Deprecated("Use 'explicitModule' instead.", level = DeprecationLevel.ERROR)
-public var KtCodeFragment.forcedSpecialModule: KaDanglingFileModule?
-    get() = explicitModule as? KaDanglingFileModule
-    set(value) {
-        explicitModule = value
-    }
-
 /**
  * Whether [KaDanglingFileResolutionMode] for dangling files should be automatically calculated by [KaDanglingFileResolutionModeProvider]
  * in cases when [KtFile.danglingFileResolutionMode] is not set.
