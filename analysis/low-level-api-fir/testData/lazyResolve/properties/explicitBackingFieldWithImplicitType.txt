@@ -1,3 +1,171 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] explicitBackingFieldWithImplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] val foo: IFoo
+        private final? [ResolvedTo(RAW_FIR)] backing field field: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): IFoo
+    public final? [ResolvedTo(RAW_FIR)] interface IFoo : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Foo : IFoo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] val foo: IFoo
+        private final? [ResolvedTo(RAW_FIR)] backing field field: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): IFoo
+    public final? [ResolvedTo(RAW_FIR)] interface IFoo : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Foo : IFoo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val foo: IFoo
+        private final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] backing field field: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): IFoo
+    public final? [ResolvedTo(RAW_FIR)] interface IFoo : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Foo : IFoo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] val foo: IFoo
+        private final? [ResolvedTo(COMPANION_GENERATION)] backing field field: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): IFoo
+    public final? [ResolvedTo(RAW_FIR)] interface IFoo : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Foo : IFoo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] val foo: IFoo
+        private final? [ResolvedTo(SUPER_TYPES)] backing field field: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(SUPER_TYPES)] get(): IFoo
+    public final? [ResolvedTo(RAW_FIR)] interface IFoo : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Foo : IFoo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public? final? [ResolvedTo(TYPES)] val foo: R|IFoo|
+        private final? [ResolvedTo(TYPES)] backing field field: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(TYPES)] get(): R|IFoo|
+    public final? [ResolvedTo(RAW_FIR)] interface IFoo : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Foo : IFoo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public final [ResolvedTo(STATUS)] val foo: R|IFoo|
+        private final [ResolvedTo(STATUS)] backing field field: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): R|IFoo|
+    public final? [ResolvedTo(RAW_FIR)] interface IFoo : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Foo : IFoo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val foo: R|IFoo|
+        private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] backing field field: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|IFoo|
+    public final? [ResolvedTo(RAW_FIR)] interface IFoo : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Foo : IFoo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public final [ResolvedTo(CONTRACTS)] val foo: R|IFoo|
+        private final [ResolvedTo(CONTRACTS)] backing field field: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): R|IFoo|
+    public final? [ResolvedTo(RAW_FIR)] interface IFoo : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Foo : IFoo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|IFoo|
+        private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] backing field field: R|Foo| = R|/Foo.Foo|()
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|IFoo|
+    public abstract [ResolvedTo(STATUS)] interface IFoo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class Foo : R|IFoo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] val foo: R|IFoo|
+        private final [ResolvedTo(CONSTANT_EVALUATION)] backing field field: R|Foo| = R|/Foo.Foo|()
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|IFoo|
+    public abstract [ResolvedTo(STATUS)] interface IFoo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class Foo : R|IFoo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val foo: R|IFoo|
+        private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|Foo| = R|/Foo.Foo|()
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|IFoo|
+    public abstract [ResolvedTo(STATUS)] interface IFoo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class Foo : R|IFoo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithImplicitType.kt
     public final [ResolvedTo(BODY_RESOLVE)] val foo: R|IFoo|
