@@ -334,10 +334,8 @@ class ExecutableWasm(
     private val _componentTask: TaskProvider<WasmComponentExec>? =
         if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
             WasmComponentExec.register(compilation, componentTaskName()) {
-                val componentOutputDir = outputDirBase.map { it.dir(COMPONENT) }
-
                 inputFile.set(mainWasmFile)
-                componentFile.set(componentOutputDir.zip(mainWasmFile) { dir, file -> dir.file("${file.asFile.name}") })
+                componentDirectory.set(outputDirBase.map { it.dir(COMPONENT) })
             }
         } else {
             null
