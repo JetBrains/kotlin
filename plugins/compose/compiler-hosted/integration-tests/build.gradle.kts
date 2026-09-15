@@ -16,8 +16,6 @@ fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
     }
 }
 
-optInToObsoleteDescriptorBasedAPI()
-
 jvmToolchains {
     jdkVersion = JdkMajorVersion.JDK_11_0
     targetBytecodeVersion = JdkMajorVersion.JDK_11_0
