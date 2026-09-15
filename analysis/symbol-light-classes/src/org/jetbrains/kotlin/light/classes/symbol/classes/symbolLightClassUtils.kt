@@ -92,19 +92,19 @@ internal fun createLightClassNoCache(
     manager: PsiManager,
 ): SymbolLightClassBase = when (classSymbol.classKind) {
     KaClassKind.INTERFACE -> SymbolLightClassForInterface(
-        ktModule = ktModule,
+        useSiteModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
     )
 
     KaClassKind.ANNOTATION_CLASS -> SymbolLightClassForAnnotationClass(
-        ktModule = ktModule,
+        useSiteModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
     )
 
     else -> SymbolLightClassForClassOrObject(
-        ktModule = ktModule,
+        useSiteModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
     )
@@ -505,7 +505,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
         }
     )
 
-    if (property.origin.cannotHasBackingField() || property.isStatic) return false
+    if (property.origin.cannotHaveBackingField() || property.isStatic) return false
     if (property.isLateInit || property.isDelegated || property.primaryConstructorParameter != null) return true
     val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
     if (hasBackingFieldByPsi == false) {
@@ -520,7 +520,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
     return hasBackingFieldByPsi ?: property.hasBackingField
 }
 
-private fun KaSymbolOrigin.cannotHasBackingField(): Boolean =
+private fun KaSymbolOrigin.cannotHaveBackingField(): Boolean =
     this == KaSymbolOrigin.SOURCE_MEMBER_GENERATED ||
             this == KaSymbolOrigin.DELEGATED ||
             this == KaSymbolOrigin.INTERSECTION_OVERRIDE ||

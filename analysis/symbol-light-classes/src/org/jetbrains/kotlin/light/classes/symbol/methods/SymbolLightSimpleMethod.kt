@@ -60,7 +60,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             SymbolLightTypeParameterList(
                 owner = this,
                 symbolWithTypeParameterPointer = symbolPointer,
-                ktModule = useSiteModule,
+                useSiteModule = useSiteModule,
                 ktDeclaration = functionDeclaration,
             )
         }
@@ -147,7 +147,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = useSiteModule,
+                    useSiteModule = useSiteModule,
                     annotatedSymbolPointer = symbolPointer,
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,

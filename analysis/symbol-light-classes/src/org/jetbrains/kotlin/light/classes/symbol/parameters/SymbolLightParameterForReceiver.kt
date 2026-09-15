@@ -78,7 +78,7 @@ internal class SymbolLightParameterForReceiver private constructor(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = useSiteModule,
+                    useSiteModule = useSiteModule,
                     annotatedSymbolPointer = symbolPointer,
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
