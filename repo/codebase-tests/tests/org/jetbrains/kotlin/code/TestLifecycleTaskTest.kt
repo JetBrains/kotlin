@@ -159,6 +159,51 @@ class TestLifecycleTaskTest {
         }
     }
 
+    @EnabledIfSystemProperty(named = "teamcity", matches = "true")
+    @EnabledIfSystemProperty(named = "quality.gate.master.tasks", matches = ".+")
+    @Test
+    fun `TeamCity configurations invoke test lifecycle tasks`() {
+        val testLifecycleTaskPaths = dump.buildModel.flatMap { [_, model] ->
+            model?.testLifecycleTasks.orEmpty()
+        }.map { it.path }.toSet()
+
+        val invokedTasks = (qualityGateMasterTasks + qualityGateNightlyTasks).filter { it.isNotBlank() }
+
+        val issues = invokedTasks
+            .filterNot { task -> task in testLifecycleTaskPaths }
+            .filterNot { task -> task in nonTestEntryPointTasks }
+            .filterNot { task -> nonTestEntryPointTaskPrefixes.any { prefix -> task.startsWith(prefix) } }
+            .distinct()
+
+        if (issues.isNotEmpty()) {
+            fail(buildString {
+                appendLine(
+                    "TeamCity invokes ${issues.size} Gradle task(s) that are neither a 'testLifecycleTask' " +
+                            "nor an allowlisted exception:"
+                )
+                issues.sorted().forEach { task ->
+                    appendLine("  - '$task'")
+                }
+                appendLine()
+                appendLine(
+                    """
+                    Either register it as a 'testLifecycleTask' in kotlin.git and point the TeamCity build at it:
+
+                    `build.gradle.kts`
+                    ```
+                      testLifecycleTask("someTest", QualityGate.Master) {
+                          dependsOn(":some:module:someTest")
+                      }
+                    ```
+
+                    ...or, if it is not a test entry point at all, add it to 'nonTestEntryPointTasks'
+                    in this test with a short justification.
+                    """.trimIndent().prependIndent("  ")
+                )
+            })
+        }
+    }
+
     object Update {
         @JvmStatic
         fun main(args: Array<String>) {
@@ -185,6 +230,39 @@ class TestLifecycleTaskTest {
         val expectFile: Path = projectDir.resolve("repo/testLifecycleTask.dump.txt")
 
         fun String.sanitize() = replace(Regex("""\R"""), "\n").trim()
+
+        private val nonTestEntryPointTasks = setOf(
+            "build",
+            "check",
+            "clean",
+            "assemble",
+            "install",
+            "publish",
+            "publishToMavenLocal",
+            "publishPlugins",
+            "help",
+            "compileAll",
+            "dist",
+            "dexMethodCount",
+            "checkBuild",
+            "resolveDependencies",
+            ":kotlin-native:publish",
+            "buildTypes:publish",
+            "generateConfigurationKeys",
+            "generateTests",
+            ":buildSamplesWithPlatformLibs",
+            ":kotlin-native:copySamples",
+            ":kotlin-compiler-native-image:kotlincNativeImageArtifacts",
+            ":compiler:test-coverage:firCoverageReport",
+            ":buildAnalyzer",
+            ":konanRun",
+            ":gradle-build-conventions:test-federation-convention:test",
+            ":native:swift:swift-export-embeddable:validateSwiftExportEmbeddable",
+        )
+
+        private val nonTestEntryPointTaskPrefixes = setOf(
+            ":kotlinx-coroutines-core:",
+        )
     }
 }
 
