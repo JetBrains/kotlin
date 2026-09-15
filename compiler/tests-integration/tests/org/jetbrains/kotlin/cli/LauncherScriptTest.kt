@@ -77,7 +77,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             executableName,
             *args,
             expectedStdout = expectedStdout,
-            expectedStderr = expectedStderr,
+            expectedStderr = CliProcessUtils.ExpectedText.ExactMatch(expectedStderr),
             expectedExitCode = expectedExitCode,
             workDirectory = workDirectory,
             environment = environment,
