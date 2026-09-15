@@ -8,9 +8,9 @@ plugins {
 }
 
 kotlin {
-    /**/js {
+    /*js {
         //nodejs()
-    }/**/
+    }*/
 }
 val commonMainFullSources = tasks.register<Sync>("commonMainFullSources") {
     dependsOn(":prepare:build.version:writeStdlibVersion")
@@ -125,7 +125,7 @@ val commonJsAndWasmJsSources = tasks.register<Sync>("commonJsAndWasmJsSources") 
 
     into(layout.buildDirectory.dir("commonJsAndWasmJsSources"))
 }
-
+/*
 val jsMainSources = tasks.register<Sync>("jsMainSources") {
     dependsOn(":kotlin-stdlib:prepareJsIrMainSources")
     val jsDir = file("$rootDir/libraries/stdlib/js")
@@ -178,7 +178,7 @@ val jsMainSources = tasks.register<Sync>("jsMainSources") {
 
     into(layout.buildDirectory.dir("jsMainSources"))
 }
-
+*/
 kotlin {
     sourceSets {
         val commonMain = getByName("commonMain") {
