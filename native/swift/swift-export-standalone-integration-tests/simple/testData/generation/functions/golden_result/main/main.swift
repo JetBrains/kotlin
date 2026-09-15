@@ -5,13 +5,13 @@ import KotlinRuntimeSupport
 import KotlinStdlib
 
 public final class Foo: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -254,13 +254,13 @@ extension main.Foo? {
 }
 extension ExportedKotlinPackages.inline {
     public final class Bar: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             let __kt = inline_Bar_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { inline_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -339,11 +339,11 @@ extension ExportedKotlinPackages.operators {
                     return ExportedKotlinPackages.operators.Foo.EmptyIterator.__createClassWrapper(externalRCRef: operators_Foo_EmptyIterator_get())
                 }
             }
-            private init() {
+            private override init() {
                 fatalError()
             }
             package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -371,7 +371,7 @@ extension ExportedKotlinPackages.operators {
             { operators_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -625,13 +625,13 @@ extension ExportedKotlinPackages.operators {
 }
 extension ExportedKotlinPackages.overload {
     public final class Foo: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             let __kt = overload_Foo_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { overload_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

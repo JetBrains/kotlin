@@ -53,14 +53,14 @@ public protocol __Greeter: KotlinRuntimeSupport._KotlinBridgeable {
 public protocol __OverloadedInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
 open class AbstractBase: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         precondition(Self.self != main.AbstractBase.self, "main.AbstractBase is an abstract class and cannot be instantiated directly")
         let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -111,7 +111,7 @@ open class Base: KotlinRuntime.KotlinBase {
             }
         }
     }
-    public init() {
+    public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.Base.self {
              __kt = __root___Base_init_allocate()
@@ -122,7 +122,7 @@ open class Base: KotlinRuntime.KotlinBase {
         { __root___Base_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -164,7 +164,7 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
             }
         }
     }
-    public init() {
+    public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.GreeterBase.self {
              __kt = __root___GreeterBase_init_allocate()
@@ -175,7 +175,7 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
         { __root___GreeterBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -198,7 +198,7 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
     }
 }
 open class Overloaded: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.Overloaded.self {
              __kt = __root___Overloaded_init_allocate()
@@ -209,7 +209,7 @@ open class Overloaded: KotlinRuntime.KotlinBase {
         { __root___Overloaded_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -274,7 +274,7 @@ open class Overloaded: KotlinRuntime.KotlinBase {
     }
 }
 open class ThrowingMembers: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.ThrowingMembers.self {
              __kt = __root___ThrowingMembers_init_allocate()
@@ -285,7 +285,7 @@ open class ThrowingMembers: KotlinRuntime.KotlinBase {
         { __root___ThrowingMembers_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -414,49 +414,49 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._OverloadedInterfa
 }
 @_cdecl("AbstractBase_abstractMethod__reverse_swift")
 package func AbstractBase_abstractMethod__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = main.AbstractBase.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.AbstractBase.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.abstractMethod()
     return _result
 }
 
 @_cdecl("AbstractBase_concreteMethod__reverse_swift")
 package func AbstractBase_concreteMethod__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = main.AbstractBase.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.AbstractBase.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.concreteMethod()
     return _result
 }
 
 @_cdecl("Base_count__reverse_swift")
 package func Base_count__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.count()
     return _result
 }
 
 @_cdecl("Base_greet__TypesOfArguments__Swift_String____reverse_swift")
 package func Base_greet__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ name: Swift.String) -> Swift.String {
-    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.greet(name: name)
     return _result
 }
 
 @_cdecl("Base_name_get__reverse_swift")
 package func Base_name_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.name
     return _result
 }
 
 @_cdecl("Base_name_set__TypesOfArguments__Swift_String____reverse_swift")
 package func Base_name_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
-    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = { _self.name = newValue }()
     return { _result; return true }()
 }
 
 @_cdecl("Base_size_get__reverse_swift")
 package func Base_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.size
     return _result
 }
@@ -505,28 +505,28 @@ package func Defaulter_tag__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointe
 
 @_cdecl("GreeterBase_greet__TypesOfArguments__Swift_String____reverse_swift")
 package func GreeterBase_greet__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ name: Swift.String) -> Swift.String {
-    let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.greet(name: name)
     return _result
 }
 
 @_cdecl("GreeterBase_mood_get__reverse_swift")
 package func GreeterBase_mood_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.mood
     return _result
 }
 
 @_cdecl("GreeterBase_mood_set__TypesOfArguments__Swift_String____reverse_swift")
 package func GreeterBase_mood_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
-    let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = { _self.mood = newValue }()
     return { _result; return true }()
 }
 
 @_cdecl("GreeterBase_salutation__reverse_swift")
 package func GreeterBase_salutation__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.salutation()
     return _result
 }
@@ -575,49 +575,49 @@ package func OverloadedInterface_say__reverse_swift(_ `self`: Swift.UnsafeMutabl
 
 @_cdecl("Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String_____reverse_swift")
 package func Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.String?) -> Swift.String {
-    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.nullable(arg: arg)
     return _result
 }
 
 @_cdecl("Overloaded_nullable__TypesOfArguments__Swift_String____reverse_swift")
 package func Overloaded_nullable__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.String) -> Swift.String {
-    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.nullable(arg: arg)
     return _result
 }
 
 @_cdecl("Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32____reverse_swift")
 package func Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg1: Swift.String, _ arg2: Swift.Int32) -> Swift.String {
-    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.pick(arg1: arg1, arg2: arg2)
     return _result
 }
 
 @_cdecl("Overloaded_pick__TypesOfArguments__Swift_String____reverse_swift")
 package func Overloaded_pick__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg1: Swift.String) -> Swift.String {
-    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.pick(arg1: arg1)
     return _result
 }
 
 @_cdecl("Overloaded_same__TypesOfArguments__Swift_Int32____reverse_swift")
 package func Overloaded_same__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.Int32) -> Swift.String {
-    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.same(arg: arg)
     return _result
 }
 
 @_cdecl("Overloaded_same__TypesOfArguments__Swift_String____reverse_swift")
 package func Overloaded_same__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.String) -> Swift.String {
-    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.String = _self.same(arg: arg)
     return _result
 }
 
 @_cdecl("ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift")
 package func ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ x: Swift.Int32, _ _out_error: Swift.UnsafeMutablePointer<Swift.UnsafeMutableRawPointer?>) -> Swift.String {
-    let _self = main.ThrowingMembers.__createClassWrapper(externalRCRef: `self`)!
+    let _self = main.ThrowingMembers.__createClassWrapper(externalRCRef: `self`)
     do {
         let _result: Swift.String = try _self.compute(x: x)
         return _result

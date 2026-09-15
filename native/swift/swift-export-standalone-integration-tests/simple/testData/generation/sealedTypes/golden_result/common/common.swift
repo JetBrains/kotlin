@@ -88,7 +88,7 @@ public final class _ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue
         { org_kotlin_foo_QueryResult_AsyncValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, value.map { it in it.__externalRCRef() } ?? nil); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -108,7 +108,7 @@ public final class _ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value: Kot
         { org_kotlin_foo_QueryResult_Value_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, value.map { it in it.__externalRCRef() } ?? nil); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -217,7 +217,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             self = EnumClassA.allCases[Int(rawValue)]
         }
         public init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             switch org_kotlin_foo_EnumClassA_ordinal(__externalRCRefUnsafe) {
@@ -227,7 +227,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             default: fatalError()
             }
         }
-        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer {
             return switch self {
             case .ONE: org_kotlin_foo_EnumClassA_ONE()
             case .TWO: org_kotlin_foo_EnumClassA_TWO()
@@ -277,7 +277,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             self = EnumClassB.allCases[Int(rawValue)]
         }
         public init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             switch org_kotlin_foo_EnumClassB_ordinal(__externalRCRefUnsafe) {
@@ -287,7 +287,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             default: fatalError()
             }
         }
-        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer {
             return switch self {
             case .FOUR: org_kotlin_foo_EnumClassB_FOUR()
             case .FIVE: org_kotlin_foo_EnumClassB_FIVE()
@@ -484,7 +484,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             { org_kotlin_foo_ClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -500,7 +500,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             { org_kotlin_foo_ClassD_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -510,13 +510,13 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         }
     }
     public final class ClassE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
-        public init() {
+        public override init() {
             let __kt = org_kotlin_foo_ClassE_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { org_kotlin_foo_ClassE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -533,7 +533,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             { org_kotlin_foo_DeprecatedErrorSubClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -550,7 +550,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             { org_kotlin_foo_DeprecatedWarningSubClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -562,7 +562,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     public final class MyClassA: KotlinRuntime.KotlinBase {
         open class Inner: ExportedKotlinPackages.org.kotlin.foo.MySealedClass {
             package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -579,13 +579,13 @@ extension ExportedKotlinPackages.org.kotlin.foo {
                 self.value = value
             }
         }
-        public init() {
+        public override init() {
             let __kt = org_kotlin_foo_MyClassA_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { org_kotlin_foo_MyClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -594,7 +594,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     public final class MyClassB: KotlinRuntime.KotlinBase {
         open class Inner: ExportedKotlinPackages.org.kotlin.foo.MySealedClass {
             package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -611,13 +611,13 @@ extension ExportedKotlinPackages.org.kotlin.foo {
                 self.value = value
             }
         }
-        public init() {
+        public override init() {
             let __kt = org_kotlin_foo_MyClassB_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { org_kotlin_foo_MyClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -625,7 +625,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     }
     open class MySealedClass: KotlinRuntime.KotlinBase {
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -646,7 +646,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             { org_kotlin_foo_NonDeprecatedSubClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -663,7 +663,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             { org_kotlin_foo_NonDeprecatedSubClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -680,7 +680,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             { org_kotlin_foo_NonSealedNonOptInClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -698,7 +698,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             { org_kotlin_foo_NonSealedNonOptInClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -717,7 +717,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             { org_kotlin_foo_NonSealedOptInClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -729,7 +729,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     }
     open class SealedClassA: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -748,7 +748,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     }
     open class SealedClassB: ExportedKotlinPackages.org.kotlin.foo.SealedClassA {
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -767,7 +767,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     @available(*, unavailable, message: "unavailable")
     open class SealedClassDeprecatedError: KotlinRuntime.KotlinBase {
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -782,7 +782,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     @available(*, deprecated, message: "deprecated")
     open class SealedClassDeprecatedWarning: KotlinRuntime.KotlinBase {
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -797,7 +797,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     }
     open class SealedClassNonDeprecated: KotlinRuntime.KotlinBase {
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -811,7 +811,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     }
     open class SealedNonOptInClass: KotlinRuntime.KotlinBase {
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -827,7 +827,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     @_spi(org$kotlin$foo$OptInA)
     open class SealedOptInClass: ExportedKotlinPackages.org.kotlin.foo.SealedNonOptInClass {
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

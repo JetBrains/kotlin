@@ -62,14 +62,14 @@ public protocol __InterfaceB: KotlinRuntimeSupport._KotlinBridgeable, edge_cases
 public protocol __SomeInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
 open class ClassC: KotlinRuntime.KotlinBase, edge_cases.InterfaceB, edge_cases.__InterfaceB {
-    public init() {
+    public override init() {
         precondition(Self.self != edge_cases.ClassC.self, "edge_cases.ClassC is an abstract class and cannot be instantiated directly")
         let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -79,26 +79,26 @@ open class ClassC: KotlinRuntime.KotlinBase, edge_cases.InterfaceB, edge_cases._
     }
 }
 public final class _ExportedKotlinPackages_conflictingTypealiases_Bar_Conflict: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         let __kt = conflictingTypealiases_Bar_Conflict_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { conflictingTypealiases_Bar_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class _ExportedKotlinPackages_conflictingTypealiases_Foo_Conflict: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         let __kt = conflictingTypealiases_Foo_Conflict_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { conflictingTypealiases_Foo_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

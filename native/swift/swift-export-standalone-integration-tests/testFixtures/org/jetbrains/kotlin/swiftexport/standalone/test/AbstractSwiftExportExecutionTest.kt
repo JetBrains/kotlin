@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.creat
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemFrameworksPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemToolchainPath
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.utils.KotlinNativePaths
@@ -54,7 +56,14 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ) {
         val swiftTestFiles = testPathFull.walk().filter { it.extension == "swift" }.map { testPathFull.resolve(it) }.toList()
-        val testExecutable = compileTestExecutable(testPathFull, swiftTestFiles, swiftModules, kotlinBinaryLibrary)
+        val objCTestFiles = testPathFull.walk().filter { it.extension == "m" }.map { testPathFull.resolve(it) }.toList()
+        val testExecutable = compileTestExecutable(
+            testPathFull,
+            swiftTestFiles,
+            objCTestFiles,
+            swiftModules,
+            kotlinBinaryLibrary,
+        )
         runExecutableAndVerify(testCase, testExecutable)
     }
 
@@ -64,9 +73,42 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
         testRunner.run()
     }
 
+    /**
+     * Compiles the Objective-C sources of a test into a static library, and returns the `swiftc`
+     * options that link it in and expose its declarations to Swift through a bridging header.
+     *
+     * `swiftc` cannot compile `.m` sources itself, so they go through Clang first. The bridging
+     * header is the single `.h` next to them.
+     */
+    private fun objCCompilationOptions(testPathFull: File, objCSources: List<File>): List<String> {
+        if (objCSources.isEmpty()) return emptyList()
+
+        val kotlinRuntimeHome = File(Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftHome)
+        val staticLibrary = compileWithClangToStaticLibrary(
+            testRunSettings = testRunSettings,
+            clangMode = ClangMode.C,
+            sourceFiles = objCSources,
+            outputFile = buildDir(testPathFull).resolve("libObjCTestSources.a"),
+            // `KotlinBase.h` lives here; keep modules off so that including it directly does not
+            // collide with the `KotlinRuntime` module map sitting in the same directory.
+            includeDirectories = listOf(kotlinRuntimeHome) + objCSources.map { it.parentFile }.distinct(),
+            additionalClangFlags = listOf("-fno-modules", "-fno-objc-arc"),
+        ).assertSuccess().resultingArtifact
+
+        val bridgingHeaders = objCSources.map { it.parentFile }.distinct()
+            .flatMap { dir -> dir.listFiles { f: File -> f.extension == "h" }?.toList() ?: emptyList() }
+        return listOf(
+            "-L", staticLibrary.libraryFile.parentFile.absolutePath,
+            "-l${staticLibrary.libraryFile.nameWithoutExtension.removePrefix("lib")}",
+            // Swift precompiles the bridging header with Clang, so it needs to find `KotlinBase.h` too.
+            "-Xcc", "-I", "-Xcc", kotlinRuntimeHome.absolutePath,
+        ) + bridgingHeaders.flatMap { listOf("-import-objc-header", it.absolutePath) }
+    }
+
     private fun compileTestExecutable(
         testPathFull: File,
         testSources: List<File>,
+        objCSources: List<File>,
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ): TestExecutable {
@@ -87,7 +129,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
             "-framework", "Testing",
             testRunSettings.systemToolchainPath?.let { "-plugin-path" },
             testRunSettings.systemToolchainPath?.let { "${it}/usr/lib/swift/host/plugins/testing/" },
-        ) + extraSwiftCompilerOptions
+        ) + objCCompilationOptions(testPathFull, objCSources) + extraSwiftCompilerOptions
 
         val success = SwiftCompilation(
             testRunSettings,

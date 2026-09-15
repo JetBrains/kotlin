@@ -5,8 +5,8 @@ import KotlinRuntimeSupport
 public var closure_property: () -> Swift.Void {
     get {
         return {
-            let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___closure_property_get(), options: .asBestFittingWrapper)!
-            return { return { simple_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!); return () }() }
+            let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___closure_property_get(), options: .asBestFittingWrapper)
+            return { return { simple_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()); return () }() }
         }()
     }
     set {
@@ -15,8 +15,8 @@ public var closure_property: () -> Swift.Void {
 }
 public func foo_1() -> () -> Swift.Void {
     return {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___foo_1(), options: .asBestFittingWrapper)!
-        return { return { simple_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!); return () }() }
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___foo_1(), options: .asBestFittingWrapper)
+        return { return { simple_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()); return () }() }
     }()
 }
 public func foo_consume_consuming(
@@ -42,8 +42,8 @@ public func foo_consume_simple(
 @_cdecl("simple_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32___")
 package func simple_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (@escaping (Swift.UInt32, Swift.UInt32) -> Swift.ClosedRange<Swift.Int32>) -> Swift.Void)({
-    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: _1, options: .asBestFittingWrapper)!
-    return { _1, _2 in return { let _ref = simple_internal_functional_type_caller_SwiftU2EClosedRangeU3CSwiftU2EInt32U3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32_Swift_UInt32__(pointerToBlock.__externalRCRef()!, _1, _2); return kotlin_ranges_intRange_getStart_int_simple(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_simple(_ref) }() }
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: _1, options: .asBestFittingWrapper)
+    return { _1, _2 in return { let _ref = simple_internal_functional_type_caller_SwiftU2EClosedRangeU3CSwiftU2EInt32U3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32_Swift_UInt32__(pointerToBlock.__externalRCRef(), _1, _2); return kotlin_ranges_intRange_getStart_int_simple(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_simple(_ref) }() }
 }())
     return { _result; return true }()
 }

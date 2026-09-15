@@ -16,7 +16,7 @@ extension ExportedKotlinPackages.kotlinx.atomicfu.locks {
         public final func unlock() -> Swift.Void {
             return { kotlinx_atomicfu_locks_SynchronizedObject_unlock(self.__externalRCRef()); return () }()
         }
-        public init() {
+        public override init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == ExportedKotlinPackages.kotlinx.atomicfu.locks.SynchronizedObject.self {
                  __kt = kotlinx_atomicfu_locks_SynchronizedObject_init_allocate()
@@ -27,7 +27,7 @@ extension ExportedKotlinPackages.kotlinx.atomicfu.locks {
             { kotlinx_atomicfu_locks_SynchronizedObject_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

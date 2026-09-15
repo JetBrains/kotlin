@@ -57,13 +57,13 @@ extension ExportedKotlinPackages.org.kotlin.baz {
 extension ExportedKotlinPackages.org.kotlin.foo {
     public typealias Typealias = Swift.Int32
     public final class Clazz: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             let __kt = org_kotlin_foo_Clazz_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
