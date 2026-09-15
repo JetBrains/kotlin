@@ -172,6 +172,11 @@ Functions for writing test assertions.
 
 Functions for working with text and regular expressions.
 
+# Package kotlin.text.unicode
+
+API and utility functions for working with Unicode code points, character properties, casing, 
+and Unicode-aware text iteration.
+
 # Package kotlin.time
 
 API for measuring time intervals and calculating durations.
