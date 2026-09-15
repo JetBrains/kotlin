@@ -1,0 +1,19 @@
+KtDotQualifiedExpression(233,246): 'derived.get()'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = derived
+        isSafeNavigation = false
+        type = Derived
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Derived.get(<dispatch receiver>: Derived): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Derived.get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
