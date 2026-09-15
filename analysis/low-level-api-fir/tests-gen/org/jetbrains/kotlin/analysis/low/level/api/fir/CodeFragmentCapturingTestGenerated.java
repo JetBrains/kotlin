@@ -178,6 +178,12 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   }
 
   @Test
+  @TestMetadata("localFunctionInExplicitBackingField.kt")
+  public void testLocalFunctionInExplicitBackingField() {
+    run("localFunctionInExplicitBackingField.kt");
+  }
+
+  @Test
   @TestMetadata("localFunctionLambdaParameterClosure.kt")
   public void testLocalFunctionLambdaParameterClosure() {
     run("localFunctionLambdaParameterClosure.kt");

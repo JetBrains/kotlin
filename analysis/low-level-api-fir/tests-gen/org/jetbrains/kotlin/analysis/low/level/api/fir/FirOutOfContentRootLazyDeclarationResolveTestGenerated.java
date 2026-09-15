@@ -2310,6 +2310,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("explicitBackingFieldWithImplicitType.kt")
+    public void testExplicitBackingFieldWithImplicitType() {
+      run("explicitBackingFieldWithImplicitType.kt");
+    }
+
+    @Test
     @TestMetadata("finalPropertyInInterface.kt")
     public void testFinalPropertyInInterface() {
       run("finalPropertyInInterface.kt");

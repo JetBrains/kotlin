@@ -1,0 +1,33 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Static scope owner symbol: FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: Foo
+    Element 8
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] explicitBackingField.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Number|
+            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Number|
+
+    }

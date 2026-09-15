@@ -1,0 +1,36 @@
+KaBackingFieldSymbol:
+  anchorPsi: KtBackingField
+  annotations: [
+    FieldAnnotation()
+      psi: KtAnnotationEntry
+  ]
+  callableId: null
+  contextParameters: []
+  contextReceivers: []
+  isActual: false
+  isCompanion: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isNotDefault: true
+  isVal: true
+  location: PROPERTY
+  modality: FINAL
+  name: field
+  origin: PROPERTY_BACKING_FIELD
+  owningProperty: KaKotlinPropertySymbol(/x)
+  psi: KtBackingField
+  realPsi: KtBackingField
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  typeParameters: []
+  visibility: PRIVATE
+  getContainingFileSymbol: KaFileSymbol(explicitBackingFieldWithAnnotations.kt)
+  getContainingJvmClassName: ExplicitBackingFieldWithAnnotationsKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null
