@@ -27,6 +27,7 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.isDirectory
+import kotlin.io.path.pathString
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 data class FileWithFqName(val filePath: String, val fqName: String)
@@ -140,9 +141,9 @@ class CacheSupport(
 
     private fun getLibrary(path: Path) =
             pathToLibrary[path] ?: error("library to cache\n" +
-                    "  ${path.absolutePathString()}\n" +
+                    "  ${path.pathString}\n" +
                     "not found among resolved libraries:\n  " +
-                    klibDag.librariesReverseTopoSorted.joinToString("\n  ") { it.path.absolutePathString() })
+                    klibDag.librariesReverseTopoSorted.joinToString("\n  ") { it.path.pathString })
 
     internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = Path(it)
