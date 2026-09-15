@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.serialization.*
+import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
@@ -63,7 +64,7 @@ fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
 
 class CacheSupport(
         private val configuration: CompilerConfiguration,
-        internal val allKlibs: CachedKlibs,
+        internal val klibDag: KlibDAG,
         ignoreCacheReason: String?,
         systemCacheDirectory: Path,
         autoCacheDirectory: Path,
@@ -72,7 +73,7 @@ class CacheSupport(
         val produce: CompilerOutputKind
 ) {
     // Note: The order of libraries is not important here.
-    private val pathToLibrary = allKlibs.librariesReverseTopoSorted.associateBy { it.path }
+    private val pathToLibrary = klibDag.librariesReverseTopoSorted.associateBy { it.path }
 
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
             .map {
@@ -128,7 +129,7 @@ class CacheSupport(
         CachedLibraries(
                 configuration = configuration,
                 target = target,
-                allKlibs = allKlibs,
+                klibDag = klibDag,
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
@@ -141,7 +142,7 @@ class CacheSupport(
             pathToLibrary[path] ?: error("library to cache\n" +
                     "  ${path.absolutePathString()}\n" +
                     "not found among resolved libraries:\n  " +
-                    allKlibs.librariesReverseTopoSorted.joinToString("\n  ") { it.path.absolutePathString() })
+                    klibDag.librariesReverseTopoSorted.joinToString("\n  ") { it.path.absolutePathString() })
 
     internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = Path(it)
@@ -170,10 +171,10 @@ class CacheSupport(
 
     fun checkConsistency() {
         // Note: The libraries should be in the reverse topo-order here.
-        for (library in allKlibs.librariesReverseTopoSorted) {
+        for (library in klibDag.librariesReverseTopoSorted) {
             val cache = cachedLibraries.getLibraryCache(library)
             if (cache != null || library == libraryToCache?.klib) {
-                val dependencies = allKlibs.getAllDependencies(library)
+                val dependencies = klibDag.getAllDependencies(library)
                 for (dependency in dependencies) {
                     if (!cachedLibraries.isLibraryCached(dependency) && dependency != libraryToCache?.klib) {
                         val description = if (cache != null) "cached (in ${cache.path})" else "going to be cached"

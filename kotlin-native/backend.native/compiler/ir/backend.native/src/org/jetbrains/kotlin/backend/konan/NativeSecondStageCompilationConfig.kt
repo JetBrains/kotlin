@@ -9,6 +9,9 @@ import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
+import org.jetbrains.kotlin.backend.konan.library.KlibDAG
+import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
+import org.jetbrains.kotlin.backend.konan.library.deserialize
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
@@ -24,6 +27,7 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.config.*
+import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
@@ -583,15 +587,14 @@ class NativeSecondStageCompilationConfig(
     }
 
     internal var cacheSupport: CacheSupport = createCacheSupport(
-            allKlibs = configuration.serializedKlibDag?.let {
-                CachedKlibs.restoreFromSerializedDag(it, loadedKlibs.all)
-            } ?: CachedKlibs.buildNew(loadedKlibs.all)
+            klibDag = configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
+                    ?: KlibDAGBuilder(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }.build()
     )
         private set
 
-    private fun createCacheSupport(allKlibs: CachedKlibs) = CacheSupport(
+    private fun createCacheSupport(klibDag: KlibDAG) = CacheSupport(
             configuration = configuration,
-            allKlibs = allKlibs,
+            klibDag = klibDag,
             ignoreCacheReason = ignoreCacheReason,
             systemCacheDirectory = systemCacheDirectory,
             autoCacheDirectory = autoCacheDirectory,
@@ -602,7 +605,7 @@ class NativeSecondStageCompilationConfig(
 
     internal fun reloadCacheSupport() {
         // Reuse CachedKlibs.
-        cacheSupport = createCacheSupport(cacheSupport.allKlibs)
+        cacheSupport = createCacheSupport(cacheSupport.klibDag)
     }
 
     internal val cachedLibraries: CachedLibraries
