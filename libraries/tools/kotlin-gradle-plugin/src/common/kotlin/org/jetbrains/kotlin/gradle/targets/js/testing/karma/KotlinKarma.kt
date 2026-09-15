@@ -50,6 +50,7 @@ import java.io.File
 import java.io.PrintWriter
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.wasm.WASM_UNIT_TESTS_ENTRY_POINT
 
 class KotlinKarma internal constructor(
     @Transient
@@ -622,7 +623,7 @@ internal fun createLoadWasm(npmProjectDir: File, file: File): File {
             """
                 import * as exports from "$relativePath"
                 try {
-                    const startUnitTests = "startUnitTests"
+                    const startUnitTests = "$WASM_UNIT_TESTS_ENTRY_POINT"
                     exports[startUnitTests]?.()
                     window.__karma__.loaded();
                 } catch (e) {

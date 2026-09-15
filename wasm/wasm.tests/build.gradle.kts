@@ -15,6 +15,8 @@ plugins {
     id("java-test-fixtures")
     id("test-inputs-check")
     id("wasmtime-configuration")
+    // HACK (KT-87723): needed to componentize WASI test binaries, see WasiComponentizer
+    id("wasm-tools-configuration")
 }
 
 node {
@@ -382,6 +384,10 @@ projectTests {
             with(wasmtimeKotlinBuild) {
                 setupWasmtime()
             }
+            // HACK (KT-87723): WASI test binaries are turned into components before they are run
+            with(wasmToolsKotlinBuild) {
+                setupWasmTools()
+            }
             with(wasmNodeJsKotlinBuild) {
                 setupNodeJs(nodejsVersion)
                 dependsOn(":js:js.tests:npmInstall")
@@ -442,6 +448,8 @@ projectTests {
 
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")
+    // HACK (KT-87723): read by WasiComponentizer to turn WASI test binaries into components
+    testData(project(":kotlin-stdlib").isolated, "wasm/wasi/internal/wit")
     testData(project(":compiler").isolated, "testData/debug")
     testData(project(":compiler").isolated, "testData/ir/irText")
     testData(project(":compiler").isolated, "testData/loadJava")
