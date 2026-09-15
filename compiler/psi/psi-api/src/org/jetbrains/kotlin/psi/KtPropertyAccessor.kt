@@ -137,6 +137,8 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
 
     /**
      * The property this accessor belongs to.
+     *
+     * Note: in broken code a property accessor can be attached to a [KtDestructuringDeclaration] (KT-74793)
      */
     open val property: KtProperty
         get() = parent as KtProperty
