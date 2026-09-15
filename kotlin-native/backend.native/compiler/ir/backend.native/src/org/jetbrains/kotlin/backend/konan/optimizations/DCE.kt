@@ -44,10 +44,8 @@ internal fun dce(
         if (!node.symbol.isStaticFieldInitializer)
             referenceFunction(node.symbol)
 
-        for (callSite in node.callSites) {
-            if (!callSite.isVirtual)
-                referenceFunction(callSite.actualCallee)
-        }
+        for (callSite in node.callSites)
+            (callSite as? CallGraphNode.CallSite.Static)?.callees?.forEach { referenceFunction(it) }
     }
 
     irModule.acceptChildrenVoid(object : IrVisitorVoid() {

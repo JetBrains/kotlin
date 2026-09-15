@@ -71,13 +71,18 @@ internal object StaticInitializersOptimization {
                 +"CALL GRAPH"
                 callGraph.directEdges.forEach { [t, u] ->
                     +"    FUN $t"
-                    u.callSites.forEach {
-                        val label = when {
-                            it.isVirtual -> "VIRTUAL"
-                            callGraph.directEdges.containsKey(it.actualCallee) -> "LOCAL"
-                            else -> "EXTERNAL"
+                    u.callSites.forEach { callSite ->
+                        when (callSite) {
+                            is CallGraphNode.CallSite.Virtual ->
+                                +"        CALLS VIRTUAL ${callSite.callee}"
+                            is CallGraphNode.CallSite.Static -> callSite.callees.forEach {
+                                val label = when {
+                                    callGraph.directEdges.containsKey(it) -> "LOCAL"
+                                    else -> "EXTERNAL"
+                                }
+                                +"        CALLS $label $it"
+                            }
                         }
-                        +"        CALLS $label ${it.actualCallee}"
                     }
                     callGraph.reversedEdges[t]!!.forEach { +"        CALLED BY $it" }
                 }
@@ -99,8 +104,18 @@ internal object StaticInitializersOptimization {
                     multiNode.nodes.forEach {
                         +"        $it"
                         callGraph.directEdges[it]!!.callSites
-                                .filter { callGraph.directEdges.containsKey(it.actualCallee) }
-                                .forEach { +"            CALLS ${it.actualCallee}" }
+                                .forEach { callSite ->
+                                    when (callSite) {
+                                        is CallGraphNode.CallSite.Virtual -> {
+                                            if (callGraph.directEdges.containsKey(callSite.callee))
+                                                +"            CALLS ${callSite.callee}"
+                                        }
+                                        is CallGraphNode.CallSite.Static -> callSite.callees.forEach { callee ->
+                                            if (callGraph.directEdges.containsKey(callee))
+                                                +"            CALLS $callee"
+                                        }
+                                    }
+                                }
                         callGraph.reversedEdges[it]!!.forEach { +"            CALLED BY $it" }
                     }
                 }
@@ -110,7 +125,10 @@ internal object StaticInitializersOptimization {
             val functions = buildSet {
                 callGraph.directEdges.values.forEach {
                     add(it.symbol.irFunction)
-                    it.callSites.forEach { callSite -> add(callSite.actualCallee.irFunction) }
+                    it.callSites.forEach { callSite ->
+                        (callSite as? CallGraphNode.CallSite.Static ?: error("No virtual call sites are expected"))
+                                .callees.forEach { callee -> add(callee.irFunction) }
+                    }
                 }
             }
             val containers = functions
@@ -198,10 +216,19 @@ internal object StaticInitializersOptimization {
                 nodes.forEach { from ->
                     +"IR"
                     +(from.irFunction?.dump() ?: "")
-                    callGraph.directEdges[from]!!.callSites.forEach { to ->
-                        +"CALL"
-                        +"   from $from"
-                        +"   to ${to.actualCallee}"
+                    callGraph.directEdges[from]!!.callSites.forEach { callSite ->
+                        when (callSite) {
+                            is CallGraphNode.CallSite.Virtual -> {
+                                +"VIRTUAL CALL"
+                                +"   from $from"
+                                +"   to ${callSite.callee}"
+                            }
+                            is CallGraphNode.CallSite.Static -> callSite.callees.forEach { to ->
+                                +"CALL"
+                                +"   from $from"
+                                +"   to $to"
+                            }
+                        }
                     }
                 }
             }
@@ -270,7 +297,7 @@ internal object StaticInitializersOptimization {
 
             val producerInvocations = mutableMapOf<IrExpression, IrCall>()
             val jobInvocations = mutableMapOf<IrCall, IrCall>()
-            val virtualCallSites = mutableMapOf<IrCall, MutableList<CallGraphNode.CallSite>>()
+            val virtualCallSites = mutableMapOf<IrCall, CallGraphNode.CallSite.Static>()
             for (callSite in node.callSites) {
                 val call = callSite.call
                 val irCall = call.irCallSite ?: continue
@@ -279,7 +306,8 @@ internal object StaticInitializersOptimization {
                 else if (irCall.origin == STATEMENT_ORIGIN_JOB_INVOCATION)
                     jobInvocations[irCall.arguments[0] as IrCall] = irCall
                 if (call !is DataFlowIR.Node.VirtualCall) continue
-                virtualCallSites.getOrPut(irCall) { mutableListOf() }.add(callSite)
+                check(virtualCallSites[irCall] == null) { "Error: duplicate call site for ${irCall.render()}" }
+                virtualCallSites[irCall] = callSite as? CallGraphNode.CallSite.Static ?: error("No virtual call site is expected")
             }
             val returnTargetsInitializedFiles = mutableMapOf<IrReturnTargetSymbol, BitSet>()
             val initializedFilesAtLoopsBreaks = mutableMapOf<IrLoop, BitSet>()
@@ -483,13 +511,13 @@ internal object StaticInitializersOptimization {
                         return data
                     if (!expression.isVirtualCall)
                         return processCall(expression, expression.actualCallee, data)
-                    val devirtualizedCallSite = virtualCallSites[expression] ?: return data
+                    val callSite = virtualCallSites[expression] ?: return data
                     val arguments = expression.getArgumentsWithIr()
                     val argumentsResult = arguments.fold(data) { set, arg -> arg.second.accept(this, set) }
                     var callResult = BitSet()
                     var first = true
-                    for (callSite in devirtualizedCallSite) {
-                        val callee = callSite.actualCallee.irFunction ?: error("No IR for: ${callSite.actualCallee}")
+                    for (actualCallee in callSite.callees) {
+                        val callee = actualCallee.irFunction ?: error("No IR for: $actualCallee")
                         updateResultForFunction(callee, argumentsResult)
                         if (first) {
                             callResult = getResultAfterCall(callee, BitSet())
