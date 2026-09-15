@@ -1,7 +1,7 @@
-fun test() {
-    while (true) {
-        run {
-            break
-        }
-    }
+context(contextual: Any)
+fun foo() {
+}
+
+fun main() {
+    foo(contextual = "")
 }
