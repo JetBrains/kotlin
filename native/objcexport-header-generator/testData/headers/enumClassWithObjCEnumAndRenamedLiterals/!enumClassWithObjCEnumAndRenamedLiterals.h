@@ -49,6 +49,8 @@ typedef NS_CLOSED_ENUM(int32_t, FooNSEnum) {
   FooNSEnumCombination1Renamed NS_SWIFT_NAME(combination1Renamed) = 7,
   FooNSEnumCombination2Renamed NS_SWIFT_NAME(combination2Renamed) = 8,
   FooNSEnumCombination3Renamed NS_SWIFT_NAME(combination3Swift) = 9,
+  FooNSEnumNULL NS_SWIFT_NAME(DEBUG_) = 10,
+  FooNSEnumYES NS_SWIFT_NAME(NO_) = 11,
 } NS_SWIFT_NAME(FooNSEnum);
 
 
@@ -68,6 +70,8 @@ __attribute__((objc_subclassing_restricted))
 @property (class, readonly) Foo *combination1Bad __attribute__((swift_name("combination1Bad")));
 @property (class, readonly) Foo *combination2BadObjC __attribute__((swift_name("combination2BadSwift")));
 @property (class, readonly) Foo *combination3BadObjC __attribute__((swift_name("combination3BadSwift")));
+@property (class, readonly) Foo *NULL_ __attribute__((swift_name("DEBUG")));
+@property (class, readonly) Foo *entryName3Swift __attribute__((swift_name("entryName3Swift")));
 + (KotlinArray<Foo *> *)values __attribute__((swift_name("values()")));
 @property (class, readonly) NSArray<Foo *> *entries __attribute__((swift_name("entries")));
 @end
