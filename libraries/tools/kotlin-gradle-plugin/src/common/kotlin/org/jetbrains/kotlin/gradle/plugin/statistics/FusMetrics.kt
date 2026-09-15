@@ -550,3 +550,16 @@ internal object KotlinSourceSetMetrics : FusMetrics {
         }
     }
 }
+
+internal object SwiftExportDslMetrics : FusMetrics {
+    internal fun collectMetrics(project: Project, moduleNameOverridden: Boolean, rootPackageOverridden: Boolean) {
+        val overriddenOptions = buildList {
+            if (moduleNameOverridden) add("moduleName")
+            if (rootPackageOverridden) add("rootPackage")
+        }
+        if (overriddenOptions.isEmpty()) return
+        project.addConfigurationMetrics {
+            it.put(StringListMetrics.SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES, overriddenOptions)
+        }
+    }
+}

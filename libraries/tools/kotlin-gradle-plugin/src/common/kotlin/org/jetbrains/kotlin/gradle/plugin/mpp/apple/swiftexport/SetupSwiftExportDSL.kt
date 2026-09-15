@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadat
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.shareSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.swiftExportDependencySelectorFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration
+import org.jetbrains.kotlin.gradle.plugin.statistics.SwiftExportDslMetrics
 
 internal object SwiftExportDSLConstants {
     const val SWIFT_EXPORT_EXTENSION_NAME = "swiftExport"
@@ -53,6 +54,11 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
     // so configuring the DSL from there publishes nothing.
     val swiftExportConfiguration = exportExtension.swiftExportConfiguration
     if (swiftExportConfiguration.moduleName.isPresent || swiftExportConfiguration.rootPackage.isPresent) {
+        SwiftExportDslMetrics.collectMetrics(
+            project,
+            moduleNameOverridden = swiftExportConfiguration.moduleName.isPresent,
+            rootPackageOverridden = swiftExportConfiguration.rootPackage.isPresent,
+        )
         locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration(swiftExportConfiguration)
 
         // Published dependencies expose their metadata through the `swiftExportMetadataElements` variant registered
