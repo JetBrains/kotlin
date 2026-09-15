@@ -29,12 +29,10 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
 // Extracted from FirSerializationPluginClassChecker to keep it reasonably small
 internal fun CheckerContext.checkCompanionOfSerializableClass(
-    classSymbol: FirClassSymbol<*>,
+    classSymbol: FirRegularClassSymbol,
     reporter: DiagnosticReporter,
 ) {
-    if (classSymbol !is FirRegularClassSymbol) return
     val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return
-    if (!classSymbol.hasSerializableOrMetaAnnotation(session)) return
     if (!companionObjectSymbol.hasSerializableOrMetaAnnotation(session)) return
     val serializableArg = classSymbol.getSerializableWith(session)
     val companionArg = companionObjectSymbol.getSerializableWith(session)
@@ -51,11 +49,9 @@ internal fun CheckerContext.checkCompanionOfSerializableClass(
 }
 
 internal fun CheckerContext.checkPrivateCompanion(
-    classSymbol: FirClassSymbol<*>,
+    classSymbol: FirRegularClassSymbol,
     reporter: DiagnosticReporter,
 ) {
-    if (classSymbol !is FirRegularClassSymbol) return
-    if (!classSymbol.shouldHaveGeneratedMethodsInCompanion(session)) return
     val classVisibility = classSymbol.publishedApiEffectiveVisibility ?: classSymbol.effectiveVisibility
     if (classVisibility.privateApi) return
     val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return
@@ -77,11 +73,9 @@ internal fun CheckerContext.checkPrivateCompanion(
  * function to generate a body for in the backend.
  */
 internal fun CheckerContext.checkCompanionSerializerClash(
-    classSymbol: FirClassSymbol<*>,
+    classSymbol: FirRegularClassSymbol,
     reporter: DiagnosticReporter,
 ) {
-    if (classSymbol !is FirRegularClassSymbol) return
-    if (!classSymbol.shouldHaveGeneratedMethodsInCompanion(session)) return
     // For a serializable object the backend looks the getter up in the object itself rather than in a companion,
     // see SerializableCompanionIrGenerator.getSerializerGetterFunction.
     val containerSymbol = when {

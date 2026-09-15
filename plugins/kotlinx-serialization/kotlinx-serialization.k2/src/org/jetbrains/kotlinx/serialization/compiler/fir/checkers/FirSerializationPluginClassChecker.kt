@@ -304,9 +304,13 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (!classSymbol.hasSerializableOrMetaAnnotation(session)) return false
 
-        checkCompanionOfSerializableClass(classSymbol, reporter)
-        checkCompanionSerializerClash(classSymbol, reporter)
-        checkPrivateCompanion(classSymbol, reporter)
+        if (classSymbol is FirRegularClassSymbol) {
+            checkCompanionOfSerializableClass(classSymbol, reporter)
+            if (classSymbol.shouldHaveGeneratedMethodsInCompanion(session)) {
+                checkCompanionSerializerClash(classSymbol, reporter)
+                checkPrivateCompanion(classSymbol, reporter)
+            }
+        }
 
         if (classSymbol.isAnonymousObjectOrInsideIt(this)) {
             reporter.reportOn(
