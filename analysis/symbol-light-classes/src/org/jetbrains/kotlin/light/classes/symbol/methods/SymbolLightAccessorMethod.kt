@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-@OptIn(KaImplementationDetail::class)
 internal class SymbolLightAccessorMethod private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
@@ -50,12 +49,12 @@ internal class SymbolLightAccessorMethod private constructor(
     private val isTopLevel: Boolean,
     private val suppressStatic: Boolean,
     generationMode: MethodGenerationMode,
-) : SymbolLightMethodBase(
+) : SymbolLightMethodBaseImpl<KaPropertyAccessorSymbol>(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
     generationMode = generationMode,
-), KaSymbolJavaView<KaPropertyAccessorSymbol> {
+) {
     private constructor(
         propertyAccessorSymbol: KaPropertyAccessorSymbol,
         containingPropertySymbol: KaPropertySymbol,

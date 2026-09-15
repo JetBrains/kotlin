@@ -61,8 +61,8 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
         }
     }
 
-    override fun getExtendsList(): PsiReferenceList? = _extendsList
-    override fun getImplementsList(): PsiReferenceList? = _implementsList
+    override fun getExtendsList(): PsiReferenceList = _extendsList
+    override fun getImplementsList(): PsiReferenceList = _implementsList
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol {
