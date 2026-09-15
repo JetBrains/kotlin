@@ -1,0 +1,4 @@
+open class Base {
+    protected open val prefix: String
+        get() = "foo"
+}
