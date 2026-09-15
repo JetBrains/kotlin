@@ -110,5 +110,5 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getQualifiedName(): String? = null
-    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, symbolPointer, useSiteModule, manager)
 }

@@ -66,7 +66,7 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
             computer = ::computeModifiers
         ),
         annotationsBox = GranularAnnotationsBox(
-            annotationsProvider = SymbolAnnotationsProvider(ktModule, classSymbolPointer),
+            annotationsProvider = SymbolAnnotationsProvider(useSiteModule, symbolPointer),
             additionalAnnotationsProvider = AbstractClassAdditionalAnnotationsProvider,
         ),
     )

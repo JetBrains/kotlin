@@ -38,8 +38,8 @@ import javax.swing.Icon
 internal class SymbolLightClassForFacade(
     override val facadeClassFqName: FqName,
     override val files: Collection<KtFile>,
-    ktModule: KaModule,
-) : SymbolLightClassBase(ktModule, files.first().manager), KtLightClassForFacade {
+    override val useSiteModule: KaModule,
+) : SymbolLightClassBase(files.first().manager), KtLightClassForFacade {
 
     init {
         require(files.isNotEmpty())
@@ -52,7 +52,7 @@ internal class SymbolLightClassForFacade(
     }
 
     private fun <T> withFileSymbols(action: context(KaSession) (List<KaFileSymbol>) -> T): T =
-        analyzeForLightClasses(ktModule) {
+        analyzeForLightClasses(useSiteModule) {
             action(files.map { it.symbol })
         }
 
@@ -67,8 +67,8 @@ internal class SymbolLightClassForFacade(
             } else {
                 GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
-                        ktModule = this.ktModule,
-                        annotatedSymbolPointer = analyzeForLightClasses(ktModule) {
+                        ktModule = this.useSiteModule,
+                        annotatedSymbolPointer = analyzeForLightClasses(useSiteModule) {
                             firstFileInFacade.symbol.createPointer()
                         },
                     )
@@ -138,7 +138,7 @@ internal class SymbolLightClassForFacade(
         result
     }
 
-    override fun copy(): SymbolLightClassForFacade = SymbolLightClassForFacade(facadeClassFqName, files, ktModule)
+    override fun copy(): SymbolLightClassForFacade = SymbolLightClassForFacade(facadeClassFqName, files, useSiteModule)
 
     private val packageClsFile = FakeFileForLightClass(
         firstFileInFacade,

@@ -27,7 +27,7 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
         require(classSymbol.classKind == KaClassKind.ANNOTATION_CLASS)
     }
 
-    constructor(classOrObject: KtClassOrObject, ktModule: KaModule) : super(classOrObject, ktModule) {
+    constructor(classOrObject: KtClassOrObject, useSiteModule: KaModule) : super(classOrObject, useSiteModule) {
         require(classOrObject is KtClass && classOrObject.isAnnotation())
     }
 
@@ -68,8 +68,8 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
 
     override fun copy(): SymbolLightClassForAnnotationClass = SymbolLightClassForAnnotationClass(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classSymbolPointer = classSymbolPointer,
-        ktModule = ktModule,
+        classSymbolPointer = symbolPointer,
+        ktModule = useSiteModule,
         manager = manager,
     )
 }
