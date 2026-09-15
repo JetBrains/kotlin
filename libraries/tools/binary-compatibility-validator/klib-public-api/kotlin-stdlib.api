@@ -234,6 +234,10 @@ open annotation class kotlin/EqualityBound : kotlin/Annotation { // kotlin/Equal
         final fun <get-bound>(): kotlin.reflect/KClass<*> // kotlin/EqualityBound.bound.<get-bound>|<get-bound>(){}[0]
 }
 
+open annotation class kotlin/ExperimentalCollectionLiteralsApi : kotlin/Annotation { // kotlin/ExperimentalCollectionLiteralsApi|null[0]
+    constructor <init>() // kotlin/ExperimentalCollectionLiteralsApi.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin/ExperimentalContextParameters : kotlin/Annotation { // kotlin/ExperimentalContextParameters|null[0]
     constructor <init>() // kotlin/ExperimentalContextParameters.<init>|<init>(){}[0]
 }
