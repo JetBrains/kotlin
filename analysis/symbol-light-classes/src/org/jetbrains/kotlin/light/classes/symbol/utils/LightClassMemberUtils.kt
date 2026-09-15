@@ -1,0 +1,195 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.light.classes.symbol.utils
+
+import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiMethods
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightMethodForDecompiledDeclaration
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.KaElementJavaView
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
+
+/**
+ * Utilities for acquiring various light declarations that are not classes: methods, field, parameters, etc.
+ */
+internal object LightClassMemberUtils {
+    context(session: KaSession)
+    fun getLightClassParameters(
+        parameterSymbol: KaParameterSymbol,
+    ): List<PsiParameter> {
+        val enclosingDeclaration = parameterSymbol.containingDeclaration as? KaFunctionSymbol ?: return emptyList()
+
+        val methods = enclosingDeclaration.asPsiMethods()
+
+        val parameterSymbolPointer = parameterSymbol.createPointer()
+        val parameterSymbolPsi = parameterSymbol.getPsiForMatching()
+        return methods.mapNotNull { method ->
+            method.parameterList.parameters.firstOrNull { parameter ->
+                parameter.isCreatedFrom(parameterSymbolPsi, parameterSymbolPointer)
+            }
+        }
+    }
+
+    context(session: KaSession)
+    fun getLightClassTypeParameter(
+        typeParameterSymbol: KaTypeParameterSymbol,
+    ): List<PsiTypeParameter> {
+        val enclosingDeclaration = typeParameterSymbol.containingDeclaration ?: return emptyList()
+        val paramIndex = enclosingDeclaration.typeParameters.indexOf(typeParameterSymbol)
+
+        val lightOwners = when (enclosingDeclaration) {
+            is KaClassSymbol -> listOf(enclosingDeclaration.asPsiClass())
+            is KaFunctionSymbol -> enclosingDeclaration.asPsiMethods()
+            is KaKotlinPropertySymbol -> listOfNotNull(enclosingDeclaration.getter, enclosingDeclaration.setter).flatMap {
+                it.asPsiMethods()
+            }
+            else -> emptyList()
+        }
+
+        return lightOwners.mapNotNull { lightOwner ->
+            (lightOwner as? PsiTypeParameterListOwner)?.typeParameters?.getOrNull(paramIndex)
+        }
+    }
+
+    context(session: KaSession)
+    fun getLightClassBackingField(
+        declarationSymbol: KaSymbol,
+    ): PsiField? {
+        if (declarationSymbol !is KaClassSymbol && declarationSymbol !is KaEnumEntrySymbol && declarationSymbol !is KaBackingFieldSymbol) return null
+
+        val psiClass: PsiClass = getWrappingClass(declarationSymbol)?.let { wrapper ->
+            (wrapper.parent as? PsiClass).takeIf { wrapper.isCreatedFromCompanion() } ?: wrapper
+        } ?: return null
+
+        val declarationSymbolPointer = declarationSymbol.createPointer()
+        val declarationSymbolPsi = declarationSymbol.getPsiForMatching()
+
+        return psiClass.fields.find { psiField: PsiField ->
+            psiField.isCreatedFrom(declarationSymbolPsi, declarationSymbolPointer)
+        }
+    }
+
+    context(session: KaSession)
+    fun getLightClassMethods(
+        functionSymbol: KaFunctionSymbol,
+    ): List<PsiMethod> {
+        val functionSymbolPointer = functionSymbol.createPointer()
+        val functionSymbolPsi = functionSymbol.getPsiForMatching()
+
+        return getWrappingClasses(functionSymbol)
+            .flatMap { it.methods.asSequence() }
+            .filterIsInstance<KtLightMethod>()
+            .filter { lightMethod ->
+                when {
+                    lightMethod.isCreatedFrom(functionSymbolPsi, functionSymbolPointer) -> {
+                        if (functionSymbol is KaPropertyAccessorSymbol && lightMethod is KtLightMethodForDecompiledDeclaration) {
+                            /**
+                             * Decompiled accessors don't have any pointers and always have the corresponding property as their `kotlinOrigin`.
+                             * Hence, an additional check is needed to properly match decompiled accessors
+                             */
+                            val hasVoidReturnType = lightMethod.returnType == PsiTypes.voidType()
+                            when (functionSymbol) {
+                                is KaPropertyGetterSymbol -> !hasVoidReturnType
+                                is KaPropertySetterSymbol -> hasVoidReturnType
+                            }
+                        } else {
+                            true
+                        }
+                    }
+                    functionSymbol is KaConstructorSymbol && functionSymbol.isPrimary && lightMethod.isConstructor -> {
+                        // no-arg constructors have the containing class as their origin
+                        lightMethod.kotlinOrigin === functionSymbolPsi.value?.containingClass()
+                    }
+                    else -> false
+                }
+            }
+    }
+
+    context(_: KaSession)
+    private fun getWrappingClass(declaration: KaSymbol): PsiClass? {
+        return when (declaration.location) {
+            KaSymbolLocation.TOP_LEVEL -> when (declaration) {
+                is KaFileSymbol -> declaration.asFacadePsiClass()
+                is KaScriptSymbol -> declaration.asFacadePsiClass()
+                // The PSI-based fallback for library declarations should be removed after KT-85997
+                else -> (declaration.containingFile ?: (declaration.realPsi?.containingFile as? KtFile)?.symbol)?.asFacadePsiClass()
+            }
+            KaSymbolLocation.CLASS -> (declaration.containingDeclaration as? KaClassSymbol)?.asPsiClass()
+            KaSymbolLocation.PROPERTY -> declaration.containingDeclaration?.let { property -> getWrappingClass(property) }
+            KaSymbolLocation.LOCAL -> null
+        }
+    }
+
+    context(_: KaSession)
+    private fun getWrappingClasses(declaration: KaSymbol): List<PsiClass> {
+        val wrapperClass = getWrappingClass(declaration) ?: return emptyList()
+
+        val isCompanion = wrapperClass.isCreatedFromCompanion()
+
+        val wrapperParent = wrapperClass.parent
+        return if (isCompanion && wrapperParent is PsiClass) {
+            listOf(wrapperClass, wrapperParent)
+        } else {
+            listOf(wrapperClass)
+        }
+    }
+
+    private fun PsiElement.isCreatedFrom(otherPsi: Lazy<KtElement?>, otherSymbolPointer: KaSymbolPointer<*>): Boolean {
+        if (this !is KaElementJavaView) {
+            return false
+        }
+
+        val thisSymbolPointer = (this as? KaSymbolJavaView<*>)?.symbolPointer
+        if (thisSymbolPointer != null) {
+            return thisSymbolPointer.pointsToTheSameSymbolAs(otherSymbolPointer)
+        }
+
+        val computedOtherPsi = otherPsi.value
+        return computedOtherPsi != null && kotlinOrigin == computedOtherPsi
+    }
+
+    private fun PsiClass.isCreatedFromCompanion(): Boolean {
+        if (this !is KaElementJavaView) {
+            return false
+        }
+
+        return when (val kotlinOrigin = kotlinOrigin) {
+            null -> (this as? KaSymbolJavaView<*>)?.symbolPointer?.withSymbol(useSiteModule) { originSymbol ->
+                originSymbol is KaClassSymbol && originSymbol.classKind == KaClassKind.COMPANION_OBJECT
+            }
+            else -> (kotlinOrigin as? KtObjectDeclaration)?.isCompanion()
+        } == true
+    }
+
+    /**
+     * Returns [KtElement] which should be used for matching [this] against produced light elements.
+     *
+     * It is needed to handle various inconsistencies in LC `kotlinOrigin`s.
+     * E.g., all accessors in LCs have the corresponding property as their origin, even when the accessor is explicit.
+     * The default option is [KaSymbol.anchorPsi].
+     * It's used instead of [KaSymbol.realPsi] to match synthetic declarations.
+     */
+    context(_: KaSession)
+    private fun KaSymbol.getPsiForMatching(): Lazy<KtElement?> {
+        return lazy(LazyThreadSafetyMode.NONE) {
+            when (this) {
+                is KaPropertyAccessorSymbol -> (containingDeclaration as? KaKotlinPropertySymbol)?.anchorPsi ?: anchorPsi
+                else -> anchorPsi
+            }?.originalElement as? KtElement
+        }
+    }
+}
+
