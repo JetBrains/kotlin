@@ -1,0 +1,60 @@
+// LANGUAGE: -StrictEquals +StrictEqualsForStructuralClasses +CustomEqualsInValueClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_STDLIB
+
+@JvmInline
+value class A(val x: Int)
+
+@JvmInline
+value class B(val y: Int) {
+    override fun equals(other: Any?): Boolean = other is B
+    operator fun equals(other: B): Boolean = y == other.y
+    override fun hashCode(): Int = y
+}
+
+interface C
+
+@JvmInline
+value class D(val t: Int) : C
+
+fun test(a: A, b: B, c: C, d: D, d2: D): Boolean {
+    if (<!EQUALITY_NOT_APPLICABLE!>a != b<!>) return true
+    if (<!EQUALITY_NOT_APPLICABLE!>a == c<!>) return false
+    if (<!EQUALITY_NOT_APPLICABLE!>c == a<!>) return false
+    if (c != d) return false
+    if (d == c) return true
+    if (d2 != d) return false
+    return true
+}
+
+fun testAfterSmartCast(a: A, d: D, nAny: Any?) {
+    if (nAny == a) return
+    if (a == nAny) return
+    if (nAny is A && a == nAny) return
+    if (nAny is B && (<!EQUALITY_NOT_APPLICABLE_WARNING!>nAny == a<!> || <!EQUALITY_NOT_APPLICABLE_WARNING!>a == nAny<!>)) return
+    if (d == nAny) return
+    if (nAny is C && d != nAny) return
+}
+
+interface I<U>
+
+@JvmInline
+value class G<T : Any>(val t: T) : I<Char>
+
+fun testGeneric(
+    gi: G<Int>,
+    gi2: G<Int>,
+    gs: G<String>,
+    ic: I<Char>,
+    il: I<Long>,
+) {
+    if (gi == gi2) return
+    if (gi2 != gi) return
+    if (gs == gi) return
+    if (gs != ic) return
+    if (il == gs || gi == il) return
+}
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, disjunctionExpression, equalityExpression, functionDeclaration,
+ifExpression, interfaceDeclaration, isExpression, nullableType, operator, override, primaryConstructor,
+propertyDeclaration, smartcast, typeConstraint, typeParameter, value */
