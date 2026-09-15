@@ -155,7 +155,27 @@ interface SwiftExportModuleOptionsDsl {
     val moduleName: Property<String>
 
     /**
-     * The root package to flatten.
+     * The root package of this module. Set this property to avoid having to reference code declared in this
+     * module using fully qualified names. Example:
+     *
+     * ```kotlin
+     * // shared/.../UsersViewModel.kt
+     * package com.example.shared
+     *
+     * class UsersViewModel
+     * ```
+     *
+     * Referencing exported `UsersViewModel` from Swift code:
+     *
+     * ```swift
+     * import Shared
+     *
+     * // With rootPackage unset.
+     * private let vm: com.example.shared.UsersViewModel = com.example.shared.UsersViewModel()
+     *
+     * // With rootPackage set to "com.example.shared".
+     * private let vm: UsersViewModel = UsersViewModel()
+     * ```
      *
      * For a dependency, it takes precedence over the root package the dependency publishes. Ignored for
      * transitively exported and for hidden dependencies.
