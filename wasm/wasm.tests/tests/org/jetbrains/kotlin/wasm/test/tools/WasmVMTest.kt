@@ -1,0 +1,100 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.wasm.test.tools
+
+import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import java.security.MessageDigest
+
+class WasmVMTest {
+    @Test
+    fun `given output that fits the capture limit then no digest is created`() {
+        var digestCount = 0
+        val capture = BoundedOutputCapture {
+            digestCount++
+            MessageDigest.getInstance("SHA-256")
+        }
+
+        val chunk = CharArray(8 * 1024) { 'x' }
+        repeat((4 * 1024 * 1024) / chunk.size) {
+            capture.append(chunk, chunk.size)
+        }
+
+        assertEquals(0, digestCount)
+
+        capture.append(chunk, chunk.size)
+
+        assertEquals(1, digestCount)
+    }
+
+    @Test
+    fun `given more output than the capture limit then only bounded output with its digest is retained`() {
+        val capture = BoundedOutputCapture()
+        val chunk = "x".repeat(8 * 1024).toCharArray()
+        repeat((4 * 1024 * 1024) / chunk.size + 1) {
+            capture.append(chunk, chunk.size)
+        }
+
+        val output = capture.toString()
+
+        assertTrue(output.length <= 4 * 1024 * 1024 + 256, output.length.toString())
+        assertTrue(GroupedTestsResultProtocol.OUTPUT_TRUNCATED in output, output.takeLast(256))
+        assertTrue("original length=" in output, output.takeLast(256))
+        assertTrue("SHA-256=" in output, output.takeLast(256))
+    }
+
+    @Test
+    fun `given protocol-looking fragments across capture boundaries then only the truncation marker is parsed`() {
+        val retainedHalfLength = 2 * 1024 * 1024
+        val prefixRecord = "${GroupedTestsResultProtocol.LINE_PREFIX}|prefix|${GroupedTestsResultProtocol.STARTED}||"
+        val prefixFragment = prefixRecord.take(prefixRecord.length / 2)
+        val prefix = buildString(retainedHalfLength) {
+            append(GroupedTestsResultProtocol.BEGIN).append('\n')
+            append("x".repeat(retainedHalfLength - length - prefixFragment.length - 1))
+            append('\n')
+            append(prefixFragment)
+        }
+        val suffixRecord = "${GroupedTestsResultProtocol.LINE_PREFIX}|suffix|${GroupedTestsResultProtocol.STARTED}||"
+        val middle = prefixRecord.drop(prefixFragment.length) + "\nnoise"
+        val suffix = suffixRecord + "\n" + "y".repeat(retainedHalfLength - suffixRecord.length - 1)
+        val capture = BoundedOutputCapture()
+
+        for (part in listOf(prefix, middle, suffix)) {
+            capture.append(part.toCharArray(), part.length)
+        }
+
+        val output = capture.toString()
+        val (crashedIds, malformedLines) = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertFalse(prefixFragment in output, output.takeLast(256))
+        assertFalse(suffixRecord in output, output.takeLast(256))
+        assertEquals(1, malformedLines.size, malformedLines.toString())
+        assertTrue(
+            malformedLines.single().startsWith(
+                "${GroupedTestsResultProtocol.LINE_PREFIX}|${GroupedTestsResultProtocol.OUTPUT_TRUNCATED}|"
+            ),
+            malformedLines.toString(),
+        )
+        assertTrue(crashedIds.isEmpty(), crashedIds.toString())
+    }
+
+    @Test
+    fun `given large output streams then suffix ring buffer accurately preserves the latest characters`() {
+        val capture = BoundedOutputCapture()
+        val chunk = "0123456789abcdef".repeat(512).toCharArray() // 8192 chars
+        repeat((6 * 1024 * 1024) / chunk.size) {
+            capture.append(chunk, chunk.size)
+        }
+        val endMarker = "\nfinal_marker_end_of_output"
+        capture.append(endMarker.toCharArray(), endMarker.length)
+
+        val output = capture.toString()
+        assertTrue(output.endsWith(endMarker), "Output should end with the final marker")
+    }
+}
