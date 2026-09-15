@@ -561,7 +561,7 @@ class PostponedArgumentInputTypesResolver(
     @K1Deprecation
     context(c: Context)
     fun fixNextReadyVariableForParameterTypeIfNeeded(
-        argument: PostponedResolvedAtomMarker,
+        argument: FunctionTypeRelatedPostponedResolvedAtomMarker,
         postponedArguments: List<PostponedResolvedAtomMarker>,
         topLevelType: KotlinTypeMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
@@ -581,7 +581,7 @@ class PostponedArgumentInputTypesResolver(
 
     context(c: Context)
     fun findNextReadyVariableForParameterType(
-        argument: PostponedResolvedAtomMarker,
+        argument: FunctionTypeRelatedPostponedResolvedAtomMarker,
         postponedArguments: List<PostponedResolvedAtomMarker>,
         topLevelType: KotlinTypeMarker,
         completionMode: ConstraintSystemCompletionMode,
