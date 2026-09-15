@@ -99,11 +99,12 @@ internal class DependenciesTrackerImpl(
     // This is a set of all "useful" libraries, sorted in the reverse-topological order.
     private val usefulLibrariesInRTO: Set<KotlinLibrary> by lazy {
         buildSet {
+            context.irModules.mapTo(this) { it.kotlinLibrary!! }
+
             // TODO(KT-88867): Drop this workaround when KT-88867 is fixed.
             if (config.configuration.konanProducedArtifactKind?.isCache == true) {
                 addIfNotNull(config.libraryToCache?.klib)
             }
-            context.irModules.mapTo(this) { it.kotlinLibrary!! }
         }
     }
 
