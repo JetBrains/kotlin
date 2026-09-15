@@ -82,6 +82,26 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                 return@processAllDeclarations
             }
 
+            // A constructor builder instantiates the very class the constructor belongs to, so a class that
+            // `build()` cannot instantiate refuses one exactly as it refuses the class-level annotation - and,
+            // again, nothing is generated for it, leaving the checks below nothing to say. A function builder
+            // is untouched by this: it builds whatever the function returns, which need not be this class.
+            if (functionSymbol is FirConstructorSymbol) {
+                declaration.uninstantiableClassModifier()?.let { modifier ->
+                    val annotationName = builder.annotation.toAnnotationClassId(context.session)?.shortClassName
+                    if (annotationName != null) {
+                        reporter.reportOn(
+                            builder.annotation.source,
+                            LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS,
+                            annotationName,
+                            modifier.presentation,
+                            context,
+                        )
+                    }
+                    return@processAllDeclarations
+                }
+            }
+
             checkFunctionParameters(functionSymbol, lombokService)
             checkToBuilderCanObtainValues(declaration, builder, functionSymbol)
             if (functionSymbol is FirNamedFunctionSymbol) {
@@ -121,7 +141,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
     }
 
     private val FirRegularClass.isBuilderCapableClass: Boolean
-        get() = classKind == ClassKind.CLASS && !isLocal
+        get() = classKind == ClassKind.CLASS && !isLocal && uninstantiableClassModifier() == null
 
     /**
      * Unless it is spelled out via `builderClassName`, the builder class name is inferred from the annotated
