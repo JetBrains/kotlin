@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// COMPILER_ARGUMENTS: -Xreturn-value-checker=full
+// COMPILER_ARGUMENTS: -return-value-checker=full
 // FILE: Unmarked.kt
 class Unmarked {
     fun getStuff(): String = ""

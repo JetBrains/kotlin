@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// COMPILER_ARGUMENTS: -Xreturn-value-checker=check
+// COMPILER_ARGUMENTS: -return-value-checker=check
 // FILE: Base.kt
 
 interface Base1 {
