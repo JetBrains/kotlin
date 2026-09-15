@@ -32,7 +32,6 @@ import com.intellij.openapi.util.SystemInfo
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
@@ -46,7 +45,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         checkStderr: (String) -> Unit,
         expectedExitCode: Int,
         workDirectory: File? = null,
-        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath),
         launcherFile: File? = null,
     ) {
         CliProcessUtils.runProcess(
@@ -70,22 +69,43 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         expectedStderr: String = "",
         expectedExitCode: Int = 0,
         workDirectory: File? = null,
-        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath),
         launcherFile: File? = null,
-    ) {
-        CliProcessUtils.runProcess(
-            executableName,
-            *args,
-            expectedStdout = expectedStdout,
-            expectedStderr = CliProcessUtils.ExpectedText.ExactMatch(expectedStderr),
-            expectedExitCode = expectedExitCode,
-            workDirectory = workDirectory,
-            environment = environment,
-            testDataDirectory = testDataDirectory,
-            tmpdir = tmpdir,
-            launcherFile = launcherFile,
-        )
-    }
+    ): Unit = runProcess(
+        executableName,
+        *args,
+        expectedStdout = expectedStdout,
+        expectedStderr = CliProcessUtils.ExpectedText.ExactMatch(expectedStderr),
+        expectedExitCode = expectedExitCode,
+        workDirectory = workDirectory,
+        environment = environment,
+        launcherFile = launcherFile,
+    )
+
+    private fun runProcess(
+        executableName: String,
+        vararg args: String,
+        expectedStdout: String = "",
+        expectedStderr: CliProcessUtils.ExpectedText,
+        expectedExitCode: Int = 0,
+        workDirectory: File? = null,
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath),
+        launcherFile: File? = null,
+    ): Unit = CliProcessUtils.runProcess(
+        executableName,
+        *args,
+        expectedStdout = expectedStdout,
+        expectedStderr = expectedStderr,
+        expectedExitCode = expectedExitCode,
+        workDirectory = workDirectory,
+        environment = environment,
+        testDataDirectory = testDataDirectory,
+        tmpdir = tmpdir,
+        launcherFile = launcherFile,
+    )
+
+    private fun String.toPattern(): CliProcessUtils.ExpectedText.Pattern =
+        CliProcessUtils.ExpectedText.Pattern(trimMargin().toRegex())
 
     private val testDataDirectory: String
         get() = ForTestCompileRuntime.transformTestDataPath("compiler/tests-integration/testData/launcher").absolutePath
@@ -149,7 +169,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             tmpdir.path,
             K2JSCompilerArguments::moduleName.cliArgument,
             "out",
-            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         )
     }
 
@@ -163,7 +183,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             KotlinWasmCompilerArguments::nopack.cliArgument,
             KotlinWasmCompilerArguments::outputDir.cliArgument(tmpdir.path),
             KotlinWasmCompilerArguments::moduleName.cliArgument("out"),
-            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         )
     }
 
@@ -235,7 +255,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", "-howtorun", "jar", "test.HelloWorldKt", workDirectory = tmpdir,
             expectedExitCode = 1,
-            expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt (No such file or directory)\n"
+            expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt\n"
         )
         runProcess("kotlinr", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
     }
@@ -275,10 +295,9 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", "test.DefaultPackageKt", workDirectory = tmpdir, expectedExitCode = 1,
             expectedStderr = """
-            error: could not find or load main class test.DefaultPackageKt
-            Caused by: java.lang.NoClassDefFoundError: test/DefaultPackageKt (wrong name: DefaultPackageKt)
-
-        """.trimIndent()
+            |error: could not find or load main class test\.DefaultPackageKt
+            |Caused by: java\.lang\.NoClassDefFoundError: .*DefaultPackageKt \(wrong name: .*DefaultPackageKt\)
+        """.toPattern()
         )
     }
 
@@ -292,10 +311,9 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", "HelloWorldKt", workDirectory = testDir, expectedExitCode = 1,
             expectedStderr = """
-            error: could not find or load main class HelloWorldKt
-            Caused by: java.lang.NoClassDefFoundError: HelloWorldKt (wrong name: test/HelloWorldKt)
-
-        """.trimIndent()
+            |error: could not find or load main class HelloWorldKt
+            |Caused by: java\.lang\.NoClassDefFoundError: .*HelloWorldKt \(wrong name: .*HelloWorldKt\)
+        """.toPattern()
         )
     }
 
@@ -313,10 +331,9 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", "test/DefaultPackageKt.class", workDirectory = tmpdir, expectedExitCode = 1,
             expectedStderr = """
-            error: could not find or load main class test.DefaultPackageKt
-            Caused by: java.lang.NoClassDefFoundError: test/DefaultPackageKt (wrong name: DefaultPackageKt)
-            
-        """.trimIndent()
+            |error: could not find or load main class test\.DefaultPackageKt
+            |Caused by: java\.lang\.NoClassDefFoundError: .*DefaultPackageKt \(wrong name: .*DefaultPackageKt\)
+        """.toPattern()
         )
 
         runProcess("kotlinr", "DefaultPackageKt.class", expectedStdout = "ok", workDirectory = testDir)
@@ -349,18 +366,16 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", "./HelloWorldKt.class", workDirectory = testDir, expectedExitCode = 1,
             expectedStderr = """
-            error: could not find or load main class HelloWorldKt
-            Caused by: java.lang.NoClassDefFoundError: HelloWorldKt (wrong name: test/HelloWorldKt)
-            
-        """.trimIndent()
+            |error: could not find or load main class HelloWorldKt
+            |Caused by: java\.lang\.NoClassDefFoundError: .*HelloWorldKt \(wrong name: .*HelloWorldKt\)
+        """.toPattern()
         )
         runProcess(
             "kotlinr", "HelloWorldKt.class", workDirectory = testDir, expectedExitCode = 1,
             expectedStderr = """
-            error: could not find or load main class HelloWorldKt
-            Caused by: java.lang.NoClassDefFoundError: HelloWorldKt (wrong name: test/HelloWorldKt)
-            
-        """.trimIndent()
+            |error: could not find or load main class HelloWorldKt
+            |Caused by: java\.lang\.NoClassDefFoundError: .*HelloWorldKt \(wrong name: .*HelloWorldKt\)
+        """.toPattern()
         )
         runProcess(
             "kotlinr", "../HelloWorldKt.class", expectedExitCode = 1,
@@ -371,30 +386,30 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
 
     @Test
     fun testKotlinUseJdkModuleFromMainClass() {
-        val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
+        val jdk17 = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         runProcess(
             "kotlinc", "$testDataDirectory/jdkModuleUsage.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
-            environment = jdk11,
+            environment = jdk17,
         )
         runProcess(
             "kotlinr", K2JVMCompilerArguments::classpath.cliArgument, tmpdir.path, "test.JdkModuleUsageKt",
             expectedStdout = "interface java.sql.Driver\n",
-            environment = jdk11,
+            environment = jdk17,
         )
     }
 
     @Test
     fun testKotlinUseJdkModuleFromJar() {
-        val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
+        val jdk17 = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         val output = tmpdir.resolve("out.jar")
         runProcess(
             "kotlinc", "$testDataDirectory/jdkModuleUsage.kt", K2JVMCompilerArguments::destination.cliArgument, output.path,
-            environment = jdk11,
+            environment = jdk17,
         )
         runProcess(
             "kotlinr", output.path,
             expectedStdout = "interface java.sql.Driver\n",
-            environment = jdk11,
+            environment = jdk17,
         )
     }
 
@@ -420,10 +435,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         val testKt = tmpdir.resolve("test.kt").apply {
             writeText("fun main() {}")
         }
-        val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
+        val jdk17 = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         runProcess(
             "kotlinc", moduleInfo.absolutePath, testKt.absolutePath, K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
-            environment = jdk11,
+            environment = jdk17,
             expectedExitCode = 0,
             expectedStdout = "",
             expectedStderr = ""
