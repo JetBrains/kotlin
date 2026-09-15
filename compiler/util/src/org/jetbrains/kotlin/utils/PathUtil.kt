@@ -147,7 +147,8 @@ object PathUtil {
             val jar = pathUtilJar
             if (!jar.exists()) return NO_PATH
 
-            if (jar.name == KOTLIN_COMPILER_JAR) {
+            // matches both kotlin-compiler.jar and kotlin-compiler-embeddable.jar, consistently with kotlinPathsForCompiler
+            if (jar.name.startsWith(KOTLIN_COMPILER_NAME) && jar.name.endsWith(".jar")) {
                 val lib = jar.parentFile
                 return lib.parentFile
             }

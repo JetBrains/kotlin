@@ -71,7 +71,7 @@ if "!_KOTLIN_RUNNER!"=="1" (
   )
 
   java !JAVA_OPTS! -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
-    org.jetbrains.kotlin.preloading.Preloader -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar!_ADDITIONAL_CLASSPATH!" ^
+    org.jetbrains.kotlin.preloading.Preloader -cp "%_KOTLIN_HOME%\lib\kotlin-compiler-embeddable.jar!_ADDITIONAL_CLASSPATH!" ^
     %_KOTLIN_COMPILER% %KOTLIN_OPTS%
 )
 

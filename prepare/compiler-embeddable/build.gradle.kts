@@ -44,6 +44,7 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
     exclude("META-INF/native-image/**")
     mergeServiceFiles()
     manifest {
+        attributes("Class-Path" to compilerManifestClassPath)
         attributes("Multi-Release" to true)
     }
 }

@@ -55,13 +55,6 @@ val compilerPlugins = configurations.create("compilerPlugins") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
-val compilerPluginsCompat = configurations.create("compilerPluginsCompat") {
-    exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
-
-    isCanBeConsumed = false
-    isCanBeResolved = true
-}
-
 val sources = configurations.create("sources") {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
     isTransitive = false
@@ -79,11 +72,10 @@ val buildNumber = configurations.create("buildNumber")
 val compilerBaseName = name
 
 val distLibraryProjects = listOfNotNull(
-    ":kotlin-annotation-processing-cli",
+    ":kotlin-annotation-processing-embeddable",
     ":kotlin-annotation-processing-runtime",
-    ":kotlin-annotation-processing",
     ":kotlin-annotations-jvm",
-    ":kotlin-daemon",
+    ":kotlin-daemon-embeddable",
     ":kotlin-daemon-client",
     ":kotlin-main-kts",
     ":kotlin-preloader",
@@ -95,29 +87,37 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-runner",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
-    ":kotlin-scripting-compiler",
-    ":kotlin-scripting-compiler-impl",
+    ":kotlin-scripting-compiler-embeddable",
+    ":kotlin-scripting-compiler-impl-embeddable",
     ":kotlin-scripting-jvm",
     ":libraries:tools:mutability-annotations-compat",
-    ":plugins:jvm-abi-gen",
+    ":plugins:jvm-abi-gen-embeddable",
     ":kotlin-jklib-compiler"
 )
 
-val distCompilerPluginProjects = listOf(
-    ":kotlin-allopen-compiler-plugin",
-    ":plugins:parcelize:parcelize-compiler",
-    ":plugins:parcelize:parcelize-runtime",
-    ":kotlin-noarg-compiler-plugin",
-    ":kotlin-power-assert-compiler-plugin",
-    ":kotlin-sam-with-receiver-compiler-plugin",
-    ":kotlinx-serialization-compiler-plugin",
-    ":kotlin-lombok-compiler-plugin",
-    ":kotlin-assignment-compiler-plugin",
-    ":kotlin-scripting-compiler",
-    ":plugins:compose-compiler-plugin:compiler-hosted",
+// Projects required to load and run the Build Tools API implementation straight from the dist.
+// Together with the libraries above they form the runtime classpath of kotlin-build-tools-impl.
+val distBuildToolsProjects = listOf(
+    ":compiler:build-tools:kotlin-build-tools-api",
+    ":compiler:build-tools:kotlin-build-tools-impl",
+    ":compiler:build-tools:kotlin-build-tools-cri-impl",
+    ":kotlin-tooling-core",
+    ":kotlin-compiler-embeddable",
+    ":kotlin-compiler-runner",
 )
-val distCompilerPluginProjectsCompat = listOf(
-    ":kotlinx-serialization-compiler-plugin",
+
+val distCompilerPluginProjects = listOf(
+    ":kotlin-allopen-compiler-plugin.embeddable",
+    ":kotlin-parcelize-compiler",
+    ":plugins:parcelize:parcelize-runtime",
+    ":kotlin-noarg-compiler-plugin.embeddable",
+    ":kotlin-power-assert-compiler-plugin.embeddable",
+    ":kotlin-sam-with-receiver-compiler-plugin.embeddable",
+    ":kotlinx-serialization-compiler-plugin.embeddable",
+    ":kotlin-lombok-compiler-plugin.embeddable",
+    ":kotlin-assignment-compiler-plugin.embeddable",
+    ":kotlin-scripting-compiler-embeddable",
+    ":plugins:compose-compiler-plugin:compiler-hosted",
 )
 
 val distSourcesProjects = listOfNotNull(
@@ -161,18 +161,11 @@ dependencies {
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
     }
+    distBuildToolsProjects.forEach {
+        libraries(project(it)) { isTransitive = false }
+    }
     distCompilerPluginProjects.forEach {
         compilerPlugins(project(it)) { isTransitive = false }
-    }
-    distCompilerPluginProjectsCompat.forEach {
-        compilerPluginsCompat(
-            project(
-                mapOf(
-                    "path" to it,
-                    "configuration" to "distCompat"
-                )
-            )
-        )
     }
 
     distSourcesProjects.forEach {
@@ -407,15 +400,11 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
         from(licenseFiles)
     }
 
-    val compilerBaseName = compilerBaseName
-    val jarFiles = files(jar)
     val librariesFiles = files(libraries)
     val librariesStripVersionFiles = files(librariesStripVersion)
     val sourcesFiles = files(sources)
     val compilerPluginsFiles = files(compilerPlugins)
-    val compilerPluginsCompatFiles = files(compilerPluginsCompat)
     into("lib") {
-        from(jarFiles) { rename { "$compilerBaseName.jar" } }
         from(librariesFiles)
         from(librariesKotlinTestFiles)
         from(librariesStripVersionFiles) {
@@ -426,17 +415,16 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
         from(sourcesFiles)
         from(compilerPluginsFiles) {
             rename {
+                // The dist ships the embeddable variants of the plugins, but under the historical dist names
+                val name = it.replace(".embeddable", "").replace("-embeddable", "")
                 // We want to migrate all compiler plugin in 'dist' to have 'kotlin-' prefix
                 // 'kotlin-serialization-compiler-plugin' is a new jar and should have such prefix from the start
-                if (!it.startsWith("kotlin-serialization")) {
-                    it.removePrefix("kotlin-")
+                if (name.startsWith("kotlinx-serialization")) {
+                    name.replaceFirst("kotlinx-", "kotlin-")
                 } else {
-                    it
+                    name.removePrefix("kotlin-")
                 }
             }
-        }
-        from(compilerPluginsCompatFiles) {
-            rename { it.removePrefix("kotlin-") }
         }
         filePermissions {
             unix("rw-r--r--")
