@@ -10,6 +10,7 @@
 
 #if KONAN_OBJC_INTEROP
 
+#include <algorithm>
 #include <cstdlib>
 #include <map>
 #import <mutex>
@@ -877,9 +878,11 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
         superType->implementedInterfaces_ + superType->implementedInterfacesCount_
   );
 
+  const size_t firstClassIndex = supers.size();
   for (const TypeInfo* t = superType; t != nullptr; t = t->superType_) {
     supers.push_back(t);
   }
+  std::reverse(supers.begin() + firstClassIndex, supers.end());
 
   bool itableEqualsSuper = true;
 

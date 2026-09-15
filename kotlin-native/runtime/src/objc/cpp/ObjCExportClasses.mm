@@ -44,10 +44,53 @@ extern "C" KInt Kotlin_hashCode(KRef str);
 extern "C" KBoolean Kotlin_equals(KRef lhs, KRef rhs);
 extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 
+// Vtable indices of `kotlin.Any`'s overridable members. Replaced by the compiler; see
+// [ObjCExportCodeGenerator.emitAnyVtableIndices].
+extern "C" {
+__attribute__((weak)) int32_t Kotlin_ObjCExport_anyEqualsVtableIndex = -1;
+__attribute__((weak)) int32_t Kotlin_ObjCExport_anyHashCodeVtableIndex = -1;
+__attribute__((weak)) int32_t Kotlin_ObjCExport_anyToStringVtableIndex = -1;
+}
+
 namespace {
 
 using PermanentRef = KRef;
 using RegularRef = kotlin::mm::ObjCBackRef;
+
+VTableElement nonRecursiveAnyMemberImpl(KRef obj, int32_t vtableIndex) noexcept {
+  if (vtableIndex < 0) return nullptr;
+
+  const TypeInfo* typeInfo = obj->type_info();
+  if ((typeInfo->flags_ & TF_OBJC_DYNAMIC) == 0) return nullptr;
+
+  VTableElement bounce = ({
+    const ObjCTypeAdapter* anyAdapter = kotlin::objCExport(theAnyTypeInfo).typeAdapter;
+    VTableElement result = nullptr;
+    if (anyAdapter != nullptr) {
+      for (int i = 0; i < anyAdapter->reverseAdapterNum; ++i) {
+        const KotlinToObjCMethodAdapter& adapter = anyAdapter->reverseAdapters[i];
+        if (adapter.vtableIndex == vtableIndex) {
+          result = adapter.kotlinImpl;
+          break;
+        }
+      }
+    }
+    result;
+  });
+
+  if (bounce == nullptr || typeInfo->vtable()[vtableIndex] != bounce) return nullptr;
+
+  while ((typeInfo->flags_ & TF_OBJC_DYNAMIC) != 0 && typeInfo->superType_ != nullptr) {
+    typeInfo = typeInfo->superType_;
+  }
+
+  VTableElement const *vtable = ({
+    const ObjCTypeAdapter* typeAdapter = kotlin::objCExport(typeInfo).typeAdapter;
+    typeAdapter != nullptr && typeAdapter->kotlinVtable != nullptr ? typeAdapter->kotlinVtable : typeInfo->vtable();
+  });
+
+  return vtable[vtableIndex];
+}
 
 }
 
@@ -315,13 +358,24 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     kotlin::CalledFromNativeGuard guard;
     ObjHolder h1;
     ObjHolder h2;
-    return Kotlin_Interop_CreateNSStringFromKString(Kotlin_toString([self toKotlin:h1.slot()], h2.slot()));
+    KRef obj = [self toKotlin:h1.slot()];
+    if (VTableElement impl = nonRecursiveAnyMemberImpl(obj, Kotlin_ObjCExport_anyToStringVtableIndex)) {
+        // Matches OBJ_GETTER(Kotlin_toString, KRef): the receiver first, the result slot last.
+        using ToString = ObjHeader* (*)(KRef, ObjHeader**);
+        return Kotlin_Interop_CreateNSStringFromKString(reinterpret_cast<ToString>(const_cast<void *>(impl))(obj, h2.slot()));
+    }
+    return Kotlin_Interop_CreateNSStringFromKString(Kotlin_toString(obj, h2.slot()));
 }
 
 - (NSUInteger)hash {
     kotlin::CalledFromNativeGuard guard;
     ObjHolder holder;
-    return (NSUInteger)Kotlin_hashCode([self toKotlin:holder.slot()]);
+    KRef obj = [self toKotlin:holder.slot()];
+    if (VTableElement impl = nonRecursiveAnyMemberImpl(obj, Kotlin_ObjCExport_anyHashCodeVtableIndex)) {
+        using HashCode = KInt (*)(KRef);
+        return (NSUInteger)reinterpret_cast<HashCode>(const_cast<void *>(impl))(obj);
+    }
+    return (NSUInteger)Kotlin_hashCode(obj);
 }
 
 - (BOOL)isEqual:(id)other {
@@ -345,6 +399,10 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     ObjHolder rhsHolder;
     KRef lhs = [self toKotlin:lhsHolder.slot()];
     KRef rhs = [other toKotlin:rhsHolder.slot()];
+    if (VTableElement impl = nonRecursiveAnyMemberImpl(lhs, Kotlin_ObjCExport_anyEqualsVtableIndex)) {
+        using Equals = KBoolean (*)(KRef, KRef);
+        return reinterpret_cast<Equals>(const_cast<void *>(impl))(lhs, rhs);
+    }
     return Kotlin_equals(lhs, rhs);
 }
 
