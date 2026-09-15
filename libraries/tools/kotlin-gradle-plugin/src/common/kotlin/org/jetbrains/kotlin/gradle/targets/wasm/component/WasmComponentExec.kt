@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WIT_DIRECTORY_NAME
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import java.io.File
 import javax.inject.Inject
 
@@ -123,7 +124,7 @@ internal constructor() : DefaultTask() {
         val witProjects = witProjects().takeIf { it.isNotEmpty() } ?: return
 
         val embedded = witProjects.foldIndexed(inputModule) { index: Int, acc: File, witProject: File ->
-            val newOutput = embedDir.resolve(index.toString()).resolve(inputModule.name)
+            val newOutput = embedDir.resolve("$index-${witProject.name}").resolve(inputModule.name)
             newOutput.parentFile.mkdirs()
 
             logger.debug(
@@ -179,10 +180,11 @@ internal constructor() : DefaultTask() {
      * in the order they have to be embedded.
      */
     private fun witProjects(): List<File> =
-        witDirectory.files
+        witDirectory
+            .files
             .filter { witProject ->
                 val isWitProject = witProject.isDirectory &&
-                        witProject.listFiles().orEmpty().any { it.isFile }
+                        witProject.listFilesOrEmpty().any { it.isFile }
 
                 if (!isWitProject) {
                     logger.debug("Skipping '{}' as it is not a WIT project", witProject)
@@ -190,8 +192,9 @@ internal constructor() : DefaultTask() {
 
                 isWitProject
             }
+            .reversed()
 
-    companion object {
+    internal companion object {
         /**
          * Default `wasm-tools` executable, resolved from `PATH`.
          */
@@ -199,7 +202,7 @@ internal constructor() : DefaultTask() {
 
         private const val EMBED_DIRECTORY_NAME = "embed"
 
-        fun register(
+        internal fun register(
             compilation: KotlinJsIrCompilation,
             name: String,
             configuration: WasmComponentExec.() -> Unit = {},
