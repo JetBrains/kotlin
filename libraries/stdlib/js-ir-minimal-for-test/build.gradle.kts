@@ -220,6 +220,7 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
                 "-Xreturn-value-checker=full",
             )
         )
+        allWarningsAsErrors = false // TODO(KT-89534): after bootstrap, rename Xreturn-value-checker and remove this line
     }
 }
 

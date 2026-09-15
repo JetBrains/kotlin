@@ -1,7 +1,9 @@
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
@@ -30,6 +32,7 @@ kotlin {
             "-Xreturn-value-checker=full",
             "-Xallow-kotlin-package",
         )
+        allWarningsAsErrors = false // TODO(KT-89534): after bootstrap, rename Xreturn-value-checker and remove this line
     }
 
     targets.all {
@@ -128,6 +131,15 @@ kotlin {
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
+
+// TODO(KT-89534): after bootstrap, rename Xreturn-value-checker and remove this block
+// -----------8<------------
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        allWarningsAsErrors = false
+    }
+}
+// ----------->8------------
 
 configureDefaultPublishing()
 
