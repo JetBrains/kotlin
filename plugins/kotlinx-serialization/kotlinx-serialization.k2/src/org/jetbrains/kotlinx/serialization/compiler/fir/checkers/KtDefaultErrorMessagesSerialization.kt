@@ -212,8 +212,7 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
         )
         map.put(
             FirSerializationErrors.SERIALIZABLE_ANNOTATION_TYPEALIAS_UNSUPPORTED,
-            "Classes annotated through a typealias of @Serializable are not processed by the serialization plugin, " +
-                    "because annotation typealiases are not expanded when the plugin runs. " +
+            "Classes annotated through a typealias of @Serializable are not supported. " +
                     "Use the @Serializable annotation directly, or declare your own annotation marked with @MetaSerializable."
         )
         map.put(
