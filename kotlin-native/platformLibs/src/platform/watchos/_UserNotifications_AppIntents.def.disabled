@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._UserNotifications_AppIntents
+
+modules = _UserNotifications_AppIntents
+compilerOpts = -framework _UserNotifications_AppIntents
+linkerOpts = -framework _UserNotifications_AppIntents
+#Disabled: Unavailable

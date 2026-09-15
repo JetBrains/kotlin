@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.MediaDevice
+
+modules = MediaDevice
+compilerOpts = -framework MediaDevice
+linkerOpts = -framework MediaDevice
+#Disabled: Swift-only framework

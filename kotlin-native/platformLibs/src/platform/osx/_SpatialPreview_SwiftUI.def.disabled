@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._SpatialPreview_SwiftUI
+
+modules = _SpatialPreview_SwiftUI
+compilerOpts = -framework _SpatialPreview_SwiftUI
+linkerOpts = -framework _SpatialPreview_SwiftUI
+#Disabled: Unavailable

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.VisualIntelligence
+
+modules = VisualIntelligence
+compilerOpts = -framework VisualIntelligence
+linkerOpts = -framework VisualIntelligence
+#Disabled: Swift-only framework

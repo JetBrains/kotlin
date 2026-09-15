@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.CoreAICache
+
+modules = CoreAICache
+compilerOpts = -framework CoreAICache
+linkerOpts = -framework CoreAICache
+#Disabled: Unavailable
