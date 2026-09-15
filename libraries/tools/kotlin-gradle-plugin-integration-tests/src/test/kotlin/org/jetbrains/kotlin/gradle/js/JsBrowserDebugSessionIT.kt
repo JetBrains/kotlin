@@ -17,8 +17,13 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.util.assertDoesNotThrow
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.io.CleanupMode
+import org.junit.jupiter.api.io.TempDir
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.file.Path
 import kotlin.concurrent.thread
 import kotlin.test.assertContains
 import kotlin.test.assertFailsWith
@@ -29,6 +34,25 @@ import kotlin.time.Duration.Companion.seconds
 class JsBrowserDebugSessionIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy().disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+
+    /**
+     * Gradle daemon can write to build directory with some "test event report" in binary format
+     * And on Windows removing working dir can be flaky with directory not empty exceptions.
+     * its is ok to have lenient cleanup strategy in this case.
+     */
+    @Suppress("LateinitVarOverridesLateinitVar")
+    @TempDir(cleanup = CleanupMode.NEVER)
+    override lateinit var workingDir: Path
+
+    @AfterAll
+    fun cleanWorkingDirIfPossible() {
+        try {
+            workingDir.toFile().deleteRecursively()
+        } catch (e: IOException) {
+            println("Failed to clean working directory: ${workingDir.toAbsolutePath()}, $e")
+            // suppress
+        }
+    }
 
     @GradleTest
     fun `verify the debug session handshake with the IDE`(gradleVersion: GradleVersion) {
