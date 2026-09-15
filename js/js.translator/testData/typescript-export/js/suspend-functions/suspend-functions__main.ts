@@ -122,9 +122,7 @@ async function box(): Promise<string> {
     assert(await exportedChild.parentSuspendFun1() === "NotExportedParent 1");
     assert(await exportedChild.parentSuspendFun1("Test") === "NotExportedParent Test");
     assert(await exportedChild.childSuspendFun() === "ExportedChild");
-    // TODO: uncomment the assertion after fixing the compilation
-    //  of `withDefaultImpl` method, which is exported as-is without a promisify bridge
-    // assert(await exportedChild.withDefaultImpl() == "OK");
+    assert(await exportedChild.withDefaultImpl() == "OK");
     class TypeScriptExportedChild extends ExportedChild {
         override async childSuspendFun(): Promise<string> {
             return "TypeScriptChild"
