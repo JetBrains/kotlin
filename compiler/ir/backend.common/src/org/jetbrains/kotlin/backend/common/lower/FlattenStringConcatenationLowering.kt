@@ -197,9 +197,17 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                 )
             }
         }
-        return folded.singleOrNull() as? IrConst
-            ?: IrStringConcatenationImpl(this.startOffset, this.endOffset, this.type, folded)
+        // An empty string doesn't affect the result of a concatenation, but it does prevent the
+        // backend from lowering the expression efficiently: on the JVM, `"" + x` is compiled into a
+        // StringBuilder, while a single argument is a plain `String.valueOf(x)` call (KT-23960).
+        // Keep the empty string if it is the only argument, so that it remains a constant.
+        val arguments = folded.filterNot { it.isConstEmptyString }.ifEmpty { folded }
+        return arguments.singleOrNull() as? IrConst
+            ?: IrStringConcatenationImpl(this.startOffset, this.endOffset, this.type, arguments)
     }
+
+    private val IrExpression.isConstEmptyString: Boolean
+        get() = this is IrConst && kind == IrConstKind.String && (value as String).isEmpty()
 
     private fun constToString(const: IrConst): String {
         return normalizeUnsignedValue(const).toString()
