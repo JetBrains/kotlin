@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.component
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
@@ -95,8 +96,8 @@ internal constructor() : DefaultTask() {
     /**
      * Resulting Wasm component.
      */
-    @get:OutputFile
-    abstract val componentFile: RegularFileProperty
+    @get:OutputDirectory
+    abstract val componentDirectory: DirectoryProperty
 
     @TaskAction
     fun run() {
@@ -150,8 +151,9 @@ internal constructor() : DefaultTask() {
                     }
             }
 
-        val component = componentFile.getFile()
-        component.parentFile.mkdirs()
+        val componentDirectory = componentDirectory.getFile()
+        componentDirectory.mkdirs()
+        val component = componentDirectory.resolve(inputModule.name)
         execOperations.exec {
             it.executable = wasmTools
             it.args = listOf(
