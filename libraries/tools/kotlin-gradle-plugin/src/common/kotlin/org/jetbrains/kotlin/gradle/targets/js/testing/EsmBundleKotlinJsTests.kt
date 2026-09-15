@@ -108,6 +108,12 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
             syncSpec.into(outputDirectory.dir("testFramework"))
         }
 
+        fs.copy { copySpec ->
+            copySpec.from(modules.require("mocha/mocha.js"))
+            copySpec.from(modules.require("mocha/mocha.css"))
+            copySpec.into(outputDirectory)
+        }
+
         val entryPointPlaceholder = if (isWasm) {
             "// kotlinWasmJsTestsEntry: './wasmJsTests.js',"
         } else {
