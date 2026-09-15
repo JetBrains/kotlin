@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
@@ -22,6 +20,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -32,11 +31,22 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 /**
  * Creates lazy object instance generator functions.
  */
-class ObjectDeclarationLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
+abstract class ObjectDeclarationLowering<Context : JsCommonBackendContext>(val context: Context) : DeclarationTransformer {
     companion object {
         internal val INSTANCE_FIELD_NAME: Name = Name.identifier("instance")
         internal val GET_INSTANCE_METHOD_NAME: Name = Name.identifier("getInstance")
     }
+
+    protected abstract val initializationGenerator: LazyGlobalInitializationGenerator
+
+    protected abstract fun IrBlockBodyBuilder.generateLazyInitialization(
+        instanceField: IrField,
+        declaration: IrClass,
+        primaryConstructorCall: IrExpression,
+    )
+
+    protected open fun instanceFieldType(obj: IrClass) = obj.defaultType.makeNullable()
+
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass || declaration.kind != ClassKind.OBJECT || declaration.isEffectivelyExternal())
             return null
@@ -47,27 +57,16 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
 
         val primaryConstructor = declaration.primaryConstructor ?: declaration.syntheticPrimaryConstructor!!
 
-        getInstanceFun.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-            statements += context.createIrBuilder(getInstanceFun.symbol).irBlockBody(getInstanceFun) {
-                +irIfThen(
-                    irNullabilityCheck(instanceField),
-                    // Instance field initialized inside constructor
-                    irCallConstructor(primaryConstructor.symbol, emptyList())
-                )
-                +irReturn(irGetField(null, instanceField))
-            }.statements
+        getInstanceFun.body = context.createIrBuilder(getInstanceFun.symbol).irBlockBody {
+            generateLazyInitialization(
+                instanceField,
+                declaration,
+                irCallConstructor(primaryConstructor.symbol, emptyList()).coerceToUnit(context.irBuiltIns),
+            )
+            +irReturn(irGetField(null, instanceField).implicitCastTo(declaration.defaultType))
         }
 
         return null
-    }
-
-    private fun IrBuilderWithScope.irNullabilityCheck(instanceField: IrField): IrExpression {
-        val context = this@ObjectDeclarationLowering.context
-        return if (context is JsIrBackendContext && context.es6mode) {
-            irEqeqeqWithoutBox(irGetField(null, instanceField), context.getVoid())
-        } else {
-            irEqualsNull(irGetField(null, instanceField))
-        }
     }
 }
 
@@ -137,7 +136,6 @@ private fun getOrCreateInstanceField(obj: IrClass): IrField =
         }
     }
 
-
 private fun getOrCreateGetInstanceFunction(obj: IrClass): IrSimpleFunction =
     obj::objectGetInstanceFunction.getOrSetIfNull {
         // There is need to initialize _instance field together with _getInstance, so the outer restrictTo call would properly assign
@@ -152,3 +150,61 @@ private fun getOrCreateGetInstanceFunction(obj: IrClass): IrSimpleFunction =
             parent = obj
         }
     }
+
+/**
+ * For an object `O`, generates the following:
+ *
+ * ```kotlin
+ * class O {
+ *   /*static*/ var instance: Any?
+ *   /*static*/ fun getInstance(): O {
+ *     val instance = this.instance
+ *     if (instance === 2) {
+ *       staticInitializationFailureWithClassName(O::class)
+ *     }
+ *     if (instance == null) {
+ *       try {
+ *         O() // The `instance` field is initialized inside the object constructor
+ *       } catch (reason: dynamic) {
+ *         this.instance = 2
+ *         kotlin.internal.staticInitializationFailure(reason, VOID)
+ *       }
+ *     }
+ *     return this.instance /* implicitly cast to O */
+ *   }
+ * }
+ * ```
+ *
+ * Note that the error state is stored in the instance field itself.
+ * This is done as a code size optimization and should not affect performance.
+ */
+class JsObjectDeclarationLowering(context: JsIrBackendContext) : ObjectDeclarationLowering<JsIrBackendContext>(context) {
+    override val initializationGenerator = JsLazyGlobalInitializationGenerator(context)
+
+    override fun instanceFieldType(obj: IrClass): IrType = context.irBuiltIns.anyNType
+
+    override fun IrBlockBodyBuilder.generateLazyInitialization(
+        instanceField: IrField,
+        declaration: IrClass,
+        primaryConstructorCall: IrExpression,
+    ) {
+        with(initializationGenerator) {
+            val instanceVar = createTmpVariable(irGetField(null, instanceField), nameHint = "instance")
+            +generateErrorStateCheck(instanceVar, declaration)
+            +irIfThen(
+                irNullabilityCheck(instanceVar),
+                // Instance field initialized inside constructor
+                generateInitializationExceptionHandling(instanceField, primaryConstructorCall)
+            )
+        }
+    }
+
+    private fun IrBuilderWithScope.irNullabilityCheck(instanceVar: IrVariable): IrExpression {
+        val context = this@JsObjectDeclarationLowering.context
+        return if (context.es6mode) {
+            irEqeqeqWithoutBox(irGet(instanceVar), context.getVoid())
+        } else {
+            irEqualsNull(irGet(instanceVar))
+        }
+    }
+}
