@@ -79,8 +79,8 @@ class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGenera
         register(field, clazz.name + "#" + field.name)
     }
 
-    fun registerSignature(declaration: JCTree.JCMethodDecl, method: MethodNode) {
-        signatureInfo[declaration.getJavacSignature()] = method.name + method.desc
+    fun registerSignature(signature: String, method: MethodNode) {
+        signatureInfo[signature] = method.name + method.desc
     }
 
     fun getPosition(clazz: ClassNode): KotlinPosition? = lineInfo[clazz.name]
