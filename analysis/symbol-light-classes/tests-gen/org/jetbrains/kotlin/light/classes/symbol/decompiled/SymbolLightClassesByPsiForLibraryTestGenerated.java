@@ -751,6 +751,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
       }
 
       @Test
+      @TestMetadata("mutableListOfNullableInt.kt")
+      public void testMutableListOfNullableInt() {
+        run("mutableListOfNullableInt.kt");
+      }
+
+      @Test
       @TestMetadata("mutableListOfString.kt")
       public void testMutableListOfString() {
         run("mutableListOfString.kt");

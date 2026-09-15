@@ -29,7 +29,7 @@ public abstract class CMutableList2 /* test.CMutableList2*/ implements test.IMut
 
   @kotlin.IgnorableReturnValue()
   @kotlin.js.JsExport.Ignore()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @kotlin.IgnorableReturnValue()
   @kotlin.js.JsExport.Ignore()
@@ -134,7 +134,7 @@ public class CMutableList3 /* test.CMutableList3*/ implements test.IMutableList 
 
   public boolean isEmpty();//  isEmpty()
 
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 

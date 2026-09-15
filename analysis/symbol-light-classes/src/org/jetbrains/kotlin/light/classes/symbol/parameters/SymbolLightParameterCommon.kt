@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -75,7 +76,7 @@ internal abstract class SymbolLightParameterCommon(
                 (!method.containingClass.isEnum || method.name != StandardNames.ENUM_VALUE_OF.identifier)
 
         return if (nullabilityApplicable) {
-            parameterSymbolPointer.withSymbol(ktModule) { getRequiredNullabilityAnnotation(it.returnType) }
+            parameterSymbolPointer.withSymbol(ktModule) { getRequiredNullabilityAnnotation(kotlinType(it)) }
         } else {
             NullabilityAnnotation.NOT_REQUIRED
         }
@@ -83,9 +84,17 @@ internal abstract class SymbolLightParameterCommon(
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, kotlinOrigin)
 
+    /**
+     * The Kotlin type the parameter is mapped from, see [computeType] and [typeNullability].
+     *
+     * It is the declared type of the parameter unless the JVM backend maps the parameter differently.
+     */
+    context(_: KaSession)
+    protected open fun kotlinType(parameterSymbol: KaParameterSymbol): KaType = parameterSymbol.returnType
+
     context(session: KaSession)
     protected open fun computeType(parameterSymbol: KaParameterSymbol): PsiType {
-        val ktType = parameterSymbol.returnType
+        val ktType = kotlinType(parameterSymbol)
 
         return ktType.asPsiType(
             this@SymbolLightParameterCommon,

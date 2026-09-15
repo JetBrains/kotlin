@@ -6,7 +6,7 @@ public abstract class SMutableCollection /* test.SMutableCollection*/ implements
   public abstract boolean contains(int);//  contains(int)
 
   @java.lang.Override()
-  public abstract boolean remove(int);//  remove(int)
+  public abstract boolean remove(java.lang.Integer);//  remove(java.lang.Integer)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -37,7 +37,7 @@ public abstract class SMutableCollection2 /* test.SMutableCollection2*/ implemen
 
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
@@ -109,7 +109,7 @@ public class SMutableCollection3 /* test.SMutableCollection3*/ implements java.u
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public boolean removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<?>);//  removeAll(java.util.Collection<?>)

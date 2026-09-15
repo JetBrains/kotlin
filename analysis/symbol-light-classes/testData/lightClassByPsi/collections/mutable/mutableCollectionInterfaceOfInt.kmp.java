@@ -13,7 +13,7 @@ public abstract class CCollection2 /* test.CCollection2*/ implements test.IMutab
 
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
@@ -66,7 +66,7 @@ public class CCollection3 /* test.CCollection3*/ implements test.IMutableCollect
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)

@@ -18,4 +18,8 @@ internal class SymbolLightValueParameterWithCustomType(
 ) : SymbolLightValueParameter(parameterSymbol, containingMethod) {
     context(session: KaSession)
     override fun computeType(parameterSymbol: KaParameterSymbol): PsiType = customType
+
+    // The custom type is already the JVM type of the parameter, so the mapping of the declared type does not apply
+    context(_: KaSession)
+    override fun isBoxedForSpecialCaseOfRemove(parameterSymbol: KaParameterSymbol): Boolean = false
 }

@@ -161,7 +161,7 @@ internal fun processPossiblyMappedCollectionMethod(
     val javaMethod = tryToMapKotlinCollectionMethodToJavaMethod(kotlinCollectionFunction, allSupertypes) ?: return true
     val collectionSupertype = allSupertypes.find { it.classId == kotlinCollectionFunction.callableId?.classId } ?: return true
     val javaCollection = javaMethod.containingClass ?: return true
-    val substitutor = createPsiSubstitutor(javaCollection, collectionSupertype, containingClass)
+    val substitutor = createPsiSubstitutors(javaCollection, collectionSupertype, containingClass).boxed
     val isErasedSignature = javaMethod.name in ERASED_COLLECTION_METHOD_NAMES ||
             ownFunction.valueParameters.any { it.returnType is KaTypeParameterType }
 
@@ -181,6 +181,29 @@ internal fun processPossiblyMappedCollectionMethod(
     result.add(mappedMethod)
     return !isErasedSignature
 }
+
+/**
+ * Whether the JVM backend boxes the single value parameter of this function.
+ *
+ * `remove(element: Int)` of a `MutableCollection<Int>` implementation is compiled as `remove(Integer)` instead of `remove(int)`.
+ * Otherwise, it would clash in Java with `remove(int): E` of `java.util.List`, which is `removeAt` in Kotlin and is generated
+ * as a bridge next to it, see [generateJavaCollectionMethodStubsIfNeeded].
+ *
+ * Mirrors `MethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove` of the JVM backend.
+ */
+context(_: KaSession)
+internal fun KaNamedFunctionSymbol.hasBoxedParameterForSpecialCaseOfRemove(): Boolean {
+    if (name.asString() != "remove" || receiverParameter != null || contextParameters.isNotEmpty()) return false
+
+    val parameterType = valueParameters.singleOrNull()?.returnType?.fullyExpandedType ?: return false
+    if (parameterType.classId != StandardClassIds.Int || parameterType.isMarkedNullable) return false
+
+    // A delegated member is not an override itself, so the interface member it delegates to is checked instead
+    val original = fakeOverrideOriginal
+    return original.isMutableCollectionMember() || original.allOverriddenSymbols.any { it.isMutableCollectionMember() }
+}
+
+private fun KaCallableSymbol.isMutableCollectionMember(): Boolean = callableId?.classId == StandardClassIds.MutableCollection
 
 /**
  * Generates stub methods from Java collection interfaces for the first non-interface Kotlin class
@@ -248,9 +271,9 @@ internal fun generateJavaCollectionMethodStubsIfNeeded(
     val kotlinCollectionSymbol = closestMappedSupertype.symbol as? KaClassSymbol ?: return
     val javaCollectionSymbol = findClass(javaClassId) ?: return
     val javaCollectionPsiClass = javaCollectionSymbol.psi as? PsiClass ?: return
-    val substitutor = createPsiSubstitutor(javaCollectionPsiClass, closestMappedSupertype, containingClass)
+    val substitutors = createPsiSubstitutors(javaCollectionPsiClass, closestMappedSupertype, containingClass)
 
-    generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, kotlinCollectionSymbol, substitutor, result)
+    generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, kotlinCollectionSymbol, substitutors, result)
 }
 
 /**
@@ -286,31 +309,57 @@ private fun mapKotlinCollectionClassToJava(classId: ClassId): ClassId? {
     }?.javaClass
 }
 
+/**
+ * Substitutors of the type parameters of a Java collection class with the type arguments of the corresponding Kotlin collection type.
+ */
+private class MappedCollectionSubstitutors(
+    /**
+     * Maps the type parameters to the type arguments as generic arguments,
+     * e.g. `E` of `java.util.List` to `java.lang.Integer` for `List<Int>` and `List<Int?>` alike.
+     */
+    val boxed: PsiSubstitutor,
+    /**
+     * Maps the type parameters to the type arguments as they appear in JVM signatures of the Kotlin collection members,
+     * e.g. `E` of `java.util.List` to `int` for `List<Int>`, but to `java.lang.Integer` for `List<Int?>`.
+     */
+    val specialized: PsiSubstitutor,
+)
+
 context(session: KaSession)
-private fun createPsiSubstitutor(
+private fun createPsiSubstitutors(
     javaCollection: PsiClass,
     kotlinCollection: KaClassType,
     containingClass: SymbolLightClassForClassOrObject,
-): PsiSubstitutor = with(session) {
-    val substitutionMap = buildMap<PsiTypeParameter, PsiType> {
-        javaCollection.typeParameters.zip(kotlinCollection.typeArguments).forEach { [typeParameter, typeArgument] ->
-            val psiType = typeArgument.type?.asPsiType(
-                useSitePosition = containingClass,
-                allowErrorTypes = true,
-                mode = KaTypeMappingMode.GENERIC_ARGUMENT
-            ) ?: return@forEach
-            put(typeParameter, psiType)
-        }
+): MappedCollectionSubstitutors = with(session) {
+    val boxedSubstitutionMap = mutableMapOf<PsiTypeParameter, PsiType>()
+    val specializedSubstitutionMap = mutableMapOf<PsiTypeParameter, PsiType>()
+    javaCollection.typeParameters.zip(kotlinCollection.typeArguments).forEach { [typeParameter, typeArgument] ->
+        val type = typeArgument.type ?: return@forEach
+        val boxedType = type.asPsiType(
+            useSitePosition = containingClass,
+            allowErrorTypes = true,
+            mode = KaTypeMappingMode.GENERIC_ARGUMENT
+        ) ?: return@forEach
+
+        boxedSubstitutionMap[typeParameter] = boxedType
+        specializedSubstitutionMap[typeParameter] = if (type.isPrimitiveBacked) boxedType.unboxedOrSelf() else boxedType
     }
-    return PsiSubstitutor.createSubstitutor(substitutionMap)
+
+    MappedCollectionSubstitutors(
+        boxed = PsiSubstitutor.createSubstitutor(boxedSubstitutionMap),
+        specialized = PsiSubstitutor.createSubstitutor(specializedSubstitutionMap),
+    )
 }
+
+private fun PsiType.unboxedOrSelf(): PsiType =
+    PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
 
 context(session: KaSession)
 private fun generateJavaCollectionMethodStubs(
     containingClass: SymbolLightClassForClassOrObject,
     javaCollectionPsiClass: PsiClass,
     kotlinCollectionSymbol: KaClassSymbol,
-    substitutor: PsiSubstitutor,
+    substitutors: MappedCollectionSubstitutors,
     result: MutableList<PsiMethod>,
 ) {
     val kotlinNames = kotlinCollectionSymbol.memberScope.callables
@@ -324,11 +373,11 @@ private fun generateJavaCollectionMethodStubs(
         .filterNot { it.hasModifierProperty(PsiModifier.DEFAULT) || it.hasModifierProperty(PsiModifier.STATIC) }
 
     val candidateMethods = javaMethods.flatMap { method ->
-        createWrappersForJavaCollectionMethod(containingClass, method, javaCollectionPsiClass, kotlinNames, substitutor)
+        createWrappersForJavaCollectionMethod(containingClass, method, javaCollectionPsiClass, kotlinNames, substitutors)
     }
-    val existingSignatures = result.mapTo(HashSet()) { it.getSignature(substitutor) }
+    val existingSignatures = result.mapTo(HashSet()) { it.getSignature(substitutors.boxed) }
     result += candidateMethods.filter { candidateMethod ->
-        candidateMethod.getSignature(substitutor) !in existingSignatures
+        candidateMethod.getSignature(substitutors.boxed) !in existingSignatures
     }
 }
 
@@ -337,7 +386,7 @@ private fun createWrappersForJavaCollectionMethod(
     method: PsiMethod,
     javaCollectionPsiClass: PsiClass,
     kotlinNames: Set<String>,
-    substitutor: PsiSubstitutor,
+    substitutors: MappedCollectionSubstitutors,
 ): List<PsiMethod> {
     val methodName = method.name
 
@@ -347,10 +396,10 @@ private fun createWrappersForJavaCollectionMethod(
 
     return when {
         kotlinGetterNameWithDifferentAbi != null -> {
-            val finalBridgeForJava = method.finalBridge(containingClass, substitutor)
+            val finalBridgeForJava = method.finalBridge(containingClass, substitutors)
             val abstractKotlinGetter = method.wrap(
                 containingClass,
-                substitutor,
+                substitutors,
                 name = kotlinGetterNameWithDifferentAbi,
                 hasImplementation = false
             )
@@ -360,14 +409,19 @@ private fun createWrappersForJavaCollectionMethod(
 
         hasCorrespondingKotlinDeclaration -> {
             if (isSpecialNotErasedSignature) {
-                createMethodsWithSpecialSignature(containingClass, method, javaCollectionPsiClass, substitutor)
+                createMethodsWithSpecialSignature(containingClass, method, javaCollectionPsiClass, substitutors)
             } else {
                 emptyList()
             }
         }
 
+        // A read-only Kotlin `List` has no `removeAt`, but the stub of `remove(int)` is still generated as its bridge
+        method.isRemoveByIndex() -> {
+            listOf(method.removeAtBridge(containingClass, substitutors, makeFinal = false))
+        }
+
         else -> {
-            val stubOverrideOfJavaOnlyMethod = method.openBridge(containingClass, substitutor)
+            val stubOverrideOfJavaOnlyMethod = method.openBridge(containingClass, substitutors)
             listOf(stubOverrideOfJavaOnlyMethod)
         }
     }
@@ -377,22 +431,22 @@ private fun createMethodsWithSpecialSignature(
     containingClass: SymbolLightClassForClassOrObject,
     method: PsiMethod,
     javaCollectionPsiClass: PsiClass,
-    substitutor: PsiSubstitutor,
+    substitutors: MappedCollectionSubstitutors,
 ): List<PsiMethod> {
     // Case 1: two type parameters
     if (javaCollectionPsiClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP) {
-        val abstractKotlinVariantWithGeneric = createJavaUtilMapMethodWithSpecialSignature(containingClass, method, substitutor)
+        val abstractKotlinVariantWithGeneric = createJavaUtilMapMethodWithSpecialSignature(containingClass, method, substitutors)
             ?: return emptyList()
-        val finalBridgeWithObject = method.finalBridge(containingClass, substitutor)
+        val finalBridgeWithObject = method.finalBridge(containingClass, substitutors)
         return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
     }
 
     // Remaining cases: one type parameter
-    if (method.name == "remove" && method.parameterList.parameters.singleOrNull()?.type == PsiTypes.intType()) {
+    if (method.isRemoveByIndex()) {
         // remove(int) -> final bridge remove(int), abstract removeAt(int)
         return listOf(
-            method.finalBridge(containingClass, substitutor),
-            method.wrap(containingClass, substitutor, name = "removeAt")
+            method.removeAtBridge(containingClass, substitutors, makeFinal = true),
+            method.wrap(containingClass, substitutors, name = "removeAt")
         )
     }
 
@@ -402,11 +456,18 @@ private fun createMethodsWithSpecialSignature(
     val javaParameterType = method.parameterList.parameters.singleOrNull()?.type ?: return emptyList()
     if (!javaParameterType.isJavaLangObject()) return emptyList()
 
-    val psiType = substitutor.substitutionMap.values.singleOrNull() ?: return emptyList()
-    if (psiType.isTypeParameter()) return emptyList()
+    val typeParameter = substitutors.boxed.substitutionMap.keys.singleOrNull() ?: return emptyList()
+    val boxedType = substitutors.boxed.substitutionMap.getValue(typeParameter)
+    if (boxedType.isTypeParameter()) return emptyList()
 
-    val finalBridgeWithObject = method.finalBridge(containingClass, substitutor)
-    val abstractKotlinVariantWithGeneric = method.wrap(containingClass, substitutor, substituteObjectWith = psiType)
+    val finalBridgeWithObject = method.finalBridge(containingClass, substitutors)
+    val kotlinParameterType = if (method.name == "remove" && boxedType.isJavaLangInteger()) {
+        // The JVM backend boxes the parameter of `remove(element: Int)`, see `hasBoxedParameterForSpecialCaseOfRemove`
+        boxedType.annotate(TypeAnnotationProvider.EMPTY)
+    } else {
+        substitutors.specialized.substitutionMap.getValue(typeParameter)
+    }
+    val abstractKotlinVariantWithGeneric = method.wrap(containingClass, substitutors, substituteObjectWith = kotlinParameterType)
     return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
 }
 
@@ -416,21 +477,29 @@ internal fun PsiType.isTypeParameter(): Boolean =
 internal fun PsiType.isJavaLangObject(): Boolean =
     this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
 
+private fun PsiType.isJavaLangInteger(): Boolean =
+    this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_INTEGER
+
+private fun PsiMethod.isRemoveByIndex(): Boolean =
+    name == "remove" && parameterList.parameters.singleOrNull()?.type == PsiTypes.intType()
+
 private fun createJavaUtilMapMethodWithSpecialSignature(
     containingClass: SymbolLightClassForClassOrObject,
     method: PsiMethod,
-    substitutor: PsiSubstitutor,
+    substitutors: MappedCollectionSubstitutors,
 ): SymbolLightMethodForMappedJavaCollectionStubMethod? {
-    val typeParameters = substitutor.substitutionMap.keys
-    val kOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "K" }] ?: return null
-    val vOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "V" }] ?: return null
-    val k = substitutor.substitute(kOriginal) ?: kOriginal
-    val v = substitutor.substitute(vOriginal) ?: vOriginal
+    val typeParameters = substitutors.boxed.substitutionMap.keys
+    val kTypeParameter = typeParameters.find { it.name == "K" } ?: return null
+    val vTypeParameter = typeParameters.find { it.name == "V" } ?: return null
+    val k = substitutors.specialized.substitutionMap[kTypeParameter] ?: return null
+    val v = substitutors.specialized.substitutionMap[vTypeParameter] ?: return null
+    // The Kotlin variants return `V?`, so the return type is boxed
+    val nullableV = substitutors.boxed.substitutionMap[vTypeParameter] ?: return null
 
     val signature = when (method.name) {
         "get" -> {
             if (k.isTypeParameter()) return null
-            MethodSignature(parameterTypes = listOf(k), returnType = v)
+            MethodSignature(parameterTypes = listOf(k), returnType = nullableV)
         }
 
         "containsKey" -> {
@@ -447,27 +516,47 @@ private fun createJavaUtilMapMethodWithSpecialSignature(
             // only `remove(Object)` pair (i.e. `remove(K)`) is needed
             if (method.parameterList.parametersCount != 1) return null
             if (k.isTypeParameter()) return null
-            MethodSignature(parameterTypes = listOf(k), returnType = v)
+            MethodSignature(parameterTypes = listOf(k), returnType = nullableV)
         }
         else -> null
     } ?: return null
 
-    return method.wrap(containingClass, substitutor, signature = signature)
+    return method.wrap(containingClass, substitutors, signature = signature)
+}
+
+/**
+ * The stub of `remove(int)` of `java.util.List`, which is a bridge to Kotlin `removeAt(int)`.
+ *
+ * The JVM backend generates the bridge with the specialized element type as the return type, so it's `int remove(int)` for `List<Int>`,
+ * unlike `removeAt` itself, whose return type is boxed as it overrides the generic `E`.
+ */
+private fun PsiMethod.removeAtBridge(
+    containingClass: SymbolLightClassForClassOrObject,
+    substitutors: MappedCollectionSubstitutors,
+    makeFinal: Boolean,
+): SymbolLightMethodForMappedJavaCollectionStubMethod {
+    val javaReturnType = requireNotNull(returnType) { "'$name' is expected to have a return type" }
+    val signature = MethodSignature(
+        parameterTypes = parameterList.parameters.map { it.type },
+        returnType = substitutors.specialized.substitute(javaReturnType) ?: javaReturnType,
+    )
+
+    return wrap(containingClass, substitutors, makeFinal = makeFinal, hasImplementation = true, signature = signature)
 }
 
 private fun PsiMethod.finalBridge(
     containingClass: SymbolLightClassForClassOrObject,
-    substitutor: PsiSubstitutor,
-): SymbolLightMethodForMappedJavaCollectionStubMethod = wrap(containingClass, substitutor, makeFinal = true, hasImplementation = true)
+    substitutors: MappedCollectionSubstitutors,
+): SymbolLightMethodForMappedJavaCollectionStubMethod = wrap(containingClass, substitutors, makeFinal = true, hasImplementation = true)
 
 private fun PsiMethod.openBridge(
     containingClass: SymbolLightClassForClassOrObject,
-    substitutor: PsiSubstitutor,
-): SymbolLightMethodForMappedJavaCollectionStubMethod = wrap(containingClass, substitutor, makeFinal = false, hasImplementation = true)
+    substitutors: MappedCollectionSubstitutors,
+): SymbolLightMethodForMappedJavaCollectionStubMethod = wrap(containingClass, substitutors, makeFinal = false, hasImplementation = true)
 
 private fun PsiMethod.wrap(
     containingClass: SymbolLightClassForClassOrObject,
-    substitutor: PsiSubstitutor,
+    substitutors: MappedCollectionSubstitutors,
     makeFinal: Boolean = false,
     hasImplementation: Boolean = false,
     name: String = this.name,
@@ -476,7 +565,8 @@ private fun PsiMethod.wrap(
 ) = SymbolLightMethodForMappedJavaCollectionStubMethod(
     containingClass = containingClass,
     javaMethod = this,
-    classSubstitutor = substitutor,
+    classSubstitutor = substitutors.boxed,
+    specializedClassSubstitutor = substitutors.specialized,
     name = name,
     isFinal = makeFinal,
     hasImplementation = hasImplementation,
