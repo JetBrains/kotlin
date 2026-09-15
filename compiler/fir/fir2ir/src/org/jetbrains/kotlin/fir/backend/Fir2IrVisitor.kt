@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.sourceSuppressedDiagnosticNames
-import org.jetbrains.kotlin.ir.suppressedDiagnosticNames
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -1084,12 +1083,43 @@ class Fir2IrVisitor(
         if (this is IrAnnotationContainer) return this
 
         val annotations = (firElement as? FirAnnotationContainer)?.annotations ?: return this
-        val suppressionNames = with(annotationGenerator) { annotations.toIrAnnotations() }
-            .flatMapTo(mutableSetOf()) { it.suppressedDiagnosticNames() }
+        val suppressionNames = annotations.extractSuppressedDiagnosticNames()
         if (suppressionNames.isNotEmpty()) {
             sourceSuppressedDiagnosticNames = suppressionNames
         }
         return this
+    }
+
+    private fun List<FirAnnotation>.extractSuppressedDiagnosticNames(): Set<String> {
+        var result: MutableSet<String>? = null
+        for (annotation in this) {
+            if (annotation.toAnnotationClassIdSafe(session) != StandardClassIds.Annotations.Suppress) continue
+            val argument = annotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.suppressNames) ?: continue
+            fun collectStrings(expression: FirExpression) {
+                when (expression) {
+                    is FirLiteralExpression -> {
+                        (expression.value as? String)?.let {
+                            val set = result ?: mutableSetOf<String>().also { result = it }
+                            set.add(it.lowercase())
+                        }
+                    }
+                    is FirVarargArgumentsExpression -> {
+                        for (arg in expression.arguments) {
+                            collectStrings(arg)
+                        }
+                    }
+                    is FirCollectionLiteral -> {
+                        for (arg in expression.arguments) {
+                            collectStrings(arg)
+                        }
+                    }
+                    is FirWrappedArgumentExpression -> collectStrings(expression.expression)
+                    else -> {}
+                }
+            }
+            collectStrings(argument)
+        }
+        return result.orEmpty()
     }
 
     internal fun convertToIrReceiverExpression(
