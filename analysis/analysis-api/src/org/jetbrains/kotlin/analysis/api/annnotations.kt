@@ -138,7 +138,7 @@ internal annotation class KaCustomContextParameterBridge
  * @see KaSpiExtensionPoint
  */
 @Target(AnnotationTarget.CLASS)
-internal annotation class KaSpi
+public annotation class KaSpi
 
 /**
  * Marks an API as a service provider interface extension point. Such APIs are designed to be implemented, not called directly. There are no
