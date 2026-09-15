@@ -139,9 +139,15 @@ abstract class GenerateSupportSources : DefaultTask() {
                             @ExperimentalForeignApi
                             expect inline var <T : support.$name> support.${name}VarOf<T>.value: T
                             """.trimIndent()
+                        val allocFunction = """
+                            @Suppress("FINAL_UPPER_BOUND")
+                            @ExperimentalForeignApi
+                            expect inline fun <T : support.$name> NativePlacement.alloc(value: T): support.${name}VarOf<T>
+                            """.trimIndent()
 
                         if (name in classesThatNeedVar) {
                             kotlinxXCinteropFileContents += valueAccessor
+                            kotlinxXCinteropFileContents += allocFunction
                             it.plus("\n\n$varOfVariant")
                         } else {
                             it
@@ -213,6 +219,13 @@ abstract class GenerateSupportSources : DefaultTask() {
                         actual inline var <T : $expansion> ${expansion}VarOf<T>.value: T
                             get() = error("Should not be called")
                             set(_) { error("Should not be called") }
+                        """.trimIndent()
+
+                    kotlinxXCinteropFileContents += """
+                        @Suppress("FINAL_UPPER_BOUND")
+                        @ExperimentalForeignApi
+                        $deprecation
+                        actual inline fun <T : $expansion> NativePlacement.alloc(value: T): ${expansion}VarOf<T> = error("Should not be called")
                         """.trimIndent()
                 }
             }
