@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.objc.emitBindClassToObjCNameAdaptersFromCaches
 import org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAnnotations
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.ReifiedFunctionLowering.Companion.isReifiedInline
@@ -352,6 +353,10 @@ internal class CodeGeneratorVisitor(
         declaration.acceptChildrenVoid(this)
 
         runAndProcessInitializers(null) {
+            // Note: has to be before `objCExport.generate` below, which is what emits the adapter tables,
+            // and after all the files were visited, so that the bindings of this binary take precedence.
+            codegen.emitBindClassToObjCNameAdaptersFromCaches()
+
             // Note: it is here because it also generates some bitcode.
             generationState.objCExport.generate(codegen)
 
