@@ -22,7 +22,12 @@ private data class PrivateClass(val myString: String) {
 
 @Serializable
 internal data class InternalClass(val myString: String) {
-    private companion object
+    <!PRIVATE_COMPANION_OF_SERIALIZABLE!>private<!> companion object
+}
+
+@Serializable @PublishedApi
+internal data class PublishedInternalClass(val myString: String) {
+    <!PRIVATE_COMPANION_OF_SERIALIZABLE!>private<!> companion object
 }
 
 @Serializable

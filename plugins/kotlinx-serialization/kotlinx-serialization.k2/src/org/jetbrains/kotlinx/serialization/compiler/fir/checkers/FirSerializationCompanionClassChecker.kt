@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.declaredFunctions
+import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -54,8 +56,10 @@ internal fun CheckerContext.checkPrivateCompanion(
 ) {
     if (classSymbol !is FirRegularClassSymbol) return
     if (!classSymbol.shouldHaveGeneratedMethodsInCompanion(session)) return
-    if (classSymbol.visibility == Visibilities.Private || classSymbol.visibility == Visibilities.Internal) return
+    val classVisibility = classSymbol.publishedApiEffectiveVisibility ?: classSymbol.effectiveVisibility
+    if (classVisibility.privateApi) return
     val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return
+    // Check "just" visibility, as we only concerned about private companions
     if (companionObjectSymbol.visibility != Visibilities.Private) return
 
     reporter.reportOn(
