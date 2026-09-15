@@ -1881,6 +1881,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("accessorInDestructuringDeclaration.kt")
+    public void testAccessorInDestructuringDeclaration() {
+      run("accessorInDestructuringDeclaration.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInInvalidCode() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
@@ -1961,6 +1967,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("expectAndActualInTheSameFile.kt")
     public void testExpectAndActualInTheSameFile() {
       run("expectAndActualInTheSameFile.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitBackingFieldInDestructuringDeclaration.kt")
+    public void testExplicitBackingFieldInDestructuringDeclaration() {
+      run("explicitBackingFieldInDestructuringDeclaration.kt");
     }
 
     @Test
