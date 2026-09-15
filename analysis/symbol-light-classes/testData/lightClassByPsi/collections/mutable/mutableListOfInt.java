@@ -9,7 +9,7 @@ public abstract class SMutableList /* test.SMutableList*/ implements java.util.L
   public abstract boolean contains(int);//  contains(int)
 
   @java.lang.Override()
-  public abstract boolean remove(int);//  remove(int)
+  public abstract boolean remove(java.lang.Integer);//  remove(java.lang.Integer)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -19,9 +19,6 @@ public abstract class SMutableList /* test.SMutableList*/ implements java.util.L
 
   @java.lang.Override()
   public abstract int lastIndexOf(int);//  lastIndexOf(int)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Integer remove(int);//  remove(int)
 
   @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
@@ -34,6 +31,9 @@ public abstract class SMutableList /* test.SMutableList*/ implements java.util.L
 
   @java.lang.Override()
   public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int remove(int);//  remove(int)
 
   @java.lang.Override()
   public final int size();//  size()
@@ -69,7 +69,7 @@ public abstract class SMutableList2 /* test.SMutableList2*/ implements java.util
 
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
@@ -123,6 +123,9 @@ public abstract class SMutableList2 /* test.SMutableList2*/ implements java.util
 
   @java.lang.Override()
   public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int remove(int);//  remove(int)
 
   @java.lang.Override()
   public final int size();//  size()
@@ -199,7 +202,7 @@ public class SMutableList3 /* test.SMutableList3*/ implements java.util.List<@or
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public boolean removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
@@ -218,6 +221,9 @@ public class SMutableList3 /* test.SMutableList3*/ implements java.util.List<@or
 
   @java.lang.Override()
   public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int remove(int);//  remove(int)
 
   @java.lang.Override()
   public final int size();//  size()

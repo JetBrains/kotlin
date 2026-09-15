@@ -15,7 +15,7 @@ public abstract class CMutableSet2 /* test.CMutableSet2*/ implements test.IMutab
 
   @kotlin.IgnorableReturnValue()
   @kotlin.js.JsExport.Ignore()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @kotlin.IgnorableReturnValue()
   @kotlin.js.JsExport.Ignore()
@@ -76,7 +76,7 @@ public class CMutableSet3 /* test.CMutableSet3*/ implements test.IMutableSet {
 
   public boolean isEmpty();//  isEmpty()
 
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 

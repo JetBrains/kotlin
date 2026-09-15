@@ -3,9 +3,6 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer remove(int);//  remove(int)
-
-  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
 
   @java.lang.Override()
@@ -51,6 +48,9 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public final int size();//  size()
 
   @java.lang.Override()
+  public int remove(int);//  remove(int)
+
+  @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
@@ -85,9 +85,6 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
 
   @java.lang.Override()
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
-
-  @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer remove(int);//  remove(int)
 
   @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
@@ -139,6 +136,9 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
 
   @java.lang.Override()
   public int lastIndexOf(int);//  lastIndexOf(int)
+
+  @java.lang.Override()
+  public int remove(int);//  remove(int)
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
@@ -177,9 +177,6 @@ public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.an
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer remove(int);//  remove(int)
-
-  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
 
   @java.lang.Override()
@@ -229,6 +226,9 @@ public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.an
 
   @java.lang.Override()
   public int lastIndexOf(int);//  lastIndexOf(int)
+
+  @java.lang.Override()
+  public int remove(int);//  remove(int)
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()

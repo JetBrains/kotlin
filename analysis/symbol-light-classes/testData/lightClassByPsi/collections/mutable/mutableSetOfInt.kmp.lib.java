@@ -15,7 +15,7 @@ public abstract class SMutableSet2 /* test.SMutableSet2*/ implements java.util.S
 
   @kotlin.IgnorableReturnValue()
   @kotlin.js.JsExport.Ignore()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @kotlin.IgnorableReturnValue()
   @kotlin.js.JsExport.Ignore()
@@ -76,7 +76,7 @@ public class SMutableSet3 /* test.SMutableSet3*/ implements java.util.Set<@org.j
 
   public boolean isEmpty();//  isEmpty()
 
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 

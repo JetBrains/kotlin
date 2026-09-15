@@ -29,7 +29,7 @@ public abstract class SMutableList2 /* test.SMutableList2*/ implements java.util
 
   @kotlin.IgnorableReturnValue()
   @kotlin.js.JsExport.Ignore()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @kotlin.IgnorableReturnValue()
   @kotlin.js.JsExport.Ignore()
@@ -134,7 +134,7 @@ public class SMutableList3 /* test.SMutableList3*/ implements java.util.List<@or
 
   public boolean isEmpty();//  isEmpty()
 
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 

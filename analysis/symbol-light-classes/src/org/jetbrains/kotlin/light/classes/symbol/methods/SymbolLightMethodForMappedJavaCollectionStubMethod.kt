@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsPro
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.MethodAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
+import org.jetbrains.kotlin.light.classes.symbol.classes.isJavaLangObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -54,16 +55,32 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
     private val javaMethod: PsiMethod,
     /**
      * Maps the type parameters of the Java collection class declaring [javaMethod] to the type arguments
-     * of the corresponding Kotlin collection supertype of [containingClass].
+     * of the corresponding Kotlin collection supertype of [containingClass] as generic arguments.
      *
-     * For example, for `class StringList : List<String>`, it maps `E` of `java.util.List` to `String`.
+     * For example, for `class StringList : List<String>`, it maps `E` of `java.util.List` to `String`,
+     * and for `class IntList : List<Int>`, to `java.lang.Integer`.
      * Type parameters of [javaMethod] itself are handled by [methodSubstitutor].
      */
     private val classSubstitutor: PsiSubstitutor,
+    /**
+     * The same as [classSubstitutor], but maps the type parameters as they appear in a JVM method signature,
+     * so for `class IntList : List<Int>`, it maps `E` of `java.util.List` to `int`.
+     *
+     * It is only applied to bare type parameters, like `E` of `add(E)`, as generic arguments,
+     * like `E` of `addAll(Collection<? extends E>)`, are boxed anyway.
+     */
+    private val specializedClassSubstitutor: PsiSubstitutor,
     private val name: String,
     private val isFinal: Boolean,
     private val hasImplementation: Boolean,
+    /**
+     * The type to substitute `java.lang.Object` in the signature of [javaMethod] with, e.g. `int` for `contains(Object)` of `List<Int>`,
+     * whose Kotlin counterpart is `contains(element: Int)`.
+     */
     private val substituteObjectWith: PsiType?,
+    /**
+     * The signature of the stub, if it can't be derived from [javaMethod] by substitution.
+     */
     private val providedSignature: MethodSignature?,
 ) : SymbolLightMethodBaseImpl<KaNamedClassSymbol>(
     lightMemberOrigin = null,
@@ -106,39 +123,39 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
      *
      * It is called lazily by [SymbolLightParameterForMappedJavaCollectionStubMethod].
      */
-    internal fun computeParameterType(javaParameter: PsiParameter, index: Int): PsiType {
-        val typeFromJava = javaParameter.type
-        val providedType = providedSignature?.parameterTypes?.get(index)
-        val candidateType = providedType ?: substituteType(typeFromJava)
-        val shouldTryToUnbox = providedType != null ||
-                (typeFromJava.isJavaLangObject() && substituteObjectWith == candidateType) ||
-                typeFromJava.isTypeParameter()
-        return if (shouldTryToUnbox) candidateType.unboxedOrSelf() else candidateType
-    }
-
-    private fun PsiType.isJavaLangObject(): Boolean =
-        this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
-
-    private fun PsiType.unboxedOrSelf(): PsiType =
-        PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
+    internal fun computeParameterType(javaParameter: PsiParameter, index: Int): PsiType =
+        providedSignature?.parameterTypes?.get(index) ?: substituteType(javaParameter.type, isSpecialized = true)
 
     /**
      * [classSubstitutor] extended with the mapping from the type parameters of [javaMethod] to the own type parameters of this method,
      * so substituted types refer to the type parameters owned by the stub rather than by the Java declaration.
      */
-    internal val methodSubstitutor: PsiSubstitutor by lazyPub {
+    internal val methodSubstitutor: PsiSubstitutor by lazyPub { classSubstitutor.withOwnTypeParameters() }
+
+    /**
+     * [specializedClassSubstitutor] extended in the same way as [methodSubstitutor].
+     */
+    private val specializedMethodSubstitutor: PsiSubstitutor by lazyPub { specializedClassSubstitutor.withOwnTypeParameters() }
+
+    private fun PsiSubstitutor.withOwnTypeParameters(): PsiSubstitutor {
         val ownTypeParameters = typeParameters
-        if (ownTypeParameters.isEmpty()) {
-            classSubstitutor
-        } else {
-            javaMethod.typeParameters.zip(ownTypeParameters).fold(classSubstitutor) { acc, [javaTypeParameter, ownTypeParameter] ->
-                acc.put(javaTypeParameter, PsiTypesUtil.getClassType(ownTypeParameter))
-            }
+        if (ownTypeParameters.isEmpty()) return this
+
+        return javaMethod.typeParameters.zip(ownTypeParameters).fold(this) { acc, [javaTypeParameter, ownTypeParameter] ->
+            acc.put(javaTypeParameter, PsiTypesUtil.getClassType(ownTypeParameter))
         }
     }
 
-    private fun substituteType(psiType: PsiType): PsiType {
-        val substituted = methodSubstitutor.substitute(psiType) ?: psiType
+    /**
+     * Substitutes the type parameters in [psiType] from the signature of [javaMethod].
+     *
+     * A bare type parameter is [specialized][specializedMethodSubstitutor] if [isSpecialized] is set, which is the case for
+     * parameter types: e.g., `E` of `add(E)` becomes `int` for `List<Int>`. Return types are boxed regardless, as their Kotlin
+     * counterparts override generic members: e.g., `E` of `removeAt(int)` becomes `java.lang.Integer`.
+     */
+    private fun substituteType(psiType: PsiType, isSpecialized: Boolean): PsiType {
+        val substitutor = if (isSpecialized && psiType.isTypeParameter()) specializedMethodSubstitutor else methodSubstitutor
+        val substituted = substitutor.substitute(psiType) ?: psiType
         return if (substituted.isJavaLangObject() && substituteObjectWith != null) {
             substituteObjectWith
         } else {
@@ -149,7 +166,7 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
     override fun getName(): String = name
 
     override fun getReturnType(): PsiType? =
-        providedSignature?.returnType ?: javaMethod.returnType?.let { substituteType(it) }
+        providedSignature?.returnType ?: javaMethod.returnType?.let { substituteType(it, isSpecialized = false) }
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         val javaTypeParameters = javaMethod.typeParameters

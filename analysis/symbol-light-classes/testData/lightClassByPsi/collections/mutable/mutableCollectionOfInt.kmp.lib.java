@@ -12,7 +12,7 @@ public abstract class SMutableCollection2 /* test.SMutableCollection2*/ implemen
   public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @kotlin.IgnorableReturnValue()
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @kotlin.IgnorableReturnValue()
   public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
@@ -52,7 +52,7 @@ public class SMutableCollection3 /* test.SMutableCollection3*/ implements java.u
 
   public boolean isEmpty();//  isEmpty()
 
-  public boolean remove(int);//  remove(int)
+  public boolean remove(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
