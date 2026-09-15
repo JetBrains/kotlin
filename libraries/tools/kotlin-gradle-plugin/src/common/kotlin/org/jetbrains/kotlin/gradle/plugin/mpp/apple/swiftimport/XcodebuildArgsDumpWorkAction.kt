@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.KOTLIN_CLANG_ARGS_DUMP_FILE_ENV
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.KOTLIN_LD_ARGS_DUMP_FILE_ENV
 import org.jetbrains.kotlin.gradle.utils.getFile
+import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -168,8 +169,17 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
             forceClangToReexecute.deleteRecursively()
         }
 
-        execOps.exec { exec ->
+        // KT-89285: xcodebuild echoes every clang/ld invocation, which can add megabytes to the build log.
+        // Capture its output instead of inheriting Gradle's streams, then log it at INFO on success
+        // and include it in the error message on failure so the cause is still visible.
+        val stdout = ByteArrayOutputStream()
+        val stderr = ByteArrayOutputStream()
+
+        val result = execOps.exec { exec ->
             exec.workingDir(projectRoot)
+            exec.standardOutput = stdout
+            exec.errorOutput = stderr
+            exec.isIgnoreExitValue = true
             // Building the synthetic package is intentional: xcodebuild computes the same clang/ld invocations that the
             // real SwiftPM package integration would use, including module maps, framework search paths, and products.
             val args = mutableListOf(
@@ -210,6 +220,22 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
                 it.startsWith("OTHER_") || it.startsWith("ASSETCATALOG_")
             }.forEach {
                 exec.environment.remove(it)
+            }
+        }
+
+        when {
+            result.exitValue != 0 -> {
+                error(
+                    """
+                    Process 'xcodebuild' returns ${result.exitValue}
+                    $stdout
+                    $stderr
+                    """.trimIndent()
+                )
+            }
+            else -> {
+                stdout.toString().lineSequence().forEach { logger.info(it) }
+                stderr.toString().lineSequence().forEach { logger.info(it) }
             }
         }
     }
