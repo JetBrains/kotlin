@@ -8,11 +8,18 @@ import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.kotlin.dsl.withType
 
 internal fun Project.configureTestInventory() {
-    val listenerRegistry = objects.newInstance(BuildEventsListenerRegistryHolder::class.java).listenerRegistry
+    // Nothing listens to TeamCity service messages anywhere else, so outside TeamCity the service is
+    // not registered at all, and no listener is asked to observe every task of the build.
+    val isTeamCityBuild = kotlinBuildProperties.isTeamcityBuild.get()
+    val listenerRegistry by lazy { objects.newInstance(BuildEventsListenerRegistryHolder::class.java).listenerRegistry }
 
     tasks.withType<AbstractTestTask>().configureEach {
         val taskPath = path
 
+        // The two listeners below run, and declare their files as outputs, whether or not this is a
+        // TeamCity build. Declaring them conditionally would make the contents of a cache entry depend
+        // on the kind of build that populated it, so an entry filled in outside TeamCity would restore
+        // no recorded tests for a TeamCity build to replay.
         val testInventoryListener = TestInventoryListener(name, project.layout.buildDirectory.asFile)
         addTestListener(testInventoryListener)
         outputs.file(testInventoryListener.inventoryFile)
@@ -22,6 +29,8 @@ internal fun Project.configureTestInventory() {
         val testExecutionsListener = TestExecutionsListener(name, taskPath, project.layout.buildDirectory.asFile)
         addTestListener(testExecutionsListener)
         outputs.file(testExecutionsListener.executionsFile)
+
+        if (!isTeamCityBuild) return@configureEach
 
         // Registered per *task*, not per project: the parameters below are plain values that are
         // already known at this point, so they do not depend on when Gradle isolates them. A map
