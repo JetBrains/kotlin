@@ -78,7 +78,10 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         parent: IrDeclarationParent,
         scopeInfo: List<ScopeWithIr>,
     ): IrDeclarationParent =
-        if (visibility == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY) {
+        if (parent is IrClass && parent.origin == JvmLoweredDeclarationOrigin.INTERFACE_PRIVATE_FIELDS_CLASS) {
+            // For INTERFACE_PRIVATE_FIELDS_CLASS, place the accessor in the parent interface
+            parent.parentAsClass
+        } else if (visibility == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY) {
             val classes = scopeInfo.map { it.irElement }.filterIsInstance<IrClass>()
             val companions = classes.mapNotNull(IrClass::companionObject)
             val objectsInScope =
