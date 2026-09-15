@@ -472,6 +472,12 @@ internal class MissingDependencyClassInExpressionTypeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MissingDependencyClassInExpressionType
 
+internal class MissingDependencyClassInParameterWithDefaultValueImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MissingDependencyClassInParameterWithDefaultValue
+
 internal class MissingDependencySuperclassImpl(
     override val missingTypeConstructorName: FqName,
     override val declarationTypeConstructorName: FqName,
