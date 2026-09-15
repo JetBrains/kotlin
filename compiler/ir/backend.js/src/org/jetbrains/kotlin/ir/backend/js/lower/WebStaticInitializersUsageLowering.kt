@@ -8,27 +8,26 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irComposite
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.staticInitFunction
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isEnumEntry
 import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Inserts calls to a static initializers function (static_init) into relevant function bodies.
- *
- * @param initializeContainerOfInnerObject When true, access to a nested object inside a class with static initializers will cause
- *  the static_init function of that class to execute. When false, only companion object access would trigger static_init execution.
  *
  * Before:
  * ```kotlin
@@ -89,22 +88,66 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  *     val third: ThirdType
  *   }
  * }
+ * ```
+ *
+ * @param initializeContainerOfInnerObject When true, access to a nested object inside a class with static initializers will cause
+ *  the static_init function of that class to execute. When false, only companion object access would trigger static_init execution.
  */
 abstract class WebStaticInitializersUsageLowering(
     private val context: JsCommonBackendContext,
     private val initializeContainerOfInnerObject: Boolean
 ) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrVisitorVoid() {
-            override fun visitFile(declaration: IrFile) {
-                declaration.acceptChildrenVoid(this)
+        irFile.transformChildren(object : IrTransformer<IrSymbolOwner>() {
+            override fun visitClass(declaration: IrClass, data: IrSymbolOwner): IrStatement {
+                insertStaticInitCall(declaration)
+                return super.visitClass(declaration, declaration)
             }
 
-            override fun visitClass(declaration: IrClass) {
-                insertStaticInitCall(declaration)
-                declaration.acceptChildrenVoid(this)
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrSymbolOwner): IrStatement {
+                return super.visitDeclaration(declaration, declaration)
             }
-        })
+
+            /**
+             * A `lateinit` backing field can be accessed directly, without a getter, which skips `static_init` call in some cases.
+             *
+             * For example, [org.jetbrains.kotlin.backend.common.lower.LateinitLowering] lowers `::prop.isInitialized` into a null-check `if`
+             * of the underlying backing field, skipping the `get_prop` getter call at all:
+             * ```
+             * ::prop.isInitialized
+             * ```
+             * becomes
+             * ```
+             * if (prop_field != null) true else false
+             * ```
+             *
+             * So we need to prepend such direct field access with `static_init` calls.
+             *
+             * See KT-89290.
+             */
+            override fun visitGetField(expression: IrGetField, data: IrSymbolOwner): IrExpression {
+                super.visitGetField(expression, data)
+
+                val field = expression.symbol.owner
+                if (!field.isStatic) return expression
+
+                val property = field.correspondingPropertySymbol?.owner ?: return expression
+                if (!property.isLateinit) return expression
+
+                val parent = field.parent as? IrClass ?: return expression
+                val staticInitFunction = parent.staticInitFunction ?: return expression
+
+                val containerClass = data as? IrClass ?: (data as? IrDeclaration)?.parentClassOrNull
+                if (containerClass?.staticInitFunction == staticInitFunction) return expression
+
+                return context.irBuiltIns.createIrBuilder(data.symbol, expression.startOffset, expression.endOffset).run {
+                    irComposite(expression) {
+                        +irCall(staticInitFunction.symbol)
+                        +expression
+                    }
+                }
+            }
+        }, irFile)
     }
 
     private fun insertStaticInitCall(container: IrClass) {
