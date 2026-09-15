@@ -9,16 +9,15 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
+import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.symbols.findClass
-import org.jetbrains.kotlin.analysis.api.symbols.symbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.renderClass
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightNoArgConstructor
 import org.jetbrains.kotlin.name.ClassId
@@ -36,19 +35,22 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
 
     @Test
     fun fileModificationTracker(file: KtFile, testServices: TestServices) {
-        val facadeLightClass = file.findFacadeClass() ?: error("Facade light class was not found")
-        val classLightClass = (file.declarations.first() as KtClassOrObject).toLightClass() ?: error("Light class was not found")
-        val fakeFilesWithModificationStamp = listOf(facadeLightClass, classLightClass).map { lightClass ->
-            lightClass.containingFile to lightClass.containingFile.modificationStamp
-        }
+        analyze(file) {
+            val facadeLightClass = file.symbol.asFacadePsiClass() ?: error("Facade light class was not found")
+            val classLightClass =
+                (file.declarations.first() as KtClassOrObject).classSymbol?.asPsiClass() ?: error("Light class was not found")
+            val fakeFilesWithModificationStamp = listOf(facadeLightClass, classLightClass).map { lightClass ->
+                lightClass.containingFile to lightClass.containingFile.modificationStamp
+            }
 
-        // Emulate file modification
-        file.clearCaches()
+            // Emulate file modification
+            file.clearCaches()
 
-        for ([fakeFile, originalStamp] in fakeFilesWithModificationStamp) {
-            val newStamp = fakeFile.modificationStamp
-            testServices.assertions.assertTrue(originalStamp < newStamp) {
-                "Expected that $fakeFile will have a modification stamp greater than $originalStamp, but $newStamp was found"
+            for ([fakeFile, originalStamp] in fakeFilesWithModificationStamp) {
+                val newStamp = fakeFile.modificationStamp
+                testServices.assertions.assertTrue(originalStamp < newStamp) {
+                    "Expected that $fakeFile will have a modification stamp greater than $originalStamp, but $newStamp was found"
+                }
             }
         }
     }
@@ -56,7 +58,9 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
     @Test
     fun enumEntryWithTypeAliasSameNameAsPrimitiveType(file: KtFile, testServices: TestServices) {
         val enumKtClass = file.declarations.filterIsInstance<KtClass>().first { it.isEnum() }
-        val enumLightClass = enumKtClass.toLightClass() ?: error("Light class was not found")
+        val enumLightClass = analyze(file) {
+            (enumKtClass.symbol as? KaClassSymbol)?.asPsiClass() ?: error("Light class was not found")
+        }
 
         val enumConstant = enumLightClass.fields.filterIsInstance<PsiEnumConstant>().first()
         val enumConstantType = enumConstant.type as PsiClassType
@@ -99,7 +103,13 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
     }
 
     private fun assertMethodAnnotation(topLevelClass: KtClass, testServices: TestServices) {
-        val topLevelLightClass = topLevelClass.toLightClass() ?: error("Light class was not found")
+        val topLevelLightClass = analyze(topLevelClass) {
+            when (val symbol = topLevelClass.symbol) {
+                is KaEnumEntrySymbol -> symbol.initializer?.asPsiClass()
+                is KaClassSymbol -> symbol.asPsiClass()
+                else -> null
+            } ?: error("Light class was not found")
+        }
         val method = topLevelLightClass.findMethodsByName("method", false).first() as PsiMethod
         val annotation = method.annotations.first()
         val argument = annotation.findAttributeValue("value")!! as PsiLiteralExpression
@@ -147,18 +157,19 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
         val project = file.project
 
         fun lightClassOf(name: String): PsiClass {
-            val declaration = analyze(file) {
+            analyze(file) {
                 val classId = ClassId(FqName("lib"), Name.identifier(name))
                 val classSymbol = findClass(classId) ?: error("'$classId' symbol was not found")
-                classSymbol.realPsi as? KtClassOrObject
+                val declaration = classSymbol.realPsi as? KtClassOrObject
                     ?: error("'$classId' is expected to have a decompiled PSI, but '${classSymbol.realPsi}' was found")
-            }
 
-            // Light classes for non-JVM declarations are only available with the multiplatform support enabled
-            @OptIn(KaNonPublicApi::class)
-            return withMultiplatformLightClassSupport(project) {
-                declaration.toLightClass()
-            } ?: error("Light class for '$name' was not found")
+
+                // Light classes for non-JVM declarations are only available with the multiplatform support enabled
+                @OptIn(KaNonPublicApi::class)
+                return withMultiplatformLightClassSupport(project) {
+                    declaration.classSymbol?.asPsiClass()
+                } ?: error("Light class for '$name' was not found")
+            }
         }
 
         val libraryObjectLightClass = lightClassOf("LibraryObject")
@@ -181,7 +192,9 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
 
         val classesWithDeclaredConstructor = listOf(lightClassOf("LibraryClass")) +
                 file.declarations.filterIsInstance<KtClassOrObject>().map { declaration ->
-                    declaration.toLightClass() ?: error("Light class for '${declaration.name}' was not found")
+                    analyze(declaration) {
+                        declaration.classSymbol?.asPsiClass() ?: error("Light class for '${declaration.name}' was not found")
+                    }
                 }
 
         val declaredConstructors = classesWithDeclaredConstructor.flatMap { it.constructors.asList() }

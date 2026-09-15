@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.classSymbol
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.AssertionsService
@@ -29,8 +31,10 @@ abstract class AbstractSymbolLightClassesNestedClassesConsistencyTestBase(
     override fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
         val assertions = testServices.assertions
         for (file in ktFiles) {
-            val lightClass = (file.declarations.first() as KtClassOrObject).toLightClass()!!
-            checkLightClass(lightClass, assertions)
+            analyze(file) {
+                val lightClass = (file.declarations.first() as KtClassOrObject).classSymbol?.asPsiClass()!!
+                checkLightClass(lightClass as KtLightClass, assertions)
+            }
         }
     }
 

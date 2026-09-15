@@ -6,23 +6,51 @@
 package org.jetbrains.kotlin.light.classes.symbol.base.service
 
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.SyntaxTraverser
-import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.asJava.toLightElements
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.*
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.psi.*
 
 internal fun getLightClassesFromFile(ktFile: KtFile): List<PsiClass> {
     val ktClasses = SyntaxTraverser.psiTraverser(ktFile).filter(KtClassOrObject::class.java).toList()
     return ktClasses.plus(ktFile).flatMap { ktElement ->
-        if (ktElement is KtFile && ktElement.isScript()) {
-            // Regular [KtElement.toLightElements] will attempt to find a facade class for [KtFile],
-            // where we deliberately drop .kts as per KTIJ-22016
-            // Thus, we need to invoke [KtScript.toLightClass] explicitly.
-            // That's how (U)LC tests do too: see [AbstractIdeLightClassesByPsiTest#doMultiFileTest]
-            listOfNotNull(ktElement.script?.toLightClass())
-        } else {
-            ktElement.toLightElements()
+        analyze(ktElement) {
+            ktElement.getLightElements()
         }
     }.filterIsInstance<PsiClass>()
+}
+
+context(_: KaSession)
+internal fun KtElement.getLightElements(): List<PsiNamedElement> {
+    return when (this) {
+        is KtFile -> if (isScript()) {
+            listOfNotNull(script?.symbol?.asFacadePsiClass())
+        } else {
+            listOfNotNull(symbol.asFacadePsiClass())
+        }
+        is KtScript -> listOfNotNull(symbol.asFacadePsiClass())
+        is KtDeclaration -> symbol.getLightElementsFromDeclaration()
+        else -> emptyList()
+    }
+}
+
+
+context(_: KaSession)
+internal fun KaSymbol.getLightElementsFromDeclaration(): List<PsiNamedElement> {
+    return when (this) {
+        is KaClassSymbol -> listOfNotNull(asPsiClass(), asPsiField())
+        is KaEnumEntrySymbol -> listOfNotNull(asPsiField(), initializer?.asPsiClass())
+        is KaFunctionSymbol -> asPsiMethods()
+        is KaPropertySymbol -> {
+            val accessors = getter?.asPsiMethods().orEmpty() + setter?.asPsiMethods().orEmpty()
+            accessors + listOfNotNull(backingFieldSymbol?.asPsiField())
+        }
+        is KaTypeParameterSymbol -> asPsiTypeParameters()
+        is KaParameterSymbol -> asPsiParameters()
+        is KaBackingFieldSymbol -> listOfNotNull(asPsiField())
+        else -> emptyList()
+    }
 }
