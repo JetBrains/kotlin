@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider
 
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.analysis.api.symbols.containingModule
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -62,8 +62,7 @@ abstract class AbstractContainingModuleByFileTest : AbstractAnalysisApiBasedTest
         if (analysisContextModuleName != null) {
             val contextModule = testServices.ktTestModuleStructure.getKtTestModule(analysisContextModuleName).ktModule
 
-            @Suppress("DEPRECATION_ERROR")
-            mainFile.virtualFile.analysisContextModule = contextModule
+            mainFile.contextModule = contextModule
         }
     }
 }
