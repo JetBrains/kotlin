@@ -60,10 +60,9 @@ class PostponedArgumentsAnalyzer(
 
     fun analyze(
         c: PostponedArgumentsAnalyzerContext,
-        argument: ConePostponedResolvedAtom,
+        argument: ConeFunctionTypeRelatedPostponedResolvedAtom,
         candidate: Candidate,
         withPCLASession: Boolean,
-        precalculatedBoundsForCL: CollectionLiteralBounds?,
     ) {
         when (argument) {
             is ConeResolvedLambdaAtom ->
@@ -77,13 +76,19 @@ class PostponedArgumentsAnalyzer(
                 )
 
             is ConeResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
-            is ConeSimpleNameForContextSensitiveResolution ->
-                processSimpleNameForContextSensitiveResolution(argument, candidate)
-            is ConeContextSensitiveAlternativeForQualifierAtom ->
-                processSimpleNameForContextSensitiveResolutionIdeAlternative(argument, candidate)
-            is ConeCollectionLiteralAtom ->
-                processCollectionLiteral(argument, candidate, precalculatedBoundsForCL)
         }
+    }
+
+    fun analyze(atom: ConeSimpleNameForContextSensitiveResolution, candidate: Candidate) {
+        processSimpleNameForContextSensitiveResolution(atom, candidate)
+    }
+
+    fun analyze(atom: ConeContextSensitiveAlternativeForQualifierAtom, candidate: Candidate) {
+        processSimpleNameForContextSensitiveResolutionIdeAlternative(atom, candidate)
+    }
+
+    fun analyze(precalculatedBounds: CollectionLiteralBounds, candidate: Candidate) {
+        processCollectionLiteral(precalculatedBounds.atom, candidate, precalculatedBounds)
     }
 
     private fun processCallableReference(atom: ConeResolvedCallableReferenceAtom, candidate: Candidate) {
@@ -235,7 +240,7 @@ class PostponedArgumentsAnalyzer(
     private fun processCollectionLiteral(
         atom: ConeCollectionLiteralAtom,
         topLevelCandidate: Candidate,
-        precalculatedBounds: CollectionLiteralBounds?,
+        precalculatedBounds: CollectionLiteralBounds,
     ) {
         atom.analyzed = true
 
