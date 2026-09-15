@@ -133,17 +133,6 @@ declare namespace JS_TESTS {
                 function withDefaultImpl($this: foo.IntermediateImplicitExportInterface): string;
             }
         }
-        interface IntermediateImplicitExportInterface {
-            withDefaultImpl(): string;
-            readonly __doNotUseOrImplementIt: {
-                readonly "foo.IntermediateImplicitExportInterface": unique symbol;
-            };
-        }
-        namespace IntermediateImplicitExportInterface {
-            namespace DefaultImpls {
-                function withDefaultImpl($this: foo.IntermediateImplicitExportInterface): string;
-            }
-        }
     }
 }
 

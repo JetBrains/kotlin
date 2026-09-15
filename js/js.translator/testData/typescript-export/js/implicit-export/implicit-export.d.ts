@@ -122,5 +122,11 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => SomeServiceRequest;
             }
         }
+        interface IntermediateImplicitExportInterface {
+            withDefaultImpl(): string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.IntermediateImplicitExportInterface": unique symbol;
+            };
+        }
     }
 }
