@@ -18,3 +18,16 @@ package kotlin
 @MustBeDocumented
 @SinceKotlin("2.5")
 public expect annotation class PlatformInline
+
+/**
+ * Specifies that given class will become a value class in the future.
+ *
+ * This annotation has a number of certain requirements for a class it's used on;
+ * shortly, these requirements are similar to those used for real value classes.
+ * Compiler will report warnings or errors on use-sites when the class is assuming to have identity.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@SinceKotlin("2.5")
+public annotation class WillBecomeValue
