@@ -216,7 +216,8 @@ internal interface ContextUtils : RuntimeAware {
                     this.computePrivateTypeInfoSymbolName(file.path)
                 }
 
-                constPointer(importGlobal(typeInfoSymbolName, runtime.typeInfoType, this))
+                generationState.dependenciesTracker.add(this)
+                constPointer(importGlobal(typeInfoSymbolName, runtime.typeInfoType))
             } else {
                 generationState.llvmDeclarations.forClass(this).typeInfo
             }

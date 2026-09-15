@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as Pr
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -536,6 +535,105 @@ internal object ClassFieldsSerializer : IdSignatureAwareSerializer<SerializedCla
 }
 
 class SerializedEagerInitializedFile(val file: SerializedFileReference)
+
+/**
+ * A `@BindReverseBridgeToMethod` bridge of a [SerializedObjCAdapter], described by everything
+ * the final binary needs to rebuild a `KotlinToObjCMethodAdapter` for it.
+ */
+class SerializedObjCReverseBridge(
+        val selector: String,
+        val impl: String,
+        val interfaceId: Int,
+        val itableSize: Int,
+        val itableIndex: Int,
+        val vtableIndex: Int,
+)
+
+/**
+ * A `@BindClassToObjCName` adapter of a cached library, described in full, so that the final binary can rebuild it
+ * without any of the IR it was computed from. See `emitBindClassToObjCNameAdaptersFromCaches`.
+ */
+class SerializedObjCAdapter(
+        file: SerializedFileReference,
+        val objCName: String,
+        val isInterface: Boolean,
+        val typeInfoSymbolName: String,
+        val vtableSize: Int,
+        val itableSize: Int,
+        val reverseBridges: List<SerializedObjCReverseBridge>,
+) : FileAwareSerializedData(file)
+
+internal object ObjCAdapterSerializer {
+    private const val FLAG_IS_INTERFACE = 1
+
+    private val SerializedObjCAdapter.payloadSize: Int
+        get() = Int.SIZE_BYTES * (8 + 6 * reverseBridges.size)
+
+    fun serialize(adapters: List<SerializedObjCAdapter>): ByteArray {
+        val stringTable = buildStringTable {
+            adapters.forEach {
+                +it.file.fqName
+                +it.file.path
+                +it.objCName
+                +it.typeInfoSymbolName
+                it.reverseBridges.forEach { bridge ->
+                    +bridge.selector
+                    +bridge.impl
+                }
+            }
+        }
+        val stream = ByteArrayStream(ByteArray(stringTable.sizeBytes + adapters.sumOf { it.payloadSize }))
+        stringTable.serialize(stream)
+        adapters.forEach { adapter ->
+            with(stream) {
+                writeInt(stringTable.indices[adapter.file.fqName]!!)
+                writeInt(stringTable.indices[adapter.file.path]!!)
+                writeInt(stringTable.indices[adapter.objCName]!!)
+                writeInt(if (adapter.isInterface) FLAG_IS_INTERFACE else 0)
+                writeInt(stringTable.indices[adapter.typeInfoSymbolName]!!)
+                writeInt(adapter.vtableSize)
+                writeInt(adapter.itableSize)
+                writeInt(adapter.reverseBridges.size)
+                adapter.reverseBridges.forEach { bridge ->
+                    writeInt(stringTable.indices[bridge.selector]!!)
+                    writeInt(stringTable.indices[bridge.impl]!!)
+                    writeInt(bridge.interfaceId)
+                    writeInt(bridge.itableSize)
+                    writeInt(bridge.itableIndex)
+                    writeInt(bridge.vtableIndex)
+                }
+            }
+        }
+        return stream.buf
+    }
+
+    fun deserializeTo(data: ByteArray, result: MutableList<SerializedObjCAdapter>) {
+        val stream = ByteArrayStream(data)
+        val stringTable = StringTable.deserialize(stream)
+        while (stream.hasData()) {
+            with(stream) {
+                result.add(SerializedObjCAdapter(
+                        file = SerializedFileReference(stringTable[readInt()], stringTable[readInt()]),
+                        objCName = stringTable[readInt()],
+                        isInterface = readInt() and FLAG_IS_INTERFACE != 0,
+                        typeInfoSymbolName = stringTable[readInt()],
+                        vtableSize = readInt(),
+                        itableSize = readInt(),
+                        reverseBridges = List(readInt()) {
+                            SerializedObjCReverseBridge(
+                                    selector = stringTable[readInt()],
+                                    impl = stringTable[readInt()],
+                                    interfaceId = readInt(),
+                                    itableSize = readInt(),
+                                    itableIndex = readInt(),
+                                    vtableIndex = readInt(),
+                            )
+                        },
+                ))
+            }
+        }
+    }
+}
 
 class SerializedTrivialGetter(
         file: SerializedFileReference, val getterSignature: IdSignature
