@@ -121,8 +121,8 @@ fun Test.setUpJsBoxTests() {
 
     forwardProperties()
 
-    @OptIn(TemporaryTestFederationApi::class)
-    smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
+//    @OptIn(TemporaryTestFederationApi::class)
+//    smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
 }
 
 fun Test.forwardProperties() {
