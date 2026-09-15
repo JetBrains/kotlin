@@ -83,7 +83,7 @@ internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLi
     context(session: KaSession)
     protected fun getTypeMappingMode(type: KaType): KaTypeMappingMode = when {
         type.isSuspendFunctionType -> KaTypeMappingMode.DEFAULT
-        method.isJvmExposedBoxed && typeForValueClass(type) -> KaTypeMappingMode.VALUE_PARAMETER_BOXED
+        method.isJvmExposeBoxed && typeForValueClass(type) -> KaTypeMappingMode.VALUE_PARAMETER_BOXED
         // TODO: extract type mapping mode from annotation?
         // TODO: methods with declaration site wildcards?
         else -> KaTypeMappingMode.VALUE_PARAMETER
