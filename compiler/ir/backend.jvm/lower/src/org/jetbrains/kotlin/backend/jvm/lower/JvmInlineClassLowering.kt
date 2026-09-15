@@ -829,8 +829,8 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
 
     private fun IrFunction.hashSuffix(): String? = InlineClassAbi.hashSuffix(
         this,
-        context.config.functionsWithInlineClassReturnTypesMangled,
-        context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+        mangleReturnTypes = true,
+        useOldMangleRules = context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
     )
 
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
@@ -959,9 +959,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
 
     private fun IrSimpleFunction.signatureRequiresMangling(): Boolean {
         if (shouldBeExposedByAnnotationOrFlag(context)) return false
-        return nonDispatchParameters.any { it.type.getRequiresMangling() } ||
-                context.config.functionsWithInlineClassReturnTypesMangled &&
-                returnType.getRequiresMangling()
+        return nonDispatchParameters.any { it.type.getRequiresMangling() } || returnType.getRequiresMangling()
     }
 
     // forbid other overrides without modifying dispatcher file JvmValueClassLoweringDispatcher.kt
