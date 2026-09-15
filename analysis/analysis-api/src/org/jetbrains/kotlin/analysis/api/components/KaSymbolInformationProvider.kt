@@ -206,17 +206,3 @@ public sealed class KaReturnValueStatus(public val name: String) {
     @KaExperimentalApi
     private data object Unknown : KaReturnValueStatus("Unknown")
 }
-
-/**
- * A [FqName] which can be used to import the given symbol, or `null` if the symbol cannot be imported.
- */
-@KaIdeApi
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
-    replaceWith = ReplaceWith("this.importableFqName", "org.jetbrains.kotlin.analysis.api.symbols.importableFqName"),
-    level = DeprecationLevel.ERROR,
-)
-@KaContextParameterApi
-context(session: KaSession)
-public val KaSymbol.importableFqName: FqName?
-    get() = with(session) { importableFqName }
