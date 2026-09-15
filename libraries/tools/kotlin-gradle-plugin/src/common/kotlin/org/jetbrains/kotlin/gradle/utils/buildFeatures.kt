@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.Project
 import org.gradle.api.configuration.BuildFeatures
-import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.getOrNull
 import javax.inject.Inject
@@ -31,19 +31,19 @@ internal abstract class DefaultBuildFeaturesAccessor @Inject constructor(
 }
 
 private const val EXTRA_KEY = "kgpBuildFeatures"
-private val Gradle.buildFeatures: BuildFeaturesAccessor
+private val Project.buildFeatures: BuildFeaturesAccessor
     get() = extraProperties.getOrNull(EXTRA_KEY) as? DefaultBuildFeaturesAccessor
-        ?: rootProject.objects.newInstance(DefaultBuildFeaturesAccessor::class.java)
+        ?: objects.newInstance(DefaultBuildFeaturesAccessor::class.java)
             .also { extraProperties.set(EXTRA_KEY, it) }
 
-internal val Gradle.isConfigurationCacheEnabled
+internal val Project.isConfigurationCacheEnabled
     get() = buildFeatures.isConfigurationCacheEnabled
 
-internal val Gradle.isConfigurationCacheRequested
+internal val Project.isConfigurationCacheRequested
     get() = buildFeatures.isConfigurationCacheRequested
 
-internal val Gradle.isProjectIsolationEnabled
+internal val Project.isProjectIsolationEnabled
     get() = buildFeatures.isProjectIsolationEnabled
 
-internal val Gradle.isProjectIsolationRequested
+internal val Project.isProjectIsolationRequested
     get() = buildFeatures.isProjectIsolationRequested

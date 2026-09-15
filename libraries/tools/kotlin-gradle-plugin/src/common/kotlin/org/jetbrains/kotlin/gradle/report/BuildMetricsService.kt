@@ -12,7 +12,6 @@ import com.gradle.develocity.agent.gradle.adapters.enterprise.GradleEnterpriseEx
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -276,7 +275,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 } ?: log.debug("Http report is disabled")
                 it.parameters.projectDir.set(project.layout.projectDirectory)
                 //init gradle tags for build scan and http reports
-                it.parameters.buildConfigurationTags.value(setupTags(project.gradle))
+                it.parameters.buildConfigurationTags.value(setupTags(project))
             }.also {
                 subscribeForTaskEvents(project, it)
 
@@ -309,7 +308,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         ): BuildScanAdapter? {
             buildMetricServiceProvider.get().parameters.reportingSettings.orNull?.buildScanReportSettings ?: return null
 
-            val rootProject = if (project.gradle.isProjectIsolationEnabled) {
+            val rootProject = if (project.isProjectIsolationEnabled) {
                 project
             } else {
                 project.rootProject
@@ -322,7 +321,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             val buildScan = develocityAdapters?.buildScan
 
             when {
-                buildScan == null && project.gradle.isProjectIsolationEnabled ->
+                buildScan == null && project.isProjectIsolationEnabled ->
                     log.warn(
                         "Build report creation in the build scan format is not yet supported when the isolated projects feature is enabled." +
                                 " Follow https://youtrack.jetbrains.com/issue/KT-68847 for the updates." +
@@ -378,12 +377,12 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 }
             }
 
-        private fun setupTags(gradle: Gradle): ArrayList<StatTag> {
+        private fun setupTags(project: Project): ArrayList<StatTag> {
             val additionalTags = ArrayList<StatTag>()
-            if (gradle.isConfigurationCacheEnabled) {
+            if (project.isConfigurationCacheEnabled) {
                 additionalTags.add(StatTag.CONFIGURATION_CACHE)
             }
-            if (gradle.startParameter.isBuildCacheEnabled) {
+            if (project.gradle.startParameter.isBuildCacheEnabled) {
                 additionalTags.add(StatTag.BUILD_CACHE)
             }
             val debugConfiguration = "-agentlib:"

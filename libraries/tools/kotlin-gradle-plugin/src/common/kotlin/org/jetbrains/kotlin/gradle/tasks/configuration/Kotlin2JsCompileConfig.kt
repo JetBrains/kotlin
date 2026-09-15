@@ -33,7 +33,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
         val libraryFilterCachingService = LibraryFilterCachingService.registerIfAbsent(project)
 
         val incrementalModuleInfoProvider =
-            if (project.gradle.isProjectIsolationEnabled) {
+            if (project.isProjectIsolationEnabled) {
                 // Can't use if IP is enabled. As a temp workaround, disable the service.
                 // https://youtrack.jetbrains.com/issue/KT-80262/Update-JS-IC-implementation-to-support-Project-Isolation
                 null

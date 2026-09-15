@@ -37,7 +37,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
             else -> BuildReportMode.VERBOSE
         }
 
-    val defaultReportDir = if (project.gradle.isProjectIsolationEnabled) {
+    val defaultReportDir = if (project.isProjectIsolationEnabled) {
         // TODO: it's a workaround for KT-52963, should be reworked – KT-55763
         project.rootDir.resolve("build")
     } else {

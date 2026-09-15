@@ -129,9 +129,9 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             buildFinishBuildService: Provider<BuildFinishBuildService>?,
         ): Provider<out BuildFusService<out Parameters>> {
 
-            val isProjectIsolationEnabled = project.gradle.isProjectIsolationEnabled
-            val isConfigurationCacheRequested = project.gradle.isConfigurationCacheRequested
-            val isProjectIsolationRequested = project.gradle.isProjectIsolationRequested
+            val isProjectIsolationEnabled = project.isProjectIsolationEnabled
+            val isConfigurationCacheRequested = project.isConfigurationCacheRequested
+            val isProjectIsolationRequested = project.isProjectIsolationRequested
 
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")

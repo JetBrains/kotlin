@@ -65,7 +65,7 @@ internal abstract class CompilerSystemPropertiesService : BuildService<CompilerS
             "${CompilerSystemPropertiesService::class.java.canonicalName}_${CompilerSystemPropertiesService::class.java.classLoader.hashCode()}",
             CompilerSystemPropertiesService::class.java
         ) { service ->
-            if (project.gradle.isConfigurationCacheEnabled) {
+            if (project.isConfigurationCacheEnabled) {
                 service.parameters.properties.set(
                     CompilerSystemProperties.values()
                         .filterNot { it.alwaysDirectAccess }

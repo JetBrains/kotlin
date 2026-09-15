@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
  * Only intended for internal use, to prototype Isolated Projects support.
  */
 internal fun Project.jsToolingProject(): Project {
-    return if (npmSharedProjectsPerProject && gradle.isProjectIsolationEnabled) {
+    return if (npmSharedProjectsPerProject && isProjectIsolationEnabled) {
         this
     } else {
         rootProject
