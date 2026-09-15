@@ -5,26 +5,37 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.metadataByComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SWIFT_EXPORT_METADATA_SCHEMA_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.consumeSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
  * Unit tests that exercise [metadataByComponent] directly: they feed a hand-crafted Swift Export metadata JSON as the
- * single resolved artifact of a [LazyResolvedConfigurationWithArtifacts] and assert either that the metadata was parsed
- * correctly or that the expected diagnostic was reported.
+ * single resolved artifact of a [LazyResolvedConfigurationWithArtifacts] or via same-build shared metadata provider,
+ * and assert either that the metadata was parsed correctly or that the expected diagnostic was reported.
  */
 class SwiftExportMetadataConsumptionUnitTests {
 
@@ -90,6 +101,68 @@ class SwiftExportMetadataConsumptionUnitTests {
         assertEquals(KotlinToolingDiagnosticsSeverity.WARNING, diagnostic.severity)
     }
 
+    @Test
+    fun `same-build valid metadata is parsed`() {
+        val result = consumeSharedMetadata(
+            """
+            {"schemaVersion":$SWIFT_EXPORT_METADATA_SCHEMA_VERSION,"moduleName":"Foo","rootPackage":"com.foo.bar"}
+            """.trimIndent()
+        )
+
+        assertTrue(result.diagnostics.isEmpty(), "No diagnostics expected for valid metadata, got: ${result.diagnostics}")
+        val (componentId, metadata) = result.metadata.entries.single()
+        assertIs<ProjectComponentIdentifier>(componentId)
+        assertEquals(SWIFT_EXPORT_METADATA_SCHEMA_VERSION, metadata.schemaVersion)
+        assertEquals("Foo", metadata.moduleName)
+        assertEquals("com.foo.bar", metadata.rootPackage)
+    }
+
+    @Test
+    fun `same-build missing metadata is ignored`() {
+        val result = consumeSharedMetadata(metadataJson = null)
+
+        assertTrue(result.diagnostics.isEmpty(), "No diagnostics expected for missing metadata, got: ${result.diagnostics}")
+        assertTrue(result.metadata.isEmpty(), "No metadata expected, got: ${result.metadata}")
+    }
+
+    @Test
+    fun `same-build unknown fields in a supported schema are ignored`() {
+        val result = consumeSharedMetadata(
+            """
+            {"schemaVersion":$SWIFT_EXPORT_METADATA_SCHEMA_VERSION,"moduleName":"Foo","rootPackage":null,"unknownField":42,"nested":{"a":1}}
+            """.trimIndent()
+        )
+
+        assertTrue(result.diagnostics.isEmpty(), "No diagnostics expected when ignoring unknown fields, got: ${result.diagnostics}")
+        val (componentId, metadata) = result.metadata.entries.single()
+        assertIs<ProjectComponentIdentifier>(componentId)
+        assertEquals("Foo", metadata.moduleName)
+        assertNull(metadata.rootPackage)
+    }
+
+    @Test
+    fun `same-build unsupported newer schema is ignored`() {
+        val newerSchemaVersion = SWIFT_EXPORT_METADATA_SCHEMA_VERSION + 1
+        val result = consumeSharedMetadata(
+            """
+            {"schemaVersion":$newerSchemaVersion,"moduleName":"Foo","rootPackage":null}
+            """.trimIndent()
+        )
+
+        assertTrue(result.metadata.isEmpty(), "Metadata with an unsupported schema version must be ignored")
+        val diagnostic = result.diagnostics.single()
+        assertEquals(KotlinToolingDiagnostics.SwiftExportUnsupportedMetadataSchemaVersion.id, diagnostic.id)
+        assertEquals(KotlinToolingDiagnosticsSeverity.WARNING, diagnostic.severity)
+    }
+
+    @Test
+    fun `same-build malformed metadata is ignored`() {
+        val result = consumeSharedMetadata("this is not valid json")
+
+        assertTrue(result.metadata.isEmpty(), "Malformed metadata must be ignored")
+        assertTrue(result.diagnostics.isEmpty(), "No diagnostics expected when metadata is malformed, got: ${result.diagnostics}")
+    }
+
     private class MetadataConsumptionResult(
         val metadata: Map<ComponentIdentifier, SwiftExportMetadata>,
         val diagnostics: List<ToolingDiagnostic>,
@@ -100,10 +173,50 @@ class SwiftExportMetadataConsumptionUnitTests {
      * [metadataJson], then reads it via [metadataByComponent], collecting any reported diagnostics.
      */
     private fun consumeMetadata(metadataJson: String?): MetadataConsumptionResult {
+        val (_, resolvable) = setupConfigurations(metadataJson) { project, consumable, metadataFile ->
+            project.artifacts.add(consumable.name, metadataFile)
+        }
+
+        val diagnostics = mutableListOf<ToolingDiagnostic>()
+        val metadata = LazyResolvedConfigurationWithArtifacts(resolvable).metadataByComponent(diagnostics::add)
+
+        return MetadataConsumptionResult(metadata, diagnostics)
+    }
+
+    /**
+     * Builds a [KotlinProjectSharedDataProvider] that reads metadata shared as a secondary variant from a dependency
+     * project, then reads it via [metadataByComponent].
+     */
+    private fun consumeSharedMetadata(metadataJson: String?): MetadataConsumptionResult {
+        val (project, resolvable) = setupConfigurations(metadataJson) { project, consumable, metadataFile ->
+            consumable.get().outgoing.variants.create("swiftExportMetadata") { variant ->
+                variant.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, "kotlin-project-shared-data"))
+                variant.attributes.attribute(
+                    Attribute.of("org.jetbrains.kotlin.project-shared-data", String::class.java),
+                    "swiftExportMetadata"
+                )
+                variant.attributes.attribute(
+                    ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE,
+                    "kotlin-project-shared-data-swiftExportMetadata"
+                )
+                variant.artifact(metadataFile)
+            }
+        }
+
+        val sharedDataProvider = project.kotlinSecondaryVariantsDataSharing.consumeSwiftExportMetadata(resolvable)
+
+        val diagnostics = mutableListOf<ToolingDiagnostic>()
+        val metadata = sharedDataProvider.metadataByComponent(diagnostics::add)
+
+        return MetadataConsumptionResult(metadata, diagnostics)
+    }
+
+    private fun setupConfigurations(
+        metadataJson: String?,
+        attachArtifact: (project: Project, consumable: NamedDomainObjectProvider<out Configuration>, metadataFile: File) -> Unit,
+    ): Pair<Project, Configuration> {
         val project = buildProject()
 
-        // A resolvable configuration that depends on a consumable configuration of the same project, which exposes the
-        // metadata JSON as its only artifact (see LazyResolvedConfigurationTest for the same self-dependency pattern).
         val resolvable = project.configurations.createResolvable("swiftExportMetadataForTest")
         val consumable = project.configurations.createConsumable("swiftExportMetadataForTestElements")
         project.dependencies.add(
@@ -114,12 +227,9 @@ class SwiftExportMetadataConsumptionUnitTests {
 
         if (metadataJson != null) {
             val metadataFile = project.file("swift-export-metadata.json").apply { writeText(metadataJson) }
-            project.artifacts.add(consumable.name, metadataFile)
+            attachArtifact(project, consumable, metadataFile)
         }
 
-        val diagnostics = mutableListOf<ToolingDiagnostic>()
-        val metadata = LazyResolvedConfigurationWithArtifacts(resolvable).metadataByComponent { diagnostics.add(it) }
-
-        return MetadataConsumptionResult(metadata, diagnostics)
+        return project to resolvable
     }
 }
