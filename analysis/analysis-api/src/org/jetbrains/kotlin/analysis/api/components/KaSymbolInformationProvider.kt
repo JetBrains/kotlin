@@ -220,20 +220,3 @@ public sealed class KaReturnValueStatus(public val name: String) {
 context(session: KaSession)
 public val KaSymbol.importableFqName: FqName?
     get() = with(session) { importableFqName }
-
-/**
- * File-level annotations (`@file:SomeAnnotation`) of the source file this top-level [KaDeclarationSymbol] was defined in,
- * or `null` for a nested declaration.
- *
- * This API is only intended to be used by the TypeScript export utility.
- */
-@KaNonPublicApi
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
-    replaceWith = ReplaceWith("this.containingFileAnnotations", "org.jetbrains.kotlin.analysis.api.symbols.containingFileAnnotations"),
-    level = DeprecationLevel.ERROR,
-)
-@KaContextParameterApi
-context(session: KaSession)
-public val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList?
-    get() = with(session) { containingFileAnnotations }
