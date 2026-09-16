@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
@@ -94,12 +96,11 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             project.dependencies.add(configurationName, it)
         }
 
-    @Suppress("DEPRECATION")
     override fun npm(
         name: String,
         version: String,
-    ): NpmDependency =
-        NpmDependency(
+    ): NpmDependencyDeprecated =
+        NpmDependencyDeprecated(
             objectFactory = project.objects,
             name = name,
             version = version,
@@ -111,21 +112,20 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             )
         }
 
-    @Suppress("DEPRECATION")
     override fun npm(
         name: String,
         directory: File,
-    ): NpmDependency =
+    ): NpmDependencyDeprecated =
         directoryNpmDependency(
             name = name,
             directory = directory,
             scope = KotlinNpmDependency.Scope.NORMAL,
         )
 
-    @Suppress("DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun npm(
         directory: File,
-    ): NpmDependency =
+    ): NpmDependencyDeprecated =
         npm(
             name = moduleName(directory),
             directory = directory,
@@ -241,16 +241,16 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
         )
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun devNpm(
         name: String,
         version: String
-    ): NpmDependency =
-        NpmDependency(
+    ): NpmDependencyDeprecated =
+        NpmDependencyDeprecated(
             objectFactory = project.objects,
             name = name,
             version = version,
-            scope = NpmDependency.Scope.DEV
+            scope = NpmDependencyScopeDeprecated.DEV
         ).also {
             npmDependenciesCollector.add(
                 name = name,
@@ -259,34 +259,34 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             )
         }
 
-    @Suppress("DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun devNpm(
         name: String,
         directory: File
-    ): NpmDependency =
+    ): NpmDependencyDeprecated =
         directoryNpmDependency(
             name = name,
             directory = directory,
             scope = KotlinNpmDependency.Scope.DEV,
         )
 
-    @Suppress("DEPRECATION")
-    override fun devNpm(directory: File): NpmDependency =
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun devNpm(directory: File): NpmDependencyDeprecated =
         devNpm(
             name = moduleName(directory),
             directory = directory
         )
 
-    @Suppress("DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun optionalNpm(
         name: String,
         version: String,
-    ): NpmDependency =
-        NpmDependency(
+    ): NpmDependencyDeprecated =
+        NpmDependencyDeprecated(
             objectFactory = project.objects,
             name = name,
             version = version,
-            scope = NpmDependency.Scope.OPTIONAL,
+            scope = NpmDependencyScopeDeprecated.OPTIONAL,
         ).also {
             npmDependenciesCollector.add(
                 name = name,
@@ -295,36 +295,36 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             )
         }
 
-    @Suppress("DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun optionalNpm(
         name: String,
         directory: File,
-    ): NpmDependency =
+    ): NpmDependencyDeprecated =
         directoryNpmDependency(
             name = name,
             directory = directory,
             scope = KotlinNpmDependency.Scope.OPTIONAL,
         )
 
-    @Suppress("DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun optionalNpm(
         directory: File,
-    ): NpmDependency =
+    ): NpmDependencyDeprecated =
         optionalNpm(
             name = moduleName(directory),
             directory = directory,
         )
 
-    @Suppress("DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun peerNpm(
         name: String,
         version: String
-    ): NpmDependency =
-        NpmDependency(
+    ): NpmDependencyDeprecated =
+        NpmDependencyDeprecated(
             objectFactory = project.objects,
             name = name,
             version = version,
-            scope = NpmDependency.Scope.PEER
+            scope = NpmDependencyScopeDeprecated.PEER
         ).also {
             npmDependenciesCollector.add(
                 name = name,
@@ -333,12 +333,11 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             )
         }
 
-    @Suppress("DEPRECATION")
     private fun directoryNpmDependency(
         name: String,
         directory: File,
         scope: KotlinNpmDependency.Scope,
-    ): NpmDependency =
+    ): NpmDependencyDeprecated =
         directoryNpmDependency(
             objectFactory = project.objects,
             name = name,
@@ -359,10 +358,10 @@ internal fun ObjectFactory.DefaultKotlinDependencyHandler(
     npmDependenciesCollector: KotlinNpmDependenciesCollector,
 ) = newInstance<DefaultKotlinDependencyHandler>(parent, project, npmDependenciesCollector)
 
-private fun KotlinNpmDependency.Scope.toDeprecatedScope(): NpmDependency.Scope =
+private fun KotlinNpmDependency.Scope.toDeprecatedScope(): NpmDependencyScopeDeprecated =
     when (this) {
-        KotlinNpmDependency.Scope.NORMAL -> NpmDependency.Scope.NORMAL
-        KotlinNpmDependency.Scope.DEV -> NpmDependency.Scope.DEV
-        KotlinNpmDependency.Scope.OPTIONAL -> NpmDependency.Scope.OPTIONAL
-        KotlinNpmDependency.Scope.PEER -> NpmDependency.Scope.PEER
+        KotlinNpmDependency.Scope.NORMAL -> NpmDependencyScopeDeprecated.NORMAL
+        KotlinNpmDependency.Scope.DEV -> NpmDependencyScopeDeprecated.DEV
+        KotlinNpmDependency.Scope.OPTIONAL -> NpmDependencyScopeDeprecated.OPTIONAL
+        KotlinNpmDependency.Scope.PEER -> NpmDependencyScopeDeprecated.PEER
     }
