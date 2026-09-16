@@ -9,16 +9,6 @@ import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
 
-@ImportedBridge("kotlin_Enum_toString__reverse_swift")
-internal external fun kotlin_Enum_toString__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
-
-@BindReverseBridgeToMethod(kotlin.Enum::class, "toString")
-public fun kotlin_Enum_toString__reverse(self: kotlin.Enum<*>): kotlin.String {
-    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val _result = kotlin_Enum_toString__reverse_swift(__self)
-    return interpretObjCPointer<kotlin.String>(_result)
-}
-
 @ImportedBridge("kotlin_collections_Iterator_hasNext__reverse_swift")
 internal external fun kotlin_collections_Iterator_hasNext__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 
@@ -84,21 +74,6 @@ public fun kotlin_Enum_compareTo__TypesOfArguments__ExportedKotlinPackages_kotli
     return _result
 }
 
-@ExportedBridge("kotlin_Enum_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun kotlin_Enum_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Enum<*>
-    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = run { __self.equals(__other) }
-    return _result
-}
-
-@ExportedBridge("kotlin_Enum_hashCode")
-public fun kotlin_Enum_hashCode(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Enum<*>
-    val _result = run { __self.hashCode() }
-    return _result
-}
-
 @ExportedBridge("kotlin_Enum_name_get")
 public fun kotlin_Enum_name_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Enum<*>
@@ -111,20 +86,6 @@ public fun kotlin_Enum_ordinal_get(self: kotlin.native.internal.NativePtr): Int 
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Enum<*>
     val _result = run { __self.ordinal }
     return _result
-}
-
-@ExportedBridge("kotlin_Enum_toString")
-public fun kotlin_Enum_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Enum<*>
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
-}
-
-@ExportedBridge("kotlin_Enum_toString_direct", nonVirtualTargetMethod = "toString")
-public fun kotlin_Enum_toString_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Enum<*>
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
 }
 
 @ExportedBridge("kotlin_collections_Iterator_hasNext")

@@ -315,26 +315,6 @@ public fun kotlinx_serialization_descriptors_SerialDescriptor_serialName_get__re
     return interpretObjCPointer<kotlin.String>(_result)
 }
 
-@ImportedBridge("kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift")
-internal external fun kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift(self: kotlin.native.internal.NativePtr): Int
-
-@BindReverseBridgeToMethod(kotlinx.serialization.descriptors.SerialKind::class, "hashCode")
-public fun kotlinx_serialization_descriptors_SerialKind_hashCode__reverse(self: kotlinx.serialization.descriptors.SerialKind): Int {
-    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val _result = kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift(__self)
-    return _result
-}
-
-@ImportedBridge("kotlinx_serialization_descriptors_SerialKind_toString__reverse_swift")
-internal external fun kotlinx_serialization_descriptors_SerialKind_toString__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
-
-@BindReverseBridgeToMethod(kotlinx.serialization.descriptors.SerialKind::class, "toString")
-public fun kotlinx_serialization_descriptors_SerialKind_toString__reverse(self: kotlinx.serialization.descriptors.SerialKind): kotlin.String {
-    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val _result = kotlinx_serialization_descriptors_SerialKind_toString__reverse_swift(__self)
-    return interpretObjCPointer<kotlin.String>(_result)
-}
-
 @ImportedBridge("kotlinx_serialization_encoding_AbstractDecoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
 internal external fun kotlinx_serialization_encoding_AbstractDecoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -1817,14 +1797,6 @@ public fun kotlinx_serialization_PolymorphicSerializer_descriptor_get(self: kotl
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("kotlinx_serialization_PolymorphicSerializer_toString")
-@OptIn(kotlinx.serialization.InternalSerializationApi::class)
-public fun kotlinx_serialization_PolymorphicSerializer_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.PolymorphicSerializer<kotlin.Any>
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
-}
-
 @ExportedBridge("kotlinx_serialization_SealedClassSerializer_descriptor_get")
 @OptIn(kotlinx.serialization.InternalSerializationApi::class)
 public fun kotlinx_serialization_SealedClassSerializer_descriptor_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
@@ -2450,38 +2422,6 @@ public fun kotlinx_serialization_descriptors_SerialKind_CONTEXTUAL_get(): kotlin
 public fun kotlinx_serialization_descriptors_SerialKind_ENUM_get(): kotlin.native.internal.NativePtr {
     val _result = run { kotlinx.serialization.descriptors.SerialKind.ENUM }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("kotlinx_serialization_descriptors_SerialKind_hashCode")
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-public fun kotlinx_serialization_descriptors_SerialKind_hashCode(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.descriptors.SerialKind
-    val _result = run { __self.hashCode() }
-    return _result
-}
-
-@ExportedBridge("kotlinx_serialization_descriptors_SerialKind_hashCode_direct", nonVirtualTargetMethod = "hashCode")
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-public fun kotlinx_serialization_descriptors_SerialKind_hashCode_direct(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.descriptors.SerialKind
-    val _result = run { __self.hashCode() }
-    return _result
-}
-
-@ExportedBridge("kotlinx_serialization_descriptors_SerialKind_toString")
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-public fun kotlinx_serialization_descriptors_SerialKind_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.descriptors.SerialKind
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
-}
-
-@ExportedBridge("kotlinx_serialization_descriptors_SerialKind_toString_direct", nonVirtualTargetMethod = "toString")
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-public fun kotlinx_serialization_descriptors_SerialKind_toString_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.descriptors.SerialKind
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
 }
 
 @ExportedBridge("kotlinx_serialization_descriptors_StructureKind_CLASS_get")

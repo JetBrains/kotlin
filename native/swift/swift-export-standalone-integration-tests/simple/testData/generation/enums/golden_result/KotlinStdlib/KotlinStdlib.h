@@ -3,8 +3,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSString * kotlin_Enum_toString__reverse_swift(void * self);
-
 _Bool kotlin_collections_Iterator_hasNext__reverse_swift(void * self);
 
 void * _Nullable kotlin_collections_Iterator_next__reverse_swift(void * self);
@@ -21,17 +19,9 @@ void * kotlin_Enum_Companion_get();
 
 int32_t kotlin_Enum_compareTo__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(void * self, void * other);
 
-_Bool kotlin_Enum_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t kotlin_Enum_hashCode(void * self);
-
 NSString * kotlin_Enum_name_get(void * self);
 
 int32_t kotlin_Enum_ordinal_get(void * self);
-
-NSString * kotlin_Enum_toString(void * self);
-
-NSString * kotlin_Enum_toString_direct(void * self);
 
 _Bool kotlin_collections_Iterator_hasNext(void * self);
 

@@ -145,8 +145,6 @@ _Bool kotlinx_coroutines_CoroutineDispatcher_isDispatchNeeded__TypesOfArguments_
 
 void * kotlinx_coroutines_CoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t parallelism);
 
-NSString * kotlinx_coroutines_CoroutineDispatcher_toString__reverse_swift(void * self);
-
 _Bool kotlinx_coroutines_CoroutineExceptionHandler_handleException__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ExportedKotlinPackages_kotlin_Throwable____reverse_swift(void * self, void * context, void * exception);
 
 void * kotlinx_coroutines_CoroutineScope_coroutineContext_get__reverse_swift(void * self);
@@ -192,8 +190,6 @@ _Bool kotlinx_coroutines_Job_start__reverse_swift(void * self);
 void * kotlinx_coroutines_MainCoroutineDispatcher_immediate_get__reverse_swift(void * self);
 
 void * kotlinx_coroutines_MainCoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t parallelism);
-
-NSString * kotlinx_coroutines_MainCoroutineDispatcher_toString__reverse_swift(void * self);
 
 _Bool kotlinx_coroutines_Runnable_run__reverse_swift(void * self);
 
@@ -273,8 +269,6 @@ void * kotlinx_coroutines_flow_internal_ChannelFlow_fuse__TypesOfArguments__anyU
 
 void * kotlinx_coroutines_flow_internal_ChannelFlow_produceImpl__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope____reverse_swift(void * self, void * scope);
 
-NSString * kotlinx_coroutines_flow_internal_ChannelFlow_toString__reverse_swift(void * self);
-
 void * kotlinx_coroutines_flow_internal_FusibleFlow_fuse__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow____reverse_swift(void * self, void * context, int32_t capacity, void * onBufferOverflow);
 
 void * kotlinx_coroutines_internal_AtomicOp_atomicOp_get__reverse_swift(void * self);
@@ -289,8 +283,6 @@ _Bool kotlinx_coroutines_internal_LockFreeLinkedListNode_isRemoved_get__reverse_
 
 _Bool kotlinx_coroutines_internal_LockFreeLinkedListNode_remove__reverse_swift(void * self);
 
-NSString * kotlinx_coroutines_internal_LockFreeLinkedListNode_toString__reverse_swift(void * self);
-
 void * kotlinx_coroutines_internal_MainDispatcherFactory_createDispatcher__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_U60internalU60_MainDispatcherFactory_____reverse_swift(void * self, NSArray<id> * allFactories);
 
 NSString * _Nullable kotlinx_coroutines_internal_MainDispatcherFactory_hintOnError__reverse_swift(void * self);
@@ -300,8 +292,6 @@ int32_t kotlinx_coroutines_internal_MainDispatcherFactory_loadPriority_get__reve
 void * _Nullable kotlinx_coroutines_internal_OpDescriptor_atomicOp_get__reverse_swift(void * self);
 
 void * _Nullable kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable affected);
-
-NSString * kotlinx_coroutines_internal_OpDescriptor_toString__reverse_swift(void * self);
 
 int32_t kotlinx_coroutines_internal_ThreadSafeHeapNode_index_get__reverse_swift(void * self);
 
@@ -461,10 +451,6 @@ void * kotlinx_coroutines_CoroutineDispatcher_limitedParallelism__TypesOfArgumen
 
 _Bool kotlinx_coroutines_CoroutineDispatcher_releaseInterceptedContinuation__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation__(void * self, void * continuation);
 
-NSString * kotlinx_coroutines_CoroutineDispatcher_toString(void * self);
-
-NSString * kotlinx_coroutines_CoroutineDispatcher_toString_direct(void * self);
-
 void * kotlinx_coroutines_CoroutineExceptionHandler__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_U20ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void__(void * handler);
 
 void * kotlinx_coroutines_CoroutineExceptionHandler_Key_get();
@@ -475,17 +461,11 @@ void * kotlinx_coroutines_CoroutineName_Key_get();
 
 void * kotlinx_coroutines_CoroutineName_copy__TypesOfArguments__Swift_String__(void * self, NSString * name);
 
-_Bool kotlinx_coroutines_CoroutineName_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t kotlinx_coroutines_CoroutineName_hashCode(void * self);
-
 void * kotlinx_coroutines_CoroutineName_init_allocate();
 
 _Bool kotlinx_coroutines_CoroutineName_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(void * __kt, NSString * name);
 
 NSString * kotlinx_coroutines_CoroutineName_name_get(void * self);
-
-NSString * kotlinx_coroutines_CoroutineName_toString(void * self);
 
 void * kotlinx_coroutines_CoroutineScope__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__(void * context);
 
@@ -583,8 +563,6 @@ _Bool kotlinx_coroutines_JobSupport_start(void * self);
 
 NSString * kotlinx_coroutines_JobSupport_toDebugString(void * self);
 
-NSString * kotlinx_coroutines_JobSupport_toString(void * self);
-
 void * kotlinx_coroutines_Job_Key_get();
 
 _Bool kotlinx_coroutines_Job_cancel__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_coroutines_cancellation_CancellationException___(void * self, void * _Nullable cause);
@@ -619,10 +597,6 @@ void * kotlinx_coroutines_MainCoroutineDispatcher_limitedParallelism__TypesOfArg
 
 void * kotlinx_coroutines_MainCoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32___direct(void * self, int32_t parallelism);
 
-NSString * kotlinx_coroutines_MainCoroutineDispatcher_toString(void * self);
-
-NSString * kotlinx_coroutines_MainCoroutineDispatcher_toString_direct(void * self);
-
 void * kotlinx_coroutines_MainScope();
 
 _Bool kotlinx_coroutines_NonCancellable_cancel__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_coroutines_cancellation_CancellationException___(void * self, void * _Nullable cause);
@@ -651,8 +625,6 @@ void * _Nullable kotlinx_coroutines_NonCancellable_parent_get(void * self);
 
 _Bool kotlinx_coroutines_NonCancellable_start(void * self);
 
-NSString * kotlinx_coroutines_NonCancellable_toString(void * self);
-
 _Bool kotlinx_coroutines_NonDisposableHandle_childCancelled__TypesOfArguments__ExportedKotlinPackages_kotlin_Throwable__(void * self, void * cause);
 
 _Bool kotlinx_coroutines_NonDisposableHandle_dispose(void * self);
@@ -660,8 +632,6 @@ _Bool kotlinx_coroutines_NonDisposableHandle_dispose(void * self);
 void * kotlinx_coroutines_NonDisposableHandle_get();
 
 void * _Nullable kotlinx_coroutines_NonDisposableHandle_parent_get(void * self);
-
-NSString * kotlinx_coroutines_NonDisposableHandle_toString(void * self);
 
 void * kotlinx_coroutines_ParentJob_getChildJobCancellationCause(void * self);
 
@@ -719,23 +689,17 @@ void * kotlinx_coroutines_channels_ChannelResult_Companion_get();
 
 void * kotlinx_coroutines_channels_ChannelResult_Companion_success__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable value);
 
-_Bool kotlinx_coroutines_channels_ChannelResult_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
 void * _Nullable kotlinx_coroutines_channels_ChannelResult_exceptionOrNull(void * self);
 
 void * _Nullable kotlinx_coroutines_channels_ChannelResult_getOrNull(void * self);
 
 void * _Nullable kotlinx_coroutines_channels_ChannelResult_getOrThrow(void * self);
 
-int32_t kotlinx_coroutines_channels_ChannelResult_hashCode(void * self);
-
 _Bool kotlinx_coroutines_channels_ChannelResult_isClosed_get(void * self);
 
 _Bool kotlinx_coroutines_channels_ChannelResult_isFailure_get(void * self);
 
 _Bool kotlinx_coroutines_channels_ChannelResult_isSuccess_get(void * self);
-
-NSString * kotlinx_coroutines_channels_ChannelResult_toString(void * self);
 
 int32_t kotlinx_coroutines_channels_Channel_Factory_BUFFERED_get(void * self);
 
@@ -1079,10 +1043,6 @@ void * kotlinx_coroutines_flow_internal_ChannelFlow_produceImpl__TypesOfArgument
 
 void * kotlinx_coroutines_flow_internal_ChannelFlow_produceImpl__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope___direct(void * self, void * scope);
 
-NSString * kotlinx_coroutines_flow_internal_ChannelFlow_toString(void * self);
-
-NSString * kotlinx_coroutines_flow_internal_ChannelFlow_toString_direct(void * self);
-
 void * kotlinx_coroutines_flow_internal_FusibleFlow_fuse__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow__(void * self, void * context, int32_t capacity, void * onBufferOverflow);
 
 _Bool kotlinx_coroutines_flow_internal_SendingCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable value, void * continuation, void * exception, void * cancellation);
@@ -1225,10 +1185,6 @@ _Bool kotlinx_coroutines_internal_LockFreeLinkedListNode_remove(void * self);
 
 _Bool kotlinx_coroutines_internal_LockFreeLinkedListNode_remove_direct(void * self);
 
-NSString * kotlinx_coroutines_internal_LockFreeLinkedListNode_toString(void * self);
-
-NSString * kotlinx_coroutines_internal_LockFreeLinkedListNode_toString_direct(void * self);
-
 void * kotlinx_coroutines_internal_MainDispatcherFactory_createDispatcher__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_U60internalU60_MainDispatcherFactory___(void * self, NSArray<id> * allFactories);
 
 NSString * _Nullable kotlinx_coroutines_internal_MainDispatcherFactory_hintOnError(void * self);
@@ -1242,10 +1198,6 @@ void * _Nullable kotlinx_coroutines_internal_OpDescriptor_atomicOp_get(void * se
 _Bool kotlinx_coroutines_internal_OpDescriptor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * _Nullable kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable affected);
-
-NSString * kotlinx_coroutines_internal_OpDescriptor_toString(void * self);
-
-NSString * kotlinx_coroutines_internal_OpDescriptor_toString_direct(void * self);
 
 int32_t kotlinx_coroutines_internal_ThreadSafeHeapNode_index_get(void * self);
 

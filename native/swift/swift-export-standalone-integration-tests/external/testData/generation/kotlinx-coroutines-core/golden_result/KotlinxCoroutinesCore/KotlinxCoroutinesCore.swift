@@ -837,13 +837,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         ) -> Swift.Void {
             return { kotlinx_coroutines_CoroutineDispatcher_releaseInterceptedContinuation__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation__(self.__externalRCRef(), continuation.__externalRCRef()); return () }()
         }
-        open func toString() -> Swift.String {
-            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.CoroutineDispatcher.self {
-                return kotlinx_coroutines_CoroutineDispatcher_toString(self.__externalRCRef())
-            } else {
-                return kotlinx_coroutines_CoroutineDispatcher_toString_direct(self.__externalRCRef())
-            }
-        }
         public init() {
             precondition(Self.self != ExportedKotlinPackages.kotlinx.coroutines.CoroutineDispatcher.self, "ExportedKotlinPackages.kotlinx.coroutines.CoroutineDispatcher is an abstract class and cannot be instantiated directly")
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
@@ -883,23 +876,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
             name: Swift.String
         ) -> ExportedKotlinPackages.kotlinx.coroutines.CoroutineName {
             return ExportedKotlinPackages.kotlinx.coroutines.CoroutineName.__createClassWrapper(externalRCRef: kotlinx_coroutines_CoroutineName_copy__TypesOfArguments__Swift_String__(self.__externalRCRef(), name))
-        }
-        public func equals(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            return kotlinx_coroutines_CoroutineName_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-        }
-        public static func ==(
-            this: ExportedKotlinPackages.kotlinx.coroutines.CoroutineName,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            this.equals(other: other)
-        }
-        public func hashCode() -> Swift.Int32 {
-            return kotlinx_coroutines_CoroutineName_hashCode(self.__externalRCRef())
-        }
-        public func toString() -> Swift.String {
-            return kotlinx_coroutines_CoroutineName_toString(self.__externalRCRef())
         }
         public init(
             name: Swift.String
@@ -1107,10 +1083,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
             return kotlinx_coroutines_JobSupport_toDebugString(self.__externalRCRef())
         }
         @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        open func toString() -> Swift.String {
-            return kotlinx_coroutines_JobSupport_toString(self.__externalRCRef())
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
         public init(
             active: Swift.Bool
         ) {
@@ -1148,13 +1120,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
                 return ExportedKotlinPackages.kotlinx.coroutines.CoroutineDispatcher.__createClassWrapper(externalRCRef: kotlinx_coroutines_MainCoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), parallelism))
             } else {
                 return ExportedKotlinPackages.kotlinx.coroutines.CoroutineDispatcher.__createClassWrapper(externalRCRef: kotlinx_coroutines_MainCoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), parallelism))
-            }
-        }
-        open override func toString() -> Swift.String {
-            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.MainCoroutineDispatcher.self {
-                return kotlinx_coroutines_MainCoroutineDispatcher_toString(self.__externalRCRef())
-            } else {
-                return kotlinx_coroutines_MainCoroutineDispatcher_toString_direct(self.__externalRCRef())
             }
         }
         public override init() {
@@ -1254,9 +1219,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         public func start() -> Swift.Bool {
             return kotlinx_coroutines_NonCancellable_start(self.__externalRCRef())
         }
-        public func toString() -> Swift.String {
-            return kotlinx_coroutines_NonCancellable_toString(self.__externalRCRef())
-        }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
@@ -1292,10 +1254,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         @_spi(kotlinx$coroutines$InternalCoroutinesApi)
         public func dispose() -> Swift.Void {
             return { kotlinx_coroutines_NonDisposableHandle_dispose(self.__externalRCRef()); return () }()
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        public func toString() -> Swift.String {
-            return kotlinx_coroutines_NonDisposableHandle_toString(self.__externalRCRef())
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -1849,17 +1807,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
                 return kotlinx_coroutines_channels_ChannelResult_isSuccess_get(self.__externalRCRef())
             }
         }
-        public func equals(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            return kotlinx_coroutines_channels_ChannelResult_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-        }
-        public static func ==(
-            this: ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            this.equals(other: other)
-        }
         public func exceptionOrNull() -> ExportedKotlinPackages.kotlin.Throwable? {
             return { switch kotlinx_coroutines_channels_ChannelResult_exceptionOrNull(self.__externalRCRef()) { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
         }
@@ -1868,12 +1815,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         }
         public func getOrThrow() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
             return { switch kotlinx_coroutines_channels_ChannelResult_getOrThrow(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-        }
-        public func hashCode() -> Swift.Int32 {
-            return kotlinx_coroutines_channels_ChannelResult_hashCode(self.__externalRCRef())
-        }
-        public func toString() -> Swift.String {
-            return kotlinx_coroutines_channels_ChannelResult_toString(self.__externalRCRef())
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -3822,14 +3763,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines.`internal` {
             }
         }
         @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        open func toString() -> Swift.String {
-            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode.self {
-                return kotlinx_coroutines_internal_LockFreeLinkedListNode_toString(self.__externalRCRef())
-            } else {
-                return kotlinx_coroutines_internal_LockFreeLinkedListNode_toString_direct(self.__externalRCRef())
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
         public init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode.self {
@@ -3866,13 +3799,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines.`internal` {
                 return { switch kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), affected.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
             } else {
                 fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.perform': a Swift subclass must override it and must not call super.")
-            }
-        }
-        open func toString() -> Swift.String {
-            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.self {
-                return kotlinx_coroutines_internal_OpDescriptor_toString(self.__externalRCRef())
-            } else {
-                return kotlinx_coroutines_internal_OpDescriptor_toString_direct(self.__externalRCRef())
             }
         }
         public init() {
@@ -4061,14 +3987,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal` {
                 return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_internal_ChannelFlow_produceImpl__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope__(self.__externalRCRef(), scope.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
             } else {
                 return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_internal_ChannelFlow_produceImpl__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope___direct(self.__externalRCRef(), scope.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        open func toString() -> Swift.String {
-            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.ChannelFlow.self {
-                return kotlinx_coroutines_flow_internal_ChannelFlow_toString(self.__externalRCRef())
-            } else {
-                return kotlinx_coroutines_flow_internal_ChannelFlow_toString_direct(self.__externalRCRef())
             }
         }
         @_spi(kotlinx$coroutines$InternalCoroutinesApi)
@@ -6191,13 +6109,6 @@ package func kotlinx_coroutines_CoroutineDispatcher_limitedParallelism__TypesOfA
     return _result.__externalRCRef()
 }
 
-@_cdecl("kotlinx_coroutines_CoroutineDispatcher_toString__reverse_swift")
-package func kotlinx_coroutines_CoroutineDispatcher_toString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = ExportedKotlinPackages.kotlinx.coroutines.CoroutineDispatcher.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.String = _self.toString()
-    return _result
-}
-
 @_cdecl("kotlinx_coroutines_CoroutineExceptionHandler_handleException__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ExportedKotlinPackages_kotlin_Throwable____reverse_swift")
 package func kotlinx_coroutines_CoroutineExceptionHandler_handleException__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ExportedKotlinPackages_kotlin_Throwable____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ context: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CoroutineExceptionHandler.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CoroutineExceptionHandler
@@ -6385,13 +6296,6 @@ package func kotlinx_coroutines_MainCoroutineDispatcher_limitedParallelism__Type
     let _self = ExportedKotlinPackages.kotlinx.coroutines.MainCoroutineDispatcher.__createClassWrapper(externalRCRef: `self`)!
     let _result: ExportedKotlinPackages.kotlinx.coroutines.CoroutineDispatcher = _self.limitedParallelism(parallelism: parallelism)
     return _result.__externalRCRef()
-}
-
-@_cdecl("kotlinx_coroutines_MainCoroutineDispatcher_toString__reverse_swift")
-package func kotlinx_coroutines_MainCoroutineDispatcher_toString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = ExportedKotlinPackages.kotlinx.coroutines.MainCoroutineDispatcher.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.String = _self.toString()
-    return _result
 }
 
 @_cdecl("kotlinx_coroutines_Runnable_run__reverse_swift")
@@ -6782,13 +6686,6 @@ package func kotlinx_coroutines_flow_internal_ChannelFlow_produceImpl__TypesOfAr
     return _result.__externalRCRef()
 }
 
-@_cdecl("kotlinx_coroutines_flow_internal_ChannelFlow_toString__reverse_swift")
-package func kotlinx_coroutines_flow_internal_ChannelFlow_toString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.ChannelFlow.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.String = _self.toString()
-    return _result
-}
-
 @_cdecl("kotlinx_coroutines_flow_internal_FusibleFlow_fuse__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow____reverse_swift")
 package func kotlinx_coroutines_flow_internal_FusibleFlow_fuse__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ context: Swift.UnsafeMutableRawPointer, _ capacity: Swift.Int32, _ onBufferOverflow: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.FusibleFlow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.FusibleFlow
@@ -6838,13 +6735,6 @@ package func kotlinx_coroutines_internal_LockFreeLinkedListNode_remove__reverse_
     return _result
 }
 
-@_cdecl("kotlinx_coroutines_internal_LockFreeLinkedListNode_toString__reverse_swift")
-package func kotlinx_coroutines_internal_LockFreeLinkedListNode_toString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.String = _self.toString()
-    return _result
-}
-
 @_cdecl("kotlinx_coroutines_internal_MainDispatcherFactory_createDispatcher__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_U60internalU60_MainDispatcherFactory_____reverse_swift")
 package func kotlinx_coroutines_internal_MainDispatcherFactory_createDispatcher__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_U60internalU60_MainDispatcherFactory_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ allFactories: Any) -> Swift.UnsafeMutableRawPointer {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory
@@ -6878,13 +6768,6 @@ package func kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments_
     let _self = ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.perform(affected: { switch affected { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result.map { it in it.__externalRCRef() } ?? nil
-}
-
-@_cdecl("kotlinx_coroutines_internal_OpDescriptor_toString__reverse_swift")
-package func kotlinx_coroutines_internal_OpDescriptor_toString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.String = _self.toString()
-    return _result
 }
 
 @_cdecl("kotlinx_coroutines_internal_ThreadSafeHeapNode_index_get__reverse_swift")

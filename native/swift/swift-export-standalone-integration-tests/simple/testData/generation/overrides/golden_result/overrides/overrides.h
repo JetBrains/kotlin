@@ -15,8 +15,6 @@ _Bool Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__over
 
 _Bool Child_contains__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t element);
 
-_Bool Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable to);
-
 NSArray<id> * Child_genericReturnTypeFunc__reverse_swift(void * self);
 
 _Bool Child_nonoverride__reverse_swift(void * self);
@@ -68,8 +66,6 @@ int32_t OpenDerived1_abstractVal_get__reverse_swift(void * self);
 _Bool Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child____reverse_swift(void * self, int32_t nullable, void * poly, void * nullablePoly);
 
 _Bool Parent_contains__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t element);
-
-_Bool Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable to);
 
 _Bool Parent_finalOverrideFunc__reverse_swift(void * self);
 
@@ -130,10 +126,6 @@ _Bool Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__over
 _Bool Child_contains__TypesOfArguments__Swift_Int32__(void * self, int32_t element);
 
 _Bool Child_contains__TypesOfArguments__Swift_Int32___direct(void * self, int32_t element);
-
-_Bool Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable to);
-
-_Bool Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable to);
 
 _Bool Child_finalOverrideFunc(void * self);
 
@@ -246,10 +238,6 @@ _Bool Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_ove
 _Bool Parent_contains__TypesOfArguments__Swift_Int32__(void * self, int32_t element);
 
 _Bool Parent_contains__TypesOfArguments__Swift_Int32___direct(void * self, int32_t element);
-
-_Bool Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable to);
-
-_Bool Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable to);
 
 _Bool Parent_finalOverrideFunc(void * self);
 

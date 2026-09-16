@@ -58,28 +58,6 @@ public fun DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self: kotlin.native.
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
-    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = run { __self.equals(__other) }
-    return _result
-}
-
-@ExportedBridge("DATA_CLASS_hashCode")
-public fun DATA_CLASS_hashCode(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
-    val _result = run { __self.hashCode() }
-    return _result
-}
-
-@ExportedBridge("DATA_CLASS_toString")
-public fun DATA_CLASS_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
-}
-
 @ExportedBridge("Demo_INNER_CLASS_init_allocate")
 public fun Demo_INNER_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<Demo.INNER_CLASS>() }
@@ -628,21 +606,6 @@ public fun ignored_VALUE_CLASS_a_get(self: kotlin.native.internal.NativePtr): In
     return _result
 }
 
-@ExportedBridge("ignored_VALUE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun ignored_VALUE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ignored.VALUE_CLASS
-    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = run { __self.equals(__other) }
-    return _result
-}
-
-@ExportedBridge("ignored_VALUE_CLASS_hashCode")
-public fun ignored_VALUE_CLASS_hashCode(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ignored.VALUE_CLASS
-    val _result = run { __self.hashCode() }
-    return _result
-}
-
 @ExportedBridge("ignored_VALUE_CLASS_init_allocate")
 public fun ignored_VALUE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<ignored.VALUE_CLASS>() as Any? }
@@ -655,13 +618,6 @@ public fun ignored_VALUE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMu
     val __a = a
     val _result = run { kotlin.native.internal.initInstance(____kt, ignored.VALUE_CLASS(__a)) }
     return run { _result; true }
-}
-
-@ExportedBridge("ignored_VALUE_CLASS_toString")
-public fun ignored_VALUE_CLASS_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ignored.VALUE_CLASS
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
 }
 
 @ExportedBridge("ignored_produce_ENUM")
@@ -729,32 +685,10 @@ public fun namespace_deeper_DATA_OBJECT_a_get(self: kotlin.native.internal.Nativ
     return _result
 }
 
-@ExportedBridge("namespace_deeper_DATA_OBJECT_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun namespace_deeper_DATA_OBJECT_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT
-    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = run { __self.equals(__other) }
-    return _result
-}
-
 @ExportedBridge("namespace_deeper_DATA_OBJECT_get")
 public fun namespace_deeper_DATA_OBJECT_get(): kotlin.native.internal.NativePtr {
     val _result = run { namespace.deeper.DATA_OBJECT }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("namespace_deeper_DATA_OBJECT_hashCode")
-public fun namespace_deeper_DATA_OBJECT_hashCode(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT
-    val _result = run { __self.hashCode() }
-    return _result
-}
-
-@ExportedBridge("namespace_deeper_DATA_OBJECT_toString")
-public fun namespace_deeper_DATA_OBJECT_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
 }
 
 @ExportedBridge("namespace_deeper_Object_with_package_INNER_CLASS_init_allocate")

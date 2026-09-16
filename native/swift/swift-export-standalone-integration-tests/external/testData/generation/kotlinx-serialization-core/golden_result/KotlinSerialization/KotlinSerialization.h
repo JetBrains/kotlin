@@ -57,10 +57,6 @@ void * kotlinx_serialization_descriptors_SerialDescriptor_kind_get__reverse_swif
 
 NSString * kotlinx_serialization_descriptors_SerialDescriptor_serialName_get__reverse_swift(void * self);
 
-int32_t kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift(void * self);
-
-NSString * kotlinx_serialization_descriptors_SerialKind_toString__reverse_swift(void * self);
-
 void * kotlinx_serialization_encoding_AbstractDecoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(void * self, void * descriptor);
 
 _Bool kotlinx_serialization_encoding_AbstractDecoder_decodeBoolean__reverse_swift(void * self);
@@ -343,8 +339,6 @@ NSArray<NSString *> * kotlinx_serialization_MissingFieldException_missingFields_
 
 void * kotlinx_serialization_PolymorphicSerializer_descriptor_get(void * self);
 
-NSString * kotlinx_serialization_PolymorphicSerializer_toString(void * self);
-
 void * kotlinx_serialization_SealedClassSerializer_descriptor_get(void * self);
 
 void * _Nullable kotlinx_serialization_SealedClassSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder_Swift_Optional_Swift_String___(void * self, void * decoder, NSString * _Nullable klassName);
@@ -514,14 +508,6 @@ NSString * kotlinx_serialization_descriptors_SerialDescriptor_serialName_get(voi
 void * kotlinx_serialization_descriptors_SerialKind_CONTEXTUAL_get();
 
 void * kotlinx_serialization_descriptors_SerialKind_ENUM_get();
-
-int32_t kotlinx_serialization_descriptors_SerialKind_hashCode(void * self);
-
-int32_t kotlinx_serialization_descriptors_SerialKind_hashCode_direct(void * self);
-
-NSString * kotlinx_serialization_descriptors_SerialKind_toString(void * self);
-
-NSString * kotlinx_serialization_descriptors_SerialKind_toString_direct(void * self);
 
 void * kotlinx_serialization_descriptors_StructureKind_CLASS_get();
 

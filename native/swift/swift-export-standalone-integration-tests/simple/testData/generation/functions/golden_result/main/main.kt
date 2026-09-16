@@ -357,26 +357,11 @@ public fun operators_Foo_divAssign__TypesOfArguments__ExportedKotlinPackages_ope
     return run { _result; true }
 }
 
-@ExportedBridge("operators_Foo_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun operators_Foo_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
-    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = run { __self.equals(__other) }
-    return _result
-}
-
 @ExportedBridge("operators_Foo_get__TypesOfArguments__Swift_Int32__")
 public fun operators_Foo_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
     val __index = index
     val _result = run { __self.`get`(__index) }
-    return _result
-}
-
-@ExportedBridge("operators_Foo_hashCode")
-public fun operators_Foo_hashCode(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
-    val _result = run { __self.hashCode() }
     return _result
 }
 
@@ -509,13 +494,6 @@ public fun operators_Foo_timesAssign__TypesOfArguments__ExportedKotlinPackages_o
     val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
     val _result = run { __self.timesAssign(__other) }
     return run { _result; true }
-}
-
-@ExportedBridge("operators_Foo_toString")
-public fun operators_Foo_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
 }
 
 @ExportedBridge("operators_Foo_unaryMinus")

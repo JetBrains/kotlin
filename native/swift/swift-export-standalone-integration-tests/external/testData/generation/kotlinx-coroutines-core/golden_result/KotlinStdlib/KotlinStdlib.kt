@@ -77,16 +77,6 @@ public fun kotlin_Throwable_message_get__reverse(self: kotlin.Throwable): kotlin
     return if (_result == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(_result)
 }
 
-@ImportedBridge("kotlin_Throwable_toString__reverse_swift")
-internal external fun kotlin_Throwable_toString__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
-
-@BindReverseBridgeToMethod(kotlin.Throwable::class, "toString")
-public fun kotlin_Throwable_toString__reverse(self: kotlin.Throwable): kotlin.String {
-    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val _result = kotlin_Throwable_toString__reverse_swift(__self)
-    return interpretObjCPointer<kotlin.String>(_result)
-}
-
 @ImportedBridge("kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
 internal external fun kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(self: kotlin.native.internal.NativePtr, elements: kotlin.native.internal.NativePtr): Boolean
 
@@ -1170,14 +1160,6 @@ public fun kotlin_Result_Companion_success__TypesOfArguments__Swift_Optional_any
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("kotlin_Result_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun kotlin_Result_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Result<kotlin.Any?>
-    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = run { __self.equals(__other) }
-    return _result
-}
-
 @ExportedBridge("kotlin_Result_exceptionOrNull")
 public fun kotlin_Result_exceptionOrNull(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Result<kotlin.Any?>
@@ -1192,13 +1174,6 @@ public fun kotlin_Result_getOrNull(self: kotlin.native.internal.NativePtr): kotl
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("kotlin_Result_hashCode")
-public fun kotlin_Result_hashCode(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Result<kotlin.Any?>
-    val _result = run { __self.hashCode() }
-    return _result
-}
-
 @ExportedBridge("kotlin_Result_isFailure_get")
 public fun kotlin_Result_isFailure_get(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Result<kotlin.Any?>
@@ -1211,13 +1186,6 @@ public fun kotlin_Result_isSuccess_get(self: kotlin.native.internal.NativePtr): 
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Result<kotlin.Any?>
     val _result = run { __self.isSuccess }
     return _result
-}
-
-@ExportedBridge("kotlin_Result_toString")
-public fun kotlin_Result_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Result<kotlin.Any?>
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
 }
 
 @ExportedBridge("kotlin_RuntimeException_init_allocate")
@@ -1339,20 +1307,6 @@ public fun kotlin_Throwable_printStackTrace(self: kotlin.native.internal.NativeP
     return run { _result; true }
 }
 
-@ExportedBridge("kotlin_Throwable_toString")
-public fun kotlin_Throwable_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Throwable
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
-}
-
-@ExportedBridge("kotlin_Throwable_toString_direct", nonVirtualTargetMethod = "toString")
-public fun kotlin_Throwable_toString_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Throwable
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
-}
-
 @ExportedBridge("kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Collection<kotlin.Any?>
@@ -1399,21 +1353,6 @@ public fun kotlin_collections_IndexedValue_copy__TypesOfArguments__Swift_Int32_S
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("kotlin_collections_IndexedValue_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun kotlin_collections_IndexedValue_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.IndexedValue<kotlin.Any?>
-    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = run { __self.equals(__other) }
-    return _result
-}
-
-@ExportedBridge("kotlin_collections_IndexedValue_hashCode")
-public fun kotlin_collections_IndexedValue_hashCode(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.IndexedValue<kotlin.Any?>
-    val _result = run { __self.hashCode() }
-    return _result
-}
-
 @ExportedBridge("kotlin_collections_IndexedValue_index_get")
 public fun kotlin_collections_IndexedValue_index_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.IndexedValue<kotlin.Any?>
@@ -1434,13 +1373,6 @@ public fun kotlin_collections_IndexedValue_init_initialize__TypesOfArguments__Sw
     val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
     val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.collections.IndexedValue<kotlin.Any?>(__index, __value)) }
     return run { _result; true }
-}
-
-@ExportedBridge("kotlin_collections_IndexedValue_toString")
-public fun kotlin_collections_IndexedValue_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.IndexedValue<kotlin.Any?>
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
 }
 
 @ExportedBridge("kotlin_collections_IndexedValue_value_get")
@@ -2548,21 +2480,6 @@ public fun kotlin_time_Duration_div__TypesOfArguments__ExportedKotlinPackages_ko
     return _result
 }
 
-@ExportedBridge("kotlin_time_Duration_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun kotlin_time_Duration_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = run { __self.equals(__other) }
-    return _result
-}
-
-@ExportedBridge("kotlin_time_Duration_hashCode")
-public fun kotlin_time_Duration_hashCode(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.hashCode() }
-    return _result
-}
-
 @ExportedBridge("kotlin_time_Duration_inWholeDays_get")
 public fun kotlin_time_Duration_inWholeDays_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
@@ -2775,13 +2692,6 @@ public fun kotlin_time_Duration_toLong__TypesOfArguments__ExportedKotlinPackages
     val __unit = kotlin.native.internal.ref.dereferenceExternalRCRef(unit) as kotlin.time.DurationUnit
     val _result = run { __self.toLong(__unit) }
     return _result
-}
-
-@ExportedBridge("kotlin_time_Duration_toString")
-public fun kotlin_time_Duration_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
 }
 
 @ExportedBridge("kotlin_time_Duration_toString__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit_Swift_Int32__")

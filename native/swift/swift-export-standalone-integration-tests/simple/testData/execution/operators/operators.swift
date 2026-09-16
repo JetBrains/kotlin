@@ -61,6 +61,7 @@ func testComparisonOperators() throws {
     #expect(a == a)
     #expect(a != b)
 
-    #expect(a.equals(other: a))
-    #expect(!a.equals(other: b))
+    // `equals` is not exported: `kotlin.Any`'s members are reached through their NSObject spellings.
+    #expect(a.isEqual(a))
+    #expect(!a.isEqual(b))
 }
