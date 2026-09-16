@@ -52,6 +52,24 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("fullValueClassFunction.kt")
+  public void testFullValueClassFunction() {
+    run("fullValueClassFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassPrimaryConstructor.kt")
+  public void testFullValueClassPrimaryConstructor() {
+    run("fullValueClassPrimaryConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassProperty.kt")
+  public void testFullValueClassProperty() {
+    run("fullValueClassProperty.kt");
+  }
+
+  @Test
   @TestMetadata("javaClass.kt")
   public void testJavaClass() {
     run("javaClass.kt");
