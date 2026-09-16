@@ -73,31 +73,31 @@ inline fun TestConfigurationBuilder.deserializedIrHandlersStep(
 inline fun TestConfigurationBuilder.jvmArtifactsHandlersStep(
     init: TestStepBuilder.HandlersStepBuilder.NonGroupingStage<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.() -> Unit = {}
 ) {
-    namedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, CompilationStage.FIRST, stepPhase = TestPhase.BACKEND, init)
+    namedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, CompilationStage.FIRST, stepPhase = TestPhase.CODEGEN, init)
 }
 
 inline fun TestConfigurationBuilder.nativeArtifactsHandlersStep(
     init: TestStepBuilder.HandlersStepBuilder.NonGroupingStage<BinaryArtifacts.Native, ArtifactKinds.Native>.() -> Unit = {}
 ) {
-    namedHandlersStep(NATIVE_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Native, CompilationStage.SECOND, stepPhase = TestPhase.BACKEND, init)
+    namedHandlersStep(NATIVE_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Native, CompilationStage.SECOND, stepPhase = TestPhase.CODEGEN, init)
 }
 
 inline fun TestConfigurationBuilder.jsArtifactsHandlersStep(
     init: TestStepBuilder.HandlersStepBuilder.NonGroupingStage<BinaryArtifacts.Js, ArtifactKinds.Js>.() -> Unit = {}
 ) {
-    namedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, CompilationStage.SECOND, stepPhase = TestPhase.BACKEND, init)
+    namedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, CompilationStage.SECOND, stepPhase = TestPhase.CODEGEN, init)
 }
 
 inline fun TestConfigurationBuilder.wasmArtifactsHandlersStep(
     init: TestStepBuilder.HandlersStepBuilder.NonGroupingStage<BinaryArtifacts.Wasm, ArtifactKinds.Wasm>.() -> Unit = {}
 ) {
-    namedHandlersStep(WASM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Wasm, CompilationStage.SECOND, stepPhase = TestPhase.BACKEND, init)
+    namedHandlersStep(WASM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Wasm, CompilationStage.SECOND, stepPhase = TestPhase.CODEGEN, init)
 }
 
 inline fun TestConfigurationBuilder.klibArtifactsHandlersStep(
     init: TestStepBuilder.HandlersStepBuilder.NonGroupingStage<BinaryArtifacts.KLib, ArtifactKinds.KLib>.() -> Unit = {}
 ) {
-    namedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, CompilationStage.FIRST, stepPhase = TestPhase.BACKEND, init)
+    namedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, CompilationStage.FIRST, stepPhase = TestPhase.CODEGEN, init)
 }
 
 inline fun TestConfigurationBuilder.configureFirHandlersStep(

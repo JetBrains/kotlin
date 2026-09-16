@@ -57,7 +57,7 @@ abstract class AbstractDiagnosticsNativeTestBase(
             dependencyKind = DependencyKind.Source
         }
         defaultDirectives {
-            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
+            LATEST_PHASE_IN_PIPELINE with TestPhase.CODEGEN
         }
         useFailureSuppressors(
             ::BlackBoxCodegenSuppressor,
