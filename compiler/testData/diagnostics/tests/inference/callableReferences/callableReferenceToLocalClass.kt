@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <T, R> List<T>.myMap(block: (T) -> R): List<R> = null!!
 
 fun test_1() {

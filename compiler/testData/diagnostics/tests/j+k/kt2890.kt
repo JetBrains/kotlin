@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //FILE:_03_collections/CollectionTest.java
 package _03_collections;
 

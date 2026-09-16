@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // http://youtrack.jetbrains.net/issue/KT-552
 // KT-552 For variable unresolved if loop body is not block
 

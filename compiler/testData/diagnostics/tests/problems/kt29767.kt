@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-29767
 
 // KT-29767: No smartcast diagnostic on qualifier expression of captured type

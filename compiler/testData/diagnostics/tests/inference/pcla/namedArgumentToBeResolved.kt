@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-72036
 
 fun <Failure, Value> progressive(block: Thrower<Failure>.() -> Value) {}

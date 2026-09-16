@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 public fun <T: Any> iterate(initialValue: T, nextFunction: (T) -> T?): Iterator<T> =
         throw Exception("$initialValue $nextFunction")
 

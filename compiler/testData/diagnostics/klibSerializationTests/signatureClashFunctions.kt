@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // MODULE: lib
 package com.example.klib.serialization.diagnostics

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 enum class E(val x: Int, val y: Int) {
     A(1, 2),
     B(1),

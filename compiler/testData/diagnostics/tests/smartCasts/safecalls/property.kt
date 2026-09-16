@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 data class MyClass(val x: String?)
 
 fun foo(y: MyClass): Int {

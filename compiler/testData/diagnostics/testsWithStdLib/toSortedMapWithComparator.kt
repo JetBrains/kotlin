@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun test(map: Map<String?, List<String>>) {
     val sortedMap = map.toSortedMap(nullsLast())
 }

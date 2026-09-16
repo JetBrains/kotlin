@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-32486
 
 // KT-32486: NI marks upcast in lambda return as redundant, but removing it causes type error in chained call

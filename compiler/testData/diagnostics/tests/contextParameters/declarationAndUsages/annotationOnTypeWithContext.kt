@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-73149
 import kotlin.annotation.AnnotationTarget.TYPE

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 abstract class A<X : CharSequence> {
     inner class Inner
     fun foo(x: Inner.() -> Unit) {}

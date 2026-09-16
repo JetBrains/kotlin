@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 sealed class SourceLocation {
     object NoLocation : SourceLocation()
     companion object {

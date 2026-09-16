@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-19665
 
 // KT-19665: False negative USELESS_CAST with safe cast followed by safe call

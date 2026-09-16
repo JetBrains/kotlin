@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun prefixIncrement() {
     val intArray = IntArray(10)
     val a1 = Array(10) { i -> { ++intArray[i] } }

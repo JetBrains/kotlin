@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface Inv<T : CharSequence>
 
 fun <E : CharSequence> id(i: Inv<E>): Inv<E> = i

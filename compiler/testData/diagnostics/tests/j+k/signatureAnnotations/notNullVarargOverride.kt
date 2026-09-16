@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: BaseClass.java
 import org.jetbrains.annotations.NotNull;
 

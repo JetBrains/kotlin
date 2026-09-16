@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface I {
     fun <T : Comparable<T>> f(t: List<T>): Any// T = D, List<D> == List<D>
 }

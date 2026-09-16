@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-65584
 
 fun <T> giveItName(it: T, block: (myName: T) -> Unit) = block(it)

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 interface UAnnotationEx : UAnnotation, UAnchorOwner
 interface UAnchorOwner : UElement

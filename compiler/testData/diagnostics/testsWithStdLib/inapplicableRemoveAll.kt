@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun test(list: MutableList<String>) {
     list.removeAll {
         it.isEmpty()

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // http://youtrack.jetbrains.net/issue/KT-526
 // KT-526 Unresolved reference for inner static class
 

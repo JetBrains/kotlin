@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun Any.withInvoke(f: String.() -> Unit) {
     if (this is String) {
         f() // Should be OK

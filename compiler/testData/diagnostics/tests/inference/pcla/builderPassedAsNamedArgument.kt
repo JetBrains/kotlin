@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Controller<T>
 
 fun <S> generate1(g: suspend (Controller<S>) -> Unit): S = TODO()

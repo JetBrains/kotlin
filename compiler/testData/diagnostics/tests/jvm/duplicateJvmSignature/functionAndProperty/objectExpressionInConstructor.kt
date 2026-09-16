@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Outer {
     val x = object {
         <!CONFLICTING_JVM_DECLARATIONS!>val x<!> = 1

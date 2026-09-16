@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class IrClassSymbolImpl(descriptor: String? = null) :
     IrBindableSymbolBase<String>(descriptor),
     IrClassSymbol

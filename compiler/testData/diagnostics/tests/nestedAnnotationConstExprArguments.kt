@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 annotation class InnerAnnotation(val text: String)
 annotation class OuterAnnotation(val inner: InnerAnnotation)
 

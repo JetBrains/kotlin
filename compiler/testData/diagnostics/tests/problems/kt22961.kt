@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-22961
 
 // KT-22961: Overload resolution ambiguity when calling overloaded function on parameterized class instantiated with Any

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

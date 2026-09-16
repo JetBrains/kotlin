@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -UNCHECKED_CAST
 // This test is a copy of conversionLastStatementInLambda, but with generic functions
 // However works diffirently in K1

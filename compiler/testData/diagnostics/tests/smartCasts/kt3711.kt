@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 data class StringPair(val first: String, val second: String)
 
 infix fun String.to(second: String) = StringPair(this, second)

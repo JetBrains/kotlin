@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //FILE: a/C.java
 // KT-1431 StackOverflowException in IDE when using JavaFX builders
 package a;

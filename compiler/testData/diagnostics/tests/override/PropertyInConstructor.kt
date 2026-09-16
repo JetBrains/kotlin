@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class Base {
     protected open val prot: Int = 1
     internal open val int: Int = 1

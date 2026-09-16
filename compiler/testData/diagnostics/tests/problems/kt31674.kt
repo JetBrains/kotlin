@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-31674
 
 // KT-31674: Wrong upper bound for star projection with recursive upper bound

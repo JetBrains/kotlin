@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 sealed class Operation(val left: Int, val right: Int) {
     abstract fun exec(): Int
     class Plus(left: Int, right: Int): Operation(left, right) {

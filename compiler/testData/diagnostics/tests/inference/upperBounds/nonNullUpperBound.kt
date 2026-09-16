@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <R : Any> unescape(value: Any): R? = throw Exception("$value")
 
 fun <T: Any> foo(v: Any): T? = unescape(v)

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Test(protected var prop1: Int = 1) {
     protected var prop2: Int = 2
 

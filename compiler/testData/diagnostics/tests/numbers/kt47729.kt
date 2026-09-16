@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: Kt-47447, KT-47729
 
 fun takeLong(value : Long) {}

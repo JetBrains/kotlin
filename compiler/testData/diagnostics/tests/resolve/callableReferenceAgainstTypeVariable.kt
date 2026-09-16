@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Inv<T>
 
 fun <T> foo(x: Inv<T>, y: T) {}

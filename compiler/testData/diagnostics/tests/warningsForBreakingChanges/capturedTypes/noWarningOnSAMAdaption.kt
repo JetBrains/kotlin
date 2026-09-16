@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: TaskProvider.java
 public interface TaskProvider<T extends CharSequence> {
     void configure(Action<? super T> a);

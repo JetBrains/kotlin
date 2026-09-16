@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class Base(x: String, y: Int)
 
 fun test(x: Any, y: Int?) {

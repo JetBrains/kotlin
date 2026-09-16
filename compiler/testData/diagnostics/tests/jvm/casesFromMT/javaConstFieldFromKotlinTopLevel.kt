@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: KConsts.kt
 @file:JvmName("KConstsKt")
 const val KOTLIN_TOP_LEVEL: Int = 41

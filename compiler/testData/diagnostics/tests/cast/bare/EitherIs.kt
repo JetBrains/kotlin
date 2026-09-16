@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 interface Either<out A, out B>
 interface Left<out A>: Either<A, Nothing> {

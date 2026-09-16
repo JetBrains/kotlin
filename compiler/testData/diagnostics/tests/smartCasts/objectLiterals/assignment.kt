@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See KT-6293: Smart cast doesn't work after object literal
 abstract class Runnable {
     abstract fun run()

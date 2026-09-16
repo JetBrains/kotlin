@@ -1,5 +1,5 @@
 // DISABLE_JAVA_FACADE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // FILE: VertLikeTable.java
 public interface VertLikeTable extends BasicModMajorObject, BasicModTableOrView, BasicModIdentifiedElement

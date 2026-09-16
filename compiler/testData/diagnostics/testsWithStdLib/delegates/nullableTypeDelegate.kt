@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface ReadWriteProperty<R, T> {
     operator fun getValue(thisRef: R, prop: Any): T
     operator fun setValue(thisRef: R, prop: Any, value: T)

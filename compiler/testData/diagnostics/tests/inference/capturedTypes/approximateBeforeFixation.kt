@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <T> Array<out T>.intersect(other: Iterable<T>) {
     val set = toMutableSet()
     set.retainAll(other)

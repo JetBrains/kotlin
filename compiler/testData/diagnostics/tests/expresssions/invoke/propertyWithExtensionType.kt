@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class A(val x: (String.() -> Unit)?, val y: (String.() -> Int))
 
 fun test(a: A) {

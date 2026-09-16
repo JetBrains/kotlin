@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 @Suppress("UNCHECKED_CAST")
 java.io.File(".").list() as? Array<String>
 

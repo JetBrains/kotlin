@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 class Final
 fun <@Suppress("FINAL_UPPER_BOUND") T : Final> suppressTypeParameter() {}

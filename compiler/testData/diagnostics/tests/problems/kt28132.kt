@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-28132
 
 // KT-28132: Members of enum with same name as class imported from other package try to call that constructor

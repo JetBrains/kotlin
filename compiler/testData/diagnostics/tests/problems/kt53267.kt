@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-53267
 
 // KT-53267: Nested typealias call with an upperbound doesn't typecheck correctly

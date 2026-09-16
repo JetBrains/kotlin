@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-67013
 class ClientResetRequiredException constructor() : Throwable(message = "", cause = null)
 

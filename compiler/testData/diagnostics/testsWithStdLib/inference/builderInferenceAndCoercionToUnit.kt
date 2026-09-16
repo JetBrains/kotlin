@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class DropDownComponent<T : Any>(val initialValues: List<T>)
 
 fun test(strings: List<String>) {

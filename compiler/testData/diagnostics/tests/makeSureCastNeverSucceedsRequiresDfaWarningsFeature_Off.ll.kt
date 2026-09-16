@@ -1,7 +1,7 @@
 // LL_FIR_DIVERGENCE
 // EnableDfaWarningsInK2 is enabled despite the directive
 // LL_FIR_DIVERGENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-75303
 // WITH_STDLIB
 // LANGUAGE: -EnableDfaWarningsInK2

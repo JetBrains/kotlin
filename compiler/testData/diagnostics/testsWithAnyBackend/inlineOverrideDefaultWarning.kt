@@ -1,5 +1,5 @@
 // ISSUE: KT-82017
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // LANGUAGE: -ForbidOverriddenDefaultParametersInInline

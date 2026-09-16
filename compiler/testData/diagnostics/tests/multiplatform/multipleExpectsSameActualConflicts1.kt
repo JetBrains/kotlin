@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +MultiPlatformProjects +AllowMultipleExpectsForSingleActual
 // ISSUE: KT-69909, KT-88307
 // IGNORE_REVERSED_RESOLVE

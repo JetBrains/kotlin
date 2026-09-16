@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-2585 Code in try-finally is incorrectly marked as unreachable
 
 fun foo(x: String): String {

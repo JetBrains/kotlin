@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun fn(): Nothing = throw java.lang.RuntimeException("oops")
 
 val x: Nothing = throw java.lang.RuntimeException("oops")

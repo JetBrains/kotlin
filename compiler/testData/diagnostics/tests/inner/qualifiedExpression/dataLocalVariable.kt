@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun bar(b: Boolean) = b
 
 fun foo(data: List<String>) {

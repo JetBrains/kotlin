@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-11075 NONE_APPLICABLE reported for callable reference to an overloaded generic function with expected type provided
 
 object TestCallableReferences {

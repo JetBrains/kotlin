@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class List<out T>(val size : Int) {
     companion object {
         val Nil = List<Nothing>(0)

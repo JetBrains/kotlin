@@ -1,5 +1,5 @@
 // ISSUE: KT-74728
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: J.java
 public class J implements K {
     @Override

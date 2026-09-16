@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun cornerCases() {
     val a = "a" + "b" + "c"
     val d = dummy("a" + "b" + "c")

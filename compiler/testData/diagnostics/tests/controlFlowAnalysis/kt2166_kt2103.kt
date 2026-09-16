@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 package a
 
 //KT-2166 Control flow analysis doesn't detect that a 'while(true)' loop never terminates

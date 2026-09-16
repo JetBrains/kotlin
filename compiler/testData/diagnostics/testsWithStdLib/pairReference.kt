@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 typealias MPair<K> = Pair<K, Int>
 typealias TextWithOffset = MPair<String>

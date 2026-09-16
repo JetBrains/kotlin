@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // IS_APPLICABLE: false
 // WITH_STDLIB
 data class Foo(val name: String)

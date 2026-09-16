@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 package a
 
 //KT-2240 Wrong overload resolution ambiguity when object literal is involved

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-4403 Wrong "type mismatch" on smart cast with inference
 
 interface A

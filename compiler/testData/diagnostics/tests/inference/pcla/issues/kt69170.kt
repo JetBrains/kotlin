@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-69170
 fun <T1> layerConfig(config: LayerConfigurer<T1>.() -> Unit) {}
 

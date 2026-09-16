@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // NB new inference doesn't really work with old JVM back-end.
 
 // WITH_JDK

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +AllowDnnTypeOverridingFlexibleType
 // ISSUE: KT-58933
 // FILE: J.java

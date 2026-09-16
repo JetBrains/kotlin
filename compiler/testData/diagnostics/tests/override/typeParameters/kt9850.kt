@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 abstract class Base {
     abstract fun <T> foo(list: List<T>) where T : Number, T : Comparable<T>
 }

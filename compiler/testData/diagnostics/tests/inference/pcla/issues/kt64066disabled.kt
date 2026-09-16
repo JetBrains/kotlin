@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // ISSUE: KT-64066, KT-53478
 // LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction

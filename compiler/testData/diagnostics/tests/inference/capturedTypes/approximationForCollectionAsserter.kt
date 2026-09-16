@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-53113
 abstract class AbstractCollectionAssert<SELF : AbstractCollectionAssert<SELF, ELEMENT>, ELEMENT> {
     fun describedAs(s: String): SELF = TODO()

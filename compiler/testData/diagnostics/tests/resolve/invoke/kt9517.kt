@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-9517 Wrong resolve for invoke convention after smart cast
 open class A {
     open val foo: () -> Number = null!!

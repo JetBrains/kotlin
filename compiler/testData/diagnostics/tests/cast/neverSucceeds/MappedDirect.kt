@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -PLATFORM_CLASS_MAPPED_TO_KOTLIN -USELESS_CAST
 import java.lang.String as JString
 import java.lang.CharSequence as JCS

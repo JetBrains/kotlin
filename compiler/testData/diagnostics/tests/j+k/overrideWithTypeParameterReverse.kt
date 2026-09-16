@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: Super.kt
 interface Super {
     fun <B : Any?> foo(klass: Class<B & Any>): B

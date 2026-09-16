@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.identityHashCode
 

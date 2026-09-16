@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun f(t: (v: Int) -> Unit) {
     1.run(t)
 }

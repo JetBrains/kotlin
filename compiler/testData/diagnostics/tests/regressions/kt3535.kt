@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-3535 Functional value-parametr in nested class is inaccessible
 
 class Foo {

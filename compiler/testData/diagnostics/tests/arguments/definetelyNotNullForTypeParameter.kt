@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface Out<out E>
 
 fun <X> id(x: Out<X>): Out<X> = TODO()

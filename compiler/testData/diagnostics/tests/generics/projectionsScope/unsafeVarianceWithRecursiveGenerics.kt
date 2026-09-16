@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface UpdatableRendering<out T : UpdatableRendering<T>> {
     fun canUpdateFrom(another: @UnsafeVariance T): Boolean
 }

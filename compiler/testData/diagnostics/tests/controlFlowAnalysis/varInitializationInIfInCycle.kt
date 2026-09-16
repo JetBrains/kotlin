@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo(numbers: Collection<Int>) {
     for (i in numbers) {
         val b: Boolean

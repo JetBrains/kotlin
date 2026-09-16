@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-56520 (case 7, object vs companion member vs static member, one companion in scope)
 // FIR_DUMP
 

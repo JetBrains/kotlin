@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 abstract class Base {
     final override fun equals(other: Any?) = false
     final override fun hashCode() = 42

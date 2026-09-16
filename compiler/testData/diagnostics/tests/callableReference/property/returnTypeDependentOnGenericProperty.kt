@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import kotlin.reflect.KProperty1
 
 fun <T, R> getProperty(x: T, property: KProperty1<T, R>): R =

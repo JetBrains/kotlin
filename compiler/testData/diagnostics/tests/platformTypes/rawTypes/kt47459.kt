@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: MapObjectManager.java
 abstract class MapObjectManager<C extends MapObjectManager.Collection> {
     public class Collection {

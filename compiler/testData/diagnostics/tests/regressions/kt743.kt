@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-743 Wrong type inference
 class List<T>(val head: T, val tail: List<T>? = null)
 

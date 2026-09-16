@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // SCOPE_DUMP: p1.B:equals, p1.D:equals, p1.G:equals, p1.I:equals, p1.J:equals, p2.D:equals, p3.J6:equals, p3.J7:equals, p4.D:equals, p5.D:equals, p5.F:equals
 
 // FILE: f1.kt

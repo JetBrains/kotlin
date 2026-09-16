@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // http://youtrack.jetbrains.net/issue/KT-419
 
 class A(w: Int) {

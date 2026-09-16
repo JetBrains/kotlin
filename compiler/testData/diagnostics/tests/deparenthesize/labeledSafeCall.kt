@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun f(s : String?) : Boolean {
     return foo@(s?.equals("a"))!!
 }

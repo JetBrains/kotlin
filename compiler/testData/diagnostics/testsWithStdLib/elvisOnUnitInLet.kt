@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo(x: Int?) {
     // Both parts of the Elvis should be alive, see KT-7936
     x?.let {

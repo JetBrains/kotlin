@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import java.lang.Deprecated as deprecated
 
 <!DEPRECATED_JAVA_ANNOTATION!>@java.lang.Deprecated<!> fun foo() {}

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-338 Support.smartcasts in nested declarations
 
 fun f(a: Any?) {

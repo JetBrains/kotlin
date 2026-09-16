@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 val test: Int = listOf<Any>().map {
     when (it) {
         is Int -> it

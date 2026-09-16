@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // AssertionError for nested ifs with lambdas and Nothing as results
 
 val fn = if (true) {

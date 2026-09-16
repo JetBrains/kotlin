@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: BehaviorSubject.java
 public class BehaviorSubject<T> extends Observable<T> {
 }
