@@ -134,9 +134,9 @@ internal abstract class KotlinKProperty<out V>(
             return annotations.unwrapKotlinRepeatableAnnotations()
         }
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionBlocks::class)
     override val isCompanionBlockMember: Boolean
-        get() = container is KClassImpl<*> && kmProperty.isStatic
+        get() = container is KClassImpl<*> && kmProperty.isCompanionBlockMember
 
     abstract class Accessor<out PropertyType, out ReturnType> :
         KotlinKCallable<ReturnType>(KCallableOverriddenStorage.EMPTY), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {

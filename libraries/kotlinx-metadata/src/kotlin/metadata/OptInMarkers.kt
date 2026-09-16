@@ -58,6 +58,9 @@ public annotation class ExperimentalMustUseStatus
  * Functions and properties introduced in companion extensions have
  * [KmFunction.companionExtensionReceiverType] and [KmProperty.companionExtensionReceiverType]
  * properties set to the corresponding [KmType].
+ *
+ * This annotation predates decision to split companion block members and extensions into two separate features.
+ * Annotated API will be gradually phased out and replaced with new API annotated with [ExperimentalCompanionBlocks].
  */
 @RequiresOptIn(
     "This API is related to the experimental feature \"companion blocks and extensions\" (see KEEP-449) and may be changed or removed in any future release.",
@@ -65,3 +68,21 @@ public annotation class ExperimentalMustUseStatus
 )
 @MustBeDocumented
 public annotation class ExperimentalCompanionBlocksAndExtensions
+
+
+/**
+ * Marks an API related to the experimental feature "companion blocks and extensions" [KEEP-449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md).
+ *
+ * Functions and properties introduced in companion blocks are compiled as static on JVM,
+ * and have [KmFunction.isCompanionBlockMember] and [KmProperty.isCompanionBlockMember] attributes set to `true`.
+ *
+ * Functions and properties introduced in companion extensions have
+ * [KmFunction.companionExtensionReceiverType] and [KmProperty.companionExtensionReceiverType]
+ * properties set to the corresponding [KmType].
+ */
+@RequiresOptIn(
+    "This API is related to the experimental feature \"companion blocks\" (see KEEP-449) and may be changed or removed in any future release.",
+    RequiresOptIn.Level.ERROR,
+)
+@MustBeDocumented
+public annotation class ExperimentalCompanionBlocks

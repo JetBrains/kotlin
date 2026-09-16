@@ -15,10 +15,10 @@ import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.fieldSignature
 import kotlin.metadata.jvm.signature
 
-@OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+@OptIn(ExperimentalCompanionBlocks::class)
 internal fun KmProperty.mapSignature(container: KmClass?): JvmFieldSignature {
     fieldSignature?.let { return it }
-    val hasExtensionReceiver = receiverParameterType != null && !isStatic
+    val hasExtensionReceiver = receiverParameterType != null && !isCompanionBlockMember
     if (hasExtensionReceiver || contextParameters.isNotEmpty()) {
         "Extension/contextual properties are not supported when computing a builtin property signature: $name in $container"
     }

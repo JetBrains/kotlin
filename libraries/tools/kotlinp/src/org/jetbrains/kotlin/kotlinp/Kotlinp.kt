@@ -203,7 +203,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class, ExperimentalCompanionBlocks::class)
     fun renderFunctionModifiers(function: KmFunction, printer: Printer): Unit = with(printer) {
         append(VISIBILITY_MAP[function.visibility])
         append(MODALITY_MAP[function.modality])
@@ -216,7 +216,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             function.isExternal to "external",
             function.isSuspend to "suspend",
             function.isExpect to "expect",
-            function.isStatic to "static",
+            function.isCompanionBlockMember to "static",
             (function.companionExtensionReceiverType != null) to "companion",
             function.hasNonStableParameterNames to "/* non-stable parameter names */"
         )

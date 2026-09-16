@@ -305,8 +305,25 @@ public var KmFunction.returnValueStatus: ReturnValueStatus by returnValueStatusD
  * or ones produced by `@JvmStatic`, but they do not have metadata on their own,
  * and thus this flag is not related to them.
  */
+@Deprecated("Use isCompanionBlockMember instead", ReplaceWith("isCompanionBlockMember"))
+@OptIn(ExperimentalCompanionBlocks::class)
 @ExperimentalCompanionBlocksAndExtensions
-public var KmFunction.isStatic: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_STATIC_FUNCTION))
+public var KmFunction.isStatic: Boolean
+    get() = isCompanionBlockMember
+    set(value) {
+        isCompanionBlockMember = value
+    }
+
+/**
+ * Indicates whether the function is compiled as static on the JVM.
+ * It is true for functions declared in the companion blocks.
+ *
+ * Note that there are some other functions that are also compiled as static, such as `Enum.valueOf`
+ * or ones produced by `@JvmStatic`, but they do not have metadata on their own,
+ * and thus this flag is not related to them.
+ */
+@ExperimentalCompanionBlocks
+public var KmFunction.isCompanionBlockMember: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_STATIC_FUNCTION))
 
 // --- PROPERTY ---
 
@@ -419,8 +436,26 @@ public var KmProperty.returnValueStatus: ReturnValueStatus by returnValueStatusD
  * or ones produced by `@JvmStatic`, but they do not have metadata on their own,
  * and thus this flag is not related to them.
  */
+@OptIn(ExperimentalCompanionBlocks::class)
 @ExperimentalCompanionBlocksAndExtensions
-public var KmProperty.isStatic: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_STATIC_PROPERTY))
+@Deprecated(message = "Use isCompanionBlockMember instead", replaceWith = ReplaceWith("isCompanionBlockMember"))
+public var KmProperty.isStatic: Boolean
+    get() = isCompanionBlockMember
+    set(value) {
+        isCompanionBlockMember = value
+    }
+
+/**
+ * Indicates whether the property is compiled as static on the JVM.
+ * It is true for properties declared in the companion blocks.
+ * Property accessor in this case is also static, and there is no separate attribute for it.
+ *
+ * Note that there are some other properties that are also compiled as static, such as `Enum.entries`
+ * or ones produced by `@JvmStatic`, but they do not have metadata on their own,
+ * and thus this flag is not related to them.
+ */
+@ExperimentalCompanionBlocks
+public var KmProperty.isCompanionBlockMember: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_STATIC_PROPERTY))
 
 // --- PROPERTY ACCESSOR ---
 
