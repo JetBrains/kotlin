@@ -21,7 +21,7 @@ class KaBaseSimpleFunctionCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
     private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
-) : @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall {
+) : @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall {
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")

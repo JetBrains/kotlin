@@ -386,7 +386,8 @@ public interface KaDanglingFileModule : KaModule {
      */
     @Deprecated(
         "Use 'files' instead.",
-        ReplaceWith("files.single()", imports = ["kotlin.collections.single"])
+        ReplaceWith("files.single()", imports = ["kotlin.collections.single"]),
+        level = DeprecationLevel.ERROR,
     )
     public val file: KtFile
         get() = files.first()

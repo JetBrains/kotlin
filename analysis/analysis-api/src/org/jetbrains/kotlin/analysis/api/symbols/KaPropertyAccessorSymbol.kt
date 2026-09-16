@@ -19,7 +19,7 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
     /**
      * Whether the accessor is implicitly generated.
      */
-    @Deprecated("Use `!isNotDefault` instead", ReplaceWith("!isNotDefault"))
+    @Deprecated("Use `!isNotDefault` instead", ReplaceWith("!isNotDefault"), level = DeprecationLevel.ERROR)
     public abstract val isDefault: Boolean
 
     /**
@@ -100,7 +100,7 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
      *     private set // The default setter with private visibility.
      * ```
      */
-    @Deprecated("Use `isCustom` instead", ReplaceWith("isCustom"))
+    @Deprecated("Use `isCustom` instead", ReplaceWith("isCustom"), level = DeprecationLevel.ERROR)
     public abstract val hasBody: Boolean
 
     abstract override fun createPointer(): KaSymbolPointer<KaPropertyAccessorSymbol>

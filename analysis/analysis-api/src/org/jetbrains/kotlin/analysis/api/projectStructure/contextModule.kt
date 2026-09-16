@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.psi.UserDataProperty
  * When applied to a virtual file *A*, [analysisContextModule] determines the context module of any [KaDanglingFileModule] whose file has
  * *A* as an *original file*. It does not affect the [KaModule] of *A* itself.
  */
-@Deprecated("`analysisContextModule` has problematic semantics (see KT-80856). Consider `KtFile.contextModule` instead.")
+@Deprecated(
+    "`analysisContextModule` has problematic semantics (see KT-80856). Consider `KtFile.contextModule` instead.",
+    level = DeprecationLevel.ERROR,
+)
 @KaImplementationDetail
 public var VirtualFile.analysisContextModule: KaModule? by UserDataProperty(Key.create("ANALYSIS_CONTEXT_MODULE"))

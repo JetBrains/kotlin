@@ -69,7 +69,7 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      * type may not be nullable.
      */
     @KaNoContextParameterBridgeRequired
-    @Deprecated("Use `isNullable` instead", ReplaceWith("this.isNullable"))
+    @Deprecated("Use `isNullable` instead", ReplaceWith("this.isNullable"), level = DeprecationLevel.ERROR)
     public val KaType.canBeNull: Boolean
         get() = isNullable
 
@@ -373,6 +373,7 @@ public interface KaBuiltinFunctionTypeFamilies : org.jetbrains.kotlin.analysis.a
 @Deprecated(
     message = "Use 'org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds' instead.",
     replaceWith = ReplaceWith("KaStandardTypeClassIds", "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds"),
+    level = DeprecationLevel.ERROR,
 )
 public object KaStandardTypeClassIds {
     /** The [Unit] class ID. */
@@ -418,8 +419,8 @@ public object KaStandardTypeClassIds {
     public val PRIMITIVES: Set<ClassId> get() = org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.PRIMITIVES
 }
 
-@Deprecated("Use `KaStandardTypeClassIds` instead", ReplaceWith("KaStandardTypeClassIds"))
-@Suppress("DEPRECATION")
+@Deprecated("Use `KaStandardTypeClassIds` instead", ReplaceWith("KaStandardTypeClassIds"), level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public object DefaultTypeClassIds {
     /** The [Unit] class ID. */
     public val UNIT: ClassId get() = KaStandardTypeClassIds.UNIT

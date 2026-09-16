@@ -22,7 +22,7 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
     /**
      * The [symbol][KaCallableSymbol] of the callable which the given [KtReturnExpression] returns from.
      */
-    @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", ReplaceWith("resolveSymbol()"))
+    @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", ReplaceWith("resolveSymbol()"), level = DeprecationLevel.ERROR)
     @KaIdeApi
     public val KtReturnExpression.targetSymbol: KaCallableSymbol?
 
@@ -247,12 +247,13 @@ public sealed class KaWhenMissingCase {
 @Deprecated(
     "The API is obsolete. Use `resolveSuccessfulSymbol()` instead.",
     ReplaceWith("resolveSuccessfulSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaIdeApi
 @KaContextParameterApi
 context(session: KaSession)
 public val KtReturnExpression.targetSymbol: KaCallableSymbol?
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     get() = with(session) { targetSymbol }
 
 /**

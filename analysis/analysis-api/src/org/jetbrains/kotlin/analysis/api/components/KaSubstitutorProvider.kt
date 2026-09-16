@@ -383,6 +383,7 @@ public class KaSubstitutorBuilder
         "createSubstitutor(mappings)",
         "org.jetbrains.kotlin.analysis.api.types.createSubstitutor",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi
@@ -422,6 +423,7 @@ public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSu
         "createInheritanceTypeSubstitutor(subClass, superClass)",
         "org.jetbrains.kotlin.analysis.api.types.createInheritanceTypeSubstitutor",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi

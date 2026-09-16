@@ -79,7 +79,7 @@ public interface KaTypeParametersRenderer {
     }
 
     @KaExperimentalApi
-    @Deprecated("Use 'WITHOUT_BOUNDS' instead.")
+    @Deprecated("Use 'WITHOUT_BOUNDS' instead.", level = DeprecationLevel.ERROR)
     public object WIHTOUT_BOUNDS : KaTypeParametersRenderer {
         override fun renderTypeParameters(
             analysisSession: KaSession,

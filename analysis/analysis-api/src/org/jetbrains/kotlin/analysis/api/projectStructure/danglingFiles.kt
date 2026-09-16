@@ -148,7 +148,7 @@ public val KtFile.isDangling: Boolean
     get() = when {
         this is KtCodeFragment -> true
         contextModule != null -> true
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         virtualFile?.analysisContextModule != null -> false
         !isPhysical -> true
         copyOrigin != null -> true
