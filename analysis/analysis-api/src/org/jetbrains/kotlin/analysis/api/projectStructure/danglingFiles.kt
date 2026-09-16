@@ -143,13 +143,11 @@ public val KaModule.baseContextModuleOrSelf: KaModule
  *
  * @see org.jetbrains.kotlin.analysis.api.session.analyzeCopy
  */
-@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+@OptIn(KaExperimentalApi::class)
 public val KtFile.isDangling: Boolean
     get() = when {
         this is KtCodeFragment -> true
         contextModule != null -> true
-        @Suppress("DEPRECATION_ERROR")
-        virtualFile?.analysisContextModule != null -> false
         !isPhysical -> true
         copyOrigin != null -> true
         analysisContext != null -> true

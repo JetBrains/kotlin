@@ -56,12 +56,9 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         return KaDanglingFileResolutionMode.PREFER_SELF
     }
 
-    @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+    @OptIn(KaExperimentalApi::class)
     private fun computeContextModule(file: KtFile): KaModule {
         val originalFile = file.copyOrigin
-
-        @Suppress("DEPRECATION_ERROR")
-        originalFile?.virtualFile?.analysisContextModule?.let { return it }
 
         file.contextModule?.let { return it }
 
