@@ -5,17 +5,24 @@
 
 #include "mm/MemoryDump.hpp"
 
-#include <algorithm>
 #include <atomic>
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
-#include <limits>
 #include <queue>
 #include <unordered_set>
 
+// Konan tvOS/watchOS sysroots do not ship libz; a global -lz breaks linking there.
+#if KONAN_LINUX || KONAN_ANDROID || KONAN_MACOSX || KONAN_IOS || KONAN_WINDOWS
+#define KONAN_HAS_ZLIB 1
+#include <algorithm>
+#include <limits>
 #include <zlib.h>
+#else
+#define KONAN_HAS_ZLIB 0
+#endif
 
+#if KONAN_HAS_ZLIB
 #if KONAN_WINDOWS
 #include <io.h>
 #define KN_DUP _dup
@@ -24,6 +31,7 @@
 #include <unistd.h>
 #define KN_DUP dup
 #define KN_CLOSE close
+#endif
 #endif
 
 #include "Porting.h"
@@ -43,11 +51,13 @@ namespace {
 
 std::atomic<bool> g_dumpInProgress{false};
 
-// Writes dump bytes either uncompressed or as a gzip member.
+// Writes dump bytes uncompressed, or as a gzip member when zlib is available.
 class DumpWriter : private Pinned {
 public:
     explicit DumpWriter(FILE* file) : file_(file) {}
+#if KONAN_HAS_ZLIB
     explicit DumpWriter(gzFile gz) : gz_(gz) {}
+#endif
 
     void write(const void* data, size_t size) {
         auto* bytes = static_cast<const uint8_t*>(data);
@@ -58,6 +68,7 @@ public:
             }
             return;
         }
+#if KONAN_HAS_ZLIB
         // gzwrite takes `unsigned`; split large spans so we never truncate the length.
         while (size > 0) {
             unsigned chunk = static_cast<unsigned>(std::min(size, static_cast<size_t>(std::numeric_limits<int>::max())));
@@ -70,6 +81,9 @@ public:
             bytes += n;
             size -= static_cast<size_t>(n);
         }
+#else
+        throw std::system_error(ENOSYS, std::generic_category());
+#endif
     }
 
     void flush() {
@@ -80,9 +94,12 @@ public:
 
 private:
     FILE* file_ = nullptr;
+#if KONAN_HAS_ZLIB
     gzFile gz_ = nullptr;
+#endif
 };
 
+#if KONAN_HAS_ZLIB
 // Owns a gzip stream opened on a dup of `fd`, so gzclose does not close the caller's descriptor.
 class GzipStream : private Pinned {
 public:
@@ -119,6 +136,7 @@ public:
 private:
     gzFile gz_ = nullptr;
 };
+#endif
 
 } // namespace
 
@@ -470,6 +488,7 @@ void PrepareForMemoryDump() {
 }
 
 void DumpMemoryOrThrow(int fd, bool omitPayloads, bool gzip) {
+#if KONAN_HAS_ZLIB
     if (gzip) {
         GzipStream gz(fd);
         DumpWriter writer(gz.get());
@@ -477,6 +496,12 @@ void DumpMemoryOrThrow(int fd, bool omitPayloads, bool gzip) {
         gz.closeOrThrow();
         return;
     }
+#else
+    // Still produce a dump when gzip was requested: omitPayloads remains usable.
+    if (gzip) {
+        RuntimeLogInfo({kTagMemDump}, "gzip is not available on this target; writing an uncompressed dump");
+    }
+#endif
 
     FILE* file = fdopen(fd, "w");
     if (file == nullptr) {
