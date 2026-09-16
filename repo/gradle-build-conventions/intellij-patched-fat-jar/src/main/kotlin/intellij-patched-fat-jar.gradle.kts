@@ -21,9 +21,29 @@ configure<JavaPluginExtension> {
     withSourcesJar()
 }
 
+/*
+    IntelliJ's Gradle importer cannot attach sources to a project fat-JAR: a JAR with content beyond the module's own
+    outputs is kept in consumers as a bare module library (binaries only), so navigation from IntelliJ classes would
+    only lead to decompiled code. During Gradle sync, the project is therefore modeled the plain way instead: the patched
+    classes remain module sources, and the wrapped IntelliJ artifacts are exported as ordinary Maven library
+    dependencies, for which the IDE downloads and attaches '-sources.jar' itself.
+
+    Regular Gradle builds (including tasks the IDE runs) are not affected, as 'idea.sync.active' is only set while
+    the IDE builds its project model.
+*/
+val isInIdeaSync = kotlinBuildProperties.isInIdeaSync.get()
+
 tasks.named<Jar>("jar") {
-    addEmbeddedRuntime()
+    if (!isInIdeaSync) {
+        addEmbeddedRuntime()
+    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+if (isInIdeaSync) {
+    configurations.named("api") {
+        extendsFrom(configurations["embedded"])
+    }
 }
 
 tasks.named<Jar>("sourcesJar") {
