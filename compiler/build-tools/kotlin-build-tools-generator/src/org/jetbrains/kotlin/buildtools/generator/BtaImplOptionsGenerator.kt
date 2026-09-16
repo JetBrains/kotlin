@@ -85,6 +85,7 @@ internal class BtaImplOptionsGenerator(
                 if (parentClass != null) {
                     superclass(parentClass)
                     if (!generateCompatLayer) {
+                        addSuperclassConstructorParameter("defaultArguments")
                         addSuperclassConstructorParameter("argumentValidationErrors")
                         addSuperclassConstructorParameter("restrictedArgViolations")
                         addSuperclassConstructorParameter("argumentParseDiagnostics")
@@ -339,7 +340,7 @@ internal class BtaImplOptionsGenerator(
 
             val wasRemoved = argument.removedSinceVersion?.let { removedVersion ->
                 // argument was removed in or before current version - 3, skip it entirely
-                if (removedVersion <= getOldestSupportedVersion(kotlinVersion)) {
+                if (removedVersion <= getOldestSupportedVersion(kotlinVersion) || !generateCompatLayer) {
                     return@forEach
                 }
                 true

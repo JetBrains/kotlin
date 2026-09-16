@@ -120,9 +120,6 @@ internal class JsArgumentsImpl(
   @SerialName("X_SUSPEND_LAMBDA_EXPORTING")
   protected var `Xsuspend-lambda-exporting`: Boolean
 
-  @SerialName("X_TYPED_ARRAYS")
-  protected var `Xtyped-arrays`: Boolean
-
   @SerialName("MODULE_KIND")
   protected var `module-kind`: JsModuleKind?
 
@@ -226,7 +223,6 @@ internal class JsArgumentsImpl(
     arguments.optimizeGeneratedJs = `Xoptimize-generated-js`
     arguments.platformArgumentsProviderJsExpression = `Xplatform-arguments-in-main-function`
     arguments.allowExportingSuspendLambdas = `Xsuspend-lambda-exporting`
-    try { arguments.setUsingReflection("typedArrays", `Xtyped-arrays`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     arguments.moduleKind = `module-kind`?.stringValue
     arguments.target = target?.stringValue
     arguments.internalArguments = parseCommandLineArguments<K2JSCompilerArguments>(internalArguments.toList()).internalArguments
@@ -259,7 +255,6 @@ internal class JsArgumentsImpl(
     try { `Xoptimize-generated-js` = arguments.optimizeGeneratedJs } catch (_: NoSuchMethodError) {  }
     try { `Xplatform-arguments-in-main-function` = arguments.platformArgumentsProviderJsExpression } catch (_: NoSuchMethodError) {  }
     try { `Xsuspend-lambda-exporting` = arguments.allowExportingSuspendLambdas } catch (_: NoSuchMethodError) {  }
-    try { `Xtyped-arrays` = arguments.getUsingReflection<Boolean>("typedArrays") } catch (_: NoSuchMethodError) {  }
     try { `module-kind` = arguments.moduleKind?.let { JsModuleKind.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { target = arguments.target?.let { JsEcmaVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
@@ -290,7 +285,6 @@ internal class JsArgumentsImpl(
     arguments.optimizeGeneratedJs = `Xoptimize-generated-js`
     arguments.platformArgumentsProviderJsExpression = `Xplatform-arguments-in-main-function`
     arguments.allowExportingSuspendLambdas = `Xsuspend-lambda-exporting`
-    try { arguments.setUsingReflection("typedArrays", `Xtyped-arrays`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     arguments.moduleKind = `module-kind`?.stringValue
     arguments.target = target?.stringValue
     return arguments
@@ -397,8 +391,6 @@ internal class JsArgumentsImpl(
 
     public val X_SUSPEND_LAMBDA_EXPORTING: JsArgument<Boolean> =
         JsArgument("X_SUSPEND_LAMBDA_EXPORTING")
-
-    public val X_TYPED_ARRAYS: JsArgument<Boolean> = JsArgument("X_TYPED_ARRAYS")
 
     public val MODULE_KIND: JsArgument<JsModuleKind?> = JsArgument("MODULE_KIND")
 

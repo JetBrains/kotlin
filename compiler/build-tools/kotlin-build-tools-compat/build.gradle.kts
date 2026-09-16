@@ -8,7 +8,7 @@ dependencies {
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(libs.kotlin.compiler.before.bta.v2)
     implementation(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
-
+    implementation(libs.kotlinx.serialization.core)
     testCompileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
     testImplementation(kotlinTest("junit5"))
 }
