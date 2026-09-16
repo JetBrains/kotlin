@@ -41,7 +41,7 @@ class WasmStringSwitchOptimizerLowering(
     private fun IrBlockBuilder.createEqEqForIntVariable(tempIntVariable: IrVariable, value: Int) =
         irCall(context.irBuiltIns.eqeqSymbol, booleanType).also {
             it.arguments[0] = irGet(tempIntVariable)
-            it.arguments[1] = JsIrBuilder.buildInt(type = intType, v = value)
+            it.arguments[1] = JsIrBuilder.buildInt(intType, value)
         }
 
     private fun asEqCall(expression: IrExpression): IrCall? =
@@ -93,7 +93,7 @@ class WasmStringSwitchOptimizerLowering(
                 it.arguments[0] = irGet(subject)
                 it.arguments[1] = irNull(subjectType)
             }
-            irIfThenElse(intType, stringIsNull, JsIrBuilder.buildInt(type = intType, v = 0), getHashCode)
+            irIfThenElse(intType, stringIsNull, JsIrBuilder.buildInt(intType, 0), getHashCode)
         } else {
             getHashCode
         }
@@ -185,16 +185,16 @@ class WasmStringSwitchOptimizerLowering(
             irIfThenElse(
                 type = intType,
                 condition = matchedCase.condition,
-                thenPart = JsIrBuilder.buildInt(type = intType, v = matchedCase.branchIndex),
-                elsePart = JsIrBuilder.buildInt(type = intType, v = elseBranchIndex)
+                thenPart = JsIrBuilder.buildInt(intType, matchedCase.branchIndex),
+                elsePart = JsIrBuilder.buildInt(intType, elseBranchIndex)
             )
         } else {
             val bucketBranches = mutableListOf<IrBranch>()
             bucket.value.mapTo(bucketBranches) { bucketCase ->
                 val matchedCase = stringConstantToMatchedCase.getValue(bucketCase)
-                irBranch(matchedCase.condition, JsIrBuilder.buildInt(type = intType, v = matchedCase.branchIndex))
+                irBranch(matchedCase.condition, JsIrBuilder.buildInt(intType, matchedCase.branchIndex))
             }
-            bucketBranches.add(irElseBranch(JsIrBuilder.buildInt(type = intType, v = elseBranchIndex)))
+            bucketBranches.add(irElseBranch(JsIrBuilder.buildInt(intType, elseBranchIndex)))
             irWhen(intType, bucketBranches)
         }
         BucketSelector(bucket.key, selector)
@@ -282,7 +282,7 @@ class WasmStringSwitchOptimizerLowering(
                         tempIntVariable = tempIntVariable,
                         bucketsSelectors = bucketsSelectors,
                         selectorsType = intType,
-                        elseBranchExpression = JsIrBuilder.buildInt(type = intType, v = elseBranchIndex)
+                        elseBranchExpression = JsIrBuilder.buildInt(intType, elseBranchIndex)
                     )
                     +irSet(tempIntVariable, caseSelectorWhen)
                     +createTransformedWhen(tempIntVariable, expression)

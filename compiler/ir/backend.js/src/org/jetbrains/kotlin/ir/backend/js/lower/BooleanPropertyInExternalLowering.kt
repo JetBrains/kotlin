@@ -83,7 +83,7 @@ class BooleanPropertyInExternalLowering(
                     target = function!!
                 ).apply {
                     arguments[0] = property.fqNameWhenAvailable?.asString()
-                        ?.let { JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = it) }
+                        ?.let { JsIrBuilder.buildString(context.irBuiltIns.stringType, it) }
                     arguments[1] = irGet(tmp)
                 }
 

@@ -320,8 +320,8 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
             return builder.irCallConstructor(symbols.reflectionSymbols.wasmTypeInfoData.constructors.first(), emptyList()).also {
                 it.arguments[0] = typeId
-                it.arguments[1] = JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = packageName)
-                it.arguments[2] = JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = typeName)
+                it.arguments[1] = JsIrBuilder.buildString(context.irBuiltIns.stringType, packageName)
+                it.arguments[2] = JsIrBuilder.buildString(context.irBuiltIns.stringType, typeName)
             }
         }
     }

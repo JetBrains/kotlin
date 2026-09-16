@@ -100,7 +100,7 @@ private class WhenBranchOptimiserTransformer(
     private fun createElse(startOffset: Int, endOffset: Int, result: IrExpression): IrElseBranch = IrElseBranchImpl(
         startOffset = startOffset,
         endOffset = endOffset,
-        condition = JsIrBuilder.buildBoolean(type = context.irBuiltIns.booleanType, v = true),
+        condition = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true),
         result = result
     )
 

@@ -78,7 +78,7 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
                 +irSet(
                     isNotFirstWasmExportCallSetter.owner.returnType,
                     null, isNotFirstWasmExportCallSetter,
-                    JsIrBuilder.buildBoolean(type = irBooleanType, v = true)
+                    JsIrBuilder.buildBoolean(irBooleanType, true)
                 )
 
                 +body.statements

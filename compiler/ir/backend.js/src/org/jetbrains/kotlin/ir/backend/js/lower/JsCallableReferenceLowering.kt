@@ -58,10 +58,10 @@ class JsCallableReferenceLowering(private val jsContext: JsIrBackendContext) : W
                     origin = JsStatementOrigins.CALLABLE_REFERENCE_INVOKE,
                 )
             } else if (functionReference.reflectionTargetSymbol != null) {
-                arguments[0] = JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = functionReference.getFlags())
-                arguments[1] = JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = functionReference.getArity())
+                arguments[0] = JsIrBuilder.buildInt(context.irBuiltIns.intType, functionReference.getFlags())
+                arguments[1] = JsIrBuilder.buildInt(context.irBuiltIns.intType, functionReference.getArity())
                 arguments[2] = JsIrBuilder.buildCall(jsContext.symbols.signatureIdSymbol).apply {
-                    arguments[0] = JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = functionReference.getId(jsContext))
+                    arguments[0] = JsIrBuilder.buildString(context.irBuiltIns.stringType, functionReference.getId(jsContext))
                 }
             }
         }

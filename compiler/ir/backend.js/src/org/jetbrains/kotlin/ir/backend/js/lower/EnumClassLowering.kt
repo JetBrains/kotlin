@@ -246,10 +246,10 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
         private val enumEntries = irClass.enumEntries
 
         private fun IrEnumEntry.getNameExpression() =
-            JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = name.identifier)
+            JsIrBuilder.buildString(context.irBuiltIns.stringType, name.identifier)
 
         private fun IrEnumEntry.getOrdinalExpression() =
-            JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = enumEntries.indexOf(this))
+            JsIrBuilder.buildInt(context.irBuiltIns.intType, enumEntries.indexOf(this))
 
         private fun buildConstructorCall(constructor: IrConstructor, constructorCall: IrEnumConstructorCall) =
             if (isInsideConstructor)

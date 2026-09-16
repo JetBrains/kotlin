@@ -99,7 +99,7 @@ class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) :
             runIf(hasStringArrayParameter()) {
                 context.platformArgumentsProviderJsExpression?.let {
                     JsIrBuilder.buildCall(context.symbols.jsCode).apply {
-                        arguments[0] = JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = it)
+                        arguments[0] = JsIrBuilder.buildString(context.irBuiltIns.stringType, it)
                     }
                 } ?: JsIrBuilder.buildArray(
                     elements = emptyList(),

@@ -81,7 +81,7 @@ abstract class LazyGlobalInitializationGenerator {
         initializer = backendContext.irFactory.createExpressionBody(
             SYNTHETIC_OFFSET,
             SYNTHETIC_OFFSET,
-            JsIrBuilder.buildInt(type = backendContext.irBuiltIns.intType, v = InitializationState.UNINITIALIZED),
+            JsIrBuilder.buildInt(backendContext.irBuiltIns.intType, InitializationState.UNINITIALIZED),
         )
     }
 

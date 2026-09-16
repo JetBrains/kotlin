@@ -251,8 +251,8 @@ private class JsCodeOutlineTransformer(
         // Building JS Ast function
         val newFun = createJsFunction(jsStatements, kotlinLocalsUsedInJs)
         val [jsFunCode, sourceMap] = printJsCodeWithDebugInfo(newFun)
-        annotation.arguments[0] = JsIrBuilder.buildString(type = loweringContext.irBuiltIns.stringType, s = jsFunCode)
-        annotation.arguments[1] = JsIrBuilder.buildString(type = loweringContext.irBuiltIns.stringType, s = sourceMap)
+        annotation.arguments[0] = JsIrBuilder.buildString(loweringContext.irBuiltIns.stringType, jsFunCode)
+        annotation.arguments[1] = JsIrBuilder.buildString(loweringContext.irBuiltIns.stringType, sourceMap)
 
         return with(loweringContext.createIrBuilder(container.symbol)) {
             irCall(outlinedFunction).apply {

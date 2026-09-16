@@ -262,8 +262,8 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
             name,
             upperBounds,
             variance,
-            JsIrBuilder.buildBoolean(type = context.irBuiltIns.booleanType, v = typeParameter.isReified),
-            JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = typeParameter.parent.kotlinFqName.asString()),
+            JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, typeParameter.isReified),
+            JsIrBuilder.buildString(context.irBuiltIns.stringType, typeParameter.parent.kotlinFqName.asString()),
         ).also {
             visitedTypeParams.remove(typeParameter)
         }

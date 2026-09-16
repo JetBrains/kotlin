@@ -625,7 +625,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val functionReferenceReflectedName = lambdaInfo.lambdaClass.functionReferenceReflectedName
 
         val callableName = functionReferenceReflectedName
-            ?.let { JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = it) }
+            ?.let { JsIrBuilder.buildString(context.irBuiltIns.stringType, it) }
             ?: context.getVoid()
 
         val kFunctionImplCall = constructor.body?.statements
@@ -642,7 +642,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
                         // Regular arity includes $continuation parameter, so it's more precises to take the lambdaDeclaration arguments size
                         arguments[1] = if (lambdaInfo.isSuspendLambda) {
-                            JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = lambdaDeclaration.parameters.size)
+                            JsIrBuilder.buildInt(context.irBuiltIns.intType, lambdaDeclaration.parameters.size)
                         } else arity?.shallowCopy() ?: compilationException("'arity' is expected to be passed to a parent constructor", kFunctionImplCall)
 
                         arguments[2] = flags?.shallowCopy()
@@ -667,7 +667,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 JsIrBuilder.buildCall(constructCallableReferenceSymbol)
                     .apply {
                         arguments[0] = functionExpression
-                        arguments[1] = JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = lambdaDeclaration.parameters.size)
+                        arguments[1] = JsIrBuilder.buildInt(context.irBuiltIns.intType, lambdaDeclaration.parameters.size)
                         arguments[2] = context.getVoid()
                         arguments[3] = context.getVoid()
                         arguments[4] = context.getVoid()

@@ -235,27 +235,27 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         return when {
             linkerError != null -> {
                 when (parameter.name.asString()) {
-                    "message" -> JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = linkerError)
-                    "name" -> JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = name)
+                    "message" -> JsIrBuilder.buildString(context.irBuiltIns.stringType, linkerError)
+                    "name" -> JsIrBuilder.buildString(context.irBuiltIns.stringType, name)
                     else -> irNull()
                 }
             }
             reflectionTargetSymbol != null -> {
                 when (parameter.name.asString()) {
                     "flags" -> {
-                        JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = reference.getFlags())
+                        JsIrBuilder.buildInt(context.irBuiltIns.intType, reference.getFlags())
                     }
                     "arity" -> {
-                        JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = reference.getArity())
+                        JsIrBuilder.buildInt(context.irBuiltIns.intType, reference.getArity())
                     }
                     "id" -> {
-                        JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = reference.getId(backendContext))
+                        JsIrBuilder.buildString(context.irBuiltIns.stringType, reference.getId(backendContext))
                     }
                     "boundValueCount" -> {
-                        JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = reference.boundValues.size)
+                        JsIrBuilder.buildInt(context.irBuiltIns.intType, reference.boundValues.size)
                     }
                     "name" -> {
-                        JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = name)
+                        JsIrBuilder.buildString(context.irBuiltIns.stringType, name)
                     }
                     else -> irNull()
                 }

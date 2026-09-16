@@ -166,8 +166,8 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                 ).apply {
                     val proxyFunctionRegularParameters = proxyFunction.parameters.filter { it.kind == IrParameterKind.Regular }
                     arguments[0] = JsIrBuilder.buildString(
-                        type = context.irBuiltIns.stringType,
-                        s = createValueParametersObject(proxyFunctionRegularParameters)
+                        context.irBuiltIns.stringType,
+                        createValueParametersObject(proxyFunctionRegularParameters)
                     )
                 }
             )
@@ -211,7 +211,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                 ).apply {
                     val objectAssignCall =
                         "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(proxyFunction.parameters.drop(1))})"
-                    arguments[0] = JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = objectAssignCall)
+                    arguments[0] = JsIrBuilder.buildString(context.irBuiltIns.stringType, objectAssignCall)
                 }
             )
         }
