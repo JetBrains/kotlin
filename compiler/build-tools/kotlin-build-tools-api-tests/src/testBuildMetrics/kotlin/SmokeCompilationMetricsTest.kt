@@ -5,24 +5,20 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.tests.SmokeCompilationMetricsTest.Companion.Jvm.daemonMetricNames
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jsProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.wasmProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.io.path.walk
@@ -41,7 +37,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                 is MetadataProject -> Common.nonIncrementalMetricNames + Metadata.compilerTranslationMetrics
                 is JvmProject -> Common.nonIncrementalMetricNames + Jvm.compilerTranslationMetrics
                 else -> Common.nonIncrementalMetricNames + Klib.compilerTranslationMetrics
-            }
+            } + maybeGetDaemonMetricNames()
 
             module1.compileWithMetrics { metrics ->
                 val actualNames = metrics.all().map { it.name }.toSet()
@@ -61,7 +57,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
             module1.compileWithMetrics { metrics ->
-                val expectedNames = Jvm.nonIncrementalMetricNames
+                val expectedNames = Jvm.nonIncrementalMetricNames + maybeGetDaemonMetricNames()
                 val actualNames = metrics.all().map { it.name }.toSet()
                 assertEquals(expectedNames, actualNames) {
                     "Unexpected set of metric names for module1 non-incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
@@ -69,7 +65,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
             }
             module2.compileWithMetrics { metrics ->
-                val expectedNames = Jvm.nonIncrementalMetricNames
+                val expectedNames = Jvm.nonIncrementalMetricNames + maybeGetDaemonMetricNames()
                 val actualNames = metrics.all().map { it.name }.toSet()
                 assertEquals(expectedNames, actualNames) {
                     "Unexpected set of metric names for module2 non-incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
@@ -92,13 +88,13 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             module1.compileIncrementallyWithMetrics(SourcesChanges.ToBeCalculated) { metrics ->
                 val actualNames = metrics.all().map { it.name }.toSet()
                 if (isJvm) {
-                    val expectedNames = Jvm.incrementalRecompilationMetricNames
+                    val expectedNames = Jvm.incrementalRecompilationMetricNames + maybeGetDaemonMetricNames()
                     assertEquals(expectedNames, actualNames) {
                         "Unexpected set of metric names for module1 incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
                     }
                     assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
                 } else {
-                    val expectedNames = Klib.incrementalMetricNames
+                    val expectedNames = Klib.incrementalMetricNames + maybeGetDaemonMetricNames()
                     assertTrue(actualNames.containsAll(expectedNames)) {
                         "Missing expected incremental metrics for module1.\n\nMissing: ${expectedNames - actualNames}\nGot: $actualNames"
                     }
@@ -107,13 +103,13 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             module2.compileIncrementallyWithMetrics(SourcesChanges.ToBeCalculated) { metrics ->
                 val actualNames = metrics.all().map { it.name }.toSet()
                 if (isJvm) {
-                    val expectedNames = Jvm.incrementalRecompilationMetricNames
+                    val expectedNames = Jvm.incrementalRecompilationMetricNames + maybeGetDaemonMetricNames()
                     assertEquals(expectedNames, actualNames) {
                         "Unexpected set of metric names for module2 incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
                     }
                     assertOutputs("AKt.class", "BKt.class")
                 } else {
-                    val expectedNames = Klib.incrementalMetricNames
+                    val expectedNames = Klib.incrementalMetricNames + maybeGetDaemonMetricNames()
                     assertTrue(actualNames.containsAll(expectedNames)) {
                         "Missing expected incremental metrics for module2.\n\nMissing: ${expectedNames - actualNames}\nGot: $actualNames"
                     }
@@ -159,7 +155,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             val module1 = module("basic-multimodule-project/module-1")
 
             module1.compileIncrementallyWithMetrics(SourcesChanges.ToBeCalculated) { metrics ->
-                val expectedNames = Jvm.incrementalRecompilationMetricNames
+                val expectedNames = Jvm.incrementalRecompilationMetricNames + maybeGetDaemonMetricNames()
                 val actualNames = metrics.all().map { it.name }.toSet()
                 assertEquals(expectedNames, actualNames) {
                     "Unexpected set of metric names for module1 incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
@@ -173,7 +169,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             module1.compileIncrementallyWithMetrics(SourcesChanges.Known(modifiedFiles = listOf(bazKt.toFile()), removedFiles = emptyList())) { metrics ->
                 assertCompiledSources("baz.kt")
 
-                val expectedNames = Jvm.incrementalCompilationMetricNames
+                val expectedNames = Jvm.incrementalCompilationMetricNames + maybeGetDaemonMetricNames()
                 val actualNames = metrics.all().map { it.name }.toSet()
                 assertEquals(expectedNames, actualNames) {
                     "Unexpected set of metric names for module1 incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
@@ -234,7 +230,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
         ) { metrics ->
             assertCompiledSources("useAInAppMain.kt")
 
-            val expectedNames = Klib.crossModuleIncrementalMetricNames
+            val expectedNames = Klib.crossModuleIncrementalMetricNames + maybeGetDaemonMetricNames()
             val actualNames = metrics.all().map { it.name }.toSet()
             assertTrue(actualNames.containsAll(expectedNames)) {
                 "Missing expected cross-module incremental metrics for the app module.\n\nMissing: ${expectedNames - actualNames}\nGot: $actualNames"
@@ -289,6 +285,11 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                 "Total compiler iteration -> Analysis lines per second",
                 "Total compiler iteration -> Code generation lines per second",
                 "Total compiler iteration -> Number of lines analyzed",
+            )
+
+            val daemonMetricNames = setOf(
+                "Increase memory usage",
+                "Total memory usage at the end of build",
             )
 
             val incrementalBaseMetricNames = nonIncrementalMetricNames + setOf(
@@ -371,4 +372,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             }
         }
     }
+
+    private fun AbstractProject<out BaseCompilationOperation, out BaseCompilationOperation.Builder, out BaseIncrementalCompilationConfiguration.Builder>.maybeGetDaemonMetricNames(): Set<String> =
+        if (this.defaultStrategyConfig is ExecutionPolicy.WithDaemon) daemonMetricNames else emptySet()
 }
