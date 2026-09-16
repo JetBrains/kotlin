@@ -52,6 +52,12 @@ public class SymbolLightClassesStructureForSourceTestGenerated extends AbstractS
   }
 
   @Test
+  @TestMetadata("FullValueClasses.kt")
+  public void testFullValueClasses() {
+    run("FullValueClasses.kt");
+  }
+
+  @Test
   @TestMetadata("InterfaceAndClasses.kt")
   public void testInterfaceAndClasses() {
     run("InterfaceAndClasses.kt");
