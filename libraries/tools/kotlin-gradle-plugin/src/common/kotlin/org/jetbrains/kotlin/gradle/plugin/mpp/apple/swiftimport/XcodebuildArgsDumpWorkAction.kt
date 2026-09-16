@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFil
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.OutputStream
 import javax.inject.Inject
 
 internal interface XcodebuildAwaitArgsDumpWorkParameters : WorkParameters {
@@ -169,17 +171,16 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
             forceClangToReexecute.deleteRecursively()
         }
 
-        // KT-89285: xcodebuild echoes every clang/ld invocation, which can add megabytes to the build log.
-        // Capture its output instead of inheriting Gradle's streams, then log it at INFO on success
-        // and include it in the error message on failure so the cause is still visible.
-        val stdout = ByteArrayOutputStream()
-        val stderr = ByteArrayOutputStream()
+        // KT-89285: xcodebuild prints every clang/ld invocation, several megabytes per run. Hide it unless
+        // --info is set, and show all of it when xcodebuild fails.
+        val stdout = XcodebuildFileOutputStream(logger, clangArgsDump.parentFile.resolve("xcodebuild-stdout.log"))
+        val stderr = XcodebuildFileOutputStream(logger, clangArgsDump.parentFile.resolve("xcodebuild-stderr.log"))
 
         val result = execOps.exec { exec ->
             exec.workingDir(projectRoot)
+            exec.isIgnoreExitValue = true
             exec.standardOutput = stdout
             exec.errorOutput = stderr
-            exec.isIgnoreExitValue = true
             // Building the synthetic package is intentional: xcodebuild computes the same clang/ld invocations that the
             // real SwiftPM package integration would use, including module maps, framework search paths, and products.
             val args = mutableListOf(
@@ -222,21 +223,65 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
                 exec.environment.remove(it)
             }
         }
-
-        when {
-            result.exitValue != 0 -> {
-                error(
-                    """
-                    Process 'xcodebuild' returns ${result.exitValue}
-                    $stdout
-                    $stderr
-                    """.trimIndent()
-                )
-            }
-            else -> {
-                stdout.toString().lineSequence().forEach { logger.info(it) }
-                stderr.toString().lineSequence().forEach { logger.info(it) }
-            }
+        // We ignore the exit value above so the saved output can be printed before Gradle reports the failure.
+        // assertNormalExitValue() then throws Gradle's usual exception for a non-zero exit.
+        if (result.exitValue != 0) {
+            stdout.reportAsErrors()
+            stderr.reportAsErrors()
         }
+        stdout.delete()
+        stderr.delete()
+        result.assertNormalExitValue()
+    }
+}
+
+/**
+ * With --info, every line goes to the log as it arrives. Otherwise the stream writes lines to [file].
+ * Call [reportAsErrors] to print them when the process fails, then [delete] to remove the file. The output
+ * never sits in memory.
+ */
+private class XcodebuildFileOutputStream(
+    private val logger: Logger,
+    private val file: File,
+) : OutputStream() {
+
+    private val line = ByteArrayOutputStream()
+
+    // With --info the file is not needed, lines are logged as they arrive.
+    private val fileWriter = if (logger.isInfoEnabled) null else file.bufferedWriter()
+
+    override fun write(b: Int) {
+        when (b) {
+            '\n'.code -> endLine()
+            '\r'.code -> Unit
+            else -> line.write(b)
+        }
+    }
+
+    override fun flush() {
+        endLine()
+        fileWriter?.flush()
+    }
+
+    override fun close() {
+        endLine()
+        fileWriter?.close()
+    }
+
+    fun reportAsErrors() {
+        close()
+        if (fileWriter != null) file.forEachLine { logger.error(it) }
+    }
+
+    fun delete() {
+        close()
+        file.delete()
+    }
+
+    private fun endLine() {
+        if (line.size() == 0) return
+        val text = line.toString(Charsets.UTF_8.name())
+        line.reset()
+        if (fileWriter == null) logger.info(text) else fileWriter.write(text + "\n")
     }
 }
