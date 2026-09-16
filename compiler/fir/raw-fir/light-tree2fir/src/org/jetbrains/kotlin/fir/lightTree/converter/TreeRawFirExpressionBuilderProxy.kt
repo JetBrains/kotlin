@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.NodeTypeAnalyzer
+import org.jetbrains.kotlin.fir.analysis.NotToShareWithAA
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@OptIn(NotToShareWithAA::class)
 class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     val analyzer: AbstractTreeRawFirBuilder<Node, Type>,
     context: Context<Node>,
@@ -609,7 +611,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                     ) { getAsFirExpression(this) }
                 }
                 val receiver = getAsFirExpression<FirExpression>(argument, "No operand", sourceWhenInvalidExpression = unaryExpression)
-                convertUnaryPlusMinusCallOnIntegerLiteralIfNecessary(unaryExpression, receiver, operationToken)?.let { return it }
+                convertUnaryPlusMinusCallOnIntegerLiteralIfNecessary(unaryExpression, receiver, conventionCallName)?.let { return it }
                 buildFunctionCall {
                     source = unaryExpression.toFirSourceElement()
                     calleeReference = buildSimpleNamedReference {

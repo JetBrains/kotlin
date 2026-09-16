@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.NotToShareWithAA
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
@@ -17,7 +18,9 @@ import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.ConstantValueKind
 
+@OptIn(NotToShareWithAA::class)
 abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     baseSession: FirSession,
     context: Context<Node>,
@@ -32,6 +35,56 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
 
     override val Node.isVararg: Boolean
         get() = getModifierList()?.getVarargKeyword() != null
+
+    override fun Node.isArrayAccessExpression(): Boolean = toTokenId() == KtNodeTypes.ARRAY_ACCESS_EXPRESSION_ID
+
+    override fun Node.isSafeAccessExpression(): Boolean = toTokenId() == KtNodeTypes.SAFE_ACCESS_EXPRESSION_ID
+
+    override fun Node.isStringInterpolationPrefixOrQuote(): Boolean = when (toTokenId()) {
+        KtNodeTypes.STRING_INTERPOLATION_PREFIX_ID, KtTokens.OPEN_QUOTE_ID, KtTokens.CLOSING_QUOTE_ID -> true
+        else -> false
+    }
+
+    override fun Node.isLiteralStringTemplateEntry(): Boolean =
+        toTokenId() == KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY_ID
+
+    override fun Node.isEscapeStringTemplateEntry(): Boolean =
+        toTokenId() == KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY_ID
+
+    override fun Node.isShortOrLongStringTemplateEntry(): Boolean = when (toTokenId()) {
+        KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY_ID, KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY_ID -> true
+        else -> false
+    }
+
+    override fun Type.toConstantValueKind(): ConstantValueKind? {
+        return when (typeToTokenId()) {
+            KtNodeTypes.INTEGER_CONSTANT_ID -> ConstantValueKind.Int
+            KtNodeTypes.FLOAT_CONSTANT_ID -> ConstantValueKind.Float
+            KtNodeTypes.BOOLEAN_CONSTANT_ID -> ConstantValueKind.Boolean
+            KtNodeTypes.CHARACTER_CONSTANT_ID -> ConstantValueKind.Char
+            KtNodeTypes.NULL_ID -> ConstantValueKind.Null
+            else -> null
+        }
+    }
+
+    /**
+     * See [UNWRAPPABLE_TOKEN_TYPES][org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES]
+     */
+    override fun Node?.unwrap(): Node? {
+        // NOTE: By removing surrounding parentheses and labels, FirLabels will NOT be created for those labels.
+        // This should be fine since the label is meaningless and unusable for a ++/-- argument or assignment LHS.
+        var unwrapped = this
+        while (true) {
+            val tokenId = unwrapped?.toTokenId()
+            unwrapped = when (tokenId) {
+                null -> return unwrapped
+                KtNodeTypes.PARENTHESIZED_ID -> unwrapped.getExpressionInParentheses()
+                KtNodeTypes.LABELED_EXPRESSION_ID -> unwrapped.getLabeledExpression()
+                KtNodeTypes.ANNOTATED_EXPRESSION_ID -> unwrapped.getAnnotatedExpression()
+                else -> return unwrapped
+            }
+        }
+    }
 
     abstract fun KtSourceElement.toNode(): Node
 

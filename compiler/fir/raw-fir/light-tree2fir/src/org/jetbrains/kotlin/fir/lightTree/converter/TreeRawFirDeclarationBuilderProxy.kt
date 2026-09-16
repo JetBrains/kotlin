@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.NotToShareWithAA
 import org.jetbrains.kotlin.fir.analysis.firstFunctionCallInBlockHasLambdaArgumentWithLabel
 import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
 import org.jetbrains.kotlin.fir.analysis.isExpression
@@ -151,6 +152,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
+@OptIn(NotToShareWithAA::class)
 class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     val analyzer: AbstractTreeRawFirBuilder<Node, Type>,
     context: Context<Node>,
