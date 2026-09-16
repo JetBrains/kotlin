@@ -555,6 +555,9 @@ public final class kotlin/UnsignedKt {
 	public static final fun ulongToDouble (J)D
 }
 
+public abstract interface annotation class kotlin/WillBecomeValue : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/_Assertions {
 	public static final field ENABLED Z
 	public static final field INSTANCE Lkotlin/_Assertions;

@@ -14230,11 +14230,21 @@ open annotation class kotlin.native/ShouldRefineInSwift : kotlin/Annotation { //
 }
 
 // Targets: [js, wasmJs, wasmWasi]
+open annotation class kotlin/PlatformInline : kotlin/Annotation { // kotlin/PlatformInline|null[0]
+    constructor <init>() // kotlin/PlatformInline.<init>|<init>(){}[0]
+}
+
+// Targets: [js, wasmJs, wasmWasi]
 open annotation class kotlin/Throws : kotlin/Annotation { // kotlin/Throws|null[1]
     constructor <init>(kotlin/Array<out kotlin.reflect/KClass<out kotlin/Throwable>>...) // kotlin/Throws.<init>|<init>(kotlin.Array<out|kotlin.reflect.KClass<out|kotlin.Throwable>>...){}[1]
 
     final val exceptionClasses // kotlin/Throws.exceptionClasses|{}exceptionClasses[1]
         final fun <get-exceptionClasses>(): kotlin/Array<out kotlin.reflect/KClass<out kotlin/Throwable>> // kotlin/Throws.exceptionClasses.<get-exceptionClasses>|<get-exceptionClasses>(){}[1]
+}
+
+// Targets: [js, wasmJs, wasmWasi]
+open annotation class kotlin/WillBecomeValue : kotlin/Annotation { // kotlin/WillBecomeValue|null[0]
+    constructor <init>() // kotlin/WillBecomeValue.<init>|<init>(){}[0]
 }
 
 // Targets: [js, wasmJs, wasmWasi]
