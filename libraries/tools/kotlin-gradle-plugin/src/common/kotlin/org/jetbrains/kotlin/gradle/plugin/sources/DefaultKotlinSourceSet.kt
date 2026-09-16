@@ -15,6 +15,7 @@ import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.*
@@ -70,8 +71,15 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     override fun getName(): String = displayName
 
+    internal val npmDependenciesCollector: KotlinNpmDependenciesCollector =
+        KotlinNpmDependenciesCollector(project.objects)
+
+    private val dependencyHandler: KotlinDependencyHandler by lazy(LazyThreadSafetyMode.NONE) {
+        project.objects.DefaultKotlinDependencyHandler(this, project, npmDependenciesCollector)
+    }
+
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        project.objects.DefaultKotlinDependencyHandler(this, project).run(configure)
+        dependencyHandler.run(configure)
 
     override fun dependencies(configure: Action<KotlinDependencyHandler>) =
         dependencies { configure.execute(this) }

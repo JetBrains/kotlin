@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
@@ -39,10 +40,14 @@ internal class DefaultKotlinCompilationConfigurationsContainer(
 ) : KotlinCompilationConfigurationsContainer
 
 internal fun HasKotlinDependencies(
-    project: Project, compilationDependencyContainer: KotlinCompilationConfigurationsContainer
+    project: Project,
+    compilationDependencyContainer: KotlinCompilationConfigurationsContainer,
+    npmDependenciesCollector: KotlinNpmDependenciesCollector,
 ): HasKotlinDependencies = object : HasKotlinDependencies {
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        project.objects.DefaultKotlinDependencyHandler(this, project).run(configure)
+        project.objects
+            .DefaultKotlinDependencyHandler(this, project, npmDependenciesCollector)
+            .run(configure)
 
     override fun dependencies(configure: Action<KotlinDependencyHandler>) =
         dependencies { configure.execute(this) }
