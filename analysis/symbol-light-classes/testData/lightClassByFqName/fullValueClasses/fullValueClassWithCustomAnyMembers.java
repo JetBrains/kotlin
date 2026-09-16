@@ -13,6 +13,8 @@ public final class ValueClass /* pack.ValueClass*/ {
   @java.lang.Override()
   public int hashCode();//  hashCode()
 
+  public  ValueClass(int, int);//  .ctor(int, int)
+
   public final int getFirst();//  getFirst()
 
   public final int getSecond();//  getSecond()

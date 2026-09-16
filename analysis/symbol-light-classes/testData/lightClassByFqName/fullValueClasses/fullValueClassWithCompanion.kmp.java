@@ -8,9 +8,18 @@ public final class StringWrapper /* pack.StringWrapper*/ {
   private final int n;
 
   @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+
+  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getS();//  getS()
 
+  public  StringWrapper(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String, int)
+
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
   public final int getN();//  getN()
+
+  public int hashCode();//  hashCode()
 
   public static final class Companion /* pack.StringWrapper.Companion*/ {
     @org.jetbrains.annotations.NotNull()

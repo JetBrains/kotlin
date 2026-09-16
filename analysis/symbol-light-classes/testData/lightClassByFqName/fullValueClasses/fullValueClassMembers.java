@@ -13,9 +13,31 @@ public final class ValueClass /* pack.ValueClass*/ {
   private static final int companionProperty = 0 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+
+  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() pack.OriginalClass getOriginal();//  getOriginal()
 
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() pack.ValueClass getPropertyWithValueClassType();//  getPropertyWithValueClassType()
+
+  public  ValueClass(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.OriginalClass, int);//  .ctor(@org.jetbrains.annotations.NotNull() pack.OriginalClass, int)
+
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
   public final int getCount();//  getCount()
+
+  public final int getProperty();//  getProperty()
+
+  public final int getPropertyWithAccessors();//  getPropertyWithAccessors()
+
+  public final void funWithSelfParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.ValueClass);//  funWithSelfParameter(@org.jetbrains.annotations.NotNull() pack.ValueClass)
+
+  public final void funWithoutParameters();//  funWithoutParameters()
+
+  public final void setPropertyWithAccessors(int);//  setPropertyWithAccessors(int)
+
+  public int hashCode();//  hashCode()
 
   public final class Inner /* pack.ValueClass.Inner*/ {
     private final int nested;

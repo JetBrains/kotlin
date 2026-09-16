@@ -918,7 +918,10 @@ private fun isNonMaterializedValueClassMember(symbol: KaCallableSymbol, owner: K
 }
 
 /**
- * The value class behind [type] after erasure, or `null` if [type] is not represented by a value class.
+ * The inline value class behind [type] after erasure, or `null` if [type] is not represented by an inline value class.
+ *
+ * Only the inline representation counts: a full value class is a regular class on the JVM, so it neither mangles names
+ * nor requires boxing, see [KaNamedClassSymbol.isInline].
  */
 context(_: KaSession)
 private fun valueClassSymbol(type: KaType): KaNamedClassSymbol? {
@@ -958,5 +961,6 @@ internal inline fun <reified T : KaClassSymbol> KtClassOrObject.createSymbolPoin
     symbol.createPointer() as KaSymbolPointer<T>
 }
 
+/** @see SymbolLightClassForClassOrObject.isKotlinValueClass */
 internal inline val SymbolLightClassBase.isKotlinValueClass: Boolean
     get() = this is SymbolLightClassForClassOrObject && isKotlinValueClass

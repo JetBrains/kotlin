@@ -1,4 +1,17 @@
 public abstract class AbstractValueClass /* pack.AbstractValueClass*/ {
+  public  AbstractValueClass(int);//  .ctor(int)
+
+  public abstract int getAbstractProperty();//  getAbstractProperty()
+
+  public abstract void abstractFunction();//  abstractFunction()
+
+  public final int getFinalProperty();//  getFinalProperty()
+
+  public final void finalFunction();//  finalFunction()
+
+  public int getOpenProperty();//  getOpenProperty()
+
+  public void openFunction();//  openFunction()
 }
 
 public final class FinalRegularClass /* pack.FinalRegularClass*/ extends pack.SealedValueClass {
@@ -33,9 +46,18 @@ public final class FinalValueClass /* pack.FinalValueClass*/ extends pack.Sealed
   @java.lang.Override()
   public void openFunction();//  openFunction()
 
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+
+  public  FinalValueClass(int, int);//  .ctor(int, int)
+
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
   public final int getFirst();//  getFirst()
 
   public final int getSecond();//  getSecond()
+
+  public int hashCode();//  hashCode()
 }
 
 public class OpenRegularClass /* pack.OpenRegularClass*/ extends pack.SealedValueClass {
@@ -62,6 +84,9 @@ public class OpenRegularClass /* pack.OpenRegularClass*/ extends pack.SealedValu
 }
 
 public abstract class SealedValueClass /* pack.SealedValueClass*/ extends pack.AbstractValueClass {
+  private  SealedValueClass(int);//  .ctor(int)
+
+  public abstract int getCode();//  getCode()
 }
 
 public final class ValueObject /* pack.ValueObject*/ extends pack.SealedValueClass {
@@ -76,4 +101,13 @@ public final class ValueObject /* pack.ValueObject*/ extends pack.SealedValueCla
 
   @java.lang.Override()
   public void abstractFunction();//  abstractFunction()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+
+  private  ValueObject();//  .ctor()
+
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
+  public int hashCode();//  hashCode()
 }
