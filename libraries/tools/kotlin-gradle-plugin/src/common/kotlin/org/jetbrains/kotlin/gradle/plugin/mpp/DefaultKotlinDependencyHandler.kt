@@ -10,6 +10,8 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.model.ObjectFactory
+import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependenciesCollector
+import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -19,7 +21,8 @@ import javax.inject.Inject
 
 internal open class DefaultKotlinDependencyHandler @Inject constructor(
     val parent: HasKotlinDependencies,
-    override val project: Project
+    override val project: Project,
+    val npmDependenciesCollector: KotlinNpmDependenciesCollector,
 ) : KotlinDependencyHandler {
     override fun api(dependencyNotation: Any): Dependency? =
         addDependencyByAnyNotation(parent.apiConfigurationName, dependencyNotation)
@@ -98,7 +101,13 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             objectFactory = project.objects,
             name = name,
             version = version,
-        )
+        ).also {
+            npmDependenciesCollector.add(
+                name = name,
+                version = version,
+                scope = KotlinNpmDependency.Scope.NORMAL,
+            )
+        }
 
     @Suppress("DEPRECATION")
     override fun npm(
@@ -108,7 +117,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
         directoryNpmDependency(
             name = name,
             directory = directory,
-            scope = NpmDependency.Scope.NORMAL,
+            scope = KotlinNpmDependency.Scope.NORMAL,
         )
 
     @Suppress("DEPRECATION")
@@ -130,7 +139,13 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             name = name,
             version = version,
             scope = NpmDependency.Scope.DEV
-        )
+        ).also {
+            npmDependenciesCollector.add(
+                name = name,
+                version = version,
+                scope = KotlinNpmDependency.Scope.DEV,
+            )
+        }
 
     @Suppress("DEPRECATION")
     override fun devNpm(
@@ -140,7 +155,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
         directoryNpmDependency(
             name = name,
             directory = directory,
-            scope = NpmDependency.Scope.DEV,
+            scope = KotlinNpmDependency.Scope.DEV,
         )
 
     @Suppress("DEPRECATION")
@@ -160,7 +175,13 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             name = name,
             version = version,
             scope = NpmDependency.Scope.OPTIONAL,
-        )
+        ).also {
+            npmDependenciesCollector.add(
+                name = name,
+                version = version,
+                scope = KotlinNpmDependency.Scope.OPTIONAL,
+            )
+        }
 
     @Suppress("DEPRECATION")
     override fun optionalNpm(
@@ -170,7 +191,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
         directoryNpmDependency(
             name = name,
             directory = directory,
-            scope = NpmDependency.Scope.OPTIONAL,
+            scope = KotlinNpmDependency.Scope.OPTIONAL,
         )
 
     @Suppress("DEPRECATION")
@@ -192,23 +213,44 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             name = name,
             version = version,
             scope = NpmDependency.Scope.PEER
-        )
+        ).also {
+            npmDependenciesCollector.add(
+                name = name,
+                version = version,
+                scope = KotlinNpmDependency.Scope.PEER,
+            )
+        }
 
     @Suppress("DEPRECATION")
     private fun directoryNpmDependency(
         name: String,
         directory: File,
-        scope: NpmDependency.Scope,
+        scope: KotlinNpmDependency.Scope,
     ): NpmDependency =
         directoryNpmDependency(
             objectFactory = project.objects,
             name = name,
             directory = directory,
-            scope = scope,
-        )
+            scope = scope.toDeprecatedScope(),
+        ).also {
+            npmDependenciesCollector.add(
+                name = name,
+                file = directory,
+                scope = scope,
+            )
+        }
 }
 
 internal fun ObjectFactory.DefaultKotlinDependencyHandler(
     parent: HasKotlinDependencies,
     project: Project,
-) = newInstance<DefaultKotlinDependencyHandler>(parent, project)
+    npmDependenciesCollector: KotlinNpmDependenciesCollector,
+) = newInstance<DefaultKotlinDependencyHandler>(parent, project, npmDependenciesCollector)
+
+private fun KotlinNpmDependency.Scope.toDeprecatedScope(): NpmDependency.Scope =
+    when (this) {
+        KotlinNpmDependency.Scope.NORMAL -> NpmDependency.Scope.NORMAL
+        KotlinNpmDependency.Scope.DEV -> NpmDependency.Scope.DEV
+        KotlinNpmDependency.Scope.OPTIONAL -> NpmDependency.Scope.OPTIONAL
+        KotlinNpmDependency.Scope.PEER -> NpmDependency.Scope.PEER
+    }
