@@ -196,12 +196,12 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - explicit subsets override selects requested subsets`() {
         run {
-            val result = runTestBuild(subsetsOverride = "SmokeTests")
+            val result = runTestBuild(subsetsOverride = "smoke")
             assertEquals(setOf(TestResult("PseudoTest", "smoke test")), result.executedTests)
         }
 
         run {
-            val result = runTestBuild(changed = arrayOf(Domain.Wasm), subsetsOverride = "SmokeTests,ContractTestsForWasm")
+            val result = runTestBuild(changed = arrayOf(Domain.Wasm), subsetsOverride = "smoke,contract:Wasm")
             assertEquals(
                 setOf(
                     TestResult("PseudoTest", "smoke test"),
@@ -212,26 +212,26 @@ class TestFederationFunctionalTest {
         }
 
         run {
-            val result = runTestBuild(mode = TestFederationMode.Full, subsetsOverride = "AllTests")
+            val result = runTestBuild(mode = TestFederationMode.Full, subsetsOverride = "all")
             assertEquals(allTests, result.executedTests)
         }
     }
 
     @Test
     fun `test - explicit subsets override works without enabling test federation`() {
-        val result = runTestBuild(subsetsOverride = "SmokeTests", testFederationEnabled = false)
+        val result = runTestBuild(subsetsOverride = "smoke", testFederationEnabled = false)
         assertEquals(setOf(TestResult("PseudoTest", "smoke test")), result.executedTests)
     }
 
     @Test
     fun `test - explicit subsets override via environment variable`() {
-        val result = runTestBuild(subsetsOverrideEnv = "SmokeTests", testFederationEnabled = false)
+        val result = runTestBuild(subsetsOverrideEnv = "smoke", testFederationEnabled = false)
         assertEquals(setOf(TestResult("PseudoTest", "smoke test")), result.executedTests)
     }
 
     @Test
     fun `test - explicit subsets override does not override smokeTestConfig RunAllTests`() {
-        val result = runTestBuild(subsetsOverride = "SmokeTests", smokeTestConfig = "RunAllTests")
+        val result = runTestBuild(subsetsOverride = "smoke", smokeTestConfig = "RunAllTests")
         assertEquals(allTests, result.executedTests)
     }
 

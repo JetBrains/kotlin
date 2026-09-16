@@ -59,7 +59,14 @@ internal val testFederationSubsets: Set<TestSubset>? = run {
 }
 
 private fun String.toTestSubsets(): Set<TestSubset> =
-    if (isBlank()) emptySet() else split(",").map { TestSubset.valueOf(it.trim()) }.toSet()
+    if (isBlank()) emptySet() else split(",").map { it.trim().toTestSubset() }.toSet()
+
+private fun String.toTestSubset(): TestSubset = when {
+    this == "all" -> TestSubset.AllTests
+    this == "smoke" -> TestSubset.SmokeTests
+    startsWith("contract:") -> TestSubset.valueOf("ContractTestsFor${removePrefix("contract:")}")
+    else -> error("Unknown test subset: '$this'")
+}
 
 
 /**

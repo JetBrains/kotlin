@@ -6,7 +6,20 @@
 package org.jetbrains.kotlin.testFederation
 
 fun Iterable<TestSubset>.toArgumentString(): String =
-    joinToString(",") { it.name }
+    joinToString(",") { it.toArgumentToken() }
 
 fun String.toTestSubsets(): Set<TestSubset> =
-    if (isBlank()) emptySet() else split(",").map { TestSubset.valueOf(it.trim()) }.toSet()
+    if (isBlank()) emptySet() else split(",").map { it.trim().toTestSubset() }.toSet()
+
+private fun TestSubset.toArgumentToken(): String = when (this) {
+    TestSubset.AllTests -> "all"
+    TestSubset.SmokeTests -> "smoke"
+    else -> "contract:${name.removePrefix("ContractTestsFor")}"
+}
+
+private fun String.toTestSubset(): TestSubset = when {
+    this == "all" -> TestSubset.AllTests
+    this == "smoke" -> TestSubset.SmokeTests
+    startsWith("contract:") -> TestSubset.valueOf("ContractTestsFor${removePrefix("contract:")}")
+    else -> error("Unknown TestSubset token: '$this'")
+}
