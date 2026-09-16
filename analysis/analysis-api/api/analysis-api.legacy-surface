@@ -566,12 +566,10 @@ org.jetbrains.kotlin.analysis.api.components.combinedMemberScope
 org.jetbrains.kotlin.analysis.api.components.commonSupertype
 org.jetbrains.kotlin.analysis.api.components.commonSupertype
 org.jetbrains.kotlin.analysis.api.components.compositeScope((KaScopeKind) -> Boolean)
-org.jetbrains.kotlin.analysis.api.components.computeExitPointSnapshot(List<KtExpression>)
 org.jetbrains.kotlin.analysis.api.components.computeMissingCases()
 org.jetbrains.kotlin.analysis.api.components.constructedClass
 org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 org.jetbrains.kotlin.analysis.api.components.containingFile
-org.jetbrains.kotlin.analysis.api.components.containingFileAnnotations
 org.jetbrains.kotlin.analysis.api.components.containingModule
 org.jetbrains.kotlin.analysis.api.components.containingSymbol
 org.jetbrains.kotlin.analysis.api.components.createExtensionCandidateChecker(KtFile, KtSimpleNameExpression, KtExpression?)
@@ -594,15 +592,12 @@ org.jetbrains.kotlin.analysis.api.components.expectedType
 org.jetbrains.kotlin.analysis.api.components.expressionType
 org.jetbrains.kotlin.analysis.api.components.fakeOverrideOriginal
 org.jetbrains.kotlin.analysis.api.components.fileScope
-org.jetbrains.kotlin.analysis.api.components.findKDoc()
-org.jetbrains.kotlin.analysis.api.components.findKDoc()
 org.jetbrains.kotlin.analysis.api.components.fullyExpandedType
 org.jetbrains.kotlin.analysis.api.components.functionType
 org.jetbrains.kotlin.analysis.api.components.functionalInterface
 org.jetbrains.kotlin.analysis.api.components.hasCommonSubtypeWith(KaType)
 org.jetbrains.kotlin.analysis.api.components.hasConflictingSignatureWith(KaFunctionSymbol, TargetPlatform)
 org.jetbrains.kotlin.analysis.api.components.hasFlexibleNullability
-org.jetbrains.kotlin.analysis.api.components.implicitReceiverSmartCasts
 org.jetbrains.kotlin.analysis.api.components.importableFqName
 org.jetbrains.kotlin.analysis.api.components.importingScopeContext
 org.jetbrains.kotlin.analysis.api.components.intersectionOverriddenSymbols
@@ -648,7 +643,6 @@ org.jetbrains.kotlin.analysis.api.components.isUnitType
 org.jetbrains.kotlin.analysis.api.components.isUsedAsExpression
 org.jetbrains.kotlin.analysis.api.components.javaGetterName
 org.jetbrains.kotlin.analysis.api.components.javaSetterName
-org.jetbrains.kotlin.analysis.api.components.klibSourceFileName
 org.jetbrains.kotlin.analysis.api.components.lowerBoundIfFlexible()
 org.jetbrains.kotlin.analysis.api.components.memberScope
 org.jetbrains.kotlin.analysis.api.components.namedClassSymbol
