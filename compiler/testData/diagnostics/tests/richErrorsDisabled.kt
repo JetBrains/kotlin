@@ -1,5 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -RichErrors
+// ALLOW_KOTLIN_PACKAGE
+// FILE: RichError.kt
+package kotlin
+
+abstract class RichError
+// FILE: test.kt
 
 <!UNSUPPORTED_FEATURE, WRONG_MODIFIER_TARGET!>error<!> class Foo
 <!UNSUPPORTED_FEATURE, WRONG_MODIFIER_TARGET!>error<!> object Bar

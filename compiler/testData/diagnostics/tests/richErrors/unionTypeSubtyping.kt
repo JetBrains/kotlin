@@ -1,4 +1,10 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// ALLOW_KOTLIN_PACKAGE
+// FILE: RichError.kt
+package kotlin
+
+abstract class RichError
+// FILE: test.kt
 
 <!WRONG_MODIFIER_TARGET!>error<!> class Foo
 <!WRONG_MODIFIER_TARGET!>error<!> class Bar

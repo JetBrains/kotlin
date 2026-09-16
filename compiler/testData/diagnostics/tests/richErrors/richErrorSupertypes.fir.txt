@@ -1,0 +1,34 @@
+FILE: RichError.kt
+    package kotlin
+
+    public abstract class RichError : R|kotlin/Any| {
+        public constructor(): R|kotlin/RichError| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: test.kt
+    public final error class E1 : R|kotlin/RichError| {
+        public constructor(): R|E1| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class E2 : R|kotlin/RichError| {
+        public constructor(): R|E2| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error object EO1 : R|kotlin/RichError| {
+        private constructor(): R|EO1| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error object EO2 : R|kotlin/RichError| {
+        private constructor(): R|EO2| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
