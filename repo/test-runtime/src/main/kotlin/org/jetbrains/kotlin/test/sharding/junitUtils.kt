@@ -32,7 +32,7 @@ private class HasMethodWithAnnotationClassValue(val annotationClass: Class<out A
             } == true) return true
 
         if (type.interfaces.orEmpty().any { superInterface ->
-                this[superInterface.superclass]
+                superInterface.superclass?.let { this[it] } ?: false
             }) return true
 
         if (type.declaredMethods.any { method ->
