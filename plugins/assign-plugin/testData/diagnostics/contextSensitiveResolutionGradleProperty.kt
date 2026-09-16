@@ -31,11 +31,11 @@ fun propertyRepro(propertyRepro: PropertyRepro, provider: Provider<Foo>) {
     propertyRepro.foo = Foo.BAR
     propertyRepro.foo = provider
 
-    propertyRepro.foo.set(<!UNRESOLVED_REFERENCE!>BAR<!>)
-    propertyRepro.foo <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> <!UNRESOLVED_REFERENCE!>BAR<!>
+    propertyRepro.foo.set(BAR)
+    propertyRepro.foo = BAR
     propertyRepro.foo <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> <!UNRESOLVED_REFERENCE!>UNRESOLVED<!>
 
     propertyRepro.apply {
-        foo <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> <!UNRESOLVED_REFERENCE!>BAZ<!>
+        foo = BAZ
     }
 }

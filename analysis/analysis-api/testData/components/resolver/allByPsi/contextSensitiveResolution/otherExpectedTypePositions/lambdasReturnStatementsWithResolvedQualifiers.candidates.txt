@@ -846,13 +846,13 @@ KtCallExpression(499,504): 'id(X)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MySealed
+        returnType = MySealed.X
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MySealed
+            returnType = MySealed.X
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -860,13 +860,13 @@ KtCallExpression(499,504): 'id(X)'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MySealed)
+        X -> (MySealed.X)
       }
       valueArgumentMapping = {
         X -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MySealed
+          returnType = MySealed.X
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -882,13 +882,13 @@ KtNameReferenceExpression(499,501): 'id'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MySealed
+        returnType = MySealed.X
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MySealed
+            returnType = MySealed.X
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -896,13 +896,13 @@ KtNameReferenceExpression(499,501): 'id'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MySealed)
+        X -> (MySealed.X)
       }
       valueArgumentMapping = {
         X -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MySealed
+          returnType = MySealed.X
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -943,13 +943,13 @@ KtCallExpression(513,518): 'id(Y)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MySealed
+        returnType = MySealed.Y
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MySealed
+            returnType = MySealed.Y
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -957,13 +957,13 @@ KtCallExpression(513,518): 'id(Y)'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MySealed)
+        X -> (MySealed.Y)
       }
       valueArgumentMapping = {
         Y -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MySealed
+          returnType = MySealed.Y
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -979,13 +979,13 @@ KtNameReferenceExpression(513,515): 'id'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MySealed
+        returnType = MySealed.Y
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MySealed
+            returnType = MySealed.Y
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -993,13 +993,13 @@ KtNameReferenceExpression(513,515): 'id'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MySealed)
+        X -> (MySealed.Y)
       }
       valueArgumentMapping = {
         Y -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MySealed
+          returnType = MySealed.Y
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -1765,7 +1765,7 @@ KtNameReferenceExpression(811,812): 'Y'
   NO_CANDIDATES
 
 KtCallExpression(823,885): 'myRun {'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1773,13 +1773,13 @@ KtCallExpression(823,885): 'myRun {'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MySealed.X
+        returnType = MySealed
         symbol = /myRun(b: () -> T): T
         valueParameters = [
           KaVariableSignature:
             name = b
             receiverType = null
-            returnType = () -> MySealed.X
+            returnType = () -> MySealed
             symbol = b: () -> T
             contextParameters = []
             callableId = null
@@ -1787,7 +1787,7 @@ KtCallExpression(823,885): 'myRun {'
         contextParameters = []
         callableId = /myRun
       typeArgumentsMapping = {
-        T -> (MySealed.X)
+        T -> (MySealed)
       }
       valueArgumentMapping = {
         {
@@ -1796,16 +1796,15 @@ KtCallExpression(823,885): 'myRun {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = () -> MySealed.X
+          returnType = () -> MySealed
           symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> myRun(b: () -> T): T>
     isInBestCandidates = true
 
 KtNameReferenceExpression(823,828): 'myRun'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1813,13 +1812,13 @@ KtNameReferenceExpression(823,828): 'myRun'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MySealed.X
+        returnType = MySealed
         symbol = /myRun(b: () -> T): T
         valueParameters = [
           KaVariableSignature:
             name = b
             receiverType = null
-            returnType = () -> MySealed.X
+            returnType = () -> MySealed
             symbol = b: () -> T
             contextParameters = []
             callableId = null
@@ -1827,7 +1826,7 @@ KtNameReferenceExpression(823,828): 'myRun'
         contextParameters = []
         callableId = /myRun
       typeArgumentsMapping = {
-        T -> (MySealed.X)
+        T -> (MySealed)
       }
       valueArgumentMapping = {
         {
@@ -1836,12 +1835,11 @@ KtNameReferenceExpression(823,828): 'myRun'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = () -> MySealed.X
+          returnType = () -> MySealed
           symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> myRun(b: () -> T): T>
     isInBestCandidates = true
 
 KtLambdaArgument(829,885): '{'

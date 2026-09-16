@@ -19,7 +19,7 @@ fun foo() {
     overloadedFunction(listOf("a", "b"), func = ::<!UNRESOLVED_REFERENCE!>referencedFunction<!>)
 
     // These correctly produce UNRESOLVED_REFERENCE
-    overloadedFunction(1, 2, func = <!UNRESOLVED_REFERENCE!>itIsNotEvenDecalredButAlsoIsNotReferenced<!>)
+    <!NONE_APPLICABLE!>overloadedFunction<!>(1, 2, func = <!UNRESOLVED_REFERENCE!>itIsNotEvenDecalredButAlsoIsNotReferenced<!>)
     overloadedFunction(listOf(1, 2), func = <!UNRESOLVED_REFERENCE!>itIsNotEvenDecalredButAlsoIsNotReferenced<!>)
     <!NONE_APPLICABLE!>overloadedFunction<!>("a", "b", func = <!UNRESOLVED_REFERENCE!>itIsNotEvenDecalredButAlsoIsNotReferenced<!>)
     overloadedFunction(listOf("a", "b"), func = <!UNRESOLVED_REFERENCE!>itIsNotEvenDecalredButAlsoIsNotReferenced<!>)

@@ -37,8 +37,8 @@ fun propertyRepro(propertyRepro: PropertyRepro<Foo>, provider: Provider<Foo>) {
     propertyRepro.foo.set(provider)
     propertyRepro.foo.assign(Foo.BAR)
 
-    propertyRepro.foo.set(<!UNRESOLVED_REFERENCE!>BAR<!>)
-    propertyRepro.foo.assign(<!UNRESOLVED_REFERENCE!>BAR<!>)
+    propertyRepro.foo.set(BAR)
+    propertyRepro.foo.assign(BAR)
     propertyRepro.foo.set(<!UNRESOLVED_REFERENCE!>UNRESOLVED<!>)
 }
 

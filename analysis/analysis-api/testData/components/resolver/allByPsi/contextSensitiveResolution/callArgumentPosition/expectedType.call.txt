@@ -1033,13 +1033,13 @@ KtCallExpression(1089,1108): 'id(InheritorObject)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -1047,13 +1047,13 @@ KtCallExpression(1089,1108): 'id(InheritorObject)'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MyClass)
+        X -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -1068,13 +1068,13 @@ KtNameReferenceExpression(1089,1091): 'id'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -1082,13 +1082,13 @@ KtNameReferenceExpression(1089,1091): 'id'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MyClass)
+        X -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -1390,13 +1390,13 @@ KtCallExpression(1167,1186): 'id(InheritorObject)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -1404,13 +1404,13 @@ KtCallExpression(1167,1186): 'id(InheritorObject)'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MyClass)
+        X -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -1425,13 +1425,13 @@ KtNameReferenceExpression(1167,1169): 'id'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -1439,13 +1439,13 @@ KtNameReferenceExpression(1167,1169): 'id'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MyClass)
+        X -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -1630,80 +1630,74 @@ KtNameReferenceExpression(1250,1265): 'InheritorObject'
   null
 
 KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testTypeParam(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testTypeParam
-        typeArgumentsMapping = {
-          T -> (ERROR CLASS: Cannot infer argument for type parameter T)
-        }
-        valueArgumentMapping = {
-          InheritorObject -> (KaVariableSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testTypeParam(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
             name = instance
             receiverType = null
-            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            returnType = MyClass.InheritorObject
             symbol = instance: T
             contextParameters = []
-            callableId = null)
-        }
-    ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParam>
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testTypeParam
+      typeArgumentsMapping = {
+        T -> (MyClass.InheritorObject)
+      }
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = instance
+          receiverType = null
+          returnType = MyClass.InheritorObject
+          symbol = instance: T
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1272,1285): 'testTypeParam'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testTypeParam(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testTypeParam
-        typeArgumentsMapping = {
-          T -> (ERROR CLASS: Cannot infer argument for type parameter T)
-        }
-        valueArgumentMapping = {
-          InheritorObject -> (KaVariableSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testTypeParam(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
             name = instance
             receiverType = null
-            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            returnType = MyClass.InheritorObject
             symbol = instance: T
             contextParameters = []
-            callableId = null)
-        }
-    ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParam>
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testTypeParam
+      typeArgumentsMapping = {
+        T -> (MyClass.InheritorObject)
+      }
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = instance
+          receiverType = null
+          returnType = MyClass.InheritorObject
+          symbol = instance: T
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(1285,1302): '(InheritorObject)'
   null
@@ -1712,9 +1706,7 @@ KtValueArgument(1286,1301): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1286,1301): 'InheritorObject'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
+  null
 
 KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
   KaSimpleCallResolutionError:
@@ -1752,7 +1744,7 @@ KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParamWithMultipleBound>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'MyClass & OtherI' was expected.>
 
 KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
   KaSimpleCallResolutionError:
@@ -1790,7 +1782,7 @@ KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParamWithMultipleBound>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'MyClass & OtherI' was expected.>
 
 KtValueArgumentList(1337,1354): '(InheritorObject)'
   null
@@ -1799,85 +1791,77 @@ KtValueArgument(1338,1353): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1338,1353): 'InheritorObject'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
+  null
 
 KtCallExpression(1359,1409): 'testDefinitelyNotNullIntersection(InheritorObject)'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T & Any
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testDefinitelyNotNullIntersection
-        typeArgumentsMapping = {
-          T -> (ERROR CLASS: Cannot infer argument for type parameter T)
-        }
-        valueArgumentMapping = {
-          InheritorObject -> (KaVariableSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
             name = instance
             receiverType = null
-            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            returnType = MyClass.InheritorObject
             symbol = instance: T & Any
             contextParameters = []
-            callableId = null)
-        }
-    ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testDefinitelyNotNullIntersection>
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testDefinitelyNotNullIntersection
+      typeArgumentsMapping = {
+        T -> (MyClass.InheritorObject)
+      }
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = instance
+          receiverType = null
+          returnType = MyClass.InheritorObject
+          symbol = instance: T & Any
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1359,1392): 'testDefinitelyNotNullIntersection'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T & Any
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testDefinitelyNotNullIntersection
-        typeArgumentsMapping = {
-          T -> (ERROR CLASS: Cannot infer argument for type parameter T)
-        }
-        valueArgumentMapping = {
-          InheritorObject -> (KaVariableSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
             name = instance
             receiverType = null
-            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            returnType = MyClass.InheritorObject
             symbol = instance: T & Any
             contextParameters = []
-            callableId = null)
-        }
-    ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testDefinitelyNotNullIntersection>
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testDefinitelyNotNullIntersection
+      typeArgumentsMapping = {
+        T -> (MyClass.InheritorObject)
+      }
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = instance
+          receiverType = null
+          returnType = MyClass.InheritorObject
+          symbol = instance: T & Any
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(1392,1409): '(InheritorObject)'
   null
@@ -1886,9 +1870,7 @@ KtValueArgument(1393,1408): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1393,1408): 'InheritorObject'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
+  null
 
 KtCallExpression(1414,1451): 'testFakeIntersection(InheritorObject)'
   KaSimpleCallResolutionError:
@@ -2100,7 +2082,7 @@ KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testRegularIntersection>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'SealedInterface & MyClass' was expected.>
 
 KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
   KaSimpleCallResolutionError:
@@ -2138,7 +2120,7 @@ KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testRegularIntersection>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'SealedInterface & MyClass' was expected.>
 
 KtValueArgumentList(1528,1545): '(InheritorObject)'
   null
@@ -2147,6 +2129,4 @@ KtValueArgument(1529,1544): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1529,1544): 'InheritorObject'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
+  null

@@ -57,7 +57,7 @@ FILE: kt81558gradlePropertyLike.kt
         R|<local>/propertyRepro|.R|SubstitutionOverride</PropertyRepro.foo: R|Property<Foo>|>|.R|SubstitutionOverride</Property.set: R|kotlin/Unit|>|(Q|Foo|.R|/Foo.BAR|)
         R|<local>/propertyRepro|.R|SubstitutionOverride</PropertyRepro.foo: R|Property<Foo>|>|.R|SubstitutionOverride</Property.set: R|kotlin/Unit|>|(R|<local>/provider|)
         R|<local>/propertyRepro|.R|SubstitutionOverride</PropertyRepro.foo: R|Property<Foo>|>|.R|/assign|<R|Foo|>(Q|Foo|.R|/Foo.BAR|)
-        R|<local>/propertyRepro|.R|SubstitutionOverride</PropertyRepro.foo: R|Property<Foo>|>|.<Ambiguity: set, [/Property.set, /Property.set]>#(<Unresolved name: BAR>#)
-        R|<local>/propertyRepro|.R|SubstitutionOverride</PropertyRepro.foo: R|Property<Foo>|>|.<Ambiguity: assign, [/assign, /assign]>#(<Unresolved name: BAR>#)
+        R|<local>/propertyRepro|.R|SubstitutionOverride</PropertyRepro.foo: R|Property<Foo>|>|.R|SubstitutionOverride</Property.set: R|kotlin/Unit|>|(Q|Foo|.R|/Foo.BAR|)
+        R|<local>/propertyRepro|.R|SubstitutionOverride</PropertyRepro.foo: R|Property<Foo>|>|.R|/assign|<R|Foo|>(Q|Foo|.R|/Foo.BAR|)
         R|<local>/propertyRepro|.R|SubstitutionOverride</PropertyRepro.foo: R|Property<Foo>|>|.<Ambiguity: set, [/Property.set, /Property.set]>#(<Unresolved name: UNRESOLVED>#)
     }

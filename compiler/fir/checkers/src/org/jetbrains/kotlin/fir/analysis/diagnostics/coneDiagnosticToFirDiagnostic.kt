@@ -187,6 +187,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
             // see EagerResolveOfCallableReferences
             is UnsuccessfulCallableReferenceArgument -> null
             is UnsuccessfulCollectionLiteralArgument -> null
+            is UnsuccessfulContextSensitiveResolutionArgument -> null
 
             is MultipleContextReceiversApplicableForExtensionReceivers ->
                 FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source, session)

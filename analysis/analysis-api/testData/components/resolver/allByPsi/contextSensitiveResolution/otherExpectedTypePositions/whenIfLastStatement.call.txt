@@ -747,112 +747,118 @@ KtNameReferenceExpression(772,788): 'ClassMemberAlias'
       typeArgumentsMapping = {}
 
 KtCallExpression(794,1278): 'receive<MyClass>('
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /receive(e: T): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          if (i == 0) {
+                      NestedInheritor
+                      NestedInheritor
+                      // KT-76400
+                  }
+                  else if (i == 1) {
+                      myClassProp
+                      myClassProp
+                      // KT-76400
+                  }
+                  else if (i == 2) {
+                      getNestedInheritor()
+                      getNestedInheritor()
+                  }
+                  else if (i == 3) {
+                      stringProp
+                      stringProp
+                      // KT-76400
+                  }
+                  else ClassMemberAlias -> (KaVariableSignature:
             name = e
             receiverType = null
             returnType = MyClass
             symbol = e: T
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyClass)
-      }
-      valueArgumentMapping = {
-        if (i == 0) {
-                    NestedInheritor
-                    NestedInheritor
-                    // KT-76400
-                }
-                else if (i == 1) {
-                    myClassProp
-                    myClassProp
-                    // KT-76400
-                }
-                else if (i == 2) {
-                    getNestedInheritor()
-                    getNestedInheritor()
-                }
-                else if (i == 3) {
-                    stringProp
-                    stringProp
-                    // KT-76400
-                }
-                else ClassMemberAlias -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass.NestedInheritor' was expected.>
 
 KtNameReferenceExpression(794,801): 'receive'
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /receive(e: T): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          if (i == 0) {
+                      NestedInheritor
+                      NestedInheritor
+                      // KT-76400
+                  }
+                  else if (i == 1) {
+                      myClassProp
+                      myClassProp
+                      // KT-76400
+                  }
+                  else if (i == 2) {
+                      getNestedInheritor()
+                      getNestedInheritor()
+                  }
+                  else if (i == 3) {
+                      stringProp
+                      stringProp
+                      // KT-76400
+                  }
+                  else ClassMemberAlias -> (KaVariableSignature:
             name = e
             receiverType = null
             returnType = MyClass
             symbol = e: T
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyClass)
-      }
-      valueArgumentMapping = {
-        if (i == 0) {
-                    NestedInheritor
-                    NestedInheritor
-                    // KT-76400
-                }
-                else if (i == 1) {
-                    myClassProp
-                    myClassProp
-                    // KT-76400
-                }
-                else if (i == 2) {
-                    getNestedInheritor()
-                    getNestedInheritor()
-                }
-                else if (i == 3) {
-                    stringProp
-                    stringProp
-                    // KT-76400
-                }
-                else ClassMemberAlias -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass.NestedInheritor' was expected.>
 
 KtTypeArgumentList(801,810): '<MyClass>'
   null
@@ -985,9 +991,7 @@ KtNameReferenceExpression(846,861): 'NestedInheritor'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtNameReferenceExpression(874,889): 'NestedInheritor'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
+  null
 
 KtContainerNodeForControlStructureBody(937,1272): 'if (i == 1) {'
   null
@@ -1102,9 +1106,24 @@ KtNameReferenceExpression(963,974): 'myClassProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
 KtNameReferenceExpression(987,998): 'myClassProp'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClassProp
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = myClassProp
+        receiverType = null
+        returnType = MyClass
+        symbol = val myClassProp: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.myClassProp
+      typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(1046,1272): 'if (i == 2) {'
   null
@@ -1352,9 +1371,24 @@ KtNameReferenceExpression(1175,1185): 'stringProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
 
 KtNameReferenceExpression(1198,1208): 'stringProp'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = stringProp
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = stringProp
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val stringProp: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.stringProp
+      typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(1256,1272): 'ClassMemberAlias'
   null
@@ -1607,9 +1641,7 @@ KtNameReferenceExpression(1333,1348): 'NestedInheritor'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtNameReferenceExpression(1361,1376): 'NestedInheritor'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
+  null
 
 KtContainerNodeForControlStructureBody(1424,1549): 'if (i == 1) {'
   null
@@ -1724,9 +1756,24 @@ KtNameReferenceExpression(1450,1461): 'myClassProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
 KtNameReferenceExpression(1474,1485): 'myClassProp'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClassProp
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = myClassProp
+        receiverType = null
+        returnType = MyClass
+        symbol = val myClassProp: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.myClassProp
+      typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(1533,1549): 'ClassMemberAlias'
   null

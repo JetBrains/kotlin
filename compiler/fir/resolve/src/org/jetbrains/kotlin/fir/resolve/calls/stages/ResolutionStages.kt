@@ -920,6 +920,23 @@ internal object EagerResolveOfCollectionLiteral :
     }
 }
 
+internal object EagerResolveOfContextSensitiveSimpleName :
+    EagerResolveOfAtomWithExpectedTypeAsStaticReceiver<ConeSimpleNameForContextSensitiveResolution>(
+        ContextSensitiveResolutionReceiverStrategy
+    ) {
+
+    override fun ConePostponedResolvedAtom.asRelevantAtom(): ConeSimpleNameForContextSensitiveResolution? =
+        this as? ConeSimpleNameForContextSensitiveResolution
+
+    context(sink: CheckerSink, context: ResolutionContext)
+    override fun resolve(
+        candidate: Candidate,
+        state: StateForAtomWithExpectedTypeAsStaticReceiver.NonTvExpected<ConeSimpleNameForContextSensitiveResolution>,
+    ): Unit = context(OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver(candidate, sink)) {
+        runContextSensitiveResolutionForAtom(state)
+    }
+}
+
 internal object DiscriminateSyntheticAndForbiddenProperties : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
     override suspend fun check(candidate: Candidate) {

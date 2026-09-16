@@ -18,7 +18,7 @@ fun foo(m: MyEnum) {
     }
 
     generate {
-        yield(X)
+        yield(<!UNRESOLVED_REFERENCE!>X<!>)
         yield(m)
     }
 

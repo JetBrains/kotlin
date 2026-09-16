@@ -52,7 +52,7 @@ fun other(b1: Boolean, b2: Boolean, subClass1: OtherClass.A, subClass2: OtherCla
         when {
             b1 -> subClass1
             b2 -> subClass2
-            else -> <!ARGUMENT_TYPE_MISMATCH!>C<!>
+            else -> C
         }
     )
 }
@@ -76,7 +76,7 @@ fun open2(b: Boolean, subClass: OpenClass.NestedInheritorOfOpenClass) {
     receiveOpenClass(
         when {
             b -> subClass
-            else -> <!UNRESOLVED_REFERENCE!>NestedInheritorOfOpenClass<!>
+            else -> NestedInheritorOfOpenClass
         }
     )
 }

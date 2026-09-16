@@ -99,10 +99,10 @@ FILE: typeVariableExpectedType.kt
         ^nullableEnum Q|MyEnum|.R|/MyEnum.Y|
     }
     public final fun test(b: R|kotlin/Boolean|, invA: R|Inv<MySealed>|): R|kotlin/Unit| {
-        lval p: R|MySealed| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(Q|MySealed.Left|, Q|MySealed.Right|)
-        lval q: R|MySealed| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(Q|MySealed.Right|, Q|MySealed.Left|)
+        lval p: R|MySealed| = R|/select|<R|MySealed|>(Q|MySealed.Left|, Q|MySealed.Right|)
+        lval q: R|MySealed| = R|/select|<R|MySealed|>(Q|MySealed.Right|, Q|MySealed.Left|)
         lval r: R|MySealed| = R|/select|<R|MySealed|>(Q|MySealed.Left|, Q|MySealed.Right|)
-        lval s: R|MySealed.Left| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(Q|MySealed.Left|, Q|MySealed.Right|)
+        lval s: R|MySealed| = R|/select|<R|MySealed|>(Q|MySealed.Left|, Q|MySealed.Right|)
         lval p2: R|MySealed| = when () {
             R|<local>/b| ->  {
                 Q|MySealed.Left|
@@ -130,7 +130,7 @@ FILE: typeVariableExpectedType.kt
             }
         }
 
-        lval s2: R|MySealed.Left| = when () {
+        lval s2: R|MySealed| = when () {
             R|<local>/b| ->  {
                 Q|MySealed.Left|
             }
@@ -139,24 +139,24 @@ FILE: typeVariableExpectedType.kt
             }
         }
 
-        lval i1: R|MyInterface| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySecondSealed.First|>(Q|MySecondSealed.First|, Q|MySecondSealed.Second|)
-        lval i2: R|MySecondSealed.First| = R|/selectI<Inapplicable(INAPPLICABLE): /selectI>#|<R|MySecondSealed.First|>(Q|MySecondSealed.Second|, Q|MySecondSealed.First|)
+        lval i1: R|MyInterface| = R|/select|<R|MySecondSealed|>(Q|MySecondSealed.First|, Q|MySecondSealed.Second|)
+        lval i2: R|MySecondSealed| = R|/selectI|<R|MySecondSealed|>(Q|MySecondSealed.Second|, Q|MySecondSealed.First|)
         lval i3: R|MyInterface| = when () {
             R|<local>/b| ->  {
                 Q|MySecondSealed.First|
             }
             else ->  {
-                <Unresolved name: Second>#
+                Q|MySecondSealed.Second|
             }
         }
 
-        lval t1: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySealed.Left|, Int(1), <Unresolved name: Right>#)
-        lval t2: R|it(kotlin/Comparable<it(kotlin/String & MyEnum)> & java/io/Serializable)| = R|/select3|<R|it(kotlin/Comparable<it(kotlin/String & MyEnum)> & java/io/Serializable)|>(String(), Q|MyEnum|.R|/MyEnum.X|, <Unresolved name: Y>#)
-        lval t3: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(<Unresolved name: Right>#, Q|MySealed.Left|, String())
-        lval t4: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySecondSealed.First|, Int(1), <Unresolved name: Second>#)
+        lval t1: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySealed.Left|, Int(1), Q|MySealed.Right|)
+        lval t2: R|it(kotlin/Comparable<it(kotlin/String & MyEnum)> & java/io/Serializable)| = R|/select3|<R|it(kotlin/Comparable<it(kotlin/String & MyEnum)> & java/io/Serializable)|>(String(), Q|MyEnum|.R|/MyEnum.X|, Q|MyEnum|.R|/MyEnum.Y|)
+        lval t3: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySealed.Right|, Q|MySealed.Left|, String())
+        lval t4: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySecondSealed.First|, Int(1), Q|MySecondSealed.Second|)
         lval t: R|MySealed| = R|/selectWithBound|<R|MySealed|>(Q|MySealed.Left|, Q|MySealed.Right|, R|<local>/invA|)
         lval u: R|MySealed| = R|/selectWithBound|<R|MySealed|>(Q|MySealed.Right|, Q|MySealed.Right|, R|<local>/invA|)
-        R|/takeF<Inapplicable(INAPPLICABLE): /takeF>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|MySealedGeneric.StringInheritor|)
+        R|/takeF|<R|kotlin/String|>(Q|MySealedGeneric.StringInheritor|)
         R|/takeFAndT|<R|kotlin/String|>(Q|MySealedGeneric.StringInheritor|, String())
         lval v: R|MyEnum| = when () {
             R|<local>/b| ->  {
