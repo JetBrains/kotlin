@@ -307,6 +307,10 @@ open annotation class kotlin/ParameterName : kotlin/Annotation { // kotlin/Param
         final fun <get-name>(): kotlin/String // kotlin/ParameterName.name.<get-name>|<get-name>(){}[0]
 }
 
+open annotation class kotlin/PlatformInline : kotlin/Annotation { // kotlin/PlatformInline|null[0]
+    constructor <init>() // kotlin/PlatformInline.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin/PublishedApi : kotlin/Annotation { // kotlin/PublishedApi|null[0]
     constructor <init>() // kotlin/PublishedApi.<init>|<init>(){}[0]
 }
@@ -363,6 +367,10 @@ open annotation class kotlin/Suppress : kotlin/Annotation { // kotlin/Suppress|n
 
 open annotation class kotlin/UnsafeVariance : kotlin/Annotation { // kotlin/UnsafeVariance|null[0]
     constructor <init>() // kotlin/UnsafeVariance.<init>|<init>(){}[0]
+}
+
+open annotation class kotlin/WillBecomeValue : kotlin/Annotation { // kotlin/WillBecomeValue|null[0]
+    constructor <init>() // kotlin/WillBecomeValue.<init>|<init>(){}[0]
 }
 
 final enum class kotlin.annotation/AnnotationRetention : kotlin/Enum<kotlin.annotation/AnnotationRetention> { // kotlin.annotation/AnnotationRetention|null[0]
