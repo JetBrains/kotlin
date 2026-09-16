@@ -18,14 +18,14 @@ const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
 
 /**
  * Reports whether Test Federation is enabled in the runtime configuration. Defaults to `false`.
- * The execution condition uses [testFederationMode] to select tests, not this flag directly.
+ * The discovery filter uses [testFederationMode] to select tests, not this flag directly.
  */
 val testFederationEnabled: Boolean =
     resolve(TEST_FEDERATION_ENABLED_KEY, TEST_FEDERATION_ENABLED_ENV_KEY)?.toBoolean() ?: false
 
 /**
  * Provides the configured test selection mode, or `null` when no mode is configured.
- * With no mode, the execution condition does not restrict test selection. Other test filters still apply.
+ * With no mode, the discovery filter does not restrict test selection. Other test filters still apply.
  */
 val testFederationMode: TestFederationMode? = run {
     val raw = resolve(TEST_FEDERATION_MODE_KEY, TEST_FEDERATION_MODE_ENV_KEY) ?: return@run null
