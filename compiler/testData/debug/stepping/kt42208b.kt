@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR
+// IGNORE_BACKEND_MULTI_MODULE: JS_IR
 // ^^^ KT-80626: Wrong source file for debuginfo in splitted stepping tests
 // FILE: test.kt
 
@@ -41,6 +41,6 @@ inline fun foo() = {
 // test1.kt:11 $box (19)
 // test1.kt:12 $box (1)
 // test.kt:7 $box (4)
-// test.kt:2 $box$lambda.invoke (70)
+// test.kt:2 $box$lambda.invoke (73)
 // test.kt:7 $box (4)
 // test.kt:8 $box (1)

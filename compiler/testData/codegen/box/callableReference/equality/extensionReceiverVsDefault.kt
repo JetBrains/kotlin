@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2_MULTI_MODULE: ANY
+// IGNORE_BACKEND_MULTI_MODULE: ANY
 // ^^^ Cannot split to two modules due to cyclic import
 // FILE: test.kt
 
