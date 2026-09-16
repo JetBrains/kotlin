@@ -50,7 +50,6 @@ internal val multiplatformAndroidSourceSetLayoutV2 = KotlinAndroidSourceSetLayou
         MultiplatformLayoutV2DefaultManifestLocationConfigurator
     ),
     checker = KotlinAndroidSourceSetLayoutChecker(
-        MultiplatformLayoutV2AgpRequirementChecker,
         MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker,
     )
 )
