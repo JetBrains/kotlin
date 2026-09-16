@@ -184,5 +184,10 @@ enum class DiagnosticKind {
 
     UnderscoreWithoutRenamingInDestructuring,
 
+    NullableErrorComponentInUnionType,
+    NullableNestedUnionType,
+    NonErrorComponentInNestedUnionType,
+    NonErrorComponentWrongPositionInUnionType,
+
     Other,
 }

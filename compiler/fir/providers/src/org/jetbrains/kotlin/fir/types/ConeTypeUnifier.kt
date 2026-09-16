@@ -73,7 +73,10 @@ object ConeTypeUnifier {
         for (richError in flattenedErrorTypes) {
             if (richError is ConeErrorType) return ConeErrorType(richError.diagnostic, delegatedType = unionType)
             if (richError.isMarkedNullable)
-                return ConeErrorType(ConeSimpleDiagnostic("Nullable error component"), delegatedType = unionType)
+                return ConeErrorType(
+                    ConeSimpleDiagnostic("Nullable error component", NullableErrorComponentInUnionType),
+                    delegatedType = unionType
+                )
         }
 
         return unionType
@@ -82,12 +85,10 @@ object ConeTypeUnifier {
     private fun ConeKotlinType.flattenRecursively(): List<ConeKotlinType> {
         return if (this is ConeUnionType) {
             if (!primaryType.isNothing) {
-                val diagnostic = ConeSimpleDiagnostic(
-                    when {
-                        primaryType.isNullableNothing -> "Nullable nested union type"
-                        else -> "Non error component in nested union type"
-                    }
-                )
+                val diagnostic = when {
+                    primaryType.isNullableNothing -> ConeSimpleDiagnostic("Nullable nested union type", NullableNestedUnionType)
+                    else -> ConeSimpleDiagnostic("Non-error component in nested union type", NonErrorComponentInNestedUnionType)
+                }
                 return [ConeErrorType(diagnostic, delegatedType = this)]
             }
             richErrorTypes.flatMap { it.flattenRecursively() }
