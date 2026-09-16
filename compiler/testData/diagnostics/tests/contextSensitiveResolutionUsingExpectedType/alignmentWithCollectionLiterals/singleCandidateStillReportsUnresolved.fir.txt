@@ -24,11 +24,11 @@ FILE: singleCandidateStillReportsUnresolved.kt
         ^id R|<local>/x|
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/bar|(<Unresolved name: Z>#)
-        R|/bar|(R|/id|<R|MyEnum3|>(<Unresolved name: Z>#))
+        R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(<Unresolved name: Z>#)
+        R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(R|/id|<R|MyEnum3|>(<Unresolved name: Z>#))
         R|/bar|(Q|MyEnum3|.R|/MyEnum3.X|)
-        R|/barTwo|(Q|MyEnum3|.R|/MyEnum3.X|, <Unresolved name: Z>#)
-        R|/barTwo|(<Unresolved name: Z>#, <Unresolved name: Z>#)
-        lval a: R|kotlin/Unit| = R|/bar|(<Unresolved name: Z>#)
-        lval b: R|kotlin/Unit| = R|/bar|(<Unresolved name: Z>#)
+        R|/barTwo<Inapplicable(INAPPLICABLE): /barTwo>#|(Q|MyEnum3|.R|/MyEnum3.X|, <Unresolved name: Z>#)
+        R|/barTwo<Inapplicable(INAPPLICABLE): /barTwo>#|(<Unresolved name: Z>#, <Unresolved name: Z>#)
+        lval a: R|kotlin/Unit| = R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(<Unresolved name: Z>#)
+        lval b: R|kotlin/Unit| = R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(<Unresolved name: Z>#)
     }

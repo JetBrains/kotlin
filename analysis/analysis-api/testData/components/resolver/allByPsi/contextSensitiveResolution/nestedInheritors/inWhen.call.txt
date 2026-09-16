@@ -484,78 +484,84 @@ KtBlockExpression(587,737): '{'
   null
 
 KtCallExpression(593,735): 'receiveMyClass('
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /receiveMyClass(m: MyClass): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveMyClass(m: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m
+              receiverType = null
+              returnType = MyClass
+              symbol = m: MyClass
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveMyClass
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          when {
+                      b1 -> subClass
+                      b2 -> NestedInheritor
+                      else -> OtherInheritor
+                  } -> (KaVariableSignature:
             name = m
             receiverType = null
             returnType = MyClass
             symbol = m: MyClass
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /receiveMyClass
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        when {
-                    b1 -> subClass
-                    b2 -> NestedInheritor
-                    else -> OtherInheritor
-                } -> (KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass
-          symbol = m: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiveMyClass>
 
 KtNameReferenceExpression(593,607): 'receiveMyClass'
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /receiveMyClass(m: MyClass): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveMyClass(m: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m
+              receiverType = null
+              returnType = MyClass
+              symbol = m: MyClass
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveMyClass
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          when {
+                      b1 -> subClass
+                      b2 -> NestedInheritor
+                      else -> OtherInheritor
+                  } -> (KaVariableSignature:
             name = m
             receiverType = null
             returnType = MyClass
             symbol = m: MyClass
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /receiveMyClass
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        when {
-                    b1 -> subClass
-                    b2 -> NestedInheritor
-                    else -> OtherInheritor
-                } -> (KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass
-          symbol = m: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiveMyClass>
 
 KtValueArgumentList(607,735): '('
   null
@@ -1610,6 +1616,4 @@ KtWhenEntry(1583,1617): 'else -> NestedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(1591,1617): 'NestedInheritorOfOpenClass'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritorOfOpenClass'.>
+  null

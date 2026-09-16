@@ -15,15 +15,88 @@ import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ConeSimpleNameForContextSensitiveResolution
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.UnsuccessfulContextSensitiveResolutionArgument
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.inference.ExpectedTypeAsStaticReceiverStrategy
+import org.jetbrains.kotlin.fir.resolve.inference.StateForAtomWithExpectedTypeAsStaticReceiver
+import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.asCone
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.model.safeSubstitute
+
+object ContextSensitiveResolutionReceiverStrategy : ExpectedTypeAsStaticReceiverStrategy<ConeSimpleNameForContextSensitiveResolution> {
+    context(resolutionContext: ResolutionContext)
+    override fun getClassRepresentative(type: ConeKotlinType): FirRegularClassSymbol? {
+        return type.getClassRepresentativeForContextSensitiveResolution(resolutionContext.session)
+    }
+
+    context(resolutionContext: ResolutionContext)
+    override fun isSuitableReceiver(atom: ConeSimpleNameForContextSensitiveResolution, classSymbol: FirRegularClassSymbol): Boolean {
+        // TODO: potentially might have performance cost (KT-89496)
+        return resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(atom.expression, classSymbol) != null
+    }
+}
+
+/**
+ * Resolves the CSR atom and applies the result to the system of an outer candidate:
+ * - on success, the resolved expression replaces the original one in the containing call
+ * - otherwise, the original (unresolved) expression remains and [UnsuccessfulContextSensitiveResolutionArgument] is reported
+ */
+context(context: ResolutionContext, outerCandidateContext: OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver)
+fun runContextSensitiveResolutionForAtom(
+    state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeSimpleNameForContextSensitiveResolution>,
+) {
+    val atom = state.atom
+    val containingCandidate = outerCandidateContext.containingCandidate
+    val csBuilder = containingCandidate.csBuilder
+    val substitutedExpectedType = csBuilder.buildCurrentSubstitutor(emptyMap()).asCone()
+        .safeSubstitute(csBuilder, atom.expectedType).asCone()
+
+    val classesForResolution: Collection<FirRegularClassSymbol> = when (state) {
+        is StateForAtomWithExpectedTypeAsStaticReceiver.SingleBound -> listOf(state.bound)
+        is StateForAtomWithExpectedTypeAsStaticReceiver.NonTvExpected -> listOfNotNull(state.bound)
+        is StateForAtomWithExpectedTypeAsStaticReceiver.MultipleBounds -> state.bounds
+        is StateForAtomWithExpectedTypeAsStaticReceiver.FallbackOnly -> emptyList()
+    }
+
+    val newExpression = context.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(atom.expression, classesForResolution)
+    val checkerSink = outerCandidateContext.checkerSink ?: CheckerSinkImpl(containingCandidate)
+
+    val atomToCheck = if (newExpression != null) {
+        atom.containingCallCandidate.setUpdatedArgumentFromContextSensitiveResolution(atom.expression, newExpression)
+        ConeResolutionAtom.createRawAtom(newExpression)
+    } else {
+        atom.fallbackSubAtom
+    }
+
+    ArgumentCheckingProcessor.resolveArgumentExpression(
+        csBuilder,
+        atomToCheck,
+        atom.containingCallCandidate,
+        substitutedExpectedType,
+        checkerSink,
+        context = context,
+        isReceiver = false,
+        isDispatch = false,
+    )
+
+    if (newExpression == null) {
+        outerCandidateContext.checkerSink?.reportDiagnostic(UnsuccessfulContextSensitiveResolutionArgument)
+    }
+}
 
 /**
  * @return not-nullable value when resolution was successful
@@ -32,8 +105,43 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
     originalExpression: FirPropertyAccessExpression,
     expectedType: ConeKotlinType,
 ): FirExpression? {
-    for (representativeClass in expectedType.getParentChainForContextSensitiveResolutionOfExpressions(session)) {
-        val additionalQualifier = representativeClass.toImplicitResolvedQualifierReceiver(
+    val representativeClass = expectedType.getClassRepresentativeForContextSensitiveResolution(session) ?: return null
+    return runContextSensitiveResolutionForPropertyAccess(originalExpression, representativeClass)
+}
+
+/**
+ * @return not-nullable value when resolution against at least one of the classes was successful,
+ * and all the successful results refer to the same declaration.
+ */
+private fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
+    originalExpression: FirPropertyAccessExpression,
+    representativeClasses: Collection<FirRegularClassSymbol>,
+): FirExpression? {
+    var result: FirExpression? = null
+    for (representativeClass in representativeClasses) {
+        val newExpression = runContextSensitiveResolutionForPropertyAccess(originalExpression, representativeClass) ?: continue
+        if (result == null) {
+            result = newExpression
+        } else if (result.obtainSymbol() != newExpression.obtainSymbol()) {
+            // Different bounds of the expected type variable provide different declarations for the name,
+            // there is no way to choose between them
+            return null
+        }
+    }
+
+    return result
+}
+
+/**
+ * This function is expected to be pure, so it should not modify given property access nor should it change any constraint system.
+ * @return not-nullable value when resolution was successful
+ */
+fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
+    originalExpression: FirPropertyAccessExpression,
+    representativeClass: FirRegularClassSymbol,
+): FirExpression? {
+    for (classToLookAt in representativeClass.getParentChainForContextSensitiveResolution(session, onlySealed = false)) {
+        val additionalQualifier = classToLookAt.toImplicitResolvedQualifierReceiver(
             this,
             originalExpression.source?.fakeElement(KtFakeSourceElementKind.QualifierForContextSensitiveResolution),
             definitelyNotCompanion = false,
@@ -54,6 +162,7 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
             isUsedAsReceiver = false, isUsedAsGetClassReceiver = false,
             callSite = newAccess,
             ResolutionMode.ContextIndependent,
+            isNestedIntoOuterCallResolution = true,
         )
 
 
@@ -65,7 +174,7 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
                     if (newExpression.extensionReceiver === additionalQualifier) {
                         // By KEEP, we have to filter here properties with extension receiver
                         if (!isValidContextSensitiveResolutionToExtension(
-                                newCalleeReference, newExpression.dispatchReceiver, representativeClass
+                                newCalleeReference, newExpression.dispatchReceiver, classToLookAt
                             )
                         ) {
                             return null

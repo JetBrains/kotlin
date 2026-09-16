@@ -278,6 +278,14 @@ class FirCallResolver(
         callSite: FirElement = qualifiedAccess,
         resolutionMode: ResolutionMode,
         outerCandidateForCollectionLiteral: Candidate? = null,
+        /**
+         * Might be `true` for CSR or CLs.
+         * Also, it seems like being always `true` doesn't change the semantics,
+         * but just helps to reuse TowerResolveManager/CandidateCollector.
+         *
+         * So, it's some sort of questionable performance optimization.
+         */
+        isNestedIntoOuterCallResolution: Boolean = outerCandidateForCollectionLiteral != null,
     ): ResolutionResult {
         assert(outerCandidateForCollectionLiteral == null || forceCallKind == null) {
             "We only force call kind in cases we resolve incorrect variable access as though it was function call (or vice versa)," +
@@ -313,16 +321,17 @@ class FirCallResolver(
             implicitInvokeMode = if (qualifiedAccess is FirImplicitInvokeCall) ImplicitInvokeMode.Regular else ImplicitInvokeMode.None,
             containingCandidateForCollectionLiteral = outerCandidateForCollectionLiteral,
         )
-        val resultCollector = if (outerCandidateForCollectionLiteral != null) {
-            // collection literals may be resolved during resolve of outer call, hence no resolve and fresh CandidateCollector instance
-            val collectorForCLCall = CandidateCollector(components, components.resolutionStageRunner)
-            val managerForCLCall = TowerResolveManager(collectorForCLCall)
+        val resultCollector = if (isNestedIntoOuterCallResolution) {
+            // Collection literals and CSR may be resolved during resolve of outer call,
+            // thus we use fresh instances instead of resetting.
+            val collectorForNestedCall = CandidateCollector(components, components.resolutionStageRunner)
+            val managerForNestedCall = TowerResolveManager(collectorForNestedCall)
 
             towerResolver.runResolver(
                 info,
                 resolutionContext,
-                collectorForCLCall,
-                managerForCLCall,
+                collectorForNestedCall,
+                managerForNestedCall,
             )
         } else {
             towerResolver.reset()
@@ -386,13 +395,22 @@ class FirCallResolver(
         isUsedAsGetClassReceiver: Boolean,
         callSite: FirElement,
         resolutionMode: ResolutionMode,
+        /**
+         * Might be `true` for CSR.
+         * Also, it seems like being always `true` doesn't change the semantics,
+         * but just helps to reuse TowerResolveManager/CandidateCollector.
+         *
+         * So, it's some sort of questionable performance optimization.
+         */
+        isNestedIntoOuterCallResolution: Boolean = false,
     ): FirExpression {
         return resolveVariableAccessAndSelectCandidateImpl(
             qualifiedAccess,
             isUsedAsReceiver,
             resolutionMode,
             isUsedAsGetClassReceiver,
-            callSite
+            callSite,
+            isNestedIntoOuterCallResolution,
         ) { true }
     }
 
@@ -402,6 +420,7 @@ class FirCallResolver(
         resolutionMode: ResolutionMode,
         isUsedAsGetClassReceiver: Boolean,
         callSite: FirElement = qualifiedAccess,
+        isNestedIntoOuterCallResolution: Boolean,
         acceptCandidates: (Collection<Candidate>) -> Boolean,
     ): FirExpression {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
@@ -417,6 +436,7 @@ class FirCallResolver(
                 isUsedAsGetClassReceiver = isUsedAsGetClassReceiver,
                 callSite = callSite,
                 resolutionMode = resolutionMode,
+                isNestedIntoOuterCallResolution = isNestedIntoOuterCallResolution,
             )
         }
 
@@ -475,7 +495,11 @@ class FirCallResolver(
             // Don't report FUNCTION_CALL_EXPECTED in name-based destructuring, it's not helpful.
             qualifiedAccess.source?.kind != KtFakeSourceElementKind.DesugaredNameBasedDestructuring
         ) {
-            val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function, resolutionMode = resolutionMode)
+            val newResult = collectCandidates(
+                qualifiedAccess, callee.name, CallKind.Function,
+                resolutionMode = resolutionMode,
+                isNestedIntoOuterCallResolution = isNestedIntoOuterCallResolution,
+            )
             if (newResult.candidates.isNotEmpty()) {
                 result = newResult
                 functionCallExpected = true

@@ -748,7 +748,7 @@ KtBlockExpression(351,376): 'yield(X)'
   NO_CANDIDATES
 
 KtCallExpression(351,359): 'yield(X)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -812,10 +812,11 @@ KtCallExpression(351,359): 'yield(X)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun yield(t: MyEnum): Boolean>
     isInBestCandidates = true
 
 KtNameReferenceExpression(351,356): 'yield'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -879,6 +880,7 @@ KtNameReferenceExpression(351,356): 'yield'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun yield(t: MyEnum): Boolean>
     isInBestCandidates = true
 
 KtValueArgumentList(356,359): '(X)'
@@ -888,25 +890,7 @@ KtValueArgument(357,358): 'X'
   NO_CANDIDATES
 
 KtNameReferenceExpression(357,358): 'X'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = X
-        isSafeNavigation = false
-        type = kotlin.Unit
-      extensionReceiver = null
-      isContextSensitive = true
-      kind = Read
-      signature = KaVariableSignature:
-        name = X
-        receiverType = null
-        returnType = MyEnum
-        symbol = /MyEnum.X
-        contextParameters = []
-        callableId = /MyEnum.X
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtCallExpression(368,376): 'yield(m)'
   KaApplicableCallCandidate:
@@ -1328,7 +1312,7 @@ KtNameReferenceExpression(429,430): 'X'
     isInBestCandidates = true
 
 KtCallExpression(443,476): 'generate {'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1363,11 +1347,10 @@ KtCallExpression(443,476): 'generate {'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <S> generate(g: suspend Controller<S>.() -> Unit): S>
     isInBestCandidates = true
 
 KtNameReferenceExpression(443,451): 'generate'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1402,7 +1385,6 @@ KtNameReferenceExpression(443,451): 'generate'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <S> generate(g: suspend Controller<S>.() -> Unit): S>
     isInBestCandidates = true
 
 KtLambdaArgument(452,476): '{'
@@ -1418,7 +1400,7 @@ KtBlockExpression(462,470): 'yield(X)'
   NO_CANDIDATES
 
 KtCallExpression(462,470): 'yield(X)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1481,10 +1463,11 @@ KtCallExpression(462,470): 'yield(X)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun yield(t: ??? (Unknown type for type parameter S)): Boolean>
     isInBestCandidates = true
 
 KtNameReferenceExpression(462,467): 'yield'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1547,6 +1530,7 @@ KtNameReferenceExpression(462,467): 'yield'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun yield(t: ??? (Unknown type for type parameter S)): Boolean>
     isInBestCandidates = true
 
 KtValueArgumentList(467,470): '(X)'

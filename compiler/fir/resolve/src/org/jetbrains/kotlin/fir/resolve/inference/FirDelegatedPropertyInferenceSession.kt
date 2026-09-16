@@ -11,12 +11,10 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeContextSensitiveAlternativeForQualifierAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeFunctionLikeAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
-import org.jetbrains.kotlin.fir.resolve.calls.ConeSimpleNameForContextSensitiveResolution
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -181,17 +179,12 @@ class FirDelegatedPropertyInferenceSession(
                         .analyze(parentSystem, atom, getCurrentCandidate(atom), withPCLASession)
                 }
 
-                override fun analyze(atom: ConeSimpleNameForContextSensitiveResolution) {
-                    callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
-                        .analyze(atom, getCurrentCandidate(atom))
-                }
-
                 override fun analyze(atom: ConeContextSensitiveAlternativeForQualifierAtom) {
                     callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
                         .analyze(atom, getCurrentCandidate(atom))
                 }
 
-                override fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>) {
+                override fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<*>) {
                     callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
                         .analyze(state, getCurrentCandidate(state.atom))
                 }

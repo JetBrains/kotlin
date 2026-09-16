@@ -402,7 +402,7 @@ KtNameReferenceExpression(302,306): 'arg2'
     isInBestCandidates = true
 
 KtCallExpression(312,329): 'receiveEnum(arg3)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -433,10 +433,11 @@ KtCallExpression(312,329): 'receiveEnum(arg3)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveEnum(arg: MyEnum): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(312,323): 'receiveEnum'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -467,6 +468,7 @@ KtNameReferenceExpression(312,323): 'receiveEnum'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveEnum(arg: MyEnum): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(323,329): '(arg3)'
