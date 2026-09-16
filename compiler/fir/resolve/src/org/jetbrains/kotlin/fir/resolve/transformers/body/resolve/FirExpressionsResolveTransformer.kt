@@ -841,11 +841,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             val referencedSymbol = reference.symbol
             if (referencedSymbol is FirFunctionSymbol<*> && (referencedSymbol.fir.isCopy || referencedSymbol.valueParameterSymbols.any { it.fir.isCopy })) {
-                return buildCopyFunCallExpression {
+                val copyFunCall = buildCopyFunCallExpression {
                     source = result.source
                     originalExpression = result
                     coneTypeOrNull = builtinTypes.unitType.coneType
                 }
+                dataFlowAnalyzer.exitCopyFunCall(copyFunCall)
+                return copyFunCall
             }
 
             return result.addSmartcastIfNeeded(data)

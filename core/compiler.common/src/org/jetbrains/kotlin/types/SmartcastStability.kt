@@ -39,4 +39,8 @@ enum class SmartcastStability(private val str: String, val description: String =
     // A delegated property.
     // Smart casts are not safe
     DELEGATED_PROPERTY("delegate", "delegated property"),
+
+    // Member variable regardless of its visibility
+    // Smart casts are not safe
+    COPY_PROPERTY("copy", "copy property that could be mutated concurrently"),
 }

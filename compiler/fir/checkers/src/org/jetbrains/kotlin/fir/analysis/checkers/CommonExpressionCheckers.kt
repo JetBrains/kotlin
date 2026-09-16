@@ -30,7 +30,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirExpressionWithErrorTypeChecker,
         FirInlineBodyResolvableExpressionChecker,
         ArrayEqualityCanBeReplacedWithContentEquals,
-        FirCopyPathChecker,
     )
 
     override val throwExpressionCheckers: Set<FirThrowExpressionChecker> = setOf(

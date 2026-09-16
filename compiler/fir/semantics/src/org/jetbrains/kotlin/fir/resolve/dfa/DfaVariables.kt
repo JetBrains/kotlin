@@ -122,7 +122,8 @@ private enum class PropertyStability(
     EXPECT_PROPERTY(SmartcastStability.EXPECT_PROPERTY),
     PROPERTY_WITH_GETTER(SmartcastStability.PROPERTY_WITH_GETTER),
     MUTABLE_PROPERTY(SmartcastStability.MUTABLE_PROPERTY),
-    DELEGATED_PROPERTY(SmartcastStability.DELEGATED_PROPERTY);
+    DELEGATED_PROPERTY(SmartcastStability.DELEGATED_PROPERTY),
+    COPY_PROPERTY(SmartcastStability.COPY_PROPERTY);
 }
 
 class RealVariable(
@@ -194,13 +195,18 @@ class RealVariable(
             !is FirVariable -> PropertyStability.PRIVATE_OR_CONST_VAL // named object or containing class for a static field reference
             is FirEnumEntry -> PropertyStability.PRIVATE_OR_CONST_VAL
             is FirErrorProperty -> PropertyStability.PRIVATE_OR_CONST_VAL
-            is FirValueParameter -> PropertyStability.PRIVATE_OR_CONST_VAL
+            is FirValueParameter -> when {
+                fir.isCopy -> PropertyStability.COPY_PROPERTY
+                else -> PropertyStability.PRIVATE_OR_CONST_VAL
+            }
             is FirBackingField -> when {
                 fir.isVal -> PropertyStability.PRIVATE_OR_CONST_VAL
+                fir.isCopy -> PropertyStability.COPY_PROPERTY
                 else -> PropertyStability.MUTABLE_PROPERTY
             }
             is FirField -> when {
                 fir.isVal -> PropertyStability.PUBLIC_FINAL_VAL
+                fir.isCopy -> PropertyStability.COPY_PROPERTY
                 else -> PropertyStability.MUTABLE_PROPERTY
             }
             is FirProperty -> when {
@@ -210,8 +216,10 @@ class RealVariable(
                 // will check that at each use site individually and mark the access as stable when possible.
                 fir.symbol is FirLocalPropertySymbol -> when {
                     fir.isVal -> PropertyStability.PRIVATE_OR_CONST_VAL
+                    fir.isCopy -> PropertyStability.COPY_PROPERTY
                     else -> PropertyStability.CAPTURED_VARIABLE
                 }
+                fir.isCopy -> PropertyStability.COPY_PROPERTY
                 fir.isVar -> PropertyStability.MUTABLE_PROPERTY
                 fir.isInstanceExtension -> PropertyStability.PROPERTY_WITH_GETTER
                 fir.getter !is FirDefaultPropertyAccessor? -> PropertyStability.PROPERTY_WITH_GETTER

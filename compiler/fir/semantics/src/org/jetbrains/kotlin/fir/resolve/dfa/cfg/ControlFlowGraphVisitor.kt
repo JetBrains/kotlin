@@ -411,6 +411,10 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitCopyCallFunExitNode(node: CopyFunCallExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     open fun visitFakeExpressionEnterNode(node: FakeExpressionTerminalNode, data: D): R {
         throw IllegalStateException("fake expressions should not appear in graphs")
     }

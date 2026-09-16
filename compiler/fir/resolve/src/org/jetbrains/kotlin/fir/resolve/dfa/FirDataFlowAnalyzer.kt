@@ -1130,6 +1130,10 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitSmartCastExpression(smartCastExpression).mergeIncomingFlow()
     }
 
+    fun exitCopyFunCall(copyFunCall: FirCopyFunCallExpression) {
+        graphBuilder.exitCopyFunCall(copyFunCall).mergeIncomingFlow()
+    }
+
     fun enterSafeCallAfterNullCheck(safeCall: FirSafeCallExpression) {
         graphBuilder.enterSafeCall(safeCall).mergeIncomingFlow { _, flow ->
             val receiverVariable = flow.rememberVariableIfUsedOrReal(safeCall.receiver) ?: return@mergeIncomingFlow
@@ -1501,7 +1505,7 @@ abstract class FirDataFlowAnalyzer(
 
         graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow { _, flow ->
             property ?: return@mergeIncomingFlow
-            if (property.isEffectivelyLocal || property.isVal) {
+            if (property.isEffectivelyLocal || property.isVal || property.isCopy) {
                 val variable = flow.rememberVariableWithoutUnwrappingAlias(assignment.lValue)
                 if (variable is RealVariable) {
                     logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
@@ -1564,6 +1568,16 @@ abstract class FirDataFlowAnalyzer(
                         // required for "reverse" implies - returns contracts, see KT-79220
                         (initializer is FirSmartCastExpression &&
                                 flow.unwrapVariable(propertyVariable).originalType != initializer.resolvedType)
+            }
+        }
+
+        fun SmartcastStability.goodForCopyVars(): Boolean =
+            this == SmartcastStability.STABLE_VALUE || this == SmartcastStability.CAPTURED_VARIABLE || this == SmartcastStability.COPY_PROPERTY
+
+        if (stability.goodForCopyVars()) {
+            val initializerVariable = flow.rememberVariableIfUsedOrReal(initializer)
+            if (initializerVariable is RealVariable && initializerVariable.getStability(flow, components.session).goodForCopyVars()) {
+                logicSystem.addPotentialAlias(flow, propertyVariable, initializerVariable)
             }
         }
 

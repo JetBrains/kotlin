@@ -288,3 +288,6 @@ fun ControlFlowGraphBuilder.createComparisonExpressionNode(fir: FirComparisonExp
 
 fun ControlFlowGraphBuilder.createSmartCastExitNode(fir: FirSmartCastExpression): SmartCastExpressionExitNode =
     SmartCastExpressionExitNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createCopyFunCallExitNode(fir: FirCopyFunCallExpression): CopyFunCallExitNode =
+    CopyFunCallExitNode(currentGraph, fir, levelCounter)

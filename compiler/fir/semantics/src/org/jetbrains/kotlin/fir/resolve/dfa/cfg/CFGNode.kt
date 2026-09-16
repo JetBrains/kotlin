@@ -1100,3 +1100,9 @@ class SmartCastExpressionExitNode(owner: ControlFlowGraph, override val fir: Fir
         return visitor.visitSmartCastExpressionExitNode(this, data)
     }
 }
+
+class CopyFunCallExitNode(owner: ControlFlowGraph, override val fir: FirCopyFunCallExpression, level: Int) : CFGNode<FirCopyFunCallExpression>(owner, level) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitCopyCallFunExitNode(this, data)
+    }
+}

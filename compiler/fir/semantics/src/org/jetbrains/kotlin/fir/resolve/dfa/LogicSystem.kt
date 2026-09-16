@@ -49,6 +49,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         } else {
             result.copyCommonAliases(flows)
         }
+        result.copyCommonAliases(flows)
         result.copyStatements(statementFlows, commonFlow, union)
         result.copyImplications(statementFlows)
         return result
@@ -58,6 +59,17 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         if (underlyingVariable == alias) return // x = x
         flow.directAliasMap[alias] = underlyingVariable
         flow.backwardsAliasMap[underlyingVariable] = flow.backwardsAliasMap[underlyingVariable]?.adding(alias) ?: persistentSetOf(alias)
+    }
+
+    fun addPotentialAlias(flow: MutableFlow, alias: RealVariable, underlyingVariable: RealVariable) {
+        if (underlyingVariable == alias) return
+        flow.potentialAliases.find { alias in it }?.let { flow.potentialAliases.replace(it, it - alias) }
+        val underlyingAliases = flow.potentialAliases.find { underlyingVariable in it }
+        if (underlyingAliases != null) {
+            flow.potentialAliases.replace(underlyingAliases, underlyingAliases + alias)
+        } else {
+            flow.potentialAliases.add(persistentSetOf(underlyingVariable, alias))
+        }
     }
 
     fun addOneWayAlias(flow: MutableFlow, alias: RealVariable, underlyingVariable: RealVariable) {
@@ -215,6 +227,26 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         for ([from, to] in candidates) {
             addLocalVariableAlias(this, from, to ?: continue)
         }
+    }
+
+    private fun MutableFlow.copyPotentialAliases(flows: Collection<PersistentFlow>) {
+        for (flow in flows) {
+            for (potentialAlias in flow.potentialAliases) {
+                val existingAlias = this.potentialAliases.find { existingAlias ->
+                    potentialAlias.any { it in existingAlias }
+                }
+                if (existingAlias != null) {
+                    this.potentialAliases.replace(existingAlias, existingAlias + potentialAlias)
+                } else {
+                    this.potentialAliases.add(potentialAlias)
+                }
+            }
+        }
+    }
+
+    fun <A> PersistentSet.Builder<PersistentSet<A>>.replace(old: PersistentSet<A>, new: PersistentSet<A>) {
+        remove(old)
+        if (new.isNotEmpty()) { add(new) }
     }
 
     private fun MutableFlow.copyStatements(flows: Collection<PersistentFlow>, commonFlow: PersistentFlow, union: Boolean) {

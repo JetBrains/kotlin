@@ -33,6 +33,8 @@ sealed class Flow(protected val previousFlow: PersistentFlow?) {
     internal abstract val realVariables: Map<RealVariable, RealVariable>
     internal abstract val memberVariables: Map<RealVariable, PersistentSet<RealVariable>>
 
+    internal abstract val potentialAliases: Set<PersistentSet<RealVariable>>
+
     val knownVariables: Set<DataFlowVariable>
         get() = approvedTypeStatements.keys + directAliasMap.keys
 
@@ -135,6 +137,7 @@ class PersistentFlow internal constructor(
     override val oneWayAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
     override val realVariables: PersistentMap<RealVariable, RealVariable>,
     override val memberVariables: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
+    override val potentialAliases: PersistentSet<PersistentSet<RealVariable>>,
 ) : Flow(previousFlow) {
     private val level: Int = if (previousFlow != null) previousFlow.level + 1 else 0
 
@@ -167,6 +170,7 @@ class PersistentFlow internal constructor(
         oneWayAliasMap.builder(),
         realVariables.builder(),
         memberVariables.builder(),
+        potentialAliases.builder(),
     )
 }
 
@@ -180,6 +184,7 @@ class MutableFlow internal constructor(
     override val oneWayAliasMap: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
     override val realVariables: PersistentMap.Builder<RealVariable, RealVariable>,
     override val memberVariables: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
+    override val potentialAliases: PersistentSet.Builder<PersistentSet<RealVariable>>,
 ) : Flow(previousFlow) {
     constructor() : this(
         null,
@@ -191,6 +196,7 @@ class MutableFlow internal constructor(
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
+        emptyPersistentHashSetBuilder(),
     )
 
     fun freeze(): PersistentFlow = PersistentFlow(
@@ -203,6 +209,7 @@ class MutableFlow internal constructor(
         oneWayAliasMap.build(),
         realVariables.build(),
         memberVariables.build(),
+        potentialAliases.build(),
     )
 
     // =====================

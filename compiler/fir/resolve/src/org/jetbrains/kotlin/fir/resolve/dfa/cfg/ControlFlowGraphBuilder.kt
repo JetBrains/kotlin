@@ -1470,6 +1470,10 @@ class ControlFlowGraphBuilder private constructor(
         return node
     }
 
+    fun exitCopyFunCall(copyFunCall: FirCopyFunCallExpression): CopyFunCallExitNode {
+        return createCopyFunCallExitNode(copyFunCall).also(this::addNewSimpleNode)
+    }
+
     fun exitResolvedQualifierNode(resolvedQualifier: FirResolvedQualifier): ResolvedQualifierNode {
         return createResolvedQualifierNode(resolvedQualifier).also(this::addNewSimpleNode)
     }
