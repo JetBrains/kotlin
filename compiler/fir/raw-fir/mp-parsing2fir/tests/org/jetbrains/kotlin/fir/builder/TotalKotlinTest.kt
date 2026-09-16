@@ -5,33 +5,18 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.TestDataPath
-import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.parsing.KotlinLightParser
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithoutTestData
 import org.junit.jupiter.api.Test
-import java.io.File
 import kotlin.system.measureNanoTime
 
 @TestDataPath("/")
 class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
-    private fun generateFirFromPsi(onlyPsi: Boolean, text: String, path: String) {
-        val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(path)), text) as KtFile
-        if (onlyPsi) {
-            DebugUtil.psiTreeToString(ktFile, false)
-        } else {
-            val firFile = ktFile.toFirFile()
-            FirRenderer().renderElementAsString(firFile)
-        }
-    }
-
     private fun generateFirFromLightTree(
         onlyLightTree: Boolean, converter: MultiplatformParsing2Fir,
         text: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping
@@ -75,57 +60,13 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
 
     }
 
-    private fun totalKotlinPsi(onlyPsi: Boolean) {
-        val path = System.getProperty("user.dir")
-        val root = File(path)
-        var counter = 0
-        var time = 0L
-
-        if (onlyPsi) println("Psi generation") else println("Fir from Psi converter")
-        println("BASE PATH: $path")
-        for (file in root.walkTopDown()) {
-            if (file.isDirectory) continue
-            /* TODO: fix this, please !!! */
-            if (file.path.contains("kotlin-native") ||
-                file.path.lowercase().contains("testdata") ||
-                file.path.contains("resources")
-            ) continue
-            if (file.extension != "kt") continue
-
-            @Suppress("UnstableApiUsage")
-            val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
-            time += measureNanoTime {
-                try {
-                    generateFirFromPsi(onlyPsi, text, file.path)
-                } catch (e: Exception) {
-                    throw IllegalStateException(file.path, e)
-                }
-            }
-
-            counter++
-        }
-        println("SUCCESS!")
-        println("TIME PER FILE: ${(time / counter) * 1e-6} ms, COUNTER: $counter")
-
-    }
-
     @Test
     fun testTotalKotlinOnlyLightTree() {
         totalKotlinLight(true)
     }
 
     @Test
-    fun testTotalKotlinOnlyPsi() {
-        totalKotlinPsi(true)
-    }
-
-    @Test
     fun testTotalKotlinFirFromLightTree() {
         totalKotlinLight(false)
-    }
-
-    @Test
-    fun testTotalKotlinFirFromPsi() {
-        totalKotlinPsi(false)
     }
 }
