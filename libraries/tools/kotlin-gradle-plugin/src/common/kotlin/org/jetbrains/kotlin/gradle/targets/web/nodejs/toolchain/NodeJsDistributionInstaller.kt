@@ -48,7 +48,6 @@ internal class NodeJsDistributionInstaller(
         version: NodeJsVersion,
         platform: BuildPlatform,
         downloadBaseUrl: String,
-        verifyDownload: Boolean,
         offline: Boolean,
     ): File {
         val distributionName = nodeJsDistributionName(version, platform)
@@ -67,7 +66,7 @@ internal class NodeJsDistributionInstaller(
 
         // The lock is taken beside the target directory, so that installations of different distributions
         // do not block each other.
-        val lockDir = installationsDir.resolve("$LOCKS_DIR_NAME/$distributionName")
+        val lockDir = installationsDir.resolve(".$distributionName.lock")
         KotlinInterprocessDirectoryLock(lockDir) { logger.info(it) }.withLock {
             // Another process may have completed the installation while the lock was being acquired.
             if (isCompleteInstallation(distributionPath, platform)) return@withLock
@@ -81,7 +80,7 @@ internal class NodeJsDistributionInstaller(
 
             try {
                 val archive = tempDir.resolve("$distributionName.${nodeJsArchiveExtension(platform)}")
-                download(version, platform, downloadBaseUrl, verifyDownload, archive)
+                download(version, platform, downloadBaseUrl, archive)
 
                 archiveOperations.extractNodeJs(fs, archive, tempDir)
 
@@ -90,10 +89,10 @@ internal class NodeJsDistributionInstaller(
                     "The Node.js distribution archive '${archive.name}' does not contain the expected " +
                             "'$distributionName' directory"
                 }
+                setUpNodeJs(logger, archive, unpacked, platform.isWindows, nodeJsExecutableFile(distributionPath, platform))
 
                 installationsDir.mkdirs()
-                Files.move(unpacked.toPath(), distributionPath.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                setUpNodeJs(logger, archive, distributionPath, platform.isWindows, nodeJsExecutableFile(distributionPath, platform))
+                Files.move(unpacked.toPath(), distributionPath.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
             } finally {
                 tempDir.deleteRecursively()
             }
@@ -111,7 +110,6 @@ internal class NodeJsDistributionInstaller(
         version: NodeJsVersion,
         platform: BuildPlatform,
         downloadBaseUrl: String,
-        verifyDownload: Boolean,
         target: File,
     ) {
         val versionUrl = "${downloadBaseUrl.trimEnd('/')}/v${version.normalized}"
@@ -120,15 +118,6 @@ internal class NodeJsDistributionInstaller(
         //TODO use
         logger.lifecycle("Downloading Node.js $version for $platform from $archiveUrl")
         downloadFile(archiveUrl, target)
-
-        if (verifyDownload) {
-            verifyChecksum(target, "$versionUrl/$CHECKSUMS_FILE_NAME")
-        } else {
-            logger.info(
-                "Skipping verification of '${target.name}': it is not downloaded from the official " +
-                        "Node.js distribution, so the source is trusted as configured"
-            )
-        }
     }
 
     /**
@@ -214,8 +203,6 @@ internal class NodeJsDistributionInstaller(
     }
 
     private companion object {
-        private const val CHECKSUMS_FILE_NAME = "SHASUMS256.txt"
-        private const val LOCKS_DIR_NAME = ".locks"
         private const val TEMP_DIR_SUFFIX = ".tmp"
         private const val DOWNLOAD_ATTEMPTS = 3
         private const val CONNECT_TIMEOUT_MS = 30_000

@@ -43,7 +43,7 @@ interface UsesNodeJsToolchainService : Task {
  * This is a part of the Kotlin Gradle Plugin public API - external users may provide their own implementation.
  * The Kotlin Gradle Plugin uses exactly one service, and ships the following built-in implementations:
  * - [DefaultNodeJsToolchainService] - downloads the official Node.js distribution.
- * - [NodeJsFromSystemPathToolchainService] - uses `node` available on the `PATH`.
+ * - [PreInstalledNodeJsToolchainService] - uses `node` available on the `PATH`.
  *
  * A custom implementation may delegate to one of the built-in ones.
  *
@@ -83,7 +83,7 @@ interface NodeJsToolchainService<P : NodeJsToolchainService.Parameters> : BuildS
 
             return when (project.kotlinPropertiesProvider.nodeJsToolchainMode) {
                 NodeJsToolchainMode.DOWNLOAD -> DefaultNodeJsToolchainService.registerIfAbsent(project)
-                NodeJsToolchainMode.SYSTEM_PATH -> NodeJsFromSystemPathToolchainService.registerIfAbsent(project)
+                NodeJsToolchainMode.SYSTEM_PATH -> PreInstalledNodeJsToolchainService.registerIfAbsent(project)
                 NodeJsToolchainMode.DISABLE -> DisabledNodeJsToolchainService.registerIfAbsent(project)
             }
         }
@@ -153,7 +153,7 @@ internal enum class NodeJsToolchainMode {
     DOWNLOAD,
 
     /**
-     * A pre-installed Node.js is used by [NodeJsFromSystemPathToolchainService], and nothing is downloaded.
+     * A pre-installed Node.js is used by [PreInstalledNodeJsToolchainService], and nothing is downloaded.
      */
     SYSTEM_PATH,
     DISABLE,

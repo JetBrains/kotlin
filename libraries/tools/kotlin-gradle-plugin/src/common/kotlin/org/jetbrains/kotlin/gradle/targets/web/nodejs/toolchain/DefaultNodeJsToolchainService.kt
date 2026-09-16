@@ -113,7 +113,6 @@ abstract class DefaultNodeJsToolchainService @Inject internal constructor(
                 version = it.version,
                 platform = it.platform,
                 downloadBaseUrl = downloadBaseUrl,
-                verifyDownload = downloadBaseUrl.trimEnd('/') == OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL,
                 offline = parameters.offline.getOrElse(false),
             )
         }
@@ -132,7 +131,7 @@ abstract class DefaultNodeJsToolchainService @Inject internal constructor(
                 spec.parameters.defaultPlatform.set(project.providers.detectBuildPlatform())
                 spec.parameters.installationDir.fileProvider(project.nodeJsToolchainInstallationDir)
                 spec.parameters.downloadBaseUrl.set(
-                    project.kotlinPropertiesProvider.nodeJsDefaultToolchainDownloadUrl.orElse(
+                    project.kotlinPropertiesProvider.nodeJsToolchainDefaultDownloadUrl.orElse(
                         OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL
                     )
                 )
@@ -155,8 +154,8 @@ abstract class DefaultNodeJsToolchainService @Inject internal constructor(
          */
         private val Project.nodeJsToolchainInstallationDir: Provider<File>
             get() {
-                if (kotlinPropertiesProvider.nodeJsDefaultToolchainInstallPath.isPresent) {
-                    return kotlinPropertiesProvider.nodeJsDefaultToolchainInstallPath.map { File(it) }
+                if (kotlinPropertiesProvider.nodeJsToolchainDefaultInstallPath.isPresent) {
+                    return kotlinPropertiesProvider.nodeJsToolchainDefaultInstallPath.map { File(it) }
                 }
 
                 return providers.provider { userKotlinPersistentDir.resolve(NODE_JS_TOOLCHAINS_DIR_NAME) }

@@ -12,39 +12,23 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsServiceName
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
-/**
- * A [NodeJsToolchainService] that uses a pre-installed Node.js instead of downloading one.
- *
- * Nothing is ever downloaded, which makes it a first-class mode for air-gapped, sandboxed
- * and containerised environments: it is enough to have `node` available on the `PATH`,
- * or to point [Parameters.command] at a Node.js executable.
- *
- * The pre-installed Node.js is trusted as configured and is not verified. Its actual version is detected
- * by running `node`, and a mismatch with the requested version is reported as a warning - the requested
- * version cannot be satisfied by any other means.
- */
-abstract class NodeJsFromSystemPathToolchainService @Inject internal constructor(
+abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
     private val objects: ObjectFactory,
     private val providers: ProviderFactory,
     private val execOperations: ExecOperations,
-) : NodeJsToolchainService<NodeJsFromSystemPathToolchainService.Parameters> {
+) : NodeJsToolchainService<PreInstalledNodeJsToolchainService.Parameters> {
 
     abstract class Parameters : NodeJsToolchainService.Parameters {
-
-        /**
-         * The Node.js executable to use.
-         *
-         * Defaults to `node`, which is resolved using the `PATH` environment variable.
-         */
-        abstract val command: Property<String>
+        abstract val nodeJsExecutable: Property<String>
     }
 
-    private val logger = Logging.getLogger(NodeJsFromSystemPathToolchainService::class.java)
+    private val logger = Logging.getLogger(PreInstalledNodeJsToolchainService::class.java)
 
     override fun request(configure: NodeJsRequest.() -> Unit): Provider<NodeJsExecutable> {
         val request = objects.newInstance<NodeJsRequest>()
@@ -54,21 +38,21 @@ abstract class NodeJsFromSystemPathToolchainService @Inject internal constructor
         val requestedPlatform = request.platform
 
         return providers.provider {
-            val command = parameters.command.getOrElse(DEFAULT_COMMAND)
-            val installed = detectInstalledNodeJs(command)
+            val command = parameters.nodeJsExecutable.get()
+            val (installedVersion, installedPlatform) = detectInstalledNodeJs(command)
 
             val requested = requestedVersion.orNull
-            if (requested != null && requested.normalized != installed.version.normalized) {
+            if (requested != null && requested.normalized != installedVersion.normalized) {
                 logger.warn(
-                    "w: Node.js ${installed.version} found by '$command' does not match the requested " +
+                    "w: Node.js $installedVersion found by '$command' does not match the requested " +
                             "version $requested. The requested version cannot be provisioned, because " +
                             "the Node.js toolchain is configured to use a pre-installed Node.js."
                 )
             }
             requestedPlatform.orNull?.let { platform ->
-                if (platform != installed.platform) {
+                if (platform != installedPlatform) {
                     logger.warn(
-                        "w: Node.js found by '$command' runs on ${installed.platform}, " +
+                        "w: Node.js found by '$command' runs on $installedPlatform, " +
                                 "but $platform was requested."
                     )
                 }
@@ -76,8 +60,8 @@ abstract class NodeJsFromSystemPathToolchainService @Inject internal constructor
 
             objects.newInstance<NodeJsExecutable>().apply {
                 executable.set(command)
-                version.set(installed.version)
-                platform.set(installed.platform)
+                version.set(installedVersion)
+                platform.set(installedPlatform)
             }
         }
     }
@@ -86,7 +70,7 @@ abstract class NodeJsFromSystemPathToolchainService @Inject internal constructor
      * Asks Node.js itself about its version and platform, which is both accurate and cheap - it is a single
      * process, and Node.js reports the very same `platform`/`arch` names as the distribution archives do.
      */
-    private fun detectInstalledNodeJs(command: String): InstalledNodeJs {
+    private fun detectInstalledNodeJs(command: String): Pair<NodeJsVersion, BuildPlatform> {
         val output = ByteArrayOutputStream()
         try {
             execOperations.exec { spec ->
@@ -102,29 +86,24 @@ abstract class NodeJsFromSystemPathToolchainService @Inject internal constructor
             )
         }
 
-        val parts = output.toString(Charsets.UTF_8.name()).trim().split(' ')
+        val parts = output.toString(Charsets.UTF_8.name()).trim().split(DELIMITER)
         check(parts.size == 3) { "Unexpected output of '$command -p $DETECT_SCRIPT': $parts" }
 
         val (version, os, arch) = parts
-        return InstalledNodeJs(
-            version = NodeJsVersion(version),
-            // Node.js reports Windows as `win32`, while the distributions are named `win`.
-            platform = BuildPlatform(if (os == "win32") WINDOWS_OS_NAME else os, arch),
-        )
+        return NodeJsVersion(version) to BuildPlatform(if (os == "win32") WINDOWS_OS_NAME else os, arch)
     }
 
-    private data class InstalledNodeJs(
-        val version: NodeJsVersion,
-        val platform: BuildPlatform,
-    )
-
     companion object {
-        private const val DEFAULT_COMMAND = "node"
+        private const val DELIMITER: Char = ' '
+        private const val DETECT_SCRIPT = "[process.versions.node, process.platform, process.arch].join(`$DELIMITER`)"
 
-        private const val DETECT_SCRIPT = "[process.versions.node, process.platform, process.arch].join(' ')"
-
-        internal fun registerIfAbsent(project: Project): Provider<NodeJsFromSystemPathToolchainService> {
-            return project.gradle.sharedServices.registerIfAbsent(nodeJsServiceName, NodeJsFromSystemPathToolchainService::class.java)
+        internal fun registerIfAbsent(project: Project): Provider<PreInstalledNodeJsToolchainService> {
+            return project.gradle.sharedServices.registerIfAbsent(
+                nodeJsServiceName,
+                PreInstalledNodeJsToolchainService::class.java
+            ) { spec ->
+                spec.parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainLocalPath.getOrElse("node"))
+            }
         }
     }
 }

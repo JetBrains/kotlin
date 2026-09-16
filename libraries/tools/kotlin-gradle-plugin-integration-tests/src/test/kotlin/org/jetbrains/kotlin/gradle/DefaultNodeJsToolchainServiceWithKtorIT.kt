@@ -335,10 +335,6 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
             ?.sorted()
             ?: emptyList()
 
-    private fun Path.installedExecutable(version: String, platform: BuildPlatform): Path =
-        resolve(platform.distributionName(version))
-            .resolve(if (platform.os == WINDOWS_OS) "node.exe" else "bin/node")
-
     /**
      * Runs [action] with a server that serves Node.js distributions the same way the official one does,
      * at `http://localhost:<port>/dist/v<version>/<archive name>`.
@@ -476,6 +472,7 @@ private fun unixDistributionArchive(rootDirName: String): ByteArray {
 private fun windowsDistributionArchive(rootDirName: String): ByteArray {
     val archive = ByteArrayOutputStream()
     ZipOutputStream(archive).use { zip ->
+        zip.addEntry("$rootDirName/bin/node", NODE_JS_STUB)
         zip.addEntry("$rootDirName/node.exe", NODE_JS_STUB)
         zip.addEntry("$rootDirName/npm.cmd", "")
         zip.addEntry("$rootDirName/node_modules/npm/bin/npm-cli.js", NPM_CLI_STUB)
