@@ -9,23 +9,14 @@ import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaExpressionInformationProvider : KaSessionComponent {
-    /**
-     * The [symbol][KaCallableSymbol] of the callable which the given [KtReturnExpression] returns from.
-     */
-    @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", ReplaceWith("resolveSymbol()"), level = DeprecationLevel.ERROR)
-    @KaIdeApi
-    public val KtReturnExpression.targetSymbol: KaCallableSymbol?
-
     /**
      * Computes the missing cases of the given [KtWhenExpression].
      *
@@ -240,21 +231,6 @@ public sealed class KaWhenMissingCase {
     @KaIdeApi
     public object UnknownCase : KaWhenMissingCase()
 }
-
-/**
- * The [symbol][KaCallableSymbol] of the callable which the given [KtReturnExpression] returns from.
- */
-@Deprecated(
-    "The API is obsolete. Use `resolveSuccessfulSymbol()` instead.",
-    ReplaceWith("resolveSuccessfulSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"),
-    level = DeprecationLevel.ERROR,
-)
-@KaIdeApi
-@KaContextParameterApi
-context(session: KaSession)
-public val KtReturnExpression.targetSymbol: KaCallableSymbol?
-    @Suppress("DEPRECATION_ERROR")
-    get() = with(session) { targetSymbol }
 
 /**
  * Computes the missing cases of the given [KtWhenExpression].
