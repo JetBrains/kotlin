@@ -48,7 +48,7 @@ internal class KaFirSyntheticPropertySetterSymbol(
     override val isExtension: Boolean
         get() = withValidityAssertion { firSymbol.isExtension }
 
-    @Deprecated("Use `isCustom` instead", replaceWith = ReplaceWith("isCustom"))
+    @Deprecated("Use `isNotDefault` instead", replaceWith = ReplaceWith("isNotDefault"))
     override val hasBody: Boolean
         get() = withValidityAssertion { firSymbol.fir.hasBody }
 
