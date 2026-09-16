@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -22,21 +20,3 @@ public interface KaSourceProvider : KaSessionComponent {
     @KaNonPublicApi
     public val KaDeclarationSymbol.klibSourceFileName: String?
 }
-
-/**
- * The source file name for the given [KtDeclaration] located in a Kotlin library (klib), or `null` if the declaration is not located in
- * a klib, or when the source file name is not available.
- */
-@KaNonPublicApi
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "this.klibSourceFileName",
-        "org.jetbrains.kotlin.analysis.api.symbols.klibSourceFileName",
-    ),
-    level = DeprecationLevel.ERROR,
-)
-@KaContextParameterApi
-context(session: KaSession)
-public val KaDeclarationSymbol.klibSourceFileName: String?
-    get() = with(session) { klibSourceFileName }
