@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsGenerator
 import org.jetbrains.kotlin.generators.builtins.numbers.primitives.NativePrimitivesGenerator.Companion.setAsExternal
 import org.jetbrains.kotlin.generators.builtins.numbers.primitives.WasmPrimitivesGenerator.Companion.implementAsIntrinsic
+import org.jetbrains.kotlin.generators.builtins.numbers.primitives.WasmPrimitivesGenerator.Companion.associativeOpAnnotation
 import org.jetbrains.kotlin.generators.builtins.numbers.primitives.WasmPrimitivesGenerator.Companion.implementedAsIntrinsic
 import java.io.PrintWriter
 
@@ -242,14 +243,17 @@ class WasmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedAnd() {
+        annotations += associativeOpAnnotation
         implementAsIntrinsic(PrimitiveType.BOOLEAN, methodName)
     }
 
     override fun MethodBuilder.modifyGeneratedOr() {
+        annotations += associativeOpAnnotation
         implementAsIntrinsic(PrimitiveType.BOOLEAN, methodName)
     }
 
     override fun MethodBuilder.modifyGeneratedXor() {
+        annotations += associativeOpAnnotation
         implementAsIntrinsic(PrimitiveType.BOOLEAN, methodName)
     }
 

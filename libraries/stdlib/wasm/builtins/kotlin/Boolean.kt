@@ -29,6 +29,7 @@ public actual class Boolean private constructor(private val value: Boolean) : Co
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.wasm.internal.AssociativeOp
     @WasmOp(WasmOp.I32_AND)
     public actual infix fun and(other: Boolean): Boolean =
         implementedAsIntrinsic
@@ -38,12 +39,14 @@ public actual class Boolean private constructor(private val value: Boolean) : Co
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.wasm.internal.AssociativeOp
     @WasmOp(WasmOp.I32_OR)
     public actual infix fun or(other: Boolean): Boolean =
         implementedAsIntrinsic
 
     /** Performs a logical `xor` operation between this Boolean and the [other] one. */
     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.wasm.internal.AssociativeOp
     @WasmOp(WasmOp.I32_XOR)
     public actual infix fun xor(other: Boolean): Boolean =
         implementedAsIntrinsic
