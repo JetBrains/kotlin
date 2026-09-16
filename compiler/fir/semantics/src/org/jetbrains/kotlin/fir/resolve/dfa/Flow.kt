@@ -125,6 +125,9 @@ sealed class Flow(protected val previousFlow: PersistentFlow?) {
     fun getVariableIfKnown(variable: RealVariable): RealVariable? {
         return realVariables[variable]
     }
+
+    fun potentialAliases(variable: RealVariable): Set<RealVariable>? =
+        potentialAliases.find { variable in it }
 }
 
 class PersistentFlow internal constructor(

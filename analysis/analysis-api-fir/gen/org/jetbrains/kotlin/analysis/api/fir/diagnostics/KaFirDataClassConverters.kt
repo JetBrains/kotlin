@@ -5874,6 +5874,12 @@ private fun KaDiagnosticConverterBuilder.addConversions125() {
             token,
         )
     }
+    add(FirErrors.COPY_PATH_ALIASED) { firDiagnostic ->
+        CopyPathAliasedImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions126() {

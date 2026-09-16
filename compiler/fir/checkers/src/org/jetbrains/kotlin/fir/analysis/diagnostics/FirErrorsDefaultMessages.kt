@@ -223,6 +223,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COPY_FUN_WITH_RET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COPY_FUN_TOO_MANY_ARGS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COPY_PATH_UNSUPPORTED_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COPY_PATH_WRONG_STEP
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COPY_PATH_ALIASED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ESCAPING_CAPTURED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER_ERROR
@@ -4140,6 +4141,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             COPY_PATH_WRONG_STEP,
             "This step of a copy subject is not a copy var"
+        )
+        map.put(
+            COPY_PATH_ALIASED,
+            "Copy var update is only allowed when a single local reference exists"
         )
     }
 }

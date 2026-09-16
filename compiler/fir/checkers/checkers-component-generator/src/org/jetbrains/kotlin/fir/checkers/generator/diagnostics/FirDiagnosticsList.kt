@@ -2513,6 +2513,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COPY_FUN_TOO_MANY_ARGS by error<PsiElement>()
         val COPY_PATH_UNSUPPORTED_EXPRESSION by error<PsiElement>()
         val COPY_PATH_WRONG_STEP by error<PsiElement>()
+        val COPY_PATH_ALIASED by error<PsiElement>()
     }
 }
 
