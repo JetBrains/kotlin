@@ -399,12 +399,24 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this is ConeClassLikeLookupTag && classId == StandardClassIds.Any
     }
 
+    override fun TypeConstructorMarker.isValueConstructor(): Boolean {
+        return this is ConeClassLikeLookupTag && classId == StandardClassIds.Value
+    }
+
+    override fun TypeConstructorMarker.isRichErrorConstructor(): Boolean {
+        return this is ConeClassLikeLookupTag && classId == StandardClassIds.RichError
+    }
+
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean {
         return this is ConeClassLikeLookupTag && classId == StandardClassIds.Nothing
     }
 
     override fun TypeConstructorMarker.isArrayConstructor(): Boolean {
         return this is ConeClassLikeLookupTag && classId == StandardClassIds.Array
+    }
+
+    override fun TypeConstructorMarker.isRichErrorClass(): Boolean {
+        return toFirRegularClass()?.isRichError == true
     }
 
     override fun KotlinTypeMarker.withNewTypeSince(languageFeature: Any, newType: KotlinTypeMarker): ConeKotlinType {
