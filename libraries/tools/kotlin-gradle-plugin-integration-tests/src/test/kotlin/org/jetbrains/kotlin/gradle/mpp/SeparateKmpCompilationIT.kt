@@ -726,7 +726,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     @DisplayName("commonMain type implementing Continuation<K> is usable from commonTest with JS+Wasm targets")
     @GradleTest
-    @Disabled("KT-89391")
     fun `commonMain Continuation subtype is usable from commonTest with js and wasm targets`(gradleVersion: GradleVersion) {
         project(
             "empty",
