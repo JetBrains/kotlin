@@ -83,13 +83,7 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
             }
         }
 
-        try {
-            generateExecutable(includedLibrary = mainKlibDir, cinteropKlibDir)
-            fail { "Should have failed" }
-        } catch (e: CompilationToolException) {
-            assertTrue("java.lang.NullPointerException" in e.reason)
-            assertTrue("IrLazilyBoundAnnotationImpl" in e.reason)
-        }
+        generateExecutable(includedLibrary = mainKlibDir, cinteropKlibDir)
     }
 
     private inline fun compileToCInteropLibrary(defFileContents: () -> String): Path {
