@@ -67,7 +67,7 @@ abstract class AbstractJsDiagnosticWithBackendTestBase(parser: FirParser) : Abst
             useHandlers(::KlibBackendDiagnosticsHandler)
         }
         defaultDirectives {
-            TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
+            TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.CODEGEN
         }
     }
 }

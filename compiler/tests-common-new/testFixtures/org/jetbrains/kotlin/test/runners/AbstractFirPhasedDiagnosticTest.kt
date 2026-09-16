@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.bind
 abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
-            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
+            LATEST_PHASE_IN_PIPELINE with TestPhase.CODEGEN
             LANGUAGE + "+EnableDfaWarningsInK2"
             DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
         }
