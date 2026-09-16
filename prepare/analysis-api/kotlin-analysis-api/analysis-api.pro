@@ -35,9 +35,6 @@
 # Used in script compilation (refineCompilationConfiguration.kt), requires intellij-analysis
 -dontwarn com.intellij.openapi.vfs.LocalFileSystem
 
-# Used in REPL
--dontwarn org.jline.**
-
 # Warnings in Guava on broken 'MethodHandle's
 -dontwarn com.google.common.hash.Hashing$Crc32cMethodHandles
 -dontwarn com.google.common.hash.ChecksumHashFunction$ChecksumMethodHandles

@@ -48,19 +48,13 @@
     <dependency>
       <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>kotlinx-serialization-json</artifactId>
-      <version>1.7.3</version>
+      <version>1.9.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
       <version>1</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jline</groupId>
-      <artifactId>jline</artifactId>
-      <version>3.24.1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

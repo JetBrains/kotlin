@@ -47,12 +47,6 @@ sourceSets {
 val runtimeJar = runtimeJar(embeddableCompiler()) {
     exclude("com/sun/jna/**")
     exclude("org/jetbrains/annotations/**")
-    // Only embedded into the kotlin-scripting-compiler-embeddable
-    exclude("org/jline/**")
-    exclude("META-INF/jline/**")
-    exclude("META-INF/maven/org.jline/**")
-    exclude("META-INF/services/org.jline.*")
-    exclude("META-INF/services/org/jline/**")
     exclude("META-INF/native-image/**")
     mergeServiceFiles()
     manifest {

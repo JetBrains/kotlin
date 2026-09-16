@@ -55,7 +55,6 @@
 -dontwarn org.imgscalr.Scalr**
 -dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionInputStream
 -dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionOutputStream
--dontwarn org.jline.builtins.Nano$Buffer
 -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 -dontwarn org.w3c.dom.ElementTraversal
 -dontwarn org.xerial.snappy.SnappyBundleActivator
@@ -330,17 +329,6 @@
 -keepclassmembers class com.intellij.openapi.extensions.ExtensionsArea {
     public void registerExtensionPoint(java.lang.String, java.lang.String, com.intellij.openapi.extensions.ExtensionPoint$Kind);
 }
-
-# used in REPL
-# TODO: pack jline directly to scripting-compiler jars instead
--keep class org.jline.reader.LineReaderBuilder { *; }
--keep class org.jline.reader.LineReader { *; }
--keep class org.jline.reader.History { *; }
--keep class org.jline.reader.EndOfFileException { *; }
--keep class org.jline.reader.UserInterruptException { *; }
--keep class org.jline.terminal.TerminalBuilder { *; }
--keep class org.jline.terminal.impl.jna.JnaSupportImpl  { *; }
--keep class org.jline.terminal.impl.jansi.JansiSupportImpl  { *; }
 
 # Keep rules for serializable classes (see https://www.guardsquare.com/manual/configuration/examples#serializable)
 -keepclassmembers class * implements java.io.Serializable {

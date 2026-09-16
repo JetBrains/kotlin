@@ -12,7 +12,6 @@ dependencies {
     implementation(libs.org.jetbrains.annotations)
     implementation(libs.kotlinx.serialization.json)
     implementation(commonDependency("javax.inject"))
-    implementation(variantOf(libs.jline) { classifier("jdk8") })
     implementation(commonDependency("org.fusesource.jansi", "jansi"))
     implementation(commonDependency("com.google.code.findbugs", "jsr305"))
     implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
