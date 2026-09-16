@@ -15,12 +15,12 @@ class AccessLevelPrivate {
 
     }
 
-    private open fun build(): AccessLevelPrivate {
+    open fun build(): AccessLevelPrivate {
       val tmp_0: Int = <this>.#x
       return AccessLevelPrivate(x = tmp_0)
     }
 
-    private open fun x(x: Int): AccessLevelPrivateBuilder {
+    open fun x(x: Int): AccessLevelPrivateBuilder {
       <this>.#x = x
       return <this>
     }
@@ -39,12 +39,20 @@ class AccessLevelPrivate {
       return AccessLevelPrivateBuilder()
     }
 
+    fun makeInternally(x: Int): AccessLevelPrivate {
+      return <this>.builder().x(x = x).build()
+    }
+
   }
 
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  fun rebuild(newX: Int): AccessLevelPrivate {
+    return Companion.builder().x(x = newX).build()
   }
 
 }
@@ -146,6 +154,8 @@ fun box(): String {
   assertEquals<String>(expected = user2.<get-name>(), actual = user3.<get-name>())
   assertEquals<Int>(expected = user2.<get-age>(), actual = user3.<get-age>())
   assertEquals<String?>(expected = user2.<get-info>(), actual = user3.<get-info>())
+  assertEquals<Int>(expected = 7, actual = Companion.makeInternally(x = 7).<get-x>())
+  assertEquals<Int>(expected = 8, actual = Companion.makeInternally(x = 7).rebuild(newX = 8).<get-x>())
   return "OK"
 }
 

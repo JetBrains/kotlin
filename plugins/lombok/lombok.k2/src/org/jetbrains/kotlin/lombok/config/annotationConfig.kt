@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.config
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArrayArgument
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.lombok.generators.hasJavaOrigin
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ACCESS
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME_CONFIG
@@ -363,15 +365,32 @@ object ConeLombokAnnotations {
         }
 
         /**
+         * The visibility of the functions generated *inside* the builder class - its setters and `build()` -
+         * which is not always the [accessLevel] the annotation asks for.
+         *
          * Mirrors Lombok behavior (https://projectlombok.org/features/Builder#small-print):
          *
          * > If setting the access level to `PROTECTED`, all methods generated inside the builder class are actually generated as `public`;
          * the meaning of the `protected` keyword is different inside the inner class, and the precise behavior that `PROTECTED` would indicate
          * (access by any source in the same package is allowed, as well as any subclasses *from the outer class, marked with `@Builder`* is not possible,
          * and marking the inner members `public` is as close as we can get.
+         *
+         * A Kotlin builder needs the same of `PRIVATE`, for a reason Lombok never had to state: Java lets a class
+         * reach a private member of its own nested class, which is what makes `@Builder(access = PRIVATE)` usable
+         * there, while Kotlin's `private` inside the builder class means that class and nothing else - leaving the
+         * annotated class unable to call the setters or `build()` of the very builder it asked for (KT-89027).
+         * Nothing is widened in practice: the builder class itself stays private, and its members can only be
+         * named where its type can. A Java class keeps Lombok's own output.
          */
-        val builderFunctionsAccessLevel: AccessLevel
-            get() = if (accessLevel == AccessLevel.PROTECTED) AccessLevel.PUBLIC else accessLevel
+        fun builderFunctionsVisibility(builderSymbol: FirBasedSymbol<*>): Visibility? {
+            val effectiveAccessLevel = when (accessLevel) {
+                AccessLevel.PROTECTED -> AccessLevel.PUBLIC
+                AccessLevel.PRIVATE -> if (builderSymbol.hasJavaOrigin) accessLevel else AccessLevel.PUBLIC
+                else -> accessLevel
+            }
+
+            return effectiveAccessLevel.toVisibility(builderSymbol)
+        }
     }
 
     class Builder(
