@@ -24,5 +24,5 @@ dependencies {
 }
 
 tasks.named<KotlinApiBuildTask>("apiBuild") {
-    inputJar.value(tasks.named<Jar>("jar").flatMap { it.archiveFile })
+    inputJar.value(tasks.named<org.gradle.jvm.tasks.Jar>("embeddableJar").flatMap { it.archiveFile })
 }
