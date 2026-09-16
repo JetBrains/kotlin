@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     embedded(project(":kotlin-scripting-compiler")) { isTransitive = false }
+    embedded(variantOf(libs.jline) { classifier("jdk8") }) { isTransitive = false }
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
     api(project(":kotlin-scripting-compiler-impl-embeddable"))
@@ -16,7 +17,9 @@ dependencies {
 
 publish()
 
-runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
+runtimeJar(rewriteDefaultJarDepsToShadedCompiler()) {
+    mergeServiceFiles()
+}
 
 sourcesJar()
 javadocJar()
