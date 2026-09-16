@@ -18,6 +18,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.WasmToolsPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
@@ -188,11 +189,6 @@ internal constructor() : DefaultTask() {
             .reversed()
 
     internal companion object {
-        /**
-         * Default `wasm-tools` executable, resolved from `PATH`.
-         */
-        const val WASM_TOOLS_EXECUTABLE = "wasm-tools"
-
         private const val EMBED_DIRECTORY_NAME = "embed"
 
         internal fun register(
@@ -202,10 +198,14 @@ internal constructor() : DefaultTask() {
         ): TaskProvider<WasmComponentExec> {
             val project = compilation.target.project
             val witDirectories = project.configurations.named(compilation.witConfigurationName)
+            val wasmTools = WasmToolsPlugin.applyWithEnvSpec(project)
             return project.registerTask(
                 name,
             ) {
-                it.executable.convention(WASM_TOOLS_EXECUTABLE)
+                it.executable.convention(wasmTools.executable)
+                with(wasmTools) {
+                    it.dependsOn(project.wasmToolsSetupTaskProvider)
+                }
                 it.witDirectory.from(project.layout.projectDirectory.dir(WIT_DIRECTORY_NAME))
                 it.witDirectory.from(witDirectories)
                 it.configuration()
