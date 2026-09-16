@@ -687,11 +687,12 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
 
                         if (superTypeRefs.isEmpty() && !classIsKotlinAny) {
                             val classIsKotlinNothing = symbol.classId == StandardClassIds.Nothing
+                            val defaultSuperTypeRef = if (calculatedModifiers.isErrorClass()) implicitRichErrorType else implicitAnyType
                             // kotlin.Nothing doesn't have `Any` supertype, but does have delegating constructor call to Any
                             if (!classIsKotlinNothing) {
-                                superTypeRefs += implicitAnyType
+                                superTypeRefs += defaultSuperTypeRef
                             }
-                            delegatedSuperTypeRef = implicitAnyType
+                            delegatedSuperTypeRef = defaultSuperTypeRef
                         }
 
                         this.superTypeRefs += superTypeRefs
