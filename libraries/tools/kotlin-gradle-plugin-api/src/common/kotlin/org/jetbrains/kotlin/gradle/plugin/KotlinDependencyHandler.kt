@@ -387,21 +387,25 @@ interface KotlinDependencyHandler : HasProject {
     ): Dependency
 
     /**
-     * Creates a dependency on the [NPM](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies) module.
-     * The name of the dependency is derived either from the `package.json` file located in the [directory] or the [directory] name itself.
-     *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * **Deprecated** - deriving the NPM dependency name from the [directory] is deprecated.
+     * Declare the name explicitly instead:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     implementation(npm(project.file("npm/is-odd-even")))
+     *     npm("is-odd-even", project.file("npm/is-odd-even"))
      * }
      * ```
      *
-     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     * Scheduled for removal in Kotlin 2.7.
      *
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) keyword)
+     * @return The declared NPM dependency, kept for backward compatibility; it must not be passed to a Gradle dependency scope.
      */
+    @Deprecated(
+        message = "Deriving the NPM dependency name from the directory is deprecated, declare the name explicitly",
+        replaceWith = ReplaceWith("""npm("dependency-name", directory)"""),
+        level = DeprecationLevel.WARNING,
+    )
     fun npm(
         directory: File,
     ): Dependency
