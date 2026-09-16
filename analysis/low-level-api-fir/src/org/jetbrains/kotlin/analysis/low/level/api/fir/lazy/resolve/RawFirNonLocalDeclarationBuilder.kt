@@ -42,8 +42,12 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     private val originalDeclaration: FirDeclaration,
     private val declarationToBuild: KtElement,
     private val declarationsToRebind: List<FirDeclaration>,
-    context: NonLocalFirBuilderContext,
-) : PsiRawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL, context) {
+) : PsiRawFirBuilder(
+    session = session,
+    baseScopeProvider = baseScopeProvider,
+    bodyBuildingMode = BodyBuildingMode.NORMAL,
+    context = NonLocalFirBuilderContext(originalDeclaration),
+) {
     companion object {
         fun buildWithSymbolRebind(
             session: FirSession,
@@ -79,15 +83,12 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         ): FirDeclaration {
             check(rootNonLocalDeclaration is KtDeclaration || rootNonLocalDeclaration is KtCodeFragment)
 
-            val originalDeclaration = designation.target as FirDeclaration
-            val delegatingContext = NonLocalFirBuilderContext(originalDeclaration)
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
-                originalDeclaration = originalDeclaration,
+                originalDeclaration = designation.target as FirDeclaration,
                 declarationToBuild = rootNonLocalDeclaration,
                 declarationsToRebind = declarationsToRebind,
-                context = delegatingContext,
             )
 
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
