@@ -291,40 +291,43 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = i
-        isSafeNavigation = false
-        type = OperatorHolder
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = OperatorHolder
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = enumArg
+              receiverType = null
+              returnType = MyEnum
+              symbol = enumArg: MyEnum
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /OperatorHolder.plus
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          InheritorObject -> (KaVariableSignature:
             name = enumArg
             receiverType = null
             returnType = MyEnum
             symbol = enumArg: MyEnum
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /OperatorHolder.plus
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = enumArg
-          receiverType = null
-          returnType = MyEnum
-          symbol = enumArg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /OperatorHolder.plus>
 
 KtNameReferenceExpression(358,359): 'i'
   KaSimpleCallResolutionSuccess:
@@ -344,40 +347,43 @@ KtNameReferenceExpression(358,359): 'i'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(360,361): '+'
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = i
-        isSafeNavigation = false
-        type = OperatorHolder
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = OperatorHolder
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = enumArg
+              receiverType = null
+              returnType = MyEnum
+              symbol = enumArg: MyEnum
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /OperatorHolder.plus
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          InheritorObject -> (KaVariableSignature:
             name = enumArg
             receiverType = null
             returnType = MyEnum
             symbol = enumArg: MyEnum
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /OperatorHolder.plus
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = enumArg
-          receiverType = null
-          returnType = MyEnum
-          symbol = enumArg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /OperatorHolder.plus>
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
   KaSimpleCallResolutionError:

@@ -74,15 +74,15 @@ FILE: boundsFromShallowDependencies.kt
         ^takeI R|<local>/x|
     }
     public final fun test(): R|kotlin/Unit| {
-        lval a: R|MySealed| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(Q|MySealed.Left|, R|/id|<R|MySealed.Left|>(Q|MySealed.Right|))
-        lval b: R|MySealed| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(R|/id|<R|MySealed.Left|>(Q|MySealed.Right|), Q|MySealed.Left|)
-        lval c: R|MySealed| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(Q|MySealed.Left|, R|/id|<R|MySealed.Left|>(R|/id|<R|MySealed.Left|>(Q|MySealed.Right|)))
-        lval d: R|MySealed| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(R|/id|<R|MySealed.Left|>(Q|MySealed.Left|), R|/id|<R|MySealed.Left|>(Q|MySealed.Right|))
-        lval e: R|MySealed| = R|/takeA|<R|MySealed|>(R|/id|<R|MySealed|>(Q|MySealed.Right|))
-        lval f: R|MyInterface| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySecondSealed.First|>(Q|MySecondSealed.First|, R|/id|<R|MySecondSealed.First|>(Q|MySecondSealed.Second|))
-        lval g: R|MySecondSealed.First| = R|/takeI<Inapplicable(INAPPLICABLE): /takeI>#|<R|MySecondSealed.First|>(R|/id|<R|MySecondSealed.First|>(Q|MySecondSealed.Second|), Q|MySecondSealed.First|)
-        lval h: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySecondSealed.First|, Q|MyEnum|.R|/MyEnum.X|, R|/id|<R|kotlin/Any|>(<Unresolved name: Second>#))
-        lval i: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySecondSealed.First|, String(), R|/id|<R|kotlin/Any|>(<Unresolved name: Second>#))
-        lval j: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(R|/id|<R|kotlin/Any|>(<Unresolved name: Second>#), Int(1), Q|MySecondSealed.First|)
-        lval k: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(R|/id|<R|kotlin/Any|>(<Unresolved name: Second>#), Q|MySecondSealed.First|, Q|MyEnum|.R|/MyEnum.X|)
+        lval a: R|MySealed| = R|/select|<R|MySealed|>(Q|MySealed.Left|, R|/id|<R|MySealed.Right|>(Q|MySealed.Right|))
+        lval b: R|MySealed| = R|/select|<R|MySealed|>(R|/id|<R|MySealed.Right|>(Q|MySealed.Right|), Q|MySealed.Left|)
+        lval c: R|MySealed| = R|/select|<R|MySealed|>(Q|MySealed.Left|, R|/id|<R|MySealed.Right|>(R|/id|<R|MySealed.Right|>(Q|MySealed.Right|)))
+        lval d: R|MySealed| = R|/select|<R|MySealed|>(R|/id|<R|MySealed.Left|>(Q|MySealed.Left|), R|/id|<R|MySealed.Right|>(Q|MySealed.Right|))
+        lval e: R|MySealed.Right| = R|/takeA|<R|MySealed.Right|>(R|/id|<R|MySealed.Right|>(Q|MySealed.Right|))
+        lval f: R|MyInterface| = R|/select|<R|MySecondSealed|>(Q|MySecondSealed.First|, R|/id|<R|MySecondSealed.Second|>(Q|MySecondSealed.Second|))
+        lval g: R|MySecondSealed| = R|/takeI|<R|MySecondSealed|>(R|/id|<R|MySecondSealed.Second|>(Q|MySecondSealed.Second|), Q|MySecondSealed.First|)
+        lval h: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySecondSealed.First|, Q|MyEnum|.R|/MyEnum.X|, R|/id|<R|MySecondSealed.Second|>(Q|MySecondSealed.Second|))
+        lval i: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySecondSealed.First|, String(), R|/id|<R|MySecondSealed.Second|>(Q|MySecondSealed.Second|))
+        lval j: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(R|/id|<R|MySecondSealed.Second|>(Q|MySecondSealed.Second|), Int(1), Q|MySecondSealed.First|)
+        lval k: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(R|/id|<R|MySecondSealed.Second|>(Q|MySecondSealed.Second|), Q|MySecondSealed.First|, Q|MyEnum|.R|/MyEnum.X|)
     }

@@ -66,12 +66,12 @@ FILE: multipleOverloadsSameNameInBoth.kt
     }
     public final fun main(): R|kotlin/Unit| {
         <Ambiguity: foo, [/foo, /foo]>#(<Unresolved name: X>#)
-        <Ambiguity: foo, [/foo, /foo]>#(<Unresolved name: Y>#)
-        <Ambiguity: foo, [/foo, /foo]>#(<Unresolved name: Z>#)
-        <Ambiguity: bar, [/bar, /bar]>#(<Unresolved name: X>#)
-        <Ambiguity: bar, [/bar, /bar]>#(<Unresolved name: W>#)
-        <Ambiguity: baz, [/baz, /baz]>#(<Unresolved name: X>#)
-        <Ambiguity: baz, [/baz, /baz]>#(<Unresolved name: Y>#)
+        R|/foo|(Q|MyEnum1|.R|/MyEnum1.Y|)
+        R|/foo|(Q|MyEnum2|.R|/MyEnum2.Z|)
+        R|/bar|(Q|MyEnum1|.R|/MyEnum1.X|)
+        R|/bar|(Q|MyEnum3|.R|/MyEnum3.W|)
+        R|/baz|(Q|MyEnum1|.R|/MyEnum1.X|)
+        R|/baz|(Q|MyEnum1|.R|/MyEnum1.Y|)
         <Ambiguity: foo, [/foo, /foo]>#(<Unresolved name: Q>#)
         <Ambiguity: bar, [/bar, /bar]>#(R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unresolved name: W>#))
         <Ambiguity: baz, [/baz, /baz]>#(R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unresolved name: Y>#))
@@ -83,7 +83,7 @@ FILE: multipleOverloadsSameNameInBoth.kt
         local final fun local(x: R|MyEnum3|): R|kotlin/Unit| {
         }
 
-        <Ambiguity: local, [<local>/local, <local>/local]>#(<Unresolved name: Y>#)
-        <Ambiguity: local, [<local>/local, <local>/local]>#(<Unresolved name: W>#)
-        <Ambiguity: local, [<local>/local, <local>/local]>#(<Unresolved name: X>#)
+        R|<local>/local|(Q|MyEnum1|.R|/MyEnum1.Y|)
+        R|<local>/local|(Q|MyEnum3|.R|/MyEnum3.W|)
+        R|<local>/local|(Q|MyEnum1|.R|/MyEnum1.X|)
     }

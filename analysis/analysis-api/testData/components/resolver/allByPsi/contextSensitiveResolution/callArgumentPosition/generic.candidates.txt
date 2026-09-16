@@ -1084,13 +1084,13 @@ KtCallExpression(753,774): 'test(InheritorObject)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -1098,13 +1098,13 @@ KtCallExpression(753,774): 'test(InheritorObject)'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -1120,13 +1120,13 @@ KtNameReferenceExpression(753,757): 'test'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -1134,13 +1134,13 @@ KtNameReferenceExpression(753,757): 'test'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -1428,13 +1428,13 @@ KtCallExpression(834,858): 'test(propInheritorClass)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorClass
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorClass
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -1442,13 +1442,13 @@ KtCallExpression(834,858): 'test(propInheritorClass)'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorClass)
       }
       valueArgumentMapping = {
         propInheritorClass -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorClass
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -1464,13 +1464,13 @@ KtNameReferenceExpression(834,838): 'test'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorClass
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorClass
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -1478,13 +1478,13 @@ KtNameReferenceExpression(834,838): 'test'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorClass)
       }
       valueArgumentMapping = {
         propInheritorClass -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorClass
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -1601,13 +1601,13 @@ KtCallExpression(879,904): 'test(propInheritorObject)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -1615,13 +1615,13 @@ KtCallExpression(879,904): 'test(propInheritorObject)'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         propInheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -1637,13 +1637,13 @@ KtNameReferenceExpression(879,883): 'test'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -1651,13 +1651,13 @@ KtNameReferenceExpression(879,883): 'test'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         propInheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -1768,7 +1768,7 @@ KtValueArgument(926,944): 'test(NestedObject)'
   NO_CANDIDATES
 
 KtCallExpression(926,944): 'test(NestedObject)'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1801,11 +1801,10 @@ KtCallExpression(926,944): 'test(NestedObject)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(926,930): 'test'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1838,7 +1837,6 @@ KtNameReferenceExpression(926,930): 'test'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(930,944): '(NestedObject)'
@@ -1943,7 +1941,7 @@ KtValueArgument(965,975): 'test(prop)'
   NO_CANDIDATES
 
 KtCallExpression(965,975): 'test(prop)'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1976,11 +1974,10 @@ KtCallExpression(965,975): 'test(prop)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(965,969): 'test'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2013,7 +2010,6 @@ KtNameReferenceExpression(965,969): 'test'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(969,975): '(prop)'
@@ -2120,7 +2116,7 @@ KtValueArgument(996,1011): 'test(superProp)'
   NO_CANDIDATES
 
 KtCallExpression(996,1011): 'test(superProp)'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2153,11 +2149,10 @@ KtCallExpression(996,1011): 'test(superProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(996,1000): 'test'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2190,7 +2185,6 @@ KtNameReferenceExpression(996,1000): 'test'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(1000,1011): '(superProp)'
@@ -2297,7 +2291,7 @@ KtValueArgument(1032,1046): 'test(lazyProp)'
   NO_CANDIDATES
 
 KtCallExpression(1032,1046): 'test(lazyProp)'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2330,11 +2324,10 @@ KtCallExpression(1032,1046): 'test(lazyProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1032,1036): 'test'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2367,7 +2360,6 @@ KtNameReferenceExpression(1032,1036): 'test'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(1036,1046): '(lazyProp)'
@@ -2474,7 +2466,7 @@ KtValueArgument(1067,1083): 'test(lambdaProp)'
   NO_CANDIDATES
 
 KtCallExpression(1067,1083): 'test(lambdaProp)'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2507,11 +2499,10 @@ KtCallExpression(1067,1083): 'test(lambdaProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1067,1071): 'test'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2544,7 +2535,6 @@ KtNameReferenceExpression(1067,1071): 'test'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(1071,1083): '(lambdaProp)'

@@ -277,79 +277,85 @@ KtProperty(345,389): 'val r2 = 1 infixEnumConsumer InheritorObject'
   null
 
 KtBinaryExpression(354,389): '1 infixEnumConsumer InheritorObject'
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = 1
-        isSafeNavigation = false
-        type = kotlin.Int
-      signature = KaFunctionSignature:
-        receiverType = kotlin.Int
-        returnType = kotlin.Unit
-        symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = 1
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Unit
+          symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyEnum
+              symbol = arg: MyEnum
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /infixEnumConsumer
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          InheritorObject -> (KaVariableSignature:
             name = arg
             receiverType = null
             returnType = MyEnum
             symbol = arg: MyEnum
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /infixEnumConsumer
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /infixEnumConsumer>
 
 KtConstantExpression(354,355): '1'
   null
 
 KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = 1
-        isSafeNavigation = false
-        type = kotlin.Int
-      signature = KaFunctionSignature:
-        receiverType = kotlin.Int
-        returnType = kotlin.Unit
-        symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = 1
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Unit
+          symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyEnum
+              symbol = arg: MyEnum
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /infixEnumConsumer
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          InheritorObject -> (KaVariableSignature:
             name = arg
             receiverType = null
             returnType = MyEnum
             symbol = arg: MyEnum
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /infixEnumConsumer
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /infixEnumConsumer>
 
 KtNameReferenceExpression(374,389): 'InheritorObject'
   KaSimpleCallResolutionError:

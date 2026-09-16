@@ -24,23 +24,23 @@ fun <T : MyInterface> takeI(x: T, y: T): T = x
 
 fun test() {
     // S <: T (from `id(Right)` passed to `select`), MySealed.Left <: T, T <: MySealed: the bounds of T are reached through S
-    val a: MySealed = select(MySealed.Left, id(<!ARGUMENT_TYPE_MISMATCH!>Right<!>))
-    val b: MySealed = select(id(<!ARGUMENT_TYPE_MISMATCH!>Right<!>), MySealed.Left)
-    val c: MySealed = select(MySealed.Left, id(id(<!ARGUMENT_TYPE_MISMATCH!>Right<!>)))
-    val d: MySealed = select(id(MySealed.Left), id(<!ARGUMENT_TYPE_MISMATCH!>Right<!>))
+    val a: MySealed = select(MySealed.Left, id(Right))
+    val b: MySealed = select(id(Right), MySealed.Left)
+    val c: MySealed = select(MySealed.Left, id(id(Right)))
+    val d: MySealed = select(id(MySealed.Left), id(Right))
 
     // S <: T, T <: MySealed (declared bound)
     val e = takeA(id(Right))
 
     // The upper bound of T is an interface, which has no `Second` name
-    val f: MyInterface = select(MySecondSealed.First, id(<!ARGUMENT_TYPE_MISMATCH!>Second<!>))
-    val g = takeI(id(<!ARGUMENT_TYPE_MISMATCH!>Second<!>), MySecondSealed.First)
+    val f: MyInterface = select(MySecondSealed.First, id(Second))
+    val g = takeI(id(Second), MySecondSealed.First)
 
     // T has several lower bounds, and only one of the classes has `Second` name
-    val h = select3(MySecondSealed.First, MyEnum.X, id(<!UNRESOLVED_REFERENCE!>Second<!>))
-    val i = select3(MySecondSealed.First, "", id(<!UNRESOLVED_REFERENCE!>Second<!>))
-    val j = select3(id(<!UNRESOLVED_REFERENCE!>Second<!>), 1, MySecondSealed.First)
-    val k: Any = select3(id(<!UNRESOLVED_REFERENCE!>Second<!>), MySecondSealed.First, MyEnum.X)
+    val h = select3(MySecondSealed.First, MyEnum.X, id(Second))
+    val i = select3(MySecondSealed.First, "", id(Second))
+    val j = select3(id(Second), 1, MySecondSealed.First)
+    val k: Any = select3(id(Second), MySecondSealed.First, MyEnum.X)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, integerLiteral,

@@ -9,17 +9,20 @@ fun main() {
     val somethingList = mutableListOf<Something>()
 
     somethingList.add(A)
-    somethingList += <!UNRESOLVED_REFERENCE!>A<!>
-    somethingList -= <!UNRESOLVED_REFERENCE!>A<!>
-    somethingList.plusAssign(<!UNRESOLVED_REFERENCE!>A<!>)
-    somethingList.minusAssign(<!UNRESOLVED_REFERENCE!>A<!>)
+    somethingList += A
+    somethingList -= A
+    somethingList.plusAssign(A)
+    somethingList.minusAssign(A)
     somethingList += Something.A
 
     val nullableList = mutableListOf<Something?>()
-    nullableList += <!UNRESOLVED_REFERENCE!>A<!>
+    nullableList += A
     nullableList.add(A)
 
     val listOfSets = mutableListOf<Set<Something>>()
+    // CSR here is used againts type variable from `setOf`, so we don't run it until completion.
+    // Thus, we're not able to choose between `plusAssign` accepting a single or a Collection of elements.
+    // See KT-89507
     <!VAL_REASSIGNMENT!>listOfSets<!> += <!ASSIGNMENT_TYPE_MISMATCH!>setOf<!>(<!UNRESOLVED_REFERENCE!>A<!>)
     listOfSets.plusAssign(<!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>(<!UNRESOLVED_REFERENCE!>A<!>))
     listOfSets += setOf(Something.A)
