@@ -283,10 +283,8 @@ object AbstractTypeChecker {
 
         state.customIsSubtypeOf(subType, superType)?.let { return it }
 
-        return with(state) {
-            with(state.typeSystemContext) {
-                completeIsSubTypeOf(subType, superType, isFromNullabilityConstraint)
-            }
+        return context(state, state.typeSystemContext) {
+            completeIsSubTypeOf(subType, superType, isFromNullabilityConstraint)
         }
     }
 
@@ -434,7 +432,7 @@ object AbstractTypeChecker {
         if (superType.typeConstructor().isAnyConstructor()) return true
 
         val supertypesWithSameConstructor = filterOutEquivalentSupertypesWithSameConstructor(
-            findCorrespondingSupertypes(state, subType, superConstructor)
+            findCorrespondingSupertypes(subType, superConstructor)
         )
 
         when (supertypesWithSameConstructor.size) {
