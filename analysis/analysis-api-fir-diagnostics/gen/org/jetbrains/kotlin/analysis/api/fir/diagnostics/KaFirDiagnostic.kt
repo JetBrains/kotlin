@@ -633,6 +633,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface MissingDependencyClassInParameterWithDefaultValue : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<MissingDependencyClassInParameterWithDefaultValue>
+            get() = MissingDependencyClassInParameterWithDefaultValue::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface MissingDependencySuperclass : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<MissingDependencySuperclass>
             get() = MissingDependencySuperclass::class
