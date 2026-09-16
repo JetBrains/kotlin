@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
@@ -148,7 +150,7 @@ internal class KotlinCompilationImpl(
         level = DeprecationLevel.WARNING
     )
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) {
-        HasKotlinDependencies(project, configurations).dependencies(configure)
+        HasKotlinDependencies(project, configurations, defaultSourceSet.internal.npmDependenciesCollector).dependencies(configure)
     }
 
     @Deprecated(
@@ -157,7 +159,7 @@ internal class KotlinCompilationImpl(
         level = DeprecationLevel.WARNING
     )
     override fun dependencies(configure: Action<KotlinDependencyHandler>) {
-        HasKotlinDependencies(project, configurations).dependencies(configure)
+        HasKotlinDependencies(project, configurations, defaultSourceSet.internal.npmDependenciesCollector).dependencies(configure)
     }
 
     //endregion
