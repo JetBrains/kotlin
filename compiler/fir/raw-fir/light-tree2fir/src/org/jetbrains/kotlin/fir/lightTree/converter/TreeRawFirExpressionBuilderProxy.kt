@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.lightTree.converter
 
-import com.google.common.collect.ImmutableBiMap
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtSourceElement
@@ -455,23 +454,23 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
 
         private val inOperationsId = setOf(KtTokens.IN_MODIFIER_ID, KtTokens.NOT_IN_ID)
 
-        private val ktTokenToBinaryOperationNameMap: ImmutableBiMap<Int, Name> = ImmutableBiMap.builder<Int, Name>()
-            .put(KtTokens.MUL_ID, OperatorNameConventions.TIMES)
-            .put(KtTokens.PLUS_ID, OperatorNameConventions.PLUS)
-            .put(KtTokens.MINUS_ID, OperatorNameConventions.MINUS)
-            .put(KtTokens.DIV_ID, OperatorNameConventions.DIV)
-            .put(KtTokens.PERC_ID, OperatorNameConventions.REM)
-            .put(KtTokens.RANGE_ID, OperatorNameConventions.RANGE_TO)
-            .put(KtTokens.RANGE_UNTIL_ID, OperatorNameConventions.RANGE_UNTIL)
-            .build()
+        private val ktTokenToBinaryOperationNameMap: Map<Int, Name> = hashMapOf(
+            KtTokens.MUL_ID to OperatorNameConventions.TIMES,
+            KtTokens.PLUS_ID to OperatorNameConventions.PLUS,
+            KtTokens.MINUS_ID to OperatorNameConventions.MINUS,
+            KtTokens.DIV_ID to OperatorNameConventions.DIV,
+            KtTokens.PERC_ID to OperatorNameConventions.REM,
+            KtTokens.RANGE_ID to OperatorNameConventions.RANGE_TO,
+            KtTokens.RANGE_UNTIL_ID to OperatorNameConventions.RANGE_UNTIL,
+        )
 
-        private val ktTokenToUnaryOperationNameMap = ImmutableBiMap.builder<Int, Name>()
-            .put(KtTokens.PLUSPLUS_ID, OperatorNameConventions.INC)
-            .put(KtTokens.MINUSMINUS_ID, OperatorNameConventions.DEC)
-            .put(KtTokens.PLUS_ID, OperatorNameConventions.UNARY_PLUS)
-            .put(KtTokens.MINUS_ID, OperatorNameConventions.UNARY_MINUS)
-            .put(KtTokens.EXCL_ID, OperatorNameConventions.NOT)
-            .build()
+        private val ktTokenToUnaryOperationNameMap: Map<Int, Name> = hashMapOf(
+            KtTokens.PLUSPLUS_ID to OperatorNameConventions.INC,
+            KtTokens.MINUSMINUS_ID to OperatorNameConventions.DEC,
+            KtTokens.PLUS_ID to OperatorNameConventions.UNARY_PLUS,
+            KtTokens.MINUS_ID to OperatorNameConventions.UNARY_MINUS,
+            KtTokens.EXCL_ID to OperatorNameConventions.NOT,
+        )
 
         private val ktTokenToFirOperationMap = hashMapOf(
             KtTokens.LT_ID to FirOperation.LT,
