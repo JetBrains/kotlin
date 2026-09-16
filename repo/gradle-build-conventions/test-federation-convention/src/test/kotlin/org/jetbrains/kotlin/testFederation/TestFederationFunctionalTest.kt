@@ -559,14 +559,14 @@ class TestFederationFunctionalTest {
 
     @Test
     fun `test - smoke - no selected tests does not execute BeforeAll or AfterAll`() {
-        val arguments = listOf("--tests", "org.jetbrains.kotlin.testFederation.PseudoTest.domain test")
+        val testsFilter = "org.jetbrains.kotlin.testFederation.PseudoTest.domain test"
         val lifecycleMarkers = setOf("PseudoTest.beforeAll executed", "PseudoTest.afterAll executed")
 
-        val fullResult = runTestBuild(TestFederationMode.Full, additionalCliArgs = arguments)
+        val fullResult = runTestBuild(TestFederationMode.Full, testsFilter = testsFilter)
         assertEquals(setOf(TestResult("PseudoTest", "domain test")), fullResult.executedTests)
         lifecycleMarkers.forEach { assertContains(fullResult.buildResult.output, it) }
 
-        val smokeResult = runTestBuild(TestFederationMode.Smoke, additionalCliArgs = arguments)
+        val smokeResult = runTestBuild(TestFederationMode.Smoke, testsFilter = testsFilter)
         assertEquals(emptySet(), smokeResult.executedTests)
         assertEquals(
             emptySet(),
@@ -610,6 +610,7 @@ private fun runTestBuild(
     testFederationEnabled: Boolean = true,
     nightly: Boolean? = null,
     rerun: Boolean = true,
+    testsFilter: String? = "org.jetbrains.kotlin.testFederation.PseudoTest",
     additionalCliArgs: List<String> = emptyList(),
 ): TestBuildResult {
     val environment = defaultEnv().toMutableMap().apply {
@@ -649,8 +650,8 @@ private fun runTestBuild(
         if (nightly != null) add("-Pnightly=$nightly")
         add("-Dorg.gradle.daemon.idletimeout=${5.seconds.inWholeMilliseconds}")
         if (rerun) add("--rerun")
-        if ("--tests" !in additionalCliArgs) {
-            addAll(listOf("--tests", "org.jetbrains.kotlin.testFederation.PseudoTest"))
+        if (testsFilter != null) {
+            addAll(listOf("--tests", testsFilter))
         }
         addAll(additionalCliArgs)
     }
@@ -685,7 +686,7 @@ private fun runTestBuild(
 private fun runTestEvents(mode: TestFederationMode, vararg changed: Domain, testFilter: String): List<String> {
     val result = runTestBuild(
         mode, *changed,
-        additionalCliArgs = listOf("--tests", testFilter)
+        testsFilter = testFilter
     )
     return result.buildResult.output.lineSequence()
         .map { it.trim() }
