@@ -756,7 +756,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val fieldName = item.name
         val setterName = fieldName.toMethodName(builder)
         val builderType = getBuilderType(builderSymbol) ?: return
-        val visibility = builder.builderFunctionsAccessLevel.toVisibility(builderSymbol) ?: return
+        val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
         addIfNonClashing(setterName, existingFunctionNames) {
             createJavaOrKotlinMemberFunction(
@@ -895,7 +895,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderType = getBuilderType(builderSymbol)?.toFirResolvedTypeRef() ?: return
 
         // Early return in case of `AccessLevel.NONE` is used (it means not generating anything at all)
-        val visibility = builder.builderFunctionsAccessLevel.toVisibility(builderSymbol) ?: return
+        val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
         addIfNonClashing(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
             createJavaOrKotlinMemberFunction(
