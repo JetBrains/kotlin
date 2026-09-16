@@ -16,17 +16,11 @@ FILE: mutate.kt
             public copy set(value: R|kotlin/String?|): R|kotlin/Unit|
 
         public final copy fun f(): R|Person| {
-             {
-            }
-
             ^f this@R|/Person|
         }
 
     }
     public final copy fun R|Person|.g(): R|Person| {
-         {
-        }
-
         ^g this@R|/g|
     }
     public final fun test(p: R|Person|): R|kotlin/Unit| {

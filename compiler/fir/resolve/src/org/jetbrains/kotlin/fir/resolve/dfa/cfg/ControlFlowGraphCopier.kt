@@ -484,4 +484,8 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
     override fun visitFakeExpressionEnterNode(node: FakeExpressionTerminalNode, data: Unit): CFGNode<*> {
         return FakeExpressionTerminalNode(get(node.owner), node.level)
     }
+
+    override fun visitCopyCallFunExitNode(node: CopyFunCallExitNode, data: Unit): CFGNode<*> {
+        return CopyFunCallExitNode(get(node.owner), node.fir, node.level)
+    }
 }

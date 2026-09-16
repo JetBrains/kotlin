@@ -2179,23 +2179,23 @@ class LightTreeRawFirDeclarationBuilder(
                     ) {
                         convertFunctionBody(block, expression, allowLegacyContractDescription)
                     }
-                    val extendedBody = when {
+
+                    this.body = when {
                         body == null -> body
                         copyReference == null -> body
-                        isAnonymousFunction -> buildBlock {
-                            statements += body
-                            statements += copyReference
-                        }
                         else -> buildBlock {
-                            statements += body
-                            statements += buildReturnExpression {
-                                this.target = target
-                                result = copyReference
-                            }
+                            source = body.source?.realElement()
+                            annotations.addAll(body.annotations)
+                            statements.addAll(body.statements)
+                            val returnCopy =
+                                if (isAnonymousFunction) copyReference
+                                else buildReturnExpression {
+                                    this.target = target
+                                    result = copyReference
+                                }
+                            statements.add(returnCopy)
                         }
                     }
-
-                    this.body = extendedBody
                     val contractDescription = outerContractDescription ?: innerContractDescription
                     contractDescription?.let {
                         if (this is FirNamedFunctionBuilder) {

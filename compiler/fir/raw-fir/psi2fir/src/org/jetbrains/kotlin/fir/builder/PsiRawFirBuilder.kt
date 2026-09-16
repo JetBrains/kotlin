@@ -2399,22 +2399,23 @@ open class PsiRawFirBuilder(
                         val [body, innerContractDescription] = withForcedLocalContext {
                             function.buildFirBody()
                         }
-                        val extendedBody = when {
-                            body == null -> body
-                            copyReference == null -> body
-                            isAnonymousFunction -> buildBlock {
-                                statements += body
-                                statements += copyReference
-                            }
-                            else -> buildBlock {
-                                statements += body
-                                statements += buildReturnExpression {
-                                    this.target = target
-                                    result = copyReference
+                        this.body = body?.let {
+                            buildOrLazyBlock block@{
+                                if (copyReference == null) return@block body
+                                buildBlock {
+                                    source = body.source?.realElement()
+                                    annotations.addAll(body.annotations)
+                                    statements.addAll(body.statements)
+                                    val returnCopy =
+                                        if (isAnonymousFunction) copyReference
+                                        else buildReturnExpression {
+                                            this.target = target
+                                            result = copyReference
+                                        }
+                                    statements.add(returnCopy)
                                 }
                             }
                         }
-                        this.body = extendedBody
                         val contractDescription = outerContractDescription ?: innerContractDescription
                         contractDescription?.let {
                             if (this is FirNamedFunctionBuilder) {

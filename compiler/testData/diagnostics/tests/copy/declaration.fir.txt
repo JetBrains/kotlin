@@ -20,38 +20,23 @@ FILE: declaration.kt
             public copy set(value: R|kotlin/String|): R|kotlin/Unit|
 
         public final copy fun f(): R|Person| {
-             {
-            }
-
             ^f this@R|/Person|
         }
 
         public final copy fun f1(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
-             {
-                ^f1 this@R|/Person|.R|/Person.f|()
-            }
-
+            ^f1 this@R|/Person|.R|/Person.f|()
             ^f1 this@R|/Person|
         }
 
         public final copy fun f2(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
-             {
-            }
-
             ^f2 this@R|/Person|
         }
 
         public final copy fun f3(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
-             {
-            }
-
             ^f3 this@R|/Person|
         }
 
         public final copy fun f4(copy x: R|kotlin/Int|): R|Person| {
-             {
-            }
-
             ^f4 this@R|/Person|
         }
 
@@ -86,58 +71,31 @@ FILE: declaration.kt
 
     }
     public final copy fun R|Person|.g(): R|Person| {
-         {
-        }
-
         ^g this@R|/g|
     }
     public final copy fun R|Person|.g1(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
-         {
-            ^g1 this@R|/g1|.R|/g|()
-        }
-
+        ^g1 this@R|/g1|.R|/g|()
         ^g1 this@R|/g1|
     }
     public final copy fun R|Person|.g2(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
-         {
-        }
-
         ^g2 this@R|/g2|
     }
     public final copy fun R|Person|.g3(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
-         {
-        }
-
         ^g3 this@R|/g3|
     }
-    public final copy fun g4(): <ERROR TYPE REF: empty body> {
-         {
-        }
-
+    public final copy fun g4(): <ERROR TYPE REF: 'this' is not defined in this context> {
         ^g4 this#
     }
     public final copy fun g5(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
-         {
-            ^g5 R|kotlin/TODO|()
-        }
-
+        ^g5 R|kotlin/TODO|()
         ^g5 this#
     }
     public final copy fun g6(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
-         {
-        }
-
         ^g6 this#
     }
     public final copy fun g7(): <ERROR TYPE REF: Copy fun with explicit return type or expression body> {
-         {
-        }
-
         ^g7 this#
     }
     public final copy fun R|Person|.g8(copy x: R|kotlin/Int|): R|Person| {
-         {
-        }
-
         ^g8 this@R|/g8|
     }
