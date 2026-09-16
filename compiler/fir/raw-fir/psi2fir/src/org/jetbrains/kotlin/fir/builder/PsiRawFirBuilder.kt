@@ -3590,6 +3590,7 @@ open class PsiRawFirBuilder(
 
             val source = expression.toFirSourceElement()
 
+            @OptIn(NotToShareWithAA::class)
             when (operationToken) {
                 ELVIS ->
                     return leftArgument.generateNotNullOrOther(rightArgument, source)
