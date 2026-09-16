@@ -205,7 +205,6 @@ public enum class MemberKind(kind: Int) {
  * if they were compiled with `-Xreturn-value-checker=full` compiler flag.
  * However, they should not be reported as unused.
  */
-@ExperimentalMustUseStatus
 public enum class ReturnValueStatus {
     /**
      * Signifies that the corresponding callable does not have status associated with its return value.

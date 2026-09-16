@@ -154,7 +154,6 @@ abstract class Kotlinp(protected val settings: Settings) {
         container.typeAliases.sortIfNeeded { it.sortedBy(KmTypeAlias::name) }.forEach { renderTypeAlias(it, this) }
     }
 
-    @OptIn(ExperimentalMustUseStatus::class)
     fun renderConstructor(constructor: KmConstructor, printer: Printer): Unit = with(printer) {
         appendLine()
         appendVersionRequirements(constructor.versionRequirements)
@@ -176,7 +175,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         )
     }
 
-    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class, ExperimentalMustUseStatus::class, ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class, ExperimentalCompanionBlocksAndExtensions::class)
     fun renderFunction(function: KmFunction, printer: Printer): Unit = with(printer) {
         appendLine()
         appendOrigin(function)
@@ -324,7 +323,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendLine("}")
     }
 
-    @OptIn(ExperimentalContextParameters::class, ExperimentalMustUseStatus::class, ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalCompanionBlocksAndExtensions::class)
     fun renderProperty(property: KmProperty, printer: Printer): Unit = with(printer) {
         appendLine()
         appendVersionRequirements(property.versionRequirements)
@@ -551,7 +550,6 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
-    @OptIn(ExperimentalMustUseStatus::class)
     private fun Printer.appendReturnValueStatus(returnValueStatus: ReturnValueStatus) {
         val s = when (returnValueStatus) {
             ReturnValueStatus.UNSPECIFIED -> return
