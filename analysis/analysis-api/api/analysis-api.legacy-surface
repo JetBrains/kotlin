@@ -141,7 +141,6 @@ org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider.com
 org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider.isStableForSmartCasting
 org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider.isUsedAsExpression
 org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider.isUsedAsResultOfLambda
-org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider.targetSymbol
 org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider
 org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.expectedType
 org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.expressionType
@@ -596,9 +595,7 @@ org.jetbrains.kotlin.analysis.api.components.fullyExpandedType
 org.jetbrains.kotlin.analysis.api.components.functionType
 org.jetbrains.kotlin.analysis.api.components.functionalInterface
 org.jetbrains.kotlin.analysis.api.components.hasCommonSubtypeWith(KaType)
-org.jetbrains.kotlin.analysis.api.components.hasConflictingSignatureWith(KaFunctionSymbol, TargetPlatform)
 org.jetbrains.kotlin.analysis.api.components.hasFlexibleNullability
-org.jetbrains.kotlin.analysis.api.components.importableFqName
 org.jetbrains.kotlin.analysis.api.components.importingScopeContext
 org.jetbrains.kotlin.analysis.api.components.intersectionOverriddenSymbols
 org.jetbrains.kotlin.analysis.api.components.isAnyType
@@ -661,7 +658,6 @@ org.jetbrains.kotlin.analysis.api.components.semanticallyEquals(KaType, KaSubtyp
 org.jetbrains.kotlin.analysis.api.components.smartCastInfo
 org.jetbrains.kotlin.analysis.api.components.staticDeclaredMemberScope
 org.jetbrains.kotlin.analysis.api.components.staticMemberScope
-org.jetbrains.kotlin.analysis.api.components.targetSymbol
 org.jetbrains.kotlin.analysis.api.components.type
 org.jetbrains.kotlin.analysis.api.components.upperBoundIfFlexible()
 org.jetbrains.kotlin.analysis.api.components.withNullability(Boolean)
