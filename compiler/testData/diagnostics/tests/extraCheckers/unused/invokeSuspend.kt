@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 suspend fun foo(action: suspend () -> Unit) {
     val x = action
 

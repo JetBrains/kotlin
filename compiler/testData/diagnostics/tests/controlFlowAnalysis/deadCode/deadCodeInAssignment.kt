@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun testAssignment() {
     var <!VARIABLE_NEVER_READ!>a<!> = 1
     <!UNREACHABLE_CODE!><!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> =<!> todo()

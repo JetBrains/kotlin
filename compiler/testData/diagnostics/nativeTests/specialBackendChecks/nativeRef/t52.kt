@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import kotlin.native.ref.*
 
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)

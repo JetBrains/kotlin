@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-12982 Incorrect type inference when accessing mutable protected property via reflection
 
 import kotlin.reflect.KMutableProperty1

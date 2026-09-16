@@ -1,6 +1,6 @@
 // LANGUAGE: +ExpectRefinement
 // WITH_STDLIB
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // MODULE: common
 expect class Foo {
     fun foo()

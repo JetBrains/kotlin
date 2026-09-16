@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 @Suppress("REDUNDANT_NULLABLE")
 class C {
     fun foo(): String?? = null <!USELESS_CAST!>as Nothing??<!>

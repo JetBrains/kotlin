@@ -2,7 +2,7 @@
 // ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT reported because in LL we have access to the stdlib sources,
 // thus can check SOURCE-retention annotations.
 // LL_FIR_DIVERGENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // MODULE: common
 expect annotation class Ann() // No @Retention SOURCE set

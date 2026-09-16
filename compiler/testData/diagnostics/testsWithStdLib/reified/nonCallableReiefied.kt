@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class A<T>(val x: Array<T>) {
     val y: Int = x[0].toString().length
 

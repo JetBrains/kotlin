@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +InferThrowableTypeParameterToUpperBound
 // FIR_DUMP
 // ISSUE: KT-82961

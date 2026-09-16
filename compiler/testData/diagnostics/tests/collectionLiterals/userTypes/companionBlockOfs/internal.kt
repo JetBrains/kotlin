@@ -1,7 +1,7 @@
 // MODULE: lib
 // MODULE_KIND: LibrarySource
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // FILE: MyCollection.kt
 

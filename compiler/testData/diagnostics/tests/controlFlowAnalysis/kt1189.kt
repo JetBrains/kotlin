@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-1189 StackOverflow in ide
 package kt1189
 import java.util.concurrent.locks.ReentrantReadWriteLock

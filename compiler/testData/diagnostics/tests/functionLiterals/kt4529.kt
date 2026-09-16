@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-4529 Lambdas are analyzed improperly in an infix call nested inside a println
 
 class G {

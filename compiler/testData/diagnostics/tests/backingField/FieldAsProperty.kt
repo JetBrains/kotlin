@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class My(val field: Int) {
     // Backing field, initializer
     val second: Int = 0

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Test for a potential byte code mistake for a postfix operation on a smart casted variable
 public fun box() : Int {
     var i : Int? 

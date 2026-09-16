@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // constructor vs. fun overload
 
 // FILE: constructorVsFun/J.java

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: Api.java
 import org.jetbrains.annotations.NotNull;
 public abstract class Api<T> {

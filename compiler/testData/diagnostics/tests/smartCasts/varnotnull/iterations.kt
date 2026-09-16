@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 data class SomeObject(val n: SomeObject?) {
     fun doSomething() {}
     fun next(): SomeObject? = n    

@@ -1,7 +1,7 @@
 // LL_FIR_DIVERGENCE
 // KT-77114: Source Java classes cannot be hidden in the Analysis API
 // LL_FIR_DIVERGENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: JavaClass.java
 public class JavaClass {
     @kotlin.Deprecated(message = "nested", level = kotlin.DeprecationLevel.HIDDEN)

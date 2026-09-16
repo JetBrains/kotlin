@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-76171
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume

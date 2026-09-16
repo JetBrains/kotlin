@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DUMP_CFG
 fun test_1(x: Int) {
     val y = when {

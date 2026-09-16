@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 inline fun <reified T : Any> foo(t: T): T {
     val klass = T::class.java
     return t

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See KT-10648: Exhaustiveness check does not work with nested sealed hierarchy
 sealed class Base {
     sealed class A : Base() {

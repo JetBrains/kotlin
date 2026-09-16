@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun add(a: Int, b: Int) = a + b
 interface A {
     fun <T> shuffle(x: List<T>): List<T>

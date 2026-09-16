@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +BreakContinueInInlineLambdas +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // ISSUE: KT-68975
 // See same test for codegen: compiler/testData/codegen/box/js/inlinedReturnBreakContinue/inlineFunctionWithMultipleParameters.kt

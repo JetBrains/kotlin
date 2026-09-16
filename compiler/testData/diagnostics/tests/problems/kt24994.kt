@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-24994
 
 // KT-24994: Class literal reference is not allowed to a local class inside generic function

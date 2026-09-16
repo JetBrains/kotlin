@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 typealias GlobalUndoLogRef = Long
 fun GlobalUndoLogRef(p: Long): GlobalUndoLogRef = p

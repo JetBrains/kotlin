@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo(block: () -> Unit) {}
 fun bar(block: () -> String) {}
 fun itIs(block: (String) -> String) {}

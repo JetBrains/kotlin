@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-609 Analyze not only local variables, but function parameters as well in 'unused values' analysis
 
 package kt609

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // JDK_KIND: FULL_JDK_11
 // WITH_STDLIB
 import java.util.stream.IntStream

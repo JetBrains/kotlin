@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-30591
 
 // KT-30591: UNIT_EXPECTED_TYPE semantics with nested run lambdas and generic materialize

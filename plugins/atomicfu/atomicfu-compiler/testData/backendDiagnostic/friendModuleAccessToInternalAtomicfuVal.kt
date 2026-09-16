@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // DISABLE_IR_VISIBILITY_CHECKS: NATIVE
 // ^^^ Because AtomicFU plugin generates an IR property reference node that refers to a private property, KT-85180.

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: -CollectionLiterals
 // LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
 // WITH_STDLIB

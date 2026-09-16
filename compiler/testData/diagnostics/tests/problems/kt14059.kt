@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-14059
 
 // KT-14059: @Deprecated(level = HIDDEN) nested class still visible in subclass scope

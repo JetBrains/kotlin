@@ -1,5 +1,5 @@
 // LANGUAGE: -StrictEquals +StrictEqualsForStructuralClasses
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 annotation class A(val x: Int)
 annotation class B(val y: Int)

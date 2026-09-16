@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: Derived.java
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;

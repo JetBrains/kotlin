@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 tailrec fun foo1(x: Int): Int {
     return maybe(x) ?: foo1(x - 1)

@@ -1,5 +1,5 @@
 // DISABLE_JAVA_FACADE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: ExtensionPointName.java
 public final class ExtensionPointName<T> {}
 // FILE: ExtensionPoint.java

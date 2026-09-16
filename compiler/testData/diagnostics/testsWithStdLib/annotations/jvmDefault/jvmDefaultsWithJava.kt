@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // JVM_DEFAULT_MODE: no-compatibility
 // JVM_TARGET: 1.8
 // FILE: JavaInterface.java

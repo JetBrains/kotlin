@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-610 Distinguish errors 'unused variable' and 'variable is assigned but never accessed'
 
 package kt610

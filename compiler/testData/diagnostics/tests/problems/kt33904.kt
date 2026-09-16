@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-33904
 
 // KT-33904: Compiler freezes / infinite loop in constraint incorporation with recursive generic type parameters

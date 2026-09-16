@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_EXTRA_CHECKERS
 //KT-3501 Variable/parameter is highlighted as unused if it is used in member of local class
 

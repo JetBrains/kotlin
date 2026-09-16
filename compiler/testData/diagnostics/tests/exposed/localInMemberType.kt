@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Something {
     public val publicVal1 = object { override fun toString() = "!" }
     protected val protectedVal1 = object { override fun toString() = "!" }

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // SCOPE_DUMP: C:foo;getFoo
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-75323

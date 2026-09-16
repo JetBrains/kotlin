@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See counterpart test without IR inliner in js/js.translator/testData/box/jsCode/referenceToKotlin.kt
 
 <!NOTHING_TO_INLINE!>inline<!> fun inlineFun(arg: String): String {

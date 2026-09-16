@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo() {
     <!CAN_BE_VAL!>var<!> a = 1
     var b = <!VARIABLE_INITIALIZER_IS_REDUNDANT!>2<!>

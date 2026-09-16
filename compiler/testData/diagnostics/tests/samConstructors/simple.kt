@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: MyRunnable.java
 public interface MyRunnable {
     boolean foo(int x);

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // SCOPE_DUMP: StringBox:equals
 
 interface Box<T> {

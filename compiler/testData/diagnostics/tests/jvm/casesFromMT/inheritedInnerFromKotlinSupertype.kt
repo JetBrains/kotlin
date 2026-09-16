@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: KSuper.kt
 open class KSuper {
     open class Inner(val name: String)

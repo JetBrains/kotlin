@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 annotation class Base(val x: Int)
 
 annotation class UseBase(val b: Base = Base(0))

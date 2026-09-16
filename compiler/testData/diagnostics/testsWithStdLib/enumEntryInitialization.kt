@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 enum class JvmTarget(val description: String) {
     JVM_1_6("1.6"),
     JVM_1_8("1.8"),

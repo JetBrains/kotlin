@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class My(val x: Int?) {
     val y: Int? by lazy {
         var z = x

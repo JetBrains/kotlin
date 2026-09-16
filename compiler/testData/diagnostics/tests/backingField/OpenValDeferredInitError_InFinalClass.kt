@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 // LANGUAGE:+ProhibitOpenValDeferredInitialization
 interface Base {

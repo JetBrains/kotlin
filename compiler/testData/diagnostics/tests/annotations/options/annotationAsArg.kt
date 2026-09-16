@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Annotation(val x: Int) {
     fun baz() {}
     fun bar() = x

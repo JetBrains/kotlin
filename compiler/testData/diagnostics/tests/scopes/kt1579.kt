@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //FILE:a.kt
 //KT-1579 Can't import nested class/interface
 package lib

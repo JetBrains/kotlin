@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: BindingContext.java
 public interface BindingContext {
     @org.jetbrains.annotations.Nullable

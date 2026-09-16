@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 fun ff(a: Any) = a <!UNCHECKED_CAST!>as MutableList<String><!>
 

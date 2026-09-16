@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 import java.lang.reflect.*
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<!>

@@ -1,7 +1,7 @@
 // LL_FIR_DIVERGENCE
 // Not a real LL divergence, it's just tiered runners reporting errors from `BACKEND`
 // LL_FIR_DIVERGENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
 // Reason: KT-85774, more context at line 60
 // MODULE: m1-common

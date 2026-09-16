@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-34669
 
 // KT-34669: Incorrect USELESS_CAST warning when casting from dynamic type multiple times

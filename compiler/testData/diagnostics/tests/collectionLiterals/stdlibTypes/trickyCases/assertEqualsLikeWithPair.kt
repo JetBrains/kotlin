@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FIR_DUMP
 
 fun <T> assertEquals(a: T, b: T) = Unit

@@ -1,5 +1,5 @@
 // LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 fun testUnsupportedModernSyntax() {
     js(<!JSCODE_ERROR!>"const { a, ...rest } = { a: 1, b: 2 };"<!>)

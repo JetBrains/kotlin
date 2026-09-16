@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 public fun foo(p: String?, y: String?): Int {
     do {
         // After the check, smart cast should work

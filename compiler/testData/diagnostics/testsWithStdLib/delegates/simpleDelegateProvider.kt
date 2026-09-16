@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Delegate(val value: String) {
     operator fun getValue(thisRef: Any?, property: Any?) = value
 }

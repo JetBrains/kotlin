@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //  ^ ignored in K1
 // LANGUAGE: +NestedTypeAliases
 // LANGUAGE_FEATURE_TOGGLED: SkipHiddenObjectsInResolution

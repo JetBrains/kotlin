@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: A.java
 public interface A<T extends A<? super T, ?>, S extends A<? super T, ?>> {}
 

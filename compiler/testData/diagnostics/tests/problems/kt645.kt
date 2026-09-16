@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-645
 
 // KT-645: "Overload resolution ambiguity" for integer literal and nullable parameter type

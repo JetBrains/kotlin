@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //  Anonymous object's initialization does not affect smart casts
 
 abstract class A(val s: String) {

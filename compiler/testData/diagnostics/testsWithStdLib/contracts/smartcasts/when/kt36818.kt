@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun main(x1: Double?, range: ClosedRange<Double>) {
     when (x1) {
         null -> throw Exception()

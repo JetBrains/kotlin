@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-20801
 
 // KT-20801: USELESS_CAST diagnostic for complex expressions

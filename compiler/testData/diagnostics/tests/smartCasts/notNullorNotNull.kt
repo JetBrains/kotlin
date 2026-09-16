@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun bar(x: Int?): Int {
     if (x != null) return -1
     if (<!SENSELESS_COMPARISON!>x == null<!>) return -2

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 fun testFor() {
     operator fun Nothing.iterator() = (0..1).iterator()

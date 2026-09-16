@@ -1,5 +1,5 @@
 // LANGUAGE: -StrictEquals +StrictEqualsForStructuralClasses
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 data object A
 data class B(val y: Int) {

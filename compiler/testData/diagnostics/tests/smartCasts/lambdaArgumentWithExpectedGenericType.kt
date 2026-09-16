@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class My<T: Any>(val y: T?) {
 
     fun get(): T = run {

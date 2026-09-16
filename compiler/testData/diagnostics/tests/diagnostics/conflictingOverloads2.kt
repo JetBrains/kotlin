@@ -1,5 +1,5 @@
 // ISSUE: KT-73801
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 suspend fun test(): String = "123"
 
 val test: String = "456"

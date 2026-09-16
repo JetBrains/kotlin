@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // see https://youtrack.jetbrains.com/issue/KT-21515
 
 abstract class DerivedAbstract : C.Base()

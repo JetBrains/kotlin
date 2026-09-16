@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-74819
 // Note: here we don't have OverloadResolutionByLambdaReturnType, so the problem from the issue is not reproducible
 // WITH_STDLIB

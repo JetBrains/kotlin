@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DUMP_CFG
 inline fun run(block: () -> Unit) {
     block()

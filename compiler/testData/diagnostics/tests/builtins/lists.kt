@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 abstract class MyStringList : List<String>
 abstract class MyMutableStringList : MutableList<String>
 

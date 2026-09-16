@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <T, R> apply(x: T, f: (T) -> R): R = f(x)
 
 fun foo(i: Int) {}

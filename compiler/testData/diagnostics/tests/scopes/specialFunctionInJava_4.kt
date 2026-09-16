@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // SCOPE_DUMP: Some:toByte;byteValue MyNumber:toByte;byteValue
 // -SCOPE_DUMP: Some:toInt;intValue;toByte;byteValue;toLong;longValue
 

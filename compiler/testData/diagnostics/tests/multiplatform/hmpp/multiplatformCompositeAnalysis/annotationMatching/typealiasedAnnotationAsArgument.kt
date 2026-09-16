@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -TYPE_MISMATCH
 // MODULE: common
 expect annotation class Typealiased()

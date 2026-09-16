@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-3162 More precise try-finally error marking
 
 fun foo(x: String) : String {

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Raw-ness of a qualified inner-class reference follows the qualifier written in source, not the
 // declaring outer of the resolved class: `Sub.Inner` denotes `Outer<String>.Inner` and is not raw
 // (javac reports no `rawtypes` warning for it), while `Outer.Inner` written in the very same place is.

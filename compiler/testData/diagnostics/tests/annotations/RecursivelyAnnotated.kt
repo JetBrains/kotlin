@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Class CAN be recursively annotated
 @RecursivelyAnnotated(1)
 annotation class RecursivelyAnnotated(val x: Int)

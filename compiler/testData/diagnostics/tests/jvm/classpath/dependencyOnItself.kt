@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-61051 K1/K2 difference on extension functions with specific extension receiver types when compiling code that has itself as a dependency
 // MODULE: lib1
 // FILE: main.kt

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class AtomicRef<T>(val value: T)
 
 inline fun <F : Segment<F>> AtomicRef<F>.findSegmentAndMoveForward(createNewSegment: (prev: F?) -> F) = null

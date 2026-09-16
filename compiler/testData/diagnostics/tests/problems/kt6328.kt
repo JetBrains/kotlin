@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-6328
 
 // KT-6328: Lookup of short form `invoke()` operator function doesn't work on generic properties

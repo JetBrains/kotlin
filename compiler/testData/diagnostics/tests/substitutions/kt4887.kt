@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 package h
 
 public class MyClass<S, T>(param: MyClass<S, T>) {

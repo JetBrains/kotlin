@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 class A {
     fun <T : Function0<String>> eased(p1: T, p2: T): Int {

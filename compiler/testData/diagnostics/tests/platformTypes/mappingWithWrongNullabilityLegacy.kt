@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-78783
 // LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
 // JVM_TARGET: 1.8

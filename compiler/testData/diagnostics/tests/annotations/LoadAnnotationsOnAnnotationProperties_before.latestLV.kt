@@ -1,6 +1,6 @@
 // LANGUAGE: +AnnotationsInMetadata -JvmLoadAnnotationsOnAnnotationProperties
 // ISSUE: KT-22463
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LATEST_LV_DIFFERENCE
 
 // This test checks that annotations on annotation properties are not loaded _from binaries_ if the JvmLoadAnnotationsOnAnnotationProperties

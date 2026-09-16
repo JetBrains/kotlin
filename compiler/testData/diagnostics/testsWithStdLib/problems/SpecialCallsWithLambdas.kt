@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo() {
     val inv = {{}}<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!>
     val bar = {{}}

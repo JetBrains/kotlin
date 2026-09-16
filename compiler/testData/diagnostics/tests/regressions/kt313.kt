@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-313 Bug in substitutions in a function returning its type parameter T
 
 fun <T> Iterable<T>.join(separator : String?) : String {

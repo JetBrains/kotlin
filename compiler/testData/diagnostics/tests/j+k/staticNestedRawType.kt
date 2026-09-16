@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // JLS 4.6/8.1.3: `A.Middle.Inner<String>` is raw only if a type parameter which is actually in
 // scope for the reference is left without an argument. `Middle` is `static`, so it inherits none of
 // `A`'s parameters and `A`'s `T` is not in scope below it — the reference is not raw, even though an

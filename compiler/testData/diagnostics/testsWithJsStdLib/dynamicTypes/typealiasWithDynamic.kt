@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 typealias Test1 = List<dynamic>
 
 typealias Test2 = (dynamic) -> dynamic

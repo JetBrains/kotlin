@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 fun <T, K> test(x: T & Any) {
     x <!USELESS_CAST!>as (T & Any)<!>

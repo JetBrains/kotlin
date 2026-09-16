@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: Aaa.java
 // http://youtrack.jetbrains.com/issue/KT-1694
 

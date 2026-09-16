@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ContextParameters +DisableMaxTypeDepthFromInitialConstraints
 // ISSUE: KT-81441
 interface K<F, A>

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-15949
 
 // KT-15949: typeinference couldn't filter out non-applicable generic candidates

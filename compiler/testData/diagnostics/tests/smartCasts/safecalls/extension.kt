@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun String.foo(arg: Int) = this[arg]
 
 fun calc(x: String?) {

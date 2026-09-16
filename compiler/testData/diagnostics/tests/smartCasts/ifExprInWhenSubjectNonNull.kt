@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun baz(s: String?, u: String?): String {
     val t = when(if (u == null) return "" else u) {
         "abc" -> u

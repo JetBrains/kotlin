@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 fun <T> select(vararg x: T) = x[0]
 fun <T> id1(x: T): T = x

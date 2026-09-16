@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <R1> build(block: TestInterface<R1>.() -> Unit): R1 = TODO()
 
 interface TestInterface<R> {

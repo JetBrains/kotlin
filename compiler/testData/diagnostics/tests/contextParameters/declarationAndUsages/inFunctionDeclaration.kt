@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ContextParameters
 
 fun <A, R> context(context: A, block: context(A) () -> R): R = block(context)

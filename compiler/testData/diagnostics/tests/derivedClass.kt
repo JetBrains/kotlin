@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class Base<T1>(val x: T1)
 
 class Derived<T2 : Any>(x: T2) : Base<T2>(x)

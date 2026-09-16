@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class C<T>(val x: T, val y: String) {
     constructor(x: T): this(x, "")
 }

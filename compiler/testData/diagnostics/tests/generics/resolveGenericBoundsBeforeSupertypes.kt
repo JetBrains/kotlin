@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Tests that generic bounds in the object supertype are resolved prior to the supertype itself
 
 object O : Tr<V<*>>

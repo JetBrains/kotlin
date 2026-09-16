@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 // ISSUES: KT-51357, KT-67146, KT-67335
 // FIR_DUMP

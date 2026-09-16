@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +LocalVariableTargetedAnnotationOnDestructuring
 fun test(): Any? {
     @ann val (a, b) = P(1, 1)

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Test(foo: Any?, bar: Any?) {
     val foo = foo ?: this
     private val bar = bar ?: this

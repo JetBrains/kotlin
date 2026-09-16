@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class Base
 class Derived<E : CharSequence> : Base()
 fun f(entry: Base) = entry is Derived<out CharSequence>

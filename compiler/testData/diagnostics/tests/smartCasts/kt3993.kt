@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class User(val login : Boolean) {}
 
 fun currentAccess(user: User?): Int {

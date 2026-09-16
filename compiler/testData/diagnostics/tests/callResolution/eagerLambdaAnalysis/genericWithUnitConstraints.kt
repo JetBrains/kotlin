@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // This file doesn't contain LANGUAGE directive because it's expected
 // to work independently of language-version-settings configuration, so there should be no LATEST_LV_DIFFERENCE.

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-10628
 
 // KT-10628: Wrong type mismatch with star projection of inner class inside use-site projected type

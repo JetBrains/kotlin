@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // TARGET_BACKEND: JVM_IR
 
 // FILE: priv/members/check/MyJClass.java

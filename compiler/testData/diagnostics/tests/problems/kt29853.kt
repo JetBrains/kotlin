@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-29853
 
 // KT-29853: Declaring local variable named `field` inside property getter triggers name shadowing warning

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See also KT-4285
 open class A {
     open fun foo(x: Int = 0) {}

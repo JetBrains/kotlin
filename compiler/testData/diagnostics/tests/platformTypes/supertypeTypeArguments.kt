@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface ExtMap<K, V> : Map<K, V>
 class HashMapEx<K, V> : java.util.HashMap<K, V>(), ExtMap<K, V>
 

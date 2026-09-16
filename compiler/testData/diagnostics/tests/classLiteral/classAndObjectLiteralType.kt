@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import kotlin.reflect.KClass
 
 abstract class Base<T : Any>(val klass: KClass<out T>)

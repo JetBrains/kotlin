@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: com/winterbe/domain/IEntity.java
 package com.winterbe.domain;
 import com.winterbe.observer.ObserverSupport;

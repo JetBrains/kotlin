@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface Generic<K, V>
 
 fun <X, Y> Generic<X, Y>.getValue(x: X): Y = TODO()

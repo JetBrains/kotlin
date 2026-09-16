@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 fun testEmptyString() {
     js(<!JSCODE_NO_JAVASCRIPT_PRODUCED!>""<!>)

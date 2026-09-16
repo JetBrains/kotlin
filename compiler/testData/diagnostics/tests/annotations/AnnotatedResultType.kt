@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Result type can be annotated
 @Target(AnnotationTarget.TYPE)
 annotation class My(val x: Int)

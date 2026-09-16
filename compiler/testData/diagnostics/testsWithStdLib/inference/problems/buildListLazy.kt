@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 data class NameAndSafeValue(val name: String, val value: Int)
 
 fun getEnv() = listOf<NameAndSafeValue>()

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See also KT-5198 / KT-10186
 
 inline fun doCall(f: () -> Unit) = f()

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-702 Type inference failed
 fun <T> getJavaClass() : java.lang.Class<T> { return "" <!CAST_NEVER_SUCCEEDS!>as<!> Class<T> }
 

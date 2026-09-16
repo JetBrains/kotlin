@@ -1,5 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // MODULE: m1-common
 // FILE: common.kt

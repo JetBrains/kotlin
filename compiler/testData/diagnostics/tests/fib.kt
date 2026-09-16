@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun fibIterative(n: Int): Int {
     if (n < 2) return 1
     var current = 1

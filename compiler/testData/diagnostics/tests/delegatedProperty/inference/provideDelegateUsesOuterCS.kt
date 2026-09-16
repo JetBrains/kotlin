@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-63646
 // WITH_STDLIB
 interface MyPropertyDelegateProvider<out Y1> {

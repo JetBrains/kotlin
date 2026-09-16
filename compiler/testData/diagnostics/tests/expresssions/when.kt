@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo() = if (true) 1 else 0
 
 fun bar(arg: Any?) = when (arg) {

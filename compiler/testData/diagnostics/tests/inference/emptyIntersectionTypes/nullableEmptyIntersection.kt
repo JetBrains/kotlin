@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 fun <T : <!FINAL_UPPER_BOUND!>String<!>> g(): T? = null
 
