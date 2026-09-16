@@ -14,7 +14,7 @@ import org.junit.platform.launcher.PostDiscoveryFilter
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.absoluteValue
 
-class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
+internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
     override fun apply(descriptor: TestDescriptor): FilterResult {
         val source = descriptor.source.getOrNull() as? MethodSource
             ?: return included("Not a method-based test")
