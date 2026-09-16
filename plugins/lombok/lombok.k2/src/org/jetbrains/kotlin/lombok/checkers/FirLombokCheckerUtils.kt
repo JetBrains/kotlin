@@ -187,7 +187,8 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
         allowedTargetsMap = setOf(
             KotlinTarget.CLASS_ONLY,
             KotlinTarget.CONSTRUCTOR,
-            KotlinTarget.FUNCTION,
+            KotlinTarget.MEMBER_FUNCTION,
+            KotlinTarget.COMPANION_MEMBER_FUNCTION,
         ),
         // An inner class's constructor takes the outer instance as its dispatch receiver, and the generated
         // `build()` - a member of the builder class, which holds no such instance - has no way to pass one: the
