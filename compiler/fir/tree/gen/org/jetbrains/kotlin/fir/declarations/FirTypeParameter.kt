@@ -47,5 +47,7 @@ abstract class FirTypeParameter : FirDeclaration(), FirTypeParameterRef {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract fun <D> transformBounds(transformer: FirTransformer<D>, data: D): FirTypeParameter
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameter
 }
