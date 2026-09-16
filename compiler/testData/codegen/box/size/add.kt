@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_MULTI_MODULE: JS_IR, JS_IR_ES6
 // ^^^^^^
 // The Mutli Module tests are compiling the main module as a dependency module.
 // Since we use ES modules in those tests, there is no re-exports from the dependencies,

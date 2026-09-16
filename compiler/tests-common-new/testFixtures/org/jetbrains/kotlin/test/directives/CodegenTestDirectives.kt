@@ -28,7 +28,7 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
-    val IGNORE_BACKEND_K2_MULTI_MODULE by enumDirective<TargetBackend>(
+    val IGNORE_BACKEND_MULTI_MODULE by enumDirective<TargetBackend>(
         description = "Ignore failures of multimodule test on target backend if test uses K2 frontend",
         applicability = Global
     )

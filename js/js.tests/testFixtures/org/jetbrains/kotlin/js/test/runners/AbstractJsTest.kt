@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_SPLITTING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_SPLITTING_DIFFERENCE
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -149,7 +149,7 @@ abstract class AbstractJsCodegenSplittingTest(
     testGroupOutputDirPrefix: String = "codegen/boxInlineSplitted/",
 ) : AbstractJsCodegenBoxTestBase(pathToTestDir, testGroupOutputDirPrefix) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+        get() = listOf(IGNORE_BACKEND_MULTI_MODULE)
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -237,7 +237,7 @@ abstract class AbstractJsSteppingSplitTest : AbstractJsSteppingTest(
     testGroupOutputDirPrefix = "debug/steppingSplit/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+        get() = listOf(IGNORE_BACKEND_MULTI_MODULE)
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
