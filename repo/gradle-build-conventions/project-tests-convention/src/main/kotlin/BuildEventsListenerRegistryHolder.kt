@@ -6,12 +6,6 @@
 import org.gradle.build.event.BuildEventsListenerRegistry
 import javax.inject.Inject
 
-/**
- * Gives access to [BuildEventsListenerRegistry], which is only available via constructor injection
- * and therefore cannot be requested directly from a precompiled script plugin.
- *
- * Instantiate with `objects.newInstance(BuildEventsListenerRegistryHolder::class.java)`.
- */
 internal abstract class BuildEventsListenerRegistryHolder @Inject constructor(
     val listenerRegistry: BuildEventsListenerRegistry,
 )
