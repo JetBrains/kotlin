@@ -12,6 +12,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -719,6 +721,43 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             }
 
             build("compileKotlinJvm")
+        }
+    }
+
+    @DisplayName("commonMain type implementing Continuation<K> is usable from commonTest with JS+Wasm targets")
+    @GradleTest
+    @Disabled("KT-89391")
+    fun `commonMain Continuation subtype is usable from commonTest with js and wasm targets`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+                .copy(separateCompilation = true),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    js()
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs()
+                }
+
+            }
+            kotlinSourcesDir("commonMain").source("common.kt") {
+                "interface Some<K> : kotlin.coroutines.Continuation<K>"
+            }
+            kotlinSourcesDir("commonTest").source("testCommon.kt") {
+                """
+                fun <L> test_common(x: Some<L>, result: Result<L>) {
+                    x.resumeWith(result)
+                }
+                """.trimIndent()
+            }
+            build(":compileTestKotlinJs")
         }
     }
 
