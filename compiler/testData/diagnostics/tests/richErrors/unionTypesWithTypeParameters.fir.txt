@@ -1,0 +1,23 @@
+FILE: unionTypesWithTypeParameters.kt
+    public final error class Foo : R|kotlin/RichError| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final typealias TA = R|kotlin/RichError|
+    public final fun <T, V : R|kotlin/Value|, E : R|kotlin/RichError|, E2 : R|{TA=} kotlin/RichError|> test(a: R|union(primary=T, errors=Foo)|, b: R|union(primary=V, errors=Foo)|, c: R|union(errors=E | Foo)|, d: R|union(errors=E2 | Foo)|, e: <ERROR TYPE REF: Non-rich error component must appear first>, f: <ERROR TYPE REF: Non-rich error component must appear first>, g: R|union(errors=Foo | E)|, h: R|union(errors=Foo | E2)|): R|kotlin/Unit| {
+    }
+    public final val <E : R|kotlin/RichError|> R|union(errors=E | Foo)|.prop: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(1)
+        }
+    public final class C<T, V : R|kotlin/Value|, E : R|kotlin/RichError|, E2 : R|{TA=} kotlin/RichError|> : R|kotlin/Any| {
+        public constructor<T, V : R|kotlin/Value|, E : R|kotlin/RichError|, E2 : R|{TA=} kotlin/RichError|>(): R|C<T, V, E, E2>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(a: R|union(primary=T, errors=Foo)|, b: R|union(primary=V, errors=Foo)|, c: R|union(errors=E | Foo)|, d: R|union(errors=E2 | Foo)|, e: <ERROR TYPE REF: Non-rich error component must appear first>, f: <ERROR TYPE REF: Non-rich error component must appear first>, g: R|union(errors=Foo | E)|, h: R|union(errors=Foo | E2)|): R|kotlin/Unit| {
+        }
+
+    }

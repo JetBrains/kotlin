@@ -314,12 +314,21 @@ open class FirTypeResolveTransformer(
 
             withDeclaration(namedFunction) {
                 addTypeParametersScope(namedFunction)
-                val result = transformDeclaration(namedFunction, data).also {
-                    unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
-                }
+
+                val result = namedFunction
+                    // Type parameters must be resolved first so that we can inspect RichError bounds for union type resolution
+                    .transformTypeParameters(this, data)
+                    .transformReturnTypeRef(this, data)
+                    .transformReceiverParameter(this, data)
+                    .transformContextParameters(this, data)
+                    .transformValueParameters(this, data)
+                    .transformBody(this, data)
+                    .transformAnnotations(this, data)
+                    .also {
+                        unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
+                    }
 
                 if (result.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction &&
-                    result is FirNamedFunction &&
                     result.name == StandardNames.DATA_CLASS_COPY
                 ) {
                     for (valueParameter in result.valueParameters) {
@@ -329,7 +338,7 @@ open class FirTypeResolveTransformer(
 
                 result
             }
-        } as FirNamedFunction
+        }
     }
 
     private fun unboundCyclesInTypeParametersSupertypes(typeParametersOwner: FirTypeParameterRefsOwner) {
