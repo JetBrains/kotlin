@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmExposeBoxedNa
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName
 import org.jetbrains.kotlin.light.classes.symbol.classes.jvmNameFromAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
+import org.jetbrains.kotlin.light.classes.symbol.classes.typeForInlineClass
 
 internal abstract class SymbolLightMethodBase(
     lightMemberOrigin: LightMemberOrigin?,
@@ -41,7 +41,7 @@ internal abstract class SymbolLightMethodBase(
     val generationMode: MethodGenerationMode,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
     /**
-     * Whether this method is the Java-facing declaration whose value-class types are boxed.
+     * Whether this method is the Java-facing declaration whose inline-class types are boxed.
      */
     val isJvmExposeBoxed: Boolean get() = generationMode is MethodGenerationMode.Boxed
 
@@ -143,7 +143,7 @@ internal abstract class SymbolLightMethodBase(
             }
             is MethodGenerationMode.Boxed -> {
                 symbol.getJvmExposeBoxedNameFromAnnotation()
-                    ?: computeJavaMethodName(symbol, defaultName, ignoreValueClassMangling = true)
+                    ?: computeJavaMethodName(symbol, defaultName, ignoreInlineClassMangling = true)
             }
         }
 
@@ -171,7 +171,7 @@ internal abstract class SymbolLightMethodBase(
             // implicitly override generic 'invoke' from a corresponding base class.
             symbol is KaNamedFunctionSymbol && symbol.isBuiltinFunctionInvoke && isInlineClassType(returnType) -> true
 
-            isJvmExposeBoxed && typeForValueClass(returnType) -> true
+            isJvmExposeBoxed && typeForInlineClass(returnType) -> true
 
             returnType.isPrimitiveBacked -> {
                 if (symbol.origin == KaSymbolOrigin.DELEGATED) {

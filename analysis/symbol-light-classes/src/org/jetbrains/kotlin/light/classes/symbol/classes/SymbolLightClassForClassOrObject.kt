@@ -63,7 +63,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
      *
      * @see KaNamedClassSymbol.isInline
      */
-    val isKotlinValueClass: Boolean by lazyPub {
+    val isInlineClass: Boolean by lazyPub {
         withClassSymbol { it.isInline }
     }
 
@@ -217,7 +217,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             lightMemberOrigin,
             METHOD_INDEX_BASE,
             isTopLevel = false,
-            suppressValueClass = true,
+            suppressInlineClass = true,
         )
     }
 
@@ -256,7 +256,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 lightMemberOrigin = lightMemberOrigin,
                 methodIndex = METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
                 isTopLevel = false,
-                suppressValueClass = true,
+                suppressInlineClass = true,
             )
         }
 
