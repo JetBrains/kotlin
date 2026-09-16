@@ -267,10 +267,6 @@ extension ExportedKotlinPackages.kotlinx.serialization {
                 return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_PolymorphicSerializer_descriptor_get(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor.Type.self) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
             }
         }
-        @_spi(kotlinx$serialization$InternalSerializationApi)
-        public func toString() -> Swift.String {
-            return kotlinx_serialization_PolymorphicSerializer_toString(self.__externalRCRef())
-        }
         @_spi(kotlinx$serialization$InternalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
         public init(
             baseClass: Swift.Never
@@ -1947,22 +1943,6 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 _ value: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind.ENUM
             ) {
                 self.value = value
-            }
-        }
-        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-        open func hashCode() -> Swift.Int32 {
-            if Self.self == ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind.self {
-                return kotlinx_serialization_descriptors_SerialKind_hashCode(self.__externalRCRef())
-            } else {
-                return kotlinx_serialization_descriptors_SerialKind_hashCode_direct(self.__externalRCRef())
-            }
-        }
-        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-        open func toString() -> Swift.String {
-            if Self.self == ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind.self {
-                return kotlinx_serialization_descriptors_SerialKind_toString(self.__externalRCRef())
-            } else {
-                return kotlinx_serialization_descriptors_SerialKind_toString_direct(self.__externalRCRef())
             }
         }
         package override init(
@@ -4284,20 +4264,6 @@ package func kotlinx_serialization_descriptors_SerialDescriptor_kind_get__revers
 package func kotlinx_serialization_descriptors_SerialDescriptor_serialName_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor.Type.self) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     let _result: Swift.String = _self.serialName
-    return _result
-}
-
-@_cdecl("kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift")
-package func kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.Int32 = _self.hashCode()
-    return _result
-}
-
-@_cdecl("kotlinx_serialization_descriptors_SerialKind_toString__reverse_swift")
-package func kotlinx_serialization_descriptors_SerialKind_toString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.String = _self.toString()
     return _result
 }
 

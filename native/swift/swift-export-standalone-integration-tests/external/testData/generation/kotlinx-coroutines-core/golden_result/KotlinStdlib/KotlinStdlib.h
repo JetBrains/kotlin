@@ -19,8 +19,6 @@ void * _Nullable kotlin_Throwable_cause_get__reverse_swift(void * self);
 
 NSString * _Nullable kotlin_Throwable_message_get__reverse_swift(void * self);
 
-NSString * kotlin_Throwable_toString__reverse_swift(void * self);
-
 _Bool kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(void * self, void * elements);
 
 _Bool kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable element);
@@ -243,19 +241,13 @@ void * kotlin_Result_Companion_get();
 
 void * kotlin_Result_Companion_success__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable value);
 
-_Bool kotlin_Result_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
 void * _Nullable kotlin_Result_exceptionOrNull(void * self);
 
 void * _Nullable kotlin_Result_getOrNull(void * self);
 
-int32_t kotlin_Result_hashCode(void * self);
-
 _Bool kotlin_Result_isFailure_get(void * self);
 
 _Bool kotlin_Result_isSuccess_get(void * self);
-
-NSString * kotlin_Result_toString(void * self);
 
 void * kotlin_RuntimeException_init_allocate();
 
@@ -289,10 +281,6 @@ NSString * _Nullable kotlin_Throwable_message_get_direct(void * self);
 
 _Bool kotlin_Throwable_printStackTrace(void * self);
 
-NSString * kotlin_Throwable_toString(void * self);
-
-NSString * kotlin_Throwable_toString_direct(void * self);
-
 _Bool kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable element);
 
 _Bool kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(void * self, void * elements);
@@ -305,17 +293,11 @@ int32_t kotlin_collections_Collection_size_get(void * self);
 
 void * kotlin_collections_IndexedValue_copy__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, int32_t index, void * _Nullable value);
 
-_Bool kotlin_collections_IndexedValue_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t kotlin_collections_IndexedValue_hashCode(void * self);
-
 int32_t kotlin_collections_IndexedValue_index_get(void * self);
 
 void * kotlin_collections_IndexedValue_init_allocate();
 
 _Bool kotlin_collections_IndexedValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * __kt, int32_t index, void * _Nullable value);
-
-NSString * kotlin_collections_IndexedValue_toString(void * self);
 
 void * _Nullable kotlin_collections_IndexedValue_value_get(void * self);
 
@@ -597,10 +579,6 @@ void * kotlin_time_Duration_div__TypesOfArguments__Swift_Double__(void * self, d
 
 double kotlin_time_Duration_div__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(void * self, void * other);
 
-_Bool kotlin_time_Duration_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t kotlin_time_Duration_hashCode(void * self);
-
 int64_t kotlin_time_Duration_inWholeDays_get(void * self);
 
 int64_t kotlin_time_Duration_inWholeHours_get(void * self);
@@ -646,8 +624,6 @@ int32_t kotlin_time_Duration_toInt__TypesOfArguments__ExportedKotlinPackages_kot
 NSString * kotlin_time_Duration_toIsoString(void * self);
 
 int64_t kotlin_time_Duration_toLong__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(void * self, void * unit);
-
-NSString * kotlin_time_Duration_toString(void * self);
 
 NSString * kotlin_time_Duration_toString__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit_Swift_Int32__(void * self, void * unit, int32_t decimals);
 

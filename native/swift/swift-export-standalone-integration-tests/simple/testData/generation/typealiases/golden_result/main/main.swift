@@ -149,27 +149,10 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    public static func ==(
-        this: main.DATA_CLASS,
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(other: other)
-    }
     public func copy(
         a: Swift.Int32
     ) -> main.DATA_CLASS {
         return main.DATA_CLASS.__createClassWrapper(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
-    }
-    public func equals(
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func hashCode() -> Swift.Int32 {
-        return DATA_CLASS_hashCode(self.__externalRCRef())
-    }
-    public func toString() -> Swift.String {
-        return DATA_CLASS_toString(self.__externalRCRef())
     }
 }
 public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
@@ -191,27 +174,10 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    public static func ==(
-        this: main.DATA_CLASS_WITH_REF,
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(other: other)
-    }
     public func copy(
         o: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> main.DATA_CLASS_WITH_REF {
         return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), o.__externalRCRef()))
-    }
-    public func equals(
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func hashCode() -> Swift.Int32 {
-        return DATA_CLASS_WITH_REF_hashCode(self.__externalRCRef())
-    }
-    public func toString() -> Swift.String {
-        return DATA_CLASS_WITH_REF_toString(self.__externalRCRef())
     }
 }
 public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
@@ -242,25 +208,8 @@ public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    public static func ==(
-        this: main.DATA_OBJECT_WITH_PACKAGE,
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(other: other)
-    }
-    public func equals(
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-    }
     public func foo() -> Swift.Int32 {
         return DATA_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
-    }
-    public func hashCode() -> Swift.Int32 {
-        return DATA_OBJECT_WITH_PACKAGE_hashCode(self.__externalRCRef())
-    }
-    public func toString() -> Swift.String {
-        return DATA_OBJECT_WITH_PACKAGE_toString(self.__externalRCRef())
     }
 }
 public final class GENERIC_CLASS: KotlinRuntime.KotlinBase {
@@ -308,23 +257,6 @@ public final class INLINE_CLASS: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    public static func ==(
-        this: main.INLINE_CLASS,
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(other: other)
-    }
-    public func equals(
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return INLINE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func hashCode() -> Swift.Int32 {
-        return INLINE_CLASS_hashCode(self.__externalRCRef())
-    }
-    public func toString() -> Swift.String {
-        return INLINE_CLASS_toString(self.__externalRCRef())
-    }
 }
 public final class INLINE_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     public var i: main.DATA_CLASS_WITH_REF {
@@ -344,23 +276,6 @@ public final class INLINE_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-    }
-    public static func ==(
-        this: main.INLINE_CLASS_WITH_REF,
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(other: other)
-    }
-    public func equals(
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return INLINE_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func hashCode() -> Swift.Int32 {
-        return INLINE_CLASS_WITH_REF_hashCode(self.__externalRCRef())
-    }
-    public func toString() -> Swift.String {
-        return INLINE_CLASS_WITH_REF_toString(self.__externalRCRef())
     }
 }
 public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {

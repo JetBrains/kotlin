@@ -91,6 +91,10 @@ public class SirVisibilityCheckerImpl(
         if (containsHidesFromObjCAnnotation(ktSymbol)) {
             return@withSessions SirAvailability.Unavailable("Declaration is @HiddenFromObjC")
         }
+        if (ktSymbol is KaNamedFunctionSymbol && ktSymbol.overridesKotlinAnyMember()) {
+            // `toString`, `hashCode` and `equals` pre provided as `description`, `hash`, and `isEqual` by KotlinBase.
+            return@withSessions SirAvailability.Unavailable("kotlin.Any members are exposed as through KotlinBase")
+        }
         if ((ktSymbol.containingSymbol as? KaDeclarationSymbol?)?.sirAvailability() is SirAvailability.Unavailable) {
             return@withSessions SirAvailability.Unavailable("Declaration's lexical parent is unavailable")
         }
@@ -172,6 +176,10 @@ public class SirVisibilityCheckerImpl(
             return@withSessions false
         }
         return@withSessions true
+    }
+
+    private fun KaNamedFunctionSymbol.overridesKotlinAnyMember(): Boolean = sirSession.withSessions {
+        allOverriddenSymbols.any { (it.containingDeclaration as? KaClassSymbol)?.classId == KaStandardTypeClassIds.ANY }
     }
 
     private fun KaNamedClassSymbol.isExported(): SirAvailability = sirSession.withSessions {

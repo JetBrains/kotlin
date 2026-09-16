@@ -97,11 +97,7 @@ void * operators_Foo_div__TypesOfArguments__ExportedKotlinPackages_operators_Foo
 
 _Bool operators_Foo_divAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
-_Bool operators_Foo_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
 int32_t operators_Foo_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
-
-int32_t operators_Foo_hashCode(void * self);
 
 void * operators_Foo_inc(void * self);
 
@@ -136,8 +132,6 @@ _Bool operators_Foo_set__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self
 void * operators_Foo_times__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
 _Bool operators_Foo_timesAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
-
-NSString * operators_Foo_toString(void * self);
 
 void * operators_Foo_unaryMinus(void * self);
 

@@ -548,9 +548,6 @@ extension ExportedKotlinPackages.kotlin.text {
         ) -> Swift.Void {
             return { kotlin_text_StringBuilder_toCharArray__TypesOfArguments__ExportedKotlinPackages_kotlin_CharArray_Swift_Int32_Swift_Int32_Swift_Int32__(self.__externalRCRef(), destination.__externalRCRef(), destinationOffset, startIndex, endIndex); return () }()
         }
-        public func toString() -> Swift.String {
-            return kotlin_text_StringBuilder_toString(self.__externalRCRef())
-        }
         public func trimToSize() -> Swift.Void {
             return { kotlin_text_StringBuilder_trimToSize(self.__externalRCRef()); return () }()
         }

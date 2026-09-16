@@ -120,12 +120,6 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Bool {
             this._compareTo(other: other) <= 0
         }
-        public static func ==(
-            this: ExportedKotlinPackages.kotlin.Enum,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            this.equals(other: other)
-        }
         public static func >(
             this: ExportedKotlinPackages.kotlin.Enum,
             other: ExportedKotlinPackages.kotlin.Enum
@@ -143,30 +137,8 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Int32 {
             return kotlin_Enum_compareTo__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(self.__externalRCRef(), other.__externalRCRef())
         }
-        public final func equals(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            return kotlin_Enum_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-        }
-        public final func hashCode() -> Swift.Int32 {
-            return kotlin_Enum_hashCode(self.__externalRCRef())
-        }
-        open func toString() -> Swift.String {
-            if Self.self == ExportedKotlinPackages.kotlin.Enum.self {
-                return kotlin_Enum_toString(self.__externalRCRef())
-            } else {
-                return kotlin_Enum_toString_direct(self.__externalRCRef())
-            }
-        }
     }
 }
-@_cdecl("kotlin_Enum_toString__reverse_swift")
-package func kotlin_Enum_toString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = ExportedKotlinPackages.kotlin.Enum.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.String = _self.toString()
-    return _result
-}
-
 @_cdecl("kotlin_collections_Iterator_hasNext__reverse_swift")
 package func kotlin_collections_Iterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.Iterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Iterator

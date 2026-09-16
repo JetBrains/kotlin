@@ -693,13 +693,6 @@ public fun kotlin_text_StringBuilder_toCharArray__TypesOfArguments__ExportedKotl
     return run { _result; true }
 }
 
-@ExportedBridge("kotlin_text_StringBuilder_toString")
-public fun kotlin_text_StringBuilder_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
-}
-
 @ExportedBridge("kotlin_text_StringBuilder_trimToSize")
 public fun kotlin_text_StringBuilder_trimToSize(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder

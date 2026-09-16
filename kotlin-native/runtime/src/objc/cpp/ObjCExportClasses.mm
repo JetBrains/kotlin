@@ -49,6 +49,15 @@ namespace {
 using PermanentRef = KRef;
 using RegularRef = kotlin::mm::ObjCBackRef;
 
+struct {
+    const KotlinToObjCMethodAdapter *toString;
+    const KotlinToObjCMethodAdapter *hashCode;
+    const KotlinToObjCMethodAdapter *equals;
+} anyReverseAdapters = {};
+
+static void initializeAnyMemberReverseAdapters(void) noexcept;
+static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMethodAdapter *adapter) noexcept;
+
 }
 
 // Note: `KotlinBase`'s `toKotlin` and `_tryRetain` methods will terminate if
@@ -79,6 +88,7 @@ using RegularRef = kotlin::mm::ObjCBackRef;
   if (self == [KotlinBase class]) {
     injectToRuntime(); // In case `initialize` is called before `load` (see e.g. https://youtrack.jetbrains.com/issue/KT-50982).
     Kotlin_ObjCExport_initialize();
+    initializeAnyMemberReverseAdapters();
   }
   if (kotlin::compiler::swiftExport()) {
       // Swift Export generates types that don't need to be additionally initialized.
@@ -315,13 +325,24 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     kotlin::CalledFromNativeGuard guard;
     ObjHolder h1;
     ObjHolder h2;
-    return Kotlin_Interop_CreateNSStringFromKString(Kotlin_toString([self toKotlin:h1.slot()], h2.slot()));
+    KRef obj = [self toKotlin:h1.slot()];
+    if (VTableElement impl = nonRecursiveAnyMemberImpl(obj, anyReverseAdapters.toString)) {
+        // Matches OBJ_GETTER(Kotlin_toString, KRef): the receiver first, the result slot last.
+        using ToString = ObjHeader* (*)(KRef, ObjHeader**);
+        return Kotlin_Interop_CreateNSStringFromKString(reinterpret_cast<ToString>(const_cast<void *>(impl))(obj, h2.slot()));
+    }
+    return Kotlin_Interop_CreateNSStringFromKString(Kotlin_toString(obj, h2.slot()));
 }
 
 - (NSUInteger)hash {
     kotlin::CalledFromNativeGuard guard;
     ObjHolder holder;
-    return (NSUInteger)Kotlin_hashCode([self toKotlin:holder.slot()]);
+    KRef obj = [self toKotlin:holder.slot()];
+    if (VTableElement impl = nonRecursiveAnyMemberImpl(obj, anyReverseAdapters.hashCode)) {
+        using HashCode = KInt (*)(KRef);
+        return (NSUInteger)reinterpret_cast<HashCode>(const_cast<void *>(impl))(obj);
+    }
+    return (NSUInteger)Kotlin_hashCode(obj);
 }
 
 - (BOOL)isEqual:(id)other {
@@ -345,6 +366,10 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     ObjHolder rhsHolder;
     KRef lhs = [self toKotlin:lhsHolder.slot()];
     KRef rhs = [other toKotlin:rhsHolder.slot()];
+    if (VTableElement impl = nonRecursiveAnyMemberImpl(lhs, anyReverseAdapters.equals)) {
+        using Equals = KBoolean (*)(KRef, KRef);
+        return reinterpret_cast<Equals>(const_cast<void *>(impl))(lhs, rhs);
+    }
     return Kotlin_equals(lhs, rhs);
 }
 
@@ -454,5 +479,48 @@ static void injectToRuntime() {
     injectToRuntimeImpl();
   });
 }
+
+namespace {
+
+static void initializeAnyMemberReverseAdapters() noexcept {
+  auto findAnyMemberReverseAdapter = [](SEL selector) noexcept -> const KotlinToObjCMethodAdapter *{
+    const ObjCTypeAdapter *anyAdapter = kotlin::objCExport(theAnyTypeInfo).typeAdapter;
+    if (anyAdapter == nullptr)
+      return nullptr;
+    for (int i = 0; i < anyAdapter->reverseAdapterNum; ++i) {
+      const KotlinToObjCMethodAdapter *adapter = &anyAdapter->reverseAdapters[i];
+      if (adapter->vtableIndex < 0 || adapter->kotlinImpl == nullptr)
+        continue;
+      if (sel_registerName(adapter->selector) == selector)
+        return adapter;
+    }
+    return nullptr;
+  };
+
+  anyReverseAdapters = {
+    .toString = findAnyMemberReverseAdapter(@selector(description)),
+    .hashCode = findAnyMemberReverseAdapter(@selector(hash)),
+    .equals = findAnyMemberReverseAdapter(@selector(isEqual:))
+  };
+}
+
+VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMethodAdapter *adapter) noexcept {
+    if (!adapter)
+        return nullptr;
+    const TypeInfo* typeInfo = obj->type_info();
+    const int vtableIndex = adapter->vtableIndex;
+    // If the type is `TF_OBJC_DYNAMIC`, it's vtable entry for `Any` methods will point to
+    // the reverse-adapter to the corresponding `NSObject` method. When an ObjC class (bound to a Kotlin class) does not
+    // override these methods, they end up calling `KotlinBase`. `KotlinBase` now has to tie the recursive knot:
+    // it must find the first non-`TF_OBJC_DYNAMIC` superclass and use its implementation; it acts as a sort
+    // of a `super` call.
+    while ((typeInfo->flags_ & TF_OBJC_DYNAMIC) != 0) {
+        RuntimeAssert(typeInfo->superType_ != nullptr, "Type %p is TF_OBJC_DYNAMIC and doesn't have a super type", typeInfo);
+        typeInfo = typeInfo->superType_;
+    }
+    return typeInfo->vtable()[vtableIndex];
+}
+
+} // namespace
 
 #endif // KONAN_OBJC_INTEROP

@@ -77,17 +77,6 @@ public fun Child_contains__TypesOfArguments__Swift_Int32____reverse(self: Child,
     return _result
 }
 
-@ImportedBridge("Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
-internal external fun Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean
-
-@BindReverseBridgeToMethod(Child::class, "equals")
-public fun Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: Child, to: kotlin.Any?): Boolean {
-    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __to = if (to == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(to)
-    val _result = Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __to)
-    return _result
-}
-
 @ImportedBridge("Child_genericReturnTypeFunc__reverse_swift")
 internal external fun Child_genericReturnTypeFunc__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -351,17 +340,6 @@ internal external fun Parent_contains__TypesOfArguments__Swift_Int32____reverse_
 public fun Parent_contains__TypesOfArguments__Swift_Int32____reverse(self: Parent, element: Int): Boolean {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = Parent_contains__TypesOfArguments__Swift_Int32____reverse_swift(__self, element)
-    return _result
-}
-
-@ImportedBridge("Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
-internal external fun Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean
-
-@BindReverseBridgeToMethod(Parent::class, "equals")
-public fun Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: Parent, to: kotlin.Any?): Boolean {
-    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __to = if (to == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(to)
-    val _result = Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __to)
     return _result
 }
 
@@ -649,22 +627,6 @@ public fun Child_contains__TypesOfArguments__Swift_Int32___direct(self: kotlin.n
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
     val __element = element
     val _result = run { __self.contains(__element) }
-    return _result
-}
-
-@ExportedBridge("Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
-    val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
-    val _result = run { __self.equals(__to) }
-    return _result
-}
-
-@ExportedBridge("Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct", nonVirtualTargetMethod = "equals")
-public fun Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
-    val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
-    val _result = run { __self.equals(__to) }
     return _result
 }
 
@@ -1079,22 +1041,6 @@ public fun Parent_contains__TypesOfArguments__Swift_Int32___direct(self: kotlin.
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val __element = element
     val _result = run { __self.contains(__element) }
-    return _result
-}
-
-@ExportedBridge("Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
-    val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
-    val _result = run { __self.equals(__to) }
-    return _result
-}
-
-@ExportedBridge("Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct", nonVirtualTargetMethod = "equals")
-public fun Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
-    val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
-    val _result = run { __self.equals(__to) }
     return _result
 }
 
