@@ -187,7 +187,7 @@ class TypeParametersTranslationTests(
     }
 
     @Test
-    fun `test - classifier context case when same parameter type is translated differently `() {
+    fun `test - classifier context case when same parameter type is translated differently`() {
         doTest(
             """
             interface UpperBound
