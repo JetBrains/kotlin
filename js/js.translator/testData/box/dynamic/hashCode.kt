@@ -120,6 +120,10 @@ fun jsStringHashCode() {
 }
 
 fun jsBigIntHashCode() {
+    assertEquals(js("BigInt(-1)").unsafeCast<Any>().hashCode(), 0)
+    assertEquals(js("BigInt(0)").unsafeCast<Any>().hashCode(), 0)
+    assertEquals(js("BigInt(-12)").unsafeCast<Any>().hashCode(), -11)
+
     assertEquals(js("BigInt(4)").unsafeCast<Any>().hashCode(), js("BigInt(4)").unsafeCast<Any>().hashCode())
     assertEquals(js("BigInt(5)").unsafeCast<Any>().hashCode(), js("BigInt(5)").unsafeCast<Any>().hashCode())
     assertEquals(js("BigInt(-4)").unsafeCast<Any>().hashCode(), js("BigInt(-4)").unsafeCast<Any>().hashCode())
@@ -132,6 +136,7 @@ fun jsBigIntHashCode() {
 
     assertNotEquals(js("BigInt(-4)").unsafeCast<Any>().hashCode(), js("BigInt(4)").unsafeCast<Any>().hashCode())
     assertNotEquals(js("BigInt(-4)").unsafeCast<Any>().hashCode(), js("BigInt(5)").unsafeCast<Any>().hashCode())
+
 }
 
 fun jsSymbolHashCode() {

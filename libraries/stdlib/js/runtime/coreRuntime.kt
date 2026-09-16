@@ -89,13 +89,14 @@ internal fun getBigIntHashCode(value: BigInt): Int {
     val mask = BigInt(4294967295.0)
 
     var hashCode = 0
-    var bigNumber = value
-    val endValue = if (value.isNegative) BigInt(-1) else BigInt(0)
+    var prevValue = BigInt(-1)
+    var currentValue = value
 
-    while (!jsEqeqeq(bigNumber, endValue)) {
-        val chunk = (bigNumber and mask).toNumber().unsafeCast<Int>()
+    while (!jsEqeqeq(currentValue, prevValue)) {
+        val chunk = (currentValue and mask).toNumber().unsafeCast<Int>()
         hashCode = hashCode xor chunk
-        bigNumber = bigNumber shr shiftNumber
+        prevValue = currentValue
+        currentValue = currentValue shr shiftNumber
     }
 
     return hashCode
