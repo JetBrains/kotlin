@@ -57,6 +57,30 @@ internal fun TestDescriptor.toTestPath(taskName: String): TestPath {
     return TestPath(suites, leaf)
 }
 
+/**
+ * The name TeamCity's own Gradle runner reports for this test, before the server normalizes it.
+ *
+ * A faithful port of `TestNameDescriptor.DISPLAY_NAME.getTestName` from the runner's init script (see
+ * the link above): note that it compares the candidate against the *raw* `descriptor.name` and falls
+ * back to that name, where [toTestPath] compares against the name stripped at the first bracket.
+ *
+ * The difference only shows once TeamCity has had its say. The runner reports `Class.method()` and the
+ * server strips the trailing `()` while registering the test, arriving at the `Class.method` that
+ * [toTestPath] produces directly. The server strips it only from a name that is otherwise bracket-free
+ * and does not end in whitespace, so for a method whose name ends with a space, or contains a bracket
+ * of its own, the two forms disagree - and the runner's is the one TeamCity ends up registering.
+ *
+ * Replaying a cached task therefore has to emit *this* form: those messages go through the same
+ * server-side normalization as the runner's, so emitting the already-normalized name is exactly what
+ * made a replayed name differ from an executed one.
+ */
+internal fun TestDescriptor.toTeamCityRunnerTestName(): String {
+    val methodName = name.takeWhile { it !in "([{<" }
+    val candidate = if (displayName.startsWith(methodName)) displayName else "$methodName($displayName)"
+    val resolved = if (candidate == "$name()") name else candidate
+    return className?.let { "$it.$resolved" } ?: resolved
+}
+
 /** The status names TeamCity's own Gradle integration uses. */
 internal fun TestResult.statusName(): String = when (resultType) {
     TestResult.ResultType.FAILURE -> "Failure"
