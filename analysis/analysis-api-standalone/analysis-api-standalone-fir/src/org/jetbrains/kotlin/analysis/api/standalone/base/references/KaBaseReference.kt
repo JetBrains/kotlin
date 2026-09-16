@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.KaResolvableReferenceBridge
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-@OptIn(KtImplementationDetail::class, KaIdeApi::class)
+@OptIn(KtImplementationDetail::class)
 internal sealed interface KaBaseReference : KtReference, KaResolvableReferenceBridge {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol>
 
