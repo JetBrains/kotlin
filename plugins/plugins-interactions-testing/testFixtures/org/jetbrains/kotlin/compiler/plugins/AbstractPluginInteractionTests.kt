@@ -53,7 +53,7 @@ fun TestConfigurationBuilder.enablePlugins() {
         ::ExtensionRegistrarConfigurator, ::PluginAnnotationsProvider,
     )
 
-    enableSerializationRuntimeProviders(defaultsProviderBuilder.targetBackend ?: TargetBackend.JVM_IR)
+    enableSerializationRuntimeProviders(defaultsProviderBuilder.targetBackend ?: TargetBackend.JVM)
     useCustomRuntimeClasspathProviders(
         ::LombokRuntimeClassPathProvider,
         ::ParcelizeRuntimeClasspathProvider,
