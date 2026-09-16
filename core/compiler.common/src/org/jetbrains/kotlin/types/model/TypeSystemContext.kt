@@ -613,8 +613,12 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     }
 
     fun TypeConstructorMarker.isAnyConstructor(): Boolean
+    fun TypeConstructorMarker.isValueConstructor(): Boolean
+    fun TypeConstructorMarker.isRichErrorConstructor(): Boolean
     fun TypeConstructorMarker.isNothingConstructor(): Boolean
     fun TypeConstructorMarker.isArrayConstructor(): Boolean
+
+    fun TypeConstructorMarker.isRichErrorClass(): Boolean = false
 
     // TODO: Consider making `LanguageFeature` accessible from this module.
     fun KotlinTypeMarker.withNewTypeSince(languageFeature: Any, newType: KotlinTypeMarker): KotlinTypeMarker = this

@@ -429,7 +429,21 @@ object AbstractTypeChecker {
         val superConstructor = superType.typeConstructor()
 
         if (c.areEqualTypeConstructors(subType.typeConstructor(), superConstructor) && superConstructor.parametersCount() == 0) return true
-        if (superType.typeConstructor().isAnyConstructor()) return true
+        if (superConstructor.isAnyConstructor()) return true
+
+        if (superConstructor.isValueConstructor()) {
+            return state.anySupertype(
+                subType,
+                supertypesPolicy = { LowerIfFlexible },
+                predicate = {
+                    val typeConstructor = it.typeConstructor()
+                    typeConstructor.isClassTypeConstructor() &&
+                            !typeConstructor.isAnyConstructor() &&
+                            !typeConstructor.isRichErrorConstructor() &&
+                            !typeConstructor.isRichErrorClass()
+                }
+            )
+        }
 
         val supertypesWithSameConstructor = filterOutEquivalentSupertypesWithSameConstructor(
             findCorrespondingSupertypes(subType, superConstructor)

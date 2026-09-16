@@ -343,6 +343,14 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FqNames.any)
     }
 
+    override fun TypeConstructorMarker.isValueConstructor(): Boolean {
+        return false
+    }
+
+    override fun TypeConstructorMarker.isRichErrorConstructor(): Boolean {
+        return false
+    }
+
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FqNames.nothing)
