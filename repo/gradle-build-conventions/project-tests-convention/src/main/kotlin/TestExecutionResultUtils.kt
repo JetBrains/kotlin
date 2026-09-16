@@ -19,11 +19,71 @@ internal class TestPath(val suites: List<String>, val leaf: String) {
     fun joinToTeamCityName(): String = (suites + leaf).joinToString(": ")
 }
 
-// See https://jetbrains.team/p/tc/repositories/teamcity-gradle/files/a7fe40dfe94c4af5c4407003fb6fecaed4cc6795/gradle-runner-agent/src/main/scripts/init_since_8.gradle
-private fun TestDescriptor.getTestName(): String {
+/**
+ * The method part of the name as TeamCity's own Gradle runner reports it, without the class prefix.
+ *
+ * A port of `TestNameDescriptor.DISPLAY_NAME.getTestName` from the runner's init script, see
+ * https://jetbrains.team/p/tc/repositories/teamcity-gradle/files/a7fe40dfe94c4af5c4407003fb6fecaed4cc6795/gradle-runner-agent/src/main/scripts/init_since_8.gradle
+ *
+ * Note that the last step compares against the *raw* descriptor name, not against the name stripped at
+ * the first bracket: for a JUnit method Gradle reports both `name` and `displayName` as `method()`, so
+ * the comparison fails and the parentheses stay on. Dropping them is the server's job, not ours - see
+ * [dropEmptyParameterList].
+ */
+private fun TestDescriptor.teamCityRunnerMethodName(): String {
     val methodName = name.takeWhile { it !in "([{<" }
-    val testName = if (displayName.startsWith(methodName)) displayName else "$methodName($displayName)"
-    return testName.takeUnless { it == "$methodName()" } ?: methodName
+    val candidate = if (displayName.startsWith(methodName)) displayName else "$methodName($displayName)"
+    return if (candidate == "$name()") name else candidate
+}
+
+/**
+ * Emulates the normalization TeamCity's server applies to the method part of a test name: an *empty*
+ * parameter list is dropped, a non-empty one is kept.
+ *
+ * Ported from `TestNameParser.ParsePart.checkForParameters`
+ * (`server-model/src/jetbrains/buildServer/tests/TestNameParser.java`), which refuses to read a
+ * parameter list - leaving the name exactly as it was reported - unless the part closes with a brace,
+ * the opening brace is neither absent nor the first character, and the character before it is not a
+ * space. `jetbrains.test.Test.test()` therefore registers as `jetbrains.test.Test.test`, while
+ * `Test.test - a name ending in a space ()` and `Test.CHECK mode (TeamCity) - x()` keep their
+ * parentheses, the former because a space precedes the brace and the latter because the parameter list
+ * it finds is `(TeamCity) - x()` rather than `()`.
+ *
+ * Only the empty round list is handled here, which is the only case observed to be dropped; anything
+ * else is left untouched, as TeamCity leaves it.
+ */
+private fun String.dropEmptyParameterList(): String {
+    if (!endsWith("()")) return this
+
+    val openBrace = length - 2
+    // The first brace of either kind has to be the one that opens this very list.
+    val firstBrace = indexOfFirst { it == '(' || it == '[' }
+    if (firstBrace != openBrace) return this
+    // TeamCity ignores a list opened by the first character, or preceded by a space.
+    if (openBrace == 0 || this[openBrace - 1] == ' ') return this
+
+    return substring(0, openBrace)
+}
+
+/**
+ * The name TeamCity's Gradle runner sends for this test, before the server normalizes it.
+ *
+ * This is what a replay has to emit: those messages go through the same server-side normalization as
+ * the runner's, so emitting an already-normalized name is what made a replayed name differ from an
+ * executed one.
+ */
+internal fun TestDescriptor.toTeamCityRunnerTestName(): String {
+    val methodName = teamCityRunnerMethodName()
+    return className?.let { "$it.$methodName" } ?: methodName
+}
+
+/**
+ * The name TeamCity ends up registering for this test - the runner's name put through the server's
+ * normalization. This is the name to compare against anything read back from TeamCity.
+ */
+internal fun TestDescriptor.toTeamCityRegisteredTestName(): String {
+    val methodName = teamCityRunnerMethodName().dropEmptyParameterList()
+    return className?.let { "$it.$methodName" } ?: methodName
 }
 
 /**
@@ -47,39 +107,15 @@ internal fun TestDescriptor.toTestPath(taskName: String): TestPath {
         .toList()
         .asReversed()
 
-    val testName = getTestName()
-    val leaf = className?.let { "$it.$testName" } ?: testName
+    val testName = toTeamCityRegisteredTestName()
 
-    if (leaf.endsWith("'")) {
-        error("Test $leaf ends with ' (apostrophe) symbol and may be processed incorrectly by TeamCity (TW-101796)")
+    if (testName.endsWith("'")) {
+        error("Test $testName ends with ' (apostrophe) symbol and may be processed incorrectly by TeamCity (TW-101796)")
     }
 
-    return TestPath(suites, leaf)
+    return TestPath(suites, testName)
 }
 
-/**
- * The name TeamCity's own Gradle runner reports for this test, before the server normalizes it.
- *
- * A faithful port of `TestNameDescriptor.DISPLAY_NAME.getTestName` from the runner's init script (see
- * the link above): note that it compares the candidate against the *raw* `descriptor.name` and falls
- * back to that name, where [toTestPath] compares against the name stripped at the first bracket.
- *
- * The difference only shows once TeamCity has had its say. The runner reports `Class.method()` and the
- * server strips the trailing `()` while registering the test, arriving at the `Class.method` that
- * [toTestPath] produces directly. The server strips it only from a name that is otherwise bracket-free
- * and does not end in whitespace, so for a method whose name ends with a space, or contains a bracket
- * of its own, the two forms disagree - and the runner's is the one TeamCity ends up registering.
- *
- * Replaying a cached task therefore has to emit *this* form: those messages go through the same
- * server-side normalization as the runner's, so emitting the already-normalized name is exactly what
- * made a replayed name differ from an executed one.
- */
-internal fun TestDescriptor.toTeamCityRunnerTestName(): String {
-    val methodName = name.takeWhile { it !in "([{<" }
-    val candidate = if (displayName.startsWith(methodName)) displayName else "$methodName($displayName)"
-    val resolved = if (candidate == "$name()") name else candidate
-    return className?.let { "$it.$resolved" } ?: resolved
-}
 
 /** The status names TeamCity's own Gradle integration uses. */
 internal fun TestResult.statusName(): String = when (resultType) {
