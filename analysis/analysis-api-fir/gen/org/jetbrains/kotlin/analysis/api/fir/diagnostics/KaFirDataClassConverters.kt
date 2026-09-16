@@ -5050,6 +5050,14 @@ private fun KaDiagnosticConverterBuilder.addConversions109() {
             token,
         )
     }
+    add(FirErrors.LATEINIT_VAL_OVERRIDDEN_BY_VAL) { firDiagnostic ->
+        LateinitValOverriddenByValImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE.errorFactory) { firDiagnostic ->
         CallableReferenceToLessVisibleDeclarationInInlineErrorImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
@@ -6973,6 +6981,12 @@ private fun KaDiagnosticConverterBuilder.addConversions151() {
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic.b,
             firDiagnostic.c,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL) { firDiagnostic ->
+        LateinitIntrinsicCallOnLateinitValImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
