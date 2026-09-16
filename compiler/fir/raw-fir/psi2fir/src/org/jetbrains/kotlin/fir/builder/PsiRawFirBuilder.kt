@@ -12,13 +12,29 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.childrenOfType
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtNodeTypes.ANNOTATED_EXPRESSION
+import org.jetbrains.kotlin.KtNodeTypes.ARRAY_ACCESS_EXPRESSION
+import org.jetbrains.kotlin.KtNodeTypes.BOOLEAN_CONSTANT
+import org.jetbrains.kotlin.KtNodeTypes.CHARACTER_CONSTANT
+import org.jetbrains.kotlin.KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
+import org.jetbrains.kotlin.KtNodeTypes.FLOAT_CONSTANT
+import org.jetbrains.kotlin.KtNodeTypes.INTEGER_CONSTANT
+import org.jetbrains.kotlin.KtNodeTypes.LABELED_EXPRESSION
+import org.jetbrains.kotlin.KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
+import org.jetbrains.kotlin.KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
+import org.jetbrains.kotlin.KtNodeTypes.NULL
+import org.jetbrains.kotlin.KtNodeTypes.PARENTHESIZED
+import org.jetbrains.kotlin.KtNodeTypes.SAFE_ACCESS_EXPRESSION
+import org.jetbrains.kotlin.KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
+import org.jetbrains.kotlin.KtNodeTypes.STRING_INTERPOLATION_PREFIX
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.firstFunctionCallInBlockHasLambdaArgumentWithLabel
-import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
+import org.jetbrains.kotlin.fir.analysis.NotToShareWithAA
+import org.jetbrains.kotlin.fir.analysis.firstFunctionCallInBlockHasLambdaArgumentWithLabelForPsi
+import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatementForPsi
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLazyContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
@@ -41,11 +57,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.kmp.utils.kmpId
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -108,7 +124,74 @@ open class PsiRawFirBuilder(
             return stubBasedElement?.iElementType ?: node.elementType
         }
 
-    override fun IElementType.typeToTokenId(): Int = kmpId()
+    @NotToShareWithAA
+    override fun IElementType.typeToTokenId(): Int = error("Should not be called")
+
+    override fun PsiElement.isArrayAccessExpression(): Boolean = elementType == ARRAY_ACCESS_EXPRESSION
+
+    override fun PsiElement.isSafeAccessExpression(): Boolean = elementType == SAFE_ACCESS_EXPRESSION
+
+    override fun PsiElement.isStringInterpolationPrefixOrQuote(): Boolean = when (elementType) {
+        STRING_INTERPOLATION_PREFIX, OPEN_QUOTE, CLOSING_QUOTE -> true
+        else -> false
+    }
+
+    override fun PsiElement.isLiteralStringTemplateEntry(): Boolean =
+        elementType == LITERAL_STRING_TEMPLATE_ENTRY
+
+    override fun PsiElement.isEscapeStringTemplateEntry(): Boolean =
+        elementType == ESCAPE_STRING_TEMPLATE_ENTRY
+
+    override fun PsiElement.isShortOrLongStringTemplateEntry(): Boolean = when (elementType) {
+        SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> true
+        else -> false
+    }
+
+    override fun IElementType.toConstantValueKind(): ConstantValueKind? {
+        return when (this) {
+            INTEGER_CONSTANT -> ConstantValueKind.Int
+            FLOAT_CONSTANT -> ConstantValueKind.Float
+            BOOLEAN_CONSTANT -> ConstantValueKind.Boolean
+            CHARACTER_CONSTANT -> ConstantValueKind.Char
+            NULL -> ConstantValueKind.Null
+            else -> null
+        }
+    }
+
+    private fun IElementType.toUnaryPlusOrMinusName(): Name? {
+        return when (this) {
+            PLUS -> OperatorNameConventions.UNARY_PLUS
+            MINUS -> OperatorNameConventions.UNARY_MINUS
+            else -> null
+        }
+    }
+
+    private fun IElementType.toFirComparisonOperation(): FirOperation {
+        return when (this) {
+            LT -> FirOperation.LT
+            GT -> FirOperation.GT
+            LTEQ -> FirOperation.LT_EQ
+            GTEQ -> FirOperation.GT_EQ
+            else -> error("Unknown element type: $this")
+        }
+    }
+
+    /**
+     * See [UNWRAPPABLE_TOKEN_TYPES][org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES]
+     */
+    override fun PsiElement?.unwrap(): PsiElement? {
+        // NOTE: By removing surrounding parentheses and labels, FirLabels will NOT be created for those labels.
+        // This should be fine since the label is meaningless and unusable for a ++/-- argument or assignment LHS.
+        var unwrapped = this
+        while (true) {
+            unwrapped = when (unwrapped?.elementType) {
+                PARENTHESIZED -> unwrapped.getExpressionInParentheses()
+                LABELED_EXPRESSION -> unwrapped.getLabeledExpression()
+                ANNOTATED_EXPRESSION -> unwrapped.getAnnotatedExpression()
+                else -> return unwrapped
+            }
+        }
+    }
 
     override val PsiElement.asText: String
         get() = text
@@ -542,10 +625,10 @@ open class PsiRawFirBuilder(
         }
 
         private fun isCallTheFirstStatement(psi: PsiElement): Boolean =
-            isCallTheFirstStatement(psi, { it.toTokenId() }, { it.allChildren.toList() })
+            isCallTheFirstStatementForPsi(psi, { it.elementType }, { it.allChildren.toList() })
 
         private fun functionCallHasLabel(psi: PsiElement): Boolean =
-            firstFunctionCallInBlockHasLambdaArgumentWithLabel(psi, { it.toTokenId() }, { it.allChildren.toList() })
+            firstFunctionCallInBlockHasLambdaArgumentWithLabelForPsi(psi, { it.elementType }, { it.allChildren.toList() })
 
         private fun ValueArgument.toFirExpression(): FirExpression {
             val name = this.getArgumentName()?.asName
@@ -3328,8 +3411,8 @@ open class PsiRawFirBuilder(
         private val KtExpression.usedAsExpression: Boolean
             get() {
                 var parent = parent
-                while (parent.elementType == KtNodeTypes.ANNOTATED_EXPRESSION ||
-                    parent.elementType == KtNodeTypes.LABELED_EXPRESSION
+                while (parent.elementType == ANNOTATED_EXPRESSION ||
+                    parent.elementType == LABELED_EXPRESSION
                 ) {
                     parent = parent.parent
                 }
@@ -3531,7 +3614,7 @@ open class PsiRawFirBuilder(
                     )
                 in OperatorConventions.COMPARISON_OPERATIONS ->
                     return leftArgument.generateComparisonExpression(
-                        rightArgument, operationToken.typeToTokenId(), source,
+                        rightArgument, operationToken.toFirComparisonOperation(), source,
                         expression.operationReference.toFirSourceElement(),
                     )
             }
@@ -3623,7 +3706,7 @@ open class PsiRawFirBuilder(
                     val receiver = argument.toFirExpression("No operand", sourceWhenInvalidExpression = expression)
 
                     convertUnaryPlusMinusCallOnIntegerLiteralIfNecessary(
-                        expression, receiver, operationToken.typeToTokenId()
+                        expression, receiver, operationToken.toUnaryPlusOrMinusName()
                     )?.let { return it }
 
                     buildFunctionCall {
@@ -4007,8 +4090,4 @@ enum class BodyBuildingMode {
      * Build [FirLazyExpression] for property initializers
      */
     LAZY_BODIES;
-
-    companion object {
-        fun lazyBodies(lazyBodies: Boolean): BodyBuildingMode = if (lazyBodies) LAZY_BODIES else NORMAL
-    }
 }

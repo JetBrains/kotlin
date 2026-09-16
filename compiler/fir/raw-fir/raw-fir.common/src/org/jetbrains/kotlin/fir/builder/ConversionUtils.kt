@@ -217,28 +217,16 @@ fun FirExpression.generateContainsOperation(
 
 fun FirExpression.generateComparisonExpression(
     argument: FirExpression,
-    operatorToken: Int,
+    firOperation: FirOperation,
     baseSource: KtSourceElement?,
     operationReferenceSource: KtSourceElement?,
 ): FirComparisonExpression {
-    require(operatorToken in comparisonOperationsId) {
-        "$operatorToken is not in $comparisonOperationsId"
-    }
-
     val compareToCall = createConventionCall(
         operationReferenceSource,
         baseSource?.fakeElement(KtFakeSourceElementKind.GeneratedComparisonExpression),
         argument,
         OperatorNameConventions.COMPARE_TO
     )
-
-    val firOperation = when (operatorToken) {
-        org.jetbrains.kotlin.kmp.lexer.KtTokens.LT_ID -> FirOperation.LT
-        org.jetbrains.kotlin.kmp.lexer.KtTokens.GT_ID -> FirOperation.GT
-        org.jetbrains.kotlin.kmp.lexer.KtTokens.LTEQ_ID -> FirOperation.LT_EQ
-        org.jetbrains.kotlin.kmp.lexer.KtTokens.GTEQ_ID -> FirOperation.GT_EQ
-        else -> error("Unknown $operatorToken")
-    }
 
     return buildComparisonExpression {
         this.source = baseSource
