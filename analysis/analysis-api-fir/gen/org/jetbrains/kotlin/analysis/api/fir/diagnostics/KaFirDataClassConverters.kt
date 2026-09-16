@@ -5331,6 +5331,12 @@ private fun KaDiagnosticConverterBuilder.addConversions115() {
             token,
         )
     }
+    add(FirErrors.ERROR_CLASS_HAS_SUPERTYPE) { firDiagnostic ->
+        ErrorClassHasSupertypeImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions116() {
@@ -8550,6 +8556,12 @@ private fun KaDiagnosticConverterBuilder.addConversions189() {
     add(FirErrors.COMPANION_EXTENSION_RECEIVER_IS_OBJECT) { firDiagnostic ->
         CompanionExtensionReceiverIsObjectImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.ERROR_CLASS_HAS_TYPE_PARAMETER) { firDiagnostic ->
+        ErrorClassHasTypeParameterImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

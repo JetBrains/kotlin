@@ -18,7 +18,7 @@ error class C {
 error object O
 <!WRONG_MODIFIER_TARGET!>error<!> interface I
 <!WRONG_MODIFIER_TARGET!>error<!> annotation class A
-<!WRONG_MODIFIER_TARGET!>error<!> enum class E
+<!ERROR_CLASS_HAS_SUPERTYPE!><!WRONG_MODIFIER_TARGET!>error<!> enum class E<!>
 
 <!WRONG_MODIFIER_TARGET!>error<!> fun f() {}
 

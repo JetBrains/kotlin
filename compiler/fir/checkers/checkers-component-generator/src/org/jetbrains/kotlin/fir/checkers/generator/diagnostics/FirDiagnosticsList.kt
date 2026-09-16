@@ -2518,6 +2518,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val RICH_ERRORS by object : DiagnosticGroup("Rich Errors") {
         val NON_ERROR_CLASS_EXTENDS_RICH_ERROR by error<PsiElement>()
+        val ERROR_CLASS_HAS_SUPERTYPE by error<PsiElement>()
+        val ERROR_CLASS_HAS_TYPE_PARAMETER by error<PsiElement>()
     }
 }
 

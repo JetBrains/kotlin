@@ -303,6 +303,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_CLASS_HAS_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_CLASS_HAS_TYPE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_IN_CONTRACT_DESCRIPTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_SUPPRESSION
@@ -4130,5 +4132,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Companion extension receiver type cannot be nullable.",
         )
         map.put(NON_ERROR_CLASS_EXTENDS_RICH_ERROR, "Non-error class cannot extend 'RichError'.")
+        map.put(ERROR_CLASS_HAS_SUPERTYPE, "Error class cannot have supertypes.")
+        map.put(ERROR_CLASS_HAS_TYPE_PARAMETER, "Error class cannot have type parameters.")
     }
 }
