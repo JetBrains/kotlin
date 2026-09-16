@@ -16,7 +16,8 @@ import kotlin.native.internal.InternalForKotlinNative
  *   Object arrays and native-pointer arrays are still written so the heap graph can be
  *   reconstructed. `kdumputil` fills omitted primitive arrays with zeros when converting to hprof.
  * @param gzip If `true`, the dump is written as a gzip member. `kdumputil` detects the gzip
- *   magic and decompresses before parsing.
+ *   magic and decompresses before parsing. Ignored on tvOS and watchOS, where the
+ *   sysroot does not provide zlib; the dump is then written uncompressed.
  */
 @NativeRuntimeApi
 public class MemoryDumpOptions(
