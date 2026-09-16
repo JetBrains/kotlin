@@ -1,6 +1,5 @@
 function test(a, b, c) {
-  var tmp = a + b | 0;
-  return tmp + c | 0;
+  return (a + b | 0) + c | 0;
 }
 function box() {
   var result = test(2, 3, 4);
@@ -8,3 +7,4 @@ function box() {
     return 'fail: ' + result;
   return 'OK';
 }
+

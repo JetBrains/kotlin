@@ -5,12 +5,9 @@ function id(x) {
 function box() {
   var a = id(2);
   var b = id(3);
-  var c = id(4);
-  var d = id(5);
-  if (a > b || c > d)
+  if (id(4) > id(5) || a > b)
     return 'fail condition';
   if (!(log === '2;3;4;5;'))
     return 'fail log: ' + log;
   return 'OK';
 }
-
