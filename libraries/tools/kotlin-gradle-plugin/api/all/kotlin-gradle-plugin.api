@@ -323,9 +323,6 @@ public final class org/jetbrains/kotlin/gradle/execution/KotlinAggregatingExecut
 	public static fun configureAllExecutions (Lorg/jetbrains/kotlin/gradle/execution/KotlinAggregatingExecution;Lorg/gradle/api/Action;)V
 }
 
-public abstract interface annotation class org/jetbrains/kotlin/gradle/export/ExperimentalExportDsl : java/lang/annotation/Annotation {
-}
-
 public abstract class org/jetbrains/kotlin/gradle/incremental/IncrementalModuleInfoBuildService : org/gradle/api/services/BuildService, org/jetbrains/kotlin/gradle/incremental/IncrementalModuleInfoProvider {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/incremental/IncrementalModuleInfoBuildService$Companion;
 	public fun <init> ()V
