@@ -72,7 +72,7 @@ fun inlineFunctionsAndAccessors(header: KotlinClassHeader, excludePrivateMembers
     }
 }
 
-private fun inlineFunctions(
+fun inlineFunctions(
     functions: List<ProtoBuf.Function>,
     nameResolver: NameResolver,
     protoTypeTable: ProtoBuf.TypeTable,
@@ -88,7 +88,7 @@ private fun inlineFunctions(
         }
 }
 
-private fun inlinePropertyAccessors(
+fun inlinePropertyAccessors(
     properties: List<ProtoBuf.Property>,
     nameResolver: NameResolver,
     excludePrivateAccessors: Boolean = false
