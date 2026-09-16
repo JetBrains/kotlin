@@ -1,6 +1,4 @@
-// TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
-//  ^ JVM_IR back-end generates SAM conversion with invokedynamic
+// SAM_CONVERSIONS: CLASS
 // WITH_STDLIB
 
 fun box(): String {

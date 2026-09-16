@@ -1,5 +1,4 @@
-// Test to ensure that we mark the backing field of a lateinit property
-// as NotNull, even though the field is nullable in the JVM IR backend.
+// This test checks that we mark the backing field of a lateinit property with `@NotNull`.
 class A {
     lateinit var x: A
 }
