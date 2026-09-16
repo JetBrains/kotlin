@@ -16,8 +16,13 @@ import java.io.File
  *
  * This is the structured counterpart of [TestInventoryListener]: the flat `test-inventory.tsv` joins
  * the suite names and the test name with `": "`, which cannot be undone, because a test name may
- * itself contain `": "`. Both files are derived from the same [TestPath], so the full names TeamCity
- * reconstructs from the nesting stored here are exactly the ones listed there.
+ * itself contain `": "`.
+ *
+ * The suite names are the same as the inventory's, but the test names are **not**: they are recorded in
+ * the form TeamCity's own Gradle runner reports, which the server then normalizes (see
+ * [toTeamCityRunnerTestName]). The inventory records the normalized form, because it is compared
+ * against the names TeamCity registers; this file records the form that has to be *sent* to arrive at
+ * them. For all but a handful of tests the two are identical.
  *
  * ### Why JSON rather than YAML
  *
@@ -58,7 +63,11 @@ class TestExecutionsListener(
 
     override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
         val path = testDescriptor.toTestPath(taskName)
-        val record = TestRecord(path.leaf, result.statusName(), result.durationMillis)
+        // The leaf is the runner's form, not the path's: this file is replayed as service messages, and
+        // TeamCity normalizes those the same way it normalizes the runner's own. See
+        // [toTeamCityRunnerTestName] - the name recorded here is deliberately not the one in
+        // 'test-inventory.tsv', which has to match what TeamCity ends up registering.
+        val record = TestRecord(testDescriptor.toTeamCityRunnerTestName(), result.statusName(), result.durationMillis)
 
         synchronized(lock) {
             // Suites of equal name under the same parent are merged, a suite being identified by its
