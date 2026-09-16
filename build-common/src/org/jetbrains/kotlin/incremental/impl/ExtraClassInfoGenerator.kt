@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.incremental.impl
 
 import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.incremental.ClassProtoData
 import org.jetbrains.kotlin.incremental.KotlinClassInfo.ExtraInfo
+import org.jetbrains.kotlin.incremental.PackagePartProtoData
+import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotClassExcludingMembers
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotMethod
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.sortClassMembers
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
+import org.jetbrains.kotlin.inline.inlineFunctions
 import org.jetbrains.kotlin.inline.inlineFunctionsAndAccessors
+import org.jetbrains.kotlin.inline.inlinePropertyAccessors
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -38,9 +43,41 @@ open class ExtraClassInfoGenerator() {
         return ownMethodHash
     }
 
+    /**
+     * Computes [ExtraInfo] from class-file bytes, discovering non-private inline functions and accessors from [classHeader].
+     */
     fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArray): ExtraInfo {
+        return getExtraInfo(classHeader, ClassReader(classContents), inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true))
+    }
+
+    /**
+     * Computes [ExtraInfo] using an existing [classReader] and already decoded [classProto].
+     * Non-private inline functions and accessors are discovered from [classProto]; if it is null, none are included.
+     */
+    fun getExtraInfo(classHeader: KotlinClassHeader, classReader: ClassReader, classProto: ProtoData?): ExtraInfo {
+        val inlineMembers = when (classProto) {
+            is ClassProtoData ->
+                inlineFunctions(classProto.proto.functionList, classProto.nameResolver, classProto.proto.typeTable, excludePrivateFunctions = true) +
+                        inlinePropertyAccessors(classProto.proto.propertyList, classProto.nameResolver, excludePrivateAccessors = true)
+            is PackagePartProtoData ->
+                inlineFunctions(classProto.proto.functionList, classProto.nameResolver, classProto.proto.typeTable, excludePrivateFunctions = true) +
+                        inlinePropertyAccessors(classProto.proto.propertyList, classProto.nameResolver, excludePrivateAccessors = true)
+            null -> emptyList()
+        }
+        return getExtraInfo(classHeader, classReader, inlineMembers)
+    }
+
+    /**
+     * Computes [ExtraInfo] using an existing [classReader] and already discovered [inlineMembers].
+     * [inlineMembers] must contain only non-private inline functions and accessors; private members are not filtered here.
+     */
+    fun getExtraInfo(
+        classHeader: KotlinClassHeader,
+        classReader: ClassReader,
+        inlineMembers: List<InlineFunctionOrAccessor>
+    ): ExtraInfo {
         val inlineFunctionsAndAccessors: Map<JvmMemberSignature.Method, InlineFunctionOrAccessor> =
-            inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true).associateBy { it.jvmMethodSignature }
+            inlineMembers.associateBy { it.jvmMethodSignature }
 
         // 1. Create a ClassNode that will contain only required info
         val classNode = ClassNode()
@@ -51,7 +88,6 @@ open class ExtraClassInfoGenerator() {
         //        + Do not filter out private methods because a *non-private* inline function/accessor may have a *private* corresponding method
         //          in the bytecode (see `InlineOnlyKt.isInlineOnlyPrivateInBytecode`)
         //        + Do not filter out method bodies
-        val classReader = ClassReader(classContents)
         val selectiveClassVisitor = SelectiveClassVisitor(
             cv = makeClassVisitor(classNode),
             shouldVisitField = { _: JvmMemberSignature.Field, isPrivate: Boolean, isConstant: Boolean ->

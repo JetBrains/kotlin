@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.org.objectweb.asm.ClassReader
 
 /**
  * Minimal information about a Kotlin class to compute recompilation-triggering changes during an incremental run of the `KotlinCompile`
@@ -28,7 +30,8 @@ class KotlinClassInfo(
     val classHeaderData: Array<String>, // Can be empty
     val classHeaderStrings: Array<String>, // Can be empty
     val multifileClassName: String?, // Not null iff classKind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
-    val extraInfo: ExtraInfo
+    val extraInfo: ExtraInfo,
+    val classProto: ProtoData? = null
 ) {
 
     /** Extra information about a Kotlin class that is not captured in the Kotlin class metadata. */
@@ -73,6 +76,7 @@ class KotlinClassInfo(
         )
     }
 
+
     /**
      * The [ProtoData] of this class.
      *
@@ -83,7 +87,7 @@ class KotlinClassInfo(
         check(classKind != KotlinClassHeader.Kind.MULTIFILE_CLASS) {
             "Proto data is not available for KotlinClassHeader.Kind.MULTIFILE_CLASS: $classId"
         }
-        protoMapValue.toProtoData(classId.packageFqName)
+        classProto ?: protoMapValue.toProtoData(classId.packageFqName)
     }
 
     /** Name of the companion object of this class (default is "Companion") iff this class HAS a companion object, or null otherwise. */
@@ -123,17 +127,56 @@ class KotlinClassInfo(
             )
         }
 
+        fun createFrom(
+            classId: ClassId,
+            classHeader: KotlinClassHeader,
+            classReader: ClassReader,
+            extraInfoGenerator: ExtraClassInfoGenerator = ExtraClassInfoGenerator(),
+            classProto: ProtoData? = readProtoData(classId, classHeader)
+        ): KotlinClassInfo {
+            return createFrom(
+                classId,
+                classHeader,
+                extraInfo = extraInfoGenerator.getExtraInfo(classHeader, classReader, classProto),
+                classProto = classProto
+            )
+        }
+
+        fun readProtoData(classId: ClassId, classHeader: KotlinClassHeader): ProtoData? {
+            val data = classHeader.data
+            val strings = classHeader.strings
+            return if (data != null && strings != null) {
+                when (classHeader.kind) {
+                    KotlinClassHeader.Kind.CLASS -> {
+                        val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(data, strings)
+                        ClassProtoData(classProto, nameResolver)
+                    }
+                    KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+                        val [nameResolver, packageProto] = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+                        PackagePartProtoData(packageProto, nameResolver, classId.packageFqName)
+                    }
+                    else -> null
+                }
+            } else null
+        }
+
         /**
          * Allows callers to customize [ExtraInfo] computation.
          */
-        fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, extraInfo: ExtraInfo): KotlinClassInfo {
+        fun createFrom(
+            classId: ClassId,
+            classHeader: KotlinClassHeader,
+            extraInfo: ExtraInfo,
+            classProto: ProtoData? = null
+        ): KotlinClassInfo {
             return KotlinClassInfo(
                 classId,
                 classHeader.kind,
                 classHeader.data ?: classHeader.incompatibleData ?: emptyArray(),
                 classHeader.strings ?: emptyArray(),
                 classHeader.multifileClassName,
-                extraInfo = extraInfo
+                extraInfo = extraInfo,
+                classProto = classProto
             )
         }
     }
