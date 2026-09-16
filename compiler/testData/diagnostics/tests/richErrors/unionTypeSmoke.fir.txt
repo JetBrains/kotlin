@@ -1,13 +1,13 @@
 FILE: unionTypeSmoke.kt
-    public final error class Foo : R|kotlin/Any| {
+    public final error class Foo : R|kotlin/RichError| {
         public constructor(): R|Foo| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/RichError|>()
         }
 
     }
-    public final error class Bar : R|kotlin/Any| {
+    public final error class Bar : R|kotlin/RichError| {
         public constructor(): R|Bar| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/RichError|>()
         }
 
     }

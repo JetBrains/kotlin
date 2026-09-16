@@ -51,6 +51,7 @@ object StandardClassIds {
     val Unit = "Unit".baseId()
     val Any = "Any".baseId()
     val Value = "Value".baseId()
+    val RichError = "RichError".baseId()
     val Enum = "Enum".baseId()
     val Annotation = "Annotation".baseId()
     val Array = "Array".baseId()
