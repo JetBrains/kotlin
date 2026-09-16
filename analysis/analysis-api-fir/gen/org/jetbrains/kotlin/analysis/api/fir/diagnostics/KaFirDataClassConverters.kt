@@ -685,6 +685,12 @@ private fun KaDiagnosticConverterBuilder.addConversions8() {
             token,
         )
     }
+    add(FirErrors.NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE) { firDiagnostic ->
+        NonErrorComponentWrongPositionInUnionTypeImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.SYNCHRONIZED_IN_INTERFACE) { firDiagnostic ->
         SynchronizedInInterfaceImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -1256,6 +1262,12 @@ private fun KaDiagnosticConverterBuilder.addConversions22() {
     add(FirErrors.USAGE_IS_NOT_INLINABLE) { firDiagnostic ->
         UsageIsNotInlinableImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE) { firDiagnostic ->
+        NullableErrorComponentInUnionTypeImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -3183,6 +3195,12 @@ private fun KaDiagnosticConverterBuilder.addConversions69() {
     add(FirErrors.ERROR_IN_CONTRACT_DESCRIPTION) { firDiagnostic ->
         ErrorInContractDescriptionImpl(
             firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE) { firDiagnostic ->
+        NonErrorComponentInNestedUnionTypeImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6401,6 +6419,12 @@ private fun KaDiagnosticConverterBuilder.addConversions135() {
         IncompatibleClassImpl(
             firDiagnostic.a,
             firDiagnostic.b,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.NULLABLE_NESTED_UNION_TYPE) { firDiagnostic ->
+        NullableNestedUnionTypeImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

@@ -614,6 +614,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ASCENDING_VERSION_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_CLASS_EXTENDS_RICH_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
@@ -665,7 +667,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_THIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_TYPE_ARGUMENTS_ON_RHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_VALUE_FOR_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_VARARG_OVERLOAD_OF_OPERATOR_OF
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_INLINE_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_NESTED_UNION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_RETURN_TYPE_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_SUPERTYPE
@@ -4134,5 +4138,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_ERROR_CLASS_EXTENDS_RICH_ERROR, "Non-error class cannot extend 'RichError'.")
         map.put(ERROR_CLASS_HAS_SUPERTYPE, "Error class cannot have supertypes.")
         map.put(ERROR_CLASS_HAS_TYPE_PARAMETER, "Error class cannot have type parameters.")
+        map.put(NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE, "Error component of union type cannot be nullable.")
+        map.put(NULLABLE_NESTED_UNION_TYPE, "Nested union types cannot be nullable.")
+        map.put(NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE, "Nested union type cannot have a non-error component.")
+        map.put(NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE, "Non-error component must appear first in union type.")
     }
 }

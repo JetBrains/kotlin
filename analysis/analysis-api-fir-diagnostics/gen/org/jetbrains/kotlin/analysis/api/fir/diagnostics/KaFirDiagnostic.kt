@@ -8411,6 +8411,34 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NullableErrorComponentInUnionType : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NullableErrorComponentInUnionType>
+            get() = NullableErrorComponentInUnionType::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NullableNestedUnionType : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NullableNestedUnionType>
+            get() = NullableNestedUnionType::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonErrorComponentInNestedUnionType : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NonErrorComponentInNestedUnionType>
+            get() = NonErrorComponentInNestedUnionType::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonErrorComponentWrongPositionInUnionType : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NonErrorComponentWrongPositionInUnionType>
+            get() = NonErrorComponentWrongPositionInUnionType::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<OverrideCannotBeStatic>
             get() = OverrideCannotBeStatic::class

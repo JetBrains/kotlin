@@ -2520,6 +2520,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NON_ERROR_CLASS_EXTENDS_RICH_ERROR by error<PsiElement>()
         val ERROR_CLASS_HAS_SUPERTYPE by error<PsiElement>()
         val ERROR_CLASS_HAS_TYPE_PARAMETER by error<PsiElement>()
+        val NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE by error<PsiElement>()
+        val NULLABLE_NESTED_UNION_TYPE by error<PsiElement>()
+        val NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE by error<PsiElement>()
+        val NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE by error<PsiElement>()
     }
 }
 
