@@ -6573,6 +6573,11 @@ internal class ImplementingFunctionInterfaceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.ImplementingFunctionInterface
 
+internal class ImplementingSuspendFunctionInterfaceImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.ImplementingSuspendFunctionInterface
+
 internal class OverridingExternalFunWithOptionalParamsImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
