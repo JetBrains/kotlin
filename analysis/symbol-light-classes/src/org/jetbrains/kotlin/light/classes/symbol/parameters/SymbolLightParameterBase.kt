@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.analysis.api.javaInterop.KaSymbolJavaView
-import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
+import org.jetbrains.kotlin.light.classes.symbol.classes.typeForInlineClass
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.utils.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.utils.invalidAccess
@@ -89,7 +89,7 @@ internal abstract class SymbolLightParameterBase<out SType : KaSymbol>(
     context(session: KaSession)
     protected fun getTypeMappingMode(type: KaType): KaTypeMappingMode = when {
         type.isSuspendFunctionType -> KaTypeMappingMode.DEFAULT
-        method.isJvmExposeBoxed && typeForValueClass(type) -> KaTypeMappingMode.VALUE_PARAMETER_BOXED
+        method.isJvmExposeBoxed && typeForInlineClass(type) -> KaTypeMappingMode.VALUE_PARAMETER_BOXED
         // TODO: extract type mapping mode from annotation?
         // TODO: methods with declaration site wildcards?
         else -> KaTypeMappingMode.VALUE_PARAMETER
