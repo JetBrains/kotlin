@@ -35,7 +35,8 @@ public interface KaDiagnosticProvider : KaSessionComponent {
     @KaExperimentalApi
     @Deprecated(
         "Use the 'org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics' endpoint with `.directOnly(true)` option instead." +
-                " The 'filter' argument becomes a 'withCheckers' modifier of the returned 'KaDiagnostics'."
+                " The 'filter' argument becomes a 'withCheckers' modifier of the returned 'KaDiagnostics'.",
+        level = DeprecationLevel.ERROR,
     )
     public fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 
@@ -161,11 +162,12 @@ public enum class KaDiagnosticCheckerFilter {
 @KaExperimentalApi
 @Deprecated(
     "Use the 'org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics' endpoint with `.directOnly(true)` option instead." +
-            " The 'filter' argument becomes a 'withCheckers' modifier of the returned 'KaDiagnostics'."
+            " The 'filter' argument becomes a 'withCheckers' modifier of the returned 'KaDiagnostics'.",
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return with(session) {
         diagnostics(
             filter = filter,

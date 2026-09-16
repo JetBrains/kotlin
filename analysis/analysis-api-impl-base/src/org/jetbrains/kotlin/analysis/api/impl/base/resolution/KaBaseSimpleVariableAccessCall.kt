@@ -22,7 +22,7 @@ class KaBaseSimpleVariableAccessCall(
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     private val backingKind: KaVariableAccessCall.Kind,
     private val backingIsContextSensitive: Boolean,
-) : @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall {
+) : @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall {
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
@@ -46,7 +46,7 @@ class KaBaseSimpleVariableAccessCall(
     override val kind: KaVariableAccessCall.Kind
         get() = withValidityAssertion { backingKind }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated("Use 'kind' instead", replaceWith = ReplaceWith("kind"))
     override val simpleAccess: org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
         get() = withValidityAssertion { backingKind as org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess }
