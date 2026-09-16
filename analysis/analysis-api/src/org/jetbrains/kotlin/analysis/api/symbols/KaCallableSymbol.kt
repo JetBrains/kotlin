@@ -145,15 +145,3 @@ public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOw
  */
 public val KaCallableSymbol.receiverType: KaType?
     get() = receiverParameter?.returnType
-
-/**
- * A list of [KaContextParameterSymbol]s directly declared in the symbol.
- */
-@KaExperimentalApi
-@Deprecated(
-    message = "'KaCallableSymbol' now has 'contextParameters' as a member property",
-    level = DeprecationLevel.HIDDEN,
-)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-public val KaCallableSymbol.contextParameters: List<KaContextParameterSymbol>
-    get() = contextParameters

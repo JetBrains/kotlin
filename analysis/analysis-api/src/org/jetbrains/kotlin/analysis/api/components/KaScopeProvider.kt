@@ -11,11 +11,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
-import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtElement
@@ -653,7 +649,8 @@ public class KaScopeWithKindImpl(
  * in addition to members which are declared explicitly inside the symbol's body.
  *
  * The member scope doesn't include [synthetic Java properties](https://kotlinlang.org/docs/java-interop.html#getters-and-setters). For
- * a scope which contains synthetic properties, please refer to [syntheticJavaPropertiesScope].
+ * a scope which contains synthetic properties, please refer to
+ * [syntheticJavaPropertiesScope][org.jetbrains.kotlin.analysis.api.scopes.syntheticJavaPropertiesScope].
  *
  * @see staticMemberScope
  */
@@ -902,68 +899,6 @@ public fun List<KaScope>.asCompositeScope(): KaScope {
         asCompositeScope()
     }
 }
-
-/**
- * A [KaTypeScope] for the given [KaType], or `null` if the type is [erroneous][org.jetbrains.kotlin.analysis.api.types.KaErrorType].
- * The scope includes all members which are callable on a given type. It also includes [synthetic Java properties](https://kotlinlang.org/docs/java-interop.html#getters-and-setters).
- *
- * Comparing to [KaScope], the [KaTypeScope] contains members whose use-site type parameters have been substituted.
- *
- * #### Example
- *
- * ```kotlin
- * fun foo(list: List<String>) {
- *     list
- * }
- *```
- *
- * We can get a [KaTypeScope] for the [expression type][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.expressionType]
- * of `list`. This scope contains a `get(index: Int): String` function, where the return type `E` from [List.get] is substituted with
- * the type argument `String`.
- *
- * @see KaTypeScope
- * @see KaTypeProvider.type
- * @see KaExpressionTypeProvider.expressionType
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
-    replaceWith = ReplaceWith("this.scope", "org.jetbrains.kotlin.analysis.api.scopes.scope"),
-    level = DeprecationLevel.ERROR,
-)
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public val KaType.scope: KaTypeScope?
-    get() = with(session) { scope }
-
-/**
- * A [KaScope] containing unsubstituted declarations from the [KaType]'s underlying declaration.
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
-    replaceWith = ReplaceWith("this.declarationScope", "org.jetbrains.kotlin.analysis.api.scopes.declarationScope"),
-    level = DeprecationLevel.ERROR,
-)
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public val KaTypeScope.declarationScope: KaScope
-    get() = with(session) { declarationScope }
-
-/**
- * A [KaTypeScope] containing the [synthetic Java properties](https://kotlinlang.org/docs/java-interop.html#getters-and-setters) created
- * for a given [KaType].
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
-    replaceWith = ReplaceWith("this.syntheticJavaPropertiesScope", "org.jetbrains.kotlin.analysis.api.scopes.syntheticJavaPropertiesScope"),
-    level = DeprecationLevel.ERROR,
-)
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public val KaType.syntheticJavaPropertiesScope: KaTypeScope?
-    get() = with(session) { syntheticJavaPropertiesScope }
 
 /**
  * Computes the lexical scope context for a given [position] in the [KtFile]. The scope context includes all scopes that are relevant
