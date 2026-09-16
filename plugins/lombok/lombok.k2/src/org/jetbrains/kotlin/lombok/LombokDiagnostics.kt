@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_NOARG_CONSTRUCTOR_IN_
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS
@@ -116,6 +117,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION by warning0<KtExpression>()
     val BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION by warning0<KtAnnotationEntry>()
     val BUILDER_DEFAULT_AND_SINGULAR_MIXED by error0<KtAnnotationEntry>()
+    val BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY by strongWarning1<KtAnnotationEntry, String>()
     val BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE by error0<KtAnnotationEntry>()
     val BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR by error1<KtAnnotationEntry, Name>()
     val BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS by error0<KtAnnotationEntry>()
@@ -246,6 +248,13 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             BUILDER_DEFAULT_AND_SINGULAR_MIXED,
             "'@Builder.Default' and '@Singular' cannot be mixed."
+        )
+        map.put(
+            BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY,
+            "''@{0}'' has no effect on a property declared in the class body: a Kotlin class builds out of the " +
+                    "value parameters of the constructor or function ''build()'' calls, so only those are builder fields. " +
+                    "Declare the property in the primary constructor to make it one.",
+            CommonRenderers.STRING,
         )
         map.put(
             BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE,

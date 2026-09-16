@@ -58,21 +58,19 @@ class ParametersWithoutVal(
 }
 
 // A property declared in the class body is not a builder field at all - `build()` has only the primary
-// constructor to call - so nothing on one is reported: not its initializer, which the builder never ignores
-// because it never sets the property, and not a `@Singular` or `@Builder.Default` that cannot reach a builder
-// field in the first place. Every one of these would have been reported when the builder was built out of the
-// class's properties.
+// constructor to call - so its initializer is left alone, the builder never ignoring what it never sets, while
+// a `@Singular` or `@Builder.Default` that cannot reach a builder field is reported as having no effect.
 @Builder
 class BodyPropertiesAreNotBuilderFields(val id: Int, extra: String) {
     val derived: String = extra + id
 
-    @Builder.Default // TODO: KT-89218 should be reported (annotation has no effect)
+    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Builder.Default<!>
     val defaulted: Int = 1
 
-    @Singular // TODO: KT-89218 should be reported (annotation has no effect)
+    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular<!>
     val sheep: List<String> = emptyList()
 
-    @Singular("thing") // TODO: KT-89218 should be reported (annotation has no effect)
+    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular("thing")<!>
     val things: Array<String> = emptyArray()
 }
 
