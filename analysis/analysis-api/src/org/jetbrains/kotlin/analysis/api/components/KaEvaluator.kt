@@ -48,24 +48,3 @@ public fun KtExpression.evaluate(): KaConstantValue? {
         evaluate()
     }
 }
-
-/**
- * Attempts to evaluate the given [KtExpression] to an [annotation value][KaAnnotationValue] (a constant value which can be used as an
- * annotation argument), or returns `null` if this is not possible.
- */
-@KaExperimentalApi
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.evaluation' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "this.evaluateAsAnnotationValue()",
-        "org.jetbrains.kotlin.analysis.api.evaluation.evaluateAsAnnotationValue",
-    ),
-    level = DeprecationLevel.ERROR,
-)
-@KaContextParameterApi
-context(session: KaSession)
-public fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue? {
-    return with(session) {
-        evaluateAsAnnotationValue()
-    }
-}
