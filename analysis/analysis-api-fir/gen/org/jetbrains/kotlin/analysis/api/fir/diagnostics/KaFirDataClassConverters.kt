@@ -7065,6 +7065,12 @@ private fun KaDiagnosticConverterBuilder.addConversions152() {
             token,
         )
     }
+    add(FirErrors.NON_ERROR_CLASS_EXTENDS_RICH_ERROR) { firDiagnostic ->
+        NonErrorClassExtendsRichErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE) { firDiagnostic ->
         NestedClassInExternalInterfaceImpl(
             firDiagnostic as KtDiagnosticWithSource,

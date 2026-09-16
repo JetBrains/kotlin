@@ -2516,6 +2516,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
         val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
     }
+
+    val RICH_ERRORS by object : DiagnosticGroup("Rich Errors") {
+        val NON_ERROR_CLASS_EXTENDS_RICH_ERROR by error<PsiElement>()
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {
