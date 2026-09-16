@@ -468,16 +468,6 @@ private val MAX_VALUE = Long(-1, -1 ushr 1)
 @EagerInitialization
 private val MIN_VALUE = Long(0, 1 shl 31)
 
-@BoxedLongApi
-@UsedFromCompilerGeneratedCode
-@OptIn(ExperimentalStdlibApi::class)
-@Suppress("DEPRECATION")
-@EagerInitialization
-// TODO(KT-85540): remove the property after bootstrapping
-internal val longArrayClass = PrimitiveKClassImpl(js("Array").unsafeCast<JsClass<LongArray>>(), "LongArray", { it is LongArray })
-
-@BoxedLongApi
-@UsedFromCompilerGeneratedCode
 internal fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "LongArray"
 
 @BoxedLongApi
