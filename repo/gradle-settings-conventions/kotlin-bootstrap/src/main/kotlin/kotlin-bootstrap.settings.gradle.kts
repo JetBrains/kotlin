@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import java.io.StringReader
 import java.util.Properties
 import org.gradle.api.internal.GradleInternal
 
@@ -26,20 +27,11 @@ private object Config {
     const val PROJECT_KOTLIN_REPO = "bootstrapKotlinRepo"
 }
 
-internal abstract class PropertiesValueSource : ValueSource<Properties, PropertiesValueSource.Parameters> {
-    interface Parameters : ValueSourceParameters {
-        val fileName: Property<String>
-        val rootDir: Property<File>
-    }
-
-    override fun obtain(): Properties? {
-        val localPropertiesFile = parameters.rootDir.get().resolve(parameters.fileName.get())
-        return if (localPropertiesFile.exists()) {
-            localPropertiesFile.bufferedReader().use {
-                Properties().apply { load(it) }
-            }
-        } else {
-            null
+private fun loadPropertiesFile(file: File): Provider<Properties> {
+    val regularFile = rootSettings.layout.settingsDirectory.file(file.absolutePath)
+    return providers.fileContents(regularFile).asText.map { content ->
+        Properties().apply {
+            StringReader(content).use { load(it) }
         }
     }
 }
@@ -91,19 +83,8 @@ private val kotlinRootDir: File = when (rootSettings.rootProject.name) {
     else -> rootSettings.rootDir
 }
 
-private val localProperties = providers.of(PropertiesValueSource::class.java) {
-    parameters {
-        fileName.set("local.properties")
-        rootDir.set(kotlinRootDir)
-    }
-}
-
-private val rootGradleProperties = providers.of(PropertiesValueSource::class.java) {
-    parameters {
-        fileName.set("gradle.properties")
-        rootDir.set(kotlinRootDir)
-    }
-}
+private val localProperties = loadPropertiesFile(kotlinRootDir.resolve("local.properties"))
+private val rootGradleProperties = loadPropertiesFile(kotlinRootDir.resolve("gradle.properties"))
 
 private fun loadLocalOrGradleProperty(
     propertyName: String
