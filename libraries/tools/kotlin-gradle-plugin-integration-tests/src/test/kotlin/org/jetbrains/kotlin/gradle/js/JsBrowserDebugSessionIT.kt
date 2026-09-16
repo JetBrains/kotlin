@@ -47,7 +47,9 @@ class JsBrowserDebugSessionIT : KGPBaseTest() {
     @AfterAll
     fun cleanWorkingDirIfPossible() {
         try {
-            workingDir.toFile().deleteRecursively()
+            if (this::workingDir.isInitialized) {
+                workingDir.toFile().deleteRecursively()
+            }
         } catch (e: IOException) {
             println("Failed to clean working directory: ${workingDir.toAbsolutePath()}, $e")
             // suppress
