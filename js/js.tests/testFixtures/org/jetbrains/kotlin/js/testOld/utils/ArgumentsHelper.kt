@@ -42,11 +42,15 @@ open class ArgumentsHelper(private val entry: String) {
         }
     }
 
+    private val advancedOptimization: Boolean? = findNamedArgument("ADVANCED_OPTIMIZATIONS")?.let { it == "true" }
+
     private val targetBackends: Set<TargetBackend> =
         findNamedListArgument("TARGET_BACKENDS").mapTo(hashSetOf(), TargetBackend::valueOf)
 
     private val ignoredBackends: Set<TargetBackend> =
         findNamedListArgument("IGNORED_BACKENDS").mapTo(hashSetOf(), TargetBackend::valueOf)
+
+    fun shouldRunWithAdvancedOptimizations(enabled: Boolean) = advancedOptimization?.let { it == enabled } ?: true
 
     fun shouldRunWithBackend(backend: TargetBackend): Boolean {
         if (targetBackends.isNotEmpty()) {

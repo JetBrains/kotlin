@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.ChangeAwareBodyLoweringPass
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -21,10 +22,10 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-class WhileConditionFoldingLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
-
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
+class WhileConditionFoldingLowering(private val context: JsIrBackendContext) : ChangeAwareBodyLoweringPass {
+    override fun changeAwareLower(irBody: IrBody, container: IrDeclaration): Boolean {
         irBody.acceptVoid(Visitor(container))
+        return false
     }
 
     private inner class Visitor(private val container: IrDeclaration) : IrVisitorVoid() {
