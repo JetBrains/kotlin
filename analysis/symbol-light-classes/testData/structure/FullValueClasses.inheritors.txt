@@ -1,0 +1,12 @@
+subClass: cba.SealedValueClass, superClass: cba.AbstractValueClass, deepSearch: false -> true
+subClass: cba.SealedValueClass, superClass: cba.AbstractValueClass, deepSearch: true -> true
+subClass: cba.FinalValueClass, superClass: cba.SealedValueClass, deepSearch: false -> true
+subClass: cba.FinalValueClass, superClass: cba.SealedValueClass, deepSearch: true -> true
+subClass: cba.FinalValueClass, superClass: cba.AbstractValueClass, deepSearch: false -> false
+subClass: cba.FinalValueClass, superClass: cba.AbstractValueClass, deepSearch: true -> true
+subClass: cba.ValueObject, superClass: cba.SealedValueClass, deepSearch: false -> true
+subClass: cba.ValueObject, superClass: cba.AbstractValueClass, deepSearch: true -> true
+subClass: cba.RegularClass, superClass: cba.SealedValueClass, deepSearch: false -> true
+subClass: cba.RegularClass, superClass: cba.AbstractValueClass, deepSearch: true -> true
+subClass: cba.StandaloneValueClass, superClass: java.lang.Object, deepSearch: false -> true
+subClass: cba.StandaloneValueClass, superClass: cba.AbstractValueClass, deepSearch: true -> false

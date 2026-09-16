@@ -1,0 +1,101 @@
+AbstractValueClass.class:
+  KtClass:
+    line: 6
+    name: AbstractValueClass
+    qualifier: cba.AbstractValueClass
+    light: KtLightClassForDecompiledDeclaration
+      name: AbstractValueClass
+      qualifier: cba.AbstractValueClass
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
+FinalValueClass.class:
+  KtClass:
+    line: 6
+    name: FinalValueClass
+    qualifier: cba.FinalValueClass
+    light: KtLightClassForDecompiledDeclaration
+      name: FinalValueClass
+      qualifier: cba.FinalValueClass
+      superTypes: [
+        PsiType:SealedValueClass
+      ]
+      superClass: KtLightClassForDecompiledDeclaration: SealedValueClass (cba.SealedValueClass)
+      interfaces: []
+      supers: [
+        KtLightClassForDecompiledDeclaration: SealedValueClass (cba.SealedValueClass)
+      ]
+
+RegularClass.class:
+  KtClass:
+    line: 6
+    name: RegularClass
+    qualifier: cba.RegularClass
+    light: KtLightClassForDecompiledDeclaration
+      name: RegularClass
+      qualifier: cba.RegularClass
+      superTypes: [
+        PsiType:SealedValueClass
+      ]
+      superClass: KtLightClassForDecompiledDeclaration: SealedValueClass (cba.SealedValueClass)
+      interfaces: []
+      supers: [
+        KtLightClassForDecompiledDeclaration: SealedValueClass (cba.SealedValueClass)
+      ]
+
+SealedValueClass.class:
+  KtClass:
+    line: 6
+    name: SealedValueClass
+    qualifier: cba.SealedValueClass
+    light: KtLightClassForDecompiledDeclaration
+      name: SealedValueClass
+      qualifier: cba.SealedValueClass
+      superTypes: [
+        PsiType:AbstractValueClass
+      ]
+      superClass: KtLightClassForDecompiledDeclaration: AbstractValueClass (cba.AbstractValueClass)
+      interfaces: []
+      supers: [
+        KtLightClassForDecompiledDeclaration: AbstractValueClass (cba.AbstractValueClass)
+      ]
+
+StandaloneValueClass.class:
+  KtClass:
+    line: 6
+    name: StandaloneValueClass
+    qualifier: cba.StandaloneValueClass
+    light: KtLightClassForDecompiledDeclaration
+      name: StandaloneValueClass
+      qualifier: cba.StandaloneValueClass
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
+ValueObject.class:
+  KtObjectDeclaration:
+    line: 6
+    name: ValueObject
+    qualifier: cba.ValueObject
+    light: KtLightClassForDecompiledDeclaration
+      name: ValueObject
+      qualifier: cba.ValueObject
+      superTypes: [
+        PsiType:SealedValueClass
+      ]
+      superClass: KtLightClassForDecompiledDeclaration: SealedValueClass (cba.SealedValueClass)
+      interfaces: []
+      supers: [
+        KtLightClassForDecompiledDeclaration: SealedValueClass (cba.SealedValueClass)
+      ]
