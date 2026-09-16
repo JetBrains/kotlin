@@ -68,12 +68,17 @@ public final class ValueClass /* pack.ValueClass*/ {
   private final int second;
 
   @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+
+  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getFirst();//  getFirst()
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() pack.ValueClass getPropertyWithValueClassType();//  getPropertyWithValueClassType()
 
   public  ValueClass(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String, int)
+
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
   public final int getProperty();//  getProperty()
 
@@ -82,6 +87,8 @@ public final class ValueClass /* pack.ValueClass*/ {
   public final void funWithSelfParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.ValueClass);//  funWithSelfParameter(@org.jetbrains.annotations.NotNull() pack.ValueClass)
 
   public final void funWithoutParameters();//  funWithoutParameters()
+
+  public int hashCode();//  hashCode()
 
   class Companion ...
 }

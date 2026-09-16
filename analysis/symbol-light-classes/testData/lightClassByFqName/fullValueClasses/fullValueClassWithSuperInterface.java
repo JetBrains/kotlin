@@ -25,7 +25,11 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
 
   public  ValueClass(int, long);//  .ctor(int, long)
 
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
   public final int getInt();//  getInt()
 
   public final long getLong();//  getLong()
+
+  public int hashCode();//  hashCode()
 }
