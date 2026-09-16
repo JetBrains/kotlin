@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.model.*
@@ -301,8 +302,22 @@ object ReflectTypeSystemContext : TypeSystemContext {
         return this as TypeArgumentListMarker
     }
 
+    override fun TypeConstructorMarker.isClassWithId(classId: ClassId): Boolean {
+        shouldNotBeCalled()
+    }
+
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean {
         return this == Any::class
+    }
+
+    override fun TypeConstructorMarker.isNonErrorConstructor(): Boolean {
+        // TODO(KT-89093) proper implementation
+        return false
+    }
+
+    override fun TypeConstructorMarker.isRichErrorConstructor(): Boolean {
+        // TODO(KT-89093) proper implementation
+        return false
     }
 
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean {
