@@ -118,9 +118,16 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
         }
 
         state = when (message) {
-            is TestSuiteStarted -> when (state) {
+            is TestSuiteStarted -> when (val state = state) {
                 is State.Begin,
                 is State.TestSuiteFinished -> State.TestSuiteStarted(message.suiteName)
+                is State.TestStarted -> {
+                    // For example, when xcodebuild runs XCTest tests, it restarts the crashed test processes automatically.
+                    // In this case, the log has `testStarted` (before restart) followed by `testSuiteStarted` (after restart).
+                    // The test hasn't finished normally => consider it failed.
+                    failedTests += state.testName
+                    State.TestSuiteStarted(message.suiteName)
+                }
                 else -> unexpectedMessage()
             }
             is TestSuiteFinished -> when (state) {
