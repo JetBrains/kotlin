@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.NotToShareWithAA
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 
+@OptIn(NotToShareWithAA::class)
 @Suppress("UnstableApiUsage")
 abstract class AbstractMultiplatformParsingRawFirBuilder(
     baseSession: FirSession,

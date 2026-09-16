@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.NodeTypeAnalyzer
+import org.jetbrains.kotlin.fir.analysis.NotToShareWithAA
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@OptIn(NotToShareWithAA::class)
 class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     val analyzer: AbstractTreeRawFirBuilder<Node, Type>,
     context: Context<Node>,
@@ -404,7 +406,9 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                     leftArgAsFir, operationToken == KtTokens.NOT_IN_ID, baseSource, operationReferenceSource
                 )
             in comparisonOperationsId ->
-                return leftArgAsFir.generateComparisonExpression(rightArgAsFir, operationToken, baseSource, operationReferenceSource)
+                return leftArgAsFir.generateComparisonExpression(
+                    rightArgAsFir, operationToken.toFirComparisonOperation(), baseSource, operationReferenceSource
+                )
         }
         val conventionCallName = ktTokenToBinaryOperationNameMap[operationToken]
         return if (conventionCallName != null || operationToken == KtTokens.IDENTIFIER_ID) {
@@ -444,6 +448,16 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                     argumentList = buildBinaryArgumentList(leftArgAsFir, rightArgAsFir)
                 }
             }
+        }
+    }
+
+    private fun Int.toFirComparisonOperation(): FirOperation {
+        return when (this) {
+            KtTokens.LT_ID -> FirOperation.LT
+            KtTokens.GT_ID -> FirOperation.GT
+            KtTokens.LTEQ_ID -> FirOperation.LT_EQ
+            KtTokens.GTEQ_ID -> FirOperation.GT_EQ
+            else -> error("Unknown comparison operation ID: $this")
         }
     }
 
@@ -610,7 +624,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                     ) { getAsFirExpression(this) }
                 }
                 val receiver = getAsFirExpression<FirExpression>(argument, "No operand", sourceWhenInvalidExpression = unaryExpression)
-                convertUnaryPlusMinusCallOnIntegerLiteralIfNecessary(unaryExpression, receiver, operationToken)?.let { return it }
+                convertUnaryPlusMinusCallOnIntegerLiteralIfNecessary(unaryExpression, receiver, conventionCallName)?.let { return it }
                 buildFunctionCall {
                     source = unaryExpression.toFirSourceElement()
                     calleeReference = buildSimpleNamedReference {

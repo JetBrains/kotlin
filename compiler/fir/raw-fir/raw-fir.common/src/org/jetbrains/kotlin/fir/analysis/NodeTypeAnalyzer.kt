@@ -33,6 +33,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.util.OperatorNameConventions
+
+@RequiresOptIn("Should not be used in compiler modules shared with LL/AA/IDE")
+annotation class NotToShareWithAA
 
 // May be merged with AbstractRawFirBuilder (was needed as a separate entity when it was an interface and used by delegation)
 abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
@@ -46,10 +50,16 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     abstract val Node.elementType: Type
     abstract val Node.asText: String
 
+    abstract fun Node.isStringInterpolationPrefixOrQuote(): Boolean
+    abstract fun Node.isLiteralStringTemplateEntry(): Boolean
+    abstract fun Node.isEscapeStringTemplateEntry(): Boolean
+    abstract fun Node.isShortOrLongStringTemplateEntry(): Boolean
+
     fun Node.getAsStringWithoutBacktick(): String {
         return this.asText.replace("`", "")
     }
 
+    @OptIn(NotToShareWithAA::class)
     open fun Node.getLabelName(): String? {
         if (toTokenId() == KtNodeTypes.FUNCTION_ID) {
             return getParent()?.getLabelName()
@@ -141,6 +151,8 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     abstract fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration
 
     abstract fun Node?.getChildrenAsArray(): Array<out Node?>
+
+    @NotToShareWithAA
     inline fun Node.forEachChildren(f: (Node) -> Unit) {
         val kidsArray = this.getChildrenAsArray()
         for (kid in kidsArray) {
@@ -150,6 +162,7 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         }
     }
 
+    @NotToShareWithAA
     inline fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
         val kidsArray = this.getChildrenAsArray()
 
@@ -234,14 +247,14 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     fun convertUnaryPlusMinusCallOnIntegerLiteralIfNecessary(
         source: Node,
         receiver: FirExpression,
-        operationTokenId: Int,
+        operationName: Name?,
     ): FirExpression? {
         if (receiver !is FirLiteralExpression) return null
         if (receiver.kind != ConstantValueKind.IntegerLiteral) return null
 
-        val convertedValue = when (operationTokenId) {
-            KtTokens.MINUS_ID -> -(receiver.value as Long)
-            KtTokens.PLUS_ID -> receiver.value as Long
+        val convertedValue = when (operationName) {
+            OperatorNameConventions.UNARY_MINUS -> -(receiver.value as Long)
+            OperatorNameConventions.UNARY_PLUS -> receiver.value as Long
             else -> return null
         }
 
@@ -290,16 +303,15 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
             argumentList = buildArgumentList {
                 L@ for (entry in this@toInterpolatingCall) {
                     if (entry == null) continue
-                    val tokenId = entry.toTokenId()
-                    when (tokenId) {
-                        KtNodeTypes.STRING_INTERPOLATION_PREFIX_ID, KtTokens.OPEN_QUOTE_ID, KtTokens.CLOSING_QUOTE_ID -> continue@L
-                        KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY_ID -> {
+                    when {
+                        entry.isStringInterpolationPrefixOrQuote() -> continue@L
+                        entry.isLiteralStringTemplateEntry() -> {
                             sb.append(entry.asText)
                             arguments += buildLiteralExpression(
                                 entry.toFirSourceElement(), ConstantValueKind.String, entry.asText, setType = false
                             )
                         }
-                        KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY_ID -> {
+                        entry.isEscapeStringTemplateEntry() -> {
                             val entryText = entry.asText
                             val characterWithDiagnostic = escapedStringToCharacter(entryText)
                             val unescapedCharacter = characterWithDiagnostic.value
@@ -316,7 +328,7 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
                                 characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
                             )
                         }
-                        KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY_ID, KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY_ID -> {
+                        entry.isShortOrLongStringTemplateEntry() -> {
                             hasExpressions = true
                             val expressions = entry.convertTemplateEntry("Incorrect template argument")
                             if (expressions.isNotEmpty()) {
@@ -398,8 +410,13 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         convert: Node.() -> FirExpression,
     ): FirExpression
 
+    @NotToShareWithAA
     fun Node.toTokenId(): Int = elementType.typeToTokenId()
+
+    @NotToShareWithAA
     abstract fun Type.typeToTokenId(): Int
+
+    abstract fun Type.toConstantValueKind(): ConstantValueKind?
 
     companion object {
         val ignoredTokensId: HashSet<Int> = hashSetOf(

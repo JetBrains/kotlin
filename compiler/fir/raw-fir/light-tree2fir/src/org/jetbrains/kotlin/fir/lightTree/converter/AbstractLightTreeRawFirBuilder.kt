@@ -13,11 +13,13 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.NotToShareWithAA
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.kmp.utils.kmpId
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.util.getChildren
 
+@OptIn(NotToShareWithAA::class)
 abstract class AbstractLightTreeRawFirBuilder(
     baseSession: FirSession,
     val tree: FlyweightCapableTreeStructure<LighterASTNode>,

@@ -283,17 +283,17 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
             }
         }
 
-        val tokenId = type.typeToTokenId()
-        val convertedText: Any? = when (tokenId) {
-            KtNodeTypes.INTEGER_CONSTANT_ID, KtNodeTypes.FLOAT_CONSTANT_ID -> when {
-                text.hasIllegalUnderscore(tokenId) -> return reportIncorrectConstant(DiagnosticKind.IllegalUnderscore)
-                else -> text.parseNumericLiteral(tokenId)
+        val constantKind = type.toConstantValueKind()
+        val convertedText: Any? = when (constantKind) {
+            ConstantValueKind.Int, ConstantValueKind.Float -> when {
+                text.hasIllegalUnderscore(constantKind) -> return reportIncorrectConstant(DiagnosticKind.IllegalUnderscore)
+                else -> text.parseNumericLiteral(constantKind)
             }
-            KtNodeTypes.BOOLEAN_CONSTANT_ID -> parseBoolean(text)
+            ConstantValueKind.Boolean -> parseBoolean(text)
             else -> null
         }
-        return when (tokenId) {
-            KtNodeTypes.INTEGER_CONSTANT_ID -> {
+        return when (constantKind) {
+            ConstantValueKind.Int -> {
                 var diagnostic: DiagnosticKind = DiagnosticKind.IllegalConstExpression
                 var number: Long?
 
@@ -349,7 +349,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                     diagnostic,
                 )
             }
-            KtNodeTypes.FLOAT_CONSTANT_ID ->
+            ConstantValueKind.Float ->
                 if (convertedText is Float) {
                     buildConstOrErrorExpression(
                         sourceElement,
@@ -369,7 +369,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                         DiagnosticKind.FloatLiteralOutOfRange,
                     )
                 }
-            KtNodeTypes.CHARACTER_CONSTANT_ID -> {
+            ConstantValueKind.Char -> {
                 val characterWithDiagnostic = text.parseCharacter()
                 buildConstOrErrorExpression(
                     sourceElement,
@@ -380,14 +380,14 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                     characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
                 )
             }
-            KtNodeTypes.BOOLEAN_CONSTANT_ID ->
+            ConstantValueKind.Boolean ->
                 buildLiteralExpression(
                     sourceElement,
                     ConstantValueKind.Boolean,
                     convertedText as Boolean,
                     setType = false
                 )
-            KtNodeTypes.NULL_ID ->
+            ConstantValueKind.Null ->
                 buildLiteralExpression(
                     sourceElement,
                     ConstantValueKind.Null,
@@ -412,17 +412,14 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    open fun String.hasIllegalUnderscore(typeId: Int): Boolean {
-        return when {
-            typeId == KtNodeTypes.INTEGER_CONSTANT_ID -> hasIllegallyPositionedUnderscore(this, isFloatingPoint = false)
-            else -> hasIllegallyPositionedUnderscore(this, isFloatingPoint = true)
-        }
+    private fun String.hasIllegalUnderscore(kind: ConstantValueKind): Boolean {
+        return hasIllegallyPositionedUnderscore(this, isFloatingPoint = kind == ConstantValueKind.Float)
     }
 
-    open fun String.parseNumericLiteral(typeId: Int): Number? {
-        return when (typeId) {
-            KtNodeTypes.INTEGER_CONSTANT_ID -> parseNumericLiteral(this, isFloatingPointLiteral = false)
-            KtNodeTypes.FLOAT_CONSTANT_ID -> parseNumericLiteral(this, isFloatingPointLiteral = true)
+    private fun String.parseNumericLiteral(kind: ConstantValueKind): Number? {
+        return when (kind) {
+            ConstantValueKind.Int -> parseNumericLiteral(this, isFloatingPointLiteral = false)
+            ConstantValueKind.Float -> parseNumericLiteral(this, isFloatingPointLiteral = true)
             else -> null
         }
     }
@@ -441,7 +438,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
             diagnostic = ConeSyntaxDiagnostic("Inc/dec without operand")
         }
 
-        if (unwrappedReceiver.toTokenId() == KtNodeTypes.ARRAY_ACCESS_EXPRESSION_ID) {
+        if (unwrappedReceiver.isArrayAccessExpression()) {
             return generateIncrementOrDecrementBlockForArrayAccess(
                 wholeExpression,
                 operationReference,
@@ -464,6 +461,8 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
             replaceReceiver = FirIncrementDecrementExpression::replaceExpression
         )
     }
+
+    protected abstract fun Node.isArrayAccessExpression(): Boolean
 
     override fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression =
         pullUpSafeCallIfNecessary(
@@ -497,24 +496,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     override fun KtSourceElement.isChildInParentheses(): Boolean =
         treeStructure.getParent(lighterASTNode)?.tokenType == org.jetbrains.kotlin.KtNodeTypes.PARENTHESIZED
 
-    /**
-     * See [UNWRAPPABLE_TOKEN_TYPES][org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES]
-     */
-    private fun Node?.unwrap(): Node? {
-        // NOTE: By removing surrounding parentheses and labels, FirLabels will NOT be created for those labels.
-        // This should be fine since the label is meaningless and unusable for a ++/-- argument or assignment LHS.
-        var unwrapped = this
-        while (true) {
-            val tokenId = unwrapped?.toTokenId()
-            unwrapped = when (tokenId) {
-                null -> return unwrapped
-                KtNodeTypes.PARENTHESIZED_ID -> unwrapped.getExpressionInParentheses()
-                KtNodeTypes.LABELED_EXPRESSION_ID -> unwrapped.getLabeledExpression()
-                KtNodeTypes.ANNOTATED_EXPRESSION_ID -> unwrapped.getAnnotatedExpression()
-                else -> return unwrapped
-            }
-        }
-    }
+    protected abstract fun Node?.unwrap(): Node?
 
     /**
      * given:
@@ -724,7 +706,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
             diagnostic = ConeSyntaxDiagnostic("Inc/dec without operand")
         }
 
-        if (unwrappedLhs.toTokenId() == KtNodeTypes.ARRAY_ACCESS_EXPRESSION_ID) {
+        if (unwrappedLhs.isArrayAccessExpression()) {
             if (operation == FirOperation.ASSIGN) {
                 context.arraySetArgument[unwrappedLhs] = rhsExpression
             }
@@ -796,7 +778,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
         require(operation == FirOperation.ASSIGN)
 
-        if (this?.toTokenId() == KtNodeTypes.SAFE_ACCESS_EXPRESSION_ID) {
+        if (this?.isSafeAccessExpression() == true) {
             val safeCallNonAssignment = convert() as? FirSafeCallExpression
             if (safeCallNonAssignment != null) {
                 return putAssignmentToSafeCall(safeCallNonAssignment, baseSource, rhsExpression, annotations)
@@ -820,6 +802,8 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
             this.annotations += annotations
         }
     }
+
+    protected abstract fun Node.isSafeAccessExpression(): Boolean
 
     // gets a?.{ $subj.x } and turns it to a?.{ $subj.x = v }
     private fun putAssignmentToSafeCall(
