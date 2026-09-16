@@ -16,7 +16,7 @@ fun test_common() {
 
 // MODULE: app-inter()(lib-inter, lib-common)(app-common)
 fun test_inter() {
-    <!INVISIBLE_REFERENCE{PLATFORM}!>foo<!>()
+    foo()
 }
 
 // MODULE: app-platform()(lib-platform)(app-inter)
