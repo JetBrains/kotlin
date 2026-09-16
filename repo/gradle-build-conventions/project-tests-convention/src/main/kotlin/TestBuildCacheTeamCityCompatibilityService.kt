@@ -75,6 +75,20 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
     private val taskPath: String by lazy { parameters.taskPath.get() }
     private val executionsFile: File by lazy { parameters.executionsFile.get() }
 
+    /**
+     * Keeps the replayed messages of this task apart from every other message in the build.
+     *
+     * TeamCity infers the suite a test belongs to from the messages that are currently open *in the
+     * same flow*, and Gradle replays several cached test tasks at once. Without a flow of its own, one
+     * task's `testSuiteStarted` would end up enclosing another task's tests, which TeamCity then
+     * registers under a suite path it never belonged to.
+     *
+     * The task path is unique within a build and stable for the whole replay, which is exactly what a
+     * flow id has to be. It is prefixed so that it cannot coincide with a flow id of the TeamCity
+     * Gradle runner itself.
+     */
+    private val flowId: String by lazy { "TestReplay$taskPath" }
+
     // Note: 'onFinish' receives the general 'FinishEvent'. Only task events are of interest here,
     // so everything else (e.g. transform or test events) is filtered out.
     override fun onFinish(event: FinishEvent) {
@@ -143,7 +157,8 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
     }
 
     private fun serviceMessage(messageName: String, vararg attributes: Pair<String, String>) {
-        val rendered = attributes.joinToString(separator = " ") { (name, value) -> "$name='${escape(value)}'" }
+        val rendered = (attributes.toList() + ("flowId" to flowId))
+            .joinToString(separator = " ") { (name, value) -> "$name='${escape(value)}'" }
         // Printed rather than logged, as the other service messages of this build are, see for instance
         // 'DexMethodCount' and the cache-redirector settings plugin.
         println("##teamcity[$messageName $rendered]")
