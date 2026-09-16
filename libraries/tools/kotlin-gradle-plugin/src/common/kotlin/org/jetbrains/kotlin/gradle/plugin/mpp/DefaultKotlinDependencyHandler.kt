@@ -9,7 +9,9 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependenciesCollector
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
@@ -128,6 +130,116 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             name = moduleName(directory),
             directory = directory,
         )
+
+    override fun npmDev(
+        name: String,
+        version: String,
+    ) {
+        npmDependenciesCollector.add(
+            name = name,
+            version = version,
+            scope = KotlinNpmDependency.Scope.DEV,
+        )
+    }
+
+    override fun npmDev(
+        name: Provider<String>,
+        version: Provider<String>,
+    ) {
+        npmDependenciesCollector.add(
+            name = name,
+            version = version,
+            scope = KotlinNpmDependency.Scope.DEV,
+        )
+    }
+
+    override fun npmDev(
+        name: String,
+        directory: File,
+    ) {
+        npmDependenciesCollector.add(
+            name = name,
+            file = directory,
+            scope = KotlinNpmDependency.Scope.DEV,
+        )
+    }
+
+    override fun npmDev(
+        name: String,
+        directory: Provider<Directory>,
+    ) {
+        npmDependenciesCollector.addDirectory(
+            name = name,
+            directory = directory,
+            scope = KotlinNpmDependency.Scope.DEV,
+        )
+    }
+
+    override fun npmOptional(
+        name: String,
+        version: String,
+    ) {
+        npmDependenciesCollector.add(
+            name = name,
+            version = version,
+            scope = KotlinNpmDependency.Scope.OPTIONAL,
+        )
+    }
+
+    override fun npmOptional(
+        name: Provider<String>,
+        version: Provider<String>,
+    ) {
+        npmDependenciesCollector.add(
+            name = name,
+            version = version,
+            scope = KotlinNpmDependency.Scope.OPTIONAL,
+        )
+    }
+
+    override fun npmOptional(
+        name: String,
+        directory: File,
+    ) {
+        npmDependenciesCollector.add(
+            name = name,
+            file = directory,
+            scope = KotlinNpmDependency.Scope.OPTIONAL,
+        )
+    }
+
+    override fun npmOptional(
+        name: String,
+        directory: Provider<Directory>,
+    ) {
+        npmDependenciesCollector.addDirectory(
+            name = name,
+            directory = directory,
+            scope = KotlinNpmDependency.Scope.OPTIONAL,
+        )
+    }
+
+    override fun npmPeer(
+        name: String,
+        version: String,
+    ) {
+        npmDependenciesCollector.add(
+            name = name,
+            version = version,
+            scope = KotlinNpmDependency.Scope.PEER,
+        )
+    }
+
+    override fun npmPeer(
+        name: Provider<String>,
+        version: Provider<String>,
+    ) {
+        npmDependenciesCollector.add(
+            name = name,
+            version = version,
+            scope = KotlinNpmDependency.Scope.PEER,
+        )
+    }
 
     @Suppress("DEPRECATION")
     override fun devNpm(
