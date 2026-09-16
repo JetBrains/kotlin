@@ -6,7 +6,9 @@
 #include "Memory.h"
 #include "mm/MemoryPrivate.hpp"
 
-#ifndef KONAN_WINDOWS
+// tvOS/watchOS sysroots mark fork(2) unavailable; dump there stays in-process.
+#if !KONAN_WINDOWS && !KONAN_TVOS && !KONAN_WATCHOS
+#define KONAN_DUMP_MAY_FORK 1
 #include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
@@ -254,7 +256,7 @@ bool dumpMemoryFromRuntime(int fd, bool omitPayloads, bool gzip, bool shortenPau
     // It's fine to wait for that suspension and execute long-running operations (I/O) here.
     mm::WaitForThreadsSuspension();
 
-#if !KONAN_WINDOWS
+#if KONAN_DUMP_MAY_FORK
     if (shortenPause) {
         pid_t pid = fork();
         if (pid == 0) {

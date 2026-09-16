@@ -62,8 +62,9 @@ public object Debugging {
      * and returns success flag.
      *
      * The dump still completes before this function returns, so the caller may close
-     * [fd] afterwards. On POSIX, the implementation may write the dump in a forked
-     * child process so other threads can resume sooner; that is not a public option.
+     * [fd] afterwards. Where `fork` is available, the implementation may write the dump
+     * in a child process so other threads can resume sooner; that is not a public option.
+     * tvOS and watchOS dump in-process.
      */
     public fun dumpMemory(fd: Long, options: MemoryDumpOptions): Boolean =
             dumpMemoryWithOptions(fd, options.omitPayloads, options.gzip)
