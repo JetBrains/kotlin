@@ -51,7 +51,7 @@ internal abstract class CommonCompilerArgumentsImpl(
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
   argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonToolArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
+) : CommonToolArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     ArgumentsCommonCompilerArguments,
     ArgumentsCommonCompilerArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -134,9 +134,6 @@ internal abstract class CommonCompilerArgumentsImpl(
   @SerialName("X_CONTEXT_PARAMETERS")
   protected var `Xcontext-parameters`: Boolean
 
-  @SerialName("X_CONTEXT_RECEIVERS")
-  protected var `Xcontext-receivers`: Boolean
-
   @SerialName("X_CONTEXT_SENSITIVE_RESOLUTION")
   protected var `Xcontext-sensitive-resolution`: Boolean
 
@@ -145,9 +142,6 @@ internal abstract class CommonCompilerArgumentsImpl(
 
   @SerialName("X_DETAILED_PERF")
   protected var `Xdetailed-perf`: Boolean
-
-  @SerialName("X_DIRECT_JAVA_ACTUALIZATION")
-  protected var `Xdirect-java-actualization`: Boolean
 
   @SerialName("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN")
   protected var `Xdisable-default-scripting-plugin`: Boolean
@@ -227,15 +221,6 @@ internal abstract class CommonCompilerArgumentsImpl(
   @SerialName("X_HEADER_MODE_TYPE")
   protected var `Xheader-mode-type`: HeaderMode
 
-  @SerialName("X_IGNORE_CONST_OPTIMIZATION_ERRORS")
-  protected var `Xignore-const-optimization-errors`: Boolean
-
-  @SerialName("X_INLINE_CLASSES")
-  protected var `Xinline-classes`: Boolean
-
-  @SerialName("X_INTELLIJ_PLUGIN_ROOT")
-  protected var `Xintellij-plugin-root`: String?
-
   @SerialName("X_INTRINSIC_CONST_EVALUATION")
   protected var `Xintrinsic-const-evaluation`: Boolean
 
@@ -262,12 +247,6 @@ internal abstract class CommonCompilerArgumentsImpl(
 
   @SerialName("X_NESTED_TYPE_ALIASES")
   protected var `Xnested-type-aliases`: Boolean
-
-  @SerialName("X_NEW_INFERENCE")
-  protected var `Xnew-inference`: Boolean
-
-  @SerialName("X_NO_CHECK_ACTUAL")
-  protected var `Xno-check-actual`: Boolean
 
   @SerialName("X_NO_INLINE")
   protected var `Xno-inline`: Boolean
@@ -305,9 +284,6 @@ internal abstract class CommonCompilerArgumentsImpl(
   @SerialName("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES")
   protected var `Xrender-internal-diagnostic-names`: Boolean
 
-  @SerialName("X_REPL")
-  protected var Xrepl: Boolean
-
   @SerialName("X_REPORT_ALL_WARNINGS")
   protected var `Xreport-all-warnings`: Boolean
 
@@ -335,20 +311,8 @@ internal abstract class CommonCompilerArgumentsImpl(
   @SerialName("X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES")
   protected var `Xstrict-equality-for-structural-classes`: Boolean
 
-  @SerialName("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR")
-  protected var `Xsuppress-api-version-greater-than-language-version-error`: Boolean
-
   @SerialName("X_SUPPRESS_VERSION_WARNINGS")
   protected var `Xsuppress-version-warnings`: Boolean
-
-  @SerialName("X_SUPPRESS_WARNING")
-  protected var `Xsuppress-warning`: List<String>
-
-  @SerialName("X_UNRESTRICTED_BUILDER_INFERENCE")
-  protected var `Xunrestricted-builder-inference`: Boolean
-
-  @SerialName("X_USE_FIR_EXPERIMENTAL_CHECKERS")
-  protected var `Xuse-fir-experimental-checkers`: Boolean
 
   @SerialName("X_USE_FIR_IC")
   protected var `Xuse-fir-ic`: Boolean
@@ -361,12 +325,6 @@ internal abstract class CommonCompilerArgumentsImpl(
 
   @SerialName("X_VERIFY_IR")
   protected var `Xverify-ir`: VerifyIrMode?
-
-  @SerialName("X_VERIFY_IR_NESTED_OFFSETS")
-  protected var `Xverify-ir-nested-offsets`: Boolean
-
-  @SerialName("X_VERIFY_IR_VISIBILITY")
-  protected var `Xverify-ir-visibility`: Boolean
 
   @SerialName("X_WHEN_GUARDS")
   protected var `Xwhen-guards`: Boolean
@@ -466,11 +424,9 @@ internal abstract class CommonCompilerArgumentsImpl(
     arguments.pluginOrderConstraints = `Xcompiler-plugin-order` ?: emptyArray()
     arguments.consistentDataClassCopyVisibility = `Xconsistent-data-class-copy-visibility`
     arguments.contextParameters = `Xcontext-parameters`
-    try { arguments.setUsingReflection("contextReceivers", `Xcontext-receivers`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_RECEIVERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.contextSensitiveResolution = `Xcontext-sensitive-resolution`
     arguments.dataFlowBasedExhaustiveness = `Xdata-flow-based-exhaustiveness`
     arguments.detailedPerf = `Xdetailed-perf`
-    try { arguments.setUsingReflection("directJavaActualization", `Xdirect-java-actualization`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DIRECT_JAVA_ACTUALIZATION. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.disableDefaultScriptingPlugin = `Xdisable-default-scripting-plugin`
     arguments.disableIrCheckers = `Xdisable-ir-checkers` ?: emptyArray()
     arguments.disablePhases = `Xdisable-phases`.toTypedArray()
@@ -497,9 +453,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     arguments.fullValueClasses = `Xfull-value-classes`
     arguments.headerMode = `Xheader-mode`
     arguments.headerModeType = `Xheader-mode-type`.stringValue
-    try { arguments.setUsingReflection("ignoreConstOptimizationErrors", `Xignore-const-optimization-errors`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IGNORE_CONST_OPTIMIZATION_ERRORS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { arguments.setUsingReflection("inlineClasses", `Xinline-classes`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INLINE_CLASSES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { arguments.setUsingReflection("intellijPluginRoot", `Xintellij-plugin-root`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INTELLIJ_PLUGIN_ROOT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.intrinsicConstEvaluation = `Xintrinsic-const-evaluation`
     arguments.listPhases = `Xlist-phases`
     arguments.localTypeAliases = `Xlocal-type-aliases`
@@ -509,8 +462,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     arguments.multiPlatform = `Xmulti-platform`
     arguments.nameBasedDestructuring = `Xname-based-destructuring`?.stringValue
     arguments.nestedTypeAliases = `Xnested-type-aliases`
-    try { arguments.setUsingReflection("newInference", `Xnew-inference`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NEW_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { arguments.setUsingReflection("noCheckActual", `Xno-check-actual`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NO_CHECK_ACTUAL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.noInline = `Xno-inline`
     arguments.nonLocalBreakContinue = `Xnon-local-break-continue`
     arguments.phasesToDump = `Xphases-to-dump`.toTypedArray()
@@ -523,7 +474,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     arguments.printConfiguration = `Xprint-configuration`
     arguments.profilePhases = `Xprofile-phases`
     arguments.renderInternalDiagnosticNames = `Xrender-internal-diagnostic-names`
-    try { arguments.setUsingReflection("repl", Xrepl) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.reportAllWarnings = `Xreport-all-warnings`
     arguments.reportOutputFiles = `Xreport-output-files`
     arguments.reportPerf = `Xreport-perf`
@@ -533,17 +483,11 @@ internal abstract class CommonCompilerArgumentsImpl(
     arguments.skipPrereleaseCheck = `Xskip-prerelease-check`
     arguments.stdlibCompilation = `Xstdlib-compilation`
     arguments.strictEqualityForStructuralClasses = `Xstrict-equality-for-structural-classes`
-    try { arguments.setUsingReflection("suppressApiVersionGreaterThanLanguageVersionError", `Xsuppress-api-version-greater-than-language-version-error`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.suppressVersionWarnings = `Xsuppress-version-warnings`
-    try { arguments.setUsingReflection("suppressedDiagnostics", `Xsuppress-warning`.toTypedArray()) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_WARNING. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { arguments.setUsingReflection("unrestrictedBuilderInference", `Xunrestricted-builder-inference`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_UNRESTRICTED_BUILDER_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { arguments.setUsingReflection("useFirExperimentalCheckers", `Xuse-fir-experimental-checkers`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_FIR_EXPERIMENTAL_CHECKERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.useFirIC = `Xuse-fir-ic`
     arguments.useFirLT = `Xuse-fir-lt`
     arguments.verbosePhases = `Xverbose-phases`.toTypedArray()
     arguments.verifyIr = `Xverify-ir`?.stringValue
-    try { arguments.setUsingReflection("verifyIrNestedOffsets", `Xverify-ir-nested-offsets`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR_NESTED_OFFSETS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.3.20 and removed in 2.4.20""").initCause(e) }
-    try { arguments.setUsingReflection("verifyIrVisibility", `Xverify-ir-visibility`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR_VISIBILITY. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.20""").initCause(e) }
     arguments.whenGuards = `Xwhen-guards`
     arguments.apiVersion = `api-version`?.stringValue
     arguments.kotlinHome = `kotlin-home`?.absolutePathStringOrThrow()
@@ -585,11 +529,9 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { `Xcompiler-plugin-order` = arguments.pluginOrderConstraints } catch (_: NoSuchMethodError) {  }
     try { `Xconsistent-data-class-copy-visibility` = arguments.consistentDataClassCopyVisibility } catch (_: NoSuchMethodError) {  }
     try { `Xcontext-parameters` = arguments.contextParameters } catch (_: NoSuchMethodError) {  }
-    try { `Xcontext-receivers` = arguments.getUsingReflection<Boolean>("contextReceivers") } catch (_: NoSuchMethodError) {  }
     try { `Xcontext-sensitive-resolution` = arguments.contextSensitiveResolution } catch (_: NoSuchMethodError) {  }
     try { `Xdata-flow-based-exhaustiveness` = arguments.dataFlowBasedExhaustiveness } catch (_: NoSuchMethodError) {  }
     try { `Xdetailed-perf` = arguments.detailedPerf } catch (_: NoSuchMethodError) {  }
-    try { `Xdirect-java-actualization` = arguments.getUsingReflection<Boolean>("directJavaActualization") } catch (_: NoSuchMethodError) {  }
     try { `Xdisable-default-scripting-plugin` = arguments.disableDefaultScriptingPlugin } catch (_: NoSuchMethodError) {  }
     try { `Xdisable-ir-checkers` = arguments.disableIrCheckers } catch (_: NoSuchMethodError) {  }
     try { `Xdisable-phases` = arguments.disablePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
@@ -616,9 +558,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { `Xfull-value-classes` = arguments.fullValueClasses } catch (_: NoSuchMethodError) {  }
     try { `Xheader-mode` = arguments.headerMode } catch (_: NoSuchMethodError) {  }
     try { `Xheader-mode-type` = arguments.headerModeType.let { HeaderMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::headerModeType, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xheader-mode-type value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { `Xignore-const-optimization-errors` = arguments.getUsingReflection<Boolean>("ignoreConstOptimizationErrors") } catch (_: NoSuchMethodError) {  }
-    try { `Xinline-classes` = arguments.getUsingReflection<Boolean>("inlineClasses") } catch (_: NoSuchMethodError) {  }
-    try { `Xintellij-plugin-root` = arguments.getUsingReflection<String?>("intellijPluginRoot") } catch (_: NoSuchMethodError) {  }
     try { `Xintrinsic-const-evaluation` = arguments.intrinsicConstEvaluation } catch (_: NoSuchMethodError) {  }
     try { `Xlist-phases` = arguments.listPhases } catch (_: NoSuchMethodError) {  }
     try { `Xlocal-type-aliases` = arguments.localTypeAliases } catch (_: NoSuchMethodError) {  }
@@ -628,8 +567,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { `Xmulti-platform` = arguments.multiPlatform } catch (_: NoSuchMethodError) {  }
     try { `Xname-based-destructuring` = arguments.nameBasedDestructuring?.let { NameBasedDestructuringMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::nameBasedDestructuring, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xname-based-destructuring value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { `Xnested-type-aliases` = arguments.nestedTypeAliases } catch (_: NoSuchMethodError) {  }
-    try { `Xnew-inference` = arguments.getUsingReflection<Boolean>("newInference") } catch (_: NoSuchMethodError) {  }
-    try { `Xno-check-actual` = arguments.getUsingReflection<Boolean>("noCheckActual") } catch (_: NoSuchMethodError) {  }
     try { `Xno-inline` = arguments.noInline } catch (_: NoSuchMethodError) {  }
     try { `Xnon-local-break-continue` = arguments.nonLocalBreakContinue } catch (_: NoSuchMethodError) {  }
     try { `Xphases-to-dump` = arguments.phasesToDump.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
@@ -642,7 +579,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { `Xprint-configuration` = arguments.printConfiguration } catch (_: NoSuchMethodError) {  }
     try { `Xprofile-phases` = arguments.profilePhases } catch (_: NoSuchMethodError) {  }
     try { `Xrender-internal-diagnostic-names` = arguments.renderInternalDiagnosticNames } catch (_: NoSuchMethodError) {  }
-    try { Xrepl = arguments.getUsingReflection<Boolean>("repl") } catch (_: NoSuchMethodError) {  }
     try { `Xreport-all-warnings` = arguments.reportAllWarnings } catch (_: NoSuchMethodError) {  }
     try { `Xreport-output-files` = arguments.reportOutputFiles } catch (_: NoSuchMethodError) {  }
     try { `Xreport-perf` = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
@@ -652,17 +588,11 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { `Xskip-prerelease-check` = arguments.skipPrereleaseCheck } catch (_: NoSuchMethodError) {  }
     try { `Xstdlib-compilation` = arguments.stdlibCompilation } catch (_: NoSuchMethodError) {  }
     try { `Xstrict-equality-for-structural-classes` = arguments.strictEqualityForStructuralClasses } catch (_: NoSuchMethodError) {  }
-    try { `Xsuppress-api-version-greater-than-language-version-error` = arguments.getUsingReflection<Boolean>("suppressApiVersionGreaterThanLanguageVersionError") } catch (_: NoSuchMethodError) {  }
     try { `Xsuppress-version-warnings` = arguments.suppressVersionWarnings } catch (_: NoSuchMethodError) {  }
-    try { `Xsuppress-warning` = arguments.getUsingReflection<Array<String>>("suppressedDiagnostics").toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { `Xunrestricted-builder-inference` = arguments.getUsingReflection<Boolean>("unrestrictedBuilderInference") } catch (_: NoSuchMethodError) {  }
-    try { `Xuse-fir-experimental-checkers` = arguments.getUsingReflection<Boolean>("useFirExperimentalCheckers") } catch (_: NoSuchMethodError) {  }
     try { `Xuse-fir-ic` = arguments.useFirIC } catch (_: NoSuchMethodError) {  }
     try { `Xuse-fir-lt` = arguments.useFirLT } catch (_: NoSuchMethodError) {  }
     try { `Xverbose-phases` = arguments.verbosePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { `Xverify-ir` = arguments.verifyIr?.let { VerifyIrMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::verifyIr, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { `Xverify-ir-nested-offsets` = arguments.getUsingReflection<Boolean>("verifyIrNestedOffsets") } catch (_: NoSuchMethodError) {  }
-    try { `Xverify-ir-visibility` = arguments.getUsingReflection<Boolean>("verifyIrVisibility") } catch (_: NoSuchMethodError) {  }
     try { `Xwhen-guards` = arguments.whenGuards } catch (_: NoSuchMethodError) {  }
     try { `api-version` = arguments.apiVersion?.let { KotlinVersion.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::apiVersion, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { `kotlin-home` = arguments.kotlinHome?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
@@ -703,10 +633,8 @@ internal abstract class CommonCompilerArgumentsImpl(
     arguments.pluginOrderConstraints = `Xcompiler-plugin-order` ?: emptyArray()
     arguments.consistentDataClassCopyVisibility = `Xconsistent-data-class-copy-visibility`
     arguments.contextParameters = `Xcontext-parameters`
-    try { arguments.setUsingReflection("contextReceivers", `Xcontext-receivers`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_RECEIVERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.contextSensitiveResolution = `Xcontext-sensitive-resolution`
     arguments.dataFlowBasedExhaustiveness = `Xdata-flow-based-exhaustiveness`
-    try { arguments.setUsingReflection("directJavaActualization", `Xdirect-java-actualization`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DIRECT_JAVA_ACTUALIZATION. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.disableDefaultScriptingPlugin = `Xdisable-default-scripting-plugin`
     arguments.disableIrCheckers = `Xdisable-ir-checkers` ?: emptyArray()
     arguments.disablePhases = `Xdisable-phases`.toTypedArray()
@@ -730,9 +658,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     arguments.fullValueClasses = `Xfull-value-classes`
     arguments.headerMode = `Xheader-mode`
     arguments.headerModeType = `Xheader-mode-type`.stringValue
-    try { arguments.setUsingReflection("ignoreConstOptimizationErrors", `Xignore-const-optimization-errors`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IGNORE_CONST_OPTIMIZATION_ERRORS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { arguments.setUsingReflection("inlineClasses", `Xinline-classes`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INLINE_CLASSES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { arguments.setUsingReflection("intellijPluginRoot", `Xintellij-plugin-root`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INTELLIJ_PLUGIN_ROOT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.intrinsicConstEvaluation = `Xintrinsic-const-evaluation`
     arguments.localTypeAliases = `Xlocal-type-aliases`
     arguments.metadataKlib = `Xmetadata-klib`
@@ -741,8 +666,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     arguments.multiPlatform = `Xmulti-platform`
     arguments.nameBasedDestructuring = `Xname-based-destructuring`?.stringValue
     arguments.nestedTypeAliases = `Xnested-type-aliases`
-    try { arguments.setUsingReflection("newInference", `Xnew-inference`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NEW_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { arguments.setUsingReflection("noCheckActual", `Xno-check-actual`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NO_CHECK_ACTUAL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.noInline = `Xno-inline`
     arguments.nonLocalBreakContinue = `Xnon-local-break-continue`
     arguments.phasesToValidate = `Xphases-to-validate`.toTypedArray()
@@ -750,23 +673,16 @@ internal abstract class CommonCompilerArgumentsImpl(
     arguments.phasesToValidateBefore = `Xphases-to-validate-before`.toTypedArray()
     arguments.pluginClasspaths = Xplugin ?: emptyArray()
     arguments.renderInternalDiagnosticNames = `Xrender-internal-diagnostic-names`
-    try { arguments.setUsingReflection("repl", Xrepl) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.returnValueChecker = `Xreturn-value-checker`.stringValue
     arguments.separateKmpCompilationScheme = `Xseparate-kmp-compilation`
     arguments.skipMetadataVersionCheck = `Xskip-metadata-version-check`
     arguments.skipPrereleaseCheck = `Xskip-prerelease-check`
     arguments.stdlibCompilation = `Xstdlib-compilation`
     arguments.strictEqualityForStructuralClasses = `Xstrict-equality-for-structural-classes`
-    try { arguments.setUsingReflection("suppressApiVersionGreaterThanLanguageVersionError", `Xsuppress-api-version-greater-than-language-version-error`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.suppressVersionWarnings = `Xsuppress-version-warnings`
-    try { arguments.setUsingReflection("suppressedDiagnostics", `Xsuppress-warning`.toTypedArray()) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_WARNING. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { arguments.setUsingReflection("unrestrictedBuilderInference", `Xunrestricted-builder-inference`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_UNRESTRICTED_BUILDER_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    try { arguments.setUsingReflection("useFirExperimentalCheckers", `Xuse-fir-experimental-checkers`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_FIR_EXPERIMENTAL_CHECKERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     arguments.useFirIC = `Xuse-fir-ic`
     arguments.useFirLT = `Xuse-fir-lt`
     arguments.verifyIr = `Xverify-ir`?.stringValue
-    try { arguments.setUsingReflection("verifyIrNestedOffsets", `Xverify-ir-nested-offsets`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR_NESTED_OFFSETS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.3.20 and removed in 2.4.20""").initCause(e) }
-    try { arguments.setUsingReflection("verifyIrVisibility", `Xverify-ir-visibility`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR_VISIBILITY. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.20""").initCause(e) }
     arguments.whenGuards = `Xwhen-guards`
     arguments.apiVersion = `api-version`?.stringValue
     arguments.kotlinHome = `kotlin-home`?.absolutePathStringOrThrow()
@@ -874,9 +790,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_CONTEXT_PARAMETERS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_CONTEXT_PARAMETERS")
 
-    public val X_CONTEXT_RECEIVERS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_CONTEXT_RECEIVERS")
-
     public val X_CONTEXT_SENSITIVE_RESOLUTION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_CONTEXT_SENSITIVE_RESOLUTION")
 
@@ -885,9 +798,6 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_DETAILED_PERF: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_DETAILED_PERF")
-
-    public val X_DIRECT_JAVA_ACTUALIZATION: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_DIRECT_JAVA_ACTUALIZATION")
 
     public val X_DISABLE_DEFAULT_SCRIPTING_PLUGIN: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN")
@@ -966,15 +876,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_HEADER_MODE_TYPE: CommonCompilerArgument<HeaderMode> =
         CommonCompilerArgument("X_HEADER_MODE_TYPE")
 
-    public val X_IGNORE_CONST_OPTIMIZATION_ERRORS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_IGNORE_CONST_OPTIMIZATION_ERRORS")
-
-    public val X_INLINE_CLASSES: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_INLINE_CLASSES")
-
-    public val X_INTELLIJ_PLUGIN_ROOT: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("X_INTELLIJ_PLUGIN_ROOT")
-
     public val X_INTRINSIC_CONST_EVALUATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_INTRINSIC_CONST_EVALUATION")
 
@@ -1001,12 +902,6 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_NESTED_TYPE_ALIASES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_NESTED_TYPE_ALIASES")
-
-    public val X_NEW_INFERENCE: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_NEW_INFERENCE")
-
-    public val X_NO_CHECK_ACTUAL: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_NO_CHECK_ACTUAL")
 
     public val X_NO_INLINE: CommonCompilerArgument<Boolean> = CommonCompilerArgument("X_NO_INLINE")
 
@@ -1042,8 +937,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_RENDER_INTERNAL_DIAGNOSTIC_NAMES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES")
 
-    public val X_REPL: CommonCompilerArgument<Boolean> = CommonCompilerArgument("X_REPL")
-
     public val X_REPORT_ALL_WARNINGS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_REPORT_ALL_WARNINGS")
 
@@ -1071,21 +964,8 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES")
 
-    public val X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR:
-        CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR")
-
     public val X_SUPPRESS_VERSION_WARNINGS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_SUPPRESS_VERSION_WARNINGS")
-
-    public val X_SUPPRESS_WARNING: CommonCompilerArgument<List<String>> =
-        CommonCompilerArgument("X_SUPPRESS_WARNING")
-
-    public val X_UNRESTRICTED_BUILDER_INFERENCE: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_UNRESTRICTED_BUILDER_INFERENCE")
-
-    public val X_USE_FIR_EXPERIMENTAL_CHECKERS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_USE_FIR_EXPERIMENTAL_CHECKERS")
 
     public val X_USE_FIR_IC: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_IC")
@@ -1098,12 +978,6 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_VERIFY_IR: CommonCompilerArgument<VerifyIrMode?> =
         CommonCompilerArgument("X_VERIFY_IR")
-
-    public val X_VERIFY_IR_NESTED_OFFSETS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_VERIFY_IR_NESTED_OFFSETS")
-
-    public val X_VERIFY_IR_VISIBILITY: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_VERIFY_IR_VISIBILITY")
 
     public val X_WHEN_GUARDS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_WHEN_GUARDS")
