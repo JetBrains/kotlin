@@ -1,7 +1,7 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
 
-// KT-89068: the no-arg constructor is generated at most once - the primary constructor claims it first.
+// KT-89068: only the primary constructor can produce the exposed no-arg constructor.
 
 @file:OptIn(ExperimentalStdlibApi::class)
 
@@ -25,10 +25,9 @@ fun box(): String {
     val fromPrimary = claimedByPrimary.single().newInstance() as PrimaryClaims
     if (fromPrimary.a != 1u) return "FAIL 2: ${fromPrimary.a}"
 
+    // The primary constructor has no default value, so no no-arg constructor is generated.
     val claimedBySecondary = SecondaryClaims::class.java.declaredConstructors.filter { it.parameterTypes.size == 0 }
-    if (claimedBySecondary.size != 1) return "FAIL 3: ${claimedBySecondary.map { it.toString() }}"
-    val fromSecondary = claimedBySecondary.single().newInstance() as SecondaryClaims
-    if (fromSecondary.a != 2u) return "FAIL 4: ${fromSecondary.a}"
+    if (claimedBySecondary.isNotEmpty()) return "FAIL 3: ${claimedBySecondary.map { it.toString() }}"
 
     return "OK"
 }

@@ -676,30 +676,17 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
 
     private fun IrClass.addExposedForJavaSecondaryConstructors() {
         val primaryConstructor = primaryConstructor!!
-        val primaryHasMarker =
-            primaryConstructor.parameters.lastOrNull()?.origin == INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
 
-        val exposedSecondaryConstructors = declarations.filterIsInstance<IrSimpleFunction>().mapNotNull { replacement ->
-            if (replacement.origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR) return@mapNotNull null
-            val constructor = replacement.originalFunctionOfStaticInlineClassReplacement as? IrConstructor ?: return@mapNotNull null
-            if (constructor.isPrimary || constructor.constructedClass != this || !constructor.shouldBeExposedByAnnotationOrFlag(context)) {
-                return@mapNotNull null
+        val exposedSecondaryConstructors = declarations.filterIsInstance<IrSimpleFunction>()
+            .filter { it.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR }
+            .mapNotNull { ctor ->
+                val constructor = ctor.originalFunctionOfStaticInlineClassReplacement as? IrConstructor ?: return@mapNotNull null
+                if (constructor.isPrimary || !constructor.shouldBeExposedByAnnotationOrFlag(context)) return@mapNotNull null
+                constructor to ctor
             }
-            constructor to replacement
-        }
-
-        var noArgConstructorIsClaimed = constructors.any {
-            it.origin == JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR && it.parameters.isEmpty()
-        }
 
         for ([constructor, replacement] in exposedSecondaryConstructors) {
-            addExposedForJavaSecondaryConstructor(constructor, primaryConstructor, replacement, primaryHasMarker)
-            if (constructor.parameters.isEmpty()) {
-                noArgConstructorIsClaimed = true
-            }
-            if (noArgConstructorIsClaimed || !constructor.shouldHaveExposedNoArgConstructor()) continue
-            noArgConstructorIsClaimed = true
-            addExposedNoArgForJavaSecondaryConstructor(constructor, primaryConstructor, replacement, primaryHasMarker)
+            addExposedForJavaSecondaryConstructor(constructor, primaryConstructor, replacement)
         }
     }
 
@@ -707,7 +694,6 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         constructor: IrConstructor,
         primaryConstructor: IrConstructor,
         constructorImpl: IrSimpleFunction,
-        primaryHasMarker: Boolean,
     ) {
         addConstructor {
             updateFrom(constructor)
@@ -729,41 +715,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                 +irDelegatingConstructorCall(primaryConstructor).apply {
                     passTypeArgumentsFrom(primaryConstructor)
                     arguments[0] = irGet(underlying)
-                    if (primaryHasMarker) {
-                        arguments[1] = irNull()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun IrConstructor.shouldHaveExposedNoArgConstructor(): Boolean =
-        parameters.isNotEmpty() &&
-                parameters.all { it.defaultValue != null } &&
-                !hasAnnotation(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)
-
-    private fun IrClass.addExposedNoArgForJavaSecondaryConstructor(
-        constructor: IrConstructor,
-        primaryConstructor: IrConstructor,
-        constructorImpl: IrSimpleFunction,
-        primaryHasMarker: Boolean,
-    ) {
-        addConstructor {
-            updateFrom(constructor)
-            isPrimary = false
-            origin = JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR
-            returnType = constructor.returnType
-        }.apply {
-            copyTypeParametersFrom(constructor)
-            annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor, this@JvmInlineClassLowering.context)
-            body = this@JvmInlineClassLowering.context.createIrBuilder(symbol).irBlockBody(this) {
-                val tmp = irUnderlyingValueFromConstructorImpl(constructorImpl, primaryConstructor) {
-                    passTypeArgumentsFrom(primaryConstructor)
-                }
-                +irDelegatingConstructorCall(primaryConstructor).apply {
-                    passTypeArgumentsFrom(primaryConstructor)
-                    arguments[0] = irGet(tmp)
-                    if (primaryHasMarker) {
+                    if (hasNonExposedPrimaryConstructorWithMarker) {
                         arguments[1] = irNull()
                     }
                 }
@@ -778,6 +730,9 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             }
         }
 
+    private val IrClass.hasNonExposedPrimaryConstructorWithMarker: Boolean
+        get() = primaryConstructor?.parameters?.lastOrNull()?.origin == INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
+
     private fun buildBoxFunction(valueClass: IrClass) {
         val function = context.inlineClassReplacements.getBoxFunction(valueClass)
         with(context.createIrBuilder(function.symbol)) {
@@ -785,7 +740,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                 irCall(valueClass.primaryConstructor!!.symbol).apply {
                     passTypeArgumentsFrom(function)
                     arguments[0] = irGet(function.parameters[0])
-                    if (valueClass.primaryConstructor?.parameters?.last()?.origin == INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER) {
+                    if (valueClass.hasNonExposedPrimaryConstructorWithMarker) {
                         arguments[1] = irNull()
                     }
                 }

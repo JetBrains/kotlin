@@ -29,7 +29,6 @@ public final class PrimaryClaims {
 public final class SecondaryClaims {
     // source: 'valueClassSecondaryConstructorNoArg.kt'
     private final field a: int
-    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(): void
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.UInt): void
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.UInt, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     private synthetic method <init>(p0: int, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
