@@ -174,7 +174,11 @@ the Kotlin IntelliJ IDEA plugin:
     - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
     - Origin: Copyright (C) 2024 The Android Open Source Project
 
- - Path: libraries/stdlib/native-wasm/src/kotlin/internal/dtoa
+ - Path: libraries/stdlib/wasm/src/kotlin/internal/dtoa
+    - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+    - Origin: Copyright (C) 2024 Apache Harmony - Open Source Java SE
+
+ - Path: kotlin-native/runtime/src/main/kotlin/kotlin/internal/dtoa
     - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
     - Origin: Copyright (C) 2024 Apache Harmony - Open Source Java SE
 
