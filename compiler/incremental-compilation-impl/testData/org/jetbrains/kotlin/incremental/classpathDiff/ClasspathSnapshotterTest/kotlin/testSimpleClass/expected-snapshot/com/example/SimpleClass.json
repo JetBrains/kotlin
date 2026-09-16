@@ -12,7 +12,7 @@
     },
     "isLocal": false
   },
-  "classAbiHash": 8283317449409255124,
+  "classAbiHash": -8223362959869171844,
   "classMemberLevelSnapshot": {
     "classId": {
       "packageFqName": {
@@ -44,7 +44,7 @@
       "publicFunction"
     ],
     "extraInfo": {
-      "classSnapshotExcludingMembers": -3712984790086353322,
+      "classSnapshotExcludingMembers": -4537721856790132609,
       "constantSnapshots": {},
       "inlineFunctionOrAccessorSnapshots": {}
     },
