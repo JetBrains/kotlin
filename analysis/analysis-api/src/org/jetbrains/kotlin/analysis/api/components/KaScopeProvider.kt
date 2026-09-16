@@ -428,7 +428,6 @@ public interface KaSmartCastSource : KaLifetimeOwner {
  * Represents a value which can be used implicitly inside a particular [KaScopeContext].
  */
 @KaExperimentalApi
-@OptIn(KaImplementationDetail::class)
 public sealed interface KaScopeImplicitValue : KaLifetimeOwner {
     /**
      * The implicit value type.

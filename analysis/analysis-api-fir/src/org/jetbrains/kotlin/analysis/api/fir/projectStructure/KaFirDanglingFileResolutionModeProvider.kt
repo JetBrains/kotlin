@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificat
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionModeProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -221,7 +220,6 @@ internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutio
     /**
      * Handles modification events from [DiffTree] and passes them to [modificationService] to detect out-of-block modifications.
      */
-    @OptIn(LLFirInternals::class)
     private class Consumer(private val modificationService: LLFirDeclarationModificationService) : DiffTreeChangeBuilder<ASTNode, ASTNode> {
         var mode: KaDanglingFileResolutionMode = KaDanglingFileResolutionMode.IGNORE_SELF
 
@@ -280,7 +278,6 @@ internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutio
             }
         }
 
-        @OptIn(LLFirInternals::class)
         private fun calculateChangeType(element: PsiElement, modificationType: KaElementModificationType): KaSourceModificationLocality {
             return modificationService.detectLocality(element, modificationType)
         }

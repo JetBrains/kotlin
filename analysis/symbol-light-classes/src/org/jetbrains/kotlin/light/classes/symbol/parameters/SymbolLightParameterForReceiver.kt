@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
@@ -46,7 +45,6 @@ internal class SymbolLightParameterForReceiver private constructor(
             if (!callableSymbol.isExtension) return@withSymbol null
             // Companion extensions hide their receiver from the JVM signature (KEEP-0449 §1.3.6, §4.1.3),
             // so the light class must not expose a leading receiver value parameter.
-            @OptIn(KaExperimentalApi::class)
             if (callableSymbol.isCompanion) return@withSymbol null
             val receiverSymbol = callableSymbol.receiverParameter ?: return@withSymbol null
 

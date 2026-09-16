@@ -15,7 +15,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compilation.*
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
@@ -94,7 +93,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedVariableDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.name.ClassId
@@ -155,7 +153,6 @@ private val USE_STDLIB_BUILD_OUTPUT: Boolean by lazy(LazyThreadSafetyMode.PUBLIC
 internal class KaFirCompilerFacility(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseSessionComponent<KaFirSession>(), KaInternalsCompilerFacility, KaFirSessionComponent {
-    @OptIn(KaImplementationDetail::class)
     override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult = withPsiValidityAssertion(file) {
         val opts = options as KaBaseCompilationOptions
         return withPsiValidityAssertion(file) {
@@ -163,12 +160,10 @@ internal class KaFirCompilerFacility(
         }
     }
 
-    @OptIn(KaImplementationDetail::class)
     override fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
         return KaBaseCompilationOptionsBuilder(token, CompilerConfiguration.create()).apply(init).build()
     }
 
-    @OptIn(KaImplementationDetail::class)
     override fun modify(options: KaCompilationOptions, init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
         return (options as KaBaseCompilationOptions).modify(init)
     }
@@ -1115,7 +1110,6 @@ internal class KaFirCompilerFacility(
         )
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun computeAdditionalCodeFragmentMapping(descriptor: IrBasedDeclarationDescriptor<*>): KaCodeFragmentCapturedValue? {
         val owner = descriptor.owner
 

@@ -10,7 +10,10 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
-import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
+import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -171,7 +174,6 @@ internal class SymbolLightAccessorMethod private constructor(
         else -> null
     }
 
-    @OptIn(KaExperimentalApi::class)
     private fun isStatic(): Boolean = withPropertySymbol { propertySymbol ->
         propertySymbol.isCompanion
                 || propertySymbol.hasJvmStaticAnnotation()

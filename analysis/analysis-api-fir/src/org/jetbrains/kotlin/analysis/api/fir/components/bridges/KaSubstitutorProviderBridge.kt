@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
 import org.jetbrains.kotlin.analysis.api.components.KaUnificationSubstitutorPolicy
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.types.createInheritanceTypeSubstitutor 
 import org.jetbrains.kotlin.analysis.api.types.createSubstitutor as createSubstitutorEndpoint
 import org.jetbrains.kotlin.analysis.api.types.createSubtypingUnificationSubstitutor as createSubtypingUnificationSubstitutorEndpoint
 
-@OptIn(KaExperimentalApi::class, KaIdeApi::class)
 internal class KaSubstitutorProviderBridge(
     override val analysisSessionProvider: () -> KaSession,
 ) : KaBaseSessionComponent<KaSession>(), KaSubstitutorProvider {

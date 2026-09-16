@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeB
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.copy as copyEndpoint
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator as typeCreatorEndpoint
 
-@OptIn(KaExperimentalApi::class)
 internal class KaTypeCreatorProviderBridge(
     override val analysisSessionProvider: () -> KaSession,
 ) : KaBaseSessionComponent<KaSession>(), KaTypeCreatorProvider {
