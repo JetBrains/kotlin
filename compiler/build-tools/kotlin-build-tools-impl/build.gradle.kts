@@ -31,7 +31,7 @@ dependencies {
     runtimeOnly(project(":kotlin-compiler-runner"))
 
     compileOnly(project(":js:typescript-export-standalone"))
-    runtimeOnly(project(":js:typescript-export-standalone-embeddable")) { isTransitive = false }
+    runtimeOnly(project(":js:typescript-export-standalone-embeddable"))
 
     embedded(libs.guava)
     embedded(project(":kotlin-scripting-compiler-embeddable")) { isTransitive = false }

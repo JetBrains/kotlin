@@ -35,6 +35,15 @@ publish {
 
 description = "Standalone embeddable runner for TypeScript Export"
 
-runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
+runtimeJar(rewriteDefaultJarDepsToShadedCompiler()) {
+    // needed for Metro which modifies its behavior based on the presence of this class and breaks otherwise
+    relocate(
+        "org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession",
+        "org.jetbrains.kotlin.js.tsexport.shaded.analysis.low.level.api.fir.sessions.LLFirSession"
+    ) {
+        include("org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession")
+        include("org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionValidityModificationTracker")
+    }
+}
 sourcesJar()
 javadocJar()
