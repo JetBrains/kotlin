@@ -41,12 +41,12 @@ fun testExpectedType() {
     testNullable(InheritorObject)
     testTypeParam<MyClass>(InheritorObject)
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>testTypeParam<!>(<!UNRESOLVED_REFERENCE!>InheritorObject<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>testTypeParamWithMultipleBound<!>(<!UNRESOLVED_REFERENCE!>InheritorObject<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>testDefinitelyNotNullIntersection<!>(<!UNRESOLVED_REFERENCE!>InheritorObject<!>)
+    testTypeParam(InheritorObject)
+    <!CANNOT_INFER_PARAMETER_TYPE!>testTypeParamWithMultipleBound<!>(<!ARGUMENT_TYPE_MISMATCH!>InheritorObject<!>)
+    testDefinitelyNotNullIntersection(InheritorObject)
     <!CANNOT_INFER_PARAMETER_TYPE!>testFakeIntersection<!>(<!UNRESOLVED_REFERENCE!>InheritorObject<!>)
     <!CANNOT_INFER_PARAMETER_TYPE!>testReverseFakeIntersection<!>(<!UNRESOLVED_REFERENCE!>InheritorObject<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>testRegularIntersection<!>(<!UNRESOLVED_REFERENCE!>InheritorObject<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>testRegularIntersection<!>(<!ARGUMENT_TYPE_MISMATCH!>InheritorObject<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, dnnType, enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration,

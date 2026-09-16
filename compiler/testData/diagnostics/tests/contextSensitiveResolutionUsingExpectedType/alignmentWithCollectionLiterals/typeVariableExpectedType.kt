@@ -33,32 +33,32 @@ enum class MyEnum { X, Y }
 fun nullableEnum(): MyEnum? = Y
 
 fun test(b: Boolean, invA: Inv<MySealed>) {
-    val p: MySealed = select(MySealed.Left, <!ARGUMENT_TYPE_MISMATCH!>Right<!>)
-    val q: MySealed = select(<!ARGUMENT_TYPE_MISMATCH!>Right<!>, MySealed.Left)
+    val p: MySealed = select(MySealed.Left, Right)
+    val q: MySealed = select(Right, MySealed.Left)
     val r: MySealed = select(Left, Right)
-    val s = select(MySealed.Left, <!ARGUMENT_TYPE_MISMATCH!>Right<!>)
+    val s = select(MySealed.Left, Right)
 
     // The same through the type variable of an `if` expression
     val p2: MySealed = if (b) MySealed.Left else Right
     val q2: MySealed = if (b) Right else MySealed.Left
     val r2: MySealed = if (b) Left else Right
-    val s2 = if (b) MySealed.Left else <!ARGUMENT_TYPE_MISMATCH!>Right<!>
+    val s2 = if (b) MySealed.Left else Right
 
     // The declared upper bound is an interface implemented by the sealed class, so only the lower bound gives the class
-    val i1: MyInterface = select(MySecondSealed.First, <!ARGUMENT_TYPE_MISMATCH!>Second<!>)
-    val i2 = selectI(<!ARGUMENT_TYPE_MISMATCH!>Second<!>, MySecondSealed.First)
-    val i3: MyInterface = if (b) MySecondSealed.First else <!UNRESOLVED_REFERENCE!>Second<!>
+    val i1: MyInterface = select(MySecondSealed.First, Second)
+    val i2 = selectI(Second, MySecondSealed.First)
+    val i3: MyInterface = if (b) MySecondSealed.First else Second
 
     // One argument gives the class, one is irrelevant, and one is resolved context-sensitively
-    val t1 = select3(MySealed.Left, 1, <!UNRESOLVED_REFERENCE!>Right<!>)
-    val t2 = select3("", MyEnum.X, <!UNRESOLVED_REFERENCE!>Y<!>)
-    val t3: Any = select3(<!UNRESOLVED_REFERENCE!>Right<!>, MySealed.Left, "")
-    val t4 = select3(MySecondSealed.First, 1, <!UNRESOLVED_REFERENCE!>Second<!>)
+    val t1 = select3(MySealed.Left, 1, Right)
+    val t2 = select3("", MyEnum.X, Y)
+    val t3: Any = select3(Right, MySealed.Left, "")
+    val t4 = select3(MySecondSealed.First, 1, Second)
 
     val t: MySealed = selectWithBound(MySealed.Left, Right, invA)
     val u = selectWithBound(Right, Right, invA)
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>takeF<!>(StringInheritor)
+    takeF(StringInheritor)
     takeFAndT(StringInheritor, "")
 
     val v: MyEnum = if (b) MyEnum.X else Y

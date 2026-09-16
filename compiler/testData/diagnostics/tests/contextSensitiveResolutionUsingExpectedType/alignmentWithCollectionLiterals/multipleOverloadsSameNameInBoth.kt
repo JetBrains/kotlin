@@ -21,13 +21,13 @@ fun main() {
     // Declared in both enums
     foo(<!UNRESOLVED_REFERENCE!>X<!>)
     // Declared only in one of the enums
-    foo(<!UNRESOLVED_REFERENCE!>Y<!>)
-    foo(<!UNRESOLVED_REFERENCE!>Z<!>)
-    bar(<!UNRESOLVED_REFERENCE!>X<!>)
-    bar(<!UNRESOLVED_REFERENCE!>W<!>)
+    foo(Y)
+    foo(Z)
+    bar(X)
+    bar(W)
     // The second overload is not enum-based
-    baz(<!UNRESOLVED_REFERENCE!>X<!>)
-    baz(<!UNRESOLVED_REFERENCE!>Y<!>)
+    baz(X)
+    baz(Y)
     // Declared nowhere
     foo(<!UNRESOLVED_REFERENCE!>Q<!>)
 
@@ -40,9 +40,9 @@ fun localOverloads() {
     fun local(x: MyEnum1) {}
     fun local(x: MyEnum3) {}
 
-    local(<!UNRESOLVED_REFERENCE!>Y<!>)
-    local(<!UNRESOLVED_REFERENCE!>W<!>)
-    local(<!UNRESOLVED_REFERENCE!>X<!>)
+    local(Y)
+    local(W)
+    local(X)
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localFunction, nullableType, typeParameter */
