@@ -1,13 +1,13 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] errorClass.kt
-    public final error [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    public final error [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/RichError| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/RichError|>()
         }
 
     }
-    public final error [ResolvedTo(BODY_RESOLVE)] object Bar : R|kotlin/Any| {
+    public final error [ResolvedTo(BODY_RESOLVE)] object Bar : R|kotlin/RichError| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/RichError|>()
         }
 
     }

@@ -66,6 +66,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
     protected val implicitUnitType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.unitType
     protected val implicitAnyType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.anyType
+    protected val implicitRichErrorType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.richErrorType
     protected val implicitEnumType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.enumType
     protected val implicitAnnotationType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.annotationType
 

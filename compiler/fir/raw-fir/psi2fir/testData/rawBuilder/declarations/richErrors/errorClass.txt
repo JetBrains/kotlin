@@ -1,13 +1,13 @@
 FILE: errorClass.kt
-    public final? error class Foo : R|kotlin/Any| {
+    public final? error class Foo : R|kotlin/RichError| {
         public? [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/RichError|>()
         }
 
     }
-    public final? error object Bar : R|kotlin/Any| {
+    public final? error object Bar : R|kotlin/RichError| {
         private [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/RichError|>()
         }
 
     }

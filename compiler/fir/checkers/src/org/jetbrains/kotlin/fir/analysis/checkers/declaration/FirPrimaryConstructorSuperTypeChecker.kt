@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.abbreviatedType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitRichErrorTypeRef
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
@@ -75,7 +76,10 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
         val delegatedConstructorCall = primaryConstructorSymbol.resolvedDelegatedConstructorCall ?: return
         // No need to check implicit call to the constructor of `kotlin.Any`.
         val constructedTypeRef = delegatedConstructorCall.constructedTypeRef
-        if (constructedTypeRef is FirImplicitAnyTypeRef || constructedTypeRef.source?.kind is KtFakeSourceElementKind.PluginGenerated) return
+        if (constructedTypeRef is FirImplicitAnyTypeRef ||
+            constructedTypeRef is FirImplicitRichErrorTypeRef ||
+            constructedTypeRef.source?.kind is KtFakeSourceElementKind.PluginGenerated
+        ) return
         val superClassSymbol = constructedTypeRef.coneType.toRegularClassSymbol() ?: return
         // Subclassing a singleton should be reported as SINGLETON_IN_SUPERTYPE
         if (superClassSymbol.classKind.isSingleton) return
