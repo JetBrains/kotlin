@@ -611,6 +611,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ASCENDING_VERSION_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_CLASS_EXTENDS_RICH_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
@@ -4128,5 +4129,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             COMPANION_EXTENSION_NULLABLE_RECEIVER,
             "Companion extension receiver type cannot be nullable.",
         )
+        map.put(NON_ERROR_CLASS_EXTENDS_RICH_ERROR, "Non-error class cannot extend 'RichError'.")
     }
 }

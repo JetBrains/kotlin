@@ -8390,6 +8390,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonErrorClassExtendsRichError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NonErrorClassExtendsRichError>
+            get() = NonErrorClassExtendsRichError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<OverrideCannotBeStatic>
             get() = OverrideCannotBeStatic::class
