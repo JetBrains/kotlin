@@ -25,10 +25,12 @@ import org.jetbrains.kotlin.kmp.tree.buildLanguageSpecificLightTree
 class MultiplatformParsing2Fir(
     override val session: FirSession,
     private val scopeProvider: FirScopeProvider,
+    // TODO: KT-89414 (currently KMP parser does not implement error listening, so we can't use diagnosticReporter properly
+    @Suppress("unused")
     private val diagnosticsReporter: DiagnosticReporter? = null,
 ) : AbstractTree2Fir() {
     override fun buildFirFile(code: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile {
-        val parser = KotlinParser(sourceFile.extension == "kts", isLazy = false)
+        val parser = KotlinParser(isScript = sourceFile.extension == "kts", isLazy = false)
         val lightTree = buildLightTree(code, KotlinLexer(), parser)
         return buildFirFile(lightTree, sourceFile, linesMapping)
     }

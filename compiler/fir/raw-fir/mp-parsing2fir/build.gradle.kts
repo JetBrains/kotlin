@@ -15,7 +15,6 @@ dependencies {
     implementation(libs.org.jetbrains.syntax.api)
 
     compileOnly(intellijCore())
-    compileOnly(libs.guava)
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
@@ -28,8 +27,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:raw-fir.common")))
 
     testCompileOnly(kotlinTest("junit"))
-
-    testFixturesCompileOnly(intellijCore())
 }
 
 sourceSets {

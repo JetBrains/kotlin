@@ -31,8 +31,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:raw-fir.common")))
 
     testCompileOnly(kotlinTest("junit"))
-
-    testFixturesCompileOnly(intellijCore())
 }
 
 sourceSets {
