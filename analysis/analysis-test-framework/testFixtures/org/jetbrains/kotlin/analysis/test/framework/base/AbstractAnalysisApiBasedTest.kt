@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.NonGroupingStageTestConfiguration
-import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -476,7 +475,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         return directoryPath.resolve(relativePath)
     }
 
-    @OptIn(TestInfrastructureInternals::class)
     private val configure: TestConfigurationBuilder.() -> Unit = {
         globalDefaults {
             frontend = FrontendKinds.FIR

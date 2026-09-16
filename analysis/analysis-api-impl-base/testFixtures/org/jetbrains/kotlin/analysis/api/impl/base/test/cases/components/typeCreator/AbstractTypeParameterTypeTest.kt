@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator
 
 import com.intellij.psi.JavaPsiFacade
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType
 import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
@@ -36,7 +35,6 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
 
-    @OptIn(KaExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val typeSpec = mainModule.testModule.directives.singleOrZeroValue(Directives.TYPE_PARAMETER_TYPE)

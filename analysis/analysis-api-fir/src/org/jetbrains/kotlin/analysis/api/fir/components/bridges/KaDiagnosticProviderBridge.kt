@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.psi.KtFile
  * place (in the `components` package) and reach the proxy through this bridge, so the bridge must forward directly to the proxy to avoid
  * recursing back into the endpoints.
  */
-@OptIn(KaExperimentalApi::class)
 @Suppress("OVERRIDE_DEPRECATION")
 internal class KaDiagnosticProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
