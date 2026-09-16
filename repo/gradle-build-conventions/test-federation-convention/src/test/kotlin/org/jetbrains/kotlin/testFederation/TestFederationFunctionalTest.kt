@@ -381,6 +381,199 @@ class TestFederationFunctionalTest {
             "##teamcity[setParameter name='$TEST_FEDERATION_CHANGED_DOMAINS_KEY' value='Js']"
         )
     }
+
+    @Test
+    fun `test - parameterized tests`() {
+        val testClass = "org.jetbrains.kotlin.testFederation.PseudoParameterizedTest"
+        val full = runTestEvents(TestFederationMode.Full, testFilter = testClass)
+        val smoke = runTestEvents(TestFederationMode.Smoke, testFilter = testClass)
+        val contract = runTestEvents(TestFederationMode.Smoke, Domain.Js, testFilter = testClass)
+        val noSelectedTests = runTestEvents(TestFederationMode.Smoke, testFilter = "$testClass.*domain*")
+
+        assertEquals(
+            listOf(
+                "Executed: contract 1", "Executed: contract 2",
+                "Executed: domain 1", "Executed: domain 2",
+                "Executed: smoke 1", "Executed: smoke 2",
+            ),
+            full
+        )
+        assertEquals(listOf("Executed: smoke 1", "Executed: smoke 2"), smoke)
+        assertEquals(listOf("Executed: contract 1", "Executed: contract 2", "Executed: smoke 1", "Executed: smoke 2"), contract)
+        assertEquals(emptyList(), noSelectedTests)
+    }
+
+    @Test
+    fun `test - repeated tests`() {
+        val testClass = "org.jetbrains.kotlin.testFederation.PseudoRepeatedTest"
+        val full = runTestEvents(TestFederationMode.Full, testFilter = testClass)
+        val smoke = runTestEvents(TestFederationMode.Smoke, testFilter = testClass)
+        val contract = runTestEvents(TestFederationMode.Smoke, Domain.Js, testFilter = testClass)
+        val noSelectedTests = runTestEvents(TestFederationMode.Smoke, testFilter = "$testClass.*domain*")
+
+        assertEquals(
+            listOf(
+                "Executed: contract", "Executed: contract",
+                "Executed: domain", "Executed: domain",
+                "Executed: smoke", "Executed: smoke",
+            ),
+            full
+        )
+        assertEquals(listOf("Executed: smoke", "Executed: smoke"), smoke)
+        assertEquals(listOf("Executed: contract", "Executed: contract", "Executed: smoke", "Executed: smoke"), contract)
+        assertEquals(emptyList(), noSelectedTests)
+    }
+
+    @Test
+    fun `test - custom test templates`() {
+        val testClass = "org.jetbrains.kotlin.testFederation.PseudoTemplateTest"
+        val full = runTestEvents(TestFederationMode.Full, testFilter = testClass)
+        val smoke = runTestEvents(TestFederationMode.Smoke, testFilter = testClass)
+        val contract = runTestEvents(TestFederationMode.Smoke, Domain.Js, testFilter = testClass)
+        val noSelectedTests = runTestEvents(TestFederationMode.Smoke, testFilter = "$testClass.*domain*")
+
+        assertEquals(
+            listOf(
+                "Executed: contract", "Executed: contract",
+                "Executed: domain", "Executed: domain",
+                "Executed: smoke", "Executed: smoke",
+            ),
+            full
+        )
+        assertEquals(listOf("Executed: smoke", "Executed: smoke"), smoke)
+        assertEquals(listOf("Executed: contract", "Executed: contract", "Executed: smoke", "Executed: smoke"), contract)
+        assertEquals(emptyList(), noSelectedTests)
+    }
+
+    @Test
+    fun `test - dynamic tests`() {
+        val testClass = "org.jetbrains.kotlin.testFederation.PseudoDynamicTest"
+        val full = runTestEvents(TestFederationMode.Full, testFilter = testClass)
+        val smoke = runTestEvents(TestFederationMode.Smoke, testFilter = testClass)
+        val contract = runTestEvents(TestFederationMode.Smoke, Domain.Js, testFilter = testClass)
+        val noSelectedTests = runTestEvents(TestFederationMode.Smoke, testFilter = "$testClass.*domain*")
+
+        assertEquals(
+            listOf(
+                "Created: contract", "Created: domain", "Created: smoke",
+                "Executed: contract 1", "Executed: contract 2",
+                "Executed: domain 1", "Executed: domain 2",
+                "Executed: smoke 1", "Executed: smoke 2",
+            ),
+            full
+        )
+        assertEquals(listOf("Created: smoke", "Executed: smoke 1", "Executed: smoke 2"), smoke)
+        assertEquals(
+            listOf(
+                "Created: contract", "Created: smoke",
+                "Executed: contract 1", "Executed: contract 2",
+                "Executed: smoke 1", "Executed: smoke 2",
+            ),
+            contract
+        )
+        assertEquals(emptyList(), noSelectedTests)
+    }
+
+    @Test
+    fun `test - dynamic containers`() {
+        val testClass = "org.jetbrains.kotlin.testFederation.PseudoDynamicContainerTest"
+        val full = runTestEvents(TestFederationMode.Full, testFilter = testClass)
+        val smoke = runTestEvents(TestFederationMode.Smoke, testFilter = testClass)
+        val contract = runTestEvents(TestFederationMode.Smoke, Domain.Js, testFilter = testClass)
+        val noSelectedTests = runTestEvents(TestFederationMode.Smoke, testFilter = "$testClass.*domain*")
+
+        assertEquals(
+            listOf(
+                "Created: contract", "Created: domain", "Created: smoke",
+                "Executed: contract 1", "Executed: contract 2",
+                "Executed: domain 1", "Executed: domain 2",
+                "Executed: smoke 1", "Executed: smoke 2",
+            ),
+            full
+        )
+        assertEquals(listOf("Created: smoke", "Executed: smoke 1", "Executed: smoke 2"), smoke)
+        assertEquals(
+            listOf(
+                "Created: contract", "Created: smoke",
+                "Executed: contract 1", "Executed: contract 2",
+                "Executed: smoke 1", "Executed: smoke 2",
+            ),
+            contract
+        )
+        assertEquals(emptyList(), noSelectedTests)
+    }
+
+    @Test
+    fun `test - nested tests inherit class tags`() {
+        val testClass = "org.jetbrains.kotlin.testFederation.PseudoNestedTest"
+        val full = runTestEvents(TestFederationMode.Full, testFilter = testClass)
+        val smoke = runTestEvents(TestFederationMode.Smoke, testFilter = testClass)
+        val contract = runTestEvents(TestFederationMode.Smoke, Domain.Js, testFilter = testClass)
+        val noSelectedTests = runTestEvents(TestFederationMode.Smoke, testFilter = "$testClass.*domain*")
+
+        assertEquals(listOf("Executed: contract", "Executed: domain", "Executed: smoke"), full)
+        assertEquals(listOf("Executed: smoke"), smoke)
+        assertEquals(listOf("Executed: contract", "Executed: smoke"), contract)
+        assertEquals(emptyList(), noSelectedTests)
+    }
+
+    @Test
+    fun `test - BeforeAll and AfterAll`() {
+        val testClass = "org.jetbrains.kotlin.testFederation.PseudoLifecycleTest"
+        val full = runTestEvents(TestFederationMode.Full, testFilter = testClass)
+        val smoke = runTestEvents(TestFederationMode.Smoke, testFilter = testClass)
+        val contract = runTestEvents(TestFederationMode.Smoke, Domain.Js, testFilter = testClass)
+        val noSelectedTests = runTestEvents(TestFederationMode.Smoke, testFilter = "$testClass.*domain*")
+
+        assertEquals(
+            listOf("Executed: contract", "Executed: domain", "Executed: smoke", "Lifecycle: afterAll", "Lifecycle: beforeAll"),
+            full
+        )
+        assertEquals(listOf("Executed: smoke", "Lifecycle: afterAll", "Lifecycle: beforeAll"), smoke)
+        assertEquals(
+            listOf("Executed: contract", "Executed: smoke", "Lifecycle: afterAll", "Lifecycle: beforeAll"),
+            contract
+        )
+        assertEquals(emptyList(), noSelectedTests)
+    }
+
+    @Test
+    fun `test - inherited tests and lifecycle callbacks`() {
+        val testClass = "org.jetbrains.kotlin.testFederation.PseudoInheritedTest"
+        val full = runTestEvents(TestFederationMode.Full, testFilter = testClass)
+        val smoke = runTestEvents(TestFederationMode.Smoke, testFilter = testClass)
+        val contract = runTestEvents(TestFederationMode.Smoke, Domain.Js, testFilter = testClass)
+        val noSelectedTests = runTestEvents(TestFederationMode.Smoke, testFilter = "$testClass.*domain*")
+
+        assertEquals(
+            listOf("Executed: contract", "Executed: domain", "Executed: smoke", "Lifecycle: afterAll", "Lifecycle: beforeAll"),
+            full
+        )
+        assertEquals(listOf("Executed: smoke", "Lifecycle: afterAll", "Lifecycle: beforeAll"), smoke)
+        assertEquals(
+            listOf("Executed: contract", "Executed: smoke", "Lifecycle: afterAll", "Lifecycle: beforeAll"),
+            contract
+        )
+        assertEquals(emptyList(), noSelectedTests)
+    }
+
+    @Test
+    fun `test - smoke - no selected tests does not execute BeforeAll or AfterAll`() {
+        val arguments = listOf("--tests", "org.jetbrains.kotlin.testFederation.PseudoTest.domain test")
+        val lifecycleMarkers = setOf("PseudoTest.beforeAll executed", "PseudoTest.afterAll executed")
+
+        val fullResult = runTestBuild(TestFederationMode.Full, additionalCliArgs = arguments)
+        assertEquals(setOf(TestResult("PseudoTest", "domain test")), fullResult.executedTests)
+        lifecycleMarkers.forEach { assertContains(fullResult.buildResult.output, it) }
+
+        val smokeResult = runTestBuild(TestFederationMode.Smoke, additionalCliArgs = arguments)
+        assertEquals(emptySet(), smokeResult.executedTests)
+        assertEquals(
+            emptySet(),
+            lifecycleMarkers.filter { it in smokeResult.buildResult.output }.toSet(),
+            "Neither 'BeforeAll' nor 'AfterAll' should execute when no tests are selected"
+        )
+    }
 }
 
 private val allTests = setOf(
@@ -405,7 +598,8 @@ private data class TestBuildResult(
 
 /**
  * Runs `:repo:test-runtime:test` with the given [mode] and [changed] domains.
- * All executed tests are parsed and returned in [TestBuildResult.executedTests].
+ * Selects `PseudoTest` unless [additionalCliArgs] supplies a `--tests` filter.
+ * Returns the full build result and test results parsed from the build output in [TestBuildResult.executedTests].
  */
 private fun runTestBuild(
     mode: TestFederationMode? = null,
@@ -455,6 +649,9 @@ private fun runTestBuild(
         if (nightly != null) add("-Pnightly=$nightly")
         add("-Dorg.gradle.daemon.idletimeout=${5.seconds.inWholeMilliseconds}")
         if (rerun) add("--rerun")
+        if ("--tests" !in additionalCliArgs) {
+            addAll(listOf("--tests", "org.jetbrains.kotlin.testFederation.PseudoTest"))
+        }
         addAll(additionalCliArgs)
     }
 
@@ -475,15 +672,26 @@ private fun runTestBuild(
     val tests = output.mapNotNull { line ->
         val match = testResultRegex.matchEntire(line) ?: return@mapNotNull null
         TestResult(match.groupValues[1], match.groupValues[2], match.groupValues[3])
-
-    }
-        /**
-         * Can be removed again after:
-         * https://youtrack.jetbrains.com/issue/KT-88303
-         */
-        .filterNot { it.status == "SKIPPED" }.toSet()
+    }.toSet()
 
     return TestBuildResult(buildResult, tests)
+}
+
+/**
+ * Runs [runTestBuild] with [testFilter] as the Gradle `--tests` filter.
+ * Returns trimmed fixture output lines starting with `Executed:`, `Created:`, or `Lifecycle:`.
+ * The list is sorted for assertions, not in execution order; duplicate events are preserved.
+ */
+private fun runTestEvents(mode: TestFederationMode, vararg changed: Domain, testFilter: String): List<String> {
+    val result = runTestBuild(
+        mode, *changed,
+        additionalCliArgs = listOf("--tests", testFilter)
+    )
+    return result.buildResult.output.lineSequence()
+        .map { it.trim() }
+        .filter { it.startsWith("Executed:") || it.startsWith("Created:") || it.startsWith("Lifecycle:") }
+        .sorted()
+        .toList()
 }
 
 private fun cleanTest(): BuildResult {

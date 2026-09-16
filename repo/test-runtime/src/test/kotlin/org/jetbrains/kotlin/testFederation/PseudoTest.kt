@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.testFederation
 
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -14,6 +16,20 @@ import kotlin.test.assertTrue
  * The functional tests run this class and check which tests ran.
  */
 class PseudoTest {
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll() {
+            println("PseudoTest.beforeAll executed")
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun afterAll() {
+            println("PseudoTest.afterAll executed")
+        }
+    }
+
     @Test
     fun `domain test`() {
         if (autoSmokeTestPercentage == 0) {
