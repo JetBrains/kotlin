@@ -16,18 +16,41 @@ import org.jetbrains.kotlin.lexer.KtToken
  * If the element type is not Kotlin-based, the result is [org.jetbrains.kotlin.lexer.KtTokens.INVALID_Id].
  */
 fun IElementType.kmpId(): Int =
-    if (this is KtToken) tokenId else IdStorage.map[index.toInt()]
+    when {
+        this is KtToken -> tokenId
+        index < indexToId.size -> indexToId[index.toInt()]
+        else -> org.jetbrains.kotlin.lexer.KtTokens.INVALID_Id
+    }
 
-private object IdStorage {
-    val map = IntArray(Short.MAX_VALUE.toInt())
+private val indexToId: IntArray = run {
+    val indexToIdMap = mutableMapOf<Short, Int>()
 
-    init {
-        var id = org.jetbrains.kotlin.kmp.parser.KtNodeTypes.FILE_ID
-        KtNodeTypes::class.java.declaredFields.forEach {
-            if (it.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
-            map[(it.get(null) as IElementType).index.toInt()] = id++
+    var maxIndex: Short = 0
+    var id = org.jetbrains.kotlin.kmp.parser.KtNodeTypes.FILE_ID
+    KtNodeTypes::class.java.declaredFields.forEach {
+        if (it.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
+        val index = (it.get(null) as IElementType).index
+        indexToIdMap[index] = id++
+        if (index > maxIndex) {
+            maxIndex = index
         }
-        map[org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT.index.toInt()] = KtTokens.DOC_COMMENT_ID
-        map[org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE.index.toInt()] = KtTokens.WHITE_SPACE_ID
+    }
+    org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT.index.let {
+        indexToIdMap[it] = KtTokens.DOC_COMMENT_ID
+        if (it > maxIndex) {
+            maxIndex = it
+        }
+    }
+    org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE.index.let {
+        indexToIdMap[it] = KtTokens.WHITE_SPACE_ID
+        if (it > maxIndex) {
+            maxIndex = it
+        }
+    }
+
+    IntArray(maxIndex.toInt() + 1).apply {
+        indexToIdMap.forEach { [index, id] ->
+            this[index.toInt()] = id
+        }
     }
 }
