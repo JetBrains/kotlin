@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -40,9 +41,13 @@ import org.jetbrains.kotlin.lombok.generators.kotlin.promotedPropertiesByName
 import org.jetbrains.kotlin.name.Name
 
 object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
+    private val BUILDER_FIELD_ANNOTATION_IDS = listOf(LombokNames.BUILDER_DEFAULT_ID, LombokNames.SINGULAR_ID)
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val lombokService = context.session.lombokService
+
+        checkBuilderFieldAnnotationsOnBodyProperties(declaration)
 
         val classBuilder = lombokService.getBuilder(declaration.symbol) ?: lombokService.getSuperBuilder(declaration.symbol)
         // A Java class builds out of its fields and so is never short of anything to build from; only a Kotlin
@@ -142,6 +147,31 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
 
     private val FirRegularClass.isBuilderCapableClass: Boolean
         get() = classKind == ClassKind.CLASS && !isLocal && uninstantiableClassModifier() == null
+
+    /**
+     * `@Builder.Default` and `@Singular` shape a builder field, and a Kotlin class's builder fields are the value
+     * parameters of the constructor or function that `build()` calls. A property declared in the class body is
+     * therefore never one.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkBuilderFieldAnnotationsOnBodyProperties(declaration: FirRegularClass) {
+        declaration.processAllDeclarations(context.session) { symbol ->
+            val property = symbol as? FirPropertySymbol ?: return@processAllDeclarations
+            // A promoted property *is* a primary constructor value parameter, and so is a builder field - the
+            // one shape both annotations are for. `checkPrimaryConstructorParameters` validates those.
+            if (property.fromPrimaryConstructor) return@processAllDeclarations
+
+            for (annotationClassId in BUILDER_FIELD_ANNOTATION_IDS) {
+                val annotation = property.findAnnotationOnPropertyOrField(annotationClassId, context.session) ?: continue
+                reporter.reportOn(
+                    annotation.source,
+                    LombokFirDiagnostics.BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY,
+                    annotationClassId.relativeClassName.asString(),
+                    context,
+                )
+            }
+        }
+    }
 
     /**
      * Unless it is spelled out via `builderClassName`, the builder class name is inferred from the annotated
