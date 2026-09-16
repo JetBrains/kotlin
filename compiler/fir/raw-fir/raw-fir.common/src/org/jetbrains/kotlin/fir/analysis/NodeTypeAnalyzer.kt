@@ -117,7 +117,7 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
             return quoted
         }
 
-        if (quoted.startsWith("`") && quoted.endsWith("`") && quoted.length >= 2) {
+        if (quoted.startsWith('`') && quoted.endsWith('`') && quoted.length >= 2) {
             return quoted.substring(1, quoted.length - 1)
         } else {
             return quoted

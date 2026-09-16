@@ -20,10 +20,12 @@ internal class NonLocalFirBuilderContext(val originalDeclaration: FirDeclaration
         declarationSource: KtSourceElement?,
         currentFirTypeParameters: List<FirTypeParameterRef>
     ) {
-        if (originalDeclaration is FirTypeParameterRefsOwner && declarationSource?.psi == originalDeclaration.psi) {
-            super.addCapturedTypeParameters(status, declarationSource, originalDeclaration.typeParameters)
+        val firTypeParameters = if (originalDeclaration is FirTypeParameterRefsOwner && declarationSource?.psi == originalDeclaration.psi) {
+            originalDeclaration.typeParameters
         } else {
-            super.addCapturedTypeParameters(status, declarationSource, currentFirTypeParameters)
+            currentFirTypeParameters
         }
+
+        super.addCapturedTypeParameters(status, declarationSource, firTypeParameters)
     }
 }

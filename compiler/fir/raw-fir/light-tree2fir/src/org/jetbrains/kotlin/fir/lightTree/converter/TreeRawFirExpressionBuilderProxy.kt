@@ -120,13 +120,20 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
             KtNodeTypes.PREFIX_EXPRESSION_ID, KtNodeTypes.POSTFIX_EXPRESSION_ID -> convertUnaryExpression(node)
             KtNodeTypes.CLASS_LITERAL_EXPRESSION_ID -> convertClassLiteralExpression(node)
             KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION_ID -> convertCallableReferenceExpression(node)
-            in qualifiedAccessesId -> convertQualifiedExpression(node)
+            KtNodeTypes.DOT_QUALIFIED_EXPRESSION_ID,
+            KtNodeTypes.SAFE_ACCESS_EXPRESSION_ID,
+                -> convertQualifiedExpression(node)
             KtNodeTypes.CALL_EXPRESSION_ID -> convertCallExpression(node)
             KtNodeTypes.WHEN_ID -> convertWhenExpression(node)
             KtNodeTypes.ARRAY_ACCESS_EXPRESSION_ID -> convertArrayAccessExpression(node)
             KtNodeTypes.COLLECTION_LITERAL_EXPRESSION_ID -> convertCollectionLiteralExpression(node)
             KtNodeTypes.STRING_TEMPLATE_ID -> convertStringTemplate(node)
-            in constantExpressionsId -> convertConstantExpression(node)
+            KtNodeTypes.NULL_ID,
+            KtNodeTypes.BOOLEAN_CONSTANT_ID,
+            KtNodeTypes.FLOAT_CONSTANT_ID,
+            KtNodeTypes.CHARACTER_CONSTANT_ID,
+            KtNodeTypes.INTEGER_CONSTANT_ID,
+                -> convertConstantExpression(node)
             KtNodeTypes.REFERENCE_EXPRESSION_ID -> convertSimpleNameExpression(node)
             KtNodeTypes.FOR_ID -> convertFor(node) // FirBlock
             KtNodeTypes.TRY_ID -> convertTryExpression(node)
@@ -444,13 +451,6 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         private val unwrappableTokenTypes: Set<Int> = setOf(
             KtNodeTypes.PARENTHESIZED_ID, KtNodeTypes.LABELED_EXPRESSION_ID, KtNodeTypes.ANNOTATED_EXPRESSION_ID
         )
-
-        private val constantExpressionsId = setOf(
-            KtNodeTypes.NULL_ID, KtNodeTypes.BOOLEAN_CONSTANT_ID, KtNodeTypes.FLOAT_CONSTANT_ID,
-            KtNodeTypes.CHARACTER_CONSTANT_ID, KtNodeTypes.INTEGER_CONSTANT_ID
-        )
-
-        private val qualifiedAccessesId = setOf(KtNodeTypes.DOT_QUALIFIED_EXPRESSION_ID, KtNodeTypes.SAFE_ACCESS_EXPRESSION_ID)
 
         private val inOperationsId = setOf(KtTokens.IN_MODIFIER_ID, KtTokens.NOT_IN_ID)
 

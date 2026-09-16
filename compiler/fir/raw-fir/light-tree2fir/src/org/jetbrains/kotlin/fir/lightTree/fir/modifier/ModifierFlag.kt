@@ -47,7 +47,7 @@ enum class ModifierFlag(val value: Long) {
     CLASS_VALUE(1L shl 35);
 
     companion object {
-        val ElementTypeToModifierFlagMap: Map<Int, ModifierFlag> = mutableMapOf(
+        val ElementTypeToModifierFlagMap: Map<Int, ModifierFlag> = hashMapOf(
             // Class
             KtTokens.ENUM_MODIFIER_ID to CLASS_ENUM,
             KtTokens.ANNOTATION_MODIFIER_ID to CLASS_ANNOTATION,

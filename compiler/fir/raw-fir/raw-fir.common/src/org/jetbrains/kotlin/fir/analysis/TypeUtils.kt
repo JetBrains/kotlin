@@ -54,9 +54,8 @@ fun Int.isExpression(): Boolean = when (this) {
     KtNodeTypes.IMPORT_ALIAS_ID,
         -> false
 
-    // All stub-based element types that are not `KtExpression` are listed above
-    in KtNodeTypes.FILE_ID..KtNodeTypes.BLOCK_CODE_FRAGMENT_ID,
-        -> true
-
-    else -> false
+    else -> {
+        // All stub-based element types that are not `KtExpression` are listed above
+        this in KtNodeTypes.FILE_ID..KtNodeTypes.BLOCK_CODE_FRAGMENT_ID
+    }
 }
