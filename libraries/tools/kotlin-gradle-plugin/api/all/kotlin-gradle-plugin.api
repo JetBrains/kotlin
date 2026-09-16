@@ -366,6 +366,21 @@ public final class org/jetbrains/kotlin/gradle/logging/GradleErrorMessageCollect
 	public fun report (Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSeverity;Ljava/lang/String;Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSourceLocation;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/npm/KotlinNpmDependency {
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getScope ()Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public abstract fun getVersion ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope : java/lang/Enum {
+	public static final field DEV Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static final field NORMAL Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static final field OPTIONAL Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static final field PEER Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
 	public fun <init> ()V
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
