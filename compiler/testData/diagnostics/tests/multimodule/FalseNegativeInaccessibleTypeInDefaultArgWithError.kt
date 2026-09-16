@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-79866
-// LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent
+// LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent +ForbidUsingParameterWithDefaultValueTypesWithInaccessibleContent
 // MODULE: bar
 // FILE: Bar.kt
 
@@ -33,7 +33,7 @@ fun main() {
     <!MISSING_DEPENDENCY_CLASS!>foo2<!>()
     <!MISSING_DEPENDENCY_CLASS!>foo2<!>(<!MISSING_DEPENDENCY_CLASS!>arrayOf<!>())
     <!MISSING_DEPENDENCY_CLASS!>foo2<!>(null)
-    foo3()
+    <!MISSING_DEPENDENCY_CLASS!>foo3<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, starProjection, typeParameter */
