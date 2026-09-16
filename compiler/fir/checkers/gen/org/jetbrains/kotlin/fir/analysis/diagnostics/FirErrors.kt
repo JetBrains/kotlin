@@ -1168,6 +1168,10 @@ object FirErrors : KtDiagnosticsContainer() {
     val NON_ERROR_CLASS_EXTENDS_RICH_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_ERROR_CLASS_EXTENDS_RICH_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val ERROR_CLASS_HAS_SUPERTYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ERROR_CLASS_HAS_SUPERTYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val ERROR_CLASS_HAS_TYPE_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("ERROR_CLASS_HAS_TYPE_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val NULLABLE_NESTED_UNION_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NULLABLE_NESTED_UNION_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }
