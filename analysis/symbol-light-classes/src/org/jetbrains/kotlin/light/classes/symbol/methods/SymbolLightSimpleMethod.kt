@@ -220,7 +220,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
 
     companion object {
         /**
-         * @param suppressValueClass whether suppress the [containingClass] check for [isKotlinValueClass]
+         * @param suppressInlineClass whether suppress the [containingClass] check for [isInlineClass]
          * @param staticsFromCompanion whether this function was called to materialize static members from a companion object
          * inside the containing class
          */
@@ -233,7 +233,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             methodIndex: Int,
             isTopLevel: Boolean,
             suppressStatic: Boolean = false,
-            suppressValueClass: Boolean = false,
+            suppressInlineClass: Boolean = false,
             staticsFromCompanion: Boolean = false,
         ) {
             ProgressManager.checkCanceled()
@@ -243,12 +243,12 @@ internal open class SymbolLightSimpleMethod protected constructor(
 
             val hasJvmNameAnnotation = functionSymbol.hasJvmNameAnnotation()
             val exposeBoxedMode = functionSymbol.jvmExposeBoxedMode()
-            val hasValueClassInReturnType = hasValueClassInReturnType(functionSymbol)
+            val hasInlineClassInReturnType = hasInlineClassInReturnType(functionSymbol)
 
-            val isNonMaterializableValueClassFunction = !suppressValueClass &&
-                    // Static methods should be materialized even inside value classes if possible
+            val isNonMaterializableInlineClassFunction = !suppressInlineClass &&
+                    // Static methods should be materialized even inside inline classes if possible
                     !staticsFromCompanion &&
-                    containingClass.isKotlinValueClass &&
+                    containingClass.isInlineClass &&
                     // Overrides are materialized by default
                     !functionSymbol.isOverride
 
@@ -258,22 +258,22 @@ internal open class SymbolLightSimpleMethod protected constructor(
             createMethodsJvmOverloadsAware(
                 declaration = functionSymbol,
                 methodIndexBase = methodIndex,
-            ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
-                val hasMangledNameDueValueClassesInSignature = hasMangledNameDueValueClassesInSignature(
-                    // Not every value class in a parameter position mangles the name, so the check cannot be reused from above
-                    hasManglingValueClassInParameterType = hasManglingValueClassInParameterPosition(
+            ) { methodIndex, valueParameterPickMask, hasInlineClassInParameterType ->
+                val hasMangledNameDueToInlineClassesInSignature = hasMangledNameDueToInlineClassesInSignature(
+                    // Not every inline class in a parameter position mangles the name, so the check cannot be reused from above
+                    hasManglingInlineClassInParameterType = hasManglingInlineClassInParameterPosition(
                         callableSymbol = functionSymbol,
                         valueParameterPickMask = valueParameterPickMask,
                     ),
-                    hasValueClassInReturnType = hasValueClassInReturnType,
+                    hasInlineClassInReturnType = hasInlineClassInReturnType,
                     isTopLevel = isTopLevel,
                 )
 
                 val generationMode = methodGeneration(
                     exposeBoxedMode = exposeBoxedMode,
-                    hasValueClassInParameterType = hasValueClassInParameterType,
-                    hasValueClassInReturnType = hasValueClassInReturnType,
-                    isAffectedByValueClass = hasMangledNameDueValueClassesInSignature || isNonMaterializableValueClassFunction,
+                    hasInlineClassInParameterType = hasInlineClassInParameterType,
+                    hasInlineClassInReturnType = hasInlineClassInReturnType,
+                    isAffectedByInlineClass = hasMangledNameDueToInlineClassesInSignature || isNonMaterializableInlineClassFunction,
                     hasJvmNameAnnotation = hasJvmNameAnnotation,
                     isSuspend = isSuspend,
                     isOverridable = isOverridable,
