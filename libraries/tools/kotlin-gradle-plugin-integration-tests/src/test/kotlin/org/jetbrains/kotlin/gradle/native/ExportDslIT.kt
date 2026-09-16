@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.native
 import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
@@ -32,7 +31,7 @@ import kotlin.test.assertTrue
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for the export DSL")
 @SwiftExportGradlePluginTests
-@OptIn(ExperimentalExportDsl::class, ExperimentalSwiftExportDsl::class)
+@OptIn(ExperimentalSwiftExportDsl::class)
 class ExportDslIT : KGPBaseTest() {
 
     @DisplayName("embedSwiftExportForXcode is registered when the Xcode integration is activated")

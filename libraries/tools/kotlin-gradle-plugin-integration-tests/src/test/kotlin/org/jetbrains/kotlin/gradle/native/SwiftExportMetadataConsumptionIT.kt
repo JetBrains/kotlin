@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
@@ -22,7 +21,7 @@ import kotlin.test.assertNotNull
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Swift Export metadata consumption with the export DSL")
 @SwiftExportGradlePluginTests
-@OptIn(ExperimentalExportDsl::class, ExperimentalSwiftExportDsl::class)
+@OptIn(ExperimentalSwiftExportDsl::class)
 class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
 
     @DisplayName(

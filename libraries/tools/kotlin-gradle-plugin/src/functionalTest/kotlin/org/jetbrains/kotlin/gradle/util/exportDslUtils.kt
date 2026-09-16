@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalExportDsl::class)
-
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.Project
@@ -12,7 +10,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
