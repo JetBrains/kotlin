@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.testFederation
 
+import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.TestTemplate
+import org.junit.platform.commons.support.AnnotationSupport
 import org.junit.platform.engine.FilterResult
 import org.junit.platform.engine.FilterResult.excluded
 import org.junit.platform.engine.FilterResult.included
@@ -18,19 +21,40 @@ internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
     override fun apply(descriptor: TestDescriptor): FilterResult {
         val source = descriptor.source.getOrNull() as? MethodSource
             ?: return included("Not a method-based test")
-        if (testFederationMode == null) return included("$TEST_FEDERATION_MODE_KEY is not set")
-        if (testFederationMode == TestFederationMode.Full) return included("'TestFederationMode.Full' is set")
+        val subsets = testFederationSubsets
 
-        if (isAutoSmokeTest(descriptor, source)) return included("Auto smoke test selected")
-        if (isMustRunAlways(descriptor)) return included("@${MustRunAlways::class.java.simpleName}")
+        val isSmokeTest = isAutoSmokeTest(descriptor, source) || isMustRunAlways(descriptor)
 
-        /* Select tests marked to run for one of the changed domains. */
-        val changedDomains = testFederationChangedDomains
-            ?: return excluded("Missing '${TEST_FEDERATION_CHANGED_DOMAINS_KEY}'")
-        val contracts = changedDomains.filter { domain -> isContract(domain, descriptor) }
-        if (contracts.isNotEmpty()) return included("Contracts: ${contracts.joinToString(", ")}")
+        if (TestSubset.SmokeTests in subsets && isSmokeTest) {
+            return included("Auto smoke test selected or @${MustRunAlways::class.java.simpleName}")
+        }
+
+        val matchedContracts = subsets.mapNotNull(::contractTagOf).filter { tag -> descriptor.tags.any { it.name == tag } }
+        if (matchedContracts.isNotEmpty()) {
+            return included("Contracts: ${matchedContracts.joinToString(", ") { it.removePrefix("contract:") }}")
+        }
+
+        if (TestSubset.PlainTests in subsets) {
+            val isContractTest = descriptor.tags.any { it.name.startsWith("contract:") }
+            if (!isSmokeTest && !isContractTest) return included("'${TestSubset.PlainTests}' is requested")
+            if (isExhaustiveCapable(source)) {
+                return included("'${TestSubset.PlainTests}' is requested (exhaustive-capable test, also selected for full variant coverage)")
+            }
+        }
+
         return excluded("Not selected automatically / Not @MustRunAlways / Not a contract test")
     }
+}
+
+/**
+ * Returns true for test methods that produce multiple execution variants — i.e., methods annotated
+ * (directly or via meta-annotation) with `@TestTemplate` (which covers `@ParameterizedTest` and
+ * `@RepeatedTest`) or `@TestFactory`. These are the methods controlled by [testFederationExhaustive].
+ */
+private fun isExhaustiveCapable(source: MethodSource): Boolean {
+    val method = source.javaMethod
+    return AnnotationSupport.isAnnotated(method, TestTemplate::class.java) ||
+            AnnotationSupport.isAnnotated(method, TestFactory::class.java)
 }
 
 /**
@@ -49,6 +73,3 @@ private fun isAutoSmokeTest(descriptor: TestDescriptor, source: MethodSource): B
 
 private fun isMustRunAlways(descriptor: TestDescriptor): Boolean =
     descriptor.tags.any { it.name == "smoke" }
-
-private fun isContract(domain: Domain, descriptor: TestDescriptor) =
-    descriptor.tags.any { it.name == "contract:${domain.name}" }

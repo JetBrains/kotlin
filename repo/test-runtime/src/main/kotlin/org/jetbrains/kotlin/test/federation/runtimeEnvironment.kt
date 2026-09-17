@@ -13,6 +13,8 @@ internal const val TEST_FEDERATION_CHANGED_DOMAINS_KEY = "test.federation.change
 internal const val TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY = "TEST_FEDERATION_CHANGED_DOMAINS"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY = "TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE"
+internal const val TEST_FEDERATION_SUBSETS_KEY = "test.federation.subsets"
+internal const val TEST_FEDERATION_SUBSETS_ENV_KEY = "TEST_FEDERATION_SUBSETS"
 const val TEST_FEDERATION_NIGHTLY_KEY = "test.federation.nightly"
 const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
 
@@ -41,6 +43,23 @@ val testFederationChangedDomains: Set<Domain>? = run {
     if (raw.isBlank()) return@run null
     domainsFromString(raw)
 }
+
+internal val testFederationSubsets: Set<TestSubset>? = run {
+    val raw = resolve(TEST_FEDERATION_SUBSETS_KEY, TEST_FEDERATION_SUBSETS_ENV_KEY)
+    if (raw != null) return@run raw.toTestSubsets()
+
+    when (testFederationMode) {
+        null -> null
+        TestFederationMode.Full -> setOf(TestSubset.AllTests)
+        TestFederationMode.Smoke -> buildSet {
+            add(TestSubset.SmokeTests)
+            testFederationChangedDomains?.forEach { domain -> add(TestSubset.valueOf("ContractTestsFor${domain.name}")) }
+        }
+    }
+}
+
+private fun String.toTestSubsets(): Set<TestSubset> =
+    if (isBlank()) emptySet() else split(",").map { TestSubset.valueOf(it.trim()) }.toSet()
 
 
 /**
