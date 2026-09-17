@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.dsl
 
 import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmDevServer
+import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 
 /**
  * DSL for configuring browser-specific settings for Kotlin Wasm JS target.

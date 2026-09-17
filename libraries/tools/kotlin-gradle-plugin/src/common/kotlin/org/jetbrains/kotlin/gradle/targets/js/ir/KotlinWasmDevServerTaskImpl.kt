@@ -13,7 +13,7 @@ import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmDevServer
+import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 import java.io.File
 import java.io.IOException
 import java.net.ServerSocket

@@ -2512,9 +2512,9 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/KotlinWasmTarget : 
 	public fun browser ()V
 	public fun browser (Lkotlin/jvm/functions/Function1;)V
 	public fun browser (Lorg/gradle/api/Action;)V
-	public fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;)V
-	public fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;Lkotlin/jvm/functions/Function1;)V
-	public fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;Lorg/gradle/api/Action;)V
+	public fun browser (Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;)V
+	public fun browser (Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;Lkotlin/jvm/functions/Function1;)V
+	public fun browser (Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;Lorg/gradle/api/Action;)V
 	public fun d8 ()V
 	public fun d8 (Lkotlin/jvm/functions/Function1;)V
 	public fun d8 (Lorg/gradle/api/Action;)V
@@ -2805,9 +2805,9 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Kotli
 	public abstract fun browser ()V
 	public abstract fun browser (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun browser (Lorg/gradle/api/Action;)V
-	public abstract fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;)V
-	public abstract fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;Lkotlin/jvm/functions/Function1;)V
-	public abstract fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;Lorg/gradle/api/Action;)V
+	public abstract fun browser (Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;)V
+	public abstract fun browser (Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun browser (Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;Lorg/gradle/api/Action;)V
 	public abstract fun d8 ()V
 	public abstract fun d8 (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun d8 (Lorg/gradle/api/Action;)V
@@ -2821,8 +2821,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTarget
 	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;)V
 	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lorg/gradle/api/Action;)V
-	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;)V
-	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;Lorg/gradle/api/Action;)V
+	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;)V
+	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;Lorg/gradle/api/Action;)V
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun d8 (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;)V

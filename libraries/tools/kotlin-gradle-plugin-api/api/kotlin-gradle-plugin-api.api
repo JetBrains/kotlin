@@ -188,6 +188,13 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension$Defaul
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension {
 }
 
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler : java/lang/Enum {
+	public static final field NONE Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;
+	public static final field WEBPACK Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerToolOptions {
 	public abstract fun getApiVersion ()Lorg/gradle/api/provider/Property;
 	public abstract fun getLanguageVersion ()Lorg/gradle/api/provider/Property;
@@ -1438,19 +1445,6 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind : java/lang
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler : java/lang/Enum {
-	public static final field NONE Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;
-	public static final field WEBPACK Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserBundler;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmDevServer : org/gradle/api/Task {
-	public abstract fun getContentDirectory ()Lorg/gradle/api/file/DirectoryProperty;
-	public abstract fun getHost ()Lorg/gradle/api/provider/Property;
-	public abstract fun getPort ()Lorg/gradle/api/provider/Property;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKapt : org/gradle/api/Task, org/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain {
 	public abstract fun getAnnotationProcessorOptionProviders ()Ljava/util/List;
 	public abstract fun getAnnotationProcessorOptionsProviders ()Lorg/gradle/api/provider/ListProperty;
@@ -1593,6 +1587,12 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinToolTask
 public final class org/jetbrains/kotlin/gradle/tasks/KotlinToolTask$DefaultImpls {
 	public static fun toolOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinToolTask;Lkotlin/jvm/functions/Function1;)V
 	public static fun toolOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinToolTask;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinWasmDevServer : org/gradle/api/Task {
+	public abstract fun getContentDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getHost ()Lorg/gradle/api/provider/Property;
+	public abstract fun getPort ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain : org/gradle/api/Task {
