@@ -146,7 +146,7 @@ internal fun LlvmFunctionSignature(
 
     require(!irFunction.isSuspend) { "Suspend functions should be lowered out at this point" }
 
-    val needsReturnSlot = returnType.isObjectType
+    val needsReturnSlot = !contextUtils.generationState.config.lateShadowStack && returnType.isObjectType
     if (needsReturnSlot)
         parameterTypes.add(LlvmParamType(contextUtils.llvm.pointerType))
 

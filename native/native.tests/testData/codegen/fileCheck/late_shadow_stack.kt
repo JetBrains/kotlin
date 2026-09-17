@@ -13,7 +13,7 @@ fun leafComputation(a: Int, b: Int): Int {
     return (a * 31) xor (b + 17)
 }
 
-// CHECK-LABEL: define {{.*}}ptr @"kfun:#allocatingFunction(kotlin.Int){}SimpleData"(i32 %0, ptr{{.*}}%1)
+// CHECK-LABEL: define {{.*}}ptr @"kfun:#allocatingFunction(kotlin.Int){}SimpleData"(i32 %0)
 // CHECK: call void @llvm.memset
 // CHECK-DEBUG: call void @EnterFrame(ptr %{{.*}}, i32 0, i32 {{.*}})
 // CHECK-DEBUG: call void @LeaveFrame(ptr %{{.*}}, i32 0, i32 {{.*}})
@@ -35,7 +35,7 @@ fun allocatingFunction(n: Int): SimpleData {
     return head
 }
 
-// CHECK-LABEL: define {{.*}}ptr @"kfun:#exceptionUnwindFunction(kotlin.Boolean){}kotlin.String"(i1 {{.*}}%0, ptr{{.*}}%1)
+// CHECK-LABEL: define {{.*}}ptr @"kfun:#exceptionUnwindFunction(kotlin.Boolean){}kotlin.String"(i1 {{.*}}%0)
 // CHECK-DEBUG: call void @EnterFrame(ptr %{{.*}}, i32 0, i32 {{.*}})
 // CHECK-OPT: store ptr %shadow_stack_frame, ptr
 // CHECK: landingpad
