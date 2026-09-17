@@ -67,9 +67,9 @@ object CompilerModules {
     )
 
     /**
-     * Modules of K2 (FIR) frontend
+     * Modules of K2 (FIR) frontend (shared between compiler and AA)
      */
-    val firCompilerModules = arrayOf(
+    val firCommonCompilerModules = arrayOf(
         ":compiler:fir:cones",
         ":compiler:fir:providers",
         ":compiler:fir:semantics",
@@ -83,8 +83,6 @@ object CompilerModules {
         ":compiler:fir:fir-native",
         ":compiler:fir:raw-fir:raw-fir.common",
         ":compiler:fir:raw-fir:psi2fir",
-        ":compiler:fir:raw-fir:light-tree2fir",
-        ":compiler:fir:raw-fir:mp-parsing2fir",
         ":compiler:fir:checkers",
         ":compiler:fir:checkers:checkers.jvm",
         ":compiler:fir:checkers:checkers.js",
@@ -96,6 +94,14 @@ object CompilerModules {
         ":compiler:fir:fir2ir:jvm-backend",  // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
         ":compiler:fir:fir2ir", // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
         ":compiler:java-direct",
+    )
+
+    /**
+     * Modules of K2 (FIR) frontend (all)
+     */
+    val firCompilerModules = firCommonCompilerModules + arrayOf(
+        ":compiler:fir:raw-fir:light-tree2fir",
+        ":compiler:fir:raw-fir:mp-parsing2fir",
         ":compiler:multiplatform-parsing",
     )
 
