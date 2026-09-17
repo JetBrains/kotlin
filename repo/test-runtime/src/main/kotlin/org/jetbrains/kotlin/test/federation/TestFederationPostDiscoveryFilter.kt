@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.testFederation
 
+import org.jetbrains.kotlin.testFederation.TestSubset.*
 import org.junit.platform.engine.FilterResult
 import org.junit.platform.engine.FilterResult.excluded
 import org.junit.platform.engine.FilterResult.included
 import org.junit.platform.engine.TestDescriptor
+import org.junit.platform.engine.TestTag
 import org.junit.platform.engine.support.descriptor.MethodSource
 import org.junit.platform.launcher.PostDiscoveryFilter
 import kotlin.jvm.optionals.getOrNull
@@ -16,22 +18,28 @@ import kotlin.math.absoluteValue
 
 internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
     override fun apply(descriptor: TestDescriptor): FilterResult {
-        val source = descriptor.source.getOrNull() as? MethodSource
-            ?: return included("Not a method-based test")
-        if (testFederationMode == null) return included("$TEST_FEDERATION_MODE_KEY is not set")
-        if (testFederationMode == TestFederationMode.Full) return included("'TestFederationMode.Full' is set")
+        val source = descriptor.source.getOrNull() as? MethodSource ?: return included("Not a method-based test")
+        val subsets = testFederationSubsets
 
-        if (isAutoSmokeTest(descriptor, source)) return included("Auto smoke test selected")
-        if (isMustRunAlways(descriptor)) return included("@${MustRunAlways::class.java.simpleName}")
-
-        /* Select tests marked to run for one of the changed domains. */
-        val changedDomains = testFederationChangedDomains
-            ?: return excluded("Missing '${TEST_FEDERATION_CHANGED_DOMAINS_KEY}'")
-        val contracts = changedDomains.filter { domain -> isContract(domain, descriptor) }
-        if (contracts.isNotEmpty()) return included("Contracts: ${contracts.joinToString(", ")}")
-        return excluded("Not selected automatically / Not @MustRunAlways / Not a contract test")
+        if (AllTests in subsets) {
+            return included("Selected by AllTests")
+        }
+        if (isSmokeTest(descriptor, source)) {
+            return if (SmokeTests in subsets) included("Selected by SmokeTests")
+            else excluded("Not selected smoke test")
+        }
+        if (isContractTest(descriptor)) {
+            return findMatchingContracts(subsets, descriptor)
+                .takeIf { it.isNotEmpty() }
+                ?.let { matchingContracts -> included("Selected by " + matchingContracts.joinToString(", ")) }
+                ?: excluded("Not selected contract test")
+        }
+        return excluded("Not selected plain test")
     }
 }
+
+private fun isSmokeTest(descriptor: TestDescriptor, source: MethodSource): Boolean =
+    descriptor.tags.any { it.name == "smoke" } || isAutoSmokeTest(descriptor, source)
 
 /**
  * Selects an approximate percentage of tests using a hash of each test's identity.
@@ -47,8 +55,21 @@ private fun isAutoSmokeTest(descriptor: TestDescriptor, source: MethodSource): B
     return (hashCode % 100).absoluteValue < autoSmokeTestPercentage
 }
 
-private fun isMustRunAlways(descriptor: TestDescriptor): Boolean =
-    descriptor.tags.any { it.name == "smoke" }
+private fun isContractTest(descriptor: TestDescriptor): Boolean =
+    descriptor.declaredContracts.isNotEmpty()
 
-private fun isContract(domain: Domain, descriptor: TestDescriptor) =
-    descriptor.tags.any { it.name == "contract:${domain.name}" }
+private fun findMatchingContracts(subsets: Set<TestSubset>, descriptor: TestDescriptor): Set<TestSubset> {
+    val requestedContracts = subsets.filter(TestSubset::isContract).toSet()
+    return descriptor.declaredContracts.intersect(requestedContracts)
+}
+
+private val TestDescriptor.declaredContracts: Set<TestSubset>
+    get() = tags.map(TestTag::getName)
+        .mapNotNull(::contractSubsetFromTag)
+        .filterNot(TestSubset::isSelfDeclaredContract)
+        .toSet()
+
+private fun TestSubset.isSelfDeclaredContract(): Boolean {
+    val selfContracts = testFederationDomains.map(::contractTestsSubsetOf).toSet()
+    return this in selfContracts
+}
