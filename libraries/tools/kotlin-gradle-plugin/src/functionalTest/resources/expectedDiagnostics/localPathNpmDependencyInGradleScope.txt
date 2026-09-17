@@ -1,0 +1,7 @@
+[NpmDependencyInGradleScope | WARNING] NPM dependencies are declared in Gradle dependency scopes
+NPM dependencies are passed to Gradle dependency scopes:
+    - 'jsMain' source set: implementation(npm("is-odd-even", project.file("npm/is-odd-even")))
+
+This is deprecated. Declare NPM dependencies just by calling npm, npmDev, npmOptional and so on.
+Don't wrap them to Gradle dependency scopes api, implementation, runtimeOnly etc.
+Replace 'implementation(npm("is-odd-even", project.file("npm/is-odd-even")))' with 'npm("is-odd-even", project.file("npm/is-odd-even"))' in the 'jsMain' source set.
