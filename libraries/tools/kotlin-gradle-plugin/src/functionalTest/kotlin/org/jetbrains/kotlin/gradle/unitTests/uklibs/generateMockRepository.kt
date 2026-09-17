@@ -80,6 +80,14 @@ class GradleMetadataComponent(
         val attributes: Map<String, String>,
         val dependencies: List<Dependency>,
         val files: List<MockVariantFile> = emptyList(),
+        val capabilities: List<Capability>? = null,
+    )
+
+    @Serializable
+    class Capability(
+        val group: String,
+        val name: String,
+        val version: String,
     )
 
     sealed class MockVariantType {
