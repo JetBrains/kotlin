@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 enum class ConstraintSystemCompletionMode(
-    // Enabled for FULL only
-    val allPostponedAtomsShouldBeAnalyzed: Boolean,
-    // Actually, it's related to all ConeFunctionLikeAtom including callable references.
     // Enabled for FULL and PCLA_POSTPONED_CALL
-    // Invariant: allPostponedAtomsShouldBeAnalyzed => allLambdasShouldBeAnalyzed
-    val allLambdasShouldBeAnalyzed: Boolean = allPostponedAtomsShouldBeAnalyzed,
+    val allPostponedAtomsShouldBeAnalyzed: Boolean,
     // Enabled for FULL and UNTIL_FIRST_LAMBDA
     val shouldForkPointConstraintsBeResolved: Boolean,
     // FULL-only
@@ -26,8 +22,7 @@ enum class ConstraintSystemCompletionMode(
         preventFixingTypeVariablesRelatedToReturnType = false,
     ),
     PCLA_POSTPONED_CALL(
-        allPostponedAtomsShouldBeAnalyzed = false,
-        allLambdasShouldBeAnalyzed = true,
+        allPostponedAtomsShouldBeAnalyzed = true,
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
         preventFixingTypeVariablesRelatedToReturnType = false,
@@ -45,7 +40,6 @@ enum class ConstraintSystemCompletionMode(
      */
     PARTIAL(
         allPostponedAtomsShouldBeAnalyzed = false,
-        allLambdasShouldBeAnalyzed = false,
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
         preventFixingTypeVariablesRelatedToReturnType = true,
@@ -54,7 +48,6 @@ enum class ConstraintSystemCompletionMode(
     @ExclusiveForOverloadResolutionByLambdaReturnType // Becomes unused in K2 since ELA
     UNTIL_FIRST_LAMBDA(
         allPostponedAtomsShouldBeAnalyzed = false,
-        allLambdasShouldBeAnalyzed = false,
         /* See testData/diagnostics/tests/inference/inferenceForkRegressionSimple.kt */
         shouldForkPointConstraintsBeResolved = true,
         // We shouldn't do it here because of input type semi-fixing
@@ -64,11 +57,6 @@ enum class ConstraintSystemCompletionMode(
 
     @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
     fun isUntilFirstLambda(): Boolean = this == UNTIL_FIRST_LAMBDA
-
-    init {
-        // allPostponedAtomsShouldBeAnalyzed => allLambdasShouldBeAnalyzed
-        assert(!allPostponedAtomsShouldBeAnalyzed || allLambdasShouldBeAnalyzed)
-    }
 
     @RequiresOptIn(
         "This mode should be used only for OverloadResolutionByLambdaReturnTypeResolver. " +
