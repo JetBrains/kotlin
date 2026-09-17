@@ -6771,6 +6771,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<UnnecessarySafeCall>
             get() = UnnecessarySafeCall::class
 
+        public val kind: String
         public val receiverType: KaType
     }
 
