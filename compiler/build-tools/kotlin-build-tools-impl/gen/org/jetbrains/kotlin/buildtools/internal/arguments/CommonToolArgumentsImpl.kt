@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonToolArgumentsImpl(
+  defaultArguments: CommonToolArguments,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
   internal val argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
@@ -44,25 +45,25 @@ internal abstract class CommonToolArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("WERROR")
-  protected var Werror: Boolean
+  protected var Werror: Boolean = defaultArguments.allWarningsAsErrors
 
   @SerialName("WEXTRA")
-  protected var Wextra: Boolean
+  protected var Wextra: Boolean = defaultArguments.extraWarnings
 
   @SerialName("X")
-  protected var X: Boolean
+  protected var X: Boolean = defaultArguments.extraHelp
 
   @SerialName("HELP")
-  protected var help: Boolean
+  protected var help: Boolean = defaultArguments.help
 
   @SerialName("NOWARN")
-  protected var nowarn: Boolean
+  protected var nowarn: Boolean = defaultArguments.suppressWarnings
 
   @SerialName("VERBOSE")
-  protected var verbose: Boolean
+  protected var verbose: Boolean = defaultArguments.verbose
 
   @SerialName("VERSION")
-  protected var version: Boolean
+  protected var version: Boolean = defaultArguments.version
 
   protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> =
       restrictedArgViolations.toMutableList()
