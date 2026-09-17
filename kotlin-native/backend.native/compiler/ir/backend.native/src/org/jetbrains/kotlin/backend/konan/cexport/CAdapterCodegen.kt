@@ -27,6 +27,14 @@ internal class CAdapterCodegen(
         private val codegen: CodeGenerator,
         override val generationState: NativeGenerationState,
 ) : ContextUtils {
+    init {
+        if (generationState.config.lateShadowStack) {
+            generationState.config.configuration.reportCompilationErrorAndThrow(
+                    "-Xbinary=lateShadowStack=true is not supported when producing a C interface " +
+                            "(the generated C++ glue still expects the return-slot ABI)"
+            )
+        }
+    }
 
     fun buildAllAdaptersRecursively(elements: CAdapterExportedElements) {
         val top = elements.scopes.single()
