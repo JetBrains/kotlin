@@ -3055,6 +3055,10 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
+    private fun Node.getReferencedNameAsName(): Name {
+        return asText.nameAsSafeName()
+    }
+
     override fun convertScript(
         script: Node,
         scriptSource: KtSourceElement,

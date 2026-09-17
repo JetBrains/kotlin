@@ -196,14 +196,6 @@ open class PsiRawFirBuilder(
         return children.firstOrNull { it.node.elementType == type }
     }
 
-    override fun PsiElement?.getChildrenAsArray(): Array<out PsiElement?> {
-        error("Should not be called")
-    }
-
-    override fun PsiElement.getReferencedNameAsName(): Name {
-        return (this as KtSimpleNameExpression).getReferencedNameAsName()
-    }
-
     override fun PsiElement.getLabelName(): String? {
         return when (this) {
             is KtExpressionWithLabel -> getLabelName()
