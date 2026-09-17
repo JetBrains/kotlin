@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedTypeParameterSymbol
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens.QUEST
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
 object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
@@ -176,6 +178,10 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
                 }
             }
             checkUpperBoundViolationsInTypeAlias(argument, symbol, fullyExpandedType)
+
+            if (argument.qualifierSymbol?.fullyExpandedClass()?.classId == StandardClassIds.NonError) {
+                reporter.reportOn(argument.source, FirErrors.NON_ERROR_GET_CLASS_CALL)
+            }
         }
     }
 
