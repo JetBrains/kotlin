@@ -68,24 +68,20 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
             }
 
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            val backendInput = when (configurationForModule.useLightTree) {
-                true -> when (chunk.size) {
-                    1 -> baseBackendInput
-                    else -> {
-                        val wholeModule = baseBackendInput.irModuleFragment
-                        val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
-                        wholeModule.files.filterTo(moduleCopy.files) { file ->
-                            file.fileEntry.name in module.getSourceFiles()
-                        }
-                        baseBackendInput.copy(irModuleFragment = moduleCopy)
+            val backendInput = when {
+                chunk.size == 1 -> baseBackendInput
+
+                configurationForModule.useLightTree -> {
+                    val wholeModule = baseBackendInput.irModuleFragment
+                    val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
+                    wholeModule.files.filterTo(moduleCopy.files) { file ->
+                        file.fileEntry.name in module.getSourceFiles()
                     }
+                    baseBackendInput.copy(irModuleFragment = moduleCopy)
                 }
 
-                false -> {
-                    val sourceFiles = module.getSourceFiles(
-                        allSourceFiles.asKtFilesList(), localFileSystem,
-                        multiModuleChunk = chunk.size > 1, buildFile
-                    )
+                else -> {
+                    val sourceFiles = module.getSourceFiles(allSourceFiles.asKtFilesList(), localFileSystem, buildFile)
                     codegenFactory.getModuleChunkBackendInput(baseBackendInput, sourceFiles)
                 }
             }
@@ -130,25 +126,19 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
     private fun Module.getSourceFiles(
         allSourceFiles: List<KtFile>,
         localFileSystem: VirtualFileSystem?,
-        multiModuleChunk: Boolean,
-        buildFile: File?
+        buildFile: File?,
     ): List<KtFile> {
-        return if (multiModuleChunk) {
-            // filter out source files from other modules
-            assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
-            val [moduleSourceDirs, moduleSourceFiles] =
-                JvmConfigurationUpdater.getBuildFilePaths(buildFile, getSourceFiles())
-                    .mapNotNull(localFileSystem!!::findFileByPath)
-                    .partition(VirtualFile::isDirectory)
+        assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
+        val [moduleSourceDirs, moduleSourceFiles] =
+            JvmConfigurationUpdater.getBuildFilePaths(buildFile, getSourceFiles())
+                .mapNotNull(localFileSystem!!::findFileByPath)
+                .partition(VirtualFile::isDirectory)
 
-            allSourceFiles.filter { file ->
-                val virtualFile = file.virtualFile
-                virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
-                    VfsUtilCore.isAncestor(dir, virtualFile, true)
-                }
+        return allSourceFiles.filter { file ->
+            val virtualFile = file.virtualFile
+            virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
+                VfsUtilCore.isAncestor(dir, virtualFile, true)
             }
-        } else {
-            allSourceFiles
         }
     }
 
