@@ -57,7 +57,7 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
 
         return runCatching {
             val document = JsonSlurper().parse(executionsFile, Charsets.UTF_8.name()) as Map<*, *>
-            document.toRecordedSuite(name = "")
+            document.toRecordedSuite(suiteName = "")
         }.getOrElse { failure ->
             log.warn("Cannot replay the tests of $taskPath from $executionsFile", failure)
             null
@@ -151,11 +151,14 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
         val tests = mutableListOf<RecordedTest>()
     }
 
-    private fun Map<*, *>.toRecordedSuite(name: String): RecordedSuite = RecordedSuite(
-        name = name,
+    private fun Map<*, *>.toRecordedSuite(suiteName: String): RecordedSuite = RecordedSuite(
+        name = suiteName,
         suites = members("suites").map { it.toRecordedSuite(it.string("name")) },
+        // An absent 'className' means the enclosing suite is the test's class; an explicit null means
+        // the test has none. The root suite's name is empty and stands for no class.
         tests = members("tests").map {
-            RecordedTest(it.string("name"), it["className"] as String?, it.string("status"), it.long("duration"))
+            val className = if (it.containsKey("className")) it["className"] as String? else suiteName.ifEmpty { null }
+            RecordedTest(it.string("name"), className, it.string("status"), it.long("duration"))
         },
     )
 
