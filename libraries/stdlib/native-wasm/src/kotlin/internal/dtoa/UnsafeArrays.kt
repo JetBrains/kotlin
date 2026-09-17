@@ -8,6 +8,19 @@
 
 package kotlin.internal.dtoa
 
+/**
+ * Unchecked array access functions and wrapper classes used by floating-point parser and stringifier routines (`dtoa`).
+ *
+ * Why they exist:
+ * These functions and wrapper classes eliminate array range checks, making floating-point string conversion and parsing
+ * as fast as the original C implementation. With standard Kotlin bounds checks, performance degrades by about 10% in these hot paths.
+ *
+ * Trade-offs:
+ * - Performance benefit: Recovers ~10% performance overhead by avoiding repeated range checks during numeric parsing and big-integer arithmetic.
+ * - Safety trade-off: Out-of-bounds indexing will result in undefined behavior or memory corruption rather than an [IndexOutOfBoundsException].
+ *   Therefore, these functions and classes are strictly internal and must only be used when index bounds are mathematically guaranteed.
+ */
+
 internal expect fun longArrayGetUnsafe(array: LongArray, index: Int): Long
 internal expect fun longArraySetUnsafe(array: LongArray, index: Int, value: Long)
 internal expect fun copyIntoUnsafe(source: LongArray, destination: LongArray, destinationOffset: Int, startIndex: Int, endIndex: Int)
