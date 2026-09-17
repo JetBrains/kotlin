@@ -2525,6 +2525,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NULLABLE_NESTED_UNION_TYPE by error<PsiElement>()
         val NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE by error<PsiElement>()
         val NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE by error<PsiElement>()
+        val MULTIPLE_TYPE_PARAMETERS_CAN_HOLD_ERROR by error<PsiElement>()
     }
 }
 
