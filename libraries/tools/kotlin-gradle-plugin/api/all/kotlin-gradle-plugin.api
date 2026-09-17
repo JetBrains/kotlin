@@ -1951,6 +1951,10 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/internal/ProjectStr
 	public fun transform (Lorg/gradle/api/artifacts/transform/TransformOutputs;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/internal/ProjectStructureMetadataTransformAction$Params : org/gradle/api/artifacts/transform/TransformParameters {
+	public abstract fun getPsmPath ()Lorg/gradle/api/provider/Property;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/util/KotlinExtensionUtilsDeprecatedKt {
 	public static final fun getTargets (Lorg/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension;)Ljava/lang/Iterable;
 }
