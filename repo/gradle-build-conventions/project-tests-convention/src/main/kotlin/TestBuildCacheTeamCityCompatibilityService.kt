@@ -45,8 +45,8 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
         val result = event.result as? TaskSuccessResult ?: return
         if (!result.isFromCache && !result.isUpToDate) return
 
-        val suite = readExecutions() ?: return
-        replay(suite)
+        val recorded = readExecutions() ?: return
+        replay(recorded.toReplayTree())
     }
 
     private fun readExecutions(): RecordedSuite? {
@@ -64,23 +64,52 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
         }
     }
 
-    private fun replay(suite: RecordedSuite) {
-        for (test in suite.tests) {
-            serviceMessage("testStarted", "name" to test.name)
-            when (test.status) {
-                STATUS_OK -> {}
-                STATUS_IGNORED -> serviceMessage("testIgnored", "name" to test.name)
-                STATUS_FAILURE -> serviceMessage(
-                    "testFailed",
-                    "name" to test.name,
-                    "message" to FAILURE_DETAILS_UNAVAILABLE,
-                )
-                else -> log.warn("Unknown status '${test.status}' of test ${test.name} in $executionsFile")
+    /**
+     * Rebuilds the suite nesting TeamCity expects from the structure Gradle reported.
+     *
+     * The recorded file keeps every suite Gradle reports, including the one standing for a test's own
+     * class, because that is where the per-class timings hang. TeamCity names a test `<class>.<method>`
+     * and does not repeat the class as an enclosing suite, so those are collapsed again here - per
+     * test, not per suite: a class that also has nested classes stays a suite for *their* tests while
+     * disappearing for its own.
+     */
+    private fun RecordedSuite.toReplayTree(): ReplayNode {
+        val replayRoot = ReplayNode("")
+
+        fun collect(node: RecordedSuite, path: List<String>) {
+            for (test in node.tests) {
+                val teamCityPath = test.className?.let { path.dropLastWhile { name -> name == it } } ?: path
+                val target = teamCityPath.fold(replayRoot) { parent, name ->
+                    parent.suites.getOrPut(name) { ReplayNode(name) }
+                }
+                target.tests += test
             }
-            serviceMessage("testFinished", "name" to test.name, "duration" to test.durationMillis.toString())
+            for (child in node.suites) collect(child, path + child.name)
         }
 
-        for (nested in suite.suites) {
+        collect(this, emptyList())
+        return replayRoot
+    }
+
+    private fun replay(suite: ReplayNode) {
+        for (test in suite.tests) {
+            // The recorded halves joined back into the name TeamCity expects.
+            val name = test.className.qualifying(test.name)
+            serviceMessage("testStarted", "name" to name)
+            when (test.status) {
+                STATUS_OK -> {}
+                STATUS_IGNORED -> serviceMessage("testIgnored", "name" to name)
+                STATUS_FAILURE -> serviceMessage(
+                    "testFailed",
+                    "name" to name,
+                    "message" to FAILURE_DETAILS_UNAVAILABLE,
+                )
+                else -> log.warn("Unknown status '${test.status}' of test $name in $executionsFile")
+            }
+            serviceMessage("testFinished", "name" to name, "duration" to test.durationMillis.toString())
+        }
+
+        for (nested in suite.suites.values) {
             serviceMessage("testSuiteStarted", "name" to nested.name)
             replay(nested)
             serviceMessage("testSuiteFinished", "name" to nested.name)
@@ -109,12 +138,25 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
 
     private class RecordedSuite(val name: String, val suites: List<RecordedSuite>, val tests: List<RecordedTest>)
 
-    private class RecordedTest(val name: String, val status: String, val durationMillis: Long)
+    private class RecordedTest(
+        val name: String,
+        val className: String?,
+        val status: String,
+        val durationMillis: Long,
+    )
+
+    /** The suite nesting as TeamCity wants it, rebuilt from the recorded one. */
+    private class ReplayNode(val name: String) {
+        val suites = LinkedHashMap<String, ReplayNode>()
+        val tests = mutableListOf<RecordedTest>()
+    }
 
     private fun Map<*, *>.toRecordedSuite(name: String): RecordedSuite = RecordedSuite(
         name = name,
         suites = members("suites").map { it.toRecordedSuite(it.string("name")) },
-        tests = members("tests").map { RecordedTest(it.string("name"), it.string("status"), it.long("duration")) },
+        tests = members("tests").map {
+            RecordedTest(it.string("name"), it["className"] as String?, it.string("status"), it.long("duration"))
+        },
     )
 
     private fun Map<*, *>.members(key: String): List<Map<*, *>> =
