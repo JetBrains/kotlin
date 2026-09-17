@@ -32,6 +32,7 @@
 #include "StackTrace.hpp"
 
 extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class, Class, const TypeInfo*);
+extern "C" void* Kotlin_SwiftExport_allocInstanceForSwiftSubclass(Class);
 
 @interface NSObject (NSObjectPrivateMethods)
 // Implemented for NSObject in libobjc/NSObject.mm
@@ -219,6 +220,15 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     }
 }
 
+- (instancetype)init {
+    if (!kotlin::compiler::swiftExport()) {
+        return [super init];
+    }
+
+    void* ref = Kotlin_SwiftExport_allocInstanceForSwiftSubclass([self class]);
+    return [self constructWithExternalRCRefUnsafe:ref options:KotlinBaseConstructionOptionsAsBoundBridge];
+}
+
 /*
  * KotlinBase maintains a 1:1 association between wrapper instances and Kotlin objects for better performance and object identity preservation.
  * However, in rare cases multiple wrapper types may be required for a single Kotlin object, with only the designated "best-fitting" wrapper being cached.
@@ -235,6 +245,10 @@ using RegularRef = kotlin::mm::ObjCBackRef;
  * @see `_createClassWrapperForExternalRCRef`
  */
 - (instancetype)initWithExternalRCRefUnsafe:(void *)ref options:(KotlinBaseConstructionOptions)options {
+    return [self constructWithExternalRCRefUnsafe:ref options:options];
+}
+
+- (instancetype)constructWithExternalRCRefUnsafe:(void *)ref options:(KotlinBaseConstructionOptions)options __attribute__((objc_direct)) {
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
     kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 

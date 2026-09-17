@@ -4,8 +4,8 @@ import KotlinRuntimeSupport
 
 public func bar() -> (Swift.String, Swift.Void) -> Swift.Void {
     return {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___bar(), options: .asBestFittingWrapper)!
-        return { _1, _2 in return { unit_param_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String_Swift_Void__(pointerToBlock.__externalRCRef()!, _1, { _2; return true }()); return () }() }
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___bar(), options: .asBestFittingWrapper)
+        return { _1, _2 in return { unit_param_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String_Swift_Void__(pointerToBlock.__externalRCRef(), _1, { _2; return true }()); return () }() }
     }()
 }
 public func barIn(
@@ -15,14 +15,14 @@ public func barIn(
 }
 public func baz() -> (@escaping (Swift.String, Swift.Void) -> Swift.Void) -> Swift.Void {
     return {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___baz(), options: .asBestFittingWrapper)!
-        return { _1 in return { unit_param_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_String_U20Swift_VoidU29202D_U20Swift_Void__(pointerToBlock.__externalRCRef()!, Unmanaged.passRetained((_1 as (Swift.String, Swift.Void) -> Swift.Void) as AnyObject).toOpaque()); return () }() }
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___baz(), options: .asBestFittingWrapper)
+        return { _1 in return { unit_param_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_String_U20Swift_VoidU29202D_U20Swift_Void__(pointerToBlock.__externalRCRef(), Unmanaged.passRetained((_1 as (Swift.String, Swift.Void) -> Swift.Void) as AnyObject).toOpaque()); return () }() }
     }()
 }
 public func foo() -> (Swift.Void) -> Swift.Void {
     return {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___foo(), options: .asBestFittingWrapper)!
-        return { _1 in return { unit_param_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___foo(), options: .asBestFittingWrapper)
+        return { _1 in return { unit_param_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef(), { _1; return true }()); return () }() }
     }()
 }
 public func fooIn(

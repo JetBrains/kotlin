@@ -66,11 +66,11 @@ extension ExportedKotlinPackages.datetime {
                     return ExportedKotlinPackages.datetime.LocalDate.Companion.__createClassWrapper(externalRCRef: datetime_LocalDate_Companion_get())
                 }
             }
-            private init() {
+            private override init() {
                 fatalError()
             }
             package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -81,13 +81,13 @@ extension ExportedKotlinPackages.datetime {
                 return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: datetime_LocalDate_Companion_Format__TypesOfArguments__U28anyU20dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDateU29202D_U20Swift_Void__(self.__externalRCRef(), Unmanaged.passRetained((block as (any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.datetime.DateTimeFormat.Type.self) as! any ExportedKotlinPackages.datetime.DateTimeFormat
             }
         }
-        public init() {
+        public override init() {
             let __kt = datetime_LocalDate_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { datetime_LocalDate_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

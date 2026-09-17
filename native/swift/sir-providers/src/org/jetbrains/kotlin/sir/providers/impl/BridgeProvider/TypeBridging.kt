@@ -450,7 +450,7 @@ internal sealed interface Bridge {
             // forward: Swift CONSUMES the ref -> concrete/transparent Error (adopts+disposes via __createClassWrapper)
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "KotlinRuntimeSupport.swiftError(fromKotlinThrowable: ${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createClassWrapper(externalRCRef: $valueExpression)!)"
+                "KotlinRuntimeSupport.swiftError(fromKotlinThrowable: ${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createClassWrapper(externalRCRef: $valueExpression))"
         }
     }
 
@@ -1217,7 +1217,7 @@ internal sealed interface Bridge {
                         if (swiftType.contextType != null) add("context")
                         addAll(allArgs.drop(1 + swiftType.contextTypes.size))
                     }.takeIf { it.isNotEmpty() }?.let { " ${it.joinToString()} in" } ?: ""
-                    val closureHolderRef = "${allArgs.first()}.__externalRCRef()!"
+                    val closureHolderRef = "${allArgs.first()}.__externalRCRef()"
                     val swiftInvocation = buildList {
                         if (swiftType.contextType != null) {
                             add(List(swiftType.contextTypes.size) { idx -> "ctx$idx" }.joinToString(prefix = "let (", postfix = ") = context"))
@@ -1231,7 +1231,7 @@ internal sealed interface Bridge {
                     val kotlinBaseName = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
                     val invokeBody = swiftInvocation.joinToString(";")
                     return """{
-                    |    let ${allArgs.first()} = $kotlinBaseName(__externalRCRefUnsafe: $valueExpression, options: .asBestFittingWrapper)!
+                    |    let ${allArgs.first()} = $kotlinBaseName(__externalRCRefUnsafe: $valueExpression, options: .asBestFittingWrapper)
                     |    return {$defineArgs $invokeBody }
                     |}()""".trimMargin()
                 }

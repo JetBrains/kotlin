@@ -22,7 +22,7 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
     }
 
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
@@ -377,7 +377,7 @@ internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, Asyn
                 }
             }
             let _exception: (UnsafeMutableRawPointer?) -> Void = { arg0 in
-                exception(arg0.map { KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: $0)!) })
+                exception(arg0.map { KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: $0)) })
             }
             let _: () = _kotlin_swift_SwiftFlowIterator_next(
                 self.__externalRCRef(),
