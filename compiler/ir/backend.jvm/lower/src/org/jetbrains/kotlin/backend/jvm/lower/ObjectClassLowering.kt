@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.parentAsClass
 
 internal class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
@@ -67,7 +68,14 @@ internal class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweri
         }
 
         pendingTransformations.add {
-            (publicInstanceField.parent as IrDeclarationContainer).declarations.add(0, publicInstanceField)
+            val indexOfPublicInstanceField = if (publicInstanceField.parent === irClass.parent) {
+                // Insert public instance field right after the companion object declaration to preserve
+                // the order of initialization with respect to companion blocks.
+                irClass.parentAsClass.declarations.indexOf(irClass).also { require(it != -1) } + 1
+            } else {
+                0
+            }
+            (publicInstanceField.parent as IrDeclarationContainer).declarations.add(indexOfPublicInstanceField, publicInstanceField)
         }
     }
 }
