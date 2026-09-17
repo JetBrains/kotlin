@@ -1,0 +1,87 @@
+/*
+ * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
+ */
+
+package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
+
+import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.analysis.java.SyntheticElementDocumentationProvider
+import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
+import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser
+import org.jetbrains.dokka.model.doc.DocumentationNode
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.builtins.StandardNames
+
+private const val ENUM_ENTRIES_TEMPLATE_PATH = "/dokka/docs/kdoc/EnumEntries.kt.template"
+private const val ENUM_VALUEOF_TEMPLATE_PATH = "/dokka/docs/kdoc/EnumValueOf.kt.template"
+private const val ENUM_VALUES_TEMPLATE_PATH = "/dokka/docs/kdoc/EnumValues.kt.template"
+
+context(_: KaSession)
+internal fun hasGeneratedKDocDocumentation(symbol: KaSymbol): Boolean =
+    getDocumentationTemplatePath(symbol) != null
+
+context(_: KaSession)
+private fun getDocumentationTemplatePath(symbol: KaSymbol): String? =
+    when (symbol) {
+        is KaPropertySymbol -> if (isEnumEntriesProperty(symbol)) ENUM_ENTRIES_TEMPLATE_PATH else null
+        is KaNamedFunctionSymbol -> {
+            when {
+                isEnumValuesMethod(symbol) -> ENUM_VALUES_TEMPLATE_PATH
+                isEnumValueOfMethod(symbol) -> ENUM_VALUEOF_TEMPLATE_PATH
+                else -> null
+            }
+        }
+
+        else -> null
+    }
+
+context(_: KaSession)
+private fun isEnumSpecialMember(symbol: KaSymbol): Boolean =
+    symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED
+            && (symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS
+
+context(_: KaSession)
+private fun isEnumEntriesProperty(symbol: KaPropertySymbol): Boolean =
+    symbol.name == StandardNames.ENUM_ENTRIES && isEnumSpecialMember(symbol)
+
+context(_: KaSession)
+private fun isEnumValuesMethod(symbol: KaNamedFunctionSymbol): Boolean =
+    symbol.name == StandardNames.ENUM_VALUES && isEnumSpecialMember(symbol)
+
+context(_: KaSession)
+private fun isEnumValueOfMethod(symbol: KaNamedFunctionSymbol): Boolean =
+    symbol.name == StandardNames.ENUM_VALUE_OF && isEnumSpecialMember(symbol)
+
+context(_: KaSession)
+internal fun getGeneratedKDocDocumentationFrom(symbol: KaSymbol): DocumentationNode? {
+    val templatePath = getDocumentationTemplatePath(symbol) ?: return null
+    return loadTemplate(templatePath)
+}
+context(_: KaSession)
+internal fun getGenerateJavaDocDocumentationFrom(symbol: KaSymbol, syntheticJavaDocProvider: SyntheticElementDocumentationProvider, sourceSet: DokkaConfiguration.DokkaSourceSet): DocumentationNode? {
+    return when (symbol) {
+        is KaNamedFunctionSymbol -> {
+            when {
+                isEnumValuesMethod(symbol) -> syntheticJavaDocProvider.getDocumentationForEnumValuesMethod(sourceSet)
+                isEnumValueOfMethod(symbol) -> syntheticJavaDocProvider.getDocumentationForEnumValueOfMethod(sourceSet)
+                else -> null
+            }
+        }
+        else -> null
+    }
+}
+
+context(_: KaSession)
+private fun loadTemplate(filePath: String): DocumentationNode {
+    val kdoc = loadContent(filePath) ?: throw IllegalArgumentException("Template file not found: $filePath")
+    val externalDriProvider = { link: String ->
+        resolveKDocTextLinkToDRI(link)
+    }
+
+    val parser = MarkdownParser(externalDriProvider, filePath)
+    return parser.parse(kdoc)
+}
+
+private fun loadContent(filePath: String): String? =
+    SymbolsAnalysisPlugin::class.java.getResource(filePath)?.readText()
