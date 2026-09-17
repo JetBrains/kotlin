@@ -5,7 +5,7 @@ package kotlin
 
 abstract class RichError
 // FILE: test.kt
-class MyNonError : NonError
+class MyNonError : <!NON_ERROR_SUPERTYPE!>NonError<!>
 
 error class MyError
 error object MyErrorObject : RichError()

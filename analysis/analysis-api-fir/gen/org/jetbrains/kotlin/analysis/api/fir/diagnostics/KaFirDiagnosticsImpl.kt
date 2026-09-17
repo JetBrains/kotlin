@@ -5980,6 +5980,21 @@ internal class MultipleTypeParametersCanHoldErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MultipleTypeParametersCanHoldError
 
+internal class NonErrorSupertypeImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonErrorSupertype
+
+internal class NonErrorGetClassCallImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonErrorGetClassCall
+
+internal class ActualTypealiasToNonErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ActualTypealiasToNonError
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

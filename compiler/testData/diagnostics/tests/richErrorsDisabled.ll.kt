@@ -21,7 +21,7 @@ fun <T : <!UNSUPPORTED_FEATURE!>RichError<!>, V : <!UNSUPPORTED_FEATURE!>NonErro
 ) {
     x<!UNNECESSARY_SAFE_CALL, UNSUPPORTED_FEATURE!>|.<!>length
     <!UNSUPPORTED_FEATURE!><!UNSUPPORTED_FEATURE!>RichError<!>::class.java<!>
-    <!UNSUPPORTED_FEATURE!><!UNSUPPORTED_FEATURE!>NonError<!>::class.java<!>
+    <!UNSUPPORTED_FEATURE!><!NON_ERROR_GET_CLASS_CALL, UNSUPPORTED_FEATURE!>NonError<!>::class.java<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, objectDeclaration, safeCall */
