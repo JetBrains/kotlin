@@ -85,15 +85,15 @@ class FirCallResolver(
     fun resolveCallAndSelectCandidate(
         functionCall: FirFunctionCall,
         resolutionMode: ResolutionMode,
-        collectionLiteralContext: CollectionLiteralOuterCandidateContext? = null,
+        outerCandidateForCollectionLiteral: Candidate? = null,
     ): FirFunctionCall {
-        val isCollectionLiteralCall = collectionLiteralContext != null
+        val isCollectionLiteralCall = outerCandidateForCollectionLiteral != null
         val name = functionCall.calleeReference.name
         val result = collectCandidates(
             functionCall, name,
             origin = functionCall.origin,
             resolutionMode = resolutionMode,
-            collectionLiteralContext = collectionLiteralContext
+            outerCandidateForCollectionLiteral = outerCandidateForCollectionLiteral
         )
 
         var forceCandidates: Collection<Candidate>? = null
@@ -278,9 +278,9 @@ class FirCallResolver(
         collector: CandidateCollector? = null,
         callSite: FirElement = qualifiedAccess,
         resolutionMode: ResolutionMode,
-        collectionLiteralContext: CollectionLiteralOuterCandidateContext? = null,
+        outerCandidateForCollectionLiteral: Candidate? = null,
     ): ResolutionResult {
-        assert(collectionLiteralContext == null || forceCallKind == null) {
+        assert(outerCandidateForCollectionLiteral == null || forceCallKind == null) {
             "We only force call kind in cases we resolve incorrect variable access as though it was function call (or vice versa)," +
                     " it does not have sense for collection literal"
         }
@@ -293,7 +293,7 @@ class FirCallResolver(
 
         val callKind = when {
             forceCallKind != null -> forceCallKind
-            collectionLiteralContext != null -> CallKind.CollectionLiteral
+            outerCandidateForCollectionLiteral != null -> CallKind.CollectionLiteral
             qualifiedAccess is FirFunctionCall -> CallKind.Function
             else -> CallKind.VariableAccess
         }
@@ -312,9 +312,9 @@ class FirCallResolver(
             origin = origin,
             resolutionMode = resolutionMode,
             implicitInvokeMode = if (qualifiedAccess is FirImplicitInvokeCall) ImplicitInvokeMode.Regular else ImplicitInvokeMode.None,
-            containingCandidateForCollectionLiteral = collectionLiteralContext?.containingCandidate,
+            containingCandidateForCollectionLiteral = outerCandidateForCollectionLiteral,
         )
-        val resultCollector = if (collectionLiteralContext != null) {
+        val resultCollector = if (outerCandidateForCollectionLiteral != null) {
             // collection literals may be resolved during resolve of outer call, hence no resolve and fresh CandidateCollector instance
             val collectorForCLCall = CandidateCollector(components, components.resolutionStageRunner)
             val managerForCLCall = TowerResolveManager(collectorForCLCall)
