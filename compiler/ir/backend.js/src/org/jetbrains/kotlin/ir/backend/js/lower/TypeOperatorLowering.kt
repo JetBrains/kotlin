@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsW
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
 private val NOT_NULL_CHECK by IrStatementOriginImpl
 
@@ -53,6 +55,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     //NOTE: Should we define JS-own functions similar to current implementation?
     private val throwCCE = context.symbols.throwTypeCastException
     private val throwNPE = context.symbols.throwNullPointerException
+    private val ensureNotNull = context.symbols.jsEnsureNonNull
 
     private val eqeq = context.irBuiltIns.eqeqSymbol
     private val booleanNot = context.irBuiltIns.booleanNotSymbol
@@ -143,14 +146,23 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
                 val newStatements = mutableListOf<IrStatement>()
 
-                val argument = cacheValue(expression.argument, newStatements, declaration)
-                val check = generateTypeCheck(argument, toType)
+                val isNotNullAssertionRequired = !isSafe && expression.argument.type.isNullable() && !toType.isNullable()
+                val argument = cacheValue(
+                    expression.argument.butIf(isNotNullAssertionRequired, ::buildEnsureNotNull),
+                    newStatements,
+                    declaration
+                )
+                val check = generateTypeCheck(argument, toType, isNotNullAssertionRequired)
 
-                if (check.isTrueConst()) return expression.argument
+                val isConditionRequired = !check.isTrueConst()
+                if (!isConditionRequired && !isNotNullAssertionRequired) return expression.argument
 
-                val castedValue = expression.wrapWithUnsafeCast(argument())
-
-                newStatements += JsIrBuilder.buildIfElse(expression.type, check, castedValue, failResult)
+                newStatements += if (isConditionRequired) {
+                    val castedValue = expression.wrapWithUnsafeCast(argument())
+                    JsIrBuilder.buildIfElse(expression.type, check, castedValue, failResult)
+                } else {
+                    argument()
+                }
 
                 return expression.run {
                     IrCompositeImpl(startOffset, endOffset, expression.type, null, newStatements)
@@ -159,7 +171,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
             // Note: native `instanceOf` is not used which is important because of null-behaviour
             private fun advancedCheckRequired(type: IrType) = type.isInterface() ||
-                    type.isTypeParameter() && type.superTypes().any { it.isInterface() } ||
+                    type.isTypeParameter() ||
                     type.isArray() ||
                     type.isPrimitiveArray() ||
                     isTypeOfCheckingType(type)
@@ -204,6 +216,13 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 arguments[1] = litNull
             }
 
+            private fun buildEnsureNotNull(value: IrExpression): IrExpression {
+                val notNullType = value.type.makeNotNull()
+                return JsIrBuilder.buildCall(ensureNotNull, notNullType, listOf(notNullType)).apply {
+                    arguments[0] = value
+                }
+            }
+
             private fun cacheValue(
                 value: IrExpression,
                 newStatements: MutableList<IrStatement>,
@@ -235,10 +254,14 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
              * ```
              * Note: advanced check is performed when casting to primitive types, array types, function types, or interfaces.
              */
-            private fun generateTypeCheck(argument: () -> IrExpression, toType: IrType): IrExpression {
+            private fun generateTypeCheck(
+                argument: () -> IrExpression,
+                toType: IrType,
+                isDefinitelyNotNull: Boolean = false
+            ): IrExpression {
                 val toNotNullable = toType.makeNotNull()
                 val argumentInstance = argument()
-                val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable)
+                val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable, isDefinitelyNotNull)
                 val isFromNullable = argumentInstance.type.isNullable()
                 val isToNullable = toType.isNullable()
                 val isNativeCheck = !advancedCheckRequired(toNotNullable)
@@ -246,27 +269,32 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 return when {
                     !isFromNullable -> instanceCheck // ! -> *
                     isToNullable -> if (instanceCheck.isNotNullCheck() || instanceCheck.isTrueConst()) {
-                        litTrue
+                        instanceCheck
                     } else {
                         calculator.oror(nullCheck(argument()), instanceCheck) // * -> ?
                     }
-                    else -> if (isNativeCheck) instanceCheck else calculator.run {
-                        andand(
-                            not(nullCheck(argument())),
-                            instanceCheck
-                        )
-                    } // ? -> !
+                    else ->
+                        if (isNativeCheck || isDefinitelyNotNull) instanceCheck else calculator.run {
+                            andand(
+                                not(nullCheck(argument())),
+                                instanceCheck
+                            )
+                        } // ? -> !
                 }
             }
 
             private fun IrStatement.isNotNullCheck(): Boolean =
                 this is IrMemberAccessExpression<*> && origin == NOT_NULL_CHECK
 
-            private fun generateTypeCheckNonNull(argument: IrExpression, toType: IrType): IrExpression {
+            private fun generateTypeCheckNonNull(
+                argument: IrExpression,
+                toType: IrType,
+                isDefinitelyNotNull: Boolean
+            ): IrExpression {
                 assert(!toType.isMarkedNullable())
                 return when {
                     toType is IrDynamicType -> argument
-                    toType.isAny() -> generateIsObjectCheck(argument)
+                    toType.isAny() -> generateIsObjectCheck(argument, isDefinitelyNotNull)
                     toType.isNothing() -> JsIrBuilder.buildComposite(context.irBuiltIns.booleanType, listOf(argument, litFalse))
                     toType.isSuspendFunction() -> generateSuspendFunctionCheck(argument, toType)
                     isTypeOfCheckingType(toType) -> generateTypeOfCheck(argument, toType)
@@ -276,10 +304,10 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     toType.isCharSequence() -> generateCharSequenceCheck(argument)
                     toType.isArray() -> generateGenericArrayCheck(argument)
                     toType.isPrimitiveArray() -> generatePrimitiveArrayTypeCheck(argument, toType)
-                    toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType)
+                    toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType, isDefinitelyNotNull)
                     toType.isInterface() -> {
                         if ((toType.classifierOrFail.owner as IrClass).isEffectivelyExternal()) {
-                            generateIsObjectCheck(argument)
+                            generateIsObjectCheck(argument, isDefinitelyNotNull)
                         } else {
                             generateInterfaceCheck(argument, toType)
                         }
@@ -289,12 +317,17 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 }
             }
 
-            private fun generateIsObjectCheck(argument: IrExpression) = JsIrBuilder.buildCall(booleanNot).apply {
-                dispatchReceiver = nullCheck(argument)
-                origin = NOT_NULL_CHECK
-            }
+            private fun generateIsObjectCheck(argument: IrExpression, isDefinitelyNotNull: Boolean) =
+                if (isDefinitelyNotNull) litTrue else JsIrBuilder.buildCall(booleanNot).apply {
+                    dispatchReceiver = nullCheck(argument)
+                    origin = NOT_NULL_CHECK
+                }
 
-            private fun generateTypeCheckWithTypeParameter(argument: IrExpression, toType: IrType): IrExpression {
+            private fun generateTypeCheckWithTypeParameter(
+                argument: IrExpression,
+                toType: IrType,
+                isDefinitelyNotNull: Boolean
+            ): IrExpression {
                 val typeParameterSymbol =
                     (toType.classifierOrNull as? IrTypeParameterSymbol)
                         ?: compilationException(
@@ -311,7 +344,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     .filter { !it.type.isNullableAny() }
                     .fold<IrType, IrExpression?>(null) { r, t ->
                         val copy = argument.shallowCopyOrNull() ?: argument.deepCopyWithSymbols()
-                        val check = generateTypeCheckNonNull(copy, t.makeNotNull())
+                        val check = generateTypeCheckNonNull(copy, t.makeNotNull(), isDefinitelyNotNull)
 
                         if (r == null) {
                             check

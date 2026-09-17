@@ -74,6 +74,6 @@ function box() {
     // Inline function 'inlineFunction' call
   }
   sep('End');
-  var tmp_5 = OK;
-  return (!(tmp_5 == null) ? typeof tmp_5 === 'string' : false) ? tmp_5 : THROW_CCE();
+  var tmp_5 = ensureNotNull(OK);
+  return typeof tmp_5 === 'string' ? tmp_5 : THROW_CCE();
 }
