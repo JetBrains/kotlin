@@ -205,15 +205,6 @@ val AbstractTestTask.smokeTestConfig: Property<SmokeTestConfig> by extensionProp
 }
 
 /**
- * Provides whether this test task selects a subset of tests rather than all tests.
- *
- * ### Extra: Smoke selection
- * This returns `true` when the task uses [TestFederationMode.Smoke]. See `repo/TEST-FEDERATION.md` for details.
- */
-val AbstractTestTask.isSmokeTestMode: Provider<Boolean> get() = testFederationMode.map { it == TestFederationMode.Smoke }
-
-
-/**
  * Provides whether nightly tests are enabled for the current build.
  *
  * The value is `true` for nightly aggregates and `false` for non-nightly remote builds, such as master-based runs, regular aggregates, and
