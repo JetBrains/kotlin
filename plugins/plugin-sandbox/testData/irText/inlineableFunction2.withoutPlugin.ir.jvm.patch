@@ -1,5 +1,5 @@
 --- a/inlineableFunction2.withoutPlugin.ir.txt
-+++ b/inlineableFunction2.withoutPlugin.ir.jvm_ir.txt
++++ b/inlineableFunction2.withoutPlugin.ir.jvm.txt
 @@ -42,7 +42,7 @@
              annotations:
                MyInlineable
