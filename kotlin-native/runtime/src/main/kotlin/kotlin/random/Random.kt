@@ -9,6 +9,8 @@ package kotlin.random
 
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.native.internal.GCUnsafeCall
+import kotlin.random.NativeRandom.seed
 import kotlin.system.getTimeNanos
 
 /**
@@ -37,6 +39,24 @@ internal object NativeRandom : Random() {
     }
 
     override fun nextInt(): Int = nextBits(32)
+}
+
+@GCUnsafeCall("Kotlin_random_seedRandomIntTL")
+external private fun initialSeed(seed: Long): Unit
+
+@GCUnsafeCall("Kotlin_random_nextRandomLongTL")
+external private fun nextRandomLong(): Long
+
+public object NativeNativeRandom : Random() {
+    init {
+        @Suppress("DEPRECATION_ERROR")
+        initialSeed(getTimeNanos())
+    }
+
+    override fun nextBits(bitCount: Int): Int {
+        val next = nextRandomLong()
+        return (next ushr (48 - bitCount)).toInt()
+    }
 }
 
 internal actual fun defaultPlatformRandom(): Random = NativeRandom
