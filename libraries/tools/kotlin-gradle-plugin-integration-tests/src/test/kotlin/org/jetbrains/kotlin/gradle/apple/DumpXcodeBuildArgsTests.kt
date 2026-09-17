@@ -543,6 +543,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     "dumpXcodebuildArgsIphoneos",
                     buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.LIFECYCLE),
                 ) {
+                    // This is successful xcodebuild print, not Gradle
                     assertOutputDoesNotContain("BUILD SUCCEEDED")
                 }
 
@@ -552,6 +553,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                 build(
                     "dumpXcodebuildArgsIphoneos",
                 ) {
+                    // This is successful xcodebuild print, not Gradle
                     assertOutputContains("BUILD SUCCEEDED")
                 }
             }
