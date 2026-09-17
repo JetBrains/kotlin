@@ -108,7 +108,9 @@ projectTests {
         This test is still using junit3 style tests, neither 'Category' nor 'Tag' mechanics are supported.
         We just run all tests as smoke tests.
         */
-        smokeTestConfig = SmokeTestConfig.RunAllTests
+        testFederation {
+            smokeTests { includeAll() }
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.TestGeneratorForTestsIntegrationTestsKt")
