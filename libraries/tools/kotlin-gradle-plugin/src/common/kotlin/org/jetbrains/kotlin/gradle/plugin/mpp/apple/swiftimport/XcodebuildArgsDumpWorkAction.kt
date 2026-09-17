@@ -142,6 +142,7 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
             clangArgsDump = clangArgsDump,
             ldArgsDumpScript = ldArgsDumpScript,
             ldArgsDump = ldArgsDump,
+            dumpedXcodeBuildArgsDir = dumpedXcodeBuildArgsDir
         )
     }
 
@@ -151,6 +152,7 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
         clangArgsDump: File,
         ldArgsDumpScript: File,
         ldArgsDump: File,
+        dumpedXcodeBuildArgsDir: File,
     ) {
         val targetArchitectures = architectures.map { it.xcodebuildArch }
         val projectRoot = parameters.syntheticImportProjectRoot.get()
@@ -173,8 +175,8 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
 
         // KT-89285: xcodebuild prints every clang/ld invocation, several megabytes per run. Hide it unless
         // --info is set, and show all of it when xcodebuild fails.
-        val stdout = XcodebuildFileOutputStream(logger, clangArgsDump.parentFile.resolve("xcodebuild-stdout.log"))
-        val stderr = XcodebuildFileOutputStream(logger, clangArgsDump.parentFile.resolve("xcodebuild-stderr.log"))
+        val stdout = XcodebuildFileOutputStream(logger, dumpedXcodeBuildArgsDir.resolve("xcodebuild-stdout.log"))
+        val stderr = XcodebuildFileOutputStream(logger, dumpedXcodeBuildArgsDir.resolve("xcodebuild-stderr.log"))
 
         val result = execOps.exec { exec ->
             exec.workingDir(projectRoot)
