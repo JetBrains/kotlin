@@ -4,20 +4,14 @@ plugins {
     kotlin("jvm")
 }
 
-val firCompilerModules: Array<String> = CompilerModules.firCompilerModules
+val firCommonCompilerModules: Array<String> = CompilerModules.firCommonCompilerModules
 val jvmCompilerModules: Array<String> = CompilerModules.jvmCompilerModules
-
-val excludedFirModules = listOf(
-    ":compiler:fir:raw-fir:mp-parsing2fir",
-    ":compiler:fir:raw-fir:light-tree2fir",
-    ":compiler:multiplatform-parsing",
-)
 
 val additionalK1Modules = listOf(
     ":core:deserialization",
     ":core:descriptors.jvm",
 )
 
-val projects = firCompilerModules.asList() + jvmCompilerModules + additionalK1Modules - excludedFirModules
+val projects = firCommonCompilerModules.asList() + jvmCompilerModules + additionalK1Modules
 
 publishJarsForIde(projects)
