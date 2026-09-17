@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.DAEMON_RUN_DIR_PATH
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.JVM_ARGUMENTS
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_COUNT_LIMIT
@@ -137,6 +138,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             CompilationResultCategory.BUILD_METRICS.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] },
             // Daemon would report log lines only if debug logging is enabled or metrics are requested
             CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] || isDebugLoggingEnabled },
+            CompilationResultCategory.IC_EVENT.code.takeIf { this[IC_EVENT_COLLECTOR] != null },
         ).toTypedArray()
 
         return getIcOptionsOrNull(reportCategories, reportSeverity, requestedCompilationResults, arguments)
@@ -228,7 +230,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 daemonCompileOptions,
                 BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
                 DaemonCompilationResults(
-                    loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
+                    loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter, this[IC_EVENT_COLLECTOR]
                 ),
                 compilationId
             ).get()
@@ -348,6 +350,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     companion object {
         val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", null)
+
+        val IC_EVENT_COLLECTOR: Option<IcEventCollector?> = Option("IC_EVENT_TRACKER", null)
 
         /*
         * Tracks imports during compilation.

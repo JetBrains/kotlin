@@ -83,6 +83,12 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         DoNothingBuildMetricsReporter
     }
 
+    private val icEventCollector = if (true) { // TODO: add Gradle property to toggle event collection
+        IcEventCollectorImpl()
+    } else {
+        null
+    }
+
     // the files are backed up in the task action before any changes to the outputs
     private fun initializeBackup(log: KotlinLogger): TaskOutputsBackup? = if (parameters.snapshotsDir.isPresent) {
         TaskOutputsBackup(
@@ -175,7 +181,8 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         val compilerMessageRenderer = ProblemsApiCompilerMessageRenderer(
             suppressLogForProblemsApi = parameters.warningModeIsAll.getOrElse(false),
         )
-        val runner = createRunner(workArguments.btaToolchain ?: error("btaToolchain is not set for task ${workArguments.taskPath}"), workArguments, metrics)
+//        val icEventCollector = IcEventCollectorImpl()
+        val runner = createRunner(workArguments.btaToolchain ?: error("btaToolchain is not set for task ${workArguments.taskPath}"), workArguments, metrics, icEventCollector)
         val backup = initializeBackup(log)
         val buildSession = obtainBuildSession()
 
@@ -241,8 +248,12 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     .reportToIde(it, workArguments.kotlinPluginVersion, logger = printingLogger)
             }
             metrics.endMeasure(RUN_COMPILATION_IN_WORKER)
-            val result =
-                TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo, icLogLines = printingLogger.capturedLines)
+            val result = TaskExecutionResult(
+                buildMetrics = metrics.getMetrics(),
+                taskInfo = taskInfo,
+                icLogLines = printingLogger.capturedLines,
+                icEvents = icEventCollector?.collectedEvents ?: emptyList(),
+            )
             TaskExecutionResults[workArguments.taskPath] = result
             backup?.deleteSnapshot()
 
@@ -263,6 +274,7 @@ private fun createRunner(
     toolchain: BtaToolchain,
     workArguments: GradleKotlinCompilerWorkArguments,
     metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    icEventCollector: IcEventCollectorImpl?
 ): BtaCompilerRunner<*> {
     val icEnv = workArguments.incrementalCompilationEnvironment
     val outputDirs = workArguments.outputFiles.map(File::toPath)
@@ -281,6 +293,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            icEventCollector,
         )
         BtaToolchain.JS_COMPILATION -> BtaCompilerRunner(
             metrics,
@@ -291,6 +304,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            icEventCollector,
         )
         BtaToolchain.JS_LINKING -> BtaCompilerRunner(
             metrics,
@@ -299,6 +313,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            icEventCollector,
         )
         BtaToolchain.WASM_COMPILATION -> BtaCompilerRunner(
             metrics,
@@ -309,6 +324,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            icEventCollector,
         )
         BtaToolchain.WASM_LINKING -> BtaCompilerRunner(
             metrics,
@@ -317,6 +333,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            icEventCollector,
         )
         BtaToolchain.METADATA -> BtaCompilerRunner(
             metrics,
@@ -325,6 +342,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            icEventCollector,
         )
     }
 }

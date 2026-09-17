@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.report.data
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 
 /** Data for a build operation (e.g., task or transform). */
 interface BuildOperationRecord {
@@ -20,4 +21,5 @@ interface BuildOperationRecord {
     val didWork: Boolean
     val skipMessage: String?
     val icLogLines: List<String>
+    val icEvents: List<IcEvent>
 }

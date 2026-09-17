@@ -315,6 +315,7 @@ internal object CompilationServiceImpl : CompilationService {
                 loggerAdapter.kotlinLogger,
                 compilationConfiguration.aggregatedIcConfiguration?.options?.rootProjectDir,
                 DoNothingBuildMetricsReporter,
+                null,   // It seems that this pipeline is deprecated (non-BTA), so reporting logic shouldn't be needed here
             )
         ).get()
 

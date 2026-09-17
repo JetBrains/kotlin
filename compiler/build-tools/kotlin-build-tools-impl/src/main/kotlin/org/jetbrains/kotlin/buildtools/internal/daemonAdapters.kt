@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.Serializable
@@ -81,7 +83,8 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
 internal class DaemonCompilationResults(
     private val kotlinLogger: KotlinLogger,
     private val rootProjectDir: File?,
-    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>
+    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    private val icEventCollector: IcEventCollector?,
 ) : CompilationResults,
     UnicastRemoteObject(
         SOCKET_ANY_FREE_PORT,
@@ -116,6 +119,10 @@ internal class DaemonCompilationResults(
                     kotlinLogger.debug(line)
                 }
             }
+            CompilationResultCategory.IC_EVENT.code -> @Suppress("UNCHECKED_CAST") (value as? List<IcEvent>)?.let {
+                icEventCollector?.collectEvents(it)
+            }
+
             else -> kotlinLogger.debug("Result category=$compilationResultCategory value=$value")
         }
     }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
+import org.jetbrains.kotlin.build.report.events.IcEventImpl
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
 import org.jetbrains.kotlin.build.report.warn
@@ -152,11 +153,30 @@ abstract class IncrementalCompilerRunner<
         reporter.debug {
             "Source changes: $changedFiles"
         }
+
+        val known = changedFiles as? DeterminableFiles.Known
+
+        reporter.reportIcEvent(
+            IcEventImpl.SourceChanges(
+                changedFiles.javaClass.simpleName,
+                known?.modified?.map { it.path }.orEmpty(),
+                known?.removed?.map { it.path }.orEmpty(),
+            )
+        )
+
         if (configurationInputs != null) {
             reporter.debug {
                 "Configuration inputs: $configurationInputs"
             }
         }
+
+        reporter.reportIcEvent(
+            IcEventImpl.ConfigInputs(
+                configurationInputs?.icConfigurationInputsSnapshot.orEmpty(),
+                configurationInputs?.compilerArgumentsInputsSnapshot.orEmpty(),
+            )
+        )
+
         val hashedConfigurationInputs = configurationInputs?.computeHashedConfigurationInputs()
         val trackChangedFiles = changedFiles is DeterminableFiles.ToBeComputed
         val result = when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector, hashedConfigurationInputs)) {
@@ -345,6 +365,12 @@ abstract class IncrementalCompilerRunner<
             } ?: mainOutputDirs
 
             reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
+
+            reporter.reportIcEvent(
+                IcEventImpl.CleaningOutputDirs(
+                    outputDirsToClean.map { it.path }.toList(),
+                )
+            )
             cleanOrCreateDirectories(outputDirsToClean)
         }
         val icContext = createIncrementalCompilationContext(

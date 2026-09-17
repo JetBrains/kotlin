@@ -30,6 +30,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
     compileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
+    compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
 
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(platform(libs.junit.bom))

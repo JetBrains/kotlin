@@ -11,7 +11,7 @@ import java.io.File
 import java.io.Serializable
 
 data class ReportingSettings(
-    val buildReportOutputs: List<BuildReportType> = emptyList(),
+    val buildReportOutputs: List<BuildReportType> = emptyList(), // Need to ask how I add a new option for Ic Event Logging
     val buildReportMode: BuildReportMode = BuildReportMode.NONE,
     val buildReportLabel: String? = null,
     val fileReportSettings: FileReportSettings? = null,

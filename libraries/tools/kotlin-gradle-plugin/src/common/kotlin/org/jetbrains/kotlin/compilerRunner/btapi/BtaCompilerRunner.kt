@@ -20,6 +20,7 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
     private val daemonJvmArgs: List<String>,
     private val compilerArgumentsLogLevel: JvmCompilationOperation.CompilerArgumentsLogLevel,
     private val generateCompilerRefIndex: Boolean,
+    private val icEventCollector: IcEventCollectorImpl?
 ) {
 
     fun performCompilation(
@@ -58,6 +59,8 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
     ) {
         compilationOperationBuilder[BaseCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL] = compilerArgumentsLogLevel
         compilationOperationBuilder[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER] = compilerMessageRenderer
+        compilationOperationBuilder[BaseCompilationOperation.IC_EVENT_COLLECTOR] = icEventCollector
+
         if (metrics is BuildMetricsReporterImpl) {
             @Suppress("DEPRECATION_ERROR")
             compilationOperationBuilder[BuildOperation.Companion.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = true

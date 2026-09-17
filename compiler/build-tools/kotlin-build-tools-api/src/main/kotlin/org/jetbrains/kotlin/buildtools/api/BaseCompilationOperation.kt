@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 
 @ExperimentalBuildToolsApi
 public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
@@ -74,6 +75,12 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
          */
         @JvmField
         public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", KotlinReleaseVersion(2, 3, 0))
+
+        /**
+         * Adds a collector that allows BTA-impl to pass events to the Build Tool consumer.
+         */
+        @JvmField
+        public val IC_EVENT_COLLECTOR: Option<IcEventCollector?> = Option("IC_EVENT_TRACKER", KotlinReleaseVersion(2, 5, 0))
 
         /**
          * Controls at which logging level to display the command line arguments passed to the compiler.
