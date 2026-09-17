@@ -131,8 +131,17 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
 
     @Test
     fun `copy metadataBinary`() {
+        copyMetadataBinaryImpl(null)
+    }
+    @Test
+    fun `copy metadataBinary with relative path`() {
+        copyMetadataBinaryImpl("metadata")
+    }
+
+    private fun copyMetadataBinaryImpl(relativePath: String?) {
         /* Setup Artifact content */
-        val primaryArtifactContent = newTempDirectory().toFile()
+        val artifactRoot = newTempDirectory().toFile()
+        val primaryArtifactContent = if (relativePath == null) artifactRoot else artifactRoot.resolve(relativePath)
 
         primaryArtifactContent.resolve("sourceSetA/$KLIB_MANIFEST_PATH")
             .withParentDirectoriesCreated()
@@ -152,7 +161,7 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
 
         /* Create metadata jar */
         val primaryArtifactFile = newTempFile("metadata.jar").toFile()
-        zipTo(primaryArtifactFile, primaryArtifactContent)
+        zipTo(primaryArtifactFile, artifactRoot)
 
         val metadataArtifact = CompositeMetadataArtifactImpl(
             moduleDependencyIdentifier = ModuleDependencyIdentifier("test-group", "test-module"),
@@ -165,7 +174,8 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
                 )
             ),
             primaryArtifactFile = primaryArtifactFile,
-            hostSpecificArtifactFilesBySourceSetName = emptyMap()
+            hostSpecificArtifactFilesBySourceSetName = emptyMap(),
+            archiveRelativePath = relativePath
         )
 
         metadataArtifact.read { artifactContent ->
@@ -208,8 +218,18 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
 
     @Test
     fun `copy cinteropMetadataBinaries`() {
+        copyCinteropMetadataBinariesImpl(null)
+    }
+
+    @Test
+    fun `copy cinteropMetadataBinaries with relative path`() {
+        copyCinteropMetadataBinariesImpl("metadata")
+    }
+
+    private fun copyCinteropMetadataBinariesImpl(relativePath: String?) {
         /* Setup Artifact content */
-        val primaryArtifactContent = newTempDirectory().toFile()
+        val artifactRoot = newTempDirectory().toFile()
+        val primaryArtifactContent = if (relativePath == null) artifactRoot else artifactRoot.resolve(relativePath)
 
         primaryArtifactContent.resolve("sourceSetA-cinterop/interopA0/$KLIB_MANIFEST_PATH")
             .withParentDirectoriesCreated()
@@ -229,7 +249,7 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
 
         /* Create metadata jar */
         val primaryArtifactFile = newTempFile("metadata.jar").toFile()
-        zipTo(primaryArtifactFile, primaryArtifactContent)
+        zipTo(primaryArtifactFile, artifactRoot)
 
         val metadataArtifact = CompositeMetadataArtifactImpl(
             moduleDependencyIdentifier = ModuleDependencyIdentifier("test-group", "test-module"),
@@ -241,7 +261,8 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
                 )
             ),
             primaryArtifactFile = primaryArtifactFile,
-            hostSpecificArtifactFilesBySourceSetName = emptyMap()
+            hostSpecificArtifactFilesBySourceSetName = emptyMap(),
+            archiveRelativePath = relativePath
         )
 
         metadataArtifact.read { artifactContent ->
