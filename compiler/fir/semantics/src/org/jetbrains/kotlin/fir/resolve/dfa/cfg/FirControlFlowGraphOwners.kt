@@ -9,7 +9,13 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 
 /**
  * Whether this declaration, as a member of a container, contributes its own graph to the container graph.
@@ -89,16 +95,31 @@ val FirControlFlowGraphOwner.isUsedInControlFlowGraphBuilderForScript: Boolean
     }
 
 /**
- * Whether this is a container which always gets a graph of its own, so that a missing graph means it is not resolved yet.
+ * Returns `true` for a [FirControlFlowGraphOwner] which is used by the [container] [FirBasedSymbol].
  *
- * A missing graph is otherwise ambiguous. An owner which never gets one keeps its content in the graph being traversed – a local
- * property is such an owner, it is a statement of the container graph and gets no graph of its own even with an initializer, so
- * the traversal has to descend into it. A container keeps its content in its own graph instead, and descending into an unresolved
- * one would collect properties the traversed graph knows nothing about. In the Analysis API a container is analyzed without its
- * nested declarations being resolved, so an unresolved nested container is reachable there.
+ * This questions can also be answered by [ControlFlowGraph.isSubGraph], but that requires the CFG to be built.
+ * In the context of Analysis API, it is not guaranteed that all children elements will be fully resolved.
+ * So for a [FirControlFlowGraphOwner], properties of the owned graph cannot be used to determine if it is used,
+ * as the graph may be `null` because the element is unresolved.
  */
-val FirElement.isContainerWithOwnGraph: Boolean
-    get() = when (this) {
-        is FirFile, is FirScript, is FirClass -> true
-        else -> false
+fun FirControlFlowGraphOwner.isUsedInControlFlowGraph(container: FirBasedSymbol<*>): Boolean {
+    return when (container) {
+        is FirFileSymbol -> isUsedInControlFlowGraphBuilderForFile
+        is FirScriptSymbol -> isUsedInControlFlowGraphBuilderForScript
+        is FirClassSymbol<*> -> container.isLocal || isUsedInControlFlowGraphBuilderForClassOrStatic
+        is FirPropertySymbol -> container is FirLocalPropertySymbol || this !is FirPropertyAccessor
+        else -> true
     }
+}
+
+/**
+ * Returns `true` for a [FirControlFlowGraphOwner] which is used by the [container] [ControlFlowGraph].
+ *
+ * This questions can also be answered by [ControlFlowGraph.isSubGraph], but that requires the CFG to be built.
+ * In the context of Analysis API, it is not guaranteed that all children elements will be fully resolved.
+ * So for a [FirControlFlowGraphOwner], properties of the owned graph cannot be used to determine if it is used,
+ * as the graph may be `null` because the element is unresolved.
+ */
+fun FirControlFlowGraphOwner.isUsedInControlFlowGraph(container: ControlFlowGraph): Boolean {
+    return isUsedInControlFlowGraph(container.declaration?.symbol ?: return true)
+}

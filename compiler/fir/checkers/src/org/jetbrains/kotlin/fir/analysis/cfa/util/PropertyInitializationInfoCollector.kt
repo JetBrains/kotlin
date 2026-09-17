@@ -32,8 +32,7 @@ class PropertyInitializationInfoData(
 ) : VariableInitializationInfoData() {
     private val data by lazy(LazyThreadSafetyMode.NONE) {
         val declaredVariablesInLoop = setMultimapOf<FirStatement, FirVariableSymbol<*>>().apply {
-            // First element we visit is the graph declaration itself, and it is definitely an allowed (sub)graph.
-            val collectorData = PropertyDeclarationCollector.Data(repeatable = null, allowedSubgraphs = setOf(graph))
+            val collectorData = PropertyDeclarationCollector.Data(repeatable = null, container = graph)
             graph.declaration?.accept(PropertyDeclarationCollector(this), collectorData)
         }
         graph.traverseToFixedPoint(PropertyInitializationInfoCollector(properties, receiver, declaredVariablesInLoop))
@@ -151,20 +150,16 @@ class PropertyInitializationInfoCollector(
 private class PropertyDeclarationCollector(
     val declaredVariablesInLoop: SetMultimap<FirStatement, FirVariableSymbol<*>>,
 ) : FirVisitor<Unit, PropertyDeclarationCollector.Data>() {
-    data class Data(val repeatable: FirStatement? = null, val allowedSubgraphs: Set<ControlFlowGraph>)
+    data class Data(val repeatable: FirStatement? = null, val container: ControlFlowGraph)
 
     override fun visitElement(element: FirElement, data: Data) {
         when (element) {
             is FirControlFlowGraphOwner -> {
-                // Only traverse elements that can have a graph when...
-                // 1. They do not have a graph and never will,
-                // 2. Or their graph is in the allowed set of sub-graphs.
-                val elementGraph = element.controlFlowGraphReference?.controlFlowGraph
-                when {
-                    elementGraph != null -> if (elementGraph in data.allowedSubgraphs) {
-                        element.acceptChildren(this, data.copy(allowedSubgraphs = elementGraph.subGraphs.toSet()))
-                    }
-                    !element.isContainerWithOwnGraph -> element.acceptChildren(this, data)
+                // When visiting an element which can have a CFG, check it is used by the containing graph before recursing.
+                // Recusing to a CFG-independent element is a navigation violation in the Analysis API.
+                if (element.isUsedInControlFlowGraph(container = data.container)) {
+                    val container = element.controlFlowGraphReference?.controlFlowGraph ?: data.container
+                    element.acceptChildren(this, data.copy(container = container))
                 }
             }
             else -> element.acceptChildren(this, data)
