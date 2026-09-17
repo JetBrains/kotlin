@@ -62,6 +62,7 @@ data class PublishedProject(
         val pom: File get() = path.resolve("${artifactsPrefix}.pom")
         val uklib: File get() = path.resolve("${artifactsPrefix}.uklib")
         val jar: File get() = path.resolve("${artifactsPrefix}.jar")
+        val sourcesJar: File get() = path.resolve("${artifactsPrefix}-sources.jar")
         val psmJar: File get() = path.resolve("${artifactsPrefix}-psm.jar")
         val gradleMetadata: File get() = path.resolve("${artifactsPrefix}.module")
         val swiftPmMetadata: File get() = path.resolve("${artifactsPrefix}-swiftpm-metadata.json")
