@@ -303,6 +303,10 @@ open annotation class kotlin/ParameterName : kotlin/Annotation { // kotlin/Param
         final fun <get-name>(): kotlin/String // kotlin/ParameterName.name.<get-name>|<get-name>(){}[0]
 }
 
+open annotation class kotlin/PlatformInline : kotlin/Annotation { // kotlin/PlatformInline|null[0]
+    constructor <init>() // kotlin/PlatformInline.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin/PublishedApi : kotlin/Annotation { // kotlin/PublishedApi|null[0]
     constructor <init>() // kotlin/PublishedApi.<init>|<init>(){}[0]
 }
@@ -359,6 +363,10 @@ open annotation class kotlin/Suppress : kotlin/Annotation { // kotlin/Suppress|n
 
 open annotation class kotlin/UnsafeVariance : kotlin/Annotation { // kotlin/UnsafeVariance|null[0]
     constructor <init>() // kotlin/UnsafeVariance.<init>|<init>(){}[0]
+}
+
+open annotation class kotlin/WillBecomeValue : kotlin/Annotation { // kotlin/WillBecomeValue|null[0]
+    constructor <init>() // kotlin/WillBecomeValue.<init>|<init>(){}[0]
 }
 
 final enum class kotlin.annotation/AnnotationRetention : kotlin/Enum<kotlin.annotation/AnnotationRetention> { // kotlin.annotation/AnnotationRetention|null[0]
@@ -14230,21 +14238,11 @@ open annotation class kotlin.native/ShouldRefineInSwift : kotlin/Annotation { //
 }
 
 // Targets: [js, wasmJs, wasmWasi]
-open annotation class kotlin/PlatformInline : kotlin/Annotation { // kotlin/PlatformInline|null[0]
-    constructor <init>() // kotlin/PlatformInline.<init>|<init>(){}[0]
-}
-
-// Targets: [js, wasmJs, wasmWasi]
 open annotation class kotlin/Throws : kotlin/Annotation { // kotlin/Throws|null[1]
     constructor <init>(kotlin/Array<out kotlin.reflect/KClass<out kotlin/Throwable>>...) // kotlin/Throws.<init>|<init>(kotlin.Array<out|kotlin.reflect.KClass<out|kotlin.Throwable>>...){}[1]
 
     final val exceptionClasses // kotlin/Throws.exceptionClasses|{}exceptionClasses[1]
         final fun <get-exceptionClasses>(): kotlin/Array<out kotlin.reflect/KClass<out kotlin/Throwable>> // kotlin/Throws.exceptionClasses.<get-exceptionClasses>|<get-exceptionClasses>(){}[1]
-}
-
-// Targets: [js, wasmJs, wasmWasi]
-open annotation class kotlin/WillBecomeValue : kotlin/Annotation { // kotlin/WillBecomeValue|null[0]
-    constructor <init>() // kotlin/WillBecomeValue.<init>|<init>(){}[0]
 }
 
 // Targets: [js, wasmJs, wasmWasi]
