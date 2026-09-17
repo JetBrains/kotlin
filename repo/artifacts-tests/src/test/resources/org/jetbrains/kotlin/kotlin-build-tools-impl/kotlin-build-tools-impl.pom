@@ -67,12 +67,6 @@
       <artifactId>typescript-export-standalone-embeddable</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 </project>
