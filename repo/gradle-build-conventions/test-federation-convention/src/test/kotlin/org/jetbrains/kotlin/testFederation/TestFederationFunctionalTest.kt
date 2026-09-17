@@ -193,6 +193,48 @@ class TestFederationFunctionalTest {
         }
     }
 
+    @Test
+    fun `test - explicit clusters override selects requested subsets`() {
+        run {
+            val result = runTestBuild(clustersOverride = "SmokeTests")
+            assertEquals(setOf(TestResult("PseudoTest", "smoke test")), result.executedTests)
+        }
+
+        run {
+            val result = runTestBuild(changed = arrayOf(Domain.Wasm), clustersOverride = "SmokeTests,ContractTestsForWasm")
+            assertEquals(
+                setOf(
+                    TestResult("PseudoTest", "smoke test"),
+                    TestResult("PseudoTest", "wasm contract test"),
+                ),
+                result.executedTests
+            )
+        }
+
+        run {
+            val result = runTestBuild(mode = TestFederationMode.Full, clustersOverride = "AllTests")
+            assertEquals(allTests, result.executedTests)
+        }
+    }
+
+    @Test
+    fun `test - explicit clusters override works without enabling test federation`() {
+        val result = runTestBuild(clustersOverride = "SmokeTests", testFederationEnabled = false)
+        assertEquals(setOf(TestResult("PseudoTest", "smoke test")), result.executedTests)
+    }
+
+    @Test
+    fun `test - explicit clusters override via environment variable`() {
+        val result = runTestBuild(clustersOverrideEnv = "SmokeTests", testFederationEnabled = false)
+        assertEquals(setOf(TestResult("PseudoTest", "smoke test")), result.executedTests)
+    }
+
+    @Test
+    fun `test - explicit clusters override does not override alwaysRunAllTests`() {
+        val result = runTestBuild(clustersOverride = "SmokeTests", smokeTestConfig = "RunAllTests")
+        assertEquals(allTests, result.executedTests)
+    }
+
     /**
      * We will check if  running a test with test federation (full mode) produces a cache entry, which can be used
      * by running the same test task with test federation disabled.
@@ -611,6 +653,8 @@ private fun runTestBuild(
     nightly: Boolean? = null,
     rerun: Boolean = true,
     testsFilter: String? = "org.jetbrains.kotlin.testFederation.PseudoTest",
+    clustersOverride: String? = null,
+    clustersOverrideEnv: String? = null,
     additionalCliArgs: List<String> = emptyList(),
 ): TestBuildResult {
     val environment = defaultEnv().toMutableMap().apply {
@@ -618,9 +662,14 @@ private fun runTestBuild(
         remove(TEST_FEDERATION_MODE_ENV_KEY)
         remove(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
         remove(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY)
+        remove(TEST_FEDERATION_CLUSTERS_ENV_KEY)
 
         if (mode != null) {
             this[TEST_FEDERATION_MODE_ENV_KEY] = mode.name
+        }
+
+        if (clustersOverrideEnv != null) {
+            this[TEST_FEDERATION_CLUSTERS_ENV_KEY] = clustersOverrideEnv
         }
 
         if (smokeTestConfig != null) {
@@ -647,6 +696,7 @@ private fun runTestBuild(
     val arguments = buildList {
         add(":repo:test-runtime:test")
         add("-P$TEST_FEDERATION_ENABLED_KEY=$testFederationEnabled")
+        if (clustersOverride != null) add("-P$TEST_FEDERATION_CLUSTERS_KEY=$clustersOverride")
         if (nightly != null) add("-Pnightly=$nightly")
         add("-Dorg.gradle.daemon.idletimeout=${5.seconds.inWholeMilliseconds}")
         if (rerun) add("--rerun")
@@ -726,6 +776,7 @@ private fun defaultEnv(): Map<String, String> {
         remove(TEST_FEDERATION_MODE_ENV_KEY)
         remove(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
         remove(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY)
+        remove(TEST_FEDERATION_CLUSTERS_ENV_KEY)
     }
 }
 

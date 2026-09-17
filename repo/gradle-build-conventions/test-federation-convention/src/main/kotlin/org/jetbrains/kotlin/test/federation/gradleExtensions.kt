@@ -95,6 +95,35 @@ val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensi
     )
 }
 
+@DelicateTestFederationApi
+val AbstractTestTask.testFederationClusters: Provider<Set<TestCluster>> by extensionProperty property@{
+    project.provider {
+        if (smokeTestConfig.get() == SmokeTestConfig.RunAllTests) {
+            return@provider setOf(TestCluster.AllTests)
+        }
+
+        project.providers.gradleProperty(TEST_FEDERATION_CLUSTERS_KEY)
+            .orElse(project.providers.environmentVariable(TEST_FEDERATION_CLUSTERS_ENV_KEY))
+            .orNull?.let { return@provider it.toTestClusters() }
+
+        if (!project.testFederationEnabled) {
+            return@provider setOf(TestCluster.AllTests)
+        }
+
+        null
+    }.orElse(
+        testFederationMode.zip(project.testFederationChangedDomains) { mode, changedDomains ->
+            when (mode) {
+                TestFederationMode.Full -> setOf(TestCluster.AllTests)
+                TestFederationMode.Smoke -> buildSet {
+                    add(TestCluster.SmokeTests)
+                    changedDomains.forEach { domain -> add(contractTestsClusterOf(domain)) }
+                }
+            }
+        }
+    )
+}
+
 /**
  * Provides changed file paths, either explicitly configured or inferred from the branch diff.
  *
