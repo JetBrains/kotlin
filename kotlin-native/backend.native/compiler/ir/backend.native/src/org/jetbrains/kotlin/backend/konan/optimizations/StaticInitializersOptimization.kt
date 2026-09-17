@@ -61,8 +61,6 @@ internal object StaticInitializersOptimization {
         val beforeCallThreadLocal = mutableMapOf<IrSimpleFunction, CustomBitSet>()
     }
 
-    private val invalidContainerId = 0
-
     private class InterproceduralAnalysis(val context: NativeBackendContext, val callGraph: CallGraph,
                                           val rootSet: Set<IrSimpleFunction>) {
         fun analyze(): AnalysisResult {
@@ -141,13 +139,14 @@ internal object StaticInitializersOptimization {
 
             val callSitesRequiringGlobalInitializerCall = mutableSetOf<IrCall>()
             val callSitesRequiringThreadLocalInitializerCall = mutableSetOf<IrCall>()
-            val callSitesNotRequiringGlobalInitializerCall = mutableSetOf<IrCall>()
-            val callSitesNotRequiringThreadLocalInitializerCall = mutableSetOf<IrCall>()
+            // Only the existence of such a call site matters when deciding whether to extract a function's initializer.
+            val functionsWithCallSitesNotRequiringGlobalInitializerCall = mutableSetOf<IrSimpleFunction>()
+            val functionsWithCallSitesNotRequiringThreadLocalInitializerCall = mutableSetOf<IrSimpleFunction>()
 
             for (node in callGraph.directEdges.values) {
                 intraproceduralAnalysis(node, initializedFiles, AnalysisGoal.CollectCallSites,
                         callSitesRequiringGlobalInitializerCall, callSitesRequiringThreadLocalInitializerCall,
-                        callSitesNotRequiringGlobalInitializerCall, callSitesNotRequiringThreadLocalInitializerCall)
+                        functionsWithCallSitesNotRequiringGlobalInitializerCall, functionsWithCallSitesNotRequiringThreadLocalInitializerCall)
             }
 
             fun collectFunctionsRequiringInitializerCall(
@@ -172,13 +171,13 @@ internal object StaticInitializersOptimization {
 
             val functionsRequiringGlobalInitializerCall = collectFunctionsRequiringInitializerCall(
                     initializedFiles.beforeCallGlobal,
-                    callSitesRequiringGlobalInitializerCall.map { it.actualCallee }
-                            .intersect(callSitesNotRequiringGlobalInitializerCall.mapTo(mutableSetOf()) { it.actualCallee })
+                    callSitesRequiringGlobalInitializerCall.mapTo(mutableSetOf()) { it.actualCallee }
+                            .apply { retainAll(functionsWithCallSitesNotRequiringGlobalInitializerCall) }
             )
             val functionsRequiringThreadLocalInitializerCall = collectFunctionsRequiringInitializerCall(
                     initializedFiles.beforeCallThreadLocal,
-                    callSitesRequiringThreadLocalInitializerCall.map { it.actualCallee }
-                            .intersect(callSitesNotRequiringThreadLocalInitializerCall.mapTo(mutableSetOf()) { it.actualCallee })
+                    callSitesRequiringThreadLocalInitializerCall.mapTo(mutableSetOf()) { it.actualCallee }
+                            .apply { retainAll(functionsWithCallSitesNotRequiringThreadLocalInitializerCall) }
             )
 
             return AnalysisResult(functionsRequiringGlobalInitializerCall, functionsRequiringThreadLocalInitializerCall,
@@ -228,7 +227,8 @@ internal object StaticInitializersOptimization {
         private val executeImplSymbol = context.symbols.executeImpl
         private val getContinuationSymbol = context.symbols.getContinuation
 
-        private var dummySet = mutableSetOf<IrCall>()
+        private val dummySet = mutableSetOf<IrCall>()
+        private val dummyFunctionSet = mutableSetOf<IrSimpleFunction>()
 
         private enum class AnalysisGoal {
             ComputeInitializedAfterCall,
@@ -245,8 +245,8 @@ internal object StaticInitializersOptimization {
                 analysisGoal: AnalysisGoal,
                 callSitesRequiringGlobalInitializerCall: MutableSet<IrCall> = dummySet,
                 callSitesRequiringThreadLocalInitializerCall: MutableSet<IrCall> = dummySet,
-                callSitesNotRequiringGlobalInitializerCall: MutableSet<IrCall> = dummySet,
-                callSitesNotRequiringThreadLocalInitializerCall: MutableSet<IrCall> = dummySet
+                functionsWithCallSitesNotRequiringGlobalInitializerCall: MutableSet<IrSimpleFunction> = dummyFunctionSet,
+                functionsWithCallSitesNotRequiringThreadLocalInitializerCall: MutableSet<IrSimpleFunction> = dummyFunctionSet
         ) {
             val irDeclaration = node.symbol.irDeclaration ?: return
             val body = if (node.symbol.isStaticFieldInitializer)
@@ -432,22 +432,22 @@ internal object StaticInitializersOptimization {
                     val argumentsResult = arguments.fold(data) { set, arg -> arg.second.accept(this, set) }
                     updateResultForFunction(actualCallee, argumentsResult)
                     val container = actualCallee.calledInitializer
-                    val containerId = initializedContainers.containerIds[container] ?: invalidContainerId
-                    if (analysisGoal == AnalysisGoal.CollectCallSites &&
+                    if (analysisGoal == AnalysisGoal.CollectCallSites && container != null &&
                             // Only extract initializer calls from non-virtual functions.
                             !actualCallee.isOverridable
                     ) {
+                        val containerId = initializedContainers.containerIds[container]!!
                         // The initializer won't be optimized away from the function.
                         if (!initializedContainers.beforeCallGlobal[actualCallee]!!.get(containerId)) {
                             if (argumentsResult.get(containerId) || containersWithInitializedGlobals.get(containerId))
-                                callSitesNotRequiringGlobalInitializerCall += expression
+                                functionsWithCallSitesNotRequiringGlobalInitializerCall += actualCallee
                             else
                                 callSitesRequiringGlobalInitializerCall += expression
                         }
                         // The initializer won't be optimized away from the function.
                         if (!initializedContainers.beforeCallThreadLocal[actualCallee]!!.get(containerId)) {
                             if (argumentsResult.get(containerId) || containersWithInitializedThreadLocals.get(containerId))
-                                callSitesNotRequiringThreadLocalInitializerCall += expression
+                                functionsWithCallSitesNotRequiringThreadLocalInitializerCall += actualCallee
                             else
                                 callSitesRequiringThreadLocalInitializerCall += expression
                         }
