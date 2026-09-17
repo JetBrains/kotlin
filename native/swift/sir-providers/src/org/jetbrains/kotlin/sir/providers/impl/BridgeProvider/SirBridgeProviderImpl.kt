@@ -107,15 +107,16 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
     is SirNominalType -> {
         val declarationSupported = when (val declaration = type.typeDeclaration) {
             is SirTypealias -> isSupported(declaration.type)
-            else -> type.typeDeclaration.kaSymbolOrNull<KaNamedClassSymbol>()?.sirAvailability()?.let { it is SirAvailability.Available } != false
+            else -> type.typeDeclaration.kaSymbolOrNull<KaNamedClassSymbol>()?.sirAvailability()
+                ?.let { it is SirAvailability.Available } != false
         }
         declarationSupported && type.typeArguments.all { isSupported(it) }
     }
     is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all { isSupported(it) }
     is SirTypedFlowType -> isSupported(type.elementType)
     is SirExistentialType -> type.protocols.all { [protocol, typeArguments] ->
-        val protocolSupported = protocol == KotlinRuntimeSupportModule.kotlinBridgeable ||
-                protocol.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available
+        val protocolSupported = protocol.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability()
+            ?.let { it is SirAvailability.Available } != false
         protocolSupported && typeArguments.all { isSupported(it) }
     }
     is SirTupleType -> type.types.all { isSupported(it.second) }
