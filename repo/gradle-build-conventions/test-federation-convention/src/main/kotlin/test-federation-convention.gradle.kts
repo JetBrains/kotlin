@@ -17,8 +17,8 @@ tasks.withType<Test>().configureEach {
     /* Resolve the mode from the task configuration, overrides, and domain selection. */
     val testFederationMode: Provider<TestFederationMode> = testFederationMode
 
-    val testFederationSubsets: Provider<Set<TestSubset>> = testFederationSubsets
-    val formattedSubsets = testFederationSubsets.map { subsets -> subsets.toArgumentString() }
+    val testFederationSubsets: Provider<Set<String>> = testFederationSubsets
+    val formattedSubsets = testFederationSubsets.map { subsets -> subsets.joinToString(",") }
 
     inputs.property(TEST_FEDERATION_MODE_KEY, testFederationMode)
     inputs.property(SMOKE_TEST_CONFIG_KEY, smokeTestConfig)
@@ -134,13 +134,13 @@ afterEvaluate {
     tasks.withType<Test>().configureEach {
         val defaultFailOnNoDiscoveredTests = failOnNoDiscoveredTests.get()
         failOnNoDiscoveredTests.value(testFederationSubsets.map { subsets ->
-            if (TestSubset.AllTests !in subsets) false
+            if (TestSubsets.all !in subsets) false
             else defaultFailOnNoDiscoveredTests
         }).disallowChanges()
 
         val testFederationSubsets = testFederationSubsets
         doFirst {
-            if (TestSubset.AllTests !in testFederationSubsets.get()) {
+            if (TestSubsets.all !in testFederationSubsets.get()) {
                 filter.isFailOnNoMatchingTests = false
             }
         }

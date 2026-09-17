@@ -44,28 +44,18 @@ val testFederationChangedDomains: Set<Domain>? = run {
     domainsFromString(raw)
 }
 
-internal val testFederationSubsets: Set<TestSubset>? = run {
+internal val testFederationSubsets: Set<String>? = run {
     val raw = resolve(TEST_FEDERATION_SUBSETS_KEY, TEST_FEDERATION_SUBSETS_ENV_KEY)
-    if (raw != null) return@run raw.toTestSubsets()
+    if (raw != null) return@run if (raw.isBlank()) emptySet() else raw.split(",").map { it.trim() }.toSet()
 
     when (testFederationMode) {
         null -> null
-        TestFederationMode.Full -> setOf(TestSubset.AllTests)
+        TestFederationMode.Full -> setOf(TestSubsets.all)
         TestFederationMode.Smoke -> buildSet {
-            add(TestSubset.SmokeTests)
-            testFederationChangedDomains?.forEach { domain -> add(TestSubset.valueOf("ContractTestsFor${domain.name}")) }
+            add(TestSubsets.smoke)
+            testFederationChangedDomains?.forEach { domain -> add(TestSubsets.contract(domain)) }
         }
     }
-}
-
-private fun String.toTestSubsets(): Set<TestSubset> =
-    if (isBlank()) emptySet() else split(",").map { it.trim().toTestSubset() }.toSet()
-
-private fun String.toTestSubset(): TestSubset = when {
-    this == "all" -> TestSubset.AllTests
-    this == "smoke" -> TestSubset.SmokeTests
-    startsWith("contract:") -> TestSubset.valueOf("ContractTestsFor${removePrefix("contract:")}")
-    else -> error("Unknown test subset: '$this'")
 }
 
 

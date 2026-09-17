@@ -21,17 +21,12 @@ internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
         val subsets = testFederationSubsets
             ?: return included("$TEST_FEDERATION_MODE_KEY is not set")
 
-        if (TestSubset.AllTests in subsets) return included("'${TestSubset.AllTests}' is requested")
+        if (TestSubsets.all in subsets) return included("'${TestSubsets.all}' is requested")
+        if (TestSubsets.smoke in subsets && isAutoSmokeTest(descriptor, source)) return included("Auto smoke test selected")
 
-        if (TestSubset.SmokeTests in subsets) {
-            if (isAutoSmokeTest(descriptor, source)) return included("Auto smoke test selected")
-            if (isMustRunAlways(descriptor)) return included("@${MustRunAlways::class.java.simpleName}")
-        }
+        val matchedTags = descriptor.tags.map { it.name }.filter { it in subsets }
+        if (matchedTags.isNotEmpty()) return included("Tags: ${matchedTags.joinToString(", ")}")
 
-        val matchedContracts = subsets.mapNotNull(::contractTagOf).filter { tag -> descriptor.tags.any { it.name == tag } }
-        if (matchedContracts.isNotEmpty()) {
-            return included("Contracts: ${matchedContracts.joinToString(", ") { it.removePrefix("contract:") }}")
-        }
         return excluded("Not selected automatically / Not @MustRunAlways / Not a contract test")
     }
 }
@@ -49,6 +44,3 @@ private fun isAutoSmokeTest(descriptor: TestDescriptor, source: MethodSource): B
     hashCode = hashCode * 31 + descriptor.uniqueId.toString().hashCode()
     return (hashCode % 100).absoluteValue < autoSmokeTestPercentage
 }
-
-private fun isMustRunAlways(descriptor: TestDescriptor): Boolean =
-    descriptor.tags.any { it.name == "smoke" }

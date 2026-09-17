@@ -78,32 +78,6 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 this += "|"
             }.trimMargin()
         )
-
-        outputDir.asFile.get().toPath().resolve("testSubsets.kt").createParentDirectories().writeText(
-            buildString {
-                this += "|// This file is generated automatically. DO NOT MODIFY IT MANUALLY"
-                this += "|// See ${GenerateTestFederationRuntimeCodeTask::class.simpleName}"
-                this += "|"
-                this += "|package org.jetbrains.kotlin.testFederation"
-                this += "|"
-                this += "|enum class TestSubset {"
-                this += "|    AllTests,"
-                this += "|    SmokeTests,"
-                for (domain in domains) {
-                    this += "|    ContractTestsFor${domain.name},"
-                }
-                this += "|    ;"
-                this += "|}"
-                this += "|"
-                this += "|fun contractTagOf(subset: TestSubset): String? = when (subset) {"
-                this += "|    TestSubset.AllTests -> null"
-                this += "|    TestSubset.SmokeTests -> null"
-                for (domain in domains) {
-                    this += "|    TestSubset.ContractTestsFor${domain.name} -> \"contract:${domain.name}\""
-                }
-                this += "|}"
-            }.trimMargin()
-        )
     }
 }
 

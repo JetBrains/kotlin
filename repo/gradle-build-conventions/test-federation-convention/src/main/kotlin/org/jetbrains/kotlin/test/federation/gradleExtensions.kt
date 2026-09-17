@@ -96,28 +96,28 @@ val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensi
 }
 
 @DelicateTestFederationApi
-val AbstractTestTask.testFederationSubsets: Provider<Set<TestSubset>> by extensionProperty property@{
+val AbstractTestTask.testFederationSubsets: Provider<Set<String>> by extensionProperty property@{
     project.provider {
         if (smokeTestConfig.get() == SmokeTestConfig.RunAllTests) {
-            return@provider setOf(TestSubset.AllTests)
+            return@provider setOf(TestSubsets.all)
         }
 
         project.providers.gradleProperty(TEST_FEDERATION_SUBSETS_KEY)
             .orElse(project.providers.environmentVariable(TEST_FEDERATION_SUBSETS_ENV_KEY))
-            .orNull?.let { return@provider it.toTestSubsets() }
+            .orNull?.let { raw -> return@provider if (raw.isBlank()) emptySet() else raw.split(",").map { it.trim() }.toSet() }
 
         if (!project.testFederationEnabled) {
-            return@provider setOf(TestSubset.AllTests)
+            return@provider setOf(TestSubsets.all)
         }
 
         null
     }.orElse(
         testFederationMode.zip(project.testFederationChangedDomains) { mode, changedDomains ->
             when (mode) {
-                TestFederationMode.Full -> setOf(TestSubset.AllTests)
+                TestFederationMode.Full -> setOf(TestSubsets.all)
                 TestFederationMode.Smoke -> buildSet {
-                    add(TestSubset.SmokeTests)
-                    changedDomains.forEach { domain -> add(contractTestsSubsetOf(domain)) }
+                    add(TestSubsets.smoke)
+                    changedDomains.forEach { domain -> add(TestSubsets.contract(domain)) }
                 }
             }
         }
