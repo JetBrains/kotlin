@@ -14,7 +14,10 @@ fun box(): String {
     assertEquals(a, test<A>(a), "a = AImpl()")
     a = object : A {}
     assertEquals(a, test<A>(a), "a = object : A{}")
-    failsClassCast("test(null)") { test<A>(null) }
+
+    // Previously a `ClassCastException` was thrown. Changed in sake of parity with the other backends.
+    // failsClassCast("test(null)") { test<A>(null) }
+    failsNullPointer("test(null)") { test<A>(null) }
     failsClassCast("test(object{})") { test<A>(object{}) }
 
     return "OK"

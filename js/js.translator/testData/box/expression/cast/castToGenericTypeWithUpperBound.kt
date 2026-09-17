@@ -24,7 +24,10 @@ fun box(): String {
     success("nullableToNotNullT<A>(a)") {assertEquals(a, nullableToNotNullT<A>(a)) }
     success("nullableToNotNullT<A>(b)") {assertEquals(b, nullableToNotNullT<A>(b)) }
     failsClassCast("nullableToNotNullT<A>(c)") { nullableToNotNullT<A>(c) }
-    failsClassCast("nullableToNotNullT<A>(null)") { nullableToNotNullT<A>(null) }
+
+    // Previously a `ClassCastException` was thrown. Changed in sake of parity with the other backends.
+    // failsClassCast("nullableToNotNullT<A>(null)") { nullableToNotNullT<A>(null) }
+    failsNullPointer("nullableToNotNullT<A>(null)") { nullableToNotNullT<A>(null) }
 
     success("notNullToNullableT<A>(a)") {  assertEquals(a, notNullToNullableT<A>(a))}
     success("notNullToNullableT<A>(b)") {  assertEquals(b, notNullToNullableT<A>(b))}

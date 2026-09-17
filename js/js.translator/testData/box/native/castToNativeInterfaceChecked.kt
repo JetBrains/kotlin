@@ -9,7 +9,10 @@ fun box(): String {
         (createObject() as I).foo()
         return "fail: exception not thrown"
     }
-    catch (e: ClassCastException) {
+    // It used to be a ClassCastException, however, on JVM for null it's  NullPointerException.
+    // So, to have parity in the common code, it throws a NullPointerException for null value.
+    // catch (e: ClassCastException) {
+    catch (e: NullPointerException) {
         return "OK"
     }
 }

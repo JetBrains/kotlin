@@ -14,7 +14,9 @@ fun box(): String {
     success("{ 0 } as Any") { { 0 } as Any }
     success("a as Any") { assertEquals<Any>(a, a as Any) }
     success("object{} as Any") { object{} as Any }
-    failsClassCast("nil as Any") { nil as Any }
+    // Previously a `ClassCastException` was thrown. Changed in sake of parity with the other backends.
+    // failsClassCast("nil as Any") { nil as Any }
+    failsNullPointer("nil as Any") { nil as Any }
 
     return "OK"
 }
