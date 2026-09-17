@@ -519,3 +519,8 @@ object ConeResolvedToCompanionObjectWasRecentlyFixed : ConeDiagnostic {
     override val reason: String
         get() = "resolvedToCompanionObject was incorrectly lost until recently"
 }
+
+object ConeUnionTypeInSupertype : ConeDiagnostic {
+    override val reason: String
+        get() = "Union type as class supertype"
+}
