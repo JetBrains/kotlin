@@ -11,6 +11,6 @@ interface B
 class C : A(), B
 
 // MODULE: main(lib)
-value class Some(val x: C)
+value class Some(val y: B, <!MISSING_DEPENDENCY_SUPERCLASS!>val x: C<!>)
 
 /* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, primaryConstructor, propertyDeclaration, value */

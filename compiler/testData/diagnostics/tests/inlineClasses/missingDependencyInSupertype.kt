@@ -12,6 +12,6 @@ class C : A(), B
 
 // MODULE: main(lib)
 @JvmInline
-value class Some(val x: C)
+value class Some(<!MISSING_DEPENDENCY_SUPERCLASS!>val x: C<!>)
 
 /* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, primaryConstructor, propertyDeclaration, value */
