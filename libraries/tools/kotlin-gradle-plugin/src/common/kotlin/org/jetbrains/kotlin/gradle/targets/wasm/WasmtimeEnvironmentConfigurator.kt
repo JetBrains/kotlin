@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.ExecutableWasm
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.LibraryWasm
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimeExec
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -33,22 +34,18 @@ internal class WasmtimeEnvironmentConfigurator(private val wasmtimeSubTarget: Ko
         return WasmtimeExec.register(compilation, binaryRunName) {
             group = subTarget.taskGroupName
 
-            val inputJsFile = if (binary is ExecutableWasm && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                dependsOn(binary.optimizeTask)
-                binary.mainOptimizedFile
-            } else {
-                dependsOn(binary.linkTask)
-                binary.mainFile
+            val inputWasmFile = when (binary) {
+                is ExecutableWasm -> {
+                    dependsOn(binary.componentTask)
+                    binary.mainWasmFile
+                }
+                is LibraryWasm -> {
+                    binary.mainWasmFile
+                }
+                else -> error("Binary for wasm can be either ExecutableWasm or LibraryWasm")
             }
 
-            val inputWasmFile = inputJsFile.map {
-                val file = it.asFile
-                file.resolveSibling(file.nameWithoutExtension + ".wasm")
-            }
-
-            inputFileProperty.fileProvider(
-                inputWasmFile
-            )
+            inputFileProperty.value(inputWasmFile)
 
             wasmtimeArgs.set(wasmtimeSubTarget.wasmtimeRunArgs)
         }

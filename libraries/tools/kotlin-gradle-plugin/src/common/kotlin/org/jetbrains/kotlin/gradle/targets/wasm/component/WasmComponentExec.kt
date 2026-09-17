@@ -98,7 +98,7 @@ internal constructor() : DefaultTask() {
      * Resulting Wasm component.
      */
     @get:OutputDirectory
-    abstract val componentDirectory: DirectoryProperty
+    abstract val outputDirectory: DirectoryProperty
 
     @TaskAction
     fun run() {
@@ -112,9 +112,7 @@ internal constructor() : DefaultTask() {
             it.delete(embedDir)
         }
 
-        val witProjects = witProjects().takeIf { it.isNotEmpty() } ?: return
-
-        val embedded = witProjects.foldIndexed(inputModule) { index: Int, acc: File, witProject: File ->
+        val embedded = witProjects().foldIndexed(inputModule) { index: Int, acc: File, witProject: File ->
             val newOutput = embedDir
                 .resolve("$index-${witProject.parentFile.name}-${witProject.name}")
                 .resolve(inputModule.name)
@@ -142,17 +140,17 @@ internal constructor() : DefaultTask() {
         }
 
         val adaptFile = temporaryDir
-            .resolve("wasi_snapshot_preview1.reactor.wasm")
+            .resolve("wasi_snapshot_preview1.command.wasm")
             .also {
                 it.outputStream()
                     .use { tmpDir ->
                         WasmComponentExec::class.java
-                            .getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/wasm/component/wasi_snapshot_preview1.reactor.wasm")
+                            .getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/wasm/component/wasi_snapshot_preview1.command.wasm")
                             ?.copyTo(tmpDir)
                     }
             }
 
-        val componentDirectory = componentDirectory.getFile()
+        val componentDirectory = outputDirectory.getFile()
         componentDirectory.mkdirs()
         val component = componentDirectory.resolve(inputModule.name)
         execOperations.exec {
@@ -162,7 +160,7 @@ internal constructor() : DefaultTask() {
                 "new",
                 embedded.absolutePath,
                 "--adapt",
-                adaptFile.absolutePath
+                "wasi_snapshot_preview1=${adaptFile.absolutePath}",
             ) +
                     newArguments.get() +
                     listOf("-o", component.absolutePath)

@@ -325,21 +325,30 @@ class ExecutableWasm(
         it.outputDirectory.file(mainFileName.get())
     }
 
-    override val mainWasmFile: Provider<RegularFile> = if (mode == KotlinJsBinaryMode.PRODUCTION) {
-        wasmFileFromJsFile(mainOptimizedFile)
-    } else {
-        wasmFileFromJsFile(mainFile)
-    }
-
     private val _componentTask: TaskProvider<WasmComponentExec>? =
         if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
             WasmComponentExec.register(compilation, componentTaskName()) {
-                inputFile.set(mainWasmFile)
-                componentDirectory.set(outputDirBase.map { it.dir(COMPONENT) })
+                inputFile.set(wasmFileFromJsFileByMode())
+                outputDirectory.set(outputDirBase.map { it.dir(COMPONENT) })
             }
         } else {
             null
         }
+
+    override val mainWasmFile: Provider<RegularFile> =
+        if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
+            componentTask.flatMap {
+                wasmFileFromJsFile(it.outputDirectory.file(mainFileName))
+            }
+        } else {
+            wasmFileFromJsFileByMode()
+        }
+
+    private fun wasmFileFromJsFileByMode() = if (mode == KotlinJsBinaryMode.PRODUCTION) {
+        wasmFileFromJsFile(mainOptimizedFile)
+    } else {
+        wasmFileFromJsFile(mainFile)
+    }
 
     /**
      * Produces a Wasm component out of this binary with `wasm-tools`.
