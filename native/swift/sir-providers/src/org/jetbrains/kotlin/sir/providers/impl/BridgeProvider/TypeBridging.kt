@@ -299,6 +299,7 @@ internal sealed interface BidirectionalBridge : SwiftToKotlinBridge, KotlinToSwi
 internal sealed interface Bridge {
     val swiftType: SirType
 
+    context(session: SirSession)
     fun kotlinReverseParameterTypeFqName(typeNamer: SirTypeNamer): String =
         typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
 
@@ -794,6 +795,7 @@ internal sealed interface Bridge {
 
         private fun arrayKind(typeNamer: SirTypeNamer): String? = typeNamer.kotlinPrimitiveFqNameIfAny(elementType)
 
+        context(session: SirSession)
         override fun kotlinReverseParameterTypeFqName(typeNamer: SirTypeNamer): String =
             arrayKind(typeNamer)?.let { "kotlin.${it}Array" }
                 ?: "kotlin.Array<out ${typeNamer.kotlinFqName(elementType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}>"
@@ -1137,6 +1139,7 @@ internal sealed interface Bridge {
                     ?.let { "${it.cBridgeName}(${(listOf("closureBox.objcPtr()") + arguments).joinToString()})" }
                     ?: "error(\"Unsupported functional type: ${swiftType.swiftName}\")"
 
+                context(session: SirSession)
                 private fun List<Pair<String, KotlinToSwiftBridge>>?.defineArgs(typeNamer: SirTypeNamer): String = this?.let { args ->
                     " ${
                         args.joinToString { [name, bridge] ->

@@ -320,10 +320,12 @@ private val KaCallableSymbol.allParameters: List<KaParameterSymbol>
 context(ka: KaSession)
 private fun isClone(symbol: KaNamedFunctionSymbol): Boolean = with(ka) { isClone(symbol) }
 
+context(ka: KaSession)
 private fun List<KaTypeParameterSymbol>.hasUnsupportedFBoundedTypeParameters(): Boolean = any {
     it.resolveUpperBound().isUnsupportedFBoundedTypeParameter(it)
 }
 
+context(ka: KaSession)
 private fun KaType?.isUnsupportedFBoundedTypeParameter(typeParameterSymbol: KaTypeParameterSymbol): Boolean {
     return when (this) {
         null -> false
