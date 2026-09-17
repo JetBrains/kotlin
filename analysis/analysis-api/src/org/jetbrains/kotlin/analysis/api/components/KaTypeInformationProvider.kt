@@ -31,9 +31,11 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      * For example, `(Int) -> String` belongs to the [Function][KaBuiltinFunctionTypeFamilies.function] family,
      * while `suspend () -> Unit` belongs to the [SuspendFunction][KaBuiltinFunctionTypeFamilies.suspendFunction] family.
      *
+     * The family is determined on the fully expanded type, so a non-null family does not imply that the type itself is
+     * a [org.jetbrains.kotlin.analysis.api.types.KaFunctionType] (e.g., for a type alias of a function type).
+     *
      * @see KaBuiltinFunctionTypeFamilies
      */
-    @KaExperimentalApi
     public val KaType.functionTypeFamily: KaFunctionTypeFamily?
 
     /**
@@ -265,7 +267,6 @@ public interface KaTypeInformationProvider : KaSessionComponent {
     /**
      * Provides access to the built-in [function type families][KaFunctionTypeFamily].
      */
-    @KaExperimentalApi
     public val builtinFunctionTypeFamilies: KaBuiltinFunctionTypeFamilies
 }
 
@@ -282,11 +283,13 @@ public interface KaTypeInformationProvider : KaSessionComponent {
  *
  * Compiler plugins may introduce additional custom function type families.
  *
+ * Families are compared by value: two instances are equal if they represent the same family, so a type's family can be
+ * checked with `==` against the [built-in families][KaBuiltinFunctionTypeFamilies].
+ *
  * @see KaTypeInformationProvider.functionTypeFamily
  * @see KaBuiltinFunctionTypeFamilies
  */
 @KaObsoleteComponentApi
-@KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaFunctionTypeFamily : org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily {
     /**
@@ -339,7 +342,6 @@ public interface KaFunctionTypeFamily : org.jetbrains.kotlin.analysis.api.types.
  * @see KaTypeInformationProvider.builtinFunctionTypeFamilies
  */
 @KaObsoleteComponentApi
-@KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaBuiltinFunctionTypeFamilies : org.jetbrains.kotlin.analysis.api.types.KaBuiltinFunctionTypeFamilies {
     /**
