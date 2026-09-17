@@ -5,7 +5,5 @@ $TEMP_DIR$
 $STDLIB_COMMON_PATH$
 -Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
 
--Xnested-type-aliases
--Xwhen-guards
--Xannotation-default-target=first-only-warn
--language-version=2.1
+-Xname-based-destructuring=complete
+-language-version=2.5
