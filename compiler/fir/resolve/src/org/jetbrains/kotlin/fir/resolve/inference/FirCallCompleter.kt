@@ -380,7 +380,7 @@ class FirCallCompleter(
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
 
         val postponedAtomAnalyzer = object : ConstraintSystemCompleter.PostponedAtomAnalyzer {
-            override fun analyze(atom: ConeFunctionTypeRelatedPostponedResolvedAtom, withPCLASession: Boolean) {
+            override fun analyze(atom: ConeFunctionLikeAtom, withPCLASession: Boolean) {
                 analyzer.analyze(candidate.system, atom, candidate, withPCLASession)
             }
 

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralAtomMarker
-import org.jetbrains.kotlin.resolve.calls.model.FunctionTypeRelatedPostponedResolvedAtomMarker
+import org.jetbrains.kotlin.resolve.calls.model.FunctionLikeAtomMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
@@ -124,7 +124,7 @@ class TypeVariableDependencyInformationProvider(
         }
 
         for (argument in postponedKtPrimitives) {
-            if (argument.analyzed || argument !is FunctionTypeRelatedPostponedResolvedAtomMarker) continue
+            if (argument.analyzed || argument !is FunctionLikeAtomMarker) continue
 
             val typeVariablesInOutputType = SmartSet.create<TypeConstructorMarker>()
             (argument.outputType ?: continue).forAllMyTypeVariables { typeVariablesInOutputType.add(it) }
@@ -142,7 +142,7 @@ class TypeVariableDependencyInformationProvider(
 
     private fun computeRelatedToAllOutputTypes() {
         for (argument in postponedKtPrimitives) {
-            if (argument.analyzed || argument !is FunctionTypeRelatedPostponedResolvedAtomMarker) continue
+            if (argument.analyzed || argument !is FunctionLikeAtomMarker) continue
             (argument.outputType ?: continue).forAllMyTypeVariables {
                 addAllRelatedNodes(relatedToAllOutputTypes, it, includePostponedEdges = false)
             }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeContextSensitiveAlternativeForQualifierAtom
-import org.jetbrains.kotlin.fir.resolve.calls.ConeFunctionTypeRelatedPostponedResolvedAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ConeFunctionLikeAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeSimpleNameForContextSensitiveResolution
@@ -175,7 +175,7 @@ class FirDelegatedPropertyInferenceSession(
 
         resolutionContext.bodyResolveContext.withInferenceSession(DEFAULT) {
             val postponedAtomAnalyzer = object : ConstraintSystemCompleter.PostponedAtomAnalyzer {
-                override fun analyze(atom: ConeFunctionTypeRelatedPostponedResolvedAtom, withPCLASession: Boolean) {
+                override fun analyze(atom: ConeFunctionLikeAtom, withPCLASession: Boolean) {
                     callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
                         .analyze(parentSystem, atom, getCurrentCandidate(atom), withPCLASession)
                 }
