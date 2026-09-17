@@ -4,7 +4,7 @@
 
 typealias TA = RichError
 
-fun <T, V : Value, E : RichError, E2 : TA> test(
+fun <T, V : Value, E : RichError, E2 : TA, E3 : E> test(
     a: T | Foo,
     b: V | Foo,
     c: E | Foo,
@@ -13,6 +13,7 @@ fun <T, V : Value, E : RichError, E2 : TA> test(
     f: <!OTHER_ERROR!>Foo | V<!>,
     g: Foo | E,
     h: Foo | E2,
+    i: String | E3,
 ) {}
 
 val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>E : RichError<!>> (E | Foo).prop get() = 1

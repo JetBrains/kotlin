@@ -699,12 +699,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun FirClassifierSymbol<*>.isBoundedByRichError(): Boolean {
         return when (this) {
-            is FirRegularClassSymbol -> isRichError
+            is FirRegularClassSymbol -> isRichError || classId == StandardClassIds.RichError
             is FirTypeAliasSymbol -> fullyExpandedClass(sessionForExpansionOrNull(expandNonLibraryTypeAlias = true)!!)?.isBoundedByRichError() == true
             // It's safe to access fir because own type parameter and containing class type parameter bounds are guaranteed to be resolved
             is FirTypeParameterSymbol -> fir.bounds.any {
-                val expandedType = expandIfTypeAlias(it.coneType, it.coneType.toSymbol(session), true)
-                expandedType.classId == StandardClassIds.RichError
+                it.coneType.toSymbol(session)?.isBoundedByRichError() == true
             }
             is FirAnonymousObjectSymbol -> false
         }
