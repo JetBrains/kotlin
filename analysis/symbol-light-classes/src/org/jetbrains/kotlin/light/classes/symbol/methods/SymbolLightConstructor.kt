@@ -88,7 +88,7 @@ internal class SymbolLightConstructor private constructor(
         else -> withFunctionSymbol { symbol ->
             // A constructor cannot be renamed, so the JVM backend makes it private instead of mangling its name
             val visibility = if (!isJvmExposeBoxed &&
-                hasManglingValueClassInParameterPosition(symbol, valueParameterPickMask = valueParameterPickMask)
+                hasManglingInlineClassInParameterPosition(symbol, valueParameterPickMask = valueParameterPickMask)
             ) {
                 PsiModifier.PRIVATE
             } else {
@@ -114,7 +114,7 @@ internal class SymbolLightConstructor private constructor(
                 return
             }
 
-            val destinationClassIsValueClass = lightClass.isKotlinValueClass
+            val destinationClassIsInlineClass = lightClass.isInlineClass
             for (constructor in constructors) {
                 ProgressManager.checkCanceled()
 
@@ -124,17 +124,17 @@ internal class SymbolLightConstructor private constructor(
                 createMethodsJvmOverloadsAware(
                     declaration = constructor,
                     methodIndexBase = METHOD_INDEX_BASE,
-                ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
+                ) { methodIndex, valueParameterPickMask, hasInlineClassInParameterType ->
                     val isBoxedConstructorRequired = exposeBoxedMode != JvmExposeBoxedMode.NONE &&
-                            (hasValueClassInParameterType || destinationClassIsValueClass) &&
+                            (hasInlineClassInParameterType || destinationClassIsInlineClass) &&
                             // Private declarations are inaccessible from Java, so they are never exposed as boxed
                             !constructor.isEffectivelyPrivate()
 
                     val generationMode = when {
-                        isBoxedConstructorRequired -> MethodGenerationMode.Boxed(isRegularMethodRequired = !destinationClassIsValueClass)
+                        isBoxedConstructorRequired -> MethodGenerationMode.Boxed(isRegularMethodRequired = !destinationClassIsInlineClass)
 
-                        // Only the boxed constructor of a value class can be generated
-                        destinationClassIsValueClass -> null
+                        // Only the boxed constructor of an inline class can be generated
+                        destinationClassIsInlineClass -> null
 
                         // Explicit mode without a boxed constructor -> the regular constructor retains @JvmExposeBoxed
                         else -> MethodGenerationMode.Regular(isAffectedByJvmExposeBoxed = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT)
@@ -163,7 +163,7 @@ internal class SymbolLightConstructor private constructor(
             val primaryConstructor = constructors.singleOrNull { it.isPrimary }
             if (primaryConstructor != null && shouldGenerateNoArgOverload(lightClass, primaryConstructor, constructors)) {
                 when {
-                    !destinationClassIsValueClass -> {
+                    !destinationClassIsInlineClass -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
                             generationMode = MethodGenerationMode.Regular(),

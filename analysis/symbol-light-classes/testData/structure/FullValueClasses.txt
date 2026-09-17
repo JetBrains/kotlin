@@ -1,0 +1,95 @@
+KtClass:
+  line: 4
+  name: AbstractValueClass
+  qualifier: cba.AbstractValueClass
+  light: SymbolLightClassForClassOrObject
+    name: AbstractValueClass
+    qualifier: cba.AbstractValueClass
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 8
+  name: FinalValueClass
+  qualifier: cba.FinalValueClass
+  light: SymbolLightClassForClassOrObject
+    name: FinalValueClass
+    qualifier: cba.FinalValueClass
+    superTypes: [
+      PsiType:SealedValueClass
+    ]
+    superClass: SymbolLightClassForClassOrObject: SealedValueClass (cba.SealedValueClass)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: SealedValueClass (cba.SealedValueClass)
+    ]
+
+KtClass:
+  line: 12
+  name: RegularClass
+  qualifier: cba.RegularClass
+  light: SymbolLightClassForClassOrObject
+    name: RegularClass
+    qualifier: cba.RegularClass
+    superTypes: [
+      PsiType:SealedValueClass
+    ]
+    superClass: SymbolLightClassForClassOrObject: SealedValueClass (cba.SealedValueClass)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: SealedValueClass (cba.SealedValueClass)
+    ]
+
+KtClass:
+  line: 6
+  name: SealedValueClass
+  qualifier: cba.SealedValueClass
+  light: SymbolLightClassForClassOrObject
+    name: SealedValueClass
+    qualifier: cba.SealedValueClass
+    superTypes: [
+      PsiType:AbstractValueClass
+    ]
+    superClass: SymbolLightClassForClassOrObject: AbstractValueClass (cba.AbstractValueClass)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: AbstractValueClass (cba.AbstractValueClass)
+    ]
+
+KtClass:
+  line: 14
+  name: StandaloneValueClass
+  qualifier: cba.StandaloneValueClass
+  light: SymbolLightClassForClassOrObject
+    name: StandaloneValueClass
+    qualifier: cba.StandaloneValueClass
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtObjectDeclaration:
+  line: 10
+  name: ValueObject
+  qualifier: cba.ValueObject
+  light: SymbolLightClassForClassOrObject
+    name: ValueObject
+    qualifier: cba.ValueObject
+    superTypes: [
+      PsiType:SealedValueClass
+    ]
+    superClass: SymbolLightClassForClassOrObject: SealedValueClass (cba.SealedValueClass)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: SealedValueClass (cba.SealedValueClass)
+    ]

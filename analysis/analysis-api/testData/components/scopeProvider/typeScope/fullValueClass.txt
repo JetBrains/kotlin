@@ -1,0 +1,649 @@
+Expression: value
+KaType: test.FullValueClass<kotlin.String>
+
+KaTypeScope:
+KaVariableSignature:
+  name = first
+  receiverType = null
+  returnType = kotlin.String
+  symbol = val first: T
+  contextParameters = []
+  callableId = test/FullValueClass.first
+KaVariableSignature:
+  name = second
+  receiverType = null
+  returnType = kotlin.String
+  symbol = val second: T
+  contextParameters = []
+  callableId = test/FullValueClass.second
+KaVariableSignature:
+  name = last
+  receiverType = null
+  returnType = kotlin.String
+  symbol = val last: T
+  contextParameters = []
+  callableId = test/FullValueClass.last
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.String
+  symbol = test/FullValueClass.choose(<dispatch receiver>: test.FullValueClass<T>, useFirst: kotlin.Boolean): T
+  valueParameters = [
+    KaVariableSignature:
+      name = useFirst
+      receiverType = null
+      returnType = kotlin.Boolean
+      symbol = useFirst: kotlin.Boolean
+      contextParameters = []
+      callableId = null
+  ]
+  contextParameters = []
+  callableId = test/FullValueClass.choose
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.String
+  symbol = test/FullValueClass.firstValue(<dispatch receiver>: test.FullValueClass<T>): T
+  valueParameters = []
+  contextParameters = []
+  callableId = test/FullValueClass.firstValue
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Boolean
+  symbol = test/FullValueClass.equals(<dispatch receiver>: test.FullValueClass<T>, other: kotlin.Any?): kotlin.Boolean
+  valueParameters = [
+    KaVariableSignature:
+      name = other
+      receiverType = null
+      returnType = kotlin.Any?
+      symbol = other: kotlin.Any?
+      contextParameters = []
+      callableId = null
+  ]
+  contextParameters = []
+  callableId = test/FullValueClass.equals
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = test/FullValueClass.hashCode(<dispatch receiver>: test.FullValueClass<T>): kotlin.Int
+  valueParameters = []
+  contextParameters = []
+  callableId = test/FullValueClass.hashCode
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.String
+  symbol = test/FullValueClass.toString(<dispatch receiver>: test.FullValueClass<T>): kotlin.String
+  valueParameters = []
+  contextParameters = []
+  callableId = test/FullValueClass.toString
+
+
+Declaration Scope:
+KaKotlinPropertySymbol:
+  anchorPsi: KtParameter
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    isActual: false
+    isCompanion: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isNotDefault: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(test/FullValueClass.first)
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: T
+    typeParameters: []
+    visibility: PRIVATE
+  callableId: test/FullValueClass.first
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: false
+    isOverride: true
+    location: PROPERTY
+    modality: OPEN
+    origin: SOURCE
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: T
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KaNonConstantInitializerValue(override val first: T)
+  isActual: false
+  isCompanion: false
+  isConst: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isLateInit: false
+  isOverride: true
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: OPEN
+  name: first
+  origin: SOURCE
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: false
+    hasDefaultValue: false
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: first
+    origin: SOURCE
+    primaryConstructorProperty: KaKotlinPropertySymbol(test/FullValueClass.first)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: T
+    typeParameters: []
+    visibility: PUBLIC
+  psi: KtParameter
+  realPsi: null
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: T
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+KaKotlinPropertySymbol:
+  anchorPsi: KtParameter
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    isActual: false
+    isCompanion: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isNotDefault: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(test/FullValueClass.second)
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: T
+    typeParameters: []
+    visibility: PRIVATE
+  callableId: test/FullValueClass.second
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: SOURCE
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: T
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KaNonConstantInitializerValue(val second: T)
+  isActual: false
+  isCompanion: false
+  isConst: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: second
+  origin: SOURCE
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: false
+    hasDefaultValue: false
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: second
+    origin: SOURCE
+    primaryConstructorProperty: KaKotlinPropertySymbol(test/FullValueClass.second)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: T
+    typeParameters: []
+    visibility: PUBLIC
+  psi: KtParameter
+  realPsi: null
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: T
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+KaKotlinPropertySymbol:
+  anchorPsi: KtProperty
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: KtProperty
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    isActual: false
+    isCompanion: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isNotDefault: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(test/FullValueClass.last)
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: T
+    typeParameters: []
+    visibility: PRIVATE
+  callableId: test/FullValueClass.last
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    anchorPsi: KtPropertyAccessor
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: true
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: SOURCE
+    psi: KtPropertyAccessor
+    realPsi: KtPropertyAccessor
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: T
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isCompanion: false
+  isConst: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: last
+  origin: SOURCE
+  primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: KtProperty
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: T
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
+  annotations: []
+  callableId: test/FullValueClass.choose
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: choose
+  origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: T
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: KtParameter
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: useFirst
+      origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Boolean
+      typeParameters: []
+      visibility: PUBLIC
+  ]
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  anchorPsi: KtClass
+  annotations: []
+  callableId: test/FullValueClass.firstValue
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: true
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: firstValue
+  origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction
+  realPsi: null
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: T
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  anchorPsi: KtClass
+  annotations: []
+  callableId: test/FullValueClass.equals
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: equals
+  origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: KtClass
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: other
+      origin: SOURCE_MEMBER_GENERATED
+      primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any?
+      typeParameters: []
+      visibility: PUBLIC
+  ]
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  anchorPsi: KtClass
+  annotations: []
+  callableId: test/FullValueClass.hashCode
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: hashCode
+  origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  anchorPsi: KtClass
+  annotations: []
+  callableId: test/FullValueClass.toString
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: toString
+  origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/String
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC

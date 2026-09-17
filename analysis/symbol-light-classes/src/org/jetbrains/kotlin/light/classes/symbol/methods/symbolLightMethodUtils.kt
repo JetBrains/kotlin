@@ -91,7 +91,7 @@ internal sealed class MethodGenerationMode {
     data class Regular(val isAffectedByJvmExposeBoxed: Boolean = false) : MethodGenerationMode()
 
     /**
-     * The boxed method whose value-class parameter and return types use boxed JVM representations.
+     * The boxed method whose inline-class parameter and return types use boxed JVM representations.
      *
      * [JvmExposeBoxed.jvmName] takes precedence over [JvmName], and [JvmName] is omitted from the method.
      *
@@ -124,9 +124,10 @@ internal fun KaDeclarationSymbol.isEffectivelyPrivate(): Boolean {
  * Analyzes the requirement for regular and boxed method generation based on given parameters.
  *
  * @param exposeBoxedMode The [JvmExposeBoxedMode] for the method.
- * @param hasValueClassInParameterType Whether any of the method's parameters contain a value class.
- * @param hasValueClassInReturnType Whether the method's return type is a value class.
- * @param isAffectedByValueClass Whether the method's name is mangled due to value classes, or the method is declared inside a value class and not materialized.
+ * @param hasInlineClassInParameterType Whether any of the method's parameters contain an inline class.
+ * @param hasInlineClassInReturnType Whether the method's return type is an inline class.
+ * @param isAffectedByInlineClass Whether the method's name is mangled due to inline classes, or the method is declared inside
+ * an inline class and not materialized.
  * @param hasJvmNameAnnotation Whether the method has a [JvmName] annotation.
  * @param isOverridable Whether the method can be overridden.
  * @param isEffectivelyPrivate Whether the method is effectively private and therefore must not be exposed. @see isEffectivelyPrivate
@@ -134,9 +135,9 @@ internal fun KaDeclarationSymbol.isEffectivelyPrivate(): Boolean {
  */
 internal fun methodGeneration(
     exposeBoxedMode: JvmExposeBoxedMode,
-    hasValueClassInParameterType: Boolean,
-    hasValueClassInReturnType: Boolean,
-    isAffectedByValueClass: Boolean,
+    hasInlineClassInParameterType: Boolean,
+    hasInlineClassInReturnType: Boolean,
+    isAffectedByInlineClass: Boolean,
     hasJvmNameAnnotation: Boolean,
     isSuspend: Boolean,
     isOverridable: Boolean,
@@ -145,9 +146,9 @@ internal fun methodGeneration(
     // Explicit mode -> a boxed method is requested (even if it is a JVM name clash)
     val isBoxedMethodRequestedExplicitly = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
             !isEffectivelyPrivate &&
-            (hasValueClassInParameterType || hasValueClassInReturnType || isAffectedByValueClass)
+            (hasInlineClassInParameterType || hasInlineClassInReturnType || isAffectedByInlineClass)
 
-    val isRegularMethodRequired = if (isAffectedByValueClass) {
+    val isRegularMethodRequired = if (isAffectedByInlineClass) {
         // JvmName -> unmangled method can be generated
         hasJvmNameAnnotation
     } else {
@@ -172,10 +173,10 @@ internal fun methodGeneration(
         isOverridable -> false
 
         // No JvmName -> the default method has a mangled name, so the boxed method can be generated
-        isAffectedByValueClass && !hasJvmNameAnnotation -> true
+        isAffectedByInlineClass && !hasJvmNameAnnotation -> true
 
-        // At least one parameter has a value class -> the boxed method won't lead to a JVM name clash
-        else -> hasValueClassInParameterType
+        // At least one parameter has an inline class -> the boxed method won't lead to a JVM name clash
+        else -> hasInlineClassInParameterType
     }
 
     return when {
@@ -184,7 +185,7 @@ internal fun methodGeneration(
 
         // Explicit mode without a boxed method -> the regular method retains @JvmExposeBoxed
         else -> MethodGenerationMode.Regular(
-            isAffectedByJvmExposeBoxed = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT && !isAffectedByValueClass,
+            isAffectedByJvmExposeBoxed = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT && !isAffectedByInlineClass,
         )
     }
 }

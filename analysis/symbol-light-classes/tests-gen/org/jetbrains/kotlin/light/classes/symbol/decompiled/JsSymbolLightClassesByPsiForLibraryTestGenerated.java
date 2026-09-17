@@ -1439,6 +1439,68 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   }
 
   @Nested
+  @TestMetadata("analysis/symbol-light-classes/testData/lightClassByPsi/fullValueClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FullValueClasses {
+    private void run(String fileName) {
+      runTest("analysis/symbol-light-classes/testData/lightClassByPsi/fullValueClasses/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInFullValueClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightClassByPsi/fullValueClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("facadeWithFullValueClass.kt")
+    public void testFacadeWithFullValueClass() {
+      run("facadeWithFullValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassAsUpperBound.kt")
+    public void testFullValueClassAsUpperBound() {
+      run("fullValueClassAsUpperBound.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassHierarchy.kt")
+    public void testFullValueClassHierarchy() {
+      run("fullValueClassHierarchy.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassInSignature.kt")
+    public void testFullValueClassInSignature() {
+      run("fullValueClassInSignature.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmExposeBoxedAnnotation.kt")
+    public void testJvmExposeBoxedAnnotation() {
+      run("jvmExposeBoxedAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmExposeBoxedDirective.kt")
+    public void testJvmExposeBoxedDirective() {
+      run("jvmExposeBoxedDirective.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmExposeBoxedWithInlineClass.kt")
+    public void testJvmExposeBoxedWithInlineClass() {
+      run("jvmExposeBoxedWithInlineClass.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmInlineWithFullValueClassesEnabled.kt")
+    public void testJvmInlineWithFullValueClassesEnabled() {
+      run("jvmInlineWithFullValueClassesEnabled.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/symbol-light-classes/testData/lightClassByPsi/jvmExposeBoxed")
   @TestDataPath("$PROJECT_ROOT")
   public class JvmExposeBoxed {
