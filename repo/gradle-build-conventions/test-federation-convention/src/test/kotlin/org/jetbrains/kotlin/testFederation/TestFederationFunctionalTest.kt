@@ -124,20 +124,20 @@ class TestFederationFunctionalTest {
 
 
     /**
-     * Configuring RunAllTests selects all tests even when a different mode is explicitly requested.
+     * Configuring 'alwaysRunAllTests' selects all tests even when a different mode is explicitly requested.
      */
     @Test
-    fun `test - smokeTestConfig RunAllTests`() {
-        val result = runTestBuild(TestFederationMode.Smoke, smokeTestConfig = "RunAllTests")
+    fun `test - alwaysRunAllTests`() {
+        val result = runTestBuild(TestFederationMode.Smoke, runAllTestsAlways = true)
         assertEquals(allTests, result.executedTests)
     }
 
     /**
-     * Configuring Disabled skips the task when it is not selected for a full test run.
+     * Configuring 'notCompatibleWithTestFederation' skips the task when it is not selected for a full test run.
      */
     @Test
-    fun `test - smokeTestConfig Disabled`() {
-        val result = runTestBuild(TestFederationMode.Smoke, smokeTestConfig = "Disabled")
+    fun `test - notCompatibleWithTestFederation`() {
+        val result = runTestBuild(TestFederationMode.Smoke, runAllTestsOrSkip = true)
         assertEquals(
             emptySet(),
             result.executedTests
@@ -194,7 +194,7 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - explicit clusters override selects requested subsets`() {
+    fun `test - explicit clusters override selects requested clusters`() {
         run {
             val result = runTestBuild(clustersOverride = "SmokeTests")
             assertEquals(setOf(TestResult("PseudoTest", "smoke test")), result.executedTests)
@@ -231,7 +231,7 @@ class TestFederationFunctionalTest {
 
     @Test
     fun `test - explicit clusters override does not override alwaysRunAllTests`() {
-        val result = runTestBuild(clustersOverride = "SmokeTests", smokeTestConfig = "RunAllTests")
+        val result = runTestBuild(clustersOverride = "SmokeTests", runAllTestsAlways = true)
         assertEquals(allTests, result.executedTests)
     }
 
@@ -303,7 +303,7 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - build with test federation disabled - build with test federation enabled (full) and smoke+runAllTests - reuses build caches`(
+    fun `test - build with test federation disabled - build with test federation enabled (full) and alwaysRunAllTests - reuses build caches`(
         @TempDir cache: Path,
     ) {
         val buildCacheArgs = buildCacheArgs(cache)
@@ -311,7 +311,7 @@ class TestFederationFunctionalTest {
         cleanTest()
         runTestBuild(
             mode = TestFederationMode.Full,
-            smokeTestConfig = "RunAllTests",
+            runAllTestsAlways = true,
             changed = Domain.entries.toTypedArray(),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
@@ -326,7 +326,7 @@ class TestFederationFunctionalTest {
         cleanTest()
         runTestBuild(
             mode = TestFederationMode.Smoke,
-            smokeTestConfig = "RunAllTests",
+            runAllTestsAlways = true,
             changed = Domain.entries.toTypedArray(),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
@@ -647,7 +647,8 @@ private fun runTestBuild(
     mode: TestFederationMode? = null,
     vararg changed: Domain,
     affected: List<Domain> = changed.toList(),
-    smokeTestConfig: String? = null,
+    runAllTestsAlways: Boolean = false,
+    runAllTestsOrSkip: Boolean = false,
     testTaskDomainsOverride: List<Domain>? = null,
     testFederationEnabled: Boolean = true,
     nightly: Boolean? = null,
@@ -672,8 +673,12 @@ private fun runTestBuild(
             this[TEST_FEDERATION_CLUSTERS_ENV_KEY] = clustersOverrideEnv
         }
 
-        if (smokeTestConfig != null) {
-            this["_PSEUDO_TEST_"] = smokeTestConfig
+        if (runAllTestsAlways) {
+            this["_RUN_ALL_TESTS_ALWAYS_"] = "true"
+        }
+
+        if (runAllTestsOrSkip) {
+            this["_RUN_ALL_TESTS_OR_SKIP_"] = "true"
         }
 
         if (testTaskDomainsOverride != null) {
