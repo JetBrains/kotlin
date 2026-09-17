@@ -1,7 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // DONT_TARGET_EXACT_BACKEND: NATIVE
 // ISSUE: KT-89466
-// IGNORE_HMPP: ANY
 
 // MODULE: lib-common
 class Some

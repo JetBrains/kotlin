@@ -183,9 +183,9 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
     }
 
     private fun FirBasedSymbol<*>.properComponents(): Fir2IrComponents {
-        val sourceSession = when (origin) {
-            is FirDeclarationOrigin.Precompiled -> moduleData.session
-            else -> dependencyToSourceSession.getValue(moduleData)
+        val sourceSession = when (moduleData.session.kind) {
+            Source -> moduleData.session
+            Library -> dependencyToSourceSession.getValue(moduleData)
         }
         return componentsPerSession.getValue(sourceSession)
     }
