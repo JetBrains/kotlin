@@ -19,18 +19,20 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import java.io.File
 
-// KT-89383
 @Tag("caches")
 @EnforcedHostTarget
 class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
 
+    // KT-89383
     @Test
-    fun absoluteLibraryPathIsAcceptedWhenCachingLibrary() = doTest(useRelativePath = false)
+    fun absoluteLibraryPathIsAcceptedWhenCachingLibrary() = doTestLibraryPathIsAcceptedWhenCachingLibrary(useRelativePath = false)
 
+    // KT-89383
     @Test
-    fun relativeLibraryPathIsAcceptedWhenCachingLibrary() = doTest(useRelativePath = true)
+    fun relativeLibraryPathIsAcceptedWhenCachingLibrary() = doTestLibraryPathIsAcceptedWhenCachingLibrary(useRelativePath = true)
 
-    private fun doTest(useRelativePath: Boolean) {
+    // KT-89383
+    private fun doTestLibraryPathIsAcceptedWhenCachingLibrary(useRelativePath: Boolean) {
         assumeTrue(HostManager.host.family == Family.OSX || HostManager.host.family == Family.LINUX)
 
         val nativeDistHome = testRunSettings.get<KotlinNativeHome>()
