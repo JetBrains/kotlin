@@ -45,38 +45,44 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class MetadataArgumentsImpl(
+  defaultArguments: K2MetadataCompilerArguments = K2MetadataCompilerArguments(),
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
   argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonCompilerArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
+) : CommonCompilerArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     MetadataArguments,
     MetadataArguments.Builder,
     DeepCopyable<MetadataArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_FRIEND_PATHS")
-  protected var `Xfriend-paths`: List<Path>
+  protected var `Xfriend-paths`: List<Path> =
+      defaultArguments.friendPaths.mapOrEmpty { kotlin.io.path.Path(it) }
 
   @SerialName("X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT")
-  protected var `Xklib-zip-file-accessor-cache-limit`: Int
+  protected var `Xklib-zip-file-accessor-cache-limit`: Int =
+      defaultArguments.klibZipFileAccessorCacheLimit.let { it.toInt() }
 
   @SerialName("X_LEGACY_METADATA_JAR_K2")
-  protected var `Xlegacy-metadata-jar-k2`: Boolean
+  protected var `Xlegacy-metadata-jar-k2`: Boolean = defaultArguments.legacyMetadataJar
 
   @SerialName("X_REFINES_PATHS")
-  protected var `Xrefines-paths`: List<Path>
+  protected var `Xrefines-paths`: List<Path> =
+      defaultArguments.refinesPaths.mapOrEmpty { kotlin.io.path.Path(it) }
 
   @SerialName("X_TARGET_PLATFORM")
-  protected var `Xtarget-platform`: List<MetadataTargetPlatform>
+  protected var `Xtarget-platform`: List<MetadataTargetPlatform> =
+      defaultArguments.targetPlatform.map { MetadataTargetPlatform.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") }
 
   @SerialName("CLASSPATH")
-  protected var classpath: List<Path>?
+  protected var classpath: List<Path>? =
+      defaultArguments.classpath?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
 
   @SerialName("D")
-  protected var d: String?
+  protected var d: String? = defaultArguments.destination
 
   @SerialName("MODULE_NAME")
-  protected var `module-name`: String?
+  protected var `module-name`: String? = defaultArguments.moduleName
   init {
     applyCompilerArguments(K2MetadataCompilerArguments())
   }
@@ -111,7 +117,7 @@ internal class MetadataArgumentsImpl(
     this[key.id] = `value`
   }
 
-  override fun deepCopy(): MetadataArgumentsImpl = MetadataArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): MetadataArgumentsImpl = MetadataArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): MetadataArgumentsImpl = deepCopy()
 

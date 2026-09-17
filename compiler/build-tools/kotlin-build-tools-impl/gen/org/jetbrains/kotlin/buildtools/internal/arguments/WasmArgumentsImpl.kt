@@ -40,10 +40,11 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class WasmArgumentsImpl(
+  defaultArguments: KotlinWasmCompilerArguments = KotlinWasmCompilerArguments(),
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
   argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonJsAndWasmArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
+) : CommonJsAndWasmArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     WasmCompilerArguments,
     WasmCompilerArguments.Builder,
     WasmCompilerKlibArguments,
@@ -54,73 +55,86 @@ internal class WasmArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE")
-  protected var `Xir-dce-dump-reachability-info-to-file`: Path?
+  protected var `Xir-dce-dump-reachability-info-to-file`: Path? =
+      defaultArguments.irDceDumpReachabilityInfoToFile?.let { kotlin.io.path.Path(it) }
 
   @SerialName("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE")
-  protected var `Xir-dump-declaration-ir-sizes-to-file`: Path?
+  protected var `Xir-dump-declaration-ir-sizes-to-file`: Path? =
+      defaultArguments.irDceDumpDeclarationIrSizesToFile?.let { kotlin.io.path.Path(it) }
 
   @SerialName("X_WASM")
-  protected var Xwasm: Boolean
+  protected var Xwasm: Boolean = defaultArguments.wasm
 
   @SerialName("X_WASM_IC_GENERATE_UNCHANGED_MODULES")
-  protected var `Xwasm-IC-generate-unchanged-modules`: Boolean
+  protected var `Xwasm-IC-generate-unchanged-modules`: Boolean =
+      defaultArguments.regenerateUnchangedModules
 
   @SerialName("X_WASM_DEBUG_FRIENDLY")
-  protected var `Xwasm-debug-friendly`: Boolean
+  protected var `Xwasm-debug-friendly`: Boolean = defaultArguments.forceDebugFriendlyCompilation
 
   @SerialName("X_WASM_DEBUG_INFO")
-  protected var `Xwasm-debug-info`: Boolean
+  protected var `Xwasm-debug-info`: Boolean = defaultArguments.wasmDebug
 
   @SerialName("X_WASM_DEBUGGER_CUSTOM_FORMATTERS")
-  protected var `Xwasm-debugger-custom-formatters`: Boolean
+  protected var `Xwasm-debugger-custom-formatters`: Boolean =
+      defaultArguments.debuggerCustomFormatters
 
   @SerialName("X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION")
-  protected var `Xwasm-disable-array-range-checks-safe-elimination`: Boolean
+  protected var `Xwasm-disable-array-range-checks-safe-elimination`: Boolean =
+      defaultArguments.wasmDisableArrayRangeChecksSafeElimination
 
   @SerialName("X_WASM_ENABLE_ARRAY_RANGE_CHECKS")
-  protected var `Xwasm-enable-array-range-checks`: Boolean
+  protected var `Xwasm-enable-array-range-checks`: Boolean =
+      defaultArguments.wasmEnableArrayRangeChecks
 
   @SerialName("X_WASM_ENABLE_ASSERTS")
-  protected var `Xwasm-enable-asserts`: Boolean
+  protected var `Xwasm-enable-asserts`: Boolean = defaultArguments.wasmEnableAsserts
 
   @SerialName("X_WASM_ENABLE_TAIL_CALLS")
-  protected var `Xwasm-enable-tail-calls`: Boolean
+  protected var `Xwasm-enable-tail-calls`: Boolean = defaultArguments.wasmEnableTailCalls
 
   @SerialName("X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE")
-  protected var `Xwasm-generate-closed-world-multimodule`: Boolean
+  protected var `Xwasm-generate-closed-world-multimodule`: Boolean =
+      defaultArguments.wasmGenerateClosedWorldMultimodule
 
   @SerialName("X_WASM_GENERATE_DWARF")
-  protected var `Xwasm-generate-dwarf`: Boolean
+  protected var `Xwasm-generate-dwarf`: Boolean = defaultArguments.generateDwarf
 
   @SerialName("X_WASM_GENERATE_WAT")
-  protected var `Xwasm-generate-wat`: Boolean
+  protected var `Xwasm-generate-wat`: Boolean = defaultArguments.wasmGenerateWat
 
   @SerialName("X_WASM_INCLUDED_MODULE_ONLY")
-  protected var `Xwasm-included-module-only`: Boolean
+  protected var `Xwasm-included-module-only`: Boolean = defaultArguments.wasmIncludedModuleOnly
 
   @SerialName("X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX")
-  protected var `Xwasm-internal-local-variable-prefix`: String
+  protected var `Xwasm-internal-local-variable-prefix`: String =
+      defaultArguments.wasmInternalLocalVariablePrefix
 
   @SerialName("X_WASM_KCLASS_FQN")
-  protected var `Xwasm-kclass-fqn`: Boolean
+  protected var `Xwasm-kclass-fqn`: Boolean = defaultArguments.wasmKClassFqn
 
   @SerialName("X_WASM_NO_JSTAG")
-  protected var `Xwasm-no-jstag`: Boolean
+  protected var `Xwasm-no-jstag`: Boolean = defaultArguments.wasmNoJsTag
 
   @SerialName("X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES")
-  protected var `Xwasm-source-map-include-mappings-from-unavailable-sources`: Boolean
+  protected var `Xwasm-source-map-include-mappings-from-unavailable-sources`: Boolean =
+      defaultArguments.includeUnavailableSourcesIntoSourceMap
 
   @SerialName("X_WASM_TARGET")
-  protected var `Xwasm-target`: WasmTarget?
+  protected var `Xwasm-target`: WasmTarget? =
+      defaultArguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") }
 
   @SerialName("X_WASM_USE_NEW_EXCEPTION_PROPOSAL")
-  protected var `Xwasm-use-new-exception-proposal`: Boolean?
+  protected var `Xwasm-use-new-exception-proposal`: Boolean? =
+      defaultArguments.wasmUseNewExceptionProposal
 
   @SerialName("X_WASM_USE_STACK_SWITCHING_PROPOSAL")
-  protected var `Xwasm-use-stack-switching-proposal`: Boolean
+  protected var `Xwasm-use-stack-switching-proposal`: Boolean =
+      defaultArguments.wasmUseStackSwitchingProposal
 
   @SerialName("X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS")
-  protected var `Xwasm-use-traps-instead-of-exceptions`: Boolean
+  protected var `Xwasm-use-traps-instead-of-exceptions`: Boolean =
+      defaultArguments.wasmUseTrapsInsteadOfExceptions
   init {
     applyCompilerArguments(KotlinWasmCompilerArguments())
   }
@@ -185,7 +199,7 @@ internal class WasmArgumentsImpl(
     this[key.id] = `value`
   }
 
-  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): WasmArgumentsImpl = deepCopy()
 

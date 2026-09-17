@@ -42,10 +42,11 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonJsAndWasmArgumentsImpl(
+  defaultArguments: CommonJsAndWasmCompilerArguments,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
   argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonKlibBasedArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
+) : CommonKlibBasedArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     CommonJsAndWasmArguments,
     CommonJsAndWasmArguments.Builder,
     CommonJsAndWasmCompilerKlibArguments,
@@ -55,79 +56,89 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_CACHE_DIRECTORY")
-  protected var `Xcache-directory`: Path?
+  protected var `Xcache-directory`: Path? =
+      defaultArguments.cacheDirectory?.let { kotlin.io.path.Path(it) }
 
   @SerialName("X_FRIEND_MODULES")
-  protected var `Xfriend-modules`: List<Path>?
+  protected var `Xfriend-modules`: List<Path>? =
+      defaultArguments.friendModules?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
 
   @SerialName("X_FRIEND_MODULES_DISABLED")
-  protected var `Xfriend-modules-disabled`: Boolean
+  protected var `Xfriend-modules-disabled`: Boolean = defaultArguments.friendModulesDisabled
 
   @SerialName("X_GENERATE_DTS")
-  protected var `Xgenerate-dts`: Boolean
+  protected var `Xgenerate-dts`: Boolean = defaultArguments.generateDts
 
   @SerialName("X_INCLUDE")
-  protected var Xinclude: Path?
+  protected var Xinclude: Path? = defaultArguments.includes?.let { kotlin.io.path.Path(it) }
 
   @SerialName("X_IR_DCE")
-  protected var `Xir-dce`: Boolean
+  protected var `Xir-dce`: Boolean = defaultArguments.irDce
 
   @SerialName("X_IR_DCE_PRINT_REACHABILITY_INFO")
-  protected var `Xir-dce-print-reachability-info`: Boolean
+  protected var `Xir-dce-print-reachability-info`: Boolean =
+      defaultArguments.irDcePrintReachabilityInfo
 
   @SerialName("X_IR_DCE_RUNTIME_DIAGNOSTIC")
-  protected var `Xir-dce-runtime-diagnostic`: JsIrDiagnosticMode?
+  protected var `Xir-dce-runtime-diagnostic`: JsIrDiagnosticMode? =
+      defaultArguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") }
 
   @SerialName("X_IR_MODULE_NAME")
-  protected var `Xir-module-name`: String?
+  protected var `Xir-module-name`: String? = defaultArguments.irModuleName
 
   @SerialName("X_IR_PER_MODULE_OUTPUT_NAME")
-  protected var `Xir-per-module-output-name`: String?
+  protected var `Xir-per-module-output-name`: String? = defaultArguments.irPerModuleOutputName
 
   @SerialName("X_IR_PRODUCE_JS")
-  protected var `Xir-produce-js`: Boolean
+  protected var `Xir-produce-js`: Boolean = defaultArguments.irProduceJs
 
   @SerialName("X_IR_PRODUCE_KLIB_DIR")
-  protected var `Xir-produce-klib-dir`: Boolean?
+  protected var `Xir-produce-klib-dir`: Boolean? = defaultArguments.irProduceKlibDir
 
   @SerialName("X_IR_PRODUCE_KLIB_FILE")
-  protected var `Xir-produce-klib-file`: Boolean?
+  protected var `Xir-produce-klib-file`: Boolean? = defaultArguments.irProduceKlibFile
 
   @SerialName("X_IR_PROPERTY_LAZY_INITIALIZATION")
-  protected var `Xir-property-lazy-initialization`: Boolean
+  protected var `Xir-property-lazy-initialization`: Boolean =
+      defaultArguments.irPropertyLazyInitialization
 
   @SerialName("X_STRICT_IMPLICIT_EXPORT_TYPES")
-  protected var `Xstrict-implicit-export-types`: Boolean
+  protected var `Xstrict-implicit-export-types`: Boolean = defaultArguments.strictImplicitExportType
 
   @SerialName("IR_OUTPUT_DIR")
-  protected var `ir-output-dir`: Path?
+  protected var `ir-output-dir`: Path? = defaultArguments.outputDir?.let { kotlin.io.path.Path(it) }
 
   @SerialName("IR_OUTPUT_NAME")
-  protected var `ir-output-name`: String?
+  protected var `ir-output-name`: String? = defaultArguments.moduleName
 
   @SerialName("LIBRARIES")
-  protected var libraries: List<Path>?
+  protected var libraries: List<Path>? =
+      defaultArguments.libraries?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
 
   @SerialName("MAIN")
-  protected var main: JsMainCallMode?
+  protected var main: JsMainCallMode? =
+      defaultArguments.main?.let { JsMainCallMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") }
 
   @SerialName("NOPACK")
-  protected var nopack: Boolean
+  protected var nopack: Boolean = defaultArguments.nopack
 
   @SerialName("SOURCE_MAP")
-  protected var `source-map`: Boolean
+  protected var `source-map`: Boolean = defaultArguments.sourceMap
 
   @SerialName("SOURCE_MAP_BASE_DIRS")
-  protected var `source-map-base-dirs`: List<Path>?
+  protected var `source-map-base-dirs`: List<Path>? =
+      defaultArguments.sourceMapBaseDirs?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
 
   @SerialName("SOURCE_MAP_EMBED_SOURCES")
-  protected var `source-map-embed-sources`: SourceMapEmbedSources?
+  protected var `source-map-embed-sources`: SourceMapEmbedSources? =
+      defaultArguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") }
 
   @SerialName("SOURCE_MAP_NAMES_POLICY")
-  protected var `source-map-names-policy`: SourceMapNamesPolicy?
+  protected var `source-map-names-policy`: SourceMapNamesPolicy? =
+      defaultArguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") }
 
   @SerialName("SOURCE_MAP_PREFIX")
-  protected var `source-map-prefix`: String?
+  protected var `source-map-prefix`: String? = defaultArguments.sourceMapPrefix
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = optionsMap[key.id] as V

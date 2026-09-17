@@ -23,7 +23,6 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlinx.serialization.SerialName
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_WARNING_LEVEL
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.ExplicitApiMode
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.KotlinVersion
@@ -44,256 +43,292 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("P")
-  protected var P: Array<String>?
+  protected var P: Array<String>? = defaultArguments.pluginOptions
 
   @SerialName("XX_DEBUG_LEVEL_COMPILER_CHECKS")
-  protected var `XXdebug-level-compiler-checks`: Boolean
+  protected var `XXdebug-level-compiler-checks`: Boolean = defaultArguments.debugLevelCompilerChecks
 
   @SerialName("XX_EXPLICIT_RETURN_TYPES")
-  protected var `XXexplicit-return-types`: ExplicitApiMode
+  protected var `XXexplicit-return-types`: ExplicitApiMode =
+      defaultArguments.explicitReturnTypes.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -XXexplicit-return-types value: $it") }
 
   @SerialName("XX_LENIENT_MODE")
-  protected var `XXlenient-mode`: Boolean
+  protected var `XXlenient-mode`: Boolean = defaultArguments.lenientMode
 
   @SerialName("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS")
-  protected var `Xallow-any-scripts-in-source-roots`: Boolean
+  protected var `Xallow-any-scripts-in-source-roots`: Boolean =
+      defaultArguments.allowAnyScriptsInSourceRoots
 
   @SerialName("X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS")
-  protected var `Xallow-condition-implies-returns-contracts`: Boolean
+  protected var `Xallow-condition-implies-returns-contracts`: Boolean =
+      defaultArguments.allowConditionImpliesReturnsContracts
 
   @SerialName("X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS")
-  protected var `Xallow-contracts-on-more-functions`: Boolean
+  protected var `Xallow-contracts-on-more-functions`: Boolean =
+      defaultArguments.allowContractsOnMoreFunctions
 
   @SerialName("X_ALLOW_HOLDSIN_CONTRACT")
-  protected var `Xallow-holdsin-contract`: Boolean
+  protected var `Xallow-holdsin-contract`: Boolean = defaultArguments.allowHoldsinContract
 
   @SerialName("X_ALLOW_KOTLIN_PACKAGE")
-  protected var `Xallow-kotlin-package`: Boolean
+  protected var `Xallow-kotlin-package`: Boolean = defaultArguments.allowKotlinPackage
 
   @SerialName("X_ALLOW_REIFIED_TYPE_IN_CATCH")
-  protected var `Xallow-reified-type-in-catch`: Boolean
+  protected var `Xallow-reified-type-in-catch`: Boolean = defaultArguments.allowReifiedTypeInCatch
 
   @SerialName("X_ANNOTATION_DEFAULT_TARGET")
-  protected var `Xannotation-default-target`: AnnotationDefaultTargetMode?
+  protected var `Xannotation-default-target`: AnnotationDefaultTargetMode? =
+      defaultArguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") }
 
   @SerialName("X_ANNOTATION_TARGET_ALL")
-  protected var `Xannotation-target-all`: Boolean
+  protected var `Xannotation-target-all`: Boolean = defaultArguments.annotationTargetAll
 
   @SerialName("X_CHECK_PHASE_CONDITIONS")
-  protected var `Xcheck-phase-conditions`: Boolean
+  protected var `Xcheck-phase-conditions`: Boolean = defaultArguments.checkPhaseConditions
 
   @SerialName("X_COMMON_SOURCES")
-  protected var `Xcommon-sources`: Array<String>?
+  protected var `Xcommon-sources`: Array<String>? = defaultArguments.commonSources
 
   @SerialName("X_COMPILER_PLUGIN")
-  protected var `Xcompiler-plugin`: Array<String>?
+  protected var `Xcompiler-plugin`: Array<String>? = defaultArguments.pluginConfigurations
 
   @SerialName("X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY")
-  protected var `Xconsistent-data-class-copy-visibility`: Boolean
+  protected var `Xconsistent-data-class-copy-visibility`: Boolean =
+      defaultArguments.consistentDataClassCopyVisibility
 
   @SerialName("X_CONTEXT_PARAMETERS")
-  protected var `Xcontext-parameters`: Boolean
+  protected var `Xcontext-parameters`: Boolean = defaultArguments.contextParameters
 
   @SerialName("X_CONTEXT_RECEIVERS")
-  protected var `Xcontext-receivers`: Boolean
+  protected var `Xcontext-receivers`: Boolean =
+      defaultArguments.getUsingReflection<Boolean>("contextReceivers")
 
   @SerialName("X_CONTEXT_SENSITIVE_RESOLUTION")
-  protected var `Xcontext-sensitive-resolution`: Boolean
+  protected var `Xcontext-sensitive-resolution`: Boolean =
+      defaultArguments.contextSensitiveResolution
 
   @SerialName("X_DATA_FLOW_BASED_EXHAUSTIVENESS")
-  protected var `Xdata-flow-based-exhaustiveness`: Boolean
+  protected var `Xdata-flow-based-exhaustiveness`: Boolean =
+      defaultArguments.dataFlowBasedExhaustiveness
 
   @SerialName("X_DIRECT_JAVA_ACTUALIZATION")
-  protected var `Xdirect-java-actualization`: Boolean
+  protected var `Xdirect-java-actualization`: Boolean =
+      defaultArguments.getUsingReflection<Boolean>("directJavaActualization")
 
   @SerialName("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN")
-  protected var `Xdisable-default-scripting-plugin`: Boolean
+  protected var `Xdisable-default-scripting-plugin`: Boolean =
+      defaultArguments.disableDefaultScriptingPlugin
 
   @SerialName("X_DISABLE_PHASES")
-  protected var `Xdisable-phases`: List<String>
+  protected var `Xdisable-phases`: List<String> = defaultArguments.disablePhases.toListOrEmpty()
 
   @SerialName("X_DONT_WARN_ON_ERROR_SUPPRESSION")
-  protected var `Xdont-warn-on-error-suppression`: Boolean
+  protected var `Xdont-warn-on-error-suppression`: Boolean =
+      defaultArguments.dontWarnOnErrorSuppression
 
   @SerialName("X_DUMP_DIRECTORY")
-  protected var `Xdump-directory`: Path?
+  protected var `Xdump-directory`: Path? =
+      defaultArguments.dumpDirectory?.let { kotlin.io.path.Path(it) }
 
   @SerialName("X_DUMP_FQNAME")
-  protected var `Xdump-fqname`: String?
+  protected var `Xdump-fqname`: String? = defaultArguments.dumpOnlyFqName
 
   @SerialName("X_DUMP_PERF")
-  protected var `Xdump-perf`: Path?
+  protected var `Xdump-perf`: Path? = defaultArguments.dumpPerf?.let { kotlin.io.path.Path(it) }
 
   @SerialName("X_ENABLE_INCREMENTAL_COMPILATION")
-  protected var `Xenable-incremental-compilation`: Boolean?
+  protected var `Xenable-incremental-compilation`: Boolean? =
+      defaultArguments.incrementalCompilation
 
   @SerialName("X_EXPECT_ACTUAL_CLASSES")
-  protected var `Xexpect-actual-classes`: Boolean
+  protected var `Xexpect-actual-classes`: Boolean = defaultArguments.expectActualClasses
 
   @SerialName("X_EXPLICIT_API")
-  protected var `Xexplicit-api`: ExplicitApiMode
+  protected var `Xexplicit-api`: ExplicitApiMode =
+      defaultArguments.explicitApi.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") }
 
   @SerialName("X_FRAGMENT_DEPENDENCY")
-  protected var `Xfragment-dependency`: Array<String>?
+  protected var `Xfragment-dependency`: Array<String>? = defaultArguments.fragmentDependencies
 
   @SerialName("X_FRAGMENT_REFINES")
-  protected var `Xfragment-refines`: Array<String>?
+  protected var `Xfragment-refines`: Array<String>? = defaultArguments.fragmentRefines
 
   @SerialName("X_FRAGMENT_SOURCES")
-  protected var `Xfragment-sources`: Array<String>?
+  protected var `Xfragment-sources`: Array<String>? = defaultArguments.fragmentSources
 
   @SerialName("X_FRAGMENTS")
-  protected var Xfragments: Array<String>?
+  protected var Xfragments: Array<String>? = defaultArguments.fragments
 
   @SerialName("X_IGNORE_CONST_OPTIMIZATION_ERRORS")
-  protected var `Xignore-const-optimization-errors`: Boolean
+  protected var `Xignore-const-optimization-errors`: Boolean =
+      defaultArguments.getUsingReflection<Boolean>("ignoreConstOptimizationErrors")
 
   @SerialName("X_INLINE_CLASSES")
-  protected var `Xinline-classes`: Boolean
+  protected var `Xinline-classes`: Boolean =
+      defaultArguments.getUsingReflection<Boolean>("inlineClasses")
 
   @SerialName("X_INTELLIJ_PLUGIN_ROOT")
-  protected var `Xintellij-plugin-root`: String?
+  protected var `Xintellij-plugin-root`: String? =
+      defaultArguments.getUsingReflection<String?>("intellijPluginRoot")
 
   @SerialName("X_LIST_PHASES")
-  protected var `Xlist-phases`: Boolean
+  protected var `Xlist-phases`: Boolean = defaultArguments.listPhases
 
   @SerialName("X_METADATA_KLIB")
-  protected var `Xmetadata-klib`: Boolean
+  protected var `Xmetadata-klib`: Boolean = defaultArguments.metadataKlib
 
   @SerialName("X_METADATA_VERSION")
-  protected var `Xmetadata-version`: String?
+  protected var `Xmetadata-version`: String? = defaultArguments.metadataVersion
 
   @SerialName("X_MULTI_DOLLAR_INTERPOLATION")
-  protected var `Xmulti-dollar-interpolation`: Boolean
+  protected var `Xmulti-dollar-interpolation`: Boolean = defaultArguments.multiDollarInterpolation
 
   @SerialName("X_MULTI_PLATFORM")
-  protected var `Xmulti-platform`: Boolean
+  protected var `Xmulti-platform`: Boolean = defaultArguments.multiPlatform
 
   @SerialName("X_NESTED_TYPE_ALIASES")
-  protected var `Xnested-type-aliases`: Boolean
+  protected var `Xnested-type-aliases`: Boolean = defaultArguments.nestedTypeAliases
 
   @SerialName("X_NEW_INFERENCE")
-  protected var `Xnew-inference`: Boolean
+  protected var `Xnew-inference`: Boolean =
+      defaultArguments.getUsingReflection<Boolean>("newInference")
 
   @SerialName("X_NO_CHECK_ACTUAL")
-  protected var `Xno-check-actual`: Boolean
+  protected var `Xno-check-actual`: Boolean =
+      defaultArguments.getUsingReflection<Boolean>("noCheckActual")
 
   @SerialName("X_NO_INLINE")
-  protected var `Xno-inline`: Boolean
+  protected var `Xno-inline`: Boolean = defaultArguments.noInline
 
   @SerialName("X_NON_LOCAL_BREAK_CONTINUE")
-  protected var `Xnon-local-break-continue`: Boolean
+  protected var `Xnon-local-break-continue`: Boolean = defaultArguments.nonLocalBreakContinue
 
   @SerialName("X_PHASES_TO_DUMP")
-  protected var `Xphases-to-dump`: List<String>
+  protected var `Xphases-to-dump`: List<String> = defaultArguments.phasesToDump.toListOrEmpty()
 
   @SerialName("X_PHASES_TO_DUMP_AFTER")
-  protected var `Xphases-to-dump-after`: List<String>
+  protected var `Xphases-to-dump-after`: List<String> =
+      defaultArguments.phasesToDumpAfter.toListOrEmpty()
 
   @SerialName("X_PHASES_TO_DUMP_BEFORE")
-  protected var `Xphases-to-dump-before`: List<String>
+  protected var `Xphases-to-dump-before`: List<String> =
+      defaultArguments.phasesToDumpBefore.toListOrEmpty()
 
   @SerialName("X_PHASES_TO_VALIDATE")
-  protected var `Xphases-to-validate`: List<String>
+  protected var `Xphases-to-validate`: List<String> =
+      defaultArguments.phasesToValidate.toListOrEmpty()
 
   @SerialName("X_PHASES_TO_VALIDATE_AFTER")
-  protected var `Xphases-to-validate-after`: List<String>
+  protected var `Xphases-to-validate-after`: List<String> =
+      defaultArguments.phasesToValidateAfter.toListOrEmpty()
 
   @SerialName("X_PHASES_TO_VALIDATE_BEFORE")
-  protected var `Xphases-to-validate-before`: List<String>
+  protected var `Xphases-to-validate-before`: List<String> =
+      defaultArguments.phasesToValidateBefore.toListOrEmpty()
 
   @SerialName("X_PLUGIN")
-  protected var Xplugin: Array<String>?
+  protected var Xplugin: Array<String>? = defaultArguments.pluginClasspaths
 
   @SerialName("X_PROFILE_PHASES")
-  protected var `Xprofile-phases`: Boolean
+  protected var `Xprofile-phases`: Boolean = defaultArguments.profilePhases
 
   @SerialName("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES")
-  protected var `Xrender-internal-diagnostic-names`: Boolean
+  protected var `Xrender-internal-diagnostic-names`: Boolean =
+      defaultArguments.renderInternalDiagnosticNames
 
   @SerialName("X_REPL")
-  protected var Xrepl: Boolean
+  protected var Xrepl: Boolean = defaultArguments.repl
 
   @SerialName("X_REPORT_ALL_WARNINGS")
-  protected var `Xreport-all-warnings`: Boolean
+  protected var `Xreport-all-warnings`: Boolean = defaultArguments.reportAllWarnings
 
   @SerialName("X_REPORT_OUTPUT_FILES")
-  protected var `Xreport-output-files`: Boolean
+  protected var `Xreport-output-files`: Boolean = defaultArguments.reportOutputFiles
 
   @SerialName("X_REPORT_PERF")
-  protected var `Xreport-perf`: Boolean
+  protected var `Xreport-perf`: Boolean = defaultArguments.reportPerf
 
   @SerialName("X_RETURN_VALUE_CHECKER")
-  protected var `Xreturn-value-checker`: ReturnValueCheckerMode
+  protected var `Xreturn-value-checker`: ReturnValueCheckerMode =
+      defaultArguments.returnValueChecker.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") }
 
   @SerialName("X_SEPARATE_KMP_COMPILATION")
-  protected var `Xseparate-kmp-compilation`: Boolean
+  protected var `Xseparate-kmp-compilation`: Boolean = defaultArguments.separateKmpCompilationScheme
 
   @SerialName("X_SKIP_METADATA_VERSION_CHECK")
-  protected var `Xskip-metadata-version-check`: Boolean
+  protected var `Xskip-metadata-version-check`: Boolean = defaultArguments.skipMetadataVersionCheck
 
   @SerialName("X_SKIP_PRERELEASE_CHECK")
-  protected var `Xskip-prerelease-check`: Boolean
+  protected var `Xskip-prerelease-check`: Boolean = defaultArguments.skipPrereleaseCheck
 
   @SerialName("X_STDLIB_COMPILATION")
-  protected var `Xstdlib-compilation`: Boolean
+  protected var `Xstdlib-compilation`: Boolean = defaultArguments.stdlibCompilation
 
   @SerialName("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR")
-  protected var `Xsuppress-api-version-greater-than-language-version-error`: Boolean
+  protected var `Xsuppress-api-version-greater-than-language-version-error`: Boolean =
+      defaultArguments.getUsingReflection<Boolean>("suppressApiVersionGreaterThanLanguageVersionError")
 
   @SerialName("X_SUPPRESS_VERSION_WARNINGS")
-  protected var `Xsuppress-version-warnings`: Boolean
+  protected var `Xsuppress-version-warnings`: Boolean = defaultArguments.suppressVersionWarnings
 
   @SerialName("X_SUPPRESS_WARNING")
-  protected var `Xsuppress-warning`: List<String>
+  protected var `Xsuppress-warning`: List<String> =
+      defaultArguments.getUsingReflection<Array<String>>("suppressedDiagnostics").toListOrEmpty()
 
   @SerialName("X_UNRESTRICTED_BUILDER_INFERENCE")
-  protected var `Xunrestricted-builder-inference`: Boolean
+  protected var `Xunrestricted-builder-inference`: Boolean =
+      defaultArguments.getUsingReflection<Boolean>("unrestrictedBuilderInference")
 
   @SerialName("X_USE_FIR_EXPERIMENTAL_CHECKERS")
-  protected var `Xuse-fir-experimental-checkers`: Boolean
+  protected var `Xuse-fir-experimental-checkers`: Boolean =
+      defaultArguments.getUsingReflection<Boolean>("useFirExperimentalCheckers")
 
   @SerialName("X_USE_FIR_IC")
-  protected var `Xuse-fir-ic`: Boolean
+  protected var `Xuse-fir-ic`: Boolean = defaultArguments.useFirIC
 
   @SerialName("X_USE_FIR_LT")
-  protected var `Xuse-fir-lt`: Boolean
+  protected var `Xuse-fir-lt`: Boolean = defaultArguments.useFirLT
 
   @SerialName("X_USE_K2")
-  protected var `Xuse-k2`: Boolean
+  protected var `Xuse-k2`: Boolean = defaultArguments.getUsingReflection<Boolean>("useK2")
 
   @SerialName("X_VERBOSE_PHASES")
-  protected var `Xverbose-phases`: List<String>
+  protected var `Xverbose-phases`: List<String> = defaultArguments.verbosePhases.toListOrEmpty()
 
   @SerialName("X_VERIFY_IR")
-  protected var `Xverify-ir`: VerifyIrMode?
+  protected var `Xverify-ir`: VerifyIrMode? =
+      defaultArguments.verifyIr?.let { VerifyIrMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") }
 
   @SerialName("X_VERIFY_IR_VISIBILITY")
-  protected var `Xverify-ir-visibility`: Boolean
+  protected var `Xverify-ir-visibility`: Boolean =
+      defaultArguments.getUsingReflection<Boolean>("verifyIrVisibility")
 
   @SerialName("X_WHEN_GUARDS")
-  protected var `Xwhen-guards`: Boolean
+  protected var `Xwhen-guards`: Boolean = defaultArguments.whenGuards
 
   @SerialName("API_VERSION")
-  protected var `api-version`: KotlinVersion?
+  protected var `api-version`: KotlinVersion? =
+      defaultArguments.apiVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") }
 
   @SerialName("KOTLIN_HOME")
-  protected var `kotlin-home`: Path?
+  protected var `kotlin-home`: Path? = defaultArguments.kotlinHome?.let { kotlin.io.path.Path(it) }
 
   @SerialName("LANGUAGE_VERSION")
-  protected var `language-version`: KotlinVersion?
+  protected var `language-version`: KotlinVersion? =
+      defaultArguments.languageVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") }
 
   @SerialName("OPT_IN")
-  protected var `opt-in`: List<String>
+  protected var `opt-in`: List<String> = defaultArguments.optIn.toListOrEmpty()
 
   @SerialName("PROGRESSIVE")
-  protected var progressive: Boolean
+  protected var progressive: Boolean = defaultArguments.progressiveMode
 
   @SerialName("SCRIPT")
-  protected var script: Boolean
+  protected var script: Boolean = defaultArguments.script
 
   @SerialName("X_WARNING_LEVEL")
-  protected var `Xwarning-level`: List<WarningLevel>
+  protected var `Xwarning-level`: List<WarningLevel> =
+      applyWarningLevels(emptyList<WarningLevel>(), defaultArguments)
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonCompilerArgument<V>): V = optionsMap[key.id] as V
@@ -422,7 +457,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     arguments.optIn = `opt-in`.toTypedArray()
     arguments.progressiveMode = progressive
     arguments.script = script
-    try { if (X_WARNING_LEVEL in this) { arguments.applyWarningLevels(get(X_WARNING_LEVEL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_WARNING_LEVEL. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
+    try { arguments.applyWarningLevels(`Xwarning-level`) } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_WARNING_LEVEL. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     return arguments
   }
 
@@ -512,7 +547,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { `opt-in` = arguments.optIn.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { progressive = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
     try { script = arguments.script } catch (_: NoSuchMethodError) {  }
-    try { this[X_WARNING_LEVEL] = applyWarningLevels(if(X_WARNING_LEVEL in this) this[X_WARNING_LEVEL] else emptyList<WarningLevel>(), arguments) } catch (_: NoSuchMethodError) {  }
+    try { `Xwarning-level` = applyWarningLevels(`Xwarning-level`, arguments) } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 

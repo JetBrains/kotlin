@@ -40,10 +40,11 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonKlibBasedArgumentsImpl(
+  defaultArguments: CommonKlibBasedCompilerArguments,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
   argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonCompilerArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
+) : CommonCompilerArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     CommonKlibBasedArguments,
     CommonKlibBasedArguments.Builder,
     CommonKlibBasedArgumentsKlibArguments,
@@ -53,31 +54,39 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_KLIB_ABI_VERSION")
-  protected var `Xklib-abi-version`: String?
+  protected var `Xklib-abi-version`: String? = defaultArguments.customKlibAbiVersion
 
   @SerialName("X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY")
-  protected var `Xklib-duplicated-unique-name-strategy`: DuplicatedUniqueNameStrategy?
+  protected var `Xklib-duplicated-unique-name-strategy`: DuplicatedUniqueNameStrategy? =
+      defaultArguments.duplicatedUniqueNameStrategy?.let { DuplicatedUniqueNameStrategy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::duplicatedUniqueNameStrategy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-duplicated-unique-name-strategy value: $it") }
 
   @SerialName("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS")
-  protected var `Xklib-enable-signature-clash-checks`: Boolean
+  protected var `Xklib-enable-signature-clash-checks`: Boolean =
+      defaultArguments.enableSignatureClashChecks
 
   @SerialName("X_KLIB_IR_INLINER")
-  protected var `Xklib-ir-inliner`: KlibIrInlinerMode
+  protected var `Xklib-ir-inliner`: KlibIrInlinerMode =
+      defaultArguments.irInlinerBeforeKlibSerialization.let { KlibIrInlinerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::irInlinerBeforeKlibSerialization, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-ir-inliner value: $it") }
 
   @SerialName("X_KLIB_RELATIVE_PATH_BASE")
-  protected var `Xklib-relative-path-base`: List<Path>
+  protected var `Xklib-relative-path-base`: List<Path> =
+      defaultArguments.relativePathBases.mapOrEmpty { kotlin.io.path.Path(it) }
 
   @SerialName("X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT")
-  protected var `Xklib-zip-file-accessor-cache-limit`: Int
+  protected var `Xklib-zip-file-accessor-cache-limit`: Int =
+      defaultArguments.klibZipFileAccessorCacheLimit.let { it.toInt() }
 
   @SerialName("X_PARTIAL_LINKAGE")
-  protected var `Xpartial-linkage`: PartialLinkageMode?
+  protected var `Xpartial-linkage`: PartialLinkageMode? =
+      defaultArguments.partialLinkageMode?.let { PartialLinkageMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::partialLinkageMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage value: $it") }
 
   @SerialName("X_PARTIAL_LINKAGE_LOGLEVEL")
-  protected var `Xpartial-linkage-loglevel`: PartialLinkageLogLevel?
+  protected var `Xpartial-linkage-loglevel`: PartialLinkageLogLevel? =
+      defaultArguments.partialLinkageLogLevel?.let { PartialLinkageLogLevel.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::partialLinkageLogLevel, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage-loglevel value: $it") }
 
   @SerialName("X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS")
-  protected var `Xskip-library-special-compatibility-checks`: Boolean
+  protected var `Xskip-library-special-compatibility-checks`: Boolean =
+      defaultArguments.skipLibrarySpecialCompatibilityChecks
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = optionsMap[key.id] as V

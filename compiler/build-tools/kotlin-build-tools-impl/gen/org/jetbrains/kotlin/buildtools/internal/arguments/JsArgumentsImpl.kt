@@ -41,10 +41,11 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class JsArgumentsImpl(
+  defaultArguments: K2JSCompilerArguments = K2JSCompilerArguments(),
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
   argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonJsAndWasmArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
+) : CommonJsAndWasmArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     JsCompilerArguments,
     JsCompilerArguments.Builder,
     JsCompilerKlibArguments,
@@ -55,76 +56,84 @@ internal class JsArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_DTS_USE_UNKNOWN_INSTEAD_ANY")
-  protected var `Xdts-use-unknown-instead-any`: Boolean
+  protected var `Xdts-use-unknown-instead-any`: Boolean = defaultArguments.useUnknownInsteadAny
 
   @SerialName("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS")
-  protected var `Xenable-extension-functions-in-externals`: Boolean
+  protected var `Xenable-extension-functions-in-externals`: Boolean =
+      defaultArguments.extensionFunctionsInExternals
 
   @SerialName("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT")
-  protected var `Xenable-implementing-interfaces-from-typescript`: Boolean
+  protected var `Xenable-implementing-interfaces-from-typescript`: Boolean =
+      defaultArguments.allowImplementableInterfacesExporting
 
   @SerialName("X_ENABLE_SUSPEND_FUNCTION_EXPORTING")
-  protected var `Xenable-suspend-function-exporting`: Boolean
+  protected var `Xenable-suspend-function-exporting`: Boolean =
+      defaultArguments.allowExportingSuspendFunctions
 
   @SerialName("X_ES_ARROW_FUNCTIONS")
-  protected var `Xes-arrow-functions`: Boolean?
+  protected var `Xes-arrow-functions`: Boolean? = defaultArguments.useEsArrowFunctions
 
   @SerialName("X_ES_CLASSES")
-  protected var `Xes-classes`: Boolean?
+  protected var `Xes-classes`: Boolean? = defaultArguments.useEsClasses
 
   @SerialName("X_ES_GENERATORS")
-  protected var `Xes-generators`: Boolean?
+  protected var `Xes-generators`: Boolean? = defaultArguments.useEsGenerators
 
   @SerialName("X_ES_LONG_AS_BIGINT")
-  protected var `Xes-long-as-bigint`: Boolean?
+  protected var `Xes-long-as-bigint`: Boolean? = defaultArguments.compileLongAsBigInt
 
   @SerialName("X_EXPORT_KDOC")
-  protected var `Xexport-kdoc`: Boolean
+  protected var `Xexport-kdoc`: Boolean = defaultArguments.exportKDoc
 
   @SerialName("X_GENERATE_POLYFILLS")
-  protected var `Xgenerate-polyfills`: Boolean
+  protected var `Xgenerate-polyfills`: Boolean = defaultArguments.generatePolyfills
 
   @SerialName("X_INTEGER_DIVISION_CHECK")
-  protected var `Xinteger-division-check`: Boolean
+  protected var `Xinteger-division-check`: Boolean = defaultArguments.integerDivisionCheck
 
   @SerialName("X_IR_BUILD_CACHE")
-  protected var `Xir-build-cache`: Boolean
+  protected var `Xir-build-cache`: Boolean = defaultArguments.irBuildCache
 
   @SerialName("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS")
-  protected var `Xir-generate-inline-anonymous-functions`: Boolean
+  protected var `Xir-generate-inline-anonymous-functions`: Boolean =
+      defaultArguments.irGenerateInlineAnonymousFunctions
 
   @SerialName("X_IR_KEEP")
-  protected var `Xir-keep`: String?
+  protected var `Xir-keep`: String? = defaultArguments.irKeep
 
   @SerialName("X_IR_MINIMIZED_MEMBER_NAMES")
-  protected var `Xir-minimized-member-names`: Boolean
+  protected var `Xir-minimized-member-names`: Boolean = defaultArguments.irMinimizedMemberNames
 
   @SerialName("X_IR_PER_FILE")
-  protected var `Xir-per-file`: Boolean
+  protected var `Xir-per-file`: Boolean = defaultArguments.irPerFile
 
   @SerialName("X_IR_PER_MODULE")
-  protected var `Xir-per-module`: Boolean
+  protected var `Xir-per-module`: Boolean = defaultArguments.irPerModule
 
   @SerialName("X_IR_SAFE_EXTERNAL_BOOLEAN")
-  protected var `Xir-safe-external-boolean`: Boolean
+  protected var `Xir-safe-external-boolean`: Boolean = defaultArguments.irSafeExternalBoolean
 
   @SerialName("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
-  protected var `Xir-safe-external-boolean-diagnostic`: JsIrDiagnosticMode?
+  protected var `Xir-safe-external-boolean-diagnostic`: JsIrDiagnosticMode? =
+      defaultArguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") }
 
   @SerialName("X_OPTIMIZE_GENERATED_JS")
-  protected var `Xoptimize-generated-js`: Boolean
+  protected var `Xoptimize-generated-js`: Boolean = defaultArguments.optimizeGeneratedJs
 
   @SerialName("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION")
-  protected var `Xplatform-arguments-in-main-function`: String?
+  protected var `Xplatform-arguments-in-main-function`: String? =
+      defaultArguments.platformArgumentsProviderJsExpression
 
   @SerialName("X_SUSPEND_LAMBDA_EXPORTING")
-  protected var `Xsuspend-lambda-exporting`: Boolean
+  protected var `Xsuspend-lambda-exporting`: Boolean = defaultArguments.allowExportingSuspendLambdas
 
   @SerialName("MODULE_KIND")
-  protected var `module-kind`: JsModuleKind?
+  protected var `module-kind`: JsModuleKind? =
+      defaultArguments.moduleKind?.let { JsModuleKind.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") }
 
   @SerialName("TARGET")
-  protected var target: JsEcmaVersion?
+  protected var target: JsEcmaVersion? =
+      defaultArguments.target?.let { JsEcmaVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") }
   init {
     applyCompilerArguments(K2JSCompilerArguments())
   }
@@ -189,7 +198,7 @@ internal class JsArgumentsImpl(
     this[key.id] = `value`
   }
 
-  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): JsArgumentsImpl = deepCopy()
 

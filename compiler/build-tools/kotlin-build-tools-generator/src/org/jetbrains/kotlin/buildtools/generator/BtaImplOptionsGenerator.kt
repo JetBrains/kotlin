@@ -108,7 +108,7 @@ internal class BtaImplOptionsGenerator(
                 val argumentTypeNameString =
                     generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
                 val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
-                val constructorSpecBuilder = constructorSpecBuilder()
+                val constructorSpecBuilder = level.constructorSpecBuilder()
 
                 val adapterClassName = ClassName(targetPackage, "${argumentTypeNameString}ValueAdapter")
 
@@ -157,7 +157,7 @@ internal class BtaImplOptionsGenerator(
                         addModifiers(KModifier.OVERRIDE)
                         returns(ClassName(targetPackage, implClassName))
                         val constructorArgs = if (!generateCompatLayer) {
-                            "argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()"
+                            "argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()"
                         } else ""
                         addStatement(
                             "return %T($constructorArgs).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }",
@@ -274,8 +274,15 @@ internal class BtaImplOptionsGenerator(
         return Path(fileSpec.relativePath) to appendable.toString()
     }
 
-    private fun constructorSpecBuilder(): FunSpec.Builder = FunSpec.constructorBuilder().apply {
+    private fun KotlinCompilerArgumentsLevel.constructorSpecBuilder(): FunSpec.Builder = FunSpec.constructorBuilder().apply {
         if (!generateCompatLayer) {
+            addParameter(
+                ParameterSpec.builder("defaultArguments", getCompilerArgumentsClassName()).apply {
+                    if (this@constructorSpecBuilder.isLeaf()) {
+                        defaultValue("%T()", getCompilerArgumentsClassName())
+                    }
+                }.build()
+            )
             addParameter(
                 ParameterSpec.builder("argumentValidationErrors", setTypeNameOf<String>())
                     .defaultValue("%M()", MemberName("kotlin.collections", "emptySet"))
@@ -372,7 +379,7 @@ internal class BtaImplOptionsGenerator(
             companion.property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
                 initializer("%T(%S)", argumentTypeName, name)
             }
-            val argumentProperty = property(argument.name, argumentTypeParameter, KModifier.PROTECTED) {
+            val argumentProperty = PropertySpec.builder(argument.name, argumentTypeParameter, KModifier.PROTECTED).apply {
                 mutable(true)
                 annotation(ClassName("kotlinx.serialization", "SerialName")) {
                     addMember("%S", name)
@@ -382,7 +389,6 @@ internal class BtaImplOptionsGenerator(
             when (argument) {
                 is BtaCompilerArgument.SSoTCompilerArgument -> {
                     generateAutomaticArgumentsPropagators(
-                        implClassName,
                         name,
                         argumentTypeParameter,
                         argument,
@@ -407,9 +413,12 @@ internal class BtaImplOptionsGenerator(
                         toCompilerArgumentsAffectingOutcomeFun,
                         applyCompilerArgumentsFun,
                         wasIntroducedRecently,
+                        argumentProperty,
                     )
                 }
             }
+
+            addProperty(argumentProperty.build())
         }
 
         enumsToGenerate.forEach { [type, typeSpecBuilder] ->
@@ -427,14 +436,13 @@ internal class BtaImplOptionsGenerator(
         toCompilerArgumentsAffectingOutcomeFun: FunSpec.Builder,
         applyCompilerArgumentsFun: FunSpec.Builder,
         wasIntroducedRecently: Boolean,
+        argumentProperty: PropertySpec.Builder,
     ) {
         val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
         val applier = MemberName(targetPackage, argument.applierSimpleName)
 
         CodeBlock.builder().apply {
-            add("if (%M in this) { ", member)
-            add("arguments.%M(get(%M))", applier, member)
-            add("}")
+            add("arguments.%M(%N)", applier, argumentProperty.build())
         }.build().also { setStatement ->
             toCompilerConverterFun.addSafeSetStatement(
                 wasIntroducedRecently,
@@ -458,7 +466,7 @@ internal class BtaImplOptionsGenerator(
 
         applyCompilerArgumentsFun.addSafeMethodAccessStatement(
             CodeBlock.builder().apply {
-                add("this[%M] = %M(if(%M in this) this[%M] else %L, arguments)", member, applier, member, member, argument.defaultValue)
+                add("%N = %M(%N, arguments)", argumentProperty.build(), applier, argumentProperty.build())
             }.build(),
             catches =
                 buildList {
@@ -468,13 +476,15 @@ internal class BtaImplOptionsGenerator(
                     add(catchNoSuchMethodError())
                 },
         )
+        argumentProperty.initializer(
+            CodeBlock.of("%M(%L, defaultArguments)", applier, argument.defaultValue)
+        )
     }
 
     /**
      * Generates code that configures for example [org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments] from [org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments] and vice versa
      */
     private fun generateAutomaticArgumentsPropagators(
-        implClassName: String,
         name: String,
         type: TypeName,
         argument: BtaCompilerArgument.SSoTCompilerArgument,
@@ -485,7 +495,7 @@ internal class BtaImplOptionsGenerator(
         wasIntroducedRecently: Boolean,
         applyCompilerArgumentsFun: FunSpec.Builder,
         argumentTypeParameter: TypeName,
-        argumentProperty: PropertySpec,
+        argumentProperty: PropertySpec.Builder,
     ) {
         // BTA → Compiler conversion
         CodeBlock.builder().apply {
@@ -526,17 +536,22 @@ internal class BtaImplOptionsGenerator(
                 add(catchNoSuchMethodError())
             },
         )
+        argumentProperty.initializer(
+            buildCompilerToBtaValueTransform(
+                type, argument, effectiveCompilerName, wasRemoved, argumentTypeParameter, argumentProperty, true
+            )
+        )
     }
 
     /**
      * Builds the value transformation from BTA to compiler (e.g., enum.stringValue, int.toString(), path.absolutePathStringOrThrow())
      */
     private fun buildBtaToCompilerValueTransform(
-        argumentProperty: PropertySpec,
+        argumentProperty: PropertySpec.Builder,
         type: TypeName,
         argument: BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>,
     ): CodeBlock = CodeBlock.builder().apply {
-        add("%N", argumentProperty)
+        add("%N", argumentProperty.build())
         when {
             type.isGeneratedEnum -> {
                 add(maybeGetNullabilitySign(argument) + ".stringValue")
@@ -626,18 +641,22 @@ internal class BtaImplOptionsGenerator(
         effectiveCompilerName: String,
         wasRemoved: Boolean,
         argumentTypeParameter: TypeName,
-        argumentProperty: PropertySpec,
+        argumentProperty: PropertySpec.Builder,
+        forInitializer: Boolean = false,
     ): CodeBlock = CodeBlock.builder().apply {
-        add("%N = ", argumentProperty)
+        if (!forInitializer) {
+            add("%N = ", argumentProperty.build())
+        }
+        val argumentsName = if (forInitializer) "defaultArguments" else "arguments"
         if (wasRemoved) {
             add(
-                "arguments.%M<%T>(%S)",
+                "$argumentsName.%M<%T>(%S)",
                 MemberName(targetPackage, "getUsingReflection", isExtension = true),
                 argument.getTypeArgumentForReflection(),
                 effectiveCompilerName,
             )
         } else {
-            add("arguments.%N", effectiveCompilerName)
+            add("$argumentsName.%N", effectiveCompilerName)
         }
 
         when {
@@ -645,7 +664,7 @@ internal class BtaImplOptionsGenerator(
                 add(maybeGetNullabilitySign(argument))
                 if (!generateCompatLayer) {
                     add(
-                        $$".let { %T.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> %M(_restrictedArgViolations, arguments::%N, entry.stringValue, it) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                        $$".let { %T.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> %M(_restrictedArgViolations, $$argumentsName::%N, entry.stringValue, it) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
                         argumentTypeParameter.copy(nullable = false),
                         MemberName(targetPackage, "checkCaseMatches"),
                         effectiveCompilerName,
