@@ -56,7 +56,7 @@ As a side effect, this approach also allows estimating the API costs for each ru
 
 Rules are organized in special Markdown files named `code-rules.md`.
 
-Some sanity checks for all the `code-fules.md` files in the repository are implemented as tests in
+Some sanity checks for all the `code-rules.md` files in the repository are implemented as tests in
 [RepoCodeRulesTests](test/org/jetbrains/kotlin/code/review/RepoCodeRulesTests.kt).
 For example, those tests check that all rule files can be parsed successfully, all includes refer to existing files,
 and every rule applies to at least one file.
