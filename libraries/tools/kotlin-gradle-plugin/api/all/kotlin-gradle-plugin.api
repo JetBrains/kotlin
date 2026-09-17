@@ -948,8 +948,9 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/DefaultKotlinCompilati
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/DefaultKotlinUsageContext : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext$MavenScope;Ljava/lang/String;Lorg/gradle/api/provider/SetProperty;Lorg/gradle/api/attributes/AttributeContainer;ZLorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultKotlinUsageContext$PublishOnlyIf;)V
-	public synthetic fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext$MavenScope;Ljava/lang/String;Lorg/gradle/api/provider/SetProperty;Lorg/gradle/api/attributes/AttributeContainer;ZLorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultKotlinUsageContext$PublishOnlyIf;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext$MavenScope;Ljava/lang/String;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/attributes/AttributeContainer;ZLorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultKotlinUsageContext$PublishOnlyIf;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext$MavenScope;Ljava/lang/String;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/attributes/AttributeContainer;ZLorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultKotlinUsageContext$PublishOnlyIf;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun configurePublishedConfiguration (Lorg/gradle/api/artifacts/Configuration;Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetComponent;)V
 	public fun getArtifacts ()Ljava/util/Set;
 	public fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
 	public fun getCapabilities ()Ljava/util/Set;
@@ -1285,7 +1286,7 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinSharedNativeCompilatio
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinSoftwareComponent : org/gradle/api/component/ComponentWithVariants, org/gradle/api/internal/component/SoftwareComponentInternal {
-	public fun <init> (Lorg/gradle/api/Project;Ljava/lang/String;Ljava/lang/Iterable;Lorg/gradle/api/internal/component/SoftwareComponentInternal;)V
+	public fun <init> (Lorg/gradle/api/Project;Ljava/lang/String;Ljava/lang/Iterable;)V
 	protected final fun getKotlinTargets ()Ljava/lang/Iterable;
 	public fun getName ()Ljava/lang/String;
 	public final fun getPublicationDelegate ()Lorg/gradle/api/publish/maven/MavenPublication;
@@ -1304,10 +1305,15 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinTargetWithBin
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext : org/gradle/api/internal/component/UsageContext {
+	public abstract fun configurePublishedConfiguration (Lorg/gradle/api/artifacts/Configuration;Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetComponent;)V
 	public abstract fun getCompilation ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;
 	public abstract fun getDependencyConfigurationName ()Ljava/lang/String;
 	public abstract fun getIncludeIntoProjectStructureMetadata ()Z
 	public abstract fun getMavenScope ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext$MavenScope;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext$DefaultImpls {
+	public static fun configurePublishedConfiguration (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext;Lorg/gradle/api/artifacts/Configuration;Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetComponent;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext$MavenScope : java/lang/Enum {
