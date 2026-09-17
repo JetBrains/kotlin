@@ -1,0 +1,1 @@
+fun test(): String = DelegatedClass(ImplementBase).select(42) // should be "common"
