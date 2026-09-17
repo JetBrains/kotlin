@@ -86,6 +86,30 @@ private object DomainSourcesGenerator {
                 this += "|}"
             }.trimMargin()
         )
+
+        outputDir.asFile.toPath().resolve("testClusters.kt").createParentDirectories().writeText(
+            buildString {
+                this += "|// This file is generated automatically. DO NOT MODIFY IT MANUALLY"
+                this += "|// See 'codegen.gradle.kts'"
+                this += "|"
+                this += "|package org.jetbrains.kotlin.testFederation"
+                this += "|"
+                this += "|enum class TestCluster {"
+                this += "|    AllTests,"
+                this += "|    SmokeTests,"
+                for (domain in domains) {
+                    this += "|    ContractTestsFor${domain.name},"
+                }
+                this += "|    ;"
+                this += "|}"
+                this += "|"
+                this += "|fun contractTestsClusterOf(domain: Domain): TestCluster = when (domain) {"
+                for (domain in domains) {
+                    this += "|    Domain.${domain.name} -> TestCluster.ContractTestsFor${domain.name}"
+                }
+                this += "|}"
+            }.trimMargin()
+        )
     }
 
     private fun JsonNode.toDomainDTO(key: String): DomainDTO {
