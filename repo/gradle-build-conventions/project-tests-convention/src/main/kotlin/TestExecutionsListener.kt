@@ -97,6 +97,13 @@ class TestExecutionsListener(
         else -> nodeFor(suite.enclosingSuiteNames(taskName) + suite.name)
     }
 
+    /**
+     * Whether [test] can take its class from this suite, so that the record need not repeat it: either
+     * the suite stands for that very class, or the test has no class and sits outside any suite.
+     */
+    private fun SuiteNode.enclosesClassOf(test: TestRecord): Boolean =
+        test.className == name || (test.className == null && name.isEmpty())
+
     /** Walks to the node at [suiteNames], creating the nodes along the way. */
     private fun nodeFor(suiteNames: List<String>): SuiteNode =
         // Suites of equal name under the same parent are merged, a suite being identified by its name
@@ -165,7 +172,14 @@ class TestExecutionsListener(
             append("[\n")
             node.tests.forEachIndexed { index, test ->
                 append(indent).append("  { \"name\": ").appendJsonString(test.name)
-                test.className?.let { append(", \"className\": ").appendJsonString(it) }
+                // The class is written only when it is not the enclosing suite's - which, for a suite
+                // standing for a class, it almost always is. An absent 'className' therefore means "the
+                // suite I am in", and an explicit null means "no class at all", a distinction that
+                // matters because the two are replayed differently.
+                if (!node.enclosesClassOf(test)) {
+                    append(", \"className\": ")
+                    if (test.className == null) append("null") else appendJsonString(test.className)
+                }
                 append(", \"status\": ").appendJsonString(test.status)
                 append(", \"duration\": ").append(test.durationMillis)
                 append(" }")
