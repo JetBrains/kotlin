@@ -45,8 +45,6 @@ fun box(): String {
     success("castsNullableToNotNullT<A>(null)") { castsNullableToNotNullT<A>(null) }
     success("castNullableToNotNullT<A>(a)") { castNullableToNotNullT<A>(a) }
 
-    // Previously a `ClassCastException` was thrown. Changed in sake of parity with the other backends.
-    // failsClassCast("castNullableToNotNullT<A>(null)") { castNullableToNotNullT<A>(null) }
     failsNullPointer("castNullableToNotNullT<A>(null)") { castNullableToNotNullT<A>(null) }
 
     return "OK"

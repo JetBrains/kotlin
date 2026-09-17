@@ -8,8 +8,6 @@ fun box(): String {
 
     success("ints") { ints as Array<*> }
     success("strings") { strings as Array<*> }
-    // Previously a `ClassCastException` was thrown. Changed in sake of parity with the other backends.
-    // failsClassCast("null") { nil as Array<*> }
     failsNullPointer("null") { nil as Array<*> }
     failsClassCast("obj") { obj as Array<*> }
 

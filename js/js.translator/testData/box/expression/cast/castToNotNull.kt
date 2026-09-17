@@ -12,8 +12,6 @@ fun box(): String {
     a = object : A {}
     assertEquals(a, test(a), "a = object : A{}")
 
-    // Previously a `ClassCastException` was thrown. Changed in sake of parity with the other backends.
-    // failsClassCast("test(null)") { test(null) }
     failsNullPointer("test(null)") { test(null) }
     failsClassCast("test(object{})") { test(object{}) }
 

@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: WASM_JS, WASM_WASI
 // WASM_MUTE_REASON: -
-// TODO: muted automatically, investigate should it be ran for JS or not
 
 // WITH_STDLIB
 

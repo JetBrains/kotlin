@@ -273,18 +273,18 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
                 return when {
                     !isFromNullable -> instanceCheck // ! -> *
-                    isToNullable -> when {
-                        instanceCheck.isNotNullCheck() || instanceCheck.isTrueConst() -> litTrue
-                        isDefinitelyNotNull -> instanceCheck
-                        else -> calculator.oror(nullCheck(argument()), instanceCheck) // * -> ?
+                    isToNullable -> if (instanceCheck.isNotNullCheck() || instanceCheck.isTrueConst()) {
+                        instanceCheck
+                    } else {
+                        calculator.oror(nullCheck(argument()), instanceCheck) // * -> ?
                     }
                     else ->
                         if (isNativeCheck || isDefinitelyNotNull) instanceCheck else calculator.run {
-                        andand(
-                            not(nullCheck(argument())),
-                            instanceCheck
-                        )
-                    } // ? -> !
+                            andand(
+                                not(nullCheck(argument())),
+                                instanceCheck
+                            )
+                        } // ? -> !
                 }
             }
 
