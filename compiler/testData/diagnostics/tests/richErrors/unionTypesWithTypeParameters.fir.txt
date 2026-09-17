@@ -21,6 +21,10 @@ FILE: test.kt
         public get(): R|kotlin/Int| {
             ^ Int(1)
         }
+    public final val <T> R|union(primary=T, errors=Foo)|.prop2: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(1)
+        }
     public final class C<T, V : R|kotlin/NonError|, E : R|kotlin/RichError|, E2 : R|{TA=} kotlin/RichError|> : R|kotlin/Any| {
         public constructor<T, V : R|kotlin/NonError|, E : R|kotlin/RichError|, E2 : R|{TA=} kotlin/RichError|>(): R|C<T, V, E, E2>| {
             super<R|kotlin/Any|>()
