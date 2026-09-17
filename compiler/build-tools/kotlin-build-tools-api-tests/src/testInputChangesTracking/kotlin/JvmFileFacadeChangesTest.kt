@@ -50,17 +50,8 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
             mod.replaceFileWithVersion("Foo.kt", "unwrap-object")
 
             mod.compile {
-                // TODO(KT-89352): only `Foo.kt` is recompiled. `test.Foo` stops being a classifier and becomes a file
-                //  facade of the same JVM name, but IC never rechecks `Usage.kt`, whose import is unresolvable now, so
-                //  the build wrongly succeeds. Once fixed, it has to `expectFail()` and recompile `Usage.kt` as well.
-                assertCompiledSources("Foo.kt")
-            }
-
-            mod.changeFile("Usage.kt") { "$it\n" }
-
-            mod.compile {
-                // the incremental round reports the last unresolved segment, a clean build reports the qualifier
-                expectFailWithError(".*Usage\\.kt:\\d+:\\d+ Unresolved reference '(Foo|bar)'.*".toRegex())
+                expectFailWithError(".*Usage\\.kt:\\d+:\\d+ Unresolved reference 'Foo'.*".toRegex())
+                assertCompiledSources("Foo.kt", "Usage.kt")
             }
         }
     }
