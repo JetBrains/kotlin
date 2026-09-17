@@ -283,6 +283,7 @@ include(
     ":dependencies:bootstrap:kotlin-build-tools-impl-bootstrap",
     ":dependencies:bootstrap:kotlin-build-tools-compat-bootstrap",
     ":dependencies:bootstrap:kotlin-build-tools-cri-impl-bootstrap",
+    ":dependencies:bootstrap:typescript-export-standalone-embeddable-bootstrap",
     ":dependencies:bootstrap:kotlin-script-runtime-bootstrap",
     ":dependencies:bootstrap:kotlin-scripting-common-bootstrap",
     ":dependencies:bootstrap:kotlin-scripting-jvm-bootstrap",
