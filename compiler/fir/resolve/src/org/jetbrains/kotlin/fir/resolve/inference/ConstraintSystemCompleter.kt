@@ -191,7 +191,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                 continue
 
             // Eventually, those steps will become unconditional
-            if (completionMode.allLambdasShouldBeAnalyzed || completionRefinementsFor25Enabled) {
+            if (completionMode.allPostponedAtomsShouldBeAnalyzed || completionRefinementsFor25Enabled) {
                 // Stage 3: fix variables for parameter types of all postponed arguments
                 for (argument in postponedAtomsDependingOnFunctionType) {
                     val nextVariable = postponedArgumentsInputTypesResolver.findNextReadyVariableForParameterType(
@@ -220,7 +220,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             // Likely unnecessary or even a harmful step: it doesn't actually ensure that the postponed atom is ready, but just picking
             // the first one.
             // TODO: Consider removing this step (KT-86043)
-            if (completionMode.allLambdasShouldBeAnalyzed) {
+            if (completionMode.allPostponedAtomsShouldBeAnalyzed) {
                 // Stage 5: analyze the next ready postponed argument with revisable expected type
                 if (analyzeNextReadyPostponedArgumentWithRevisableExpectedType(postponedArgumentsWithRevisableType) {
                         analyzer.analyze(it, withPCLASession = false)
@@ -241,7 +241,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                 continue
 
             // Stage 8: analyze remaining CLs and CSR names using the bounds of their expected type variables
-            if (completionMode.allLambdasShouldBeAnalyzed && firstStateForStaticReceiverAtom != null) {
+            if (completionMode.allPostponedAtomsShouldBeAnalyzed && firstStateForStaticReceiverAtom != null) {
                 analyzer.analyze(firstStateForStaticReceiverAtom)
                 continue
             }
@@ -256,7 +256,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
             // Stage 10: force analysis of remaining not analyzed postponed arguments and rerun stages if there are
             // It's either FULL or PCLA_POSTPONED_CALL modes (see `Forcing lambda analysis` at docs/fir/pcla.md)
-            if (completionMode.allLambdasShouldBeAnalyzed) {
+            if (completionMode.allPostponedAtomsShouldBeAnalyzed) {
                 if (analyzeRemainingNotAnalyzedPostponedArgument(postponedAtomsDependingOnFunctionType) {
                         analyzer.analyze(it, withPCLASession = false)
                     }
@@ -311,7 +311,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         postponedArguments: List<ConePostponedResolvedAtom>,
         analyzerWithLambdaTracker: AnalyzerWithLambdaTracker,
     ): Boolean {
-        if (!completionMode.allLambdasShouldBeAnalyzed) return false
+        if (!completionMode.allPostponedAtomsShouldBeAnalyzed) return false
 
         val lambdaArguments = postponedArguments.filterIsInstance<ConeResolvedLambdaAtom>().takeIf { it.isNotEmpty() } ?: return false
 
