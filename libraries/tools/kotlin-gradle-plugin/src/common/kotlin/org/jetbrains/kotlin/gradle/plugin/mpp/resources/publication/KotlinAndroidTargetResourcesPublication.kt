@@ -16,7 +16,6 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -62,15 +61,11 @@ internal val SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction = Kotl
             }
             isConfigured = true
 
-            // Bundle assets and resources only if AGP is 7.3.0+ due to "addGeneratedSourceDirectory" API availability. And the resources
-            // API is only supported in CMP since 7.3.1
-            if (AndroidGradlePluginVersion.current >= KotlinAndroidTargetResourcesPublication.MIN_AGP_VERSION) {
-                project.extensions.findByType<AndroidComponentsExtension<*, *, *>>()?.onVariants { newAgpVariant ->
-                    kotlinMultiplatformAndroidResourcesPublication.setUpCopyAssetsTasksForNewAgpVariants(
-                        project,
-                        newAgpVariant,
-                    )
-                }
+            project.extensions.findByType<AndroidComponentsExtension<*, *, *>>()?.onVariants { newAgpVariant ->
+                kotlinMultiplatformAndroidResourcesPublication.setUpCopyAssetsTasksForNewAgpVariants(
+                    project,
+                    newAgpVariant,
+                )
             }
         }
     }
@@ -140,11 +135,6 @@ internal class KotlinAndroidTargetResourcesPublication {
         copyTaskFromVariantName[variantName]?.let(notify)
         subscribers.getOrPut(variantName, { mutableListOf() }).add(notify)
     }
-
-    companion object {
-        const val MIN_AGP_VERSION = "7.3.1"
-    }
-
 }
 
 

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.KotlinAndroidTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.AggregateResourcesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
@@ -70,11 +69,7 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     }
 
     override fun canPublishResources(target: KotlinTarget): Boolean {
-        if (targetsThatSupportPublication.none { it.isInstance(target) }) return false
-        if (target is KotlinAndroidTarget) {
-            return AndroidGradlePluginVersion.current >= KotlinAndroidTargetResourcesPublication.MIN_AGP_VERSION
-        }
-        return true
+        return targetsThatSupportPublication.any { it.isInstance(target) }
     }
 
     override fun publishResourcesAsKotlinComponent(
