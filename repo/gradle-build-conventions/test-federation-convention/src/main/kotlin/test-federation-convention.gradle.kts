@@ -17,9 +17,13 @@ tasks.withType<Test>().configureEach {
     /* Resolve the mode from the task configuration, overrides, and domain selection. */
     val testFederationMode: Provider<TestFederationMode> = testFederationMode
 
+    val testFederationSubsets = testFederationSubsets
+    val formattedSubsets = testFederationSubsets.map { subsets -> subsets.toArgumentString() }
+
     inputs.property(TEST_FEDERATION_MODE_KEY, testFederationMode)
     inputs.property(SMOKE_TEST_CONFIG_KEY, smokeTestConfig)
     inputs.property(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled)
+    inputs.property(TEST_FEDERATION_SUBSETS_KEY, formattedSubsets)
 
     /*
     Use changed domains as a task input only when they select individual tests.
@@ -38,6 +42,7 @@ tasks.withType<Test>().configureEach {
         scan.value("$projectPath:${this.name} domain", currentDomain.get().toString())
         scan.value("$projectPath:${this.name} changed domains", formattedChangedDomains.get())
         scan.value("$projectPath:${this.name} test mode", testFederationMode.get().toString())
+        scan.value("$projectPath:${this.name} subsets", formattedSubsets.get())
 
         val testFramework = testFramework
         val smokeTestConfig = smokeTestConfig.get()
@@ -45,6 +50,7 @@ tasks.withType<Test>().configureEach {
         logger.quiet("Current Domain: '${currentDomain.get()}'")
         logger.quiet("Changed Domains: '${formattedChangedDomains.get()}'")
         logger.quiet("Domain Test Mode: '${testFederationMode.get()}'")
+        logger.quiet("Requested Test Subsets: '${formattedSubsets.get()}'")
 
         /*
         Require JUnit 5 unless the task is configured to skip runs that select only a subset of tests.
@@ -81,6 +87,9 @@ tasks.withType<Test>().configureEach {
          */
         systemProperty(TEST_FEDERATION_MODE_KEY, testFederationMode.get().name)
         environment(TEST_FEDERATION_MODE_ENV_KEY, testFederationMode.get().name)
+
+        systemProperty(TEST_FEDERATION_SUBSETS_KEY, formattedSubsets.get())
+        environment(TEST_FEDERATION_SUBSETS_ENV_KEY, formattedSubsets.get())
 
         systemProperty(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled.get())
         environment(TEST_FEDERATION_NIGHTLY_ENV_KEY, areNightlyTestsEnabled.get())
@@ -127,14 +136,14 @@ afterEvaluate {
         A task that selects only a subset of tests may have no tests to run.
         */
         val defaultFailOnNoDiscoveredTests = failOnNoDiscoveredTests.get()
-        failOnNoDiscoveredTests.value(testFederationMode.map { mode ->
-            if (mode == TestFederationMode.Smoke) false
+        failOnNoDiscoveredTests.value(testFederationSubsets.map { subsets ->
+            if (TestSubset.AllTests !in subsets) false
             else defaultFailOnNoDiscoveredTests
         }).disallowChanges()
 
-        val testFederationMode = testFederationMode
+        val testFederationSubsets = testFederationSubsets
         doFirst {
-            if (testFederationMode.get() == TestFederationMode.Smoke) {
+            if (TestSubset.AllTests !in testFederationSubsets.get()) {
                 filter.isFailOnNoMatchingTests = false
             }
         }
