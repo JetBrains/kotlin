@@ -283,7 +283,9 @@ kotlin {
 
         val latestJsCompilation = compilations.create("latestJsTest") {
             associateWith(mainCompilation)
-            defaultSourceSet.dependsOn(testCompilation.defaultSourceSet)
+            // Sources are configured in the `sourceSets` block below (see `jsLatestJsTest`).
+            // Don't `dependsOn(jsTest)` here: that would make `jsTest` a shared (non-leaf) source set
+            // and break its dependency resolution (e.g., kotlin.test) in the IDE.
             binaries.executable(this)
             binaries.configureEach {
                 linkTask.configure {
@@ -296,7 +298,7 @@ kotlin {
         }
 
         fun KotlinJsSubTargetDsl.latestTargetRunRegistering(): KotlinJsPlatformTestRun {
-            testRuns.create("latestTarget") {
+            return testRuns.create("latestTarget") {
                 setExecutionSourceFrom(latestJsCompilation)
                 executionTask.configure {
                     val devBinary = latestJsCompilation.binaries
@@ -531,6 +533,11 @@ kotlin {
         }
         val jsTest = getByName("jsTest") {
             kotlin.srcDir("${jsDir}/test")
+        }
+
+        named("jsLatestJsTest") {
+            dependsOn(commonTest.get())
+            kotlin.srcDirs(jsTest.kotlin.srcDirs)
         }
 
         val nativeWasmMain = create("nativeWasmMain") {
