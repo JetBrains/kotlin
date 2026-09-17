@@ -16,7 +16,7 @@ internal class TestPath(val suites: List<String>, val testName: String) {
  * A port of `TestNameDescriptor.DISPLAY_NAME.getTestName` from the runner's init script, see
  * gradle-runner-agent/src/main/scripts/init_since_8.gradle
  */
-private fun TestDescriptor.teamCityRunnerMethodName(): String {
+internal fun TestDescriptor.teamCityRunnerMethodName(): String {
     val methodName = name.takeWhile { it !in "([{<" }
     val candidate = if (displayName.startsWith(methodName)) displayName else "$methodName($displayName)"
     return if (candidate == "$name()") name else candidate
@@ -44,33 +44,53 @@ private fun String.dropEmptyParameterList(): String {
 }
 
 /**
- * The name TeamCity's Gradle runner sends for a test using service message, before the server normalizes it.
- */
-internal fun TestDescriptor.toTeamCityRunnerTestName(): String {
-    val methodName = teamCityRunnerMethodName()
-    return className?.let { "$it.$methodName" } ?: methodName
-}
-
-/**
  * The name TeamCity ends up registering for a test.
  * This is the name to compare against anything read back from TeamCity.
  */
-internal fun TestDescriptor.toTeamCityRegisteredTestName(): String {
-    val methodName = teamCityRunnerMethodName().dropEmptyParameterList()
-    return className?.let { "$it.$methodName" } ?: methodName
-}
+internal fun TestDescriptor.toTeamCityRegisteredTestName(): String =
+    className.qualifying(teamCityRunnerMethodName().dropEmptyParameterList())
+
+/**
+ * Spells a test name the way TeamCity does, `<class>.<method>`.
+ *
+ * [TestExecutionsListener] records the two halves apart, so that the class is not repeated in every
+ * test name now that it is a suite of its own, and a replay puts them back together with this.
+ */
+internal fun String?.qualifying(methodName: String): String = this?.let { "$it.$methodName" } ?: methodName
+
+/**
+ * Whether Gradle inserted this suite itself - the test run, the executor, and the partitions the test
+ * tasks are split into - rather than it standing for something in the test sources.
+ *
+ * The runner's init script drops the same ones, see `SuiteDescriptorWrapper.isIgnored`.
+ */
+internal fun isSyntheticSuiteName(suiteName: String, taskName: String, className: String?): Boolean =
+    suiteName.startsWith("Gradle Test Executor") ||
+            suiteName.startsWith("Gradle Test Run") ||
+            suiteName.startsWith("Partition") ||
+            suiteName == taskName ||
+            suiteName == "$taskName.$className"
+
+/**
+ * The suites enclosing this descriptor, outermost first, with only the synthetic ones removed.
+ *
+ * Unlike [toTestPath] this keeps the suite that repeats the test's own class: it is the structure
+ * Gradle reports, which is what [TestExecutionsListener] records so that per-class timings survive.
+ * Collapsing it into the test name is TeamCity's convention and belongs at the point the tests are
+ * replayed, not in the recorded file.
+ */
+internal fun TestDescriptor.enclosingSuiteNames(taskName: String): List<String> =
+    generateSequence(parent) { it.parent }
+        .map { it.name }
+        .filterNot { isSyntheticSuiteName(it, taskName, className) }
+        .toList()
+        .asReversed()
 
 internal fun TestDescriptor.toTestPath(taskName: String): TestPath {
     val suites = generateSequence(parent) { it.parent }
         .map { it.name }
         .dropWhile { it == className }
-        .filterNot {
-            it.startsWith("Gradle Test Executor") ||
-                    it.startsWith("Gradle Test Run") ||
-                    it.startsWith("Partition") ||
-                    it == taskName ||
-                    it == "$taskName.$className"
-        }
+        .filterNot { isSyntheticSuiteName(it, taskName, className) }
         .toList()
         .asReversed()
 
