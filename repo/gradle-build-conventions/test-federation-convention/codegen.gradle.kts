@@ -86,6 +86,36 @@ private object DomainSourcesGenerator {
                 this += "|}"
             }.trimMargin()
         )
+
+        outputDir.asFile.toPath().resolve("testSubsets.kt").createParentDirectories().writeText(
+            buildString {
+                this += "|// This file is generated automatically. DO NOT MODIFY IT MANUALLY"
+                this += "|// See 'codegen.gradle.kts'"
+                this += "|"
+                this += "|package org.jetbrains.kotlin.testFederation"
+                this += "|"
+                this += "|enum class TestSubset {"
+                this += "|    AllTests,"
+                this += "|    SmokeTests,"
+                for (domain in domains) {
+                    this += "|    ContractTestsFor${domain.name},"
+                }
+                this += "|    ;"
+                this += "|}"
+                this += "|"
+                this += "|fun contractTestsSubsetOf(domain: Domain): TestSubset = when (domain) {"
+                for (domain in domains) {
+                    this += "|    Domain.${domain.name} -> TestSubset.ContractTestsFor${domain.name}"
+                }
+                this += "|}"
+                this += "|"
+                this += "|val contractSubsets = setOf("
+                for (domain in domains) {
+                    this += "|    TestSubset.ContractTestsFor${domain.name},"
+                }
+                this += ")"
+            }.trimMargin()
+        )
     }
 
     private fun JsonNode.toDomainDTO(key: String): DomainDTO {
