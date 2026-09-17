@@ -16,7 +16,7 @@ interface PostponedResolvedAtomMarker {
 /**
  * A postponed atom for a lambda or a callable reference
  */
-interface FunctionTypeRelatedPostponedResolvedAtomMarker : PostponedResolvedAtomMarker {
+interface FunctionLikeAtomMarker : PostponedResolvedAtomMarker {
     /**
      * Generally, it's a collection of types that need to be "proper" to start the analysis of the atom (unless PCLA).
      * Used mostly to define if the atom is ready and to define the order among other atoms.
@@ -45,7 +45,7 @@ interface PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables : Pos
     fun addRegisteredTypeVariables(typeVariables: Collection<TypeVariableMarker>)
 }
 
-interface PostponedAtomWithRevisableExpectedType : FunctionTypeRelatedPostponedResolvedAtomMarker {
+interface PostponedAtomWithRevisableExpectedType : FunctionLikeAtomMarker {
     val revisedExpectedType: KotlinTypeMarker?
 
     fun reviseExpectedType(expectedType: KotlinTypeMarker)

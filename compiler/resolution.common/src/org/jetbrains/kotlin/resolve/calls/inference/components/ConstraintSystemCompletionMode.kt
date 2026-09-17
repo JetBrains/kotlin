@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 enum class ConstraintSystemCompletionMode(
     // Enabled for FULL only
     val allPostponedAtomsShouldBeAnalyzed: Boolean,
-    // Actually, it's related to all ConeFunctionTypeRelatedPostponedResolvedAtom including callable references.
+    // Actually, it's related to all ConeFunctionLikeAtom including callable references.
     // Enabled for FULL and PCLA_POSTPONED_CALL
     // Invariant: allPostponedAtomsShouldBeAnalyzed => allLambdasShouldBeAnalyzed
     val allLambdasShouldBeAnalyzed: Boolean = allPostponedAtomsShouldBeAnalyzed,

@@ -53,7 +53,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         /**
          * A lambda or a callable reference
          */
-        fun analyze(atom: ConeFunctionTypeRelatedPostponedResolvedAtom, withPCLASession: Boolean)
+        fun analyze(atom: ConeFunctionLikeAtom, withPCLASession: Boolean)
 
         fun analyze(atom: ConeSimpleNameForContextSensitiveResolution)
 
@@ -80,7 +80,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     ) {
         var hadLambdaToStopAfter: Boolean = false
 
-        fun analyze(atom: ConeFunctionTypeRelatedPostponedResolvedAtom, withPCLASession: Boolean) {
+        fun analyze(atom: ConeFunctionLikeAtom, withPCLASession: Boolean) {
             if (stopAtFirstLambda && atom is ConeLambdaAtom) {
                 hadLambdaToStopAfter = true
                 return
@@ -129,7 +129,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
             // TODO: This is very slow, KT-59680
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
-            val postponedAtomsDependingOnFunctionType = postponedArguments.filterIsInstance<ConeFunctionTypeRelatedPostponedResolvedAtom>()
+            val postponedAtomsDependingOnFunctionType = postponedArguments.filterIsInstance<ConeFunctionLikeAtom>()
 
             // Obsolete step for @OverloadResolutionByLambdaReturnType
             if (!isEagerLambdaAnalysisEnabled && completionMode.isUntilFirstLambda() &&

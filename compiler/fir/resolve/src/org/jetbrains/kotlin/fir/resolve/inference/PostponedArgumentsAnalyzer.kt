@@ -60,7 +60,7 @@ class PostponedArgumentsAnalyzer(
 
     fun analyze(
         c: PostponedArgumentsAnalyzerContext,
-        argument: ConeFunctionTypeRelatedPostponedResolvedAtom,
+        argument: ConeFunctionLikeAtom,
         candidate: Candidate,
         withPCLASession: Boolean,
     ) {
