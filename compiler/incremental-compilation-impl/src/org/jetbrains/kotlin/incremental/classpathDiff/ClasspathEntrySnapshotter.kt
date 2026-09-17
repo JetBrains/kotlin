@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
+import com.google.common.io.ByteStreams
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.*
@@ -127,8 +128,14 @@ private class JarReader(jar: File) : DirectoryOrJarReader {
     }
 
     override fun readBytes(unixStyleRelativePath: String): ByteArray {
-        return zipFile.getInputStream(zipFile.getEntry(unixStyleRelativePath)).use {
-            it.readBytes()
+        val entry = zipFile.getEntry(unixStyleRelativePath)
+        return zipFile.getInputStream(entry).use { input ->
+            if (entry.size == -1L) { // Allowed by spec, only achieved synthetically
+                return@use input.readBytes()
+            }
+            val bytes = ByteArray(Math.toIntExact(entry.size))
+            ByteStreams.readFully(input, bytes)
+            bytes
         }
     }
 
