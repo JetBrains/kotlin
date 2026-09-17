@@ -8439,6 +8439,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface MultipleTypeParametersCanHoldError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<MultipleTypeParametersCanHoldError>
+            get() = MultipleTypeParametersCanHoldError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<OverrideCannotBeStatic>
             get() = OverrideCannotBeStatic::class

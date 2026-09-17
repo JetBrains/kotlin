@@ -584,6 +584,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_TYPE_PARAMETERS_CAN_HOLD_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
@@ -4142,5 +4143,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NULLABLE_NESTED_UNION_TYPE, "Nested union types cannot be nullable.")
         map.put(NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE, "Nested union type cannot have a non-error component.")
         map.put(NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE, "Non-error component must appear first in union type.")
+        map.put(MULTIPLE_TYPE_PARAMETERS_CAN_HOLD_ERROR, "Multiple type parameters in union type can be inferred to an error class.")
     }
 }

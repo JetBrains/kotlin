@@ -7849,6 +7849,12 @@ private fun KaDiagnosticConverterBuilder.addConversions171() {
             token,
         )
     }
+    add(FirErrors.MULTIPLE_TYPE_PARAMETERS_CAN_HOLD_ERROR) { firDiagnostic ->
+        MultipleTypeParametersCanHoldErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirWebCommonErrors.EXTERNAL_DELEGATION) { firDiagnostic ->
         ExternalDelegationImpl(
             firDiagnostic as KtDiagnosticWithSource,
