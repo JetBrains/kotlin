@@ -20,11 +20,28 @@ package kotlin
 public expect annotation class PlatformInline
 
 /**
- * Specifies that given class will become a value class in the future.
+ * Marks a regular class that has a value semantics and will be converted to a `value class` in the future.
  *
- * This annotation has a number of certain requirements for a class it's used on;
- * shortly, these requirements are similar to those used for real value classes.
- * Compiler will report warnings or errors on use-sites when the class is assuming to have identity.
+ * For users of such classes that means that the same restrictions exist, namely, it is discouraged to use referential equality operators.
+ *
+ * A class annotated with [WillBecomeValue]:
+ * 1. **Must not be relied upon for identity.** Reference equality (`===`), identity hash codes,
+ *    and synchronization on instances are considered undefined behavior.
+ * 2. **Must be shallow-immutable.** Mutating state through shared references undermines
+ *    the value semantics the annotation promises.
+ * 3. **Is a candidate for future migration to a `value class`,** so the annotation is expected
+ *    to be dropped once the migration is complete.
+ *
+ * The compiler applies every declaration check of a `value class` to the annotated class,
+ * reporting errors just as it would for a real `value class`. Identity-sensitive **usages**,
+ * however, are only reported as warnings outside of the annotated class itself,
+ * which gives downstream users time to migrate before the class actually becomes a `value class`.
+ *
+ * A final annotated class also has to override `equals`, `hashCode` and `toString`, because the identity-based
+ * implementations inherited from [Any] would silently turn structural once the class becomes a `value class`.
+ *
+ * The annotation can be applied to final classes, to `abstract`/`sealed` classes intended as base types,
+ * and to object declarations. It cannot be applied to `value class`es, interfaces, enums, or `open` classes.
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
