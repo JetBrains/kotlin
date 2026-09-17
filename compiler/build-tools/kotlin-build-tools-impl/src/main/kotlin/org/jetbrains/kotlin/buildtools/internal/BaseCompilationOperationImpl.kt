@@ -94,6 +94,9 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             is DaemonExecutionPolicyImpl -> {
                 compileWithDaemon(executionPolicy, loggerAdapter, executionContext)
             }
+            is ExecutionPolicy.NativeImage -> {
+                compileNativeImage(loggerAdapter, executionContext)
+            }
             else -> {
                 CompilationResult.COMPILATION_ERROR.also {
                     loggerAdapter.kotlinLogger.error("Unknown execution mode: ${executionPolicy::class.qualifiedName}")
@@ -271,6 +274,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         } else {
             compileInProcessWithoutIc(arguments, loggerAdapter, executionContext)
         }
+    }
+
+    protected open fun compileNativeImage(loggerAdapter: KotlinLoggerMessageCollectorAdapter, executionContext: ExecutionContext): CompilationResult {
+        TODO()
     }
 
     abstract fun compileIncrementallyInProcess(

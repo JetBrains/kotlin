@@ -117,6 +117,10 @@ public class KotlinToolchainsV1Adapter(
         return ExecutionPolicyV1Adapter.InProcess(compilationService.makeCompilerExecutionStrategyConfiguration().useInProcessStrategy())
     }
 
+    override fun createNativeImageExecutionPolicy(): ExecutionPolicy.NativeImage {
+        TODO("Not yet implemented")
+    }
+
     override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder =
         ExecutionPolicyV1Adapter.WithDaemon(compilationService)
 

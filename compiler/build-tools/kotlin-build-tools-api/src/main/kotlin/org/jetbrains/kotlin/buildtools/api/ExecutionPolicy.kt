@@ -26,6 +26,11 @@ public sealed interface ExecutionPolicy {
     public interface InProcess : ExecutionPolicy
 
     /**
+     * Execution policy that runs the build operation in the existing process.
+     */
+    public interface NativeImage : ExecutionPolicy
+
+    /**
      * Execution policy that runs the build operation using the long-running Kotlin daemon.
      */
     public interface WithDaemon : ExecutionPolicy {

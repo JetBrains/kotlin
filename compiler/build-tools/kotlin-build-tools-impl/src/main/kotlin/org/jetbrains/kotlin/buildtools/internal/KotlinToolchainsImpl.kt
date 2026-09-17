@@ -52,6 +52,8 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
 
     override fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess = InProcessExecutionPolicyImpl
 
+    override fun createNativeImageExecutionPolicy(): ExecutionPolicy.NativeImage = NativeImageExecutionPolicyImpl
+
     @Deprecated(
         "Use jvmCompilationOperationBuilder instead",
         replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)"),

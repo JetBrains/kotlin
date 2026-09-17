@@ -15,6 +15,8 @@ import kotlin.io.path.Path
 
 internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
+internal object NativeImageExecutionPolicyImpl : ExecutionPolicy.NativeImage
+
 internal class DaemonExecutionPolicyImpl private constructor(
     private val options: Options = Options(ExecutionPolicy.WithDaemon::class),
 ) : ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder, DeepCopyable<DaemonExecutionPolicyImpl> {

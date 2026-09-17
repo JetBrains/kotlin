@@ -156,7 +156,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     val classpathFiles = files(nativeImageClasspath, resources)
 
     val basicNativeArgs = listOf(
-        "-Os",
+        "-O3",
         "-H:+AddAllCharsets",
         "-H:+UnlockExperimentalVMOptions",
         "-H:+AllowJRTFileSystem",

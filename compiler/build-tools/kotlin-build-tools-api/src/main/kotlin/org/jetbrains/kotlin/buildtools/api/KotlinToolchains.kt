@@ -85,6 +85,13 @@ public interface KotlinToolchains {
     public fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess
 
     /**
+     * Creates an [ExecutionPolicy] that allows executing operations via compiler native image.
+     *
+     * @see BuildSession.executeOperation
+     */
+    public fun createNativeImageExecutionPolicy(): ExecutionPolicy.NativeImage
+
+    /**
      * Creates a builder for [ExecutionPolicy.WithDaemon] which allows executing operations using a Kotlin daemon.
      *
      * @see BuildSession.executeOperation

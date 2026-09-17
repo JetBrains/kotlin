@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.OperationCancelledException
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
@@ -38,15 +39,23 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
+import org.jetbrains.kotlin.compilerRunner.CompilerOutputParser
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileLocations
+import org.jetbrains.kotlin.progress.CompilationCanceledException
+import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Path
 
 internal class JvmCompilationOperationImpl private constructor(
@@ -214,6 +223,66 @@ internal class JvmCompilationOperationImpl private constructor(
     ): CompilationResult {
         setupIdeaStandaloneExecution()
         return super.compileInProcess(loggerAdapter, executionContext)
+    }
+
+    override fun compileNativeImage(
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext
+    ): CompilationResult {
+        require(!shouldCompileIncrementally()) { "Native image CLI compilation does not support incremental compilation." }
+        loggerAdapter.kotlinLogger.debug("Compiling using the native image CLI strategy")
+        val arguments = createAndPrepareCompilerArguments().apply { addSources() }
+        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+
+        val distribution = "/Users/Azat.Abdullin/IdeaProjects/kotlin/prepare/compiler-native-image/build/dist"
+        val executable = "$distribution/bin/kotlinc-native-image.sh"
+        val command = listOf(
+            executable,
+            "-D${MessageRenderer.PROPERTY_KEY}=${MessageRenderer.XML.name}",
+        ) + arguments.toArgumentStrings(allowArgFileInValues = false)
+
+        val temporaryDirectory = Files.createTempDirectory("kotlin-native-image-")
+        val stdout = temporaryDirectory.resolve("stdout").toFile()
+        val stderr = temporaryDirectory.resolve("stderr").toFile()
+        var process: Process? = null
+        try {
+            cancellationHandle.checkCanceled()
+            val compilerProcess = ProcessBuilder(command)
+                .redirectOutput(stdout)
+                .redirectError(stderr)
+                .apply { environment().putIfAbsent("JAVA_HOME", System.getProperty("java.home")) }
+                .start()
+            process = compilerProcess
+            onCancel { compilerProcess.destroyForcibly() }
+            // Cancellation may have happened between starting the process and installing the callback.
+            cancellationHandle.checkCanceled()
+            val exitCode = compilerProcess.waitFor()
+            cancellationHandle.checkCanceled()
+
+            stdout.forEachLine { loggerAdapter.kotlinLogger.info(it) }
+            stderr.reader().use { reader ->
+                CompilerOutputParser.parseCompilerMessagesFromReader(loggerAdapter, reader, OutputItemsCollectorImpl())
+            }
+            val result = (ExitCode.entries.find { it.code == exitCode } ?: ExitCode.INTERNAL_ERROR).asCompilationResult
+            return if (result == CompilationResult.COMPILATION_SUCCESS && loggerAdapter.hasErrors()) {
+                CompilationResult.COMPILATION_ERROR
+            } else {
+                result
+            }
+        } catch (_: CompilationCanceledException) {
+            throw OperationCancelledException()
+        } catch (_: InterruptedException) {
+            Thread.currentThread().interrupt()
+            throw OperationCancelledException()
+        } catch (e: IOException) {
+            loggerAdapter.kotlinLogger.error("Failed to run the native image compiler", e)
+            return CompilationResult.COMPILER_INTERNAL_ERROR
+        } finally {
+            process?.destroyForcibly()
+            Files.deleteIfExists(stdout.toPath())
+            Files.deleteIfExists(stderr.toPath())
+            Files.deleteIfExists(temporaryDirectory)
+        }
     }
 
     override fun createCompiler(): CLICompiler<K2JVMCompilerArguments> {
