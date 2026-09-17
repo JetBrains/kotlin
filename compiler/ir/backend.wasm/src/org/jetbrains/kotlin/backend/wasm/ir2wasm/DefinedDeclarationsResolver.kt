@@ -26,7 +26,6 @@ internal class DefinedDeclarationsResolver(
     val vTableGcTypes: MutableMap<IdSignature, WasmStructDeclaration> = mutableMapOf(),
     val functionTypes: MutableMap<IdSignature, WasmFunctionType> = mutableMapOf(),
     val contTypes: MutableMap<Int, WasmContType> = mutableMapOf(),
-    val contFunctionTypes: MutableMap<Int, WasmFunctionType> = mutableMapOf(),
 ) : DeclarationResolver() {
 
     val globalLiteralGlobals: MutableMap<String, WasmGlobal> = mutableMapOf()
@@ -36,7 +35,6 @@ internal class DefinedDeclarationsResolver(
         is VTableHeapTypeSymbol -> vTableGcTypes.getValue(type.type)
         is FunctionHeapTypeSymbol -> functionTypes.getValue(type.type)
         is ContHeapTypeSymbol -> contTypes.getValue(type.arity)
-        is ContFunctionHeapTypeSymbol -> contFunctionTypes.getValue(type.arity)
         else -> error("Unsupported Type type: ${type::class.simpleName}")
     }
 
@@ -45,7 +43,6 @@ internal class DefinedDeclarationsResolver(
         is VTableTypeSymbol -> vTableGcTypes.getValue(type.value)
         is FunctionTypeSymbol -> functionTypes.getValue(type.value)
         is ContTypeSymbol -> contTypes.getValue(type.arity)
-        is ContFunctionTypeSymbol -> contFunctionTypes.getValue(type.arity)
         else -> error("Unsupported TypeSymbol type: ${type::class.simpleName}")
     }
 

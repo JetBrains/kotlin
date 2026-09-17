@@ -59,6 +59,7 @@ object Synthetics {
     private val stringLiteralJsStringFunctionTypeSignature = "stringLiteralJsStringFunctionType".toSyntheticSignature()
     private val parameterlessNoReturnFunctionTypeSignature = "parameterlessNoReturnFunctionTypeSignature".toSyntheticSignature()
     private val jsExceptionTagFuncTypeSignature = "jsExceptionTagFuncType".toSyntheticSignature()
+    private val wasmContTagFuncTypeSignature = "wasmContTagFuncType".toSyntheticSignature()
 
     private val throwableBuiltInTypeSignature = "throwableBuiltInType".toSyntheticSignature()
     private val anyBuiltInTypeSignature = "anyBuiltInType".toSyntheticSignature()
@@ -96,8 +97,7 @@ object Synthetics {
         val jsExceptionTagFuncType = FunctionHeapTypeSymbol(jsExceptionTagFuncTypeSignature)
         val parameterlessNoReturnFunctionType = FunctionHeapTypeSymbol(parameterlessNoReturnFunctionTypeSignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
-
-        val wasmContFunctionType = ContFunctionHeapTypeSymbol(1)
+        val wasmContTagFuncType = FunctionHeapTypeSymbol(wasmContTagFuncTypeSignature)
     }
 
 }

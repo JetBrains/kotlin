@@ -65,10 +65,6 @@ open class WasmTypeCodegenContext(
         wasmFileFragment.contTypes[arity] = wasmContType
     }
 
-    fun defineContFunctionType(arity: Int, wasmType: WasmFunctionType) {
-        wasmFileFragment.contFunctionTypes[arity] = wasmType
-    }
-
     open fun referenceWasmFunctionType(wasmFunctionType: WasmFunctionType): FunctionTypeSymbol {
         val signature = getFunctionTypeSignature(wasmFunctionType)
         wasmFileFragment.definedFunctionTypes.putIfAbsent(signature, wasmFunctionType)
@@ -104,7 +100,4 @@ open class WasmTypeCodegenContext(
 
     fun referenceHeapContType(arity: Int): ContHeapTypeSymbol =
         ContHeapTypeSymbol(arity)
-
-    fun referenceHeapContFunctionType(arity: Int): ContFunctionHeapTypeSymbol =
-        ContFunctionHeapTypeSymbol(arity)
 }

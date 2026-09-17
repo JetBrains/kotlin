@@ -245,7 +245,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 HeapTypeTags.HEAP_VT_TYPE -> VTableHeapTypeSymbol(deserializeIdSignature())
                 HeapTypeTags.HEAP_FUNC_TYPE -> FunctionHeapTypeSymbol(deserializeIdSignature())
                 HeapTypeTags.HEAP_CONT_TYPE -> ContHeapTypeSymbol(deserializeInt())
-                HeapTypeTags.HEAP_CONT_FUNC_TYPE -> ContFunctionHeapTypeSymbol(deserializeInt())
                 HeapTypeTags.CONT -> WasmHeapType.Simple.Cont
                 HeapTypeTags.NO_CONT -> WasmHeapType.Simple.NoCont
                 else -> tagError(tag)
@@ -672,7 +671,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         definedVTableGcTypes = deserializeVTableGcTypes(),
         definedFunctionTypes = deserializeFunctionTypes(),
         contTypes = deserializeMap(::deserializeInt, ::deserializeContDeclaration),
-        contFunctionTypes = deserializeMap(::deserializeInt, ::deserializeFunctionType),
     )
 
     fun deserializeCompiledDeclarationsFragment() = WasmCompiledDeclarationsFileFragment(
