@@ -4781,6 +4781,7 @@ internal class UnexpectedSafeCallImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnexpectedSafeCall
 
 internal class UnnecessarySafeCallImpl(
+    override val kind: String,
     override val receiverType: KaType,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
