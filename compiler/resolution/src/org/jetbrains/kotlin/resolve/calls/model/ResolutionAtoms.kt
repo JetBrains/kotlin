@@ -129,7 +129,7 @@ class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument, resolveI
 
 
 @K1Deprecation
-sealed class PostponedResolvedAtom : ResolvedAtom(), FunctionTypeRelatedPostponedResolvedAtomMarker {
+sealed class PostponedResolvedAtom : ResolvedAtom(), FunctionLikeAtomMarker {
     abstract override val inputTypes: Collection<UnwrappedType>
     abstract override val outputType: UnwrappedType?
     abstract override val expectedType: UnwrappedType?

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
-import org.jetbrains.kotlin.resolve.calls.model.FunctionTypeRelatedPostponedResolvedAtomMarker
+import org.jetbrains.kotlin.resolve.calls.model.FunctionLikeAtomMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.K2Only
@@ -41,7 +41,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     abstract fun couldBeResolvedWithUnrestrictedBuilderInference(): Boolean
     abstract fun resolveForkPointsConstraints()
 
-    fun <A : FunctionTypeRelatedPostponedResolvedAtomMarker> analyzeArgumentWithFixedParameterTypes(
+    fun <A : FunctionLikeAtomMarker> analyzeArgumentWithFixedParameterTypes(
         postponedArguments: List<A>,
         analyze: (A) -> Unit
     ): Boolean {
@@ -56,7 +56,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     }
 
     @K1Deprecation
-    fun <A : FunctionTypeRelatedPostponedResolvedAtomMarker> analyzeNextReadyPostponedArgument(
+    fun <A : FunctionLikeAtomMarker> analyzeNextReadyPostponedArgument(
         postponedArguments: List<A>,
         completionMode: ConstraintSystemCompletionMode,
         analyze: (A) -> Unit
@@ -95,7 +95,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         return false
     }
 
-    fun <A : FunctionTypeRelatedPostponedResolvedAtomMarker> hasLambdaToAnalyze(postponedArguments: List<A>): Boolean {
+    fun <A : FunctionLikeAtomMarker> hasLambdaToAnalyze(postponedArguments: List<A>): Boolean {
         return analyzeArgumentWithFixedParameterTypes(postponedArguments) {}
     }
 
@@ -103,7 +103,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     private fun <A : PostponedResolvedAtomMarker> findPostponedArgumentWithRevisableExpectedType(postponedArguments: List<A>): A? =
         postponedArguments.firstOrNull { argument -> argument is PostponedAtomWithRevisableExpectedType }
 
-    private fun <T : FunctionTypeRelatedPostponedResolvedAtomMarker> findPostponedArgumentWithFixedInputTypes(
+    private fun <T : FunctionLikeAtomMarker> findPostponedArgumentWithFixedInputTypes(
         postponedArguments: List<T>
     ) = postponedArguments.firstOrNull { argument -> argument.inputTypes.all { containsOnlyFixedVariables(it) } }
 
