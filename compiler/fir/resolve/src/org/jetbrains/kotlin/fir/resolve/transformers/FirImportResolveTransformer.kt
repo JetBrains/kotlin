@@ -79,10 +79,24 @@ open class FirImportResolveTransformer protected constructor(
     private fun transformImportForFqName(fqName: FqName, delegate: FirImport): FirImport {
         val (packageFqName, relativeClassFqName) = findLongestExistingPackage(symbolProvider, fqName)
 
+        if (relativeClassFqName != null) {
+            recordClassSegmentsLookup(packageFqName, relativeClassFqName, delegate)
+        }
+
         return buildResolvedImport {
             this.delegate = delegate
             this.packageFqName = packageFqName
             this.relativeParentClassName = relativeClassFqName
+        }
+    }
+
+    private fun recordClassSegmentsLookup(packageFqName: FqName, relativeClassFqName: FqName, import: FirImport) {
+        val file = currentFile ?: return
+        val lookupTracker = session.lookupTracker ?: return
+        var scope = packageFqName
+        for (segment in relativeClassFqName.pathSegments()) {
+            lookupTracker.recordLookup(segment.asString(), scope.asString(), import.source, file.source)
+            scope = scope.child(segment)
         }
     }
 }
