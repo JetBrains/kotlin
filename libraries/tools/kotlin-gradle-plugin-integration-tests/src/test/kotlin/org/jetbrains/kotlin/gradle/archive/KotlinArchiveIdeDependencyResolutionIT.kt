@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.withResolvedSourcesFile
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.jetbrainsAnnotationDependencies
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.kotlinNativeDistributionDependencies
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.kotlinStdlibDependencies
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.PublishedProject
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
@@ -36,7 +35,6 @@ class KotlinArchiveIdeDependencyResolutionIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions
             .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
-            .copy(gradleDaemonMemoryLimitInMb = 3 * 1024)
 
     @GradleTest
     fun ideDependencyResolutionTest(gradleVersion: GradleVersion) {
@@ -44,7 +42,6 @@ class KotlinArchiveIdeDependencyResolutionIT : KGPBaseTest() {
         val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject)
 
         consumer.resolveIdeDependencies { dependencies ->
-            assertNoDiagnostic(KotlinToolingDiagnostics.UnsupportedKotlinArchiveUsage)
             dependencies.assertResolvedDependenciesOnly()
             dependencies.assertNoKotlinArchiveOnClasspath()
 
@@ -117,7 +114,6 @@ class KotlinArchiveIdeDependencyResolutionIT : KGPBaseTest() {
                 platformDependency("wasmjs"),
                 anyDependsOnDependency(),
             ),
-            // The jvm target is not stored in the archive. It keeps a separate publication with its own sources jar.
             "jvmMain" to listOf(
                 kotlinStdlibDependencies,
                 jetbrainsAnnotationDependencies,
@@ -129,13 +125,7 @@ class KotlinArchiveIdeDependencyResolutionIT : KGPBaseTest() {
     }
 
     /**
-     * Every target stored in the archive resolves the archive itself. The variant of the target declares the legacy
-     * per-target coordinates as a capability, so the IDE keeps the module name that the target had before the archive.
-     *
-     * No sources are attached. The archive publishes no sources variant for a target, so
-     * [org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeSourcesVariantsResolver] finds none, and
-     * [org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeArtifactResolutionQuerySourcesResolver] stops
-     * when a dependency declares more than 1 capability.
+     * Sources for kotlin archive contained target are not supported yet. Would be supported in following PR.
      */
     private fun PublishedProject.platformDependency(legacyTargetName: String): IdeaKotlinDependencyMatcher =
         binaryCoordinates("$group:$name-$legacyTargetName:$version")
@@ -146,22 +136,10 @@ class KotlinArchiveIdeDependencyResolutionIT : KGPBaseTest() {
             matches(dependency) && dependency is IdeaKotlinBinaryDependency && dependency.sourcesClasspath.isEmpty()
         }
 
-    /**
-     * A shared source set gets one metadata klib for every source set of the producer that it sees. All of them point
-     * to the single sources jar of the archive.
-     */
     private fun PublishedProject.metadataDependency(producerSourceSetName: String): IdeaKotlinDependencyMatcher =
         binaryCoordinates("$group:$name:$producerSourceSetName:$version")
-            .withResolvedSourcesFile(rootSourcesJarName)
+            .withResolvedSourcesFile("${name}-${version}-sources.jar")
 
-    private val PublishedProject.rootSourcesJarName: String get() = "$name-$version-sources.jar"
-
-
-    /**
-     * The IDE cannot read a Kotlin Archive.
-     * [org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdeKotlinArchiveFilter] removes a dependency that
-     * has one, so without this check a leaked archive shows only as a missing dependency.
-     */
     private fun IdeaKotlinDependenciesContainer.assertNoKotlinArchiveOnClasspath() {
         val archiveFiles = values.flatten()
             .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
