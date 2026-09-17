@@ -8,6 +8,8 @@
 
 /test.kt:19:6: error: Unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
 
+/test.kt:20:6: warning: Unnecessary safe call on a receiver of non-union type 'String?'.
+
 /test.kt:20:6: error: Unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
 
 /test.kt:22:6: error: Unsafe call on receiver of union type 'String | Foo'. Consider using a safe call '|.'.
@@ -19,6 +21,8 @@
 /test.kt:26:6: error: Unsafe call on receiver of nullable union type 'String? | Foo'.
 
 /test.kt:28:6: error: Unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
+
+/test.kt:29:6: warning: Unnecessary safe call on a receiver of non-union type 'String?'.
 
 /test.kt:29:6: error: Unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
 

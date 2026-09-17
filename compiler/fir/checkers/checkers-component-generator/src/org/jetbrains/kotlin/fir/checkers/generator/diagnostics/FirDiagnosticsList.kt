@@ -1993,6 +1993,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val UNEXPECTED_SAFE_CALL by error<PsiElement>(PositioningStrategy.SAFE_ACCESS)
         val UNNECESSARY_SAFE_CALL by warning<PsiElement>(PositioningStrategy.SAFE_ACCESS) {
+            parameter<String>("kind")
             parameter<ConeKotlinType>("receiverType")
         }
         val UNNECESSARY_NOT_NULL_ASSERTION by warning<KtExpression>(PositioningStrategy.OPERATOR) {
