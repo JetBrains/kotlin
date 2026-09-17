@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompiler
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -23,7 +22,7 @@ import java.io.File
 // KT-89383
 @Tag("caches")
 @EnforcedHostTarget
-class NativeCacheRelativePathTest : AbstractNativeSimpleTest() {
+class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
 
     @Test
     fun absoluteLibraryPathIsAcceptedWhenCachingLibrary() = doTest(useRelativePath = false)
