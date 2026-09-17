@@ -138,6 +138,21 @@ internal class ClasspathMetadataIncrementalTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("KT-89300: incremental compilation of a common source using interface delegation over an expect interface")
+    @TestMetadata("interface-delegation-metadata")
+    fun testInterfaceDelegationOverExpectInterface(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = interfaceDelegationModule()
+            module.execute("JvmKt", "delegationResult=initial")
+
+            module.replaceFileWithVersion("commonMain/delegationResult.kt", "change")
+
+            module.compile(setOf("commonMain/delegationResult.kt"))
+            module.execute("JvmKt", "delegationResult=common")
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("KT-89044: adding an overload to an expect class with an actual typealias recompiles common call sites")
     @TestMetadata("expect-typealias-overload-metadata")
     fun testExpectClassOverloadAddedViaActualTypealias(strategyConfig: CompilerExecutionStrategyConfiguration) {
@@ -270,6 +285,15 @@ private fun JvmScenario.expectFakeOverrideModule() = module(
 @OptIn(ExperimentalCompilerArgument::class)
 private fun JvmScenario.expectFakeOverrideModuleNoIntermediate() = module(
     "expect-fake-override-metadata-no-intermediate",
+    compilationConfigAction = configureKmpJvmFragments(enableClasspathMetadata = true),
+    icOptionsConfigAction = {
+        it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+    },
+)
+
+@OptIn(ExperimentalCompilerArgument::class)
+private fun JvmScenario.interfaceDelegationModule() = module(
+    "interface-delegation-metadata",
     compilationConfigAction = configureKmpJvmFragments(enableClasspathMetadata = true),
     icOptionsConfigAction = {
         it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
