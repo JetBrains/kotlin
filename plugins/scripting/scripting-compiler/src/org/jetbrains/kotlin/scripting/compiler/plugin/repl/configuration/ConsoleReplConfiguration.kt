@@ -17,7 +17,7 @@ class ConsoleReplConfiguration : ReplConfiguration {
         get() = ReplExceptionReporter
 
     override val commandReader
-        get(): ReplCommandReader = TODO("This is unreachable code, REPL is no longer supported in the command-line compiler")
+        get(): ReplCommandReader = error("This is unreachable code, REPL is no longer supported in the command-line compiler")
 
     override val allowIncompleteLines: Boolean
         get() = true
