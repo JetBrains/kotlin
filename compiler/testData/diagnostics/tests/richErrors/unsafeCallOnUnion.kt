@@ -17,7 +17,7 @@ fun test(x: String | Foo, y: String? | Foo, z: String?) {
     y<!UNSAFE_CALL("on receiver of nullable union type 'String? | Foo'")!>?.<!>length
 
     z<!UNSAFE_CALL("on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'")!>.<!>length
-    z<!UNSAFE_CALL("on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'")!>|.<!>length
+    z<!UNNECESSARY_SAFE_CALL("non-union; String?"), UNSAFE_CALL("on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'")!>|.<!>length
 
     x<!UNSAFE_CALL("on receiver of union type 'String | Foo'. Consider using an error-safe call '|.'")!>.<!>foo()
 
@@ -26,7 +26,7 @@ fun test(x: String | Foo, y: String? | Foo, z: String?) {
     y<!UNSAFE_CALL("on receiver of nullable union type 'String? | Foo'")!>?.<!>foo()
 
     z<!UNSAFE_CALL("on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'")!>.<!>foo()
-    z<!UNSAFE_CALL("on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'")!>|.<!>foo()
+    z<!UNNECESSARY_SAFE_CALL("non-union; String?"), UNSAFE_CALL("on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'")!>|.<!>foo()
 }
 
 fun String.foo() {}
