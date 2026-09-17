@@ -14,24 +14,18 @@ tasks.withType<Test>().configureEach {
     val formattedChangedDomains = changedDomains.map { domains -> domains.toArgumentString() }
     val smokeTestConfig = smokeTestConfig
 
-    /* Resolve the mode from the task configuration, overrides, and domain selection. */
+    /*
+    'testFederationMode' is resolved only to forward 'test.federation.mode' to the test runtime for backward
+    compatibility (some fixtures still read it directly). Every selection decision below uses subsets instead.
+    */
     val testFederationMode: Provider<TestFederationMode> = testFederationMode
 
     val testFederationSubsets = testFederationSubsets
     val formattedSubsets = testFederationSubsets.map { subsets -> subsets.toArgumentString() }
 
-    inputs.property(TEST_FEDERATION_MODE_KEY, testFederationMode)
     inputs.property(SMOKE_TEST_CONFIG_KEY, smokeTestConfig)
     inputs.property(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled)
     inputs.property(TEST_FEDERATION_SUBSETS_KEY, formattedSubsets)
-
-    /*
-    Use changed domains as a task input only when they select individual tests.
-    Full-mode runs do not use this selection, so their build cache entries can be reused across selections.
-    */
-    inputs.property(TEST_FEDERATION_CHANGED_DOMAINS_KEY, testFederationMode.zip(changedDomains) { mode, domains ->
-        if (mode == TestFederationMode.Smoke) domains.toArgumentString() else "*"
-    })
 
     val projectPath = project.buildTreePath
     val scan = project.extensions.getByType(DevelocityConfiguration::class).buildScan
@@ -41,15 +35,13 @@ tasks.withType<Test>().configureEach {
 
         scan.value("$projectPath:${this.name} domain", currentDomain.get().toString())
         scan.value("$projectPath:${this.name} changed domains", formattedChangedDomains.get())
-        scan.value("$projectPath:${this.name} test mode", testFederationMode.get().toString())
-        scan.value("$projectPath:${this.name} subsets", formattedSubsets.get())
+        scan.value("$projectPath:${this.name} test subsets", formattedSubsets.get())
 
         val testFramework = testFramework
         val smokeTestConfig = smokeTestConfig.get()
 
         logger.quiet("Current Domain: '${currentDomain.get()}'")
         logger.quiet("Changed Domains: '${formattedChangedDomains.get()}'")
-        logger.quiet("Domain Test Mode: '${testFederationMode.get()}'")
         logger.quiet("Requested Test Subsets: '${formattedSubsets.get()}'")
 
         /*
@@ -67,15 +59,15 @@ tasks.withType<Test>().configureEach {
         }
 
         /* Skip a task configured as Disabled when it is not selected for a full test run. */
-        if (smokeTestConfig is SmokeTestConfig.Disabled && testFederationMode.get() == TestFederationMode.Smoke) {
-            throw StopExecutionException("The test task is disabled in Smoke Test mode")
+        if (smokeTestConfig is SmokeTestConfig.Disabled && TestSubset.AllTests !in testFederationSubsets.get()) {
+            throw StopExecutionException("The test task is disabled because a full test run was not selected")
         }
 
         /*
-        Run non-JUnit 5 tasks without further configuration in Full mode.
-        These tasks must be configured as Disabled so they are skipped when no full run is selected.
+        Run non-JUnit 5 tasks without further configuration when a full test run is selected.
+        These tasks must be configured as Disabled so they are skipped otherwise.
         */
-        if (testFramework !is JUnitPlatformTestFramework && testFederationMode.get() == TestFederationMode.Full) {
+        if (testFramework !is JUnitPlatformTestFramework && TestSubset.AllTests in testFederationSubsets.get()) {
             return@doFirst
         }
 
@@ -83,7 +75,10 @@ tasks.withType<Test>().configureEach {
         testFramework as JUnitPlatformTestFramework
 
         /*
-        Configure the test environment
+        Configure the test environment.
+        'test.federation.mode' and 'test.federation.changed.domains' are forwarded only for backward
+        compatibility with runtime consumers that still read them directly; selection itself is driven
+        entirely by 'test.federation.subsets' below.
          */
         systemProperty(TEST_FEDERATION_MODE_KEY, testFederationMode.get().name)
         environment(TEST_FEDERATION_MODE_ENV_KEY, testFederationMode.get().name)
@@ -95,10 +90,10 @@ tasks.withType<Test>().configureEach {
         environment(TEST_FEDERATION_NIGHTLY_ENV_KEY, areNightlyTestsEnabled.get())
 
         /*
-        Provide changed domains only when the runtime uses them to select tests.
-        Full-mode runs do not use this selection, so their build cache entries can be reused across selections.
+        Provide changed domains only when a full test run is not selected.
+        Full test runs do not use this selection, so their build cache entries can be reused across selections.
         */
-        if (testFederationMode.get() == TestFederationMode.Smoke) {
+        if (TestSubset.AllTests !in testFederationSubsets.get()) {
             systemProperty(TEST_FEDERATION_CHANGED_DOMAINS_KEY, formattedChangedDomains.get())
             environment(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY, formattedChangedDomains.get())
         }
@@ -109,13 +104,10 @@ tasks.withType<Test>().configureEach {
         }
 
         /* Set TeamCity tags */
-        if (testFederationMode.get() == TestFederationMode.Smoke) {
-            println("##teamcity[addBuildTag 'Mode: Smoke']")
+        if (TestSubset.AllTests !in testFederationSubsets.get()) {
             changedDomains.get().forEach { domain ->
                 println("##teamcity[addBuildTag 'Changed: $domain']")
             }
-        } else {
-            println("##teamcity[addBuildTag 'Mode: Full']")
         }
 
         /* Exclude nightly tests if not specifically running in 'nightly' mode */
