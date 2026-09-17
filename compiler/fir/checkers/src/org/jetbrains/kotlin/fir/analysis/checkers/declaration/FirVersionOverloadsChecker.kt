@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isCopyMethod
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator.DoNothing
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
@@ -123,7 +123,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
             if (version == null) {
                 val mayBeTrailingLambda =
                     (i == declaration.valueParameters.lastIndex) && param.returnTypeRef.coneType.isSomeFunctionType(context.session)
-                if (param.defaultValue == null && highestVersionUntilNow != null && !mayBeTrailingLambda) {
+                if (!declaration.itOrExpectHasDefaultParameterValue(i) && highestVersionUntilNow != null && !mayBeTrailingLambda) {
                     reporter.reportOn(param.source, FirErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION)
                 }
                 continue
@@ -132,16 +132,14 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
             // update version map and check arguments
             paramVersions[param.symbol] = version
 
-            var hasDefaultValue = param.defaultValue != null ||
-                    (declaration.symbol.unwrapActualizationInRegardExpectRefinement().valueParameterSymbols.getOrNull(i)?.hasDefaultValue == true)
+            var hasDefaultValue = declaration.itOrExpectHasDefaultParameterValue(i)
             if (!hasDefaultValue && classScope != null && declaration is FirNamedFunction) {
                 classScope.processFunctionsByName(declaration.nameOrSpecialName) {}
 
                 @OptIn(ScopeFunctionRequiresPrewarm::class)
                 classScope.processOverriddenFunctions(declaration.symbol) l@{ overridden ->
-                    val overriddenWithDefault = overridden.unwrapActualizationInRegardExpectRefinement()
-                    val overriddenParam = overriddenWithDefault.valueParameterSymbols.getOrNull(i) ?: return@l ProcessorAction.NEXT
-                    if (overriddenParam.hasDefaultValue) {
+                    @OptIn(SymbolInternals::class)
+                    if (overridden.fir.itOrExpectHasDefaultParameterValue(i)) {
                         hasDefaultValue = true
                         return@l ProcessorAction.STOP
                     }
