@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
-import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.parsing.*
 import org.jetbrains.kotlin.psi.utils.hasIllegallyPositionedUnderscore
@@ -494,7 +493,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     }
 
     override fun KtSourceElement.isChildInParentheses(): Boolean =
-        treeStructure.getParent(lighterASTNode)?.tokenType == org.jetbrains.kotlin.KtNodeTypes.PARENTHESIZED
+        treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED
 
     protected abstract fun Node?.unwrap(): Node?
 

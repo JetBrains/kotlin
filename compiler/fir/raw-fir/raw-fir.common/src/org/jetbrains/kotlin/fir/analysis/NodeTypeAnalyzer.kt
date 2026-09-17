@@ -25,18 +25,12 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
-import org.jetbrains.kotlin.kmp.lexer.KtTokens
-import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
-import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-@RequiresOptIn("Should not be used in compiler modules shared with LL/AA/IDE")
-annotation class NotToShareWithAA
 
 // May be merged with AbstractRawFirBuilder (was needed as a separate entity when it was an interface and used by delegation)
 abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
@@ -59,30 +53,7 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         return this.asText.replace("`", "")
     }
 
-    @OptIn(NotToShareWithAA::class)
-    open fun Node.getLabelName(): String? {
-        if (toTokenId() == KtNodeTypes.FUNCTION_ID) {
-            return getParent()?.getLabelName()
-        }
-        this.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.LABEL_QUALIFIER_ID -> return it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
-            }
-        }
-        return null
-    }
-
-    private fun unquoteIdentifier(quoted: String): String {
-        if (quoted.indexOf('`') < 0) {
-            return quoted
-        }
-
-        if (quoted.startsWith('`') && quoted.endsWith('`') && quoted.length >= 2) {
-            return quoted.substring(1, quoted.length - 1)
-        } else {
-            return quoted
-        }
-    }
+    abstract fun Node.getLabelName(): String?
 
     abstract fun Node.getReferencedNameAsName(): Name
 
@@ -151,30 +122,6 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     abstract fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration
 
     abstract fun Node?.getChildrenAsArray(): Array<out Node?>
-
-    @NotToShareWithAA
-    inline fun Node.forEachChildren(f: (Node) -> Unit) {
-        val kidsArray = this.getChildrenAsArray()
-        for (kid in kidsArray) {
-            if (kid == null) break
-            if (ignoredTokensId.contains(kid.toTokenId())) continue
-            f(kid)
-        }
-    }
-
-    @NotToShareWithAA
-    inline fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
-        val kidsArray = this.getChildrenAsArray()
-
-        val container = mutableListOf<T>()
-        for (kid in kidsArray) {
-            if (kid == null) break
-            if (ignoredTokensId.contains(kid.toTokenId())) continue
-            f(kid, container)
-        }
-
-        return container
-    }
 
     abstract val Node?.receiverExpression: Node?
     abstract val Node?.selectorExpression: Node?
@@ -410,18 +357,5 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         convert: Node.() -> FirExpression,
     ): FirExpression
 
-    @NotToShareWithAA
-    fun Node.toTokenId(): Int = elementType.typeToTokenId()
-
-    @NotToShareWithAA
-    abstract fun Type.typeToTokenId(): Int
-
     abstract fun Type.toConstantValueKind(): ConstantValueKind?
-
-    companion object {
-        val ignoredTokensId: HashSet<Int> = hashSetOf(
-            KtTokens.EOL_COMMENT_ID, KtTokens.BLOCK_COMMENT_ID, KtTokens.DOC_COMMENT_ID, KtTokens.SHEBANG_COMMENT_ID,
-            KtTokens.WHITE_SPACE_ID, KtTokens.SEMICOLON_ID, SyntaxElementTypesWithIds.NO_ID,
-        )
-    }
 }
