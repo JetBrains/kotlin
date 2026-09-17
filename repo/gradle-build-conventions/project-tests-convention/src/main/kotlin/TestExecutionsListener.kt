@@ -20,7 +20,7 @@ import java.io.File
  *
  * The suite names are the same as the inventory's, but the test names are **not**: they are recorded in
  * the form TeamCity's own Gradle runner reports, which the server then normalizes (see
- * [toTeamCityRunnerTestName]). The inventory records the normalized form, because it is compared
+ * [teamCityRunnerMethodName]). The inventory records the normalized form, because it is compared
  * against the names TeamCity registers; this file records the form that has to be *sent* to arrive at
  * them. For all but a handful of tests the two are identical.
  *
@@ -50,9 +50,17 @@ class TestExecutionsListener(
     private class SuiteNode(val name: String) {
         val suites = LinkedHashMap<String, SuiteNode>()
         val tests = mutableListOf<TestRecord>()
+
+        /** Gradle's own timing for this suite, or null if it never reported one. */
+        var durationMillis: Long? = null
     }
 
-    private class TestRecord(val name: String, val status: String, val durationMillis: Long)
+    private class TestRecord(
+        val name: String,
+        val className: String?,
+        val status: String,
+        val durationMillis: Long,
+    )
 
     /** Holds the top level suites and any test reported without an enclosing suite. */
     private val root = SuiteNode(name = "")
@@ -62,24 +70,45 @@ class TestExecutionsListener(
     private val lock = Any()
 
     override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
-        val path = testDescriptor.toTestPath(taskName)
-        // The leaf is the runner's form, not the path's: this file is replayed as service messages, and
-        // TeamCity normalizes those the same way it normalizes the runner's own. See
-        // [toTeamCityRunnerTestName] - the name recorded here is deliberately not the one in
-        // 'test-inventory.tsv', which has to match what TeamCity ends up registering.
-        val record = TestRecord(testDescriptor.toTeamCityRunnerTestName(), result.statusName(), result.durationMillis)
+        // The name is the runner's form, not the inventory's: this file is replayed as service messages,
+        // and TeamCity normalizes those the same way it normalizes the runner's own. See
+        // [teamCityRunnerMethodName].
+        val record = TestRecord(
+            // Only the method part: the class is recorded next to it rather than repeated here, now
+            // that it is a suite in its own right. A replay joins the two back, see [qualifying].
+            name = testDescriptor.teamCityRunnerMethodName(),
+            // Kept so that a replay can collapse the suite that merely repeats it, the way TeamCity
+            // names tests, without the recorded structure having to anticipate that convention.
+            className = testDescriptor.className,
+            status = result.statusName(),
+            durationMillis = result.durationMillis,
+        )
 
-        synchronized(lock) {
-            // Suites of equal name under the same parent are merged, a suite being identified by its
-            // name within its parent - which is also all TeamCity knows about it.
-            val suite = path.suites.fold(root) { parent, name ->
-                parent.suites.getOrPut(name) { SuiteNode(name) }
-            }
-            suite.tests += record
-        }
+        synchronized(lock) { nodeFor(testDescriptor.enclosingSuiteNames(taskName)).tests += record }
     }
 
+    /**
+     * The node [suite] stands for, or null for a suite Gradle inserted itself and that therefore has
+     * none - except the outermost one, which encloses the whole run and so is the root.
+     */
+    private fun nodeOf(suite: TestDescriptor): SuiteNode? = when {
+        suite.parent == null -> root
+        isSyntheticSuiteName(suite.name, taskName, suite.className) -> null
+        else -> nodeFor(suite.enclosingSuiteNames(taskName) + suite.name)
+    }
+
+    /** Walks to the node at [suiteNames], creating the nodes along the way. */
+    private fun nodeFor(suiteNames: List<String>): SuiteNode =
+        // Suites of equal name under the same parent are merged, a suite being identified by its name
+        // within its parent.
+        suiteNames.fold(root) { parent, name -> parent.suites.getOrPut(name) { SuiteNode(name) } }
+
     override fun afterSuite(suite: TestDescriptor, result: TestResult) {
+        // Gradle times every suite it reports, down to individual (and nested) test classes. TeamCity
+        // has nowhere to put those - 'testSuiteFinished' carries no duration - but they are the input a
+        // test distribution mechanism needs, so they are recorded rather than dropped.
+        synchronized(lock) { nodeOf(suite)?.durationMillis = result.durationMillis }
+
         // Only the root suite finishing means the whole task is done.
         if (suite.parent != null) return
 
@@ -96,6 +125,8 @@ class TestExecutionsListener(
         // The full task path, so that a file lifted out of its build directory still says which task
         // it came from - the directory name alone only carries the task name.
         append("  \"taskPath\": ").appendJsonString(taskPath).append(",\n")
+        // The root suite's own timing: how long the task's whole test run took.
+        root.durationMillis?.let { append("  \"duration\": ").append(it).append(",\n") }
         appendNodeMembers(root, indent = "  ")
         append("}\n")
     }
@@ -115,6 +146,9 @@ class TestExecutionsListener(
             suites.forEachIndexed { index, suite ->
                 append(itemIndent).append("{\n")
                 append(itemIndent).append("  \"name\": ").appendJsonString(suite.name).append(",\n")
+                suite.durationMillis?.let {
+                    append(itemIndent).append("  \"duration\": ").append(it).append(",\n")
+                }
                 appendNodeMembers(suite, "$itemIndent  ")
                 append(itemIndent).append("}")
                 if (index != suites.lastIndex) append(',')
@@ -131,6 +165,7 @@ class TestExecutionsListener(
             append("[\n")
             node.tests.forEachIndexed { index, test ->
                 append(indent).append("  { \"name\": ").appendJsonString(test.name)
+                test.className?.let { append(", \"className\": ").appendJsonString(it) }
                 append(", \"status\": ").appendJsonString(test.status)
                 append(", \"duration\": ").append(test.durationMillis)
                 append(" }")
