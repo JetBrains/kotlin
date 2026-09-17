@@ -44,7 +44,6 @@ data class CodeRulePatterns(val patterns: List<String>) {
 const val CODE_RULES_MD = "code-rules.md"
 private const val INCLUDE_PREFIX = "@"
 private const val RULE_NAME_PREFIX = "# "
-private const val PATTERN_PREFIX = "Pattern:"
 
 class CodeRuleRepository(val project: Project) {
     suspend fun getRules(path: ProjectFilePath): Set<CodeRule> {
@@ -124,13 +123,17 @@ class CodeRuleRepository(val project: Project) {
             val ruleLines = listOf(lines.removeFirst()) +
                     lines.removeFirstUntil { it.startsWith(RULE_NAME_PREFIX) }
 
-            rules.add(parseRule(ruleLines, file))
+            rules.add(CodeRuleParser.parseRule(ruleLines, file))
         }
 
         return ParsedRulesFile(includes, rules)
     }
+}
 
-    private fun parseRule(lines: List<String>, source: ProjectFilePath): CodeRule {
+internal object CodeRuleParser {
+    private const val PATTERN_PREFIX = "Pattern:"
+
+    fun parseRule(lines: List<String>, source: ProjectFilePath): CodeRule {
         val lines = ArrayDeque(lines)
 
         val name = lines.removeFirst().removePrefix(RULE_NAME_PREFIX)
