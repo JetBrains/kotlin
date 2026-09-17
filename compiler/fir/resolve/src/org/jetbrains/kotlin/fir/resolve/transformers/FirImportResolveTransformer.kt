@@ -63,26 +63,32 @@ open class FirImportResolveTransformer protected constructor(
             }
         }
 
-        if (import.isAllUnder) {
-            return transformImportForFqName(fqName, import)
-        }
+        val parentFqName = if (import.isAllUnder) fqName else fqName.parent()
+        val (packageFqName, relativeClassFqName) = findLongestExistingPackage(symbolProvider, parentFqName)
 
-        currentFile?.let {
-            session.lookupTracker?.recordFqNameLookup(fqName, import.source, it.source)
+        recordImportLookups(fqName, packageFqName, import)
+
+        return buildResolvedImport {
+            this.delegate = import
+            this.packageFqName = packageFqName
+            this.relativeParentClassName = relativeClassFqName
         }
-        return transformImportForFqName(fqName.parent(), import)
     }
 
     protected open val FqName.isAcceptable: Boolean
         get() = true
 
-    private fun transformImportForFqName(fqName: FqName, delegate: FirImport): FirImport {
-        val (packageFqName, relativeClassFqName) = findLongestExistingPackage(symbolProvider, fqName)
-
-        return buildResolvedImport {
-            this.delegate = delegate
-            this.packageFqName = packageFqName
-            this.relativeParentClassName = relativeClassFqName
+    /**
+     * Records a lookup for every segment of [fqName] that lies after the [packageFqName] prefix,
+     * i.e. for the class segments and, for non-star imports, the imported name itself.
+     */
+    private fun recordImportLookups(fqName: FqName, packageFqName: FqName, import: FirImport) {
+        val file = currentFile ?: return
+        val lookupTracker = session.lookupTracker ?: return
+        var scope = packageFqName
+        for (segment in fqName.pathSegments().drop(packageFqName.pathSegments().size)) {
+            lookupTracker.recordLookup(segment.asString(), scope.asString(), import.source, file.source)
+            scope = scope.child(segment)
         }
     }
 }
