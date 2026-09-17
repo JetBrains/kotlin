@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.incremental.js
 
+import org.jetbrains.kotlin.name.CallableId
+
 class TranslationResultValue(val metadata: ByteArray)
 
 data class IrTranslationResultValue(
@@ -29,4 +31,5 @@ data class IrTranslationResultValue(
     val fileMetadata: ByteArray,
     val debugInfo: ByteArray?,
     val fileEntries: ByteArray?,
+    val ids: List<CallableId>,
 )
