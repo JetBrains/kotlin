@@ -686,6 +686,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeIntermediateDiagnostic -> null // At least some usages are accounted in FirMissingDependencyClassChecker
     is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.createOn(source, this.reason, session)
     is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.createOn(source, this.reason, session)
+    is ConeUnionTypeInSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.createOn(source, this.reason, session)
     is ConeTypeParameterInQualifiedAccess -> runIf(forNoneApplicable) { // when not for NONE_APPLICABLE, reported in various checkers
         FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.createOn(source, this.symbol, session)
     }

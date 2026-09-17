@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterSupertype
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnionTypeInSupertype
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -459,6 +460,11 @@ open class FirSupertypeResolverVisitor(
                         buildErrorTypeRef {
                             source = superTypeRef.source
                             diagnostic = ConeTypeParameterSupertype(coneType.lookupTag.typeParameterSymbol)
+                        }
+                    coneType is ConeUnionType ->
+                        buildErrorTypeRef {
+                            source = superTypeRef.source
+                            diagnostic = ConeUnionTypeInSupertype
                         }
                     superTypeRef !is FirResolvedTypeRef ->
                         createErrorTypeRef(
