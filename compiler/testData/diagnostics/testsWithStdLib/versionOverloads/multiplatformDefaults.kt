@@ -13,6 +13,11 @@ expect fun missingDefault(
     <!INVALID_VERSIONING_ON_NON_OPTIONAL, INVALID_VERSIONING_ON_NON_OPTIONAL{METADATA}!>@IntroducedAt("2")<!> y: String,
 ): String
 
+expect class P1 {
+    fun m(a: Int, b: Int = 5, c: Int = 50)
+}
+
+
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
@@ -25,5 +30,10 @@ actual fun missingDefault(
     x: String,
     <!ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS!>@IntroducedAt("2") y: String = "bar"<!>,
 ): String = x + y
+
+actual class P1 {
+    actual fun m(a: Int, @IntroducedAt("1") b: Int, <!INVALID_NON_OPTIONAL_PARAMETER_POSITION!>c: Int<!>) {}
+}
+
 
 /* GENERATED_FIR_TAGS: actual, additiveExpression, expect, functionDeclaration, stringLiteral */
