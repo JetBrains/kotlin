@@ -108,7 +108,7 @@ private fun resolveCollectionLiteralToPreparedCall(
     call = context.bodyResolveComponents.callResolver.resolveCallAndSelectCandidate(
         call,
         ResolutionMode.ContextDependent,
-        outerCandidateContext,
+        outerCandidateContext.containingCandidate,
     )
     call = context.bodyResolveComponents.callCompleter.completeCall(
         call,
