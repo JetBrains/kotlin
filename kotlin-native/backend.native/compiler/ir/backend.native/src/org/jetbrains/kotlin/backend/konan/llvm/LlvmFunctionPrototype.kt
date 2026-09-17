@@ -127,7 +127,7 @@ internal fun LlvmFunctionSignature(irFunction: IrSimpleFunction, contextUtils: C
 
     require(!irFunction.isSuspend) { "Suspend functions should be lowered out at this point" }
 
-    if (returnType.isObjectType)
+    if (returnType.isObjectType && contextUtils.context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN)
         parameterTypes.add(LlvmParamType(contextUtils.llvm.pointerType))
 
     return LlvmFunctionSignature(

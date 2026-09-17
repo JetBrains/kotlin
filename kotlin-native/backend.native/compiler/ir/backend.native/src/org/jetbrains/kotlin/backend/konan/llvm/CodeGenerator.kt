@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -671,7 +672,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun alloca(type: LLVMTypeRef?, isObjectType: Boolean, name: String = "", variableLocation: VariableDebugLocation? = null): LLVMValueRef {
-        if (isObjectType) {
+        if (isObjectType && (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN)) {
             appendingTo(localsInitBb) {
                 val slotAddress = gep(type!!, slotsPhi!!, llvm.int32(slotCount), name)
                 variableLocation?.let {
@@ -757,6 +758,10 @@ internal abstract class FunctionGenerationContext(
     }
 
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
+        if (context.config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
+            return
+        }
+
         call(llvm.updateReturnRefFunction, listOf(address, value))
     }
 
@@ -774,13 +779,6 @@ internal abstract class FunctionGenerationContext(
                 call(llvm.updateHeapRefFunction, listOf(address, value))
             }
         }
-    }
-
-    internal fun castToAddressSpace0(value: LLVMValueRef): LLVMValueRef {
-        val type = LLVMTypeOf(value)
-        return if (LLVMGetPointerAddressSpace(type) != 0)
-            LLVMBuildAddrSpaceCast(builder, value, llvm.pointerType, "")!!
-        else value
     }
 
     //-------------------------------------------------------------------------//
@@ -835,7 +833,8 @@ internal abstract class FunctionGenerationContext(
             verbatim: Boolean = false,
             resultSlot: LLVMValueRef? = null,
     ): LLVMValueRef {
-        val callArgs = if (verbatim || !llvmCallable.returnsObjectType) {
+        val callArgs = if (verbatim || !llvmCallable.returnsObjectType
+                || llvmCallable.numParams == args.size) { // Workaround for imports of runtime function
             args
         } else {
             // If function returns an object - create slot for the returned value or give local arena.
@@ -1068,8 +1067,11 @@ internal abstract class FunctionGenerationContext(
         if (switchThreadState) {
             switchThreadState(Runnable)
         }
-        call(llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
-        setCurrentFrameIsCalled = true
+
+        if (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+            call(llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
+            setCurrentFrameIsCalled = true
+        }
 
         return landingpad
     }
@@ -1218,7 +1220,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun generateFrameCheck() {
-        if (!context.shouldOptimize())
+        if (!context.shouldOptimize() && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN)
             call(llvm.checkCurrentFrameFunction, listOf(slotsPhi!!))
     }
 
@@ -1370,12 +1372,14 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun prologue() {
-        if (function.returnsObjectType) {
+        if (function.returnsObjectType && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
             returnSlot = function.param(function.numParams - 1)
         }
 
         positionAtEnd(localsInitBb)
-        slotsPhi = phi(llvm.pointerType)
+        if (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+            slotsPhi = phi(llvm.pointerType)
+        }
         // Is removed by DCE trivially, if not needed.
         /*arenaSlot = intToPtr(
                 or(ptrToInt(slotsPhi, codegen.intPtrType), codegen.immOneIntPtrType), kObjHeaderPtrPtr)*/
@@ -1386,16 +1390,20 @@ internal abstract class FunctionGenerationContext(
         val needCleanupLandingpadAndLeaveFrame = this.needCleanupLandingpadAndLeaveFrame
 
         appendingTo(prologueBb) {
-            val slots = if (needSlotsPhi || needCleanupLandingpadAndLeaveFrame)
+            val slots = if ((needSlotsPhi || needCleanupLandingpadAndLeaveFrame)
+                    && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN)
                 LLVMBuildArrayAlloca(builder, llvm.pointerType, llvm.int32(slotCount), "")!!
             else
                 llvm.kNull
-            if (needSlots || needCleanupLandingpadAndLeaveFrame) {
+            if ((needSlots || needCleanupLandingpadAndLeaveFrame)
+                    && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
                 check(!forbidRuntime) { "Attempt to start a frame where runtime usage is forbidden" }
                 // Zero-init slots.
                 memset(slots, 0, slotCount * codegen.runtime.pointerSize)
             }
-            addPhiIncoming(slotsPhi!!, prologueBb to slots)
+            if (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+                addPhiIncoming(slotsPhi!!, prologueBb to slots)
+            }
             memScoped {
                 slotToVariableLocation.forEach { [slot, variable] ->
                     val expr = longArrayOf(DwarfOp.DW_OP_plus_uconst.value,
@@ -1443,14 +1451,19 @@ internal abstract class FunctionGenerationContext(
                 check(!forbidRuntime) { "Attempt to init runtime where runtime usage is forbidden" }
                 call(llvm.initRuntimeIfNeeded, emptyList())
             }
+
             if (switchToRunnable) {
                 switchThreadState(Runnable, isOutboundNativeCall = false)
             }
-            if (needSlots || needCleanupLandingpadAndLeaveFrame) {
-                call(llvm.enterFrameFunction, listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
-            } else {
-                check(!setCurrentFrameIsCalled)
+
+            if (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+                if (needSlots || needCleanupLandingpadAndLeaveFrame) {
+                    call(llvm.enterFrameFunction, listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
+                } else {
+                    check(!setCurrentFrameIsCalled)
+                }
             }
+
             if (!forbidRuntime && needSafePoint) {
                 call(llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
             }
@@ -1468,7 +1481,7 @@ internal abstract class FunctionGenerationContext(
     protected abstract fun processReturns()
 
     protected fun retValue(value: LLVMValueRef): LLVMValueRef {
-        if (returnSlot != null) {
+        if (returnSlot != null && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
             updateReturnRef(value, returnSlot!!)
         }
         onReturn()
@@ -1626,7 +1639,8 @@ internal abstract class FunctionGenerationContext(
         }
 
     private fun releaseVars() {
-        if (needCleanupLandingpadAndLeaveFrame || needSlots) {
+        if ((needCleanupLandingpadAndLeaveFrame || needSlots) &&
+                context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
             check(!forbidRuntime) { "Attempt to leave a frame where runtime usage is forbidden" }
             call(llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
