@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExplicitBinaryOptions
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
@@ -39,7 +41,13 @@ fun Settings.getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.Bi
         }
     }
 
+fun Settings.assumeCExportSupported() {
+    if (get<ExplicitBinaryOptions>().getOrNull<Boolean>(BinaryOptions.lateShadowStack) == true)
+        Assumptions.abort<Nothing>("C export is not supported with lateShadowStack.")
+}
+
 fun Settings.assumeLibraryKindSupported() {
+    assumeCExportSupported()
     when (get<BinaryLibraryKind>()) {
         BinaryLibraryKind.STATIC -> if (get<KotlinNativeTargets>().testTarget.family == Family.MINGW) {
             Assumptions.abort<Nothing>("Testing of static libraries is not supported for MinGW targets.")
