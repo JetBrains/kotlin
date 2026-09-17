@@ -510,6 +510,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public abstract fun getDispatchReceiverType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getReceiverType (Lorg/jetbrains/kotlin/psi/KtDoubleColonExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getType (Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getVarargArrayType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaValueParameterSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun hasCommonSubtypeWith (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun lowerBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public fun upperBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
@@ -1719,6 +1720,7 @@ public final class org/jetbrains/kotlin/analysis/api/types/TypeProviderKt {
 	public static final fun getDirectSupertypes (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lkotlin/sequences/Sequence;
 	public static final fun getReceiverType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtDoubleColonExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public static final fun getType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun getVarargArrayType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/KaValueParameterSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public static final fun hasCommonSubtypeWith (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun lowerBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public static final fun upperBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
