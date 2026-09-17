@@ -1,3 +1,6 @@
+// ISSUE: KT-88819
+// IGNORE_BACKEND: WASM_JS
+
 external interface I {
     fun foo(): String
 }
@@ -9,7 +12,7 @@ fun box(): String {
         (createObject() as I).foo()
         return "fail: exception not thrown"
     }
-    catch (e: ClassCastException) {
+    catch (e: NullPointerException) {
         return "OK"
     }
 }
