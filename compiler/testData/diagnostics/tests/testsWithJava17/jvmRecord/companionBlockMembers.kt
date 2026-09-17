@@ -7,9 +7,9 @@
 @JvmRecord
 data class MyRec(val name: String) {
     companion {
-        <!FIELD_IN_JVM_RECORD!>val a0<!> = 0
-        <!FIELD_IN_JVM_RECORD!>var a1: Int<!> = 0
-        const <!FIELD_IN_JVM_RECORD!>val a2<!> = 0
+        val a0 = 0
+        var a1: Int = 0
+        const val a2 = 0
     }
 }
 

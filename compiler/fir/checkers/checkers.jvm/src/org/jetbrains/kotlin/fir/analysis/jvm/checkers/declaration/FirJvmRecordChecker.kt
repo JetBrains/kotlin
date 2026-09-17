@@ -100,7 +100,7 @@ object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
                 val fromConstructor = decl.source?.kind == KtFakeSourceElementKind.PropertyFromParameter
                 if (decl.isVar && fromConstructor) {
                     reporter.reportOn(decl.source, FirJvmErrors.JVM_RECORD_NOT_VAL_PARAMETER)
-                } else if (!fromConstructor && (decl.hasBackingField || decl.delegateFieldSymbol != null)) {
+                } else if (!fromConstructor && (decl.hasBackingField || decl.delegateFieldSymbol != null) && !decl.isCompanionBlockMember) {
                     reporter.reportOn(decl.source, FirJvmErrors.FIELD_IN_JVM_RECORD)
                 }
             } else if (decl is FirField && decl.isSynthetic) {
