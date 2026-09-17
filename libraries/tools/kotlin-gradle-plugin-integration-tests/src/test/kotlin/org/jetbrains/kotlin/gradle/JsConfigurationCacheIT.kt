@@ -117,7 +117,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             assertSimpleConfigurationCacheScenarioWorks(
                 "assemble", "kotlinStorePackageLock",
                 buildOptions = defaultBuildOptions.copy(
-                    jsOptions = defaultBuildOptions.jsOptions?.copy(
+                    jsOptions = defaultBuildOptions.jsOptions.copy(
                         yarn = false
                     )
                 ),
@@ -133,7 +133,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             assertSimpleConfigurationCacheScenarioWorks(
                 "assemble", "kotlinStoreYarnLock",
                 buildOptions = defaultBuildOptions.copy(
-                    jsOptions = defaultBuildOptions.jsOptions?.copy(
+                    jsOptions = defaultBuildOptions.jsOptions.copy(
                         yarn = true
                     )
                 ),

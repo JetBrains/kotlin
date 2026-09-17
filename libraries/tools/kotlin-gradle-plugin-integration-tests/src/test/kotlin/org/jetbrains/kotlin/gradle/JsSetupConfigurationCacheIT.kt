@@ -33,7 +33,7 @@ class JsSetupConfigurationCacheIT : KGPBaseTest() {
             "kotlin-js-browser-project",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                jsOptions = defaultBuildOptions.jsOptions.copy(
                     yarn = false
                 )
             )
@@ -51,7 +51,7 @@ class JsSetupConfigurationCacheIT : KGPBaseTest() {
             "kotlin-js-browser-project",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                jsOptions = defaultBuildOptions.jsOptions.copy(
                     yarn = true
                 )
             )

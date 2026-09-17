@@ -200,7 +200,7 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            jsOptions = super.defaultBuildOptions.jsOptions?.copy(
+            jsOptions = super.defaultBuildOptions.jsOptions.copy(
                 yarn = yarn
             ),
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()

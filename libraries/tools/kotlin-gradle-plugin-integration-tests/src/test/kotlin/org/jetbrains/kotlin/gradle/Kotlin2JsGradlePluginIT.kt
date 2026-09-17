@@ -1603,7 +1603,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             "npm-dependencies",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                jsOptions = defaultBuildOptions.jsOptions.copy(
                     yarn = false
                 )
             )
@@ -1818,7 +1818,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             "kotlin-js-npm-overrides",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                jsOptions = defaultBuildOptions.jsOptions.copy(
                     yarn = false
                 )
             )
@@ -2047,7 +2047,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             "nodeJsDownload",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                jsOptions = defaultBuildOptions.jsOptions.copy(
                     yarn = true
                 )
             )

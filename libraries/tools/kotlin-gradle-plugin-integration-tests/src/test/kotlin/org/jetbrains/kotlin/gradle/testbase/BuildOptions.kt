@@ -54,7 +54,7 @@ data class BuildOptions(
     val androidVersion: String? = null,
     /** Sets `android.newDsl=false` + `android.builtInKotlin=false` so AGP 9+ keeps the legacy DSL KGP integrates with. */
     val enableLegacyAgpDsl: Boolean = true,
-    val jsOptions: JsOptions? = JsOptions(),
+    val jsOptions: JsOptions = JsOptions(),
     val wasmOptions: WasmOptions? = WasmOptions(),
     val buildReport: List<BuildReportType> = emptyList(),
     val usePreciseJavaTracking: Boolean? = null,
@@ -274,12 +274,10 @@ data class BuildOptions(
             }
         }
 
-        if (jsOptions != null) {
-            jsOptions.incrementalJs?.let { arguments.add("-Pkotlin.incremental.js=$it") }
-            jsOptions.incrementalJsKlib?.let { arguments.add("-Pkotlin.incremental.js.klib=$it") }
-            jsOptions.incrementalJsIr?.let { arguments.add("-Pkotlin.incremental.js.ir=$it") }
-            jsOptions.yarn?.let { arguments.add("-Pkotlin.js.yarn=$it") }
-        }
+        jsOptions.incrementalJs?.let { arguments.add("-Pkotlin.incremental.js=$it") }
+        jsOptions.incrementalJsKlib?.let { arguments.add("-Pkotlin.incremental.js.klib=$it") }
+        jsOptions.incrementalJsIr?.let { arguments.add("-Pkotlin.incremental.js.ir=$it") }
+        jsOptions.yarn?.let { arguments.add("-Pkotlin.js.yarn=$it") }
 
         wasmOptions?.compilationMode?.let { arguments.add("-Pkotlin.wasm.compilationMode=${it.toArgument()}") }
 
