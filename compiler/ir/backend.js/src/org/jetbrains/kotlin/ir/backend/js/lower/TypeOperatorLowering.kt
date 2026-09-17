@@ -231,7 +231,12 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 return if (value.isPure(anyVariable = true, checkFields = false)) {
                     { value.deepCopyWithSymbols() }
                 } else {
-                    val varDeclaration = JsIrBuilder.buildVar(value.type, declaration, initializer = value)
+                    val varDeclaration = JsIrBuilder.buildVar(
+                        value.type,
+                        declaration,
+                        initializer = value,
+                        origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                    )
                     newStatements += varDeclaration
                     { JsIrBuilder.buildGetValue(varDeclaration.symbol) }
                 }
