@@ -32,7 +32,7 @@ actual fun missingDefault(
 ): String = x + y
 
 actual class P1 {
-    actual fun m(a: Int, @IntroducedAt("1") b: Int, <!INVALID_NON_OPTIONAL_PARAMETER_POSITION!>c: Int<!>) {}
+    actual fun m(a: Int, @IntroducedAt("1") b: Int, c: Int) {}
 }
 
 

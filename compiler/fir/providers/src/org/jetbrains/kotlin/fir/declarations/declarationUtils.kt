@@ -295,7 +295,7 @@ private fun FirFunction.containsDefaultValue(index: Int): Boolean = valueParamet
  *  for this actual.
  */
 fun FirFunction.itOrExpectHasDefaultParameterValue(index: Int): Boolean =
-    containsDefaultValue(index) || symbol.getSingleMatchedExpectForActualOrNull()?.fir?.containsDefaultValue(index) == true
+    containsDefaultValue(index) || symbol.unwrapActualizationInRegardExpectRefinement().fir.containsDefaultValue(index)
 
 /**
  * An intersection override is trivial if one of the overridden symbols subsumes all others.
