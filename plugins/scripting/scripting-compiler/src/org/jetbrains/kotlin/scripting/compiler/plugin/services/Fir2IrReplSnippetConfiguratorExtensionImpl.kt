@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.extensions.containingReplSnippet
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -279,16 +279,12 @@ private class CollectAccessToOtherState(
 ) : FirDefaultVisitorVoid() {
 
     private fun storeAccessedSymbol(symbol: FirBasedSymbol<FirDeclaration>) {
-
-        @OptIn(SymbolInternals::class)
-        fun FirBasedSymbol<FirDeclaration>.getOriginalSnippetSymbol(): FirReplSnippetSymbol? = fir.originalReplSnippetSymbol
-
-        val originalSnippet = symbol.getOriginalSnippetSymbol() ?: return
-        snippets.add(originalSnippet)
+        val containingSnippet = session.containingReplSnippet(symbol) ?: return
+        snippets.add(containingSnippet)
         when (symbol) {
-            is FirPropertySymbol -> properties[symbol] = originalSnippet
-            is FirNamedFunctionSymbol -> functions[symbol] = originalSnippet
-            is FirRegularClassSymbol -> classes[symbol] = originalSnippet
+            is FirPropertySymbol -> properties[symbol] = containingSnippet
+            is FirNamedFunctionSymbol -> functions[symbol] = containingSnippet
+            is FirRegularClassSymbol -> classes[symbol] = containingSnippet
             else -> {}
         }
     }
