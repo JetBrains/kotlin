@@ -11,12 +11,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.types.unwrapToSimpleTypeUsingLowerBound
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.*
 
 object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
@@ -24,23 +22,22 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Comm
     override fun check(declaration: FirProperty) {
         if (declaration.symbol is FirLocalPropertySymbol) return
 
-        val boundsByName = declaration.typeParameters.associate { it.name to it.symbol.resolvedBounds }
-        val usedTypes = mutableSetOf<ConeKotlinType>()
+        val usedSymbols = mutableSetOf<FirTypeParameterSymbol>()
 
         fun collectAllTypes(type: ConeKotlinType) {
-            val unwrappedType = type.unwrapToSimpleTypeUsingLowerBound()
-            if (usedTypes.add(unwrappedType)) {
-                unwrappedType.typeArguments.forEach { it.type?.let(::collectAllTypes) }
-                if (unwrappedType is ConeTypeParameterType) {
-                    boundsByName[unwrappedType.lookupTag.name]?.forEach { collectAllTypes(it.coneType) }
+            type.forEachType {
+                val symbol = (it as? ConeTypeParameterType)?.lookupTag?.symbol
+                // Because we're looking at bounds, we need to protect ourselves against infinite loops from recursive types
+                if (symbol?.containingDeclarationSymbol == declaration.symbol && usedSymbols.add(symbol)) {
+                    symbol.resolvedBounds.forEach { bound -> collectAllTypes(bound.coneType) }
                 }
             }
         }
+
         declaration.receiverParameter?.typeRef?.let { collectAllTypes(it.coneType) }
         declaration.contextParameters.forEach { collectAllTypes(it.returnTypeRef.coneType) }
 
-        val usedNames = usedTypes.filterIsInstance<ConeTypeParameterType>().map { it.lookupTag.name }
-        declaration.typeParameters.filterNot { usedNames.contains(it.name) }.forEach { danglingParam ->
+        declaration.typeParameters.filterNot { it.symbol in usedSymbols }.forEach { danglingParam ->
             reporter.reportOn(danglingParam.source, FirErrors.INCORRECT_TYPE_PARAMETER_OF_PROPERTY)
         }
     }

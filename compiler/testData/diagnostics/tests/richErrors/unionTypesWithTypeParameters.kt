@@ -24,7 +24,8 @@ fun <T, V : NonError, E : RichError, E2 : TA, E3 : E, E4 : V | Foo, E5 : E | Foo
     k: E5 | Foo,
 ) {}
 
-val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>E : RichError<!>> (E | Foo).prop get() = 1
+val <E : RichError> (E | Foo).prop get() = 1
+val <T> (T | Foo).prop2 get() = 1
 
 class C<T, V : NonError, E : RichError, E2 : TA> {
     fun test(
@@ -40,7 +41,7 @@ class C<T, V : NonError, E : RichError, E2 : TA> {
 }
 
 fun <G : CharSequence, T : List<F | Foo>, F : G | Foo> boundsWithUnionAndDependency() {}
-val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>G : CharSequence<!>, T : List<F | Foo>, <!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>F : G | Foo<!>> T.boundsWithUnionAndDependency get() = 1
+val <G : CharSequence, T : List<F | Foo>, F : G | Foo> T.boundsWithUnionAndDependency get() = 1
 interface I<G : CharSequence, T : List<F | Foo>, F : G | Foo>
 
 fun <G : CharSequence, T : F | Foo, F : G | Foo> boundsWithUnionAndDependency2() {}
