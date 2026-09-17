@@ -19,7 +19,7 @@ internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
         val source = descriptor.source.getOrNull() as? MethodSource
             ?: return included("Not a method-based test")
         val clusters = testFederationClusters
-            ?: return included("$TEST_FEDERATION_MODE_KEY is not set")
+            ?: return included("$TEST_FEDERATION_SUBSETS_KEY is not set")
 
         if (TestSubset.AllTests in clusters) return included("'${TestSubset.AllTests}' is requested")
 
