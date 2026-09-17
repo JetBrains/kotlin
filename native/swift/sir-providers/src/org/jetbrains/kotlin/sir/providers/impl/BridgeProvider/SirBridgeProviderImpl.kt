@@ -118,7 +118,9 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
                 protocol.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available
         protocolSupported && typeArguments.all { isSupported(it) }
     }
-    else -> false
+    is SirTupleType -> type.types.all { isSupported(it.second) }
+    is SirType.Metatype -> isSupported(type.type)
+    is SirErrorType, SirUnsupportedType -> false
 }
 
 public interface BridgeFunctionBuilder {
