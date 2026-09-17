@@ -10,6 +10,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.api.tasks.testing.Test
+import org.jetbrains.kotlin.testFederation.TestSubset.*
 import java.io.File
 
 internal const val SMOKE_TEST_CONFIG_KEY = "org.jetbrains.kotlin.testFederation.smokeTestConfig"
@@ -19,6 +21,9 @@ internal const val SMOKE_TEST_CONFIG_KEY = "org.jetbrains.kotlin.testFederation.
  *
  * Test Federation is typically enabled only in CI environments. Local test runs select all tests by default unless Test Federation is
  * explicitly enabled through the corresponding Gradle property or environment variable. Other test filters still apply.
+ *
+ * This flag only affects the [TestFederationMode]/domain-derived fallback used by [testFederationSubsets]. It has no effect when
+ * `test.federation.subsets` is explicitly provided: an explicit subsets value always takes precedence, enabled or not.
  */
 @DelicateTestFederationApi
 val Project.testFederationEnabled: Boolean
@@ -66,6 +71,10 @@ val AbstractTestTask.testFederationDomains: ListProperty<Domain> by extensionPro
  * Other test filters, including nightly filters, still apply.
  *
  * The mode that selects a subset of tests is [TestFederationMode.Smoke].
+ *
+ * NOTE: [TestFederationMode] does not select tests on its own anymore. It only exists as a legacy fallback signal consumed by
+ * [testFederationSubsets] when no `test.federation.subsets` value is explicitly requested. Test selection itself is driven entirely
+ * by test subsets — `TestFederationPostDiscoveryFilter` no longer reads [TestFederationMode] at all.
  */
 @DelicateTestFederationApi
 val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensionProperty property@{
@@ -93,6 +102,42 @@ val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensi
             else TestFederationMode.Smoke
         }
     )
+}
+
+/**
+ * Provides which test subsets were requested for this test task.
+ *
+ * A test subset selects a portion of tests that would be normally selected by a test task's own filters
+ * (including the nightly filter). It may select some, all, or none of them.
+ *
+ * This value is resolved in the following order:
+ * 1. An explicit `test.federation.subsets` Gradle property or environment variable, if set
+ * 2. Otherwise, derived from [testFederationMode] and [testFederationChangedDomains]
+ *
+ * Custom configuration from the `testFederation { }` extension may change one subset to another.
+ */
+@DelicateTestFederationApi
+val Test.testFederationSubsets: Provider<Set<TestSubset>> by extensionProperty {
+    project.providers.gradleProperty(TEST_FEDERATION_SUBSETS_KEY)
+        .orElse(project.providers.environmentVariable(TEST_FEDERATION_SUBSETS_ENV_KEY))
+        .map { it.toTestSubsets() }
+        .orElse(
+            testFederationMode.zip(project.testFederationChangedDomains) { mode, changedDomains ->
+                when (mode) {
+                    TestFederationMode.Full -> setOf(AllTests)
+                    TestFederationMode.Smoke -> buildSet {
+                        add(SmokeTests)
+                        changedDomains.forEach { domain -> add(contractTestsSubsetOf(domain)) }
+                    }
+                }
+            }
+        )
+        .map { subsets ->
+            when {
+                SmokeTests in subsets && smokeTestConfig.get() == SmokeTestConfig.RunAllTests -> setOf(AllTests)
+                else -> subsets
+            }
+        }
 }
 
 /**
