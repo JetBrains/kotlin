@@ -86,18 +86,11 @@ abstract class DefaultNodeJsToolchainService @Inject internal constructor(
      */
     private val installations = ConcurrentHashMap<NodeJsDistribution, File>()
 
-    override fun request(configure: NodeJsRequest.() -> Unit): Provider<NodeJsExecutable> {
-        val request = objects.newInstance<NodeJsRequest>()
-        request.platform.convention(parameters.defaultPlatform)
-        request.configure()
-
-        val version = request.version
-        val platform = request.platform
-
+    override fun request(nodeJsRequest: NodeJsRequest): Provider<NodeJsExecutable> {
         return providers.provider {
             val distribution = NodeJsDistribution(
-                version = version.orNull ?: error("A Node.js version must be requested"),
-                platform = platform.orNull ?: error("A Node.js platform must be requested"),
+                version = nodeJsRequest.version.orNull ?: error("A Node.js version must be requested"),
+                platform = nodeJsRequest.platform.orElse(parameters.defaultPlatform).orNull ?: error("A Node.js platform must be requested")
             )
             provision(distribution)
         }

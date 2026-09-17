@@ -67,7 +67,7 @@ internal class NodeJsDistributionInstaller(
         // The lock is taken beside the target directory, so that installations of different distributions
         // do not block each other.
         val lockDir = installationsDir.resolve(".$distributionName.lock")
-        KotlinInterprocessDirectoryLock(lockDir) { logger.info(it) }.withLock {
+        KotlinInterprocessDirectoryLock(lockDir, logInfo = { logger.info(it) }).withLock {
             // Another process may have completed the installation while the lock was being acquired.
             if (isCompleteInstallation(distributionPath, platform)) return@withLock
 

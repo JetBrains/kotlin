@@ -701,6 +701,31 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `Node js toolchain provisions nothing while the tasks are being configured`(
+        gradleVersion: GradleVersion,
+        @TempDir kotlinUserHome: Path,
+    ) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(kotlinUserHome = kotlinUserHome)
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            // a dry run configures the whole task graph of ':jsBrowserTest', but executes none of it
+            build(":jsBrowserTest", "--dry-run", nodeJsToolchain("DOWNLOAD")) {
+                val installationsDir = kotlinUserHome.nodeJsInstallationsDir
+                assertFalse(
+                    installationsDir.exists(),
+                    "Expected no Node.js to be provisioned at configuration time, but '$installationsDir' exists",
+                )
+            }
+        }
+    }
+
+    @GradleTest
     fun `Node js toolchain in system path mode runs the browser tests without downloading Node js`(
         gradleVersion: GradleVersion,
         @TempDir kotlinUserHome: Path,

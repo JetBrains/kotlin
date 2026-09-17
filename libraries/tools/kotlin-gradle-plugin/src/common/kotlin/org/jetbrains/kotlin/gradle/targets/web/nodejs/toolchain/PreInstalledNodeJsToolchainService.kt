@@ -30,26 +30,21 @@ abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
 
     private val logger = Logging.getLogger(PreInstalledNodeJsToolchainService::class.java)
 
-    override fun request(configure: NodeJsRequest.() -> Unit): Provider<NodeJsExecutable> {
-        val request = objects.newInstance<NodeJsRequest>()
-        request.configure()
-
-        val requestedVersion = request.version
-        val requestedPlatform = request.platform
+    override fun request(nodeJsRequest: NodeJsRequest): Provider<NodeJsExecutable> {
 
         return providers.provider {
             val command = parameters.nodeJsExecutable.get()
             val (installedVersion, installedPlatform) = detectInstalledNodeJs(command)
 
-            val requested = requestedVersion.orNull
-            if (requested != null && requested.normalized != installedVersion.normalized) {
+            val requestedVersion = nodeJsRequest.version.orNull
+            if (requestedVersion != null && requestedVersion.normalized != installedVersion.normalized) {
                 logger.warn(
                     "w: Node.js $installedVersion found by '$command' does not match the requested " +
-                            "version $requested. The requested version cannot be provisioned, because " +
+                            "version $requestedVersion. The requested version cannot be provisioned, because " +
                             "the Node.js toolchain is configured to use a pre-installed Node.js."
                 )
             }
-            requestedPlatform.orNull?.let { platform ->
+            nodeJsRequest.platform.orNull?.let { platform ->
                 if (platform != installedPlatform) {
                     logger.warn(
                         "w: Node.js found by '$command' runs on $installedPlatform, " +

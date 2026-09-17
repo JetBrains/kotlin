@@ -17,6 +17,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
@@ -24,11 +25,7 @@ import org.gradle.kotlin.dsl.property
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.BuildPlatform
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.DefaultNodeJsToolchainService
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsExecutable
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsVersion
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.UsesNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -280,13 +277,17 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
                 @get:Internal
                 val buildPlatform: Property<BuildPlatform> = objects.property()
 
+                @get:Input
+                internal val nodeJsRequest: Provider<NodeJsRequest> = objects.property<NodeJsRequest>().map {
+                    it.version.convention(this@ProvisionNodeJsTask.version.map { NodeJsVersion(it) })
+                    it.platform.convention(this@ProvisionNodeJsTask.buildPlatform)
+                    it
+                }
+
                 @get:Nested
                 val nodeJsExecutable: Provider<NodeJsExecutable> =
-                    nodeJsToolchainService.flatMap {
-                        it.request {
-                            this.platform.set(this@ProvisionNodeJsTask.buildPlatform)
-                            this.version.set(this@ProvisionNodeJsTask.version.map { NodeJsVersion(it) })
-                        }
+                    nodeJsToolchainService.zip(nodeJsRequest) { service, resuest ->
+                        service.request(resuest).orNull
                     }
 
                 @TaskAction

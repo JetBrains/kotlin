@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainS
 
 abstract class DisabledNodeJsToolchainService : NodeJsToolchainService<NodeJsToolchainService.Parameters> {
 
-    override fun request(configure: NodeJsRequest.() -> Unit): Provider<NodeJsExecutable> {
+    override fun request(nodeJsRequest: NodeJsRequest): Provider<NodeJsExecutable> {
         throw UnsupportedOperationException("Node.js toolchain is disabled")
     }
 

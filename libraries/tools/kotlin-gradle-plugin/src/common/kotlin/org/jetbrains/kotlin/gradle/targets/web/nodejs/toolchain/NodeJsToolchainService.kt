@@ -67,7 +67,7 @@ interface NodeJsToolchainService<P : NodeJsToolchainService.Parameters> : BuildS
      * @param configure configures the requested Node.js distribution.
      * @return a provider of the provisioned Node.js installation.
      */
-    fun request(configure: NodeJsRequest.() -> Unit = {}): Provider<NodeJsExecutable>
+    fun request(nodeJsRequest: NodeJsRequest): Provider<NodeJsExecutable>
 
     companion object {
         private val serviceClass = NodeJsToolchainService::class.java
