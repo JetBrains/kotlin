@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.NodeTypeAnalyzer
-import org.jetbrains.kotlin.fir.analysis.NotToShareWithAA
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -52,7 +50,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-@OptIn(NotToShareWithAA::class)
 class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     val analyzer: AbstractTreeRawFirBuilder<Node, Type>,
     context: Context<Node>,
@@ -513,6 +510,13 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         private val incrementOperations: Set<Int> = setOf(
             KtTokens.PLUSPLUS_ID,
             KtTokens.MINUSMINUS_ID,
+        )
+
+        private val comparisonOperationsId: Set<Int> = hashSetOf(
+            KtTokens.LT_ID,
+            KtTokens.LTEQ_ID,
+            KtTokens.GTEQ_ID,
+            KtTokens.GT_ID
         )
     }
 
@@ -1376,7 +1380,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var blockNode: Node? = null
         forLoop.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypes.VALUE_PARAMETER_ID -> parameter = declarationBuilder.convertValueParameter(it, null, NodeTypeAnalyzer.ValueParameterDeclaration.FOR_LOOP)
+                KtNodeTypes.VALUE_PARAMETER_ID -> parameter = declarationBuilder.convertValueParameter(it, null, ValueParameterDeclaration.FOR_LOOP)
                 KtNodeTypes.LOOP_RANGE_ID -> rangeExpression = getAsFirExpression(it, "No range in for loop")
                 KtNodeTypes.BODY_ID -> blockNode = it
             }

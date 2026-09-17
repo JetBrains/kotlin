@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.NotToShareWithAA
 import org.jetbrains.kotlin.fir.analysis.firstFunctionCallInBlockHasLambdaArgumentWithLabelForPsi
 import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatementForPsi
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -123,9 +122,6 @@ open class PsiRawFirBuilder(
             val stubBasedElement = this as? StubBasedPsiElement<*>
             return stubBasedElement?.iElementType ?: node.elementType
         }
-
-    @NotToShareWithAA
-    override fun IElementType.typeToTokenId(): Int = error("Should not be called")
 
     override fun PsiElement.isArrayAccessExpression(): Boolean = elementType == ARRAY_ACCESS_EXPRESSION
 

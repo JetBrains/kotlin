@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.NotToShareWithAA
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
@@ -17,10 +16,10 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
+import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-@OptIn(NotToShareWithAA::class)
 abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     baseSession: FirSession,
     context: Context<Node>,
@@ -90,6 +89,32 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
 
     abstract fun Node.getChildren(): List<Node>
 
+    inline fun Node.forEachChildren(f: (Node) -> Unit) {
+        val kidsArray = this.getChildrenAsArray()
+        for (kid in kidsArray) {
+            if (kid == null) break
+            if (ignoredTokensId.contains(kid.toTokenId())) continue
+            f(kid)
+        }
+    }
+
+    inline fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
+        val kidsArray = this.getChildrenAsArray()
+
+        val container = mutableListOf<T>()
+        for (kid in kidsArray) {
+            if (kid == null) break
+            if (ignoredTokensId.contains(kid.toTokenId())) continue
+            f(kid, container)
+        }
+
+        return container
+    }
+
+    fun Node.toTokenId(): Int = elementType.typeToTokenId()
+
+    abstract fun Type.typeToTokenId(): Int
+
     fun Node.getOperationTokenId(): Int {
         return getChildren().first().toTokenId()
     }
@@ -121,6 +146,30 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
 
     override fun Node.getLabeledExpression(): Node? = getLastChildExpression()
 
+    override fun Node.getLabelName(): String? {
+        if (toTokenId() == KtNodeTypes.FUNCTION_ID) {
+            return getParent()?.getLabelName()
+        }
+        this.forEachChildren {
+            when (it.toTokenId()) {
+                KtNodeTypes.LABEL_QUALIFIER_ID -> return it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
+            }
+        }
+        return null
+    }
+
+    private fun unquoteIdentifier(quoted: String): String {
+        if (quoted.indexOf('`') < 0) {
+            return quoted
+        }
+
+        if (quoted.startsWith('`') && quoted.endsWith('`') && quoted.length >= 2) {
+            return quoted.substring(1, quoted.length - 1)
+        } else {
+            return quoted
+        }
+    }
+
     override val Node?.arrayExpression: Node?
         get() = this?.getFirstChildExpression()
 
@@ -145,5 +194,12 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         statementsSetup: MutableList<FirElement>.() -> Unit,
     ): FirReplSnippet {
         TODO("KT-77583")
+    }
+
+    companion object {
+        val ignoredTokensId: HashSet<Int> = hashSetOf(
+            KtTokens.EOL_COMMENT_ID, KtTokens.BLOCK_COMMENT_ID, KtTokens.DOC_COMMENT_ID, KtTokens.SHEBANG_COMMENT_ID,
+            KtTokens.WHITE_SPACE_ID, KtTokens.SEMICOLON_ID, SyntaxElementTypesWithIds.NO_ID,
+        )
     }
 }

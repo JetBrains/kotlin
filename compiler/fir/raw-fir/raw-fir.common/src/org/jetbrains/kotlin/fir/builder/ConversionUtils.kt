@@ -235,13 +235,6 @@ fun FirExpression.generateComparisonExpression(
     }
 }
 
-val comparisonOperationsId: Set<Int> = setOf(
-    org.jetbrains.kotlin.kmp.lexer.KtTokens.LT_ID,
-    org.jetbrains.kotlin.kmp.lexer.KtTokens.LTEQ_ID,
-    org.jetbrains.kotlin.kmp.lexer.KtTokens.GTEQ_ID,
-    org.jetbrains.kotlin.kmp.lexer.KtTokens.GT_ID
-)
-
 private fun FirExpression.createConventionCall(
     operationReferenceSource: KtSourceElement?,
     baseSource: KtSourceElement?,
