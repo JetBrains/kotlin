@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.mpp.ActualTypealiasToSpecialAnnotationUtils.isAnnotationProhibitedInActualTypeAlias
 import org.jetbrains.kotlin.types.Variance
 
@@ -65,6 +66,10 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
             if (isAnnotationProhibitedInActualTypeAlias(classId)) {
                 reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, classId)
             }
+        }
+
+        if (expandedTypeSymbol.classId == StandardClassIds.NonError) {
+            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPEALIAS_TO_NON_ERROR)
         }
     }
 

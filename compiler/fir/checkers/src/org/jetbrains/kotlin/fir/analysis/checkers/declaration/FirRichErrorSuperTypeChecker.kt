@@ -19,14 +19,12 @@ import org.jetbrains.kotlin.name.StandardClassIds
 object FirRichErrorSuperTypeChecker : FirClassChecker(Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        if (declaration is FirRegularClass && declaration.isRichError) return
-
         for (superTypeRef in declaration.superTypeRefs) {
-            if (superTypeRef.coneType.classId == StandardClassIds.RichError) {
-                reporter.reportOn(
-                    superTypeRef.source,
-                    FirErrors.NON_ERROR_CLASS_EXTENDS_RICH_ERROR,
-                )
+            when (superTypeRef.coneType.classId) {
+                StandardClassIds.RichError if !(declaration is FirRegularClass && declaration.isRichError) ->
+                    reporter.reportOn(superTypeRef.source, FirErrors.NON_ERROR_CLASS_EXTENDS_RICH_ERROR)
+                StandardClassIds.NonError ->
+                    reporter.reportOn(superTypeRef.source, FirErrors.NON_ERROR_SUPERTYPE)
             }
         }
     }

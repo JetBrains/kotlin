@@ -2838,6 +2838,12 @@ private fun KaDiagnosticConverterBuilder.addConversions61() {
             token,
         )
     }
+    add(FirErrors.NON_ERROR_GET_CLASS_CALL) { firDiagnostic ->
+        NonErrorGetClassCallImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_IS_CHECK) { firDiagnostic ->
         JsNoRuntimeForbiddenIsCheckImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -5312,6 +5318,12 @@ private fun KaDiagnosticConverterBuilder.addConversions114() {
             token,
         )
     }
+    add(FirErrors.NON_ERROR_SUPERTYPE) { firDiagnostic ->
+        NonErrorSupertypeImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions115() {
@@ -5920,6 +5932,12 @@ private fun KaDiagnosticConverterBuilder.addConversions126() {
     }
     add(FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE) { firDiagnostic ->
         AnonymousFunctionParameterWithDefaultValueImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_TYPEALIAS_TO_NON_ERROR) { firDiagnostic ->
+        ActualTypealiasToNonErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
