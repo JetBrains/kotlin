@@ -5,12 +5,6 @@
 
 package org.jetbrains.kotlin.testFederation
 
-internal const val TEST_FEDERATION_ENABLED_KEY = "test.federation.enabled"
-internal const val TEST_FEDERATION_ENABLED_ENV_KEY = "TEST_FEDERATION_ENABLED"
-internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
-internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
-internal const val TEST_FEDERATION_CHANGED_DOMAINS_KEY = "test.federation.changed.domains"
-internal const val TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY = "TEST_FEDERATION_CHANGED_DOMAINS"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY = "TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE"
 internal const val TEST_FEDERATION_CLUSTERS_KEY = "test.federation.clusters"
@@ -19,44 +13,11 @@ const val TEST_FEDERATION_NIGHTLY_KEY = "test.federation.nightly"
 const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
 
 /**
- * Reports whether Test Federation is enabled in the runtime configuration. Defaults to `false`.
- * The discovery filter uses [testFederationMode] to select tests, not this flag directly.
+ * Provides the configured test clusters, or `null` when none are configured.
+ * With no clusters configured, the discovery filter does not restrict test selection. Other test filters still apply.
  */
-val testFederationEnabled: Boolean =
-    resolve(TEST_FEDERATION_ENABLED_KEY, TEST_FEDERATION_ENABLED_ENV_KEY)?.toBoolean() ?: false
-
-/**
- * Provides the configured test selection mode, or `null` when no mode is configured.
- * With no mode, the discovery filter does not restrict test selection. Other test filters still apply.
- */
-val testFederationMode: TestFederationMode? = run {
-    val raw = resolve(TEST_FEDERATION_MODE_KEY, TEST_FEDERATION_MODE_ENV_KEY) ?: return@run null
-    TestFederationMode.valueOf(raw)
-}
-
-/**
- * Provides the configured domains containing changed files, or `null` when the value is absent or blank.
- * Used to select tests marked to run for changes in those domains when no full run is selected.
- */
-val testFederationChangedDomains: Set<Domain>? = run {
-    val raw = resolve(TEST_FEDERATION_CHANGED_DOMAINS_KEY, TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY) ?: return@run null
-    if (raw.isBlank()) return@run null
-    domainsFromString(raw)
-}
-
-internal val testFederationClusters: Set<TestCluster>? = run {
-    val raw = resolve(TEST_FEDERATION_CLUSTERS_KEY, TEST_FEDERATION_CLUSTERS_ENV_KEY)
-    if (raw != null) return@run raw.toTestClusters()
-
-    when (testFederationMode) {
-        null -> null
-        TestFederationMode.Full -> setOf(TestCluster.AllTests)
-        TestFederationMode.Smoke -> buildSet {
-            add(TestCluster.SmokeTests)
-            testFederationChangedDomains?.forEach { domain -> add(TestCluster.valueOf("ContractTestsFor${domain.name}")) }
-        }
-    }
-}
+internal val testFederationClusters: Set<TestCluster>? =
+    resolve(TEST_FEDERATION_CLUSTERS_KEY, TEST_FEDERATION_CLUSTERS_ENV_KEY)?.toTestClusters()
 
 private fun String.toTestClusters(): Set<TestCluster> =
     if (isBlank()) emptySet() else split(",").map { TestCluster.valueOf(it.trim()) }.toSet()
@@ -77,13 +38,3 @@ internal val autoSmokeTestPercentage: Int = run {
 
 private fun resolve(key: String, envKey: String): String? =
     System.getProperty(key) ?: System.getenv(envKey)
-
-private fun domainsFromString(value: String): Set<Domain> {
-    return value.split(";").flatMap { value ->
-        when (value) {
-            "*" -> Domain.entries
-            "<none>" -> emptyList()
-            else -> listOf(Domain.valueOf(value))
-        }
-    }.sorted().toSet()
-}

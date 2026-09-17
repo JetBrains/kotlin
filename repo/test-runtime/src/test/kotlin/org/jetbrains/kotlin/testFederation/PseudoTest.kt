@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.testFederation
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -33,7 +32,8 @@ class PseudoTest {
     @Test
     fun `domain test`() {
         if (autoSmokeTestPercentage == 0) {
-            assertEquals(TestFederationMode.Full, testFederationMode)
+            val clusters = testFederationClusters
+            assertTrue(clusters == null || TestCluster.AllTests in clusters, "Expected 'AllTests' in requested clusters, but was: $clusters")
         }
     }
 
@@ -46,25 +46,31 @@ class PseudoTest {
     @MustRunOnChangesInJs
     @Test
     fun `js contract test`() {
-        if (testFederationMode == TestFederationMode.Full) return
-        val changed = testFederationChangedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Js !in changed && autoSmokeTestPercentage == 0) error("Expected 'Js' in affected domains, but was: $changed")
+        val clusters = testFederationClusters ?: return
+        if (TestCluster.AllTests in clusters) return
+        if (TestCluster.ContractTestsForJs !in clusters && autoSmokeTestPercentage == 0) {
+            error("Expected 'ContractTestsForJs' in requested clusters, but was: $clusters")
+        }
     }
 
     @MustRunOnChangesInWasm
     @Test
     fun `wasm contract test`() {
-        if (testFederationMode == TestFederationMode.Full) return
-        val changed = testFederationChangedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Wasm !in changed && autoSmokeTestPercentage == 0) error("Expected 'Wasm' in affected domains, but was: $changed")
+        val clusters = testFederationClusters ?: return
+        if (TestCluster.AllTests in clusters) return
+        if (TestCluster.ContractTestsForWasm !in clusters && autoSmokeTestPercentage == 0) {
+            error("Expected 'ContractTestsForWasm' in requested clusters, but was: $clusters")
+        }
     }
 
     @MustRunOnChangesInGradle
     @Test
     fun `gradle contract test`() {
-        if (testFederationMode == TestFederationMode.Full) return
-        val changed = testFederationChangedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Gradle !in changed && autoSmokeTestPercentage == 0) error("Expected 'Gradle' in affected domains, but was: $changed")
+        val clusters = testFederationClusters ?: return
+        if (TestCluster.AllTests in clusters) return
+        if (TestCluster.ContractTestsForGradle !in clusters && autoSmokeTestPercentage == 0) {
+            error("Expected 'ContractTestsForGradle' in requested clusters, but was: $clusters")
+        }
     }
 
     @NightlyTest
