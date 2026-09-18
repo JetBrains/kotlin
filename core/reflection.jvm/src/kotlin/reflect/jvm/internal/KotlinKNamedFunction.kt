@@ -80,9 +80,10 @@ internal class KotlinKNamedFunction(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
         KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, kmFunction, overriddenStorage)
 
-    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
-        if (this.rawBoundReceiver === boundReceiver) this
-        else KotlinKNamedFunction(container, signature, boundReceiver, kmFunction, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?) = KotlinKNamedFunction(container, signature, boundReceiver, kmFunction, overriddenStorage)
+
+    override fun unbindToHigherArity(): ReflectKCallable<Any?> =
+        KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, kmFunction, overriddenStorage)
 
     private fun convertSignatureForBuiltinFunction(signature: String): JvmMethodSignature =
         with(signature) {

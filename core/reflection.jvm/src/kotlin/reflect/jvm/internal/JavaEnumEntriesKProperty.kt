@@ -53,16 +53,9 @@ internal class JavaEnumEntriesKProperty(
         container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
     ): ReflectKCallable<EnumEntries<*>> = JavaEnumEntriesKProperty(enumClass)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<EnumEntries<*>> {
-        require(boundReceiver === CallableReference.NO_RECEIVER) { "Cannot bind JavaEnumEntriesKProperty: $this" }
-        return JavaEnumEntriesKProperty(enumClass)
-    }
+    override fun bindToLowerArity(boundReceiver: Any?) = throw KotlinReflectionInternalError("Cannot bind JavaEnumEntriesKProperty: $this")
 
-    override fun unbindToHigherArity(): ReflectKProperty<EnumEntries<*>> =
-        throw KotlinReflectionInternalError("Cannot unbind JavaEnumEntriesKProperty: $this")
-
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<EnumEntries<*>> =
-        throw KotlinReflectionInternalError("Cannot bind JavaEnumEntriesKProperty: $this")
+    override fun unbindToHigherArity() = throw KotlinReflectionInternalError("Cannot unbind JavaEnumEntriesKProperty: $this")
 
     override val caller: Caller<*> = JavaEnumEntriesCaller()
     override val callerWithDefaults: Caller<*>? get() = null
@@ -116,8 +109,10 @@ internal class JavaEnumEntriesKProperty(
         ): ReflectKCallable<EnumEntries<*>> =
             error("Property accessors can only be copied by copying the corresponding property")
 
-        override fun rebind(boundReceiver: Any?): ReflectKCallable<EnumEntries<*>> =
-            error("Property accessors can only be bound by copying the corresponding property")
+        override fun bindToLowerArity(boundReceiver: Any?) = error("Property accessors can only be bound by copying the corresponding property")
+
+        override fun unbindToHigherArity(): ReflectKCallable<EnumEntries<*>> =
+            error("Property accessors can only be unbound by copying the corresponding property")
 
         override fun equals(other: Any?): Boolean = other is Getter && property == other.property
         override fun hashCode(): Int = property.hashCode()

@@ -154,8 +154,8 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         ): DescriptorKCallable<ReturnType> =
             error("Property accessors can only be copied by copying the corresponding property")
 
-        override fun rebind(boundReceiver: Any?): DescriptorKCallable<ReturnType> =
-            error("Property accessors can only be bound by copying the corresponding property")
+        override fun bindToLowerArity(boundReceiver: Any?) = error("Property accessors can only be bound by copying the corresponding property")
+        override fun unbindToHigherArity() = error("Property accessors can only be unbound by copying the corresponding property")
     }
 
     abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {

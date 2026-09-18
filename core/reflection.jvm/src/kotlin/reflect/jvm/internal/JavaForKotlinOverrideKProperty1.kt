@@ -31,14 +31,10 @@ internal open class JavaForKotlinOverrideKProperty1<T, out V>(
             container, rawBoundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty,
         )
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaForKotlinOverrideKProperty1<T, V>(container, boundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty)
-
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
-        throw KotlinReflectionInternalError("Cannot unbind KProperty1: $this")
-
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
+    override fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<V> =
         JavaForKotlinOverrideKProperty0(container, boundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty)
+
+    override fun unbindToHigherArity(): ReflectKCallable<V> = throw KotlinReflectionInternalError("Cannot unbind KProperty1: $this")
 
     class Getter<T, out V>(override val property: JavaForKotlinOverrideKProperty1<T, V>) :
         JavaForKotlinOverrideKProperty.Getter<V>(), KProperty1.Getter<T, V> {
@@ -64,7 +60,7 @@ internal open class JavaForKotlinOverrideKMutableProperty1<T, V>(
             container, rawBoundReceiver, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
         )
 
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
+    override fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<V> =
         JavaForKotlinOverrideKMutableProperty0(
             container, boundReceiver, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
         )

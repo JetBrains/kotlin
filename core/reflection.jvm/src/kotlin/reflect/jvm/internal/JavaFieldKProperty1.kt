@@ -25,14 +25,9 @@ internal open class JavaFieldKProperty1<T, out V>(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaFieldKProperty1<T, V>(container, jField, rawBoundReceiver, overriddenStorage)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaFieldKProperty1<T, V>(container, jField, boundReceiver, overriddenStorage)
+    override fun unbindToHigherArity() = throw KotlinReflectionInternalError("Cannot unbind KProperty1: $this")
 
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
-        throw KotlinReflectionInternalError("Cannot unbind KProperty1: $this")
-
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaFieldKProperty0(container, jField, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?) = JavaFieldKProperty0<V>(container, jField, boundReceiver, overriddenStorage)
 
     class Getter<T, out V>(override val property: JavaFieldKProperty1<T, V>) : JavaFieldKProperty.Getter<V>(), KProperty1.Getter<T, V> {
         override fun invoke(receiver: T): V = property.get(receiver)
@@ -50,11 +45,7 @@ internal open class JavaFieldKMutableProperty1<T, V>(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaFieldKMutableProperty1<T, V>(container, jField, rawBoundReceiver, overriddenStorage)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaFieldKMutableProperty1<T, V>(container, jField, boundReceiver, overriddenStorage)
-
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaFieldKMutableProperty0(container, jField, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?) = JavaFieldKMutableProperty0<V>(container, jField, boundReceiver, overriddenStorage)
 
     class Setter<T, V>(override val property: JavaFieldKMutableProperty1<T, V>) : JavaFieldKProperty.Setter<V>(), KMutableProperty1.Setter<T, V> {
         override fun invoke(receiver: T, value: V): Unit = property.set(receiver, value)

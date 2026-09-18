@@ -8,7 +8,6 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.runtime.structure.desc
 import java.lang.reflect.Method
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
 import kotlin.metadata.Modality
 import kotlin.reflect.ExperimentalCompanionExtensions
@@ -81,10 +80,10 @@ internal class JavaAnnotationConstructor(
         return JavaAnnotationConstructor(klass)
     }
 
-    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> {
-        require(boundReceiver === CallableReference.NO_RECEIVER) { "Annotation constructors cannot have bound receivers: $this" }
-        return this
-    }
+    override fun bindToLowerArity(boundReceiver: Any?) =
+        throw KotlinReflectionInternalError("Annotation constructors cannot have bound receivers: $this")
+
+    override fun unbindToHigherArity() = JavaAnnotationConstructor(klass)
 
     override fun equals(other: Any?): Boolean {
         val that = other.asReflectFunction() ?: return false

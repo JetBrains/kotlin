@@ -102,7 +102,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                             "Function '" + name + "' (JVM signature: " + signature + ") not resolved in " + container
                     );
                 }
-                return (KFunction<?>) result.rebind(boundReceiver);
+                return (KFunction<?>) ReflectKCallableKt.bind(result, boundReceiver);
             }
         }
         return new DescriptorKFunction(container, name, signature, boundReceiver);
@@ -238,7 +238,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                     "Property '" + name + "' (JVM signature: " + signature + ") not resolved in " + container
             );
         }
-        return (ReflectKProperty<?>) result.rebind(boundReceiver);
+        return (ReflectKProperty<?>) ReflectKCallableKt.bind(result, boundReceiver);
     }
 
     // typeOf
