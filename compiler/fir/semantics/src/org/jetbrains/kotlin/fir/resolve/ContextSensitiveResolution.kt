@@ -7,83 +7,32 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeCapturedType
-import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
-import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
-import org.jetbrains.kotlin.fir.types.ConeStubTypeForTypeVariableInSubtyping
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
-import org.jetbrains.kotlin.fir.types.ConeUnionType
 
 fun ConeKotlinType.getParentChainForContextSensitiveResolutionOfExpressions(session: FirSession): Sequence<FirRegularClassSymbol> =
-    getClassRepresentativeForContextSensitiveResolution(session)
+    getClassRepresentativeForResolutionByExpectedType(session)
         ?.getParentChainForContextSensitiveResolution(session, onlySealed = false)
         .orEmpty()
 
 fun ConeKotlinType.getParentChainForContextSensitiveResolutionOfTypes(session: FirSession): Sequence<FirRegularClassSymbol> =
-    getClassRepresentativeForContextSensitiveResolution(session)
+    getClassRepresentativeForResolutionByExpectedType(session)
         ?.getParentChainForContextSensitiveResolution(session, onlySealed = true)
         .orEmpty()
 
-private fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(session: FirSession): FirRegularClassSymbol? {
-    return when (this) {
-        is ConeFlexibleType ->
-            lowerBound.getClassRepresentativeForContextSensitiveResolution(session)?.takeIf {
-                it == upperBound.getClassRepresentativeForContextSensitiveResolution(session)
-            }
-
-        is ConeDefinitelyNotNullType -> original.getClassRepresentativeForContextSensitiveResolution(session)
-
-        is ConeIntegerLiteralType -> possibleTypes.singleOrNull()?.getClassRepresentativeForContextSensitiveResolution(session)
-
-        is ConeIntersectionType -> {
-            val representativesForComponents =
-                intersectedTypes.map {
-                    it.getClassRepresentativeForContextSensitiveResolution(session)
-                        ?: return@getClassRepresentativeForContextSensitiveResolution null
-                }
-
-            representativesForComponents.firstOrNull { candidate ->
-                representativesForComponents.all { other ->
-                    candidate.fir.isSubclassOf(other.toLookupTag(), session, isStrict = false)
-                }
-            }
-        }
-
-        is ConeLookupTagBasedType ->
-            when (val symbol = lookupTag.toSymbol(session)) {
-                is FirRegularClassSymbol -> symbol
-
-                is FirTypeParameterSymbol ->
-                    symbol.resolvedBounds.singleOrNull()?.coneType?.getClassRepresentativeForContextSensitiveResolution(session)
-
-                is FirAnonymousObjectSymbol -> null
-                is FirTypeAliasSymbol ->
-                    fullyExpandedType(session)
-                        .takeIf { it !== this }
-                        ?.getClassRepresentativeForContextSensitiveResolution(session)
-                null -> null
-            }
-
-        is ConeCapturedType, is ConeStubTypeForTypeVariableInSubtyping, is ConeTypeVariableType, is ConeUnionType -> null
-    }
-}
-
-private fun FirRegularClassSymbol.getParentChainForContextSensitiveResolution(
+/**
+ * The receiver class itself followed by its enclosing super classes
+ */
+fun FirRegularClassSymbol.getParentChainForContextSensitiveResolution(
     session: FirSession, onlySealed: Boolean = false
 ): Sequence<FirRegularClassSymbol> = sequence {
     var current: FirRegularClassSymbol? = this@getParentChainForContextSensitiveResolution
     var onlySealed = onlySealed
 
     while (current != null) {
-        if (!onlySealed || current.isSealed) { yield(current) }
+        if (!onlySealed || current.isSealed) {
+            yield(current)
+        }
         // after the first one, return only sealed enclosing parents
         current = (current.getContainingDeclaration(session) as? FirRegularClassSymbol)
             ?.takeIf { isSubclassOf(it.toLookupTag(), session, isStrict = true, lookupInterfaces = true) }

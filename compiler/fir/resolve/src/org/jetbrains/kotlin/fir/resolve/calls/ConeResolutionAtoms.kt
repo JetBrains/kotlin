@@ -407,12 +407,16 @@ class ConeResolvedCallableReferenceAtom(
     }
 }
 
+sealed class ConeAtomWithExpectedTypeAsStaticReceiver : ConePostponedResolvedAtom(), ExpectedTypeAsStaticReceiverAtomMarker {
+    abstract override val expectedType: ConeKotlinType?
+}
+
 class ConeSimpleNameForContextSensitiveResolution(
     override val expression: FirPropertyAccessExpression,
     override val expectedType: ConeKotlinType,
     override val containingCallCandidate: Candidate,
     val fallbackSubAtom: ConeResolutionAtom,
-) : ConePostponedResolvedAtom()
+) : ConeAtomWithExpectedTypeAsStaticReceiver()
 
 class ConeContextSensitiveAlternativeForQualifierAtom @FirIdeOnly constructor(
     val originalExpression: FirQualifierWithContextSensitiveAlternative,
@@ -435,8 +439,7 @@ class ConeCollectionLiteralAtom(
     override val expression: FirCollectionLiteral,
     override val expectedType: ConeKotlinType?,
     override val containingCallCandidate: Candidate,
-) : ConePostponedResolvedAtom(), CollectionLiteralAtomMarker {
-
+) : ConeAtomWithExpectedTypeAsStaticReceiver() {
     var subAtom: ConeAtomWithCandidate? = null
         set(value) {
             require(field == null) { "subAtom already initialized" }

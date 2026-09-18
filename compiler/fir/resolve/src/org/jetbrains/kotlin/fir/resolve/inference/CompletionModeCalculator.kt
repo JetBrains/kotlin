@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralAtomMarker
+import org.jetbrains.kotlin.resolve.calls.model.ExpectedTypeAsStaticReceiverAtomMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
@@ -99,7 +99,7 @@ private class CalculatorForNestedCall(
 
         // If all variables have required proper constraint, run full completion
         // TODO: KT-84145 (regarding collection literals)
-        if (directionRequirementsForVariablesHold() && postponedAtoms.none { it is CollectionLiteralAtomMarker && !it.analyzed })
+        if (directionRequirementsForVariablesHold() && postponedAtoms.none { it is ExpectedTypeAsStaticReceiverAtomMarker && !it.analyzed })
             return ConstraintSystemCompletionMode.FULL
 
         return ConstraintSystemCompletionMode.PARTIAL

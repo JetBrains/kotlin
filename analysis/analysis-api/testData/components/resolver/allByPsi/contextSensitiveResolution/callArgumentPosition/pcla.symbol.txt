@@ -380,19 +380,21 @@ KtBlockExpression(351,376): 'yield(X)'
   null
 
 KtCallExpression(351,359): 'yield(X)'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /Controller.yield>
 
 KtNameReferenceExpression(351,356): 'yield'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /Controller.yield>
 
 KtValueArgumentList(356,359): '(X)'
   null
@@ -402,12 +404,11 @@ KtValueArgument(357,358): 'X'
 
 KtNameReferenceExpression(357,358): 'X'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: Used
+  contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
-      /MyEnum.X
-    ]
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
 KtCallExpression(368,376): 'yield(m)'
   KaSimpleSymbolResolutionSuccess:
@@ -525,7 +526,7 @@ KtCallExpression(443,476): 'generate {'
     candidateSymbols = [
       /generate(g: suspend Controller<S>.() -> kotlin.Unit): S
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /generate>
+    diagnostic = ERROR<OTHER_ERROR: CS errors: /generate>
 
 KtNameReferenceExpression(443,451): 'generate'
   isImplicitReferenceToCompanion: false
@@ -535,7 +536,7 @@ KtNameReferenceExpression(443,451): 'generate'
     candidateSymbols = [
       /generate(g: suspend Controller<S>.() -> kotlin.Unit): S
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /generate>
+    diagnostic = ERROR<OTHER_ERROR: CS errors: /generate>
 
 KtLambdaArgument(452,476): '{'
   null
@@ -550,19 +551,21 @@ KtBlockExpression(462,470): 'yield(X)'
   null
 
 KtCallExpression(462,470): 'yield(X)'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /Controller.yield>
 
 KtNameReferenceExpression(462,467): 'yield'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /Controller.yield>
 
 KtValueArgumentList(467,470): '(X)'
   null

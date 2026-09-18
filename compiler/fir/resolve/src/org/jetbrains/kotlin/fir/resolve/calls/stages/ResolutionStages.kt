@@ -23,10 +23,9 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
-import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
+import org.jetbrains.kotlin.fir.resolve.inference.ExpectedTypeAsStaticReceiverStrategy
+import org.jetbrains.kotlin.fir.resolve.inference.StateForAtomWithExpectedTypeAsStaticReceiver
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.isAnyOfDelegateOperators
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId.ACCEPT_SPECIFIC_TYPE
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -879,22 +877,64 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
     }
 }
 
-internal object EagerResolveOfCollectionLiteral : ResolutionStage() {
-    context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate): Unit =
-        context(context.typeContext, CollectionLiteralOuterCandidateContext(candidate, sink)) {
-            if (candidate.postponedAtoms.isEmpty()) return
-            for (atom in candidate.postponedAtoms) {
-                if (atom !is ConeCollectionLiteralAtom || atom.analyzed) continue
-                val nonTvExpectedType =
-                    atom.expectedType?.takeUnless { it.typeConstructor() is TypeVariableTypeConstructorMarker } ?: continue
-                val clBounds =
-                    CollectionLiteralBounds.NonTvExpected(atom, nonTvExpectedType.getClassRepresentativeForCollectionLiteralResolution())
+/**
+ * Eagerly resolves atoms of kind [A] if their expected type is not a type variable,
+ * as we can resolve them fully, which might help filter out inapplicable candidates during overload resolution.
+ */
+internal abstract class EagerResolveOfAtomWithExpectedTypeAsStaticReceiver<A : ConeAtomWithExpectedTypeAsStaticReceiver>(
+    private val strategy: ExpectedTypeAsStaticReceiverStrategy<A>,
+) : ResolutionStage() {
+    protected abstract fun ConePostponedResolvedAtom.asRelevantAtom(): A?
 
-                atom.analyzed = true
-                runCollectionLiteralResolution(atom, clBounds)
-            }
+    context(sink: CheckerSink, context: ResolutionContext)
+    protected abstract fun resolve(candidate: Candidate, state: StateForAtomWithExpectedTypeAsStaticReceiver.NonTvExpected<A>)
+
+    context(sink: CheckerSink, context: ResolutionContext)
+    final override suspend fun check(candidate: Candidate): Unit = context(context.typeContext) {
+        if (candidate.postponedAtoms.isEmpty()) return
+        for (postponedAtom in candidate.postponedAtoms) {
+            val atom = postponedAtom.asRelevantAtom() ?: continue
+            if (atom.analyzed) continue
+            val nonTvExpectedType =
+                atom.expectedType?.takeUnless { it.typeConstructor() is TypeVariableTypeConstructorMarker } ?: continue
+            val state =
+                StateForAtomWithExpectedTypeAsStaticReceiver.NonTvExpected(atom, strategy.getClassRepresentative(nonTvExpectedType))
+
+            atom.analyzed = true
+            resolve(candidate, state)
         }
+    }
+}
+
+internal object EagerResolveOfCollectionLiteral :
+    EagerResolveOfAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>(CollectionLiteralReceiverStrategy) {
+
+    override fun ConePostponedResolvedAtom.asRelevantAtom(): ConeCollectionLiteralAtom? = this as? ConeCollectionLiteralAtom
+
+    context(sink: CheckerSink, context: ResolutionContext)
+    override fun resolve(
+        candidate: Candidate,
+        state: StateForAtomWithExpectedTypeAsStaticReceiver.NonTvExpected<ConeCollectionLiteralAtom>,
+    ): Unit = context(OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver(candidate, sink)) {
+        runCollectionLiteralResolution(state)
+    }
+}
+
+internal object EagerResolveOfContextSensitiveSimpleName :
+    EagerResolveOfAtomWithExpectedTypeAsStaticReceiver<ConeSimpleNameForContextSensitiveResolution>(
+        ContextSensitiveResolutionReceiverStrategy
+    ) {
+
+    override fun ConePostponedResolvedAtom.asRelevantAtom(): ConeSimpleNameForContextSensitiveResolution? =
+        this as? ConeSimpleNameForContextSensitiveResolution
+
+    context(sink: CheckerSink, context: ResolutionContext)
+    override fun resolve(
+        candidate: Candidate,
+        state: StateForAtomWithExpectedTypeAsStaticReceiver.NonTvExpected<ConeSimpleNameForContextSensitiveResolution>,
+    ): Unit = context(OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver(candidate, sink)) {
+        runContextSensitiveResolutionForAtom(state)
+    }
 }
 
 internal object DiscriminateSyntheticAndForbiddenProperties : ResolutionStage() {

@@ -283,7 +283,7 @@ KtProperty(345,389): 'val r2 = 1 infixEnumConsumer InheritorObject'
   NO_CANDIDATES
 
 KtBinaryExpression(354,389): '1 infixEnumConsumer InheritorObject'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -317,13 +317,14 @@ KtBinaryExpression(354,389): '1 infixEnumConsumer InheritorObject'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun Int.infixEnumConsumer(arg: MyEnum): Unit>
     isInBestCandidates = true
 
 KtConstantExpression(354,355): '1'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -357,6 +358,7 @@ KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun Int.infixEnumConsumer(arg: MyEnum): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(374,389): 'InheritorObject'

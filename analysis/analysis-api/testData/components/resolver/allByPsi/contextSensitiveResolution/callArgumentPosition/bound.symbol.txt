@@ -95,21 +95,19 @@ KtBlockExpression(179,210): '{'
   null
 
 KtCallExpression(185,208): 'boundHolder(EnumValue1)'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /boundHolder(arg: T): T
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /boundHolder>
 
 KtNameReferenceExpression(185,196): 'boundHolder'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /boundHolder(arg: T): T
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /boundHolder>
 
 KtValueArgumentList(196,208): '(EnumValue1)'
   null
@@ -119,11 +117,12 @@ KtValueArgument(197,207): 'EnumValue1'
 
 KtNameReferenceExpression(197,207): 'EnumValue1'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue1'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtNamedFunction(212,271): 'fun testFunBound2() {'
   null

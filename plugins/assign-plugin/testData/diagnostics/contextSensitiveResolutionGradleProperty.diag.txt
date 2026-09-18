@@ -1,0 +1,3 @@
+/contextSensitiveResolutionGradleProperty.kt:36:23: error: No applicable 'assign' function found for '=' overload.
+
+/contextSensitiveResolutionGradleProperty.kt:36:25: error: Unresolved reference 'UNRESOLVED'.
