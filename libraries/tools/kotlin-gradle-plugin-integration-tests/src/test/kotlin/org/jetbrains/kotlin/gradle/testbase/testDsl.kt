@@ -442,12 +442,16 @@ fun <T> TestProject.runBuildAction(
         enableOfflineMode = enableOfflineMode,
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+        kotlinDaemonIdleTimeout = kotlinDaemonIdleTimeout,
+        addHeapDumpOptions = addHeapDumpOptions,
         connectSubprocessVMToDebugger = enableGradleDebug.toBooleanFlag(),
         gradleVersion = gradleVersion,
         kotlinDaemonDebugPort = kotlinDaemonDebugPort,
     )
+    // Same Gradle user home as `build()` so that both share daemons and resolve artifacts to the same paths
     val connector = GradleConnector.newConnector()
         .forProjectDirectory(gradleRunner.projectDir)
+        .useGradleUserHomeDir(getGradleUserHome())
         .useDistribution(gradleDistributionUri(gradleVersion))
 
     try {

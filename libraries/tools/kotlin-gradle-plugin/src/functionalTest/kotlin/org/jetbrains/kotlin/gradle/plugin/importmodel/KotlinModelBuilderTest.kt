@@ -18,52 +18,48 @@ class KotlinModelBuilderTest {
     private val builder = KotlinModelBuilder()
 
     @Test
-    fun `returns requested base project and compilation models`() {
+    fun `returns errors until the import models are generated`() {
         val project = projectWithJvm()
+        assertEquals(
+            Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS,
+            Result.parseFrom((builder.buildAll(KotlinGradleModel::class.java.name, project) as KotlinGradleModel).kotlinModelResult).error.errorType,
+        )
+        for (modelId in listOf("unknown", KotlinImportModelIds.BASE, KotlinImportModelIds.COMPILATION_UNIT)) {
+            assertEquals(Error.Type.ERROR_TYPE_GENERIC_ERROR, builder.buildResult(modelId, project).error.errorType)
+        }
+    }
+
+    @Test
+    fun `returns the generated import models`() {
+        val project = projectWithJvm()
+        project.generateImportModels()
+
         val base = builder.buildResult(KotlinImportModelIds.BASE, project)
         val projectResult = builder.buildResult(KotlinImportModelIds.PROJECT_INFORMATION, project)
-        val compilationId = projectResult.model.unpack(ProjectModel::class.java).compilationUnitIdsList.first()
+        val (mainId, testId) = projectResult.model.unpack(ProjectModel::class.java).compilationUnitIdsList
         val compilation = builder.buildResult(
             KotlinImportModelIds.COMPILATION_UNIT,
             project,
-            CompilationUnitModelKt.parameters { compilationUnitId = compilationId }.toByteArray(),
+            CompilationUnitModelKt.parameters { compilationUnitId = mainId }.toByteArray(),
         )
-
-        assertEquals(KotlinImportModelIds.BASE, base.model.unpack(BaseModel::class.java).id)
-        assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, projectResult.model.unpack(ProjectModel::class.java).id)
-        assertEquals(compilationId, compilation.model.unpack(CompilationUnitModel::class.java).parameters.compilationUnitId)
-    }
-
-    @Test
-    fun `returns compiler arguments for the requested compilation`() {
-        val project = projectWithJvm()
-        val compilationId = KotlinImportModelProvider(project).projectInformation().compilationUnitIdsList.first()
-        val result = builder.buildResult(
+        val compilerArguments = builder.buildResult(
             KotlinImportModelIds.COMPILER_ARGUMENTS,
             project,
-            CompilerArgumentsModelKt.parameters { compilationUnitId = compilationId }.toByteArray(),
+            CompilerArgumentsModelKt.parameters { compilationUnitId = testId }.toByteArray(),
         )
-        val model = result.model.unpack(CompilerArgumentsModel::class.java)
-
-        assertEquals(KotlinImportModelIds.COMPILER_ARGUMENTS, model.id)
-        assertEquals(compilationId, model.parameters.compilationUnitId)
-    }
-
-    @Test
-    fun `serializes source dependencies for the requested compilation`() {
-        val project = projectWithJvm()
-        val (mainId, testId) = KotlinImportModelProvider(project).projectInformation().compilationUnitIdsList
-        val parameters = DependenciesModelKt.parameters {
+        val dependenciesParameters = DependenciesModelKt.parameters {
             compilationUnitId = testId
             scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE
             coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
         }
+        val dependencies = builder.buildResult(KotlinImportModelIds.DEPENDENCIES, project, dependenciesParameters.toByteArray())
 
-        val result = builder.buildResult(KotlinImportModelIds.DEPENDENCIES, project, parameters.toByteArray())
-        val model = result.model.unpack(DependenciesModel::class.java)
-
-        assertEquals(KotlinImportModelIds.DEPENDENCIES, model.id)
-        assertEquals(parameters, model.parameters)
+        assertEquals(KotlinImportModelIds.BASE, base.model.unpack(BaseModel::class.java).id)
+        assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, projectResult.model.unpack(ProjectModel::class.java).id)
+        assertEquals(mainId, compilation.model.unpack(CompilationUnitModel::class.java).parameters.compilationUnitId)
+        assertEquals(testId, compilerArguments.model.unpack(CompilerArgumentsModel::class.java).parameters.compilationUnitId)
+        val dependenciesModel = dependencies.model.unpack(DependenciesModel::class.java)
+        assertEquals(dependenciesParameters, dependenciesModel.parameters)
         assertEquals(
             listOf(
                 DependenciesModelKt.sourceDependency {
@@ -71,34 +67,17 @@ class KotlinModelBuilderTest {
                     targetCompilationUnitId = mainId
                 }
             ),
-            model.sourceDependenciesList,
-        )
-    }
-
-    @Test
-    fun `reports invalid import model requests`() {
-        val project = projectWithJvm()
-        assertEquals(
-            Error.Type.ERROR_TYPE_UNKNOWN_MODEL_ID,
-            builder.buildResult("unknown", project).error.errorType,
-        )
-        assertEquals(
-            Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS,
-            builder.buildResult(KotlinImportModelIds.COMPILATION_UNIT, project).error.errorType,
-        )
-        assertEquals(
-            Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS,
-            builder.buildResult(KotlinImportModelIds.COMPILER_ARGUMENTS, project).error.errorType,
-        )
-        assertEquals(
-            Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS,
-            builder.buildResult(KotlinImportModelIds.DEPENDENCIES, project).error.errorType,
+            dependenciesModel.sourceDependenciesList,
         )
     }
 
     private fun KotlinModelBuilder.buildResult(modelId: String, project: Project, parameters: ByteArray? = null): Result {
         val request = TestModelRequest(modelId, parameters)
         return Result.parseFrom((buildAll(KotlinGradleModel::class.java.name, request, project) as KotlinGradleModel).kotlinModelResult)
+    }
+
+    private fun Project.generateImportModels() {
+        (tasks.getByName(GENERATE_KOTLIN_IMPORT_MODELS_TASK_NAME) as KotlinImportModelsTask).generate()
     }
 
     private fun projectWithJvm(): Project = buildProjectWithJvm { }.also { it.evaluate() }

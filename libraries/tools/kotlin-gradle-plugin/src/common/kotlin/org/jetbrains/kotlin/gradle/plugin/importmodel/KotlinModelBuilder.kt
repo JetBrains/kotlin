@@ -11,11 +11,8 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.importmodels.KotlinGradleModel
-import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.ModelRequest
 import org.jetbrains.kotlin.importmodels.internal.KotlinImportModelSerialization
-import org.jetbrains.kotlin.importmodels.proto.CompilationUnitId
-import org.jetbrains.kotlin.importmodels.proto.DependenciesModel
 import org.jetbrains.kotlin.importmodels.proto.Error
 import javax.inject.Inject
 
@@ -31,79 +28,30 @@ internal abstract class KotlinModelBuilderRegistrar @Inject constructor(
     }
 }
 
+/**
+ * POC: hands out the `Result` files written by the [GENERATE_KOTLIN_IMPORT_MODELS_TASK_NAME] task without computing anything.
+ * The task is expected to be executed in the same invocation (`BuildActionExecuter.forTasks`) or earlier.
+ */
 internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelRequest> {
     override fun canBuild(modelName: String): Boolean = modelName == KotlinGradleModel::class.java.name
 
     override fun getParameterType(): Class<ModelRequest> = ModelRequest::class.java
 
-    override fun buildAll(modelName: String, project: Project): KotlinGradleModel =
-        result(Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, "Kotlin import model parameters are required")
-
-    override fun buildAll(modelName: String, parameter: ModelRequest, project: Project): KotlinGradleModel = try {
-        val provider = KotlinImportModelProvider(project)
-        when (parameter.kotlinModelId) {
-            KotlinImportModelIds.BASE -> parameterlessModel(parameter.kotlinModelParameters) {
-                KotlinImportModelSerialization.modelResult(provider.baseInformation())
-            }
-            KotlinImportModelIds.PROJECT_INFORMATION -> parameterlessModel(parameter.kotlinModelParameters) {
-                KotlinImportModelSerialization.modelResult(provider.projectInformation())
-            }
-            KotlinImportModelIds.COMPILATION_UNIT -> compilationUnitModel(parameter.kotlinModelParameters ?: byteArrayOf(), provider)
-            KotlinImportModelIds.COMPILER_ARGUMENTS -> compilerArgumentsModel(parameter.kotlinModelParameters ?: byteArrayOf(), provider)
-            KotlinImportModelIds.DEPENDENCIES -> dependenciesModel(parameter.kotlinModelParameters ?: byteArrayOf(), provider)
-            else -> result(Error.Type.ERROR_TYPE_UNKNOWN_MODEL_ID, "Unknown Kotlin import model '${parameter.kotlinModelId}'")
-        }
-    } catch (failure: Exception) {
-        result(Error.Type.ERROR_TYPE_INTERNAL_ERROR, "Failed to produce Kotlin import model: ${failure.message}")
-    }
-
-    private fun parameterlessModel(parameters: ByteArray?, producer: () -> ByteArray): KotlinGradleModel =
-        if (parameters == null) KotlinGradleModelResult(producer())
-        else result(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Kotlin import model does not accept parameters")
-
-    private fun compilationUnitModel(parameters: ByteArray, provider: KotlinImportModelProvider): KotlinGradleModel =
-        compilationScopedModel(parameters, provider, KotlinImportModelSerialization::parseCompilationUnitId) { compilationUnitId ->
-            KotlinImportModelSerialization.modelResult(provider.compilationUnit(compilationUnitId))
-        }
-
-    private fun compilerArgumentsModel(parameters: ByteArray, provider: KotlinImportModelProvider): KotlinGradleModel =
-        compilationScopedModel(parameters, provider, KotlinImportModelSerialization::parseCompilerArgumentsCompilationUnitId) { compilationUnitId ->
-            KotlinImportModelSerialization.modelResult(provider.compilerArguments(compilationUnitId))
-        }
-
-    private fun dependenciesModel(parameters: ByteArray, provider: KotlinImportModelProvider): KotlinGradleModel {
-        val request = KotlinImportModelSerialization.parseDependenciesParameters(parameters)
-            ?: return result(Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, "Dependencies model parameters are required")
-        if (request.compilationUnitId !in provider.projectInformation().compilationUnitIdsList) {
-            return result(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported compilation unit ID")
-        }
-        if (request.scope != DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE) {
-            return result(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported dependency scope")
-        }
-        if (request.coverage != DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL) {
-            // TODO: Support LOCAL dependency coverage without triggering Gradle resolution
-            return result(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported dependency coverage")
-        }
-        return KotlinGradleModelResult(KotlinImportModelSerialization.modelResult(provider.dependencies(request)))
-    }
-
-    private fun compilationScopedModel(
-        parameters: ByteArray,
-        provider: KotlinImportModelProvider,
-        parseCompilationUnitId: (ByteArray) -> CompilationUnitId?,
-        produce: (CompilationUnitId) -> ByteArray,
-    ): KotlinGradleModel {
-        val compilationUnitId = parseCompilationUnitId(parameters)
-            ?: return result(Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, "Compilation unit ID is required")
-        if (compilationUnitId !in provider.projectInformation().compilationUnitIdsList) {
-            return result(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported compilation unit ID")
-        }
-        return KotlinGradleModelResult(produce(compilationUnitId))
-    }
-
-    private fun result(type: Error.Type, message: String): KotlinGradleModel = KotlinGradleModelResult(
-        KotlinImportModelSerialization.errorResult(type, message)
+    override fun buildAll(modelName: String, project: Project): KotlinGradleModel = KotlinGradleModelResult(
+        KotlinImportModelSerialization.errorResult(Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, "Kotlin import model parameters are required")
     )
+
+    override fun buildAll(modelName: String, parameter: ModelRequest, project: Project): KotlinGradleModel {
+        val fileName = importModelFileName(parameter.kotlinModelId.orEmpty(), parameter.kotlinModelParameters)
+        val file = importModelsDirectory(project).get().file(fileName).asFile
+        return KotlinGradleModelResult(
+            if (file.isFile) file.readBytes()
+            else KotlinImportModelSerialization.errorResult(
+                Error.Type.ERROR_TYPE_GENERIC_ERROR,
+                "Kotlin import model '${parameter.kotlinModelId}' was not generated; run the '$GENERATE_KOTLIN_IMPORT_MODELS_TASK_NAME' task first",
+            )
+        )
+    }
 }
 
 private class KotlinGradleModelResult(

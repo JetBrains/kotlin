@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.tooling.BuildController
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.importmodels.KotlinGradleModel
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
-import org.jetbrains.kotlin.importmodels.ModelRequest
 import org.jetbrains.kotlin.importmodels.proto.*
 import org.jetbrains.kotlin.importmodels.proto.action as actionModel
 import org.jetbrains.kotlin.importmodels.proto.ActionKt.gradleTask as gradleTaskModel
 import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
-import java.io.Serializable
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -45,8 +41,9 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
                 }
                 kotlinJvm.sourceSets.getByName("main").generatedKotlin.srcDir(generateImportModelSources)
             }
-            val first = runBuildAction(KotlinImportModelsBuildAction()).toModels()
-            val second = runBuildAction(KotlinImportModelsBuildAction()).toModels()
+            // POC: the models are task outputs, so an IDE sync has to run `generateKotlinImportModels` before reading them
+            val first = runBuildAction(KotlinImportModelsBuildAction(), GENERATE_TASK).toModels()
+            val second = runBuildAction(KotlinImportModelsBuildAction(), GENERATE_TASK).toModels()
             val base = first.base.model.unpack(BaseModel::class.java)
             val project = first.project.model.unpack(ProjectModel::class.java)
             val units = first.compilationUnits.map { it.model.unpack(CompilationUnitModel::class.java) }
@@ -132,66 +129,3 @@ private fun output(path: String, vararg producingTaskPaths: String): Compilation
     this.path = path
     producingActions += producingTaskPaths.map(::gradleAction)
 }
-
-private class KotlinImportModelsBuildAction : org.gradle.tooling.BuildAction<KotlinImportModelsBuildActionResult> {
-    override fun execute(controller: BuildController): KotlinImportModelsBuildActionResult {
-        fun request(modelId: String, parameters: ByteArray? = null): ByteArray = controller.getModel(
-            KotlinGradleModel::class.java,
-            ModelRequest::class.java,
-        ) { request ->
-            request.kotlinModelId = modelId
-            request.kotlinModelParameters = parameters
-        }.kotlinModelResult
-
-        val base = request(KotlinImportModelIds.BASE)
-        val projectInformation = request(KotlinImportModelIds.PROJECT_INFORMATION)
-        val project = Result.parseFrom(projectInformation).model.unpack(ProjectModel::class.java)
-        val compilationUnits = project.compilationUnitIdsList.map { compilationUnitId ->
-            request(
-                KotlinImportModelIds.COMPILATION_UNIT,
-                CompilationUnitModelKt.parameters { this.compilationUnitId = compilationUnitId }.toByteArray(),
-            )
-        }
-        val compilerArguments = project.compilationUnitIdsList.map { compilationUnitId ->
-            request(
-                KotlinImportModelIds.COMPILER_ARGUMENTS,
-                CompilerArgumentsModelKt.parameters { this.compilationUnitId = compilationUnitId }.toByteArray(),
-            )
-        }
-        val dependencies = project.compilationUnitIdsList.map { compilationUnitId ->
-            request(
-                KotlinImportModelIds.DEPENDENCIES,
-                DependenciesModelKt.parameters {
-                    this.compilationUnitId = compilationUnitId
-                    scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE
-                    coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
-                }.toByteArray(),
-            )
-        }
-        return KotlinImportModelsBuildActionResult(base, projectInformation, compilationUnits, compilerArguments, dependencies)
-    }
-}
-
-private data class KotlinImportModelsBuildActionResult(
-    val base: ByteArray,
-    val project: ByteArray,
-    val compilationUnits: List<ByteArray>,
-    val compilerArguments: List<ByteArray>,
-    val dependencies: List<ByteArray>,
-) : Serializable
-
-private data class KotlinImportModelsModels(
-    val base: Result,
-    val project: Result,
-    val compilationUnits: List<Result>,
-    val compilerArguments: List<Result>,
-    val dependencies: List<Result>,
-)
-
-private fun KotlinImportModelsBuildActionResult.toModels(): KotlinImportModelsModels = KotlinImportModelsModels(
-    base = Result.parseFrom(base),
-    project = Result.parseFrom(project),
-    compilationUnits = compilationUnits.map(Result::parseFrom),
-    compilerArguments = compilerArguments.map(Result::parseFrom),
-    dependencies = dependencies.map(Result::parseFrom),
-)

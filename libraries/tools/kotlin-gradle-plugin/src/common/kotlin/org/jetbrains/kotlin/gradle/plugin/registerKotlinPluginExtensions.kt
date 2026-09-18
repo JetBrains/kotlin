@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportActionSetupA
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.importmodel.KotlinImportModelsDumpTaskSetupAction
+import org.jetbrains.kotlin.gradle.plugin.importmodel.KotlinImportModelsTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.importmodel.KotlinModelBuilderSetupAction
 import org.jetbrains.kotlin.gradle.plugin.internal.buildNeededDependentTasksWiringProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -81,6 +82,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         // TODO: Support Kotlin import models for targets beyond the JVM POC
         if (isJvm) {
             register(project, KotlinImportModelsDumpTaskSetupAction)
+            register(project, KotlinImportModelsTaskSetupAction)
             register(project, KotlinModelBuilderSetupAction)
         }
 
