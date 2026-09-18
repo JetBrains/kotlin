@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -49,6 +49,7 @@ class MultiThreadedRandomSmokeTest {
             it.execute(TransferMode.SAFE, { subject to canStart }) { [subject, canStart] ->
                 var result1 = 0
                 var result2 = -1
+                @Suppress("ControlFlowWithEmptyBody")
                 while (canStart.value == 0) {}
                 repeat(100) {
                     val r = subject.nextInt()
@@ -70,6 +71,39 @@ class MultiThreadedRandomSmokeTest {
         assertEquals(0, result2, "All zero bits should present")
         workers.forEach {
             it.requestTermination().result
+        }
+    }
+}
+
+class NativeRandomTest {
+
+    @Test
+    fun behavesAsLCG() {
+        val seed = Random.nextLong()
+        val reference = LCGRandom(seed)
+        NativeRandom.overrideSeed(seed)
+        val seq1 = List(10) { reference.nextInt() }
+        val seq2 = List(10) { NativeRandom.nextInt() }
+
+        assertEquals(seq1, seq2, "The both generators produce the same output")
+    }
+
+    private class LCGRandom(seed: Long) : Random() {
+        private var state = mult(seed)
+
+        private fun mult(value: Long) = (value xor MULTIPLIER) and MASK
+
+        override fun nextBits(bitCount: Int): Int {
+            val nextState = (state * MULTIPLIER + INCREMENT) and MASK
+            state = nextState
+            return (nextState ushr (MODULUS - bitCount)).toInt()
+        }
+
+        companion object {
+            private const val MULTIPLIER = 0x5deece66dL
+            private const val INCREMENT = 0xbL
+            private const val MODULUS = 48
+            private const val MASK = (1L shl MODULUS) - 1
         }
     }
 }
