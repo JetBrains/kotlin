@@ -10,15 +10,9 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.correspondingField
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
@@ -91,7 +85,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         val STATIC_CLASS_INITIALIZER by IrDeclarationOriginImpl.Synthetic
 
         const val STATIC_INIT_FUNCTION_NAME = "static_init"
-        const val STATIC_INIT_STATE_PROPERTY_NAME = "static_init_state"
+        val STATIC_INIT_STATE_PROPERTY_NAME = Name.identifier( "static_init_state")
     }
 
     protected abstract val context: JsCommonBackendContext
@@ -146,19 +140,17 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
 
         val initializers = buildList {
             for (declaration in container.declarations) {
-                // Special handling of companion objects - if the static_init function is introduced, the Companion$getInstance
-                // body should be moved to the static_init body to preserve the correct order of initialization.
+                // Special handling of companion objects - if the static_init function is introduced, the object constructor call
+                // should be moved from Companion$getInstance to the static_init to preserve the correct order of initialization.
                 // $getInstance then calls static_init instead.
                 if (declaration is IrClass && declaration.isCompanion) {
+                    add(ObjectDeclarationLowering.createObjectConstructorCall(declaration, context.irBuiltIns))
                     declaration.objectGetInstanceFunction?.let { getInstance ->
-                        val body = getInstance.body as? IrBlockBody ?: return@let
-                        body.statements.let { statements ->
-                            // Relying on the fact that $getInstance always ends with IrReturn
-                            addAll(statements.dropLast(1))
-                            val irReturn = statements.last()
-                            statements.clear()
-                            statements.add(irReturn)
-                        }
+                        val statements = (getInstance.body as? IrBlockBody)?.statements ?: return@let
+                        // Relying on the fact that $getInstance always ends with IrReturn
+                        val irReturn = statements.last()
+                        statements.clear()
+                        statements.add(irReturn)
                     }
                     continue
                 }
@@ -186,7 +178,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         // collision makes a reference to `static_init` resolve to `static_init_state` instead.
         val [staticInitStateField, staticInitFunction] = context.irFactory.stageController.restrictTo(container) {
             val stateField = initializationGenerator.createStateField(
-                name = Name.identifier(STATIC_INIT_STATE_PROPERTY_NAME),
+                name = STATIC_INIT_STATE_PROPERTY_NAME,
                 origin = STATIC_CLASS_INITIALIZER,
             ).apply {
                 parent = container

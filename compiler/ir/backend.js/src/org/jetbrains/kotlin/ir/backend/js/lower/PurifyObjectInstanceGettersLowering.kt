@@ -29,14 +29,25 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  * For regular `object` declarations, consider such a pre-optimized generated code:
  *
  * ```javascript
- * var Foo_instance;
+ * var Foo$instance;
  * function Foo() {
  *   this.x = 42;
- *   Foo_instance = this;
+ *   Foo$instance = this;
  * }
- * function Foo_getInstance() {
- *   if (Foo_instance == null) new Foo();
- *   return Foo_instance;
+ * function Foo$getInstance() {
+ *   var instance = Foo$instance;
+ *   if (instance === 2) {
+ *     staticInitializationFailureWithClassName(Foo);
+ *   }
+ *   if (Foo$instance == null) {
+ *     try {
+ *       new Foo();
+ *     } catch (reason) {
+ *       Foo$instance = 2;
+ *       staticInitializationFailure(reason);
+ *     }
+ *   }
+ *   return Foo$instance;
  * }
  * ```
  *
@@ -45,17 +56,17 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  *
  * Such modifications are applied when applicable:
  * - Instance getter: conditional constructor invocation is removed, just return the instance field.
- * - Constructor: instance field initialization logic `Foo_instance = this;` is removed
- * - Instance field: now has initializer in-place, using the constructor directly: `var Foo_instance = new Foo()`
+ * - Constructor: instance field initialization logic `Foo$instance = this;` is removed
+ * - Instance field: now has initializer in-place, using the constructor directly: `var Foo$instance = new Foo()`
  *
  * Which results in such a processed code:
  * ```javascript
- * var Foo_instance = new Foo();
+ * var Foo$instance = new Foo();
  * function Foo() {
  *   this.x = 42;
  * }
- * function Foo_getInstance() {
- *   return Foo_instance;
+ * function Foo$getInstance() {
+ *   return Foo$instance;
  * }
  * ```
  *
