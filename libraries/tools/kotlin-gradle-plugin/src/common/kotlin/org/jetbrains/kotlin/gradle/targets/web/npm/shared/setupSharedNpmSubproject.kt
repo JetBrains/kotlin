@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 
-internal val PublishSharedPackageJsonSideEffect = KotlinTargetSideEffect { target ->
+internal val SetupSharedPackageJsonSideEffect = KotlinTargetSideEffect { target ->
     if (target !is KotlinJsIrTarget) return@KotlinTargetSideEffect
     if (target.wasmTargetType == KotlinWasmTargetType.WASI) return@KotlinTargetSideEffect
 
@@ -25,7 +25,7 @@ internal val PublishSharedPackageJsonSideEffect = KotlinTargetSideEffect { targe
         wasmVariant = WasmPlatformDisambiguator,
     )
 
-    val packageJsonFilesConfiguration = project.maybeCreateConsumableNpmSharedPackageJsonFilesConfiguration(platform)
+    val packageJsonFilesConfiguration = project.maybeCreatePackageJsonsForRootProject(platform)
 
     target.compilations.all { compilation ->
         val packageJsonTaskName = compilation.disambiguateName("packageJson")
