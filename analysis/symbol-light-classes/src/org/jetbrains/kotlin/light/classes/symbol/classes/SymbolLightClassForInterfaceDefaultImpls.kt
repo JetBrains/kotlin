@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.load.java.JvmAbi
 
 internal class SymbolLightClassForInterfaceDefaultImpls(private val containingClass: SymbolLightClassForInterface) :
@@ -65,11 +66,20 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
 
     /**
-     * Excludes abstract members, which have no implementation, and companion block members, whose static methods are emitted on the
-     * interface itself.
+     * Excludes abstract members, which have no implementation, and companion block members, whose static methods are emitted in the
+     * interface class itself. Likewise, the `@JvmStatic` members of the companion object are static methods of the interface class
+     * only, so unlike [SymbolLightClassForInterface.getOwnMethods], this override doesn't add them.
      */
-    override fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean {
-        return super.acceptCallableSymbol(symbol) && !symbol.isCompanion && symbol.modality != KaSymbolModality.ABSTRACT
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
+        withClassSymbol { classSymbol ->
+            val result = mutableListOf<PsiMethod>()
+            val methods = classSymbol.combinedDeclaredMemberScope.callables.filter {
+                !it.isCompanion && it.modality != KaSymbolModality.ABSTRACT
+            }
+            createMethods(this@SymbolLightClassForInterfaceDefaultImpls, methods, result)
+
+            result
+        }
     }
 
     override fun getOwnFields(): List<PsiField> = emptyList()
