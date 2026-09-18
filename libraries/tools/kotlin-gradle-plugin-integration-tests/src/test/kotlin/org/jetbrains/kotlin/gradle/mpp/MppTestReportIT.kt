@@ -176,6 +176,18 @@ class MppTestReportIT : KGPBaseTest() {
             assertEquals("metadata-key", property.getAttributeValue("name"))
             assertEquals("metadata-value", property.getAttributeValue("value"))
             assertTrue(testCase.getAttributeValue("name").contains("[jvm]"))
+
+            val htmlReport = testClassHtmlReport(
+                ":jvmTest",
+                "TestReporterTest",
+                gradleVersion,
+                targetName = "jvm",
+            )
+            assertFilesCombinedContains(
+                htmlReport.parent.allFilesWithExtension("html"),
+                "metadata-key",
+                "metadata-value",
+            )
         }
     }
 }
