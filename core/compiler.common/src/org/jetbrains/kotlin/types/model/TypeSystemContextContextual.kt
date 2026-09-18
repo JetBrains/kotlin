@@ -334,10 +334,19 @@ context(c: TypeSystemContext)
 fun TypeConstructorMarker.isAnyConstructor(): Boolean = with(c) { isAnyConstructor() }
 
 context(c: TypeSystemContext)
+fun TypeConstructorMarker.isValueConstructor(): Boolean = with(c) { isValueConstructor() }
+
+context(c: TypeSystemContext)
+fun TypeConstructorMarker.isRichErrorConstructor(): Boolean = with(c) { isRichErrorConstructor() }
+
+context(c: TypeSystemContext)
 fun TypeConstructorMarker.isNothingConstructor(): Boolean = with(c) { isNothingConstructor() }
 
 context(c: TypeSystemContext)
 fun TypeConstructorMarker.isArrayConstructor(): Boolean = with(c) { isArrayConstructor() }
+
+context(c: TypeSystemContext)
+fun TypeConstructorMarker.isRichErrorClass(): Boolean = with(c) { isRichErrorClass() }
 
 context(c: TypeSystemContext)
 fun KotlinTypeMarker.withNewTypeSince(languageFeature: Any, newType: KotlinTypeMarker): KotlinTypeMarker =

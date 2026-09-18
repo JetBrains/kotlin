@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirValueSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -60,8 +61,9 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         scopeProvider: FirKotlinScopeProvider,
         context: Context,
     ): List<FirSymbolProvider> {
-        return listOf(
+        return listOfNotNull(
             FirCloneableSymbolProvider(session, moduleData, scopeProvider),
+            FirValueSymbolProvider.createIfRichErrorsEnabled(session, moduleData, scopeProvider),
             OptionalAnnotationClassesProvider(
                 session,
                 SingleModuleDataProvider(moduleData),

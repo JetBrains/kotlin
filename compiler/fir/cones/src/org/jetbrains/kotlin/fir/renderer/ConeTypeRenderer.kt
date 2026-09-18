@@ -377,9 +377,11 @@ open class ConeTypeRenderer(
     protected open fun render(type: ConeUnionType) {
         builder.append("union(")
         type.primaryType.takeUnless { it.isNothing }?.let {
+            builder.append("primary=")
             this.render(it)
-            builder.append(" | ")
+            builder.append(", ")
         }
+        builder.append("errors=")
         for ([index, intersected] in type.richErrorTypes.withIndex()) {
             if (index > 0) {
                 builder.append(" | ")

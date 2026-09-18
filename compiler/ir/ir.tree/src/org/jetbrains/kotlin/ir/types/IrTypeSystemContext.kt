@@ -303,6 +303,12 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean =
         this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.any)
 
+    override fun TypeConstructorMarker.isValueConstructor(): Boolean =
+        this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.value)
+
+    override fun TypeConstructorMarker.isRichErrorConstructor(): Boolean =
+        this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.richError)
+
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean =
         this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.nothing)
 

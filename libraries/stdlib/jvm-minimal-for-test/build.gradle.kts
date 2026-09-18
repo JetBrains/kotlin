@@ -39,6 +39,7 @@ val copyCommonSources = tasks.register<Sync>("copyCommonSources") {
             "kotlin/Nothing.kt",
             "kotlin/Number.kt",
             "kotlin/Primitives.kt",
+            "kotlin/RichError.kt",
             "kotlin/String.kt",
             "kotlin/Throwable.kt",
             "kotlin/Unit.kt",

@@ -305,6 +305,14 @@ object ReflectTypeSystemContext : TypeSystemContext {
         return this == Any::class
     }
 
+    override fun TypeConstructorMarker.isValueConstructor(): Boolean {
+        return false
+    }
+
+    override fun TypeConstructorMarker.isRichErrorConstructor(): Boolean {
+        return false
+    }
+
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean {
         return this == NothingKClass
     }
