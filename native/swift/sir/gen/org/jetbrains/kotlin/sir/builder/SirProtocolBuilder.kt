@@ -25,6 +25,7 @@ class SirProtocolBuilder {
     var superClass: SirNominalType? = null
     val protocols: MutableList<SirProtocol> = []
     val bridges: MutableList<SirBridge> = []
+    val primaryAssociatedTypes: MutableList<String> = []
 
     fun build(): SirProtocol {
         return SirProtocolImpl(
@@ -37,6 +38,7 @@ class SirProtocolBuilder {
             superClass,
             protocols,
             bridges,
+            primaryAssociatedTypes,
         )
     }
 
