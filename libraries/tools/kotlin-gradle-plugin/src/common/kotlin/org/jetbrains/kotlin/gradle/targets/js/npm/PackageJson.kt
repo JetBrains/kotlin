@@ -184,4 +184,12 @@ private fun chooseVersion(
         )
 }
 
+/* Used for deserialization of dependencies in package.json */
+@kotlinx.serialization.Serializable
+internal data class PackageJsonDependencies(
+    val dependencies: Map<String, String> = emptyMap(),
+    val peerDependencies: Map<String, String> = emptyMap(),
+    val optionalDependencies: Map<String, String> = emptyMap(),
+)
+
 internal const val fakePackageJsonValue = "FAKE"
