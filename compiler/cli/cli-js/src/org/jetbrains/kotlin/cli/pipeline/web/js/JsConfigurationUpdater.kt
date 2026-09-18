@@ -63,8 +63,6 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
                     ?: ModuleKind.ES.takeIf { isES2015 }
                     ?: ModuleKind.UMD
 
-        initializeFinalArtifactConfiguration(configuration, arguments)
-
         configuration.keep = arguments.irKeep?.split(",")?.filterNot { it.isEmpty() }.orEmpty()
         configuration.safeExternalBoolean = arguments.irSafeExternalBoolean
         configuration.minimizedMemberNames = arguments.irMinimizedMemberNames
@@ -85,6 +83,8 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         arguments.platformArgumentsProviderJsExpression?.let {
             configuration.definePlatformMainFunctionArguments = it
         }
+
+        initializeFinalArtifactConfiguration(configuration, arguments)
 
         if (arguments.script) {
             configuration.report(WEB_ARGUMENT_ERROR, "K/JS does not support Kotlin script (*.kts) files")
