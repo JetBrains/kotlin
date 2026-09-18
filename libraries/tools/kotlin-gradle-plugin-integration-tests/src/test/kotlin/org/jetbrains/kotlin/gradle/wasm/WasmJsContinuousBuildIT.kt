@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.io.path.exists
 import kotlin.io.path.readText
-import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
 
@@ -39,7 +38,10 @@ class WasmJsContinuousBuildIT : AbstractWebContinuousBuildIT() {
         project("wasm-browser-simple-project", gradleVersion) {
 
             buildGradleKts.modify {
-                it.replace("browser", "browser(bundler = org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserBundler.NONE)")
+                it.replace(
+                    "browser",
+                    "browser(bundler = org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler.NONE)"
+                )
             }
 
             val compiledWasm =
