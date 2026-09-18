@@ -128,7 +128,7 @@ data class ArgumentParseErrors(
 
     var booleanLangFeatureArgumentsWithValue: MutableList<String> = SmartList(),
 
-    val stringLangFeatureArgumentsWithIncorrectValue: MutableList<Pair<String, Set<String>>> = SmartList(),
+    val stringLangFeatureArgumentsWithIncorrectValue: MutableList<StringLangFeatureArgumentWithIncorrectValueInfo> = SmartList(),
 
     val argfileErrors: MutableList<String> = SmartList(),
 
@@ -136,7 +136,13 @@ data class ArgumentParseErrors(
     val internalArgumentsParsingErrors: MutableList<String> = SmartList(),
 
     val internalArgumentsParsingWarnings: MutableList<String> = SmartList(),
-)
+) {
+    data class StringLangFeatureArgumentWithIncorrectValueInfo(
+        val key: String,
+        val value: String,
+        val allowedValues: Set<String>
+    )
+}
 
 inline fun <reified T : CommonToolArguments> parseCommandLineArguments(args: List<String>): T {
     return parseCommandLineArguments(T::class, args)
@@ -294,11 +300,18 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         }
 
         // TODO(KT-80348): should be replaced with just '=' when `-XXLanguage` would be removed
-        val delimiter = when {
-            arg.startsWith("-XXLanguage") -> ':'
-            else -> '='
+        val delimiterIndex = arg.indexOfFirst { it == ':' || it == '=' }
+
+        val key: String
+        val value: String? // `null` means no delimiter; empty means a delimiter with empty string afterwords
+        if (delimiterIndex != -1) {
+            key = arg.substring(0, delimiterIndex)
+            value = arg.substring(delimiterIndex + 1)
+        } else {
+            key = arg
+            value = null
         }
-        val key = arg.substringBefore(delimiter)
+
         var argumentField = properties[key]
         var removedArg = false
 
@@ -311,8 +324,8 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         if (argumentField == null) {
             when {
                 // Unknown -X argument
-                arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.value.unknownExtraFlags.add(arg)
-                arg.startsWith("-") -> errors.value.unknownArgs.add(arg)
+                key.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.value.unknownExtraFlags.add(arg)
+                key.startsWith('-') -> errors.value.unknownArgs.add(arg)
                 else -> freeArgs.add(arg)
             }
             continue
@@ -341,36 +354,35 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         val existingValues by lazy(LazyThreadSafetyMode.NONE) { explicitArgs.getOrPut(argumentField) { mutableListOf() } }
 
         val newValue: Any = if (getterReturnType == Boolean::class) {
-            parseBooleanValue(arg, argumentField, delimiter, errors).also { existingValues.add(it) }
+            parseBooleanValue(key, value, argumentField, errors).also { existingValues.add(it) }
         } else {
-            val argument = argumentField.argument
-            val stringValue: String = when {
-                arg.startsWith(argument.value + delimiter) -> {
-                    val legalValues = buildSet {
-                        argumentField.enablesAnnotations.forEach { add(it.ifValueIs) }
-                        argumentField.disablesAnnotations.forEach { add(it.ifValueIs) }
-                    }
-                    arg.substring(argument.value.length + 1).also {
-                        if (legalValues.isNotEmpty() && !legalValues.contains(it)) {
-                            errors.value.stringLangFeatureArgumentsWithIncorrectValue.add(arg to legalValues)
-                        }
-                    }
-                }
-                arg.startsWith(argument.deprecatedName + delimiter) -> {
-                    arg.substring(argument.deprecatedName.length + 1)
-                }
-                i == args.size -> {
+            val stringValue = value ?: run {
+                if (i == args.size) {
                     errors.value.argumentsWithoutValue.add(arg)
                     break@loop
                 }
-                else -> {
-                    args[i++]
+                args[i++]
+            }
+
+            if (argumentField.changesLanguageFeatures) {
+                val allowedValues = buildSet {
+                    argumentField.enablesAnnotations.forEach { add(it.ifValueIs) }
+                    argumentField.disablesAnnotations.forEach { add(it.ifValueIs) }
+                }
+                if (!allowedValues.contains(stringValue)) {
+                    errors.value.stringLangFeatureArgumentsWithIncorrectValue.add(
+                        ArgumentParseErrors.StringLangFeatureArgumentWithIncorrectValueInfo(
+                            key = key,
+                            value = stringValue,
+                            allowedValues = allowedValues
+                        )
+                    )
                 }
             }
 
             when (getterReturnType) {
                 String::class -> stringValue.also { existingValues.add(it) }
-                Array<String>::class -> convertArrayOfStrings(argument, stringValue, overrideArguments, existingValues)
+                Array<String>::class -> convertArrayOfStrings(argumentField.argument, stringValue, overrideArguments, existingValues)
                 else -> error("Unexpected argument type: $getterReturnType")
             }
         }
@@ -399,25 +411,24 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 }
 
 private fun parseBooleanValue(
-    arg: String,
+    key: String,
+    value: String?,
     argumentField: ArgumentField,
-    delimiter: Char,
     errors: Lazy<ArgumentParseErrors>,
 ): Boolean {
-    val argumentValue = argumentField.argument.value
-    return if (arg.startsWith(argumentValue + delimiter)) {
+    return if (value != null) {
         val changesLangFeatures = argumentField.changesLanguageFeatures
-        when (arg.substring(argumentValue.length + 1)) {
+        when (value) {
             "true" -> true
             "false" -> false
             else -> true.also {
                 if (!changesLangFeatures) {
-                    errors.value.booleanArgumentsWithIncorrectValue.add(arg)
+                    errors.value.booleanArgumentsWithIncorrectValue.add(key)
                 }
             }
         }.also {
             if (changesLangFeatures) {
-                errors.value.booleanLangFeatureArgumentsWithValue.add(arg)
+                errors.value.booleanLangFeatureArgumentsWithValue.add(key)
             }
         }
     } else {
@@ -482,20 +493,18 @@ fun validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String> {
             add("No value passed for argument $it")
         }
         errors.booleanArgumentsWithIncorrectValue.forEach { arg ->
-            add("Incorrect value for boolean argument '${arg.substringBefore('=')}'. Only 'true' and 'false' are allowed.")
+            add("Incorrect value for boolean argument '$arg'. Only 'true' and 'false' are allowed.")
         }
         errors.booleanLangFeatureArgumentsWithValue.forEach { arg ->
             add(
-                "No value is expected for argument '${arg.substringBefore('=')}'."
+                "No value is expected for argument '$arg'."
             )
         }
-        errors.stringLangFeatureArgumentsWithIncorrectValue.forEach { argWithAllowedValued ->
-            val [arg, allowedValues] = argWithAllowedValued
-            val [argName, argValue] = arg.split('=')
+        errors.stringLangFeatureArgumentsWithIncorrectValue.forEach { (key, value, allowedValues) ->
             val allowedValuesString = allowedValues.joinToString(", ") { "'$it'" }
             add(
-                "Incorrect value for argument '$argName'. " +
-                        "Actual value: '$argValue', but allowed values: $allowedValuesString."
+                "Incorrect value for argument '$key'. " +
+                        "Actual value: '$value', but allowed values: $allowedValuesString."
             )
         }
         errors.unknownArgs.forEach {
