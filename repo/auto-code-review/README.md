@@ -97,7 +97,10 @@ So, at the beginning of the file, there are optional include directives that sta
 * `@../foo/code-rules.md` uses relative path, so the path is resolved as a relative path from the directory the current file is in.
 * `@/bar/baz.md` uses "absolute" path, which is in fact resolved as relative from the root of the repository.
 
-The include directive includes the rules defined in the included file.
+The include directive includes the rules defined in the included file,
+as if they were defined in the including file:
+the rules apply to files in the including file directory (and its subdirectories),
+and their patterns are relative to that directory (see [File patterns](#file-patterns)).
 Note that the file name in the include directive is not required to be `code-rules.md`.
 
 Only the included file itself is included, the rule files in its enclosing directories aren't included automatically.
@@ -127,8 +130,19 @@ Applies to:
 ```
 ````
 
-The pattern syntax follows [`.gitignore` syntax](https://git-scm.com/docs/gitignore).
+The pattern syntax follows [`.gitignore` syntax](https://git-scm.com/docs/gitignore),
+and the patterns are relative to the directory of the `code-rules.md` file.
 But don't be confused: the patterns in code rules files list which files are checked and not which files are ignored.
+
+There are two kinds of patterns:
+
+| Kind       | Examples                                  | Matches                                                |
+|------------|-------------------------------------------|--------------------------------------------------------|
+| Unanchored | `*.kt`, `test`, `test/`, `**/src/**/*.kt` | Paths at any depth                                     |
+| Anchored   | `/build.gradle.kts`, `src/main`, `src/**` | Paths relative to the directory of the `code-rules.md` |
+
+A pattern is unanchored if it has no `/` except a trailing one, or if it starts with `**/`.
+A pattern matching a directory also matches all files inside it.
 
 An exclusion pattern can be defined using `!`.
 Exclusion patterns must go after all other patterns.
@@ -145,11 +159,19 @@ Applies to:
 
 mean that the rule applies to all Kotlin files except those inside directories named `test`.
 
-When deciding whether a rule applies to a file, the tool checks two paths against the patterns:
-* If the file is inside the rule file directory, the relative path from that directory to the file is checked.
-  This follows the `.gitignore` convention.
-* Also, a relative path from the repo root is always checked against the same patterns.
-  This allows using patterns with includes: in such a case, some covered files can be outside the rule directory,
-  and we need a way to use patterns for them.
+### Patterns in included rules
 
-For a file to be covered by the rule, it is enough that at least one of those paths matches the patterns.
+The patterns of included rules are relative to the directory of the including file, not of the included one.
+So, if a rule is included from another directory, its anchored patterns would have a different meaning there.
+To avoid confusion, such rules can have only unanchored patterns, and the tool reports anchored patterns as errors.
+
+For example, if `/foo/code-rules.md` includes `@/bar/code-rules.md`, which has a rule that applies to `src`,
+the rule applies to files inside `src` directories in both `/bar` and `/foo`.
+
+As the includes are transitive, the same holds for the rules included indirectly:
+their patterns are relative to the directory of the `code-rules.md` that includes them, directly or not.
+So, if `/bar/code-rules.md` also includes `@/baz/shared.md`, the rules from `/baz/shared.md` apply to files in `/foo`,
+with the patterns relative to `/foo`, and to files in `/bar`, with the patterns relative to `/bar`.
+
+Including a rule file located in the same directory as the `code-rules.md` (e.g. with `@more-rules.md`)
+doesn't prohibit anchored patterns in the included file (`more-rules.md`).

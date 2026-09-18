@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.code.review
 
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class CodeRuleRepositoryTests {
     private fun projectOf(vararg files: Pair<String, String>): Project {
@@ -184,5 +186,109 @@ class CodeRuleRepositoryTests {
 
         assertEquals(setOf("Lib rule", "Lib sub rule"), ruleRepo.getRuleNames("lib/sub/foo.kt"))
         assertEquals(setOf("Lib sub rule", "Lib sub shared rule"), ruleRepo.getRuleNames("app/foo.kt"))
+    }
+
+    @Test
+    fun `patterns are relative to the rule file directory`() = runBlocking {
+        val ruleRepo = CodeRuleRepository(
+            projectOf(
+                "code-rules.md" to """
+                    # Root rule
+
+                    Applies to: `/app/src`
+                """.trimIndent(),
+                "app/code-rules.md" to """
+                    # App rule
+
+                    Applies to: `src/main`
+                """.trimIndent(),
+            )
+        )
+
+        assertEquals(setOf("Root rule", "App rule"), ruleRepo.getRuleNames("app/src/main/foo.kt"))
+        assertEquals(setOf("Root rule"), ruleRepo.getRuleNames("app/src/foo.kt"))
+        assertEquals(emptySet(), ruleRepo.getRuleNames("app/sub/app/src/main/foo.kt"))
+    }
+
+    @Test
+    fun `included rule patterns are relative to the including file directory`() = runBlocking {
+        val ruleRepo = CodeRuleRepository(
+            projectOf(
+                "lib/code-rules.md" to """
+                    # Lib rule
+
+                    Applies to: `src`
+                """.trimIndent(),
+                "app/code-rules.md" to "@/lib/code-rules.md",
+                "src/app/code-rules.md" to "@/lib/code-rules.md",
+            )
+        )
+
+        assertEquals(setOf("Lib rule"), ruleRepo.getRuleNames("lib/src/foo.kt"))
+        assertEquals(emptySet(), ruleRepo.getRuleNames("lib/test/foo.kt"))
+
+        assertEquals(setOf("Lib rule"), ruleRepo.getRuleNames("app/src/foo.kt"))
+        assertEquals(emptySet(), ruleRepo.getRuleNames("app/test/foo.kt"))
+
+        // Enclosing directories of the including file don't matter:
+        assertEquals(emptySet(), ruleRepo.getRuleNames("src/app/foo.kt"))
+        assertEquals(setOf("Lib rule"), ruleRepo.getRuleNames("src/app/src/foo.kt"))
+    }
+
+    @Test
+    fun `included rule with anchored pattern is rejected`() = runBlocking {
+        val ruleRepo = CodeRuleRepository(
+            projectOf(
+                "lib/code-rules.md" to """
+                    # Lib rule
+
+                    Applies to:
+                    ```
+                    *.kt
+                    src/main
+                    ```
+                """.trimIndent(),
+                "app/code-rules.md" to "@/lib/code-rules.md",
+            )
+        )
+
+        assertEquals(setOf("Lib rule"), ruleRepo.getRuleNames("lib/src/main/foo.kt"))
+
+        val exception = assertFailsWith<IllegalStateException> { ruleRepo.getRuleNames("app/src/main/foo.kt") }
+        assertEquals(
+            """
+                Rule "Lib rule" in lib/code-rules.md applies to files in app/
+                because app/code-rules.md includes it (directly or transitively).
+                Rules included from another directory can have only unanchored patterns:
+                without `/` except a trailing one, or starting with `**/`. But the rule has:
+                src/main
+            """.trimIndent(),
+            exception.message
+        )
+    }
+
+    @Test
+    fun `rule included from the same directory can have anchored patterns`() = runBlocking {
+        val ruleRepo = CodeRuleRepository(
+            projectOf(
+                "lib/shared.md" to """
+                    # Shared rule
+
+                    Applies to: `src/main`
+                """.trimIndent(),
+                "lib/code-rules.md" to "@shared.md",
+                "app/code-rules.md" to "@/lib/code-rules.md",
+            )
+        )
+
+        assertEquals(setOf("Shared rule"), ruleRepo.getRuleNames("lib/src/main/foo.kt"))
+        assertEquals(emptySet(), ruleRepo.getRuleNames("lib/sub/src/main/foo.kt"))
+
+        // But not if included transitively from another directory:
+        val exception = assertFailsWith<IllegalStateException> { ruleRepo.getRuleNames("app/src/main/foo.kt") }
+        assertContains(
+            exception.message.orEmpty(),
+            """Rule "Shared rule" in lib/shared.md applies to files in app/"""
+        )
     }
 }

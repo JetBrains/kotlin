@@ -13,21 +13,30 @@ data class CodeRule(
     val patterns: CodeRulePatterns,
     val source: ProjectFilePath,
 ) {
-    fun patternsMatch(path: ProjectFilePath): Boolean {
-        // If the path is within the rule source directory, check the relative path:
-        source.dir.relativePathToFileInside(path)?.let {
-            if (patterns.match(it)) return true
-        }
-
-        // In any case, check the path from the root of the project.
-        // This way we can use patterns in combination with rule file includes.
-        return patterns.match(path.pathFromProjectRoot)
+    /**
+     * Checks whether the patterns match [path] relative to [dir],
+     * which is the directory of the `code-rules.md` that applies this rule.
+     */
+    fun patternsMatch(path: ProjectFilePath, dir: ProjectDirPath): Boolean {
+        val relativePath = checkNotNull(dir.relativePathToFileInside(path)) { "$path is not inside $dir" }
+        return patterns.match(relativePath)
     }
 }
 
 data class CodeRulePatterns(val patterns: List<String>) {
     // Use JGit as the implementation detail:
     private val fastIgnoreRules = patterns.map { FastIgnoreRule(it) }
+
+    /**
+     * Patterns whose meaning depends on the directory they are relative to.
+     *
+     * Other patterns are unanchored: they have no `/` except a trailing one, or start with `**` followed by `/`.
+     * Such patterns match paths at any depth.
+     */
+    val anchoredPatterns: List<String> = patterns.filterNot { pattern ->
+        val positivePattern = pattern.removePrefix(EXCLUSION_PATTERN_PREFIX)
+        positivePattern.startsWith("**/") || '/' !in positivePattern.removeSuffix("/")
+    }
 
     fun match(path: String): Boolean {
         if (fastIgnoreRules.isEmpty()) return true
@@ -51,7 +60,7 @@ class CodeRuleRepository(val project: Project) {
         // The file is covered by `code-rules.md` files in its directory and all enclosing directories:
         for (dir in generateSequence(path.dir) { it.parent }) {
             getRulesFromRulesFile(dir.file(CODE_RULES_MD))
-                .filterTo(this) { it.patternsMatch(path) }
+                .filterTo(this) { it.patternsMatch(path, dir) }
         }
     }
 
@@ -59,8 +68,10 @@ class CodeRuleRepository(val project: Project) {
 
     /**
      * Returns the rules defined in [rulesFile] and in the files it includes (transitively).
+     *
+     * All these rules apply to the directory of [rulesFile], and their patterns are relative to it.
      */
-    internal suspend fun getRulesFromRulesFile(rulesFile: ProjectFilePath) =
+    internal suspend fun getRulesFromRulesFile(rulesFile: ProjectFilePath): Set<CodeRule> =
         ruleFileToRules.getOrPut(rulesFile) {
             buildSet {
                 // Note: this is suboptimal (we could have shared the DFS state across all requests).
@@ -70,8 +81,25 @@ class CodeRuleRepository(val project: Project) {
                     getNeighbors = { includes.map { parseRulesFile(it) } },
                     onVisit = { addAll(it.rules) }
                 )
-            }
+            }.onEach { checkPatternsOfIncludedRule(it, rulesFile) }
         }
+
+    private fun checkPatternsOfIncludedRule(rule: CodeRule, rulesFile: ProjectFilePath) {
+        if (rule.source.dir == rulesFile.dir) return
+
+        // The patterns are relative to the directory of `rulesFile`, not to the directory of `rule.source`,
+        // which might be surprising when reading `rule.source`.
+        // So, allow only patterns that mean the same regardless of the directory:
+        check(rule.patterns.anchoredPatterns.isEmpty()) {
+            """
+                |Rule "${rule.name}" in ${rule.source} applies to files in ${rulesFile.dir}
+                |because $rulesFile includes it (directly or transitively).
+                |Rules included from another directory can have only unanchored patterns:
+                |without `/` except a trailing one, or starting with `**/`. But the rule has:
+                |${rule.patterns.anchoredPatterns.joinToString("\n")}
+            """.trimMargin()
+        }
+    }
 
     private class ParsedRulesFile(val includes: List<ProjectFilePath>, val rules: List<CodeRule>)
 

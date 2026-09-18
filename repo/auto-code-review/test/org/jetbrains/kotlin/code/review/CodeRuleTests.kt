@@ -17,22 +17,29 @@ class CodeRuleTests {
         source = ProjectFilePath(source)
     )
 
-    @Test
-    fun `pattern matches full file path`() {
-        val rule = dummyRule("compiler/ir/code-rules.md", "compiler/ir/ir.tree/src/**/*.kt")
-
-        assertTrue(rule.patternsMatch(ProjectFilePath("compiler/ir/ir.tree/src/org/jetbrains/foo.kt")))
-    }
+    private fun CodeRule.matches(path: String, dir: String = source.dir.pathFromProjectRoot): Boolean =
+        patternsMatch(ProjectFilePath(path), ProjectDirPath(dir))
 
     @Test
     fun `pattern matches relative file path`() {
         val rule = dummyRule("compiler/ir/code-rules.md", "ir.tree/src/**/*.kt")
-        assertTrue(rule.patternsMatch(ProjectFilePath("compiler/ir/ir.tree/src/org/jetbrains/foo.kt")))
+        assertTrue(rule.matches("compiler/ir/ir.tree/src/org/jetbrains/foo.kt"))
+        assertFalse(rule.matches("compiler/ir/backend/ir.tree/src/org/jetbrains/foo.kt"))
     }
 
     @Test
-    fun `pattern doesn't match other file path`() {
-        val rule = dummyRule("compiler/ir/code-rules.md", "ir.tree/src/**/*.kt")
-        assertFalse(rule.patternsMatch(ProjectFilePath("kotlin-native/ir.tree/src/org/jetbrains/foo.kt")))
+    fun `pattern doesn't match file path from project root`() {
+        val rule = dummyRule("compiler/ir/code-rules.md", "compiler/ir/ir.tree/src/**/*.kt")
+        assertFalse(rule.matches("compiler/ir/ir.tree/src/org/jetbrains/foo.kt"))
+    }
+
+    @Test
+    fun `pattern matches file path relative to given directory`() {
+        val rule = dummyRule("compiler/ir/code-rules.md", "src")
+        assertTrue(rule.matches("kotlin-native/backend/src/foo.kt", dir = "kotlin-native/backend"))
+        assertFalse(rule.matches("kotlin-native/backend/test/foo.kt", dir = "kotlin-native/backend"))
+
+        // Enclosing directories of the given directory don't matter:
+        assertFalse(rule.matches("kotlin-native/src/backend/foo.kt", dir = "kotlin-native/src/backend"))
     }
 }
