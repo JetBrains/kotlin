@@ -29,20 +29,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
-import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer
-import org.jetbrains.kotlin.fir.resolve.dfa.Flow
-import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
+import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ClassExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.computeEffectiveStability
-import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.addReceiversFromExtensions
@@ -50,8 +43,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.refinedTypeForDataFlowOrSelf
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
@@ -601,12 +592,7 @@ private class ContextCollectorVisitor(
         val holder = getSessionHolder(codeFragment)
 
         context.withCodeFragment(codeFragment, holder = holder) {
-            withLocalVariableHolder(
-                onEnter = { enterCodeFragment(codeFragment) },
-                onExit = { exitCodeFragment(codeFragment) }
-            ) {
-                super.visitCodeFragment(codeFragment)
-            }
+            super.visitCodeFragment(codeFragment)
         }
     }
 
@@ -636,15 +622,7 @@ private class ContextCollectorVisitor(
     override fun visitFunctionCall(functionCall: FirFunctionCall) {
         onActive {
             withParent(functionCall) {
-                withLocalVariableHolder(
-                    onEnter = {
-                        val lambdas = functionCall.arguments.mapNotNull { it.unwrapAnonymousFunctionExpression() }
-                        enterFunctionCall(lambdas)
-                    },
-                    onExit = { exitFunctionCall(true) }
-                ) {
-                    functionCall.acceptChildren(this)
-                }
+                functionCall.acceptChildren(this)
             }
         }
 
@@ -702,10 +680,8 @@ private class ContextCollectorVisitor(
                     dumpContext(regularClass, ContextKind.BODY)
 
                     onActive {
-                        withLocalVariableHolder(onEnter = { enterClass(regularClass) }, onExit = { exitClass() }) {
-                            withInterceptor {
-                                processChildren(regularClass)
-                            }
+                        withInterceptor {
+                            processChildren(regularClass)
                         }
                     }
                 }
@@ -733,9 +709,7 @@ private class ContextCollectorVisitor(
         onActive {
             dumpContext(whileLoop, ContextKind.BODY)
 
-            withLocalVariableHolder(onEnter = { enterLoop(whileLoop) }, onExit = { exitLoop() }) {
-                processChildren(whileLoop)
-            }
+            processChildren(whileLoop)
         }
     }
 
@@ -745,32 +719,14 @@ private class ContextCollectorVisitor(
         onActive {
             dumpContext(doWhileLoop, ContextKind.BODY)
 
-            withLocalVariableHolder(onEnter = { enterLoop(doWhileLoop) }, onExit = { exitLoop() }) {
-                context.forBlock(bodyHolder.session) {
-                    process(doWhileLoop.block) { block ->
-                        doVisitBlock(block, isolateBlock = false)
-                    }
-
-                    process(doWhileLoop.condition)
+            context.forBlock(bodyHolder.session) {
+                process(doWhileLoop.block) { block ->
+                    doVisitBlock(block, isolateBlock = false)
                 }
 
-                processChildren(doWhileLoop)
+                process(doWhileLoop.condition)
             }
-        }
-    }
-
-    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
-        withLocalVariableHolder(
-            onEnter = { /* empty */ },
-            onExit = exitBlock@{
-                val property = variableAssignment.calleeReference?.toResolvedPropertySymbol()?.fir
-                if (property != null && property.isEffectivelyLocal) {
-                    val type = variableAssignment.rValue.resolvedType.refinedTypeForDataFlowOrSelf
-                    this@exitBlock.visitAssignment(property, type) // Explicit receiver to avoid occasional clashes
-                }
-            }
-        ) {
-            super.visitVariableAssignment(variableAssignment)
+            processChildren(doWhileLoop)
         }
     }
 
@@ -828,12 +784,9 @@ private class ContextCollectorVisitor(
                 }
 
                 context.forConstructorBody(constructor, holder.session) {
-                    withLocalVariableHolder(onEnter = { enterFunction(constructor) }, onExit = { exitFunction() }) {
-                        processList(constructor.valueParameters)
-
-                        dumpContext(constructor, ContextKind.BODY)
-                        processBody(constructor)
-                    }
+                    processList(constructor.valueParameters)
+                    dumpContext(constructor, ContextKind.BODY)
+                    processBody(constructor)
                 }
 
                 onActive {
@@ -899,11 +852,9 @@ private class ContextCollectorVisitor(
                     context.forFunctionBody(namedFunction, holder = holder) {
                         dumpContext(namedFunction, ContextKind.BODY)
 
-                        withLocalVariableHolder(onEnter = { enterFunction(namedFunction) }, onExit = { exitFunction() }) {
-                            processList(namedFunction.contextParameters)
-                            processList(namedFunction.valueParameters)
-                            processBody(namedFunction)
-                        }
+                        processList(namedFunction.contextParameters)
+                        processList(namedFunction.valueParameters)
+                        processBody(namedFunction)
                     }
 
                     process(namedFunction.returnTypeRef)
@@ -1048,12 +999,7 @@ private class ContextCollectorVisitor(
 
                 onActive {
                     anonymousInitializer.performBodyAnalysis()
-                    withLocalVariableHolder(
-                        onEnter = { enterAnonymousInitializer(anonymousInitializer) },
-                        onExit = { exitAnonymousInitializer(anonymousInitializer) }
-                    ) {
-                        processBody(anonymousInitializer)
-                    }
+                    processBody(anonymousInitializer)
                 }
             }
         }
@@ -1071,25 +1017,22 @@ private class ContextCollectorVisitor(
                 process(anonymousFunction.receiverParameter)
 
                 onActive {
-                    withLocalVariableHolder(onEnter = { enterFunction(anonymousFunction) }, onExit = { exitFunction() }) {
-                        context.withAnonymousFunction(anonymousFunction, holder = bodyHolder) {
-                            for (contextParameter in anonymousFunction.contextParameters) {
-                                context.storeValueParameterIfNeeded(contextParameter, bodyHolder.session)
-                            }
-
-                            for (valueParameter in anonymousFunction.valueParameters) {
-                                context.storeValueParameterIfNeeded(valueParameter, bodyHolder.session)
-                            }
-
-                            dumpContext(anonymousFunction, ContextKind.BODY)
-
-                            processList(anonymousFunction.contextParameters)
-                            processList(anonymousFunction.valueParameters)
-                            process(anonymousFunction.body)
+                    context.withAnonymousFunction(anonymousFunction, holder = bodyHolder) {
+                        for (contextParameter in anonymousFunction.contextParameters) {
+                            context.storeValueParameterIfNeeded(contextParameter, bodyHolder.session)
                         }
 
-                        processChildren(anonymousFunction)
+                        for (valueParameter in anonymousFunction.valueParameters) {
+                            context.storeValueParameterIfNeeded(valueParameter, bodyHolder.session)
+                        }
+
+                        dumpContext(anonymousFunction, ContextKind.BODY)
+
+                        processList(anonymousFunction.contextParameters)
+                        processList(anonymousFunction.valueParameters)
+                        process(anonymousFunction.body)
                     }
+                    processChildren(anonymousFunction)
                 }
             }
         }
@@ -1105,9 +1048,7 @@ private class ContextCollectorVisitor(
 
             context.withAnonymousObject(anonymousObject, holder = bodyHolder) {
                 dumpContext(anonymousObject, ContextKind.BODY)
-                withLocalVariableHolder(onEnter = { enterClass(anonymousObject) }, onExit = { exitClass() }) {
-                    processChildren(anonymousObject)
-                }
+                processChildren(anonymousObject)
             }
         }
     }
@@ -1241,7 +1182,6 @@ private class ContextCollectorVisitor(
     /**
      * Visit the already resolved parts of the body.
      */
-    @OptIn(CfgInternals::class)
     private fun Processor.processBody(declaration: FirDeclaration) {
         if (!isActive) {
             return
@@ -1250,8 +1190,8 @@ private class ContextCollectorVisitor(
         val snapshot = declaration.partialBodyAnalysisState?.analysisStateSnapshot
         if (snapshot != null) {
             context.forBlock(bodyHolder.session) {
-                context.dataFlowAnalyzerContext.variableAssignmentAnalyzer
-                    .initializeForContextCollectionOnPartiallyResolvedBody(snapshot.dataFlowAnalyzerContext.variableAssignmentAnalyzer)
+                context.dataFlowAnalyzerContext.scopes.clear()
+                context.dataFlowAnalyzerContext.scopes.addAll(snapshot.dataFlowAnalyzerContext.scopes)
 
                 for (statement in snapshot.result.statements) {
                     statement.accept(this@ContextCollectorVisitor)
@@ -1265,20 +1205,6 @@ private class ContextCollectorVisitor(
         }
 
         process(declaration.body)
-    }
-
-    @OptIn(CfgInternals::class)
-    private inline fun withLocalVariableHolder(
-        onEnter: FirLocalVariableAssignmentAnalyzer.() -> Unit,
-        onExit: FirLocalVariableAssignmentAnalyzer.() -> Unit,
-        block: () -> Unit
-    ) {
-        onEnter(context.dataFlowAnalyzerContext.variableAssignmentAnalyzer)
-        try {
-            block()
-        } finally {
-            onExit(context.dataFlowAnalyzerContext.variableAssignmentAnalyzer)
-        }
     }
 
     /**
