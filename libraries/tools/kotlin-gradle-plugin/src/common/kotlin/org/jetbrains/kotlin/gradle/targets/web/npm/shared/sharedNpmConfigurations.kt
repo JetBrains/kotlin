@@ -26,8 +26,8 @@ internal val HasPlatformDisambiguator.npmSharedDependenciesConfigurationName: St
 internal val HasPlatformDisambiguator.npmSharedDependenciesResolverConfigurationName: String
     get() = extensionName("npmSharedDependenciesResolver")
 
-/** Subproject side: publishes this project's package.json files, consumed by the root's [createResolvableNpmSharedPackageJsonFilesConfiguration]. */
-internal fun Project.maybeCreateConsumableNpmSharedPackageJsonFilesConfiguration(platform: HasPlatformDisambiguator): Configuration =
+/** Subproject side: publishes this project's package.json files, consumed by the root's [createSubprojectPackageJsonsResolver]. */
+internal fun Project.maybeCreatePackageJsonsForRootProject(platform: HasPlatformDisambiguator): Configuration =
     configurations.maybeCreateConsumable(platform.npmSharedPackageJsonFilesConfigurationName) {
         setInvisibleIfSupported()
         description = "Kotlin package.json files of this project for the shared-npm-project."
@@ -35,8 +35,8 @@ internal fun Project.maybeCreateConsumableNpmSharedPackageJsonFilesConfiguration
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
     }
 
-/** Root side: consumes the package.json files published by [maybeCreateConsumableNpmSharedPackageJsonFilesConfiguration] of the projects declared on the bucket. */
-internal fun Project.createResolvableNpmSharedPackageJsonFilesConfiguration(platform: HasPlatformDisambiguator): Configuration {
+/** Root side: consumes the package.json files published by [maybeCreatePackageJsonsForRootProject] of the projects declared on the bucket. */
+internal fun Project.createSubprojectPackageJsonsResolver(platform: HasPlatformDisambiguator): Configuration {
     val sharedDependencies = configurations.createDependencyScope(platform.npmSharedDependenciesConfigurationName) {
         setInvisibleIfSupported()
         description = "Projects contributing to the shared-npm-project."

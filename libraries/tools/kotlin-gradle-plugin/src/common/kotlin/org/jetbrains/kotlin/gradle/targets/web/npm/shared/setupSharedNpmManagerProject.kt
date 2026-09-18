@@ -23,7 +23,7 @@ internal fun setupSharedNpmProject(
     platform: HasPlatformDisambiguator,
     rootDirectoryName: String,
 ) {
-    val sharedDependenciesResolver = project.createResolvableNpmSharedPackageJsonFilesConfiguration(platform)
+    val sharedDependenciesResolver = project.createSubprojectPackageJsonsResolver(platform)
 
     project.registerTask<KotlinSetupSharedNpmProjectTask>(platform.setupSharedNpmProjectTaskName) { task ->
         task.description =
