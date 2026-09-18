@@ -153,7 +153,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
-    val analyzer: AbstractTreeRawFirBuilder<Node, Type>,
+    val rootBuilder: AbstractTreeRawFirBuilder<Node, Type>,
     context: Context<Node>,
     session: FirSession,
     val expressionConverter: TreeRawFirExpressionBuilderProxy<Node, Type>,
@@ -746,7 +746,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                         //parse data class
                         if (calculatedModifiers.isDataClass() && firPrimaryConstructor != null) {
                             val zippedParameters = properties.map { it.source!!.toNode() to it }
-                            generateDataClassMembers(
+                            DataClassMembersGenerator(
                                 primaryConstructor ?: node,
                                 this,
                                 firPrimaryConstructor,
@@ -765,8 +765,8 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                                             }
                                         }
                                     }
-                                },
-                            )
+                                }
+                            ).generate()
                         }
 
                         if (calculatedModifiers.isEnum()) {
@@ -3055,6 +3055,10 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
+    private fun Node.getReferencedNameAsName(): Name {
+        return asText.nameAsSafeName()
+    }
+
     override fun convertScript(
         script: Node,
         scriptSource: KtSourceElement,
@@ -3134,44 +3138,44 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     }
 
     override fun Node.toFirSourceElement(kind: KtFakeSourceElementKind?): KtSourceElement {
-        return with(analyzer) { toFirSourceElement(kind) }
+        return with(rootBuilder) { toFirSourceElement(kind) }
     }
 
     override fun KtSourceElement.toNode(): Node {
-        return with(analyzer) { toNode() }
+        return with(rootBuilder) { toNode() }
     }
 
     override val Node.elementType: Type
-        get() = with(analyzer) { elementType }
+        get() = with(rootBuilder) { elementType }
     override val Node.asText: String
-        get() = with(analyzer) { asText }
+        get() = with(rootBuilder) { asText }
 
     override val Node?.receiverExpression: Node?
-        get() = with(analyzer) { receiverExpression }
+        get() = with(rootBuilder) { receiverExpression }
     override val Node?.selectorExpression: Node?
-        get() = with(analyzer) { selectorExpression }
+        get() = with(rootBuilder) { selectorExpression }
 
     override fun Type.typeToTokenId(): Int {
-        return with(analyzer) { typeToTokenId() }
+        return with(rootBuilder) { typeToTokenId() }
     }
 
     override fun Node.getParent(): Node? {
-        return with(analyzer) { getParent() }
+        return with(rootBuilder) { getParent() }
     }
 
     override fun Node.getChildren(): List<Node> {
-        return with(analyzer) { getChildren() }
+        return with(rootBuilder) { getChildren() }
     }
 
     override val Node?.indexExpressions: List<Node>?
-        get() = with(analyzer) { indexExpressions }
+        get() = with(rootBuilder) { indexExpressions }
 
     override fun KtSourceElement.isChildInParentheses(): Boolean {
-        return with(analyzer) { isChildInParentheses()}
+        return with(rootBuilder) { isChildInParentheses()}
     }
 
     override fun Node?.getChildrenAsArray(): Array<out Node?> {
-        return with(analyzer) { getChildrenAsArray() }
+        return with(rootBuilder) { getChildrenAsArray() }
     }
 
     private fun Node.isExpression(): Boolean = toTokenId().isExpression()

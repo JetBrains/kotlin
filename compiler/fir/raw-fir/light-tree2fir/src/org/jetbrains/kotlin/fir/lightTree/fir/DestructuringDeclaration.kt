@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.analysis.NodeTypeAnalyzer
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.DestructuringContext
 import org.jetbrains.kotlin.fir.builder.DestructuringKind
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.generateTemporaryVariable
+import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -36,7 +36,7 @@ data class DestructuringDeclaration(
     val annotations: List<FirAnnotation>,
 ) {
     fun toFirDestructingDeclaration(
-        builder: NodeTypeAnalyzer<*, *>,
+        builder: AbstractTreeRawFirBuilder<*, *>,
         context: Context<*>,
         moduleData: FirModuleData,
         tmpVariable: Boolean = true,
@@ -95,7 +95,7 @@ class DestructuringEntry(
     }
 }
 
-fun NodeTypeAnalyzer<*, *>.addDestructuringStatements(
+fun AbstractTreeRawFirBuilder<*, *>.addDestructuringStatements(
     destination: MutableList<in FirVariable>,
     context: Context<*>,
     moduleData: FirModuleData,
