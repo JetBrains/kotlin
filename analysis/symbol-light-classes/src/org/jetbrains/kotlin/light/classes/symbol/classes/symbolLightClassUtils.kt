@@ -61,14 +61,14 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.*
 
 context(_: KaSession)
-internal fun createSymbolLightClassNoCache(classOrObject: KaClassSymbol, ktModule: KaModule): KtLightClass? = when (classOrObject) {
+internal fun createSymbolLightClassNoCache(classOrObject: KaClassSymbol, useSiteModule: KaModule): KtLightClass? = when (classOrObject) {
     is KaAnonymousObjectSymbol -> when (val containingSymbol = classOrObject.containingSymbol) {
         is KaEnumEntrySymbol -> lightClassForEnumEntryInitializer(containingSymbol)
-        else -> SymbolLightClassForAnonymousObject(classOrObject, ktModule)
+        else -> SymbolLightClassForAnonymousObject(classOrObject, useSiteModule)
     }
     is KaNamedClassSymbol -> createLightClassNoCache(
         classOrObject,
-        ktModule,
+        useSiteModule,
     )
 }
 
@@ -84,20 +84,20 @@ internal fun KtClassOrObject.contentModificationTrackers(): List<ModificationTra
 
 internal fun createLightClassNoCache(
     classSymbol: KaNamedClassSymbol,
-    ktModule: KaModule,
+    useSiteModule: KaModule,
 ): SymbolLightClassBase = when (classSymbol.classKind) {
     KaClassKind.INTERFACE -> SymbolLightClassForInterface(
-        useSiteModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
     )
 
     KaClassKind.ANNOTATION_CLASS -> SymbolLightClassForAnnotationClass(
-        useSiteModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
     )
 
     else -> SymbolLightClassForClassOrObject(
-        useSiteModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
     )
 }

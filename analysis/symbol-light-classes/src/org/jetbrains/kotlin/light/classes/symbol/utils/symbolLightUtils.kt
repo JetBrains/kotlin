@@ -329,8 +329,8 @@ internal val SymbolLightClassBase.interfaceIfDefaultImpls: SymbolLightClassForIn
 internal val SymbolLightClassBase.isDefaultImplsForInterfaceWithTypeParameters: Boolean
     get() = interfaceIfDefaultImpls?.hasTypeParameters() == true
 
-internal fun KaSymbolPointer<*>.isValid(ktModule: KaModule): Boolean =
-    analyzeForLightClasses(ktModule) {
+internal fun KaSymbolPointer<*>.isValid(useSiteModule: KaModule): Boolean =
+    analyzeForLightClasses(useSiteModule) {
         restoreSymbol() != null
     }
 
@@ -341,9 +341,9 @@ internal inline fun <T : KaSymbol> compareSymbolPointers(
 ): Boolean = left === right || left.pointsToTheSameSymbolAs(right)
 
 internal inline fun <T : KaSymbol, R> KaSymbolPointer<T>.withSymbol(
-    ktModule: KaModule,
+    useSiteModule: KaModule,
     crossinline action: context(KaSession) (T) -> R,
-): R = analyzeForLightClasses(ktModule) {
+): R = analyzeForLightClasses(useSiteModule) {
     action(
         restoreSymbolOrThrowIfDisposed(this@withSymbol)
     )

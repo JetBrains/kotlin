@@ -60,10 +60,10 @@ internal class GranularModifiersBox(
             }.toPersistentHashMap()
 
         internal fun computeVisibilityForMember(
-            ktModule: KaModule,
+            useSiteModule: KaModule,
             declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
         ): PersistentMap<String, Boolean> {
-            val visibility = declarationPointer.withSymbol(ktModule) {
+            val visibility = declarationPointer.withSymbol(useSiteModule) {
                 it.toPsiVisibilityForMember()
             }
 
@@ -71,11 +71,11 @@ internal class GranularModifiersBox(
         }
 
         internal fun computeVisibilityForClass(
-            ktModule: KaModule,
+            useSiteModule: KaModule,
             declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
             isTopLevel: Boolean,
         ): PersistentMap<String, Boolean> {
-            val visibility = declarationPointer.withSymbol(ktModule) {
+            val visibility = declarationPointer.withSymbol(useSiteModule) {
                 it.toPsiVisibilityForClass(!isTopLevel)
             }
 
@@ -83,10 +83,10 @@ internal class GranularModifiersBox(
         }
 
         internal fun computeSimpleModality(
-            ktModule: KaModule,
+            useSiteModule: KaModule,
             declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
         ): PersistentMap<String, Boolean> {
-            val modality = declarationPointer.withSymbol(ktModule) {
+            val modality = declarationPointer.withSymbol(useSiteModule) {
                 if ((it as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS) {
                     enumClassModality(it)
                 } else {
