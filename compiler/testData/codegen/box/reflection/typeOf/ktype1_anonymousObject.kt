@@ -1,5 +1,5 @@
-// DONT_TARGET_EXACT_BACKEND: JVM_IR
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR, JVM_IR_SERIALIZE
+// DONT_TARGET_EXACT_BACKEND: JVM
+// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // ^ In Kotlin/JVM, KType.toString() of an anonymous object returns a synthetic name, not "???".
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: 2.2.0
 // ^^^ In 2.2.0 there was old value `(non-denotable type)`

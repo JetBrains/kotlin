@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 annotation class MyReplaceWith(val x: String, vararg val y: String)
 

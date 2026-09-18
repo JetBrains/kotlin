@@ -40,7 +40,7 @@ abstract class AbstractKotlinCompilerWithTargetBackendTest @UnspecifiedTargetBac
 
 @OptIn(UnspecifiedTargetBackend::class)
 @MustRunOnChangesInJvm
-abstract class AbstractKotlinCompilerJvmTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
+abstract class AbstractKotlinCompilerJvmTest : AbstractKotlinCompilerWithTargetBackendTest(JVM)
 
 @OptIn(UnspecifiedTargetBackend::class)
 @MustRunOnChangesInJs

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 
 enum class A { V1 }
 
@@ -20,16 +20,14 @@ fun testStatement_empty(a: A) {
 fun testParenthesized_throwsJvm(a: A) {
     (when (a) {
         A.V1 -> 1
-        // JVM: else -> throw
-        // JVM_IR: else -> {}
+        // else -> {}
     })
 }
 
 fun testAnnotated_throwsJvm(a: A) {
     @Suppress("") when (a) {
         A.V1 -> 1
-        // JVM: else -> throw
-        // JVM_IR: else -> {}
+        // else -> {}
     }
 }
 
@@ -56,8 +54,7 @@ fun testIfTheElseParenthesized_throwsJvm(a: A, flag: Boolean) {
     else {
         when (a) {
             A.V1 -> 1
-            // JVM: else -> throw
-            // JVM_IR: else -> {}
+            // else -> {}
         }
     })
 }
@@ -69,8 +66,7 @@ fun testIfTheElseAnnotated_throwsJvm(a: A, flag: Boolean) {
     else {
         when (a) {
             A.V1 -> 1
-            // JVM: else -> throw
-            // JVM_IR: else -> {}
+            // else -> {}
         }
     }
 }

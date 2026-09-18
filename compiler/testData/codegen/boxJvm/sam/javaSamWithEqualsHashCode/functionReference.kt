@@ -1,5 +1,5 @@
 // LANGUAGE: +JavaSamConversionEqualsHashCode
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // FULL_JDK
 
 fun foo() {}

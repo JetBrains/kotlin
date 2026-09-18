@@ -28,8 +28,6 @@ fun box(): String {
     return "OK"
 }
 
-// JVM IR optimizes out the 2nd reversed() call.
-
 // 0 iterator
 // 0 getStart
 // 0 getEnd

@@ -30,7 +30,7 @@ fun box(): String {
     return InlineFunCallSite().render()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:30 box
 // InlineFunCallSite.kt:10 <init>
 // test.kt:30 box

@@ -63,7 +63,7 @@ abstract class AbstractLLBlackBoxTestBase : AbstractLLCompilerBasedTest() {
 
     override fun shouldSkipTest(filePath: String, configuration: NonGroupingStageTestConfiguration): Boolean {
         val testDataFile = File(filePath)
-        val targetBackend = TargetBackend.JVM_IR
+        val targetBackend = TargetBackend.JVM
         if (!InTextDirectivesUtils.isCompatibleTarget(targetBackend, testDataFile)) return true
 
         return InTextDirectivesUtils.isIgnoredTarget(

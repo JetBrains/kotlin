@@ -1,5 +1,5 @@
 --- a/kt48708.ir.txt
-+++ b/kt48708.ir.jvm_ir.txt
++++ b/kt48708.ir.jvm.txt
 @@ -15,7 +15,7 @@
              if: CONST Boolean type=kotlin.Boolean value=true
              then: BLOCK type=kotlin.Int origin=null

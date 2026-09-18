@@ -30,7 +30,7 @@ suspend fun box() {
 
 // FIXME(JS_IR): KT-54657
 
-// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
 // test.kt:27 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:28 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:21 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\28:int=0:int
@@ -47,7 +47,7 @@ suspend fun box() {
 // test.kt:28 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:29 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, a:kotlin.Unit=kotlin.Unit
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:27 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:28 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:21 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar:int=0:int
@@ -94,12 +94,12 @@ suspend fun box() {
 // test.kt:16 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref null $kotlin.Any)=null, $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (8, 13, 8, 8, 17)
 // test.kt:17 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref null $kotlin.Any)=null, $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4)
 // test.kt:22 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref null $kotlin.Any)=null, $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (48, 48, 48, 48, 48, 48)
-// test.kt:42 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref null $kotlin.Any)=null, $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (208, 208, 161)
+// test.kt:42 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref null $kotlin.Any)=null, $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (211, 211, 164)
 // test.kt:22 $box$lambda.invoke: $ucont:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (48, 48, 48, 48, 48)
-// test.kt:42 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (161, 161, 161, 161, 161)
+// test.kt:42 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (164, 164, 164, 164, 164)
 // test.kt:29 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1)
 // test.kt:21 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4, 4)
-// test.kt:42 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (161, 161, 161, 161, 161)
+// test.kt:42 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref null $kotlin.Unit)=null, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (164, 164, 164, 164, 164)
 // test.kt:28 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref $kotlin.Unit)=(ref $kotlin.Unit), $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4)
 // test.kt:29 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $a:(ref $kotlin.Unit)=(ref $kotlin.Unit), $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (0)
 // test.kt:21 $SuspendLambda_0.doResume: $<this>:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (4)

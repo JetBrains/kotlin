@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // FILE: AbstractBlackBoxCodegenTest.java
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {}

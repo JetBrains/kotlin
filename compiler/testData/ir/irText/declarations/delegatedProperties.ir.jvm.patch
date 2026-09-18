@@ -1,5 +1,5 @@
 --- a/delegatedProperties.ir.txt
-+++ b/delegatedProperties.ir.jvm_ir.txt
++++ b/delegatedProperties.ir.jvm.txt
 @@ -23,9 +23,9 @@
                    RETURN type=kotlin.Nothing from='local final fun test1 (): kotlin.Int declared in <root>.<get-test1>'
                      CALL 'public final fun <get-test1> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null

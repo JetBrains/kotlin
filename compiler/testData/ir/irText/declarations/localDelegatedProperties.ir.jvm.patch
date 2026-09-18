@@ -1,5 +1,5 @@
 --- a/localDelegatedProperties.ir.txt
-+++ b/localDelegatedProperties.ir.jvm_ir.txt
++++ b/localDelegatedProperties.ir.jvm.txt
 @@ -19,13 +19,13 @@
                  ARG thisRef: CONST Null type=kotlin.Nothing? value=null
                  ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val x: kotlin.Int by (...)'

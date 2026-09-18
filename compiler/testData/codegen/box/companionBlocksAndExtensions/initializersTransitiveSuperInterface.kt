@@ -1,6 +1,6 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// IGNORE_BACKEND: JVM_IR
-// JVM_IR KT-85853
+// IGNORE_BACKEND: JVM
+// JVM KT-85853
 
 var initLog = ""
 

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 
 // FILE: Test.java

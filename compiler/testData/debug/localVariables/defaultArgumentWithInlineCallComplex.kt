@@ -20,7 +20,7 @@ fun box() {
     g()
 }
 
-// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
 // test.kt:20 box:
 // test.kt:16 box: $i$f$g\1\20:int=0:int
 // test.kt:9 box: $i$f$g\1\20:int=0:int
@@ -35,7 +35,7 @@ fun box() {
 // test.kt:17 box: $i$f$g\1\20:int=0:int
 // test.kt:21 box:
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:20 box:
 // test.kt:16 box: $i$f$g:int=0:int
 // test.kt:9 box: $i$f$g:int=0:int

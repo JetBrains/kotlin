@@ -14,7 +14,7 @@ fun box(): String {
     return "OK"
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:9 box
 // test.kt:5 box
 // test.kt:9 box

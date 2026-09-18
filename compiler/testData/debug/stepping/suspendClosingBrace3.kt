@@ -19,7 +19,7 @@ suspend fun box() {
 suspend fun funWithSuspendLast(i: Int, s: String) {
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:5 box
 // test.kt:6 box
 // test.kt:8 box

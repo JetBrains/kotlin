@@ -23,7 +23,7 @@ fun box() {
     compute()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:23 box:
 // test.kt:7 compute:
 // test.kt:8 compute: result:java.lang.String="":java.lang.String

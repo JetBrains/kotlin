@@ -17,7 +17,7 @@ fun box() {
     f(1L)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:16 box:
 // test.kt:11 box:
 // test.kt:12 box: value\1:long=42:long, $i$f$f\1\16:int=0:int

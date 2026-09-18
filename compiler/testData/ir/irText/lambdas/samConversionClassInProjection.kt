@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JKLIB
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // SAM_CONVERSIONS: CLASS
 fun interface Cmp<T> {
     fun compare(a: T, b: T): Int

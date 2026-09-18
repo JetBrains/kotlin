@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // MODULE: lib
 // JVM_DEFAULT_MODE: no-compatibility

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR, JVM_IR_SERIALIZE
+// IGNORE_BACKEND: JVM
 // ^^^ Local inline functions are not yet supported.
 // FILE: lib.kt
 package foo

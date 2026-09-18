@@ -29,7 +29,7 @@ fun box() {
     stringSwitch("nope")
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:27 box
 // test.kt:5 stringSwitch
 // test.kt:6 stringSwitch

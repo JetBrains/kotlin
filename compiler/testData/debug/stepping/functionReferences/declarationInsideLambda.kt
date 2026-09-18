@@ -11,7 +11,7 @@ fun box(): String {
     }
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:6 box
 // test.kt:3 foo
 // test.kt:10 box$lambda$0

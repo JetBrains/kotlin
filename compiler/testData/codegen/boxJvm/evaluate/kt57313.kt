@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 abstract class AsyncJob {
     abstract suspend fun execute(lifetime: AsyncLifetime, attempt: Int, due: DateTime, context: JobContext): JobContext

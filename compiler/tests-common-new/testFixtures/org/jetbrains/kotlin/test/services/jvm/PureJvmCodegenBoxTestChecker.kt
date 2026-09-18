@@ -31,7 +31,7 @@ class PureJvmCodegenBoxTestChecker(testServices: TestServices) : AfterAnalysisCh
     override fun check(thereWereFailures: Boolean) {
         val directives = testServices.moduleStructure.allDirectives
         val targetBackends = directives[TARGET_BACKEND].distinct()
-        val hasSingleJvmTarget = targetBackends.singleOrNull().let { it == TargetBackend.JVM || it == TargetBackend.JVM_IR }
+        val hasSingleJvmTarget = targetBackends.singleOrNull() == TargetBackend.JVM
 
         @OptIn(TestInfrastructureInternals::class)
         val testDataPath = (testServices.testConfiguration as NonGroupingStageTestConfigurationImpl).originalBuilder.testDataPath

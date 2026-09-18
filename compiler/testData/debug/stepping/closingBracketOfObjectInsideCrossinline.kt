@@ -28,7 +28,7 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:21 box
 // test.kt:22 box
 // test.kt:9 box

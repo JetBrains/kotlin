@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // ISSUE: KT-66067
 // FILE: Java1.java
 public class Java1<T extends Number> {

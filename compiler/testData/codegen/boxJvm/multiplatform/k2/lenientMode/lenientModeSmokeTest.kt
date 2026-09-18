@@ -1,7 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // LENIENT_MODE
-// IGNORE_HMPP: JVM_IR
+// IGNORE_HMPP: JVM
 
 // MODULE: common
 // FILE: common.kt
