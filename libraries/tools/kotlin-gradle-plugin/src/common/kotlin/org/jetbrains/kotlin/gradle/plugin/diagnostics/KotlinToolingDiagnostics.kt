@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.prettyName
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsVersion
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -2642,6 +2643,27 @@ internal object KotlinToolingDiagnostics {
                             "'apply false' to the plugin line. As a last resort, set the " +
                             "kotlin.pluginLoadedInMultipleProjects.ignore=true property to suppress the error. " +
                             "See: https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl"
+                }
+        }
+    }
+
+    internal object PreInstalledNodeJsVersionMismatch : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(
+            installedVersion: NodeJsVersion,
+            requestedVersion: NodeJsVersion,
+            command: String = "node",
+        ) = build {
+            title("Pre-installed Node.js version mismatch")
+                .description {
+                    "Node.js $installedVersion found by '$command' does not match the requested " +
+                            "version $requestedVersion. The requested version cannot be provisioned, because " +
+                            "the Node.js toolchain is configured to use a pre-installed Node.js."
+                }
+                .solution {
+                    "Please update the pre-installed Node.js or configure the Kotlin Gradle Plugin to download Node.js by setting kotlin.js.node.toolchain=DOWNLOAD."
                 }
         }
     }

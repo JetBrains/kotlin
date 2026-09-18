@@ -13,7 +13,11 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.BuildServiceUsingKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsServiceName
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.warnIfNodeJsUnsupported
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -22,9 +26,11 @@ abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
     private val objects: ObjectFactory,
     private val providers: ProviderFactory,
     private val execOperations: ExecOperations,
-) : NodeJsToolchainService<PreInstalledNodeJsToolchainService.Parameters> {
+) : NodeJsToolchainService<PreInstalledNodeJsToolchainService.Parameters>,
+    BuildServiceUsingKotlinToolingDiagnostics<PreInstalledNodeJsToolchainService.Parameters> {
 
-    abstract class Parameters : NodeJsToolchainService.Parameters {
+    abstract class Parameters : NodeJsToolchainService.Parameters,
+        BuildServiceUsingKotlinToolingDiagnostics.Parameters {
         abstract val nodeJsExecutable: Property<String>
     }
 
@@ -36,12 +42,16 @@ abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
             val command = parameters.nodeJsExecutable.get()
             val (installedVersion, installedPlatform) = detectInstalledNodeJs(command)
 
+            logger.warnIfNodeJsUnsupported(installedVersion)
+
             val requestedVersion = nodeJsRequest.version.orNull
             if (requestedVersion != null && requestedVersion.normalized != installedVersion.normalized) {
-                logger.warn(
-                    "w: Node.js $installedVersion found by '$command' does not match the requested " +
-                            "version $requestedVersion. The requested version cannot be provisioned, because " +
-                            "the Node.js toolchain is configured to use a pre-installed Node.js."
+                reportDiagnostic(
+                    KotlinToolingDiagnostics.PreInstalledNodeJsVersionMismatch(
+                        installedVersion = installedVersion,
+                        requestedVersion = requestedVersion,
+                        command = command,
+                    )
                 )
             }
             nodeJsRequest.platform.orNull?.let { platform ->
@@ -81,22 +91,34 @@ abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
             )
         }
 
-        val parts = output.toString(Charsets.UTF_8.name()).trim().split(DELIMITER)
-        check(parts.size == 3) { "Unexpected output of '$command -p $DETECT_SCRIPT': $parts" }
-
-        val (version, os, arch) = parts
-        return NodeJsVersion(version) to BuildPlatform(if (os == "win32") WINDOWS_OS_NAME else os, arch)
+        return parseDetectScriptOutput(output.toString(Charsets.UTF_8.name()), command)
     }
 
     companion object {
-        private const val DELIMITER: Char = ' '
-        private const val DETECT_SCRIPT = "[process.versions.node, process.platform, process.arch].join(`$DELIMITER`)"
+        private const val DETECT_SCRIPT = "[process.versions.node, process.platform, process.arch]"
+
+        internal fun parseDetectScriptOutput(output: String, command: String): Pair<NodeJsVersion, BuildPlatform> {
+            val trimmed = output.trim()
+            val content = if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+                trimmed.substring(1, trimmed.length - 1)
+            } else {
+                throw IllegalStateException("Unexpected output of '$command -p $DETECT_SCRIPT': $output")
+            }
+            val parts = content.split(',').map { it.trim().trim('\'', '"') }
+            if (parts.size != 3 || parts.any { it.isBlank() }) {
+                throw IllegalStateException("Unexpected output of '$command -p $DETECT_SCRIPT': $output")
+            }
+
+            val (version, os, arch) = parts
+            return NodeJsVersion(version) to BuildPlatform(if (os == "win32") WINDOWS_OS_NAME else os, arch)
+        }
 
         internal fun registerIfAbsent(project: Project): Provider<PreInstalledNodeJsToolchainService> {
             return project.gradle.sharedServices.registerIfAbsent(
                 nodeJsServiceName,
                 PreInstalledNodeJsToolchainService::class.java
             ) { spec ->
+                spec.parameters.setupKotlinToolingDiagnosticsParameters(project)
                 spec.parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainLocalPath.getOrElse("node"))
             }
         }

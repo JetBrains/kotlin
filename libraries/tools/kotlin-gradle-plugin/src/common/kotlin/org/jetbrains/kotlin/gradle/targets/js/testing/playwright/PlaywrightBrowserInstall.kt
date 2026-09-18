@@ -52,7 +52,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
         } else objects.property()
     }
 
-    @get:Input
+    @get:Internal
     internal val nodeJsRequest: Provider<NodeJsRequest> = objects.property(objects.newInstance<NodeJsRequest>().also {
         it.version.convention(compilation.nodeJsEnvSpec.version.map { NodeJsVersion(it) })
         it.platform.convention(compilation.nodeJsEnvSpec.platform.map { BuildPlatform(it.name, it.arch) })

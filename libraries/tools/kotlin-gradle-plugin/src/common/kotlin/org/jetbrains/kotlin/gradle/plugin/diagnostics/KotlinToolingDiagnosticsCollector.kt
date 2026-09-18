@@ -85,10 +85,8 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         val options = context.renderingOptions
         if (diagnostic.isSuppressed(options)) return
 
-        if (!forceRender) {
-            rawDiagnosticsFromProject.compute(projectPath) { _, previousListIfAny ->
-                previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
-            }
+        rawDiagnosticsFromProject.compute(projectPath) { _, previousListIfAny ->
+            previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
         }
 
         if (isTransparent || forceRender) {
