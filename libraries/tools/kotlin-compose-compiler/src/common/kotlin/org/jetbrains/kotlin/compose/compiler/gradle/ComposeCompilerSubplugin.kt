@@ -109,13 +109,6 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
                                 featureFlags
                             }
                         }
-                        .zip(composeExtension.enableStrongSkippingMode) { featureFlags, strongSkippingMode ->
-                            if (!strongSkippingMode && !featureFlags.contains(ComposeFeatureFlag.StrongSkipping.disabled())) {
-                                featureFlags + ComposeFeatureFlag.StrongSkipping.disabled()
-                            } else {
-                                featureFlags
-                            }
-                        }
                         .zip(composeExtension.enableNonSkippingGroupOptimization) { featureFlags, nonSkippingGroupOptimization ->
                             if (nonSkippingGroupOptimization && !featureFlags.contains(ComposeFeatureFlag.OptimizeNonSkippingGroups)) {
                                 featureFlags + ComposeFeatureFlag.OptimizeNonSkippingGroups

@@ -16,18 +16,9 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.jupiter.api.Test
 
 class ComposeModuleMetricsTests : AbstractMetricsTransformTest() {
-    override fun CompilerConfiguration.updateConfiguration() {
-        // Tests in this file are about testing the output, so we want non-skippable composables
-        put(
-            ComposeConfiguration.FEATURE_FLAGS,
-            listOf(FeatureFlag.StrongSkipping.disabledName)
-        )
-    }
-
     @Test
     fun testStableAndUnstableClassesTxt() = assertClasses(
         """
@@ -98,7 +89,7 @@ class ComposeModuleMetricsTests : AbstractMetricsTransformTest() {
               stable d: Int = @static 0
               unused stable content: Function2<Composer, Int, Unit>? = @static <expression>
             )
-            restartable fun E(
+            restartable skippable fun E(
               unstable e: Unstable
             )
             restartable skippable fun F(
@@ -163,7 +154,7 @@ class ComposeModuleMetricsTests : AbstractMetricsTransformTest() {
             B,B,1,1,1,0,0,0,0,0,1,0,
             C,C,1,1,1,0,0,0,0,0,1,0,
             D,D,1,1,1,0,0,0,1,0,2,0,
-            E,E,1,0,1,0,0,0,0,0,1,0,
+            E,E,1,1,1,0,0,0,0,0,1,0,
             F,F,1,1,1,0,0,0,0,0,1,0,
         """
     )
@@ -208,7 +199,6 @@ class ComposeModuleMetricsTests : AbstractMetricsTransformTest() {
               "composableLambdas": 0,
               "totalLambdas": 0,
               "featureFlags": {
-                "StrongSkipping": false,
                 "IntrinsicRemember": true,
                 "OptimizeNonSkippingGroups": true,
                 "PausableComposition": true

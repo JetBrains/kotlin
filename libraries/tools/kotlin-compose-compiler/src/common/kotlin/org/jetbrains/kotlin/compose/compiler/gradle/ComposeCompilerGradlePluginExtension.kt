@@ -139,22 +139,6 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
     val enableNonSkippingGroupOptimization: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     /**
-     * Enable strong skipping mode.
-     *
-     * Strong Skipping is a mode that improves the runtime performance of your application by skipping unnecessary
-     * invocations of composable functions for which the parameters have not changed. In particular, when enabled, Composables with
-     * unstable parameters become skippable and lambdas with unstable captures will be memoized.
-     *
-     * For more information, see this link:
-     *  - [AndroidX strong skipping](https://github.com/JetBrains/kotlin/blob/master/plugins/compose/design/strong-skipping.md)
-     */
-    @Deprecated(
-        message = "Use the featureFlags option instead. Will be removed in Kotlin 2.5.0",
-        level = DeprecationLevel.ERROR
-    )
-    val enableStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
-
-    /**
      * Path to the stability configuration file.
      *
      * For more information, see this link:
@@ -236,13 +220,11 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
         .setProperty(ComposeFeatureFlag::class.java)
         .convention(
             // Add features that used to be added by deprecated options. No other features should be added this way.
-            enableIntrinsicRemember.zip(enableStrongSkippingMode) { intrinsicRemember, strongSkippingMode ->
+            enableIntrinsicRemember.zip(enableNonSkippingGroupOptimization) { intrinsicRemember, nonSkippingGroupsOptimization ->
                 setOfNotNull(
                     if (!intrinsicRemember) ComposeFeatureFlag.IntrinsicRemember.disabled() else null,
-                    if (!strongSkippingMode) ComposeFeatureFlag.StrongSkipping.disabled() else null
+                    if (nonSkippingGroupsOptimization) ComposeFeatureFlag.OptimizeNonSkippingGroups else null
                 )
-            }.zip(enableNonSkippingGroupOptimization) { features, nonSkippingGroupsOptimization ->
-                if (nonSkippingGroupsOptimization) features + ComposeFeatureFlag.OptimizeNonSkippingGroups else features
             }
         )
 
