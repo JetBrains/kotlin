@@ -6,10 +6,20 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_COUNT_LIMIT
-import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_DIRECTORY
-import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_SIZE_LIMIT
-import org.jetbrains.kotlin.daemon.common.DaemonOptions
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.DAEMON_RUN_DIR_PATH
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.JVM_ARGUMENTS
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_COUNT_LIMIT
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_SIZE_LIMIT
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_PATH
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY_MILLIS
+import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
+import org.jetbrains.kotlin.daemon.client.CompileServiceSession
+import org.jetbrains.kotlin.daemon.common.*
+import java.io.File
+import java.net.URLClassLoader
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -40,13 +50,25 @@ internal class DaemonExecutionPolicyImpl private constructor(
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
-    @OptIn(UseFromImplModuleRestricted::class)
-    private operator fun <V> set(key: Option<V>, value: V) {
+    operator fun <V> set(key: Option<V>, value: V) {
         options[key] = value
     }
 
     override fun deepCopy(): DaemonExecutionPolicyImpl {
         return DaemonExecutionPolicyImpl(options.deepCopy())
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DaemonExecutionPolicyImpl
+
+        return options == other.options
+    }
+
+    override fun hashCode(): Int {
+        return options.hashCode()
     }
 
     class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
@@ -107,5 +129,61 @@ internal class DaemonExecutionPolicyImpl private constructor(
          * @since 2.4.0
          */
         val LOGS_FILE_COUNT_LIMIT: Option<Int?> = Option("LOGS_FILE_COUNT_LIMIT", DEFAULT_LOG_FILE_COUNT_LIMIT)
+    }
+}
+
+private fun getCurrentClasspath() =
+    (DaemonExecutionPolicyImpl::class.java.classLoader as URLClassLoader).urLs.map { transformUrlToFile(it) }
+
+internal fun DaemonExecutionPolicyImpl.createDaemonConnection(
+    loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+    sessionIsAliveFlagFile: Lazy<File>,
+): CompileServiceSession? {
+    val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
+
+    val daemonLogOptions = DaemonLogOptions(
+        logsPath = this[LOGS_PATH].absolutePathStringOrThrow(),
+        logsFileSizeLimit = this[LOGS_FILE_SIZE_LIMIT] ?: 0,
+        logsFileCountLimit = this[LOGS_FILE_COUNT_LIMIT] ?: Int.MAX_VALUE,
+    )
+    Files.createDirectories(this[LOGS_PATH])
+
+    val additionalJvmArguments = mutableListOf<String>()
+    val daemonOptions = configureDaemonOptions(
+        DaemonOptions().apply {
+            this@createDaemonConnection[SHUTDOWN_DELAY_MILLIS]?.let { shutdownDelay ->
+                shutdownDelayMilliseconds = shutdownDelay
+            }
+
+            runFilesPath = this@createDaemonConnection[DAEMON_RUN_DIR_PATH].absolutePathStringOrThrow()
+            additionalJvmArguments += "D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${runFilesPath}"
+        })
+
+    val jvmOptions = configureDaemonJVMOptions(
+        inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true
+    ).also { opts ->
+        val effectiveJvmArguments = additionalJvmArguments + (this[JVM_ARGUMENTS] ?: emptyList())
+        if (effectiveJvmArguments.isNotEmpty()) {
+            opts.jvmParams.addAll(
+                effectiveJvmArguments.filterExtractProps(opts.mappers, "", opts.restMapper)
+            )
+        }
+    }
+
+    return KotlinCompilerRunnerUtils.newDaemonConnection(
+        compilerId,
+        clientIsAliveFile,
+        sessionIsAliveFlagFile.value,
+        loggerAdapter,
+        loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
+        daemonJVMOptions = jvmOptions,
+        daemonOptions = daemonOptions,
+        daemonLogOptions = daemonLogOptions,
+    )?.also { compileServiceSession ->
+        if (loggerAdapter.kotlinLogger.isDebugEnabled) {
+            compileServiceSession.compileService.getDaemonJVMOptions().takeIf { it.isGood }?.let { jvmOpts ->
+                loggerAdapter.kotlinLogger.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
+            }
+        }
     }
 }

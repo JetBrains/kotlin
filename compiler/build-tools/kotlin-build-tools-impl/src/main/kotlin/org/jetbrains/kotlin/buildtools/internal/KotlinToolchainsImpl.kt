@@ -77,6 +77,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             Executors.newCachedThreadPool()
         }
         private val executor by executorDelegate
+        private val daemonConnectionRegistry = DaemonConnectionRegistry()
 
         /**
          * Pins the shared application environment to this session so it is reused across build operations and
@@ -106,7 +107,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
                     projectId,
                     executionPolicy,
                     logger,
-                    ExecutionContext(sessionIsAliveFlagFile, classloadersCacheWithLogger)
+                    ExecutionContext(sessionIsAliveFlagFile, classloadersCacheWithLogger, daemonConnectionRegistry)
                 )
             }
             return if (executionPolicy is ExecutionPolicy.InProcess) {
@@ -143,6 +144,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             if (sessionIsAliveFlagFile.isInitialized()) {
                 sessionIsAliveFlagFile.value.delete()
             }
+            daemonConnectionRegistry.close()
         }
     }
 
@@ -163,4 +165,5 @@ internal sealed interface BtaApiVersion {
 internal class ExecutionContext(
     val sessionIsAliveFlagFile: Lazy<File>,
     val classloadersCache: LruClassLoadersCache?,
+    val daemonConnectionRegistry: DaemonConnectionRegistry
 )
