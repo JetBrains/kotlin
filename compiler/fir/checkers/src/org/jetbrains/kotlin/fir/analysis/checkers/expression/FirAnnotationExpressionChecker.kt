@@ -132,6 +132,14 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                     is FirEvaluatorResult.KClassLiteralOfTypeParameterError -> Diagnostic(FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR, evaluationResult.source)
                     is FirEvaluatorResult.NotConstValInConstExpression -> Diagnostic(FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION, evaluationResult.source)
                     is FirEvaluatorResult.ControlFlowNotSupportedError -> Diagnostic(FirErrors.ANNOTATION_ARGUMENT_WITH_CONTROL_FLOW_NOT_SUPPORTED, evaluationResult.source)
+                    is FirEvaluatorResult.DivisionByZero -> {
+                        reporter.reportOn(evaluationResult.source, FirErrors.DIVISION_BY_ZERO)
+                        Diagnostic(FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST, evaluationResult.source)
+                    }
+                    is FirEvaluatorResult.TrimMarginBlankPrefix -> {
+                        reporter.reportOn(evaluationResult.source, FirErrors.TRIM_MARGIN_BLANK_PREFIX)
+                        Diagnostic(FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST, evaluationResult.source)
+                    }
                     is FirEvaluatorResult.ResolutionError -> {
                         //try to go deeper if we are not sure about this function call
                         //to report non-constant val in not fully resolved calls

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.Plain
 import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.ViaTypeParameters
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
@@ -1265,4 +1266,11 @@ internal fun FirDeclaration.containsErrorTypes(): Boolean {
     }, null)
 
     return hasErrorType
+}
+
+context(context: CheckerContext)
+internal fun isInConstContext(): Boolean {
+    if (context.findClosest<FirPropertySymbol> { it.isConst } != null) return true
+    if (context.callsOrAssignments.any { it is FirAnnotation }) return true
+    return false
 }
