@@ -20,6 +20,7 @@ internal class SirStructImpl(
     override val name: String,
     override val declarations: MutableList<SirDeclaration>,
     override val protocols: MutableList<SirProtocol>,
+    override val typeParameters: MutableList<String>,
 ) : SirStruct() {
     override lateinit var parent: SirDeclarationParent
 }
