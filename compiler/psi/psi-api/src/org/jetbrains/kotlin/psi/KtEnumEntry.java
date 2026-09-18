@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -135,7 +136,8 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
             replaceWith = @ReplaceWith(
                     expression = "this.addEnumEntrySemicolon()",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addEnumEntrySemicolon"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public PsiElement addSemicolon() {

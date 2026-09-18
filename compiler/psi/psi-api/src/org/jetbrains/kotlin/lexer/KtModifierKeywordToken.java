@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.lexer;
 
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,8 @@ public final class KtModifierKeywordToken extends KtKeywordToken {
      * Generate keyword (identifier that has a keyword meaning in all possible contexts)
      */
     @kotlin.Deprecated(
-            message = "Use 'keywordModifier(value, tokenId)' instead"
+            message = "Use 'keywordModifier(value, tokenId)' instead",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public static KtModifierKeywordToken keywordModifier(String value) {
@@ -41,7 +43,8 @@ public final class KtModifierKeywordToken extends KtKeywordToken {
      * Generate soft keyword (identifier that has a keyword meaning only in some contexts)
      */
     @kotlin.Deprecated(
-            message = "Use 'softKeywordModifier(value, tokenId)' instead"
+            message = "Use 'softKeywordModifier(value, tokenId)' instead",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public static KtModifierKeywordToken softKeywordModifier(String value) {

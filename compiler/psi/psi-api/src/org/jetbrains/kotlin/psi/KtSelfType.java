@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.DeprecationLevel;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +17,8 @@ import java.util.List;
  * @deprecated This class is obsolete. The parser logic for self-types was removed in 2015.
  */
 @kotlin.Deprecated(
-        message = "This class is obsolete. The parser logic for self-types was removed in 2015."
+        message = "This class is obsolete. The parser logic for self-types was removed in 2015.",
+        level = DeprecationLevel.ERROR
 )
 @Deprecated
 @SubclassOptInRequired(markerClass = KtImplementationDetail.class)

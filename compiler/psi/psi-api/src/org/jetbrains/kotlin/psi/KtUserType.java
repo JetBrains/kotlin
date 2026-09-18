@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -126,7 +127,8 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
             replaceWith = @ReplaceWith(
                     expression = "this.removeQualifier()",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeQualifier"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public void deleteQualifier() {
