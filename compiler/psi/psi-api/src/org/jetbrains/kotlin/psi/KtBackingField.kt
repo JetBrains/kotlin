@@ -91,6 +91,7 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
     @Deprecated(
         message = "Use typeReference instead",
         replaceWith = ReplaceWith("typeReference"),
+        level = DeprecationLevel.ERROR,
     )
     open val returnTypeReference: KtTypeReference?
         get() = typeReference

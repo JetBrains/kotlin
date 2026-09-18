@@ -63,6 +63,7 @@ abstract class KtClassOrObject :
     @Deprecated(
         message = "Use addSuperType(superTypeListEntry) instead",
         replaceWith = ReplaceWith("this.addSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.addSuperType"),
+        level = DeprecationLevel.ERROR,
     )
     fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry =
         KtPsiMutationService.getInstance().addSuperType(this, superTypeListEntry)
@@ -70,6 +71,7 @@ abstract class KtClassOrObject :
     @Deprecated(
         message = "Use removeSuperType(superTypeListEntry) instead",
         replaceWith = ReplaceWith("this.removeSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.removeSuperType"),
+        level = DeprecationLevel.ERROR,
     )
     fun removeSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry) {
         KtPsiMutationService.getInstance().removeSuperType(this, superTypeListEntry)
@@ -86,6 +88,7 @@ abstract class KtClassOrObject :
     @Deprecated(
         message = "Use addMemberDeclaration(declaration) instead",
         replaceWith = ReplaceWith("this.addMemberDeclaration(declaration)", "org.jetbrains.kotlin.idea.base.psi.addMemberDeclaration"),
+        level = DeprecationLevel.ERROR,
     )
     inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T =
         KtPsiMutationService.getInstance().addMemberDeclaration(this, declaration)
@@ -96,6 +99,7 @@ abstract class KtClassOrObject :
             "this.addMemberDeclarationAfter(declaration, anchor)",
             "org.jetbrains.kotlin.idea.base.psi.addMemberDeclarationAfter",
         ),
+        level = DeprecationLevel.ERROR,
     )
     inline fun <reified T : KtDeclaration> addDeclarationAfter(declaration: T, anchor: PsiElement?): T =
         KtPsiMutationService.getInstance().addMemberDeclarationAfter(this, declaration, anchor)
@@ -106,6 +110,7 @@ abstract class KtClassOrObject :
             "this.addMemberDeclarationBefore(declaration, anchor)",
             "org.jetbrains.kotlin.idea.base.psi.addMemberDeclarationBefore",
         ),
+        level = DeprecationLevel.ERROR,
     )
     inline fun <reified T : KtDeclaration> addDeclarationBefore(declaration: T, anchor: PsiElement?): T =
         KtPsiMutationService.getInstance().addMemberDeclarationBefore(this, declaration, anchor)
@@ -216,6 +221,7 @@ abstract class KtClassOrObject :
 @Deprecated(
     message = "Use getOrCreateClassBody() instead",
     replaceWith = ReplaceWith("this.getOrCreateClassBody()", "org.jetbrains.kotlin.idea.base.psi.getOrCreateClassBody"),
+    level = DeprecationLevel.ERROR,
 )
 fun KtClassOrObject.getOrCreateBody(): KtClassBody = KtPsiMutationService.getInstance().getOrCreateClassBody(this)
 
