@@ -113,6 +113,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   }
 
   @Test
+  @TestMetadata("defaultMethodInKotlinWithSettingDisable.kt")
+  public void testDefaultMethodInKotlinWithSettingDisable() {
+    run("defaultMethodInKotlinWithSettingDisable.kt");
+  }
+
+  @Test
   @TestMetadata("defaultMethodInKotlinWithSettingEnable.kt")
   public void testDefaultMethodInKotlinWithSettingEnable() {
     run("defaultMethodInKotlinWithSettingEnable.kt");
