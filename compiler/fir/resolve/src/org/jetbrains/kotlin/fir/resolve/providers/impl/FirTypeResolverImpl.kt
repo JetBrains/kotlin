@@ -588,6 +588,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         configuration: TypeResolutionConfiguration,
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
+        skipBoundedByRichErrorCheck: Boolean,
         resolveDeprecations: Boolean,
         supertypeSupplier: SupertypeSupplier,
         expandTypeAliases: Boolean,
@@ -640,7 +641,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val coneTypes = typeRef.types.mapTo(mutableListOf()) { it.coneType }
 
                 val firstType = coneTypes.first()
-                val primaryType = if (firstType.isNonRichError()) {
+                val primaryType = if (!skipBoundedByRichErrorCheck && firstType.isNonRichError()) {
                     coneTypes.removeAt(0)
                     firstType.applyIf(typeRef.isMarkedNullable) {
                         withNullability(true, session.typeContext)
@@ -653,7 +654,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
                 val unionType = ConeTypeUnifier.unify(primaryType, coneTypes, ConeAttributes.Empty, session.typeContext)
                 FirTypeResolutionResult(
-                    if (coneTypes.any { it.isNonRichError() }) {
+                    if (coneTypes.any { !skipBoundedByRichErrorCheck && it.isNonRichError() }) {
                         ConeErrorType(ConeSimpleDiagnostic("Non-rich error component must appear first"), delegatedType = unionType)
                     } else {
                         unionType
@@ -703,7 +704,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             is FirTypeAliasSymbol -> fullyExpandedClass(sessionForExpansionOrNull(expandNonLibraryTypeAlias = true)!!)?.isBoundedByRichError() == true
             // It's safe to access fir because own type parameter and containing class type parameter bounds are guaranteed to be resolved
             is FirTypeParameterSymbol -> fir.bounds.any {
-                it.coneType.toSymbol(session)?.isBoundedByRichError() == true
+                val coneType = it.coneType
+                if (coneType is ConeUnionType) {
+                    coneType.primaryType.isNothing
+                } else {
+                    coneType.toSymbol(session)?.isBoundedByRichError() == true
+                }
             }
             is FirAnonymousObjectSymbol -> false
         }

@@ -6,7 +6,7 @@ FILE: unionTypesWithTypeParameters.kt
 
     }
     public final typealias TA = R|kotlin/RichError|
-    public final fun <T, V : R|kotlin/Value|, E : R|kotlin/RichError|, E2 : R|{TA=} kotlin/RichError|, E3 : R|E|> test(a: R|union(primary=T, errors=Foo)|, b: R|union(primary=V, errors=Foo)|, c: R|union(errors=E | Foo)|, d: R|union(errors=E2 | Foo)|, e: <ERROR TYPE REF: Non-rich error component must appear first>, f: <ERROR TYPE REF: Non-rich error component must appear first>, g: R|union(errors=Foo | E)|, h: R|union(errors=Foo | E2)|, i: R|union(primary=kotlin/String, errors=E3)|): R|kotlin/Unit| {
+    public final fun <T, V : R|kotlin/Value|, E : R|kotlin/RichError|, E2 : R|{TA=} kotlin/RichError|, E3 : R|E|, E4 : R|union(primary=V, errors=Foo)|, E5 : R|union(errors=E | Foo)|> test(a: R|union(primary=T, errors=Foo)|, b: R|union(primary=V, errors=Foo)|, c: R|union(errors=E | Foo)|, d: R|union(errors=E2 | Foo)|, e: <ERROR TYPE REF: Non-rich error component must appear first>, f: <ERROR TYPE REF: Non-rich error component must appear first>, g: R|union(errors=Foo | E)|, h: R|union(errors=Foo | E2)|, i: R|union(primary=kotlin/String, errors=E3)|, j: R|union(primary=E4, errors=Foo)|, k: R|union(errors=E5 | Foo)|): R|kotlin/Unit| {
     }
     public final val <E : R|kotlin/RichError|> R|union(errors=E | Foo)|.prop: R|kotlin/Int|
         public get(): R|kotlin/Int| {
@@ -20,4 +20,12 @@ FILE: unionTypesWithTypeParameters.kt
         public final fun test(a: R|union(primary=T, errors=Foo)|, b: R|union(primary=V, errors=Foo)|, c: R|union(errors=E | Foo)|, d: R|union(errors=E2 | Foo)|, e: <ERROR TYPE REF: Non-rich error component must appear first>, f: <ERROR TYPE REF: Non-rich error component must appear first>, g: R|union(errors=Foo | E)|, h: R|union(errors=Foo | E2)|): R|kotlin/Unit| {
         }
 
+    }
+    public final fun <G : R|kotlin/CharSequence|, T : R|kotlin/collections/List<union(primary=F, errors=Foo)>|, F : R|union(primary=G, errors=Foo)|> boundsWithUnionAndDependency(): R|kotlin/Unit| {
+    }
+    public final val <G : R|kotlin/CharSequence|, T : R|kotlin/collections/List<union(primary=F, errors=Foo)>|, F : R|union(primary=G, errors=Foo)|> R|T|.boundsWithUnionAndDependency: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(1)
+        }
+    public abstract interface I<G : R|kotlin/CharSequence|, T : R|kotlin/collections/List<union(primary=F, errors=Foo)>|, F : R|union(primary=G, errors=Foo)|> : R|kotlin/Any| {
     }
