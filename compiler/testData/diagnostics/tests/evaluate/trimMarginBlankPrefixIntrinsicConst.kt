@@ -33,13 +33,13 @@ val s1b = "".trimMargin("|")
 val s2b = "".trimMargin(notBlank)
 
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(" ")<!>) val a1 = 1
-@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"".trimMargin(blank)<!>) val a2 = 1
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(blank)<!>) val a2 = 1
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin("""
 
     """)<!>) val a3 = 1
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin("\t\n")<!>) val a4 = 1
-@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"".trimMargin(blank.trim())<!>) val a5 = 1
-@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"".trimMargin("" + " ")<!>) val a6 = 1
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(blank.trim())<!>) val a5 = 1
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin("" + " ")<!>) val a6 = 1
 
 @Ann("".trimMargin("|")) val a1b = 1
 @Ann("".trimMargin(notBlank)) val a2b = 1

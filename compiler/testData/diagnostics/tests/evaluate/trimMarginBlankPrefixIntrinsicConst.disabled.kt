@@ -6,13 +6,13 @@
 const val blank = " "
 const val notBlank = "|"
 
-const val c1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"".trimMargin(" ")<!>
+const val c1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(" ")<!>
 const val c2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"".trimMargin(blank)<!>
-const val c3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"".trimMargin(
+const val c3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(
     """
 
     """)<!>
-const val c4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"".trimMargin("\t\n")<!>
+const val c4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin("\t\n")<!>
 const val c5 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"".trimMargin(blank.trim())<!>
 const val c6 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"".trimMargin("" + " ")<!>
 
