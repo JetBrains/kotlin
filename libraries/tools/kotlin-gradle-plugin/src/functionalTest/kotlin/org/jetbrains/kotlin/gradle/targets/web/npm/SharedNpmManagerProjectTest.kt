@@ -40,7 +40,7 @@ class SharedNpmManagerProjectTest {
     private fun packageJsonFiles(vararg projects: Project): List<File> = projects
         .flatMap { it.multiplatformExtension.targets.filterIsInstance<KotlinJsIrTarget>() }
         .flatMap { it.compilations }
-        .map { it.sharedPackageJsonFile() }
+        .map { it.npmDependenciesReportFile() }
         .sorted()
 
     private fun resolvedFiles(configurationName: String): List<File> =
@@ -53,8 +53,8 @@ class SharedNpmManagerProjectTest {
 
     @Test
     fun `package json files of all compilations are collected per platform`() {
-        assertEquals(packageJsonFiles(jsBrowser, jsNodejs), resolvedFiles("kotlinNpmSharedDependenciesResolver"))
-        assertEquals(packageJsonFiles(wasmJsBrowser), resolvedFiles("kotlinWasmNpmSharedDependenciesResolver"))
+        assertEquals(packageJsonFiles(jsBrowser, jsNodejs), resolvedFiles("kotlinNpmDependenciesReportJsResolver"))
+        assertEquals(packageJsonFiles(wasmJsBrowser), resolvedFiles("kotlinNpmDependenciesReportWasmResolver"))
     }
 
     @Test

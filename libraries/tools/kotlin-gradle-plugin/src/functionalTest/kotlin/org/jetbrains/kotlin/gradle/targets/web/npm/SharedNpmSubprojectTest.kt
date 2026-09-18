@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationPackageJsonInputs
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSharedPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinNpmDependencyReportTask
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -27,7 +27,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-internal fun KotlinJsIrCompilation.sharedPackageJsonFile(): File {
+internal fun KotlinJsIrCompilation.npmDependenciesReportFile(): File {
     val platform = if (target.platformType == KotlinPlatformType.wasm) "wasm" else "js"
     return project.layout.buildDirectory.dir("kotlin-npm/$platform/shared-package-json").get().asFile
         .resolve(outputModuleName.get())
@@ -36,12 +36,12 @@ internal fun KotlinJsIrCompilation.sharedPackageJsonFile(): File {
 
 class SharedNpmSubprojectTest {
 
-    private fun Project.sharedPackageJsonTask(name: String) = tasks.getByName(name) as KotlinSharedPackageJsonTask
+    private fun Project.npmDependenciesReportTask(name: String) = tasks.getByName(name) as KotlinNpmDependencyReportTask
 
-    private fun Project.sharedPackageJsonCompilation(taskName: String, moduleName: String): CompilationPackageJsonInputs =
-        sharedPackageJsonTask(taskName).compilations.get().single { it.moduleName.get() == moduleName }
+    private fun Project.npmDependenciesReportCompilation(taskName: String, moduleName: String): CompilationNpmDependencies =
+        npmDependenciesReportTask(taskName).compilations.get().single { it.moduleName.get() == moduleName }
 
-    private fun Project.packageJsonsForRootProject(configurationName: String): List<File> =
+    private fun Project.npmDependenciesReportsForRootProject(configurationName: String): List<File> =
         configurations.getByName(configurationName).artifacts.files.files.sorted()
 
     private fun Project.jsTarget() = multiplatformExtension.js() as KotlinJsIrTarget
@@ -59,24 +59,24 @@ class SharedNpmSubprojectTest {
         project.evaluate()
 
         assertEquals(
-            project.jsTarget().compilations.map { it.sharedPackageJsonFile() }.sorted(),
-            project.packageJsonsForRootProject("kotlinNpmSharedPackageJsonFiles"),
+            project.jsTarget().compilations.map { it.npmDependenciesReportFile() }.sorted(),
+            project.npmDependenciesReportsForRootProject("kotlinNpmDependenciesReportJs"),
         )
         assertEquals(
-            project.wasmJsTarget().compilations.map { it.sharedPackageJsonFile() }.sorted(),
-            project.packageJsonsForRootProject("kotlinWasmNpmSharedPackageJsonFiles"),
+            project.wasmJsTarget().compilations.map { it.npmDependenciesReportFile() }.sorted(),
+            project.npmDependenciesReportsForRootProject("kotlinNpmDependenciesReportWasm"),
         )
         assertEquals(
-            listOf("kotlinNpmSharedPackageJsonFiles", "kotlinWasmNpmSharedPackageJsonFiles"),
-            project.configurations.names.filter { it.endsWith("NpmSharedPackageJsonFiles") }.sorted(),
+            listOf("kotlinNpmDependenciesReportJs", "kotlinNpmDependenciesReportWasm"),
+            project.configurations.names.filter { it.startsWith("kotlinNpmDependenciesReport") }.sorted(),
         )
         assertEquals(
-            listOf("kotlinSharedPackageJson", "kotlinWasmSharedPackageJson"),
-            project.tasks.names.filter { it.endsWith("SharedPackageJson") }.sorted(),
+            listOf("kotlinNpmDependenciesReport", "kotlinWasmNpmDependenciesReport"),
+            project.tasks.names.filter { it.endsWith("NpmDependenciesReport") }.sorted(),
         )
         assertEquals(
             listOf("test", "test-test"),
-            project.sharedPackageJsonTask("kotlinSharedPackageJson").compilations.get().map { it.moduleName.get() }.sorted(),
+            project.npmDependenciesReportTask("kotlinNpmDependenciesReport").compilations.get().map { it.moduleName.get() }.sorted(),
         )
     }
 
@@ -91,8 +91,8 @@ class SharedNpmSubprojectTest {
         }
         project.evaluate()
 
-        assertEquals(emptyList(), project.tasks.names.filter { it.endsWith("SharedPackageJson") })
-        assertEquals(emptyList(), project.configurations.names.filter { it.contains("SharedPackageJson") })
+        assertEquals(emptyList(), project.tasks.names.filter { it.endsWith("NpmDependenciesReport") })
+        assertEquals(emptyList(), project.configurations.names.filter { it.contains("NpmDependenciesReport") || it.contains("NpmRuntimeDependencies") })
     }
 
     @Test
@@ -106,14 +106,14 @@ class SharedNpmSubprojectTest {
         project.evaluate()
 
         val expected = listOf(
-            Triple(project.jsTarget(), "jsSharedPackageJsonElements", "kotlinNpmSharedPackageJsonElements"),
-            Triple(project.wasmJsTarget(), "wasmJsSharedPackageJsonElements", "kotlinWasmNpmSharedPackageJsonElements"),
+            Triple(project.jsTarget(), "kotlinNpmRuntimeDependenciesJs", "kotlinNpmRuntimeDependenciesJs"),
+            Triple(project.wasmJsTarget(), "kotlinNpmRuntimeDependenciesWasmJs", "kotlinNpmRuntimeDependenciesWasm"),
         )
         for ((target, configurationName, usageName) in expected) {
             val configuration = project.configurations.getByName(configurationName)
             assertEquals(usageName, configuration.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name)
             assertEquals(
-                listOf(target.compilations.getByName("main").sharedPackageJsonFile()),
+                listOf(target.compilations.getByName("main").npmDependenciesReportFile()),
                 configuration.artifacts.files.files.toList(),
             )
         }
@@ -141,8 +141,8 @@ class SharedNpmSubprojectTest {
         val isOdd = DefaultKotlinNpmDependency("is-odd", "2.0.0", KotlinNpmDependency.Scope.DEV)
         val cowsay = DefaultKotlinNpmDependency("cowsay", "9.9.9", KotlinNpmDependency.Scope.PEER)
 
-        assertEquals(setOf(isEven, isOdd), project.sharedPackageJsonCompilation("kotlinSharedPackageJson", "test").directDependencies.get())
-        assertEquals(setOf(isEven, isOdd, cowsay), project.sharedPackageJsonCompilation("kotlinSharedPackageJson", "test-test").directDependencies.get())
+        assertEquals(setOf(isEven, isOdd), project.npmDependenciesReportCompilation("kotlinNpmDependenciesReport", "test").directDependencies.get())
+        assertEquals(setOf(isEven, isOdd, cowsay), project.npmDependenciesReportCompilation("kotlinNpmDependenciesReport", "test-test").directDependencies.get())
     }
 
     @Test
@@ -155,8 +155,8 @@ class SharedNpmSubprojectTest {
         }
         project.evaluate()
 
-        for (taskName in listOf("kotlinSharedPackageJson", "kotlinWasmSharedPackageJson")) {
-            val testTools = project.sharedPackageJsonCompilation(taskName, "test-test").toolDependencies.get()
+        for (taskName in listOf("kotlinNpmDependenciesReport", "kotlinWasmNpmDependenciesReport")) {
+            val testTools = project.npmDependenciesReportCompilation(taskName, "test-test").toolDependencies.get()
             assertTrue("karma" in testTools.map { it.name }, "karma expected in $taskName test tools: $testTools")
             assertTrue(testTools.all { it.scope == KotlinNpmDependency.Scope.DEV }, "tool dependencies must be devDependencies: $testTools")
         }
@@ -172,7 +172,7 @@ class SharedNpmSubprojectTest {
         project.evaluate()
         project.version = "1.2.3"
 
-        val main = project.sharedPackageJsonCompilation("kotlinSharedPackageJson", "test")
+        val main = project.npmDependenciesReportCompilation("kotlinNpmDependenciesReport", "test")
         assertEquals("kotlin/test.js", main.main.get())
         assertNull(main.types.orNull)
         assertEquals("1.2.3", main.packageVersion.get())
@@ -196,9 +196,9 @@ class SharedNpmSubprojectTest {
         app.evaluate()
 
         val appMain = app.jsTarget().compilations.getByName("main")
-        val transitive = app.sharedPackageJsonCompilation("kotlinSharedPackageJson", appMain.outputModuleName.get()).transitiveArtifacts
+        val transitive = app.npmDependenciesReportCompilation("kotlinNpmDependenciesReport", appMain.outputModuleName.get()).transitiveArtifacts
         assertTrue(
-            transitive.buildDependencies.getDependencies(null).any { it.name == "kotlinSharedPackageJson" && it.project == lib },
+            transitive.buildDependencies.getDependencies(null).any { it.name == "kotlinNpmDependenciesReport" && it.project == lib },
             "app's shared package.json must be built after lib's",
         )
     }

@@ -41,10 +41,10 @@ import java.util.zip.ZipFile
  * Writes one `package.json` per compilation of a JS or WasmJS target into [outputDirectory].
  */
 @CacheableTask
-internal abstract class KotlinSharedPackageJsonTask : DefaultTask() {
+internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
 
     @get:Nested
-    abstract val compilations: ListProperty<CompilationPackageJsonInputs>
+    abstract val compilations: ListProperty<CompilationNpmDependencies>
 
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
@@ -89,12 +89,12 @@ internal abstract class KotlinSharedPackageJsonTask : DefaultTask() {
     }
 
     companion object {
-        internal val HasPlatformDisambiguator.sharedPackageJsonTaskName: String
-            get() = extensionName("sharedPackageJson")
+        internal val HasPlatformDisambiguator.npmDependenciesReportTaskName: String
+            get() = extensionName("npmDependenciesReport")
     }
 }
 
-internal abstract class CompilationPackageJsonInputs {
+internal abstract class CompilationNpmDependencies {
 
     @get:Input
     abstract val moduleName: Property<String>

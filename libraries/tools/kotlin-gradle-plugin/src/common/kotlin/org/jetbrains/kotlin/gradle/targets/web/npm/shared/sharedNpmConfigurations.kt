@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.utils.createDependencyScope
 import org.jetbrains.kotlin.gradle.utils.createResolvable
@@ -36,68 +37,69 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 
-internal val HasPlatformDisambiguator.npmSharedPackageJsonFilesConfigurationName: String
-    get() = extensionName("npmSharedPackageJsonFiles")
+private val HasPlatformDisambiguator.platformName: String
+    get() = platformDisambiguator ?: JsPlatformDisambiguator.jsPlatform
+
+internal val HasPlatformDisambiguator.npmDependenciesReportConfigurationName: String
+    get() = lowerCamelCaseName("kotlin", "npmDependenciesReport", platformName)
 
 internal val HasPlatformDisambiguator.npmSharedDependenciesConfigurationName: String
     get() = extensionName("npmSharedDependencies")
 
-internal val HasPlatformDisambiguator.npmSharedDependenciesResolverConfigurationName: String
-    get() = extensionName("npmSharedDependenciesResolver")
+internal val HasPlatformDisambiguator.npmDependenciesReportResolverConfigurationName: String
+    get() = lowerCamelCaseName("kotlin", "npmDependenciesReport", platformName, "resolver")
 
-internal val KotlinJsIrTarget.sharedPackageJsonElementsConfigurationName: String
-    get() = lowerCamelCaseName(disambiguationClassifier, "sharedPackageJsonElements")
+internal val KotlinJsIrTarget.npmRuntimeDependenciesConfigurationName: String
+    get() = lowerCamelCaseName("kotlin", "npmRuntimeDependencies", disambiguationClassifier)
 
-internal val KotlinJsIrCompilation.sharedPackageJsonResolverConfigurationName: String
-    get() = disambiguateName("sharedPackageJsonResolver")
+internal val KotlinJsIrCompilation.npmRuntimeDependenciesResolverConfigurationName: String
+    get() = disambiguateName("npmRuntimeDependenciesResolver")
 
-internal val HasPlatformDisambiguator.npmSharedPackageJsonFilesUsageName: String
-    get() = extensionName("npmSharedPackageJsonFiles")
+internal val HasPlatformDisambiguator.npmDependenciesReportUsageName: String
+    get() = npmDependenciesReportConfigurationName
 
-internal val HasPlatformDisambiguator.sharedPackageJsonUsageName: String
-    get() = extensionName("npmSharedPackageJsonElements")
+internal val HasPlatformDisambiguator.npmRuntimeDependenciesUsageName: String
+    get() = lowerCamelCaseName("kotlin", "npmRuntimeDependencies", platformName)
 
-private fun Project.sharedPackageJsonAttributes(attributes: AttributeContainer, usageName: String) {
+private fun Project.npmDependenciesReportAttributes(attributes: AttributeContainer, usageName: String) {
     attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(usageName))
     attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
 }
 
-/** Subproject side: publishes this project's package.json files, consumed by the root's [createResolvableNpmSharedPackageJsonFilesConfiguration]. */
-internal fun Project.maybeCreateConsumableNpmSharedPackageJsonFilesConfiguration(platform: HasPlatformDisambiguator): Configuration =
-    configurations.maybeCreateConsumable(platform.npmSharedPackageJsonFilesConfigurationName) {
+internal fun Project.maybeCreateNpmDependenciesReport(platform: HasPlatformDisambiguator): Configuration =
+    configurations.maybeCreateConsumable(platform.npmDependenciesReportConfigurationName) {
         setInvisibleIfSupported()
-        description = "Kotlin package.json files of this project for the shared-npm-project."
-        sharedPackageJsonAttributes(attributes, platform.npmSharedPackageJsonFilesUsageName)
+        description = "npm dependency reports of this project for the shared-npm-project."
+        npmDependenciesReportAttributes(attributes, platform.npmDependenciesReportUsageName)
     }
 
-/** Root side: consumes the package.json files published by [maybeCreateConsumableNpmSharedPackageJsonFilesConfiguration] of the projects declared on the bucket. */
-internal fun Project.createResolvableNpmSharedPackageJsonFilesConfiguration(platform: HasPlatformDisambiguator): Configuration {
+internal fun Project.createNpmDependenciesReportResolver(platform: HasPlatformDisambiguator): Configuration {
     val sharedDependencies = configurations.createDependencyScope(platform.npmSharedDependenciesConfigurationName) {
         setInvisibleIfSupported()
         description = "Projects contributing to the shared-npm-project."
     }
 
-    return configurations.createResolvable(platform.npmSharedDependenciesResolverConfigurationName) {
+    return configurations.createResolvable(platform.npmDependenciesReportResolverConfigurationName) {
         setInvisibleIfSupported()
-        description = "Resolves the '${platform.npmSharedPackageJsonFilesConfigurationName}' package.json files of the projects in '${platform.npmSharedDependenciesConfigurationName}'."
+        description = "Resolves the '${platform.npmDependenciesReportConfigurationName}' npm dependency reports of the projects in '${platform.npmSharedDependenciesConfigurationName}'."
         extendsFrom(sharedDependencies.get())
-        sharedPackageJsonAttributes(attributes, platform.npmSharedPackageJsonFilesUsageName)
+        npmDependenciesReportAttributes(attributes, platform.npmDependenciesReportUsageName)
     }
 }
 
-internal fun Project.maybeCreatePackageJsonForDependents(
+internal fun Project.maybeCreateNpmRuntimeDependencies(
     target: KotlinJsIrTarget,
     platform: HasPlatformDisambiguator,
 ): Configuration =
-    configurations.maybeCreateConsumable(target.sharedPackageJsonElementsConfigurationName) {
+    configurations.maybeCreateConsumable(target.npmRuntimeDependenciesConfigurationName) {
         setInvisibleIfSupported()
-        description = "Shared package.json of the '${target.name}' target for dependent projects."
-        sharedPackageJsonAttributes(attributes, platform.sharedPackageJsonUsageName)
+        description = "npm dependency report of the '${target.name}' target for dependent projects."
+        npmDependenciesReportAttributes(attributes, platform.npmRuntimeDependenciesUsageName)
     }
 
-internal fun Project.createCompilationPackageJsonResolver(compilation: KotlinJsIrCompilation): Configuration {
+internal fun Project.createNpmRuntimeDependenciesResolver(compilation: KotlinJsIrCompilation): Configuration {
     val runtimeDependencies = declaredRuntimeDependencies(compilation)
-    return configurations.createResolvable(compilation.sharedPackageJsonResolverConfigurationName) {
+    return configurations.createResolvable(compilation.npmRuntimeDependenciesResolverConfigurationName) {
         setInvisibleIfSupported()
         description = "Resolves the runtime dependencies of $compilation to collect their npm dependencies."
         usesPlatformOf(compilation.target)
@@ -113,12 +115,12 @@ private fun Project.declaredRuntimeDependencies(compilation: KotlinJsIrCompilati
         .filter { it !is FileCollectionDependency }
 }
 
-internal fun Project.sharedPackageJsonArtifacts(resolver: Configuration, platform: HasPlatformDisambiguator): FileCollection {
+internal fun Project.npmRuntimeDependenciesReports(resolver: Configuration, platform: HasPlatformDisambiguator): FileCollection {
     val projectView = resolver.incoming.artifactView { view ->
         view.withVariantReselection()
         view.componentFilter { it is ProjectComponentIdentifier }
         view.attributes { attributes ->
-            sharedPackageJsonAttributes(attributes, platform.sharedPackageJsonUsageName)
+            npmDependenciesReportAttributes(attributes, platform.npmRuntimeDependenciesUsageName)
         }
         view.lenient(true)
     }
@@ -127,11 +129,11 @@ internal fun Project.sharedPackageJsonArtifacts(resolver: Configuration, platfor
         view.lenient(true)
     }
     return files(
-        projectView.sharedPackageJsonElementsFiles(platform.sharedPackageJsonUsageName),
+        projectView.npmRuntimeDependenciesFiles(platform.npmRuntimeDependenciesUsageName),
         moduleView.files,
     )
 }
 
 /** Reselection also matches variants that declare no Usage at all, so drop everything that is not ours: KT-85517. */
-private fun ArtifactView.sharedPackageJsonElementsFiles(usageName: String) = artifacts.resolvedArtifacts
+private fun ArtifactView.npmRuntimeDependenciesFiles(usageName: String) = artifacts.resolvedArtifacts
     .map { artifacts -> artifacts.filter { it.variant.attributes.getAttributeSafely(Usage.USAGE_ATTRIBUTE) == usageName }.map { it.file } }

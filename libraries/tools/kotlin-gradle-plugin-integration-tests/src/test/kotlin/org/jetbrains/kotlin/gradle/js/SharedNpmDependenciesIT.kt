@@ -107,10 +107,10 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
 
             build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertTasksExecuted(
-                    ":lib-a:kotlinSharedPackageJson",
-                    ":lib-b:kotlinSharedPackageJson",
-                    ":lib-b:kotlinWasmSharedPackageJson",
-                    ":lib-web:kotlinSharedPackageJson",
+                    ":lib-a:kotlinNpmDependenciesReport",
+                    ":lib-b:kotlinNpmDependenciesReport",
+                    ":lib-b:kotlinWasmNpmDependenciesReport",
+                    ":lib-web:kotlinNpmDependenciesReport",
                     ":kotlinSetupSharedNpmProject",
                     ":kotlinWasmSetupSharedNpmProject",
                 )
@@ -198,10 +198,10 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
             build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertConfigurationCacheReused()
                 assertTasksUpToDate(
-                    ":lib-a:kotlinSharedPackageJson",
-                    ":lib-b:kotlinSharedPackageJson",
-                    ":lib-b:kotlinWasmSharedPackageJson",
-                    ":lib-web:kotlinSharedPackageJson",
+                    ":lib-a:kotlinNpmDependenciesReport",
+                    ":lib-b:kotlinNpmDependenciesReport",
+                    ":lib-b:kotlinWasmNpmDependenciesReport",
+                    ":lib-web:kotlinNpmDependenciesReport",
                     ":kotlinSetupSharedNpmProject",
                     ":kotlinWasmSetupSharedNpmProject",
                 )
@@ -211,7 +211,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
 
     @DisplayName("KT-90085 - Shared package json of a dependent project picks up npm changes of its dependency project")
     @GradleTest
-    fun testSharedPackageJsonPicksUpDependencyNpmChanges(gradleVersion: GradleVersion) {
+    fun testNpmDependenciesReportPicksUpDependencyNpmChanges(gradleVersion: GradleVersion) {
         project("emptyKts", gradleVersion) {
             plugins {
                 kotlin("multiplatform").apply(false)
@@ -249,22 +249,22 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 }
             }
 
-            fun TestProject.libBSharedPackageJson(): PackageJson =
+            fun TestProject.libBNpmDependenciesReport(): PackageJson =
                 projectPath.resolve("lib-b/build/kotlin-npm/js/shared-package-json/emptyKts-lib-b/package.json").toFile()
                     .let { fromSrcPackageJson(it) ?: error("Cannot parse $it") }
 
-            build(":lib-b:kotlinSharedPackageJson") {
-                assertTasksExecuted(":lib-a:kotlinSharedPackageJson")
-                assertEquals(null, libBSharedPackageJson().dependencies["left-pad"])
+            build(":lib-b:kotlinNpmDependenciesReport") {
+                assertTasksExecuted(":lib-a:kotlinNpmDependenciesReport")
+                assertEquals(null, libBNpmDependenciesReport().dependencies["left-pad"])
             }
 
-            build(":lib-b:kotlinSharedPackageJson", "-PaddLeftPad=true") {
-                assertTasksExecuted(":lib-a:kotlinSharedPackageJson")
-                assertEquals("1.3.0", libBSharedPackageJson().dependencies["left-pad"])
+            build(":lib-b:kotlinNpmDependenciesReport", "-PaddLeftPad=true") {
+                assertTasksExecuted(":lib-a:kotlinNpmDependenciesReport")
+                assertEquals("1.3.0", libBNpmDependenciesReport().dependencies["left-pad"])
             }
 
-            build(":lib-b:kotlinSharedPackageJson", "-PaddLeftPad=true") {
-                assertTasksUpToDate(":lib-a:kotlinSharedPackageJson", ":lib-b:kotlinSharedPackageJson")
+            build(":lib-b:kotlinNpmDependenciesReport", "-PaddLeftPad=true") {
+                assertTasksUpToDate(":lib-a:kotlinNpmDependenciesReport", ":lib-b:kotlinNpmDependenciesReport")
             }
         }
     }

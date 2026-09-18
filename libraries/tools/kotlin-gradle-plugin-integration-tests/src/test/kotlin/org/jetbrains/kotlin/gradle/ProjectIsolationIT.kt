@@ -154,11 +154,11 @@ class ProjectIsolationIT : KGPBaseTest() {
 
             build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertTasksExecuted(
-                    ":lib-a:kotlinSharedPackageJson",
-                    ":lib-b:kotlinSharedPackageJson",
+                    ":lib-a:kotlinNpmDependenciesReport",
+                    ":lib-b:kotlinNpmDependenciesReport",
                     ":kotlinSetupSharedNpmProject",
-                    ":lib-a:kotlinWasmSharedPackageJson",
-                    ":lib-b:kotlinWasmSharedPackageJson",
+                    ":lib-a:kotlinWasmNpmDependenciesReport",
+                    ":lib-b:kotlinWasmNpmDependenciesReport",
                     ":kotlinWasmSetupSharedNpmProject",
                 )
                 assertFileExists(projectPath.resolve("build/js/shared-npm-project/package.json"))
