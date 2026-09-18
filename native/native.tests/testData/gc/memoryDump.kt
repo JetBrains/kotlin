@@ -96,9 +96,9 @@ private fun dumpAndMeasureBytes(options: MemoryDumpOptions?): Long {
 
 @Test
 @OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
-fun dumpOmitPayloadsIsSmaller() {
+fun dumpOmitPrimitiveArrayPayloadsIsSmaller() {
     val full = dumpAndMeasureBytes(null)
-    val omitted = dumpAndMeasureBytes(MemoryDumpOptions(omitPayloads = true))
+    val omitted = dumpAndMeasureBytes(MemoryDumpOptions(omitPrimitiveArrayPayloads = true))
     assertTrue(omitted < full, "omitted dump ($omitted) should be smaller than full dump ($full)")
 }
 

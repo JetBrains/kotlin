@@ -27,12 +27,12 @@ fun dumpGzipHasMagic() {
 
 @Test
 @OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
-fun dumpOmitPayloadsAndGzip() {
+fun dumpOmitPrimitiveArrayPayloadsAndGzip() {
     val file = requireNotNull(tmpfile()) { "Could not open temporary file" }
     val fd = fileno(file)
     assertTrue(fd > -1, "Failed to obtain a temporary file descriptor")
     val local = GzipProbe()
-    assertTrue(Debugging.dumpMemory(fd.toLong(), MemoryDumpOptions(omitPayloads = true, gzip = true)))
+    assertTrue(Debugging.dumpMemory(fd.toLong(), MemoryDumpOptions(omitPrimitiveArrayPayloads = true, gzip = true)))
     assertTrue(hasGzipMagic(fd))
     fclose(file)
 }
