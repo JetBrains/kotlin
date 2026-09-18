@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.lexer;
 
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +24,8 @@ public class KtSingleValueToken extends KtToken {
     private final String myValue;
 
     @kotlin.Deprecated(
-            message = "Use the 'KtSingleValueToken(String, String, int)' constructor instead"
+            message = "Use the 'KtSingleValueToken(String, String, int)' constructor instead",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public KtSingleValueToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value) {

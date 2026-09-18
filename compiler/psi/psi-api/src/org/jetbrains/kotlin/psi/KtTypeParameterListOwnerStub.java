@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -77,7 +78,8 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
             replaceWith = @ReplaceWith(
                     expression = "modifierList?.contextParameterList",
                     imports = {}
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     @Nullable
@@ -103,7 +105,8 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
             replaceWith = @ReplaceWith(
                     expression = "modifierList?.contextParameterLists.orEmpty()",
                     imports = {}
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     @SuppressWarnings("unchecked")

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +77,8 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
             replaceWith = @ReplaceWith(
                     expression = "this.appendValueArgument(argument)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.appendValueArgument"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public KtValueArgument addArgument(@NotNull KtValueArgument argument) {
@@ -93,7 +95,8 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
             replaceWith = @ReplaceWith(
                     expression = "this.insertValueArgumentAfter(argument, anchor)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.insertValueArgumentAfter"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public KtValueArgument addArgumentAfter(@NotNull KtValueArgument argument, @Nullable KtValueArgument anchor) {
@@ -110,7 +113,8 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
             replaceWith = @ReplaceWith(
                     expression = "this.insertValueArgumentBefore(argument, anchor)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.insertValueArgumentBefore"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public KtValueArgument addArgumentBefore(@NotNull KtValueArgument argument, @Nullable KtValueArgument anchor) {
@@ -126,7 +130,8 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
             replaceWith = @ReplaceWith(
                     expression = "this.deleteValueArgument(argument)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.deleteValueArgument"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public void removeArgument(@NotNull KtValueArgument argument) {
@@ -142,7 +147,8 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
             replaceWith = @ReplaceWith(
                     expression = "this.deleteValueArgument(index)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.deleteValueArgument"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public void removeArgument(int index) {
