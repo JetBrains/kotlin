@@ -160,11 +160,13 @@ public interface KaTypeProvider : KaSessionComponent {
      * The array type that represents the list of arguments passed to this parameter if [this] is a
      * [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs) parameter.
      *
+     * If the element type has a specialized array class, [varargArrayType] is that array type, e.g., `IntArray` for `vararg x: Int`.
+     * Otherwise, it is [Array] with an `out`-projected element type, e.g., `Array<out T>` for `vararg t: T`.
+     *
      * If [this] is not a `vararg` parameter, [varargArrayType] is `null`.
      * If [this] is an invalid (e.g., in case of multiple `vararg` parameters) or useless (in anonymous functions) `vararg` parameter,
      * [varargArrayType] still contains a type for it.
      */
-    @KaExperimentalApi
     public val KaValueParameterSymbol.varargArrayType: KaType?
 
     /**
