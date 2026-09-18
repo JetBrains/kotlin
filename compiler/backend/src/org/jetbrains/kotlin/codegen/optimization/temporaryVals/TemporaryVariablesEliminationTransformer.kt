@@ -26,10 +26,10 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
         // If there are any suspend inline markers, don't touch anything now.
         if (methodNode.instructions.any { isSuspendInlineMarker(it) }) return
 
-        simplifyTrivialInstructions(methodNode)
-
         val cfg = ControlFlowGraph(methodNode)
         processLabels(cfg)
+
+        simplifyTrivialInstructions(methodNode)
 
         simplifyKnownSafeCallPatterns(cfg)
 
