@@ -88,7 +88,8 @@ open class CommonCompilerArgumentsConfigurator {
         }
 
         ReturnValueCheckerMode.fromString(compilerArg)?.let { return it } ?: reporter.reportError(
-            "Unknown value for parameter -Xreturn-value-checker: '$compilerArg'. Value should be one of ${ReturnValueCheckerMode.availableValues()}"
+            "Unknown value for parameter ${CommonCompilerArguments::returnValueChecker.cliArgument}: '$compilerArg'. " +
+                    "Value should be one of ${ReturnValueCheckerMode.availableValues()}"
         )
         return null
     }

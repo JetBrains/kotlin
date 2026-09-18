@@ -647,6 +647,18 @@ public class CliTestGenerated extends AbstractCliTest {
     public void testLv24() {
       run("lv24.args");
     }
+
+    @Test
+    @TestMetadata("unknownValueForDeprecatedFlag.args")
+    public void testUnknownValueForDeprecatedFlag() {
+      run("unknownValueForDeprecatedFlag.args");
+    }
+
+    @Test
+    @TestMetadata("unknownValueForStableFlag.args")
+    public void testUnknownValueForStableFlag() {
+      run("unknownValueForStableFlag.args");
+    }
   }
 
   @Nested

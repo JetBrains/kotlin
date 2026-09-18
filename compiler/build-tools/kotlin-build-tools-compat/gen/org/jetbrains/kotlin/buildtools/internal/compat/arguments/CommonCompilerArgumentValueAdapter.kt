@@ -31,9 +31,9 @@ internal object CommonCompilerArgumentValueAdapter {
     is List<*> if value.firstOrNull() is Enum<*> -> value.map { toApi(it) }
     is CompatArgumentsEnumsExplicitApiMode -> value.toApiEnum<ApiArgumentsEnumsExplicitApiMode>()
     is CompatArgumentsEnumsAnnotationDefaultTargetMode -> value.toApiEnum<ApiArgumentsEnumsAnnotationDefaultTargetMode>()
-    is CompatArgumentsEnumsReturnValueCheckerMode -> value.toApiEnum<ApiArgumentsEnumsReturnValueCheckerMode>()
     is CompatArgumentsEnumsVerifyIrMode -> value.toApiEnum<ApiArgumentsEnumsVerifyIrMode>()
     is CompatArgumentsEnumsKotlinVersion -> value.toApiEnum<ApiArgumentsEnumsKotlinVersion>()
+    is CompatArgumentsEnumsReturnValueCheckerMode -> value.toApiEnum<ApiArgumentsEnumsReturnValueCheckerMode>()
     else -> value
   }
 
@@ -41,9 +41,9 @@ internal object CommonCompilerArgumentValueAdapter {
     is List<*> if value.firstOrNull() is Enum<*> -> value.map { toImpl(it) }
     is ApiArgumentsEnumsExplicitApiMode -> value.toImplEnum<CompatArgumentsEnumsExplicitApiMode>()
     is ApiArgumentsEnumsAnnotationDefaultTargetMode -> value.toImplEnum<CompatArgumentsEnumsAnnotationDefaultTargetMode>()
-    is ApiArgumentsEnumsReturnValueCheckerMode -> value.toImplEnum<CompatArgumentsEnumsReturnValueCheckerMode>()
     is ApiArgumentsEnumsVerifyIrMode -> value.toImplEnum<CompatArgumentsEnumsVerifyIrMode>()
     is ApiArgumentsEnumsKotlinVersion -> value.toImplEnum<CompatArgumentsEnumsKotlinVersion>()
+    is ApiArgumentsEnumsReturnValueCheckerMode -> value.toImplEnum<CompatArgumentsEnumsReturnValueCheckerMode>()
     else -> value
   }
 }
