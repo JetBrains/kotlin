@@ -234,7 +234,7 @@ fun main(args: Array<String>) {
                 model(
                     relativeRootPath = "testsWithAnyBackend",
                     pattern = "^([^_](.+))\\.kt$",
-                    excludedPattern = excludedFirTestdataPattern,
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 )
             }
         }

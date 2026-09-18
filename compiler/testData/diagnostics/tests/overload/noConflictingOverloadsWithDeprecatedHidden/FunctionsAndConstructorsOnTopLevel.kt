@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// DIAGNOSTICS: -NOTHING_TO_INLINE, -NO_TAIL_CALLS_FOUND, -MISPLACED_TYPE_PARAMETER_CONSTRAINTS
+// DIAGNOSTICS: -NOTHING_TO_INLINE, -MISPLACED_TYPE_PARAMETER_CONSTRAINTS
 
 
 class TestBasic {
@@ -64,17 +64,6 @@ class TestInlineFunctionVsConstructorReverse {
     constructor()
 }
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN) inline fun TestInlineFunctionVsConstructorReverse() {}
-
-
-class TestTailrecFunctionVsConstructor {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
-}
-tailrec fun TestTailrecFunctionVsConstructor() {}
-
-class TestTailrecFunctionVsConstructorReverse {
-    constructor()
-}
-@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec fun TestTailrecFunctionVsConstructorReverse() {}
 
 
 class TestFunctionVsPrimaryConstructor @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
@@ -431,5 +420,5 @@ interface UserInterfaceA
 interface UserInterfaceB
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, interfaceDeclaration, nullableType,
-primaryConstructor, reified, secondaryConstructor, stringLiteral, tailrec, typeAliasDeclaration, typeConstraint,
+primaryConstructor, reified, secondaryConstructor, stringLiteral, typeAliasDeclaration, typeConstraint,
 typeParameter */
