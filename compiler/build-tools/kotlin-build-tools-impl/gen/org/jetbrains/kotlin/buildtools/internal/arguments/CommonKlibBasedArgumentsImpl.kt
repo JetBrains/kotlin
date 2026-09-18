@@ -24,6 +24,8 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.KlibIrInlinerMode
@@ -40,18 +42,15 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArgument
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal abstract class CommonKlibBasedArgumentsImpl(
-  defaultArguments: CommonKlibBasedCompilerArguments,
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonCompilerArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
-    CommonKlibBasedArguments,
-    CommonKlibBasedArguments.Builder,
-    CommonKlibBasedArgumentsKlibArguments,
-    CommonKlibBasedArgumentsKlibArguments.Builder,
-    CommonKlibBasedArgumentsLinkingArguments,
-    CommonKlibBasedArgumentsLinkingArguments.Builder {
+@Serializable
+internal abstract class CommonKlibBasedArgumentsImpl() : CommonCompilerArgumentsImpl(),
+    CommonKlibBasedArguments, CommonKlibBasedArguments.Builder,
+    CommonKlibBasedArgumentsKlibArguments, CommonKlibBasedArgumentsKlibArguments.Builder,
+    CommonKlibBasedArgumentsLinkingArguments, CommonKlibBasedArgumentsLinkingArguments.Builder {
+  @Transient
+  private val defaultArguments: CommonKlibBasedCompilerArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_KLIB_ABI_VERSION")
@@ -89,6 +88,18 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   @SerialName("X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS")
   internal var `Xskip-library-special-compatibility-checks`: Boolean =
       defaultArguments.skipLibrarySpecialCompatibilityChecks
+
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
+  }
+
+  abstract override fun createDefaultArguments(): CommonKlibBasedCompilerArguments
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = CommonKlibBasedArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V

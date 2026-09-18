@@ -62,15 +62,24 @@ internal class BtaImplOptionsGenerator(
             addAliasedImport(MemberName("org.jetbrains.kotlin.compilerRunner", "toArgumentStrings"), "compilerToArgumentStrings")
             addAliasedImport(MemberName(ClassName("org.jetbrains.kotlin.config", "KotlinCompilerVersion"), "VERSION"), "KC_VERSION")
 
+            //@file:OptIn(ExperimentalCompilerArgument::class)
             addAnnotation(
                 AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
                     .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
             )
             classType(implClassName) {
+                //class modifiers
                 addModifiers(KModifier.INTERNAL)
                 if (!level.isLeaf()) {
                     addModifiers(KModifier.ABSTRACT)
                 }
+                annotation(ANNOTATION_SERIALIZABLE)
+
+                // superclass
+                if (parentClass != null) {
+                    superclass(parentClass)
+                }
+                // class interfaces
                 val syntheticInterfaces = syntheticArgumentInterfaces.filter { it.concreteClassName == implClassName }
                 if (syntheticInterfaces.isEmpty()) {
                     addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()))
@@ -82,15 +91,21 @@ internal class BtaImplOptionsGenerator(
                     }
                 }
 
+                // constructors
+                primaryConstructor(FunSpec.constructorBuilder().build())
+                addFunction(getSecondaryConstructorFun(level))
+
                 if (parentClass != null) {
-                    superclass(parentClass)
-                    if (!generateCompatLayer) {
-                        addSuperclassConstructorParameter("defaultArguments")
-                        addSuperclassConstructorParameter("argumentValidationErrors")
-                        addSuperclassConstructorParameter("restrictedArgViolations")
-                        addSuperclassConstructorParameter("argumentParseDiagnostics")
-                    }
-                } else {
+//                    if (!generateCompatLayer) {
+//                        addSuperclassConstructorParameter("defaultArguments")
+//                        addSuperclassConstructorParameter("argumentValidationErrors")
+//                        addSuperclassConstructorParameter("restrictedArgViolations")
+//                        addSuperclassConstructorParameter("argumentParseDiagnostics")
+//                    }
+                }
+
+                // properties
+                if (parentClass == null) {
                     property(
                         "internalArguments",
                         ClassName("kotlin.collections", "MutableSet").parameterizedBy(typeNameOf<String>()),
@@ -100,15 +115,37 @@ internal class BtaImplOptionsGenerator(
                     }
                 }
 
+                property(
+                    "defaultArguments",
+                    level.getCompilerArgumentsClassName(),
+                    KModifier.PRIVATE,
+                ) {
+//                    addModifiers(if (parentClass == null) KModifier.OPEN else KModifier.OVERRIDE)
+                    annotation(ANNOTATION_TRANSIENT)
+                    initializer("createDefaultArguments()")
+                }
+
+                // methods
+                function("createDefaultArguments") {
+                    returns(level.getCompilerArgumentsClassName())
+                    if (parentClass != null) addModifiers(KModifier.OVERRIDE)
+                    if (level.isLeaf()) {
+                        addStatement("return %T()", level.getCompilerArgumentsClassName())
+                    } else {
+                        addModifiers(KModifier.ABSTRACT)
+                    }
+                }
+
+                // secondary constructor
+
+
                 val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
                 val toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFunBuilder(level, parentClass)
                 val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
-                val defaultsInitializer = CodeBlock.builder()
 
                 val argumentTypeNameString =
                     generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
                 val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
-                val constructorSpecBuilder = level.constructorSpecBuilder()
 
                 val adapterClassName = ClassName(targetPackage, "${argumentTypeNameString}ValueAdapter")
 
@@ -142,15 +179,17 @@ internal class BtaImplOptionsGenerator(
                     applyCompilerArgumentsFun = applyCompilerArgumentsFun,
                     toCompilerConverterFun = toCompilerConverterFun,
                     toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFun,
-                    level = level
+                    level = level,
+                    adapterClassName
                 )
 
                 addType(companionSpec.build())
 
-                outputs += generateValueAdapterFile(adapterClassName, mirroredEnums)
-
-                // Initialize default values for custom arguments
-                defaultsInitializer.build().takeIf { it.isNotEmpty() }?.let { addInitializerBlock(it) }
+                outputs += generateValueAdapterFile(
+                    adapterClassName,
+                    mirroredEnums,
+                    level.transformImplArguments().filterIsInstance<BtaCompilerArgument.CustomCompilerArgument>()
+                )
 
                 if (level.isLeaf()) {
                     function("deepCopy") {
@@ -185,15 +224,12 @@ internal class BtaImplOptionsGenerator(
                             MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "populateExplicitArguments")
                         )
                     }
-                    constructorSpecBuilder.addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
                 } else {
                     function("build") {
                         addModifiers(KModifier.OVERRIDE, KModifier.ABSTRACT)
                         returns(ClassName(targetPackage, implClassName))
                     }
                 }
-
-                primaryConstructor(constructorSpecBuilder.build())
 
                 toCompilerConverterFun.addStatement("return arguments")
                 addFunction(toCompilerConverterFun.build())
@@ -226,6 +262,7 @@ internal class BtaImplOptionsGenerator(
     private fun generateValueAdapterFile(
         adapterClassName: ClassName,
         mirroredEnums: Set<KClass<*>>,
+        customArguments: List<BtaCompilerArgument.CustomCompilerArgument>,
     ): Pair<Path, String> {
         fun conversionFun(toApi: Boolean): FunSpec {
             val name = if (toApi) "toApi" else "toImpl"
@@ -234,9 +271,9 @@ internal class BtaImplOptionsGenerator(
                 addParameter("value", ANY.copy(nullable = true))
                 beginControlFlow("return when (value)")
                 addStatement(
-                    "is %T if value.firstOrNull() is %T -> value.map { %N(it) }",
+                    "is %T -> value.map { %N(it) }",
                     LIST.parameterizedBy(STAR),
-                    ClassName("kotlin", "Enum").parameterizedBy(STAR),
+//                    ClassName("kotlin", "Enum").parameterizedBy(STAR),
                     name,
                 )
                 mirroredEnums.forEach { enumType ->
@@ -246,6 +283,19 @@ internal class BtaImplOptionsGenerator(
                     val targetType = if (toApi) apiType else implEnumType
                     val converter = if (toApi) "toApiEnum" else "toImplEnum"
                     addStatement("is %T -> value.%N<%T>()", sourceType, converter, targetType)
+                }
+                customArguments.forEach { it: BtaCompilerArgument.CustomCompilerArgument ->
+                    val apiType = when (val type = it.valueType.type) {
+                        is ParameterizedTypeName if type.rawType == ClassName("kotlin.collections", "List") -> {
+                            type.typeArguments.single() as ClassName
+                        }
+                        else -> type
+                    }.copy(nullable = false)
+                    val implType = getCustomParametersImplType(apiType).copy(nullable = false)
+                    val sourceType = if (toApi) implType else apiType
+//                    val targetType = if (toApi) apiType else implType
+                    val converter = if (toApi) "toApi" else "toImpl"
+                    addStatement("is %T -> value.%N()", sourceType, converter)
                 }
                 addStatement("else -> value")
                 endControlFlow()
@@ -274,15 +324,15 @@ internal class BtaImplOptionsGenerator(
         return Path(fileSpec.relativePath) to appendable.toString()
     }
 
-    private fun KotlinCompilerArgumentsLevel.constructorSpecBuilder(): FunSpec.Builder = FunSpec.constructorBuilder().apply {
+    private fun getSecondaryConstructorFun(level: KotlinCompilerArgumentsLevel): FunSpec = FunSpec.constructorBuilder().apply {
         if (!generateCompatLayer) {
-            addParameter(
-                ParameterSpec.builder("defaultArguments", getCompilerArgumentsClassName()).apply {
-                    if (this@constructorSpecBuilder.isLeaf()) {
-                        defaultValue("%T()", getCompilerArgumentsClassName())
-                    }
-                }.build()
-            )
+//            addParameter(
+//                ParameterSpec.builder("defaultArguments", level.getCompilerArgumentsClassName()).apply {
+//                    if (level.isLeaf()) {
+//                        defaultValue("%T()", level.getCompilerArgumentsClassName())
+//                    }
+//                }.build()
+//            )
             addParameter(
                 ParameterSpec.builder("argumentValidationErrors", setTypeNameOf<String>())
                     .defaultValue("%M()", MemberName("kotlin.collections", "emptySet"))
@@ -306,8 +356,12 @@ internal class BtaImplOptionsGenerator(
                     .defaultValue("%T()", ClassName(targetPackage, ARGUMENT_PARSE_DIAGNOSTICS_CLASS))
                     .build()
             )
+            callThisConstructor()
+            addStatement("_argumentValidationErrors += argumentValidationErrors")
+            addStatement("_restrictedArgViolations += restrictedArgViolations")
+            addStatement("this.argumentParseDiagnostics += argumentParseDiagnostics")
         }
-    }
+    }.build()
 
     private fun TypeSpec.Builder.generateOptions(
         companion: TypeSpec.Builder,
@@ -318,6 +372,7 @@ internal class BtaImplOptionsGenerator(
         toCompilerConverterFun: FunSpec.Builder,
         toCompilerArgumentsAffectingOutcomeFun: FunSpec.Builder,
         level: KotlinCompilerArgumentsLevel,
+        adapterClassName: ClassName,
     ): Set<KClass<*>> {
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
 
@@ -357,8 +412,8 @@ internal class BtaImplOptionsGenerator(
             val wasIntroducedRecently = (argument.introducedSinceVersion > getOldestSupportedVersion(kotlinVersion))
 
             // generate impl mirror of arguments
-            val argumentTypeParameter = when (argument.valueType) {
-                is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
+            val argumentTypeParameter = when (argument) {
+                is BtaCompilerArgument.SSoTCompilerArgument -> {
                     val type = argument.valueType.kType
                     val classifier = type.classifier as? KClass<*> ?: error("Type is not a KClass: $type")
                     when {
@@ -373,7 +428,9 @@ internal class BtaImplOptionsGenerator(
                         }
                     }
                 }
-                is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
+                is BtaCompilerArgument.CustomCompilerArgument -> argument.valueType.type.let { type ->
+                    getCustomParametersImplType(type)
+                }
             }.copy(nullable = argument.valueType.isNullable)
 
             companion.property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
@@ -381,7 +438,7 @@ internal class BtaImplOptionsGenerator(
             }
             val argumentProperty = PropertySpec.builder(argument.name, argumentTypeParameter, KModifier.INTERNAL).apply {
                 mutable(true)
-                annotation(ClassName("kotlinx.serialization", "SerialName")) {
+                annotation(ANNOTATION_SERIAL_NAME) {
                     addMember("%S", name)
                 }
                 if (argument.deprecatedSinceVersion != null) {
@@ -419,6 +476,7 @@ internal class BtaImplOptionsGenerator(
                         applyCompilerArgumentsFun,
                         wasIntroducedRecently,
                         argumentProperty,
+                        adapterClassName
                     )
                 }
             }
@@ -442,6 +500,7 @@ internal class BtaImplOptionsGenerator(
         applyCompilerArgumentsFun: FunSpec.Builder,
         wasIntroducedRecently: Boolean,
         argumentProperty: PropertySpec.Builder,
+        adapterClassName: ClassName,
     ) {
         val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
         val applier = MemberName(targetPackage, argument.applierSimpleName)
@@ -482,7 +541,13 @@ internal class BtaImplOptionsGenerator(
                 },
         )
         argumentProperty.initializer(
-            CodeBlock.of("%M(%L, defaultArguments)", applier, argument.defaultValue)
+            CodeBlock.of(
+                "@Suppress(\"UNCHECKED_CAST\") %M(%T.toImpl(%L) as %T, defaultArguments)",
+                applier,
+                adapterClassName,
+                argument.defaultValue,
+                argumentProperty.build().type
+            )
         )
     }
 
@@ -767,6 +832,7 @@ internal class BtaImplOptionsGenerator(
         ClassName("kotlin.collections", "MutableMap").parameterizedBy(typeNameOf<String>(), ANY.copy(nullable = true))
     ) {
         addModifiers(KModifier.PRIVATE)
+        annotation(ANNOTATION_TRANSIENT)
         initializer("%M()", MemberName("kotlin.collections", "mutableMapOf"))
     }
 
@@ -927,8 +993,8 @@ internal class BtaImplOptionsGenerator(
                 KModifier.PROTECTED,
             ) {
                 initializer(
-                    "restrictedArgViolations.%M()",
-                    MemberName("kotlin.collections", "toMutableList"),
+                    "%M()",
+                    MemberName("kotlin.collections", "mutableListOf"),
                 )
             }
             addProperty(
@@ -946,8 +1012,8 @@ internal class BtaImplOptionsGenerator(
                 KModifier.PROTECTED,
             ) {
                 initializer(
-                    "argumentValidationErrors.%M()",
-                    MemberName("kotlin.collections", "toMutableSet"),
+                    "%M()",
+                    MemberName("kotlin.collections", "mutableSetOf"),
                 )
             }
             addProperty(
@@ -962,7 +1028,8 @@ internal class BtaImplOptionsGenerator(
             addProperty(
                 PropertySpec.builder("argumentParseDiagnostics", ClassName(targetPackage, ARGUMENT_PARSE_DIAGNOSTICS_CLASS))
                     .addModifiers(KModifier.INTERNAL)
-                    .initializer("argumentParseDiagnostics")
+                    .initializer("%T()", ClassName(targetPackage, ARGUMENT_PARSE_DIAGNOSTICS_CLASS))
+                    .addAnnotation(ANNOTATION_TRANSIENT)
                     .build()
             )
             function("collectRestrictedArgViolations") {
@@ -1072,6 +1139,20 @@ internal class BtaImplOptionsGenerator(
         }
         return this is ParameterizedTypeName && this.rawType == List::class.asTypeName() && this.typeArguments[0].isGeneratedEnum
     }
+}
+
+private fun getCustomParametersImplType(type: TypeName): TypeName = when (type) {
+    is ParameterizedTypeName if type.rawType == ClassName("kotlin.collections", "List") -> {
+        val innerType = type.typeArguments.single() as ClassName
+        listTypeNameOf(
+            ClassName(
+                innerType.packageName.replace(".api.arguments", ".internal.arguments"),
+                innerType.simpleName + "Impl"
+            ).copy(nullable = innerType.isNullable)
+        )
+    }
+    is ClassName -> ClassName(type.packageName.replace(".api.arguments", ".internal.arguments"), type.simpleName + "Impl")
+    else -> type
 }
 
 

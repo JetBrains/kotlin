@@ -22,6 +22,12 @@ internal class ArgumentParseDiagnostics private constructor(
 ) {
     constructor() : this(null, mutableListOf(), LinkedHashMap())
 
+    operator fun plusAssign(other: ArgumentParseDiagnostics) {
+        argumentsClass = other.argumentsClass
+        argumentStringBatches += other.argumentStringBatches
+        valuesFromTypedApi.putAll(other.valuesFromTypedApi)
+    }
+
     fun copy(): ArgumentParseDiagnostics = ArgumentParseDiagnostics(
         argumentsClass,
         argumentStringBatches.toMutableList(),

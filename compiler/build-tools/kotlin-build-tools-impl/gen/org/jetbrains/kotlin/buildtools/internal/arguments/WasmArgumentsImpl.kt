@@ -23,6 +23,8 @@ import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WasmTarget
@@ -40,19 +42,15 @@ import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal class WasmArgumentsImpl(
-  defaultArguments: KotlinWasmCompilerArguments = KotlinWasmCompilerArguments(),
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonJsAndWasmArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
-    WasmCompilerArguments,
-    WasmCompilerArguments.Builder,
-    WasmCompilerKlibArguments,
-    WasmCompilerKlibArguments.Builder,
-    WasmCompilerLinkingArguments,
-    WasmCompilerLinkingArguments.Builder,
+@Serializable
+internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompilerArguments,
+    WasmCompilerArguments.Builder, WasmCompilerKlibArguments, WasmCompilerKlibArguments.Builder,
+    WasmCompilerLinkingArguments, WasmCompilerLinkingArguments.Builder,
     DeepCopyable<WasmArgumentsImpl> {
+  @Transient
+  private val defaultArguments: KotlinWasmCompilerArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE")
@@ -137,9 +135,18 @@ internal class WasmArgumentsImpl(
   @SerialName("X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS")
   internal var `Xwasm-use-traps-instead-of-exceptions`: Boolean =
       defaultArguments.wasmUseTrapsInsteadOfExceptions
-  init {
-    applyCompilerArguments(KotlinWasmCompilerArguments())
+
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
   }
+
+  override fun createDefaultArguments(): KotlinWasmCompilerArguments = KotlinWasmCompilerArguments()
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: WasmArgument<V>): V = WasmArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V

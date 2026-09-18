@@ -10,6 +10,8 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.internal.serializability.ListOfPathsAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.findPropertyWithSerialName
@@ -149,4 +151,14 @@ public fun main() {
 
     println(executionPolicy.logsPath)
     println(executionPolicy2.logsPath)
+
+
+    val arguments = JvmCompilerArgumentsImpl()
+    arguments.d = "abc"
+    arguments.`jvm-default` = JvmDefaultMode.NO_COMPATIBILITY
+    val argsJson = Json.encodeToString(arguments)
+    println(argsJson)
+    val arguments2 = Json.decodeFromString<JvmCompilerArgumentsImpl>(argsJson)
+    println(arguments2.toArgumentStrings())
+
 }
