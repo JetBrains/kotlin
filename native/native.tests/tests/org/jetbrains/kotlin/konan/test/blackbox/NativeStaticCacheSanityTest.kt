@@ -25,14 +25,12 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeCla
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import java.io.File
-import java.lang.AssertionError
 
 @Tag("caches")
 @EnforcedHostTarget
@@ -83,11 +81,7 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
     fun eagerInitializationOrderIsCorrectWithoutCaches() = doTestEagerInitializationOrderIsCorrect(useCaches = false)
 
     @Test
-    fun eagerInitializationOrderIsCorrectWithCaches() {
-        assertThrows(AssertionError::class.java) {
-            doTestEagerInitializationOrderIsCorrect(useCaches = true)
-        }
-    }
+    fun eagerInitializationOrderIsCorrectWithCaches() = doTestEagerInitializationOrderIsCorrect(useCaches = true)
 
     private fun doTestEagerInitializationOrderIsCorrect(useCaches: Boolean) {
         val cacheDir = createDir("cache")
