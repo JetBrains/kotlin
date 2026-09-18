@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -40,10 +42,22 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
     objects: ObjectFactory,
     private val execOperations: ExecOperations,
     private val providers: ProviderFactory,
-) : RequiresNpmDependenciesTask, DefaultTask() {
+) : RequiresNpmDependenciesTask, DefaultTask(), UsesNodeJsToolchainService {
 
     @get:Input
-    internal val nodeExecutable: Property<String> = objects.property(compilation.nodeJsEnvSpec.executable)
+    @get:Optional
+    internal val nodeExecutable: Provider<String> = nodeJsToolchainService.flatMap {
+        if (it is DisabledNodeJsToolchainService) {
+            objects.property(compilation.nodeJsEnvSpec).flatMap { it.executable }
+        } else objects.property()
+    }
+
+    @get:Input
+    internal val nodeJsRequest: Provider<NodeJsRequest> = objects.property(objects.newInstance<NodeJsRequest>().also {
+        it.version.convention(compilation.nodeJsEnvSpec.version.map { NodeJsVersion(it) })
+        it.platform.convention(compilation.nodeJsEnvSpec.platform.map { BuildPlatform(it.name, it.arch) })
+    })
+
 
     @get:Input
     internal val browsers = objects.setProperty(String::class.java).convention(emptyList())
@@ -104,9 +118,17 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 
         val lock = KotlinInterprocessDirectoryLock(outputDir.getFile())
 
+        val nodeJsExecutable = nodeJsToolchainService.get().let { service ->
+            if (service is DisabledNodeJsToolchainService) {
+                nodeExecutable.get()
+            } else {
+                service.request(nodeJsRequest.get())
+            }
+        }
+
         lock.withLock {
             execOperations.exec { spec ->
-                spec.executable(nodeExecutable.get())
+                spec.executable(nodeJsExecutable)
                 spec.args(args)
                 spec.environment("PLAYWRIGHT_BROWSERS_PATH", outputDir.get().asFile.absolutePath)
             }

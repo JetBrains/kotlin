@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.nodeJsDistributionName
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
@@ -40,7 +41,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
             val architecture = platformValue.arch
 
             val versionValue = version.get()
-            val nodeDirName = "node-v$versionValue-$name-$architecture"
+            val nodeDirName = nodeJsDistributionName(versionValue, name, architecture)
             val nodeDir = installationDirectory.getFile().resolve(nodeDirName)
             val isWindows = platformValue.isWindows()
             val nodeLibBinDir = if (isWindows) {
@@ -58,6 +59,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
                 return if (downloadValue) File(nodeBinDir, finalCommand).absolutePath else finalCommand
             }
 
+            //TODO deprecate it?
             fun getIvyDependency(): String {
                 val type = if (isWindows) "zip" else "tar.gz"
                 return "org.nodejs:node:$versionValue:$name-$architecture@$type"
@@ -77,6 +79,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
         }
     }
 
+    //TODO deprecate it?
     abstract val Project.nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
 }
 

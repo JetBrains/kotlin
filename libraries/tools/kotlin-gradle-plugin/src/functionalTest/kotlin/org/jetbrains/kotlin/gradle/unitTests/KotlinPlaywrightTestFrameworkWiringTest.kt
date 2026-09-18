@@ -36,7 +36,6 @@ import java.time.Duration
 import kotlin.test.*
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
-import kotlin.to
 
 class KotlinPlaywrightTestFrameworkWiringTest {
 

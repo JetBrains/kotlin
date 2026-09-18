@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -779,6 +780,19 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val playwrightBrowsersPath: Provider<String>
         get() = property(PropertyNames.KOTLIN_PLAYWRIGHT_BROWSERS_PATH)
 
+    val nodeJsToolchainMode: NodeJsToolchainMode
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN).orNull
+            ?.let { NodeJsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) } ?: NodeJsToolchainMode.DISABLE
+
+    val nodeJsToolchainDefaultInstallPath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_INSTALL_PATH)
+
+    val nodeJsToolchainDefaultDownloadUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_DOWNLOAD_URL)
+
+    val nodeJsToolchainLocalPath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_LOCAL_PATH)
+
     /**
      * Connection URL of the debug session hosted by the IDE, set when the browser tests are being debugged.
      *
@@ -870,6 +884,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = property("kotlin.mpp.enablePlatformIntegerCommonization")
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
         val KOTLIN_PLAYWRIGHT_BROWSERS_PATH = property("kotlin.gradle.playwright.browsers.path")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN = property("kotlin.js.nodejs.toolchain")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_INSTALL_PATH = property("kotlin.js.nodejs.toolchain.default.install.path")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_DOWNLOAD_URL = property("kotlin.js.nodejs.toolchain.default.download.url")
+
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_LOCAL_PATH = property("kotlin.js.nodejs.toolchain.local.path")
         val KOTLIN_JS_IDE_DEBUG_SESSION_URL = property("kotlin.internal.js.ideDebugSessionUrl")
         val KOTLIN_BUILD_REPORT_SINGLE_FILE = property("kotlin.build.report.single_file")
         val KOTLIN_BUILD_REPORT_HTTP_URL = property("kotlin.build.report.http.url")
