@@ -18,7 +18,11 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    open fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode) {
+    open fun visitLocalFunctionDeclarationEnterNode(node: LocalFunctionDeclarationEnterNode) {
+        visitNode(node)
+    }
+
+    open fun visitLocalFunctionDeclarationExitNode(node: LocalFunctionDeclarationExitNode) {
         visitNode(node)
     }
 
@@ -271,6 +275,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
+    open fun visitAugmentedAssignmentNode(node: AugmentedAssignmentNode) {
+        visitNode(node)
+    }
+
     open fun visitEnterSafeCallNode(node: EnterSafeCallNode) {
         visitNode(node)
     }
@@ -295,8 +303,12 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitFunctionExitNode(node)
     }
 
-    final override fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode, data: Nothing?) {
-        visitLocalFunctionDeclarationNode(node)
+    final override fun visitLocalFunctionDeclarationEnterNode(node: LocalFunctionDeclarationEnterNode, data: Nothing?) {
+        visitLocalFunctionDeclarationEnterNode(node)
+    }
+
+    final override fun visitLocalFunctionDeclarationExitNode(node: LocalFunctionDeclarationExitNode, data: Nothing?) {
+        visitLocalFunctionDeclarationExitNode(node)
     }
 
     // ----------------------------------- Anonymous function -----------------------------------
@@ -546,6 +558,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: Nothing?) {
         visitVariableAssignmentNode(node)
+    }
+
+    final override fun visitAugmentedAssignmentNode(node: AugmentedAssignmentNode, data: Nothing?) {
+        visitAugmentedAssignmentNode(node)
     }
 
     final override fun visitEnterSafeCallNode(node: EnterSafeCallNode, data: Nothing?) {

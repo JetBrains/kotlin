@@ -1260,7 +1260,7 @@ open class FirDeclarationsResolveTransformer(
         dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
         return context.withAnonymousInitializer(anonymousInitializer, session) {
             val result = transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent) as FirAnonymousInitializer
-            val graph = dataFlowAnalyzer.exitInitBlock(result)
+            val graph = dataFlowAnalyzer.exitInitBlock(anonymousInitializer)
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
             result
         }
