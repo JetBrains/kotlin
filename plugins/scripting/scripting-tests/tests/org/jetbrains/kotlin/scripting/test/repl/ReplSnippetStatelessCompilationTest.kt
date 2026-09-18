@@ -123,6 +123,56 @@ class ReplSnippetStatelessCompilationTest {
     }
 
     @Test
+    fun testStatelessReplKeepsVisibilitiesOfOverloadedPriorFunctions() {
+        if (!isK2) return
+
+        withTempDir { workRoot ->
+            val compiler = StatelessReplCompiler(workRoot)
+            val evaluator = K2ReplEvaluator()
+            var chain: LinkedSnippetImpl<CompiledSnippet>? = null
+
+            // The private overload comes first on purpose: only matching the serialized MemberRef signature tells the
+            // two `h`-s apart, while falling back to the first candidate would make the public one private as well.
+            chain = chain.add(
+                compiler.compile("private fun h(a: String) = a.length\nfun h(a: Int) = a + 1", "s1.repl.kts")
+            )
+            evalOrThrow(evaluator, chain, "snippet 1 eval failed")
+
+            chain = chain.add(compiler.compile("h(10)", "s2.repl.kts"))
+            val evaluated2 = evalOrThrow(evaluator, chain, "snippet 2 eval failed")
+
+            val resultValue = evaluated2.get().result as? ResultValue.Value
+                ?: fail("expected snippet 2 to produce a ResultValue.Value, got: ${evaluated2.get().result}")
+            assertEquals(11, resultValue.value, "the public overload of the prior `h` must stay public: h(10) == 11")
+        }
+    }
+
+    @Test
+    fun testStatelessReplUsesNestedClassOfPriorSnippet() {
+        if (!isK2) return
+
+        withTempDir { workRoot ->
+            val compiler = StatelessReplCompiler(workRoot)
+            val evaluator = K2ReplEvaluator()
+            var chain: LinkedSnippetImpl<CompiledSnippet>? = null
+
+            // Only `Outer` is a snippet-level declaration: `Nested` and its members are accessed through
+            // an instance of `Nested`, so the reconstruction must not treat them as snippet members.
+            chain = chain.add(
+                compiler.compile("class Outer { class Nested { val v = \"O\"\nfun f() = \"K\" } }", "s1.repl.kts")
+            )
+            evalOrThrow(evaluator, chain, "snippet 1 eval failed")
+
+            chain = chain.add(compiler.compile("val n = Outer.Nested()\nn.v + n.f()", "s2.repl.kts"))
+            val evaluated2 = evalOrThrow(evaluator, chain, "snippet 2 eval failed")
+
+            val resultValue = evaluated2.get().result as? ResultValue.Value
+                ?: fail("expected snippet 2 to produce a ResultValue.Value, got: ${evaluated2.get().result}")
+            assertEquals("OK", resultValue.value, "the nested class of the prior snippet and its members must resolve")
+        }
+    }
+
+    @Test
     fun testStatelessReplRecoversLongSessionFromSingleBackLink() {
         if (!isK2) return
 
