@@ -46,6 +46,14 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                         (it.nodeType != AbstractInsnNode.LABEL || isMergeNode[instructions.indexOf(it)])
             }
 
+        fun eliminatePop(insn: AbstractInsnNode) {
+            if (insn.isReifiedOperationPlaceholderConstant()) {
+                instructions.removeReifiedOperation(insn)
+            } else {
+                instructions.set(insn, InsnNode(Opcodes.NOP))
+            }
+        }
+
         var insn: AbstractInsnNode?
         var next = instructions.first
         while (next != null) {
@@ -57,8 +65,8 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                 Opcodes.POP -> {
                     when {
                         prev.isEliminatedByPop() -> {
+                            eliminatePop(prev)
                             instructions.set(insn, InsnNode(Opcodes.NOP))
-                            instructions.set(prev, InsnNode(Opcodes.NOP))
                             changed = true
                         }
                         prev.opcode == Opcodes.DUP_X1 -> {
@@ -102,9 +110,9 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                     } else {
                         val prev2 = prev.previousMeaningful() ?: continue
                         if (prev.isEliminatedByPop() && prev2.isEliminatedByPop()) {
+                            eliminatePop(prev2)
+                            eliminatePop(prev)
                             instructions.set(insn, InsnNode(Opcodes.NOP))
-                            instructions.set(prev, InsnNode(Opcodes.NOP))
-                            instructions.set(prev2, InsnNode(Opcodes.NOP))
                             changed = true
                         }
                     }
