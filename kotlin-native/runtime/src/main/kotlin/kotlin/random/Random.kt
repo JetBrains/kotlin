@@ -7,36 +7,26 @@
 
 package kotlin.random
 
-import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.native.concurrent.ThreadLocal
 import kotlin.system.getTimeNanos
 
 /**
  * The default implementation of pseudo-random generator using the linear congruential generator.
  */
+@ThreadLocal
 internal object NativeRandom : Random() {
     private const val MULTIPLIER = 0x5deece66dL
     @Suppress("DEPRECATION_ERROR")
-    private val _seed = AtomicLong(mult(getTimeNanos()))
-
-    /**
-     * Random generator seed value.
-     */
-    private val seed: Long
-        get() = _seed.load()
+    private var state = mult(getTimeNanos())
 
     private fun mult(value: Long) = (value xor MULTIPLIER) and ((1L shl 48) - 1)
 
-    private fun update(seed: Long): Unit {
-        _seed.store(seed)
-    }
-
     override fun nextBits(bitCount: Int): Int {
-        update((seed * MULTIPLIER + 0xbL) and ((1L shl 48) - 1))
-        return (seed ushr (48 - bitCount)).toInt()
+        val nextState = (state * MULTIPLIER + 0xbL) and ((1L shl 48) - 1)
+        state = nextState
+        return (nextState ushr (48 - bitCount)).toInt()
     }
-
-    override fun nextInt(): Int = nextBits(32)
 }
 
 internal actual fun defaultPlatformRandom(): Random = NativeRandom
