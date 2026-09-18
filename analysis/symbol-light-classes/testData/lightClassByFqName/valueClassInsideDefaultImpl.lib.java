@@ -1,10 +1,10 @@
 public abstract interface BaseInterface /* one.BaseInterface*/ {
   @org.jetbrains.annotations.Nullable()
-  public abstract java.lang.String getPropertyWithValueClassParameter-BXGQg7w();//  getPropertyWithValueClassParameter-BXGQg7w()
+  public default java.lang.String getPropertyWithValueClassParameter-BXGQg7w();//  getPropertyWithValueClassParameter-BXGQg7w()
 
-  public abstract void functionWithValueClassParameter-rdfNfmQ(@org.jetbrains.annotations.NotNull() java.lang.String);//  functionWithValueClassParameter-rdfNfmQ(java.lang.String)
+  public default void functionWithValueClassParameter-rdfNfmQ(@org.jetbrains.annotations.NotNull() java.lang.String);//  functionWithValueClassParameter-rdfNfmQ(java.lang.String)
 
-  public abstract void regularFunction();//  regularFunction()
+  public default void regularFunction();//  regularFunction()
 
   public static final class DefaultImpls /* one.BaseInterface.DefaultImpls*/ {
     @java.lang.Deprecated()

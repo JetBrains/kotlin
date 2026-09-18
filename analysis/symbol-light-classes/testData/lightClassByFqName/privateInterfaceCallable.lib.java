@@ -1,28 +1,28 @@
 public abstract interface MyInterface /* MyInterface*/ {
   @org.jetbrains.annotations.NotNull()
-  public abstract java.lang.String getPublicMangledVariable-JELJCFg(@org.jetbrains.annotations.NotNull() java.lang.String);//  getPublicMangledVariable-JELJCFg(java.lang.String)
+  public default java.lang.String getPublicMangledVariable-JELJCFg(@org.jetbrains.annotations.NotNull() java.lang.String);//  getPublicMangledVariable-JELJCFg(java.lang.String)
 
-  private abstract int getRegularVariable();//  getRegularVariable()
+  private default int getRegularVariable();//  getRegularVariable()
 
-  private abstract java.lang.String getMangledVariable-JELJCFg(java.lang.String);//  getMangledVariable-JELJCFg(java.lang.String)
+  private default java.lang.String getMangledVariable-JELJCFg(java.lang.String);//  getMangledVariable-JELJCFg(java.lang.String)
 
-  private abstract void mangledMethod-JELJCFg(java.lang.String);//  mangledMethod-JELJCFg(java.lang.String)
+  private default void mangledMethod-JELJCFg(java.lang.String);//  mangledMethod-JELJCFg(java.lang.String)
 
-  private abstract void regularMethod();//  regularMethod()
+  private default void regularMethod();//  regularMethod()
 
-  private abstract void setMangledVariable-d-auiwc(java.lang.String, java.lang.String);//  setMangledVariable-d-auiwc(java.lang.String, java.lang.String)
+  private default void setMangledVariable-d-auiwc(java.lang.String, java.lang.String);//  setMangledVariable-d-auiwc(java.lang.String, java.lang.String)
 
-  private abstract void setRegularVariable(int);//  setRegularVariable(int)
+  private default void setRegularVariable(int);//  setRegularVariable(int)
 
-  public abstract int getPublicRegularVariable();//  getPublicRegularVariable()
+  public default int getPublicRegularVariable();//  getPublicRegularVariable()
 
-  public abstract void publicMangledMethod-JELJCFg(@org.jetbrains.annotations.NotNull() java.lang.String);//  publicMangledMethod-JELJCFg(java.lang.String)
+  public default void publicMangledMethod-JELJCFg(@org.jetbrains.annotations.NotNull() java.lang.String);//  publicMangledMethod-JELJCFg(java.lang.String)
 
-  public abstract void publicRegularMethod();//  publicRegularMethod()
+  public default void publicRegularMethod();//  publicRegularMethod()
 
-  public abstract void setPublicMangledVariable-d-auiwc(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  setPublicMangledVariable-d-auiwc(java.lang.String, java.lang.String)
+  public default void setPublicMangledVariable-d-auiwc(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  setPublicMangledVariable-d-auiwc(java.lang.String, java.lang.String)
 
-  public abstract void setPublicRegularVariable(int);//  setPublicRegularVariable(int)
+  public default void setPublicRegularVariable(int);//  setPublicRegularVariable(int)
 
   public static final class DefaultImpls /* MyInterface.DefaultImpls*/ {
     @java.lang.Deprecated()
