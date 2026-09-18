@@ -33,7 +33,7 @@ class KotlinKarmaTest {
             """
             import * as exports from "../kotlin/main.mjs"
             try {
-                const startUnitTests = "startUnitTests"
+                const startUnitTests = "startunittests"
                 exports[startUnitTests]?.()
                 window.__karma__.loaded();
             } catch (e) {
