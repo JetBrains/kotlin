@@ -122,11 +122,11 @@ fun test3() {
     if (cond()) {
         var z: Int? = 42
         val resZ: Z = [{ z = 42 }, {}] // non-inline
-        bar(resZ, z!!, z)
+        bar(resZ, z!!, <!SMARTCAST_IMPOSSIBLE!>z<!>)
     } else {
         var z: Int? = 42
         val resZ: Z = Z.of({ z = 42 }, {})
-        bar(resZ, z!!, z)
+        bar(resZ, z!!, <!SMARTCAST_IMPOSSIBLE!>z<!>)
     }
 
     if (cond()) {
