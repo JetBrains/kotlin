@@ -72,4 +72,18 @@ class MultiThreadedRandomSmokeTest {
             it.requestTermination().result
         }
     }
+
+    @Test
+    fun defaultRandomReturnsDifferentInstancesOnDifferentThreads() {
+        val threadCount = 10
+        val workers = Array(threadCount) { Worker.start() }
+        val futures = workers.map {
+            it.execute(TransferMode.SAFE, {}) {
+                defaultRandom
+            }
+        }
+
+        val uniqueRandoms = futures.map { it.result }.toHashSet()
+        assertEquals(threadCount, uniqueRandoms.size)
+    }
 }
