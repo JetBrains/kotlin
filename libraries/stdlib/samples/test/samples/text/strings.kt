@@ -101,6 +101,67 @@ class Strings {
     }
 
     @Sample
+    fun windowed() {
+        val word = "kotlin"
+
+        // each window is a string of the given size, and the window moves one character forward at a time
+        val trigrams = word.windowed(3)
+        assertPrints(trigrams, "[kot, otl, tli, lin]")
+
+        // a larger step moves the window several characters forward at a time
+        assertPrints(word.windowed(size = 3, step = 2), "[kot, tli]")
+
+        // by default, a trailing window shorter than the given size is dropped
+        assertPrints(word.windowed(size = 4, step = 2), "[kotl, tlin]")
+        // but it can be kept with partialWindows = true
+        assertPrints(word.windowed(size = 4, step = 2, partialWindows = true), "[kotl, tlin, in]")
+
+        // a window larger than the whole string is dropped as well
+        assertPrints("abc".windowed(5), "[]")
+        // when partial windows are kept, every position of the string starts a window, even if it does not fit
+        assertPrints("abc".windowed(5, partialWindows = true), "[abc, bc, c]")
+
+        // an empty string has no windows
+        assertPrints("".windowed(2), "[]")
+    }
+
+    @Sample
+    fun windowedSequence() {
+        val word = "kotlin"
+        val windows = word.windowedSequence(3)
+
+        // windows are produced lazily, one by one, as the sequence is iterated
+        assertPrints(windows.first { it.startsWith('t') }, "tli")
+        assertPrints(windows.toList(), "[kot, otl, tli, lin]")
+
+        // step and partialWindows work in the same way as for windowed
+        assertPrints(word.windowedSequence(size = 4, step = 2, partialWindows = true).toList(), "[kotl, tlin, in]")
+    }
+
+    @Sample
+    fun windowedTransform() {
+        val digits = "31415"
+
+        // each window is passed to the transform function as a CharSequence
+        val numbers = digits.windowed(size = 3) { window -> window.toString().toInt() }
+        assertPrints(numbers, "[314, 141, 415]")
+
+        // a trailing partial window is passed to the transform function as well when partial windows are kept
+        val sparseNumbers = digits.windowed(size = 3, step = 2, partialWindows = true) { window -> window.toString().toInt() }
+        assertPrints(sparseNumbers, "[314, 415, 5]")
+    }
+
+    @Sample
+    fun windowedTransformToSequence() {
+        val digits = "31415926"
+        val digitSums = digits.windowedSequence(size = 3) { window -> window.sumOf { it.digitToInt() } }
+
+        // the sequence is evaluated lazily, so windows after the first match are not processed
+        assertPrints(digitSums.first { it > 10 }, "15")
+        assertPrints(digitSums.toList(), "[8, 6, 10, 15, 16, 17]")
+    }
+
+    @Sample
     fun elementAt() {
         val string = "kotlin"
         assertPrints(string.elementAt(0), "k")

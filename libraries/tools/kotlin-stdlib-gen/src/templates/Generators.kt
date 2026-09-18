@@ -667,6 +667,7 @@ object Generators : TemplateGroupBase() {
 
         specialFor(CharSequences) {
             signature("windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R)")
+            sample("samples.text.Strings.windowedTransform")
         }
         body(CharSequences) {
             """
@@ -717,6 +718,7 @@ object Generators : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Sequences.Transformations.takeWindows")
+        specialFor(CharSequences) { sample("samples.text.Strings.windowed") }
 
         body {
             """
@@ -770,7 +772,7 @@ object Generators : TemplateGroupBase() {
             by default `false` which means partial windows won't be preserved
             """
         }
-        sample("samples.collections.Sequences.Transformations.averageWindows")
+        sample("samples.text.Strings.windowedTransformToSequence")
         typeParam("R")
         returns("Sequence<R>")
 
@@ -806,7 +808,7 @@ object Generators : TemplateGroupBase() {
             by default `false` which means partial windows won't be preserved
             """
         }
-        sample("samples.collections.Sequences.Transformations.takeWindows")
+        sample("samples.text.Strings.windowedSequence")
         returns("Sequence<String>")
 
         body(CharSequences) { "return windowedSequence(size, step, partialWindows) { it.toString() }" }
