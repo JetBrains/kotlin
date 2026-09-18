@@ -38,13 +38,15 @@ interface NpmDirectoryDependencyExtension : @Suppress("DEPRECATION") BaseNpmDepe
 
 @Deprecated(
     "Unused interface. A remnant of Dukat integration. Scheduled for removal in Kotlin 2.6.",
-    ReplaceWith("BaseNpmDependencyExtension")
+    ReplaceWith("BaseNpmDependencyExtension"),
+    level = DeprecationLevel.ERROR,
 )
 interface NpmDependencyWithExternalsExtension : @Suppress("DEPRECATION") BaseNpmDependencyExtension
 
 @Deprecated(
     "Unused interface. A remnant of Dukat integration. Scheduled for removal in Kotlin 2.6.",
-    ReplaceWith("NpmDirectoryDependencyExtension")
+    ReplaceWith("NpmDirectoryDependencyExtension"),
+    level = DeprecationLevel.ERROR
 )
 interface NpmDirectoryDependencyWithExternalsExtension : @Suppress("DEPRECATION") NpmDirectoryDependencyExtension
 
@@ -74,9 +76,9 @@ interface NpmDirectoryDependencyWithExternalsExtension : @Suppress("DEPRECATION"
 interface NpmDependencyExtension :
     @Suppress("DEPRECATION")
     BaseNpmDependencyExtension,
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     NpmDependencyWithExternalsExtension,
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     NpmDirectoryDependencyWithExternalsExtension,
     @Suppress("DEPRECATION")
     NpmDirectoryDependencyExtension

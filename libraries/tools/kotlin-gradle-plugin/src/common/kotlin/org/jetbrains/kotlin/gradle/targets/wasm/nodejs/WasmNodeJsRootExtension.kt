@@ -21,11 +21,9 @@ import org.jetbrains.kotlin.gradle.utils.property
  */
 abstract class WasmNodeJsRootExtension internal constructor(
     project: Project,
-    nodeJs: () -> NodeJsEnvSpec,
     rootDir: String,
 ) : BaseNodeJsRootExtension(
     project,
-    nodeJs,
     rootDir
 ), HasPlatformDisambiguator by WasmPlatformDisambiguator {
 

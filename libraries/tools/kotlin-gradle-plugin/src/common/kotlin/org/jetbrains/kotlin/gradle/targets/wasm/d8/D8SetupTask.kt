@@ -48,12 +48,6 @@ abstract class D8SetupTask @Inject constructor(
     }
 
     companion object {
-        @Deprecated(
-            "Use d8SetupTaskProvider from D8EnvSpec. Scheduled for removal in Kotlin 2.4.",
-            level = DeprecationLevel.ERROR
-        )
-        const val NAME: String = "kotlinD8Setup"
-
         @InternalKotlinGradlePluginApi
         const val BASE_NAME: String = "D8Setup"
     }
