@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInterfaceOrAnnotationClass {
@@ -26,10 +25,6 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
         classSymbol = classSymbol,
     ) {
         require(classSymbol.classKind == KaClassKind.ANNOTATION_CLASS)
-    }
-
-    constructor(classOrObject: KtClassOrObject, useSiteModule: KaModule) : super(classOrObject, useSiteModule) {
-        require(classOrObject is KtClass && classOrObject.isAnnotation())
     }
 
     constructor(

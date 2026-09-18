@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceOrAnnotationClass {
@@ -27,10 +26,6 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         classSymbol = classSymbol,
     ) {
         require(classSymbol.classKind == KaClassKind.INTERFACE)
-    }
-
-    constructor(classOrObject: KtClassOrObject, ktModule: KaModule) : super(classOrObject, ktModule) {
-        require(classOrObject is KtClass && classOrObject.isInterface())
     }
 
     protected constructor(
