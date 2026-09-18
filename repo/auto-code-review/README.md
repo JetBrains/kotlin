@@ -28,6 +28,21 @@ If you run the tool from IntelliJ IDEA, the printed report link is clickable and
 Viewing the report in IntelliJ IDEA with Markdown preview enabled is the intended way of reading it:
 all the links to code and code rules are clickable and open the destinations in the IDE.
 
+## Run for a GitHub PR
+
+JetBrains employees can run the tool for a GitHub pull request
+by posting a comment with the text `/review` in the pull request.
+At the moment this is only supported for pull requests authored by JetBrains employees.
+
+If the requirements are met and the review is started, the comment gets a 🚀 reaction,
+and the response is posted to the PR after the review is finished.
+
+> [!NOTE]
+> The review might take 15 minutes or more.
+> If the response doesn't arrive, you can check the status manually in
+> [the build configuration](https://kotlinlang.teamcity.com/buildConfiguration/Kotlin_KotlinCloud_Dev_AutoCodeReview).
+> Look for builds for the PR branch — `refs/pull/<number>/head`.
+
 ## Run on CI
 
 JetBrains employees can also run the tool on the CI.
