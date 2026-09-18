@@ -100,6 +100,7 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.LocalTypeAliases, LanguageFeature.State.ENABLED)
     }
 
+    @Suppress("DEPRECATION")
     if (arguments.multiDollarInterpolation) {
         put(LanguageFeature.MultiDollarInterpolation, LanguageFeature.State.ENABLED)
     }
@@ -128,6 +129,7 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.NestedTypeAliases, LanguageFeature.State.ENABLED)
     }
 
+    @Suppress("DEPRECATION")
     if (arguments.nonLocalBreakContinue) {
         put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
     }
@@ -136,6 +138,7 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.StrictEqualsForStructuralClasses, LanguageFeature.State.ENABLED)
     }
 
+    @Suppress("DEPRECATION")
     if (arguments.whenGuards) {
         put(LanguageFeature.WhenGuards, LanguageFeature.State.ENABLED)
     }

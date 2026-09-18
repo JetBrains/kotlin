@@ -683,6 +683,7 @@ class ScriptingHostTest {
                 CommonCompilerArguments::languageVersion.cliArgument,
                 LanguageVersion.FIRST_SUPPORTED.versionString,
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+                @Suppress("DEPRECATION")
                 CommonCompilerArguments::whenGuards.cliArgument,
             )
         }
