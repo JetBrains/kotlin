@@ -138,6 +138,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(classInhertingDeclaration)
         parent(protocolConformingDeclaration)
         parent(bridged)
+
+        +listField("primaryAssociatedTypes", string)
     }
 
     val `class`: Element by element {
