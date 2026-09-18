@@ -113,7 +113,7 @@ internal abstract class DescriptorKCallable<out R>(
 
     private val _typeParameters = ReflectProperties.lazySoft {
         val typeParametersWithNotYetSubstitutedUpperBounds =
-            descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(unbindAllReceivers(), descriptor) }
+            descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(unbind(), descriptor) }
         val substitutor = propertyIfAccessor.overriddenStorage
             .getTypeSubstitutor(typeParametersWithNotYetSubstitutedUpperBounds, memberNameForDebug = name)
         for (typeParameter in typeParametersWithNotYetSubstitutedUpperBounds) {

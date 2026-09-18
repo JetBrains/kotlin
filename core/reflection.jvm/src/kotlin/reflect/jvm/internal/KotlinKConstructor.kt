@@ -61,7 +61,8 @@ internal class KotlinKConstructor(
         return KotlinKConstructor(container, signature, CallableReference.NO_RECEIVER, kmConstructor)
     }
 
-    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
-        if (this.rawBoundReceiver === boundReceiver) this
-        else KotlinKConstructor(container, signature, boundReceiver, kmConstructor)
+    override fun bindToLowerArity(boundReceiver: Any?) = KotlinKConstructor(container, signature, boundReceiver, kmConstructor)
+
+    override fun unbindToHigherArity(): ReflectKCallable<Any?> =
+        KotlinKConstructor(container, signature, CallableReference.NO_RECEIVER, kmConstructor)
 }

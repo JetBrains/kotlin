@@ -263,7 +263,7 @@ private fun TypeVariable<*>.findKTypeParameterInContainer(knownTypeParameters: M
 
 internal fun Array<out TypeVariable<*>>.toKTypeParameters(container: KTypeParameterOwnerImpl): List<KTypeParameter> {
     val kTypeParameters = this.associateWith {
-        val unbound = (container as? ReflectKCallable<*>)?.unbindAllReceivers() ?: container
+        val unbound = (container as? ReflectKCallable<*>)?.unbind() ?: container
         KTypeParameterImpl(unbound, it.name, KVariance.INVARIANT, isReified = false)
     }
     for ((typeVariable, kTypeParameter) in kTypeParameters) {

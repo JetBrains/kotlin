@@ -176,9 +176,10 @@ internal class DescriptorKFunction private constructor(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): DescriptorKFunction =
         DescriptorKFunction(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
-        if (this.rawBoundReceiver === boundReceiver) this
-        else DescriptorKFunction(container, descriptor, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?) = DescriptorKFunction(container, descriptor, boundReceiver, overriddenStorage)
+
+    override fun unbindToHigherArity(): ReflectKCallable<Any?> =
+        DescriptorKFunction(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,

@@ -75,7 +75,8 @@ internal class JavaKConstructor(
         return JavaKConstructor(container, jConstructor, CallableReference.NO_RECEIVER)
     }
 
-    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
-        if (this.rawBoundReceiver === boundReceiver) this
-        else JavaKConstructor(container, jConstructor, boundReceiver)
+    override fun bindToLowerArity(boundReceiver: Any?) = JavaKConstructor(container, jConstructor, boundReceiver)
+
+    override fun unbindToHigherArity(): ReflectKCallable<Any?> =
+        JavaKConstructor(container, jConstructor, CallableReference.NO_RECEIVER)
 }

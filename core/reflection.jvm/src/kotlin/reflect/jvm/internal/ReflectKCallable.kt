@@ -63,10 +63,18 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
     ): ReflectKCallable<R>
 
     /**
-     * Returns a new callable with the given bound receiver. When [boundReceiver] is [CallableReference.NO_RECEIVER],
-     * the resulting callable is unbound.
+     * Creates a new callable bound to [boundReceiver], which is assumed not to be [CallableReference.NO_RECEIVER].
+     *
+     * Unlike [bind], always returns a new callable.
      */
-    fun rebind(boundReceiver: Any?): ReflectKCallable<R>
+    fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<R>
+
+    /**
+     * Creates a new unbound callable, assuming this callable is bound.
+     *
+     * Unlike [unbind], always returns a new callable.
+     */
+    fun unbindToHigherArity(): ReflectKCallable<R>
 
     @Suppress("UNCHECKED_CAST")
     override fun call(vararg args: Any?): R = reflectionCall {
@@ -77,6 +85,22 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
         return if (isAnnotationConstructor) callAnnotationConstructor(args) else callDefaultMethod(args, null)
     }
 }
+
+/**
+ * Returns a new callable bound to [boundReceiver], or this callable itself if [boundReceiver] is [CallableReference.NO_RECEIVER].
+ *
+ * Assumes this callable is unbound; that is not checked, and the result is undefined otherwise.
+ */
+internal fun <R> ReflectKCallable<R>.bind(boundReceiver: Any?): ReflectKCallable<R> =
+    if (boundReceiver === CallableReference.NO_RECEIVER) this else bindToLowerArity(boundReceiver)
+
+/**
+ * Returns a new unbound callable, or this callable itself if it is already unbound.
+ *
+ * Throws an exception if the receiver is a property accessor. To unbind a property accessor, unbind the corresponding property and get its
+ * accessor instead.
+ */
+internal fun <R> ReflectKCallable<R>.unbind(): ReflectKCallable<R> = if (!isBound) this else unbindToHigherArity()
 
 internal val ReflectKCallable<*>.isBound: Boolean
     get() = rawBoundReceiver !== CallableReference.NO_RECEIVER
@@ -214,15 +238,6 @@ internal val ReflectKCallable<*>.isConstructor: Boolean
 
 internal val ReflectKCallable<*>.isAnnotationConstructor: Boolean
     get() = isConstructor && container.jClass.isAnnotation
-
-/**
- * Returns an object which represents the same callable, but without any bound receivers (instance, extension or context).
- *
- * Throws an exception if receiver is a property accessor. To unbind a property accessor, unbind the corresponding property and get its
- * accessor instead.
- */
-internal fun <R> ReflectKCallable<R>.unbindAllReceivers(): ReflectKCallable<R> =
-    if (!isBound) this else rebind(CallableReference.NO_RECEIVER)
 
 internal fun ReflectKCallable<*>.substituteType(type: KType): KType =
     overriddenStorage.getTypeSubstitutor(typeParameters, memberNameForDebug = name)

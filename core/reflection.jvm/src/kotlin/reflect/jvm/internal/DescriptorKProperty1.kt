@@ -50,14 +50,12 @@ internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, Descripto
     ): DescriptorKProperty1<T, V> =
         DescriptorKProperty1(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        DescriptorKProperty1<T, V>(container, descriptor, boundReceiver, overriddenStorage)
-
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
+    override fun unbindToHigherArity(): ReflectKCallable<V> =
         DescriptorKProperty2<Any?, Any?, V>(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
-        DescriptorKProperty0(container, descriptor, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<V> {
+        return DescriptorKProperty0(container, descriptor, boundReceiver, overriddenStorage)
+    }
 
     class Getter<T, out V>(override val property: DescriptorKProperty1<T, V>) : DescriptorKProperty.Getter<V>(), KProperty1.Getter<T, V> {
         override fun invoke(receiver: T): V = property.get(receiver)
@@ -86,14 +84,12 @@ internal class DescriptorKMutableProperty1<T, V> : DescriptorKProperty1<T, V>, K
     ): DescriptorKMutableProperty1<T, V> =
         DescriptorKMutableProperty1(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        DescriptorKMutableProperty1<T, V>(container, descriptor, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<V> {
+        return DescriptorKMutableProperty0(container, descriptor, boundReceiver, overriddenStorage)
+    }
 
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
+    override fun unbindToHigherArity(): ReflectKCallable<V> =
         DescriptorKMutableProperty2<Any?, Any?, V>(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
-
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
-        DescriptorKMutableProperty0(container, descriptor, boundReceiver, overriddenStorage)
 
     class Setter<T, V>(override val property: DescriptorKMutableProperty1<T, V>) : DescriptorKProperty.Setter<V>(), KMutableProperty1.Setter<T, V> {
         override fun invoke(receiver: T, value: V): Unit = property.set(receiver, value)
