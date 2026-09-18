@@ -5,10 +5,10 @@ package test
 val prop1 = <!DIVISION_BY_ZERO!>1 / 0<!>
 
 // val prop2: Infinity.toDouble()
-val prop2 = <!DIVISION_BY_ZERO!>1 / 0.0<!>
+val prop2 = 1 / 0.0
 
 // val prop3: Infinity.toDouble()
-val prop3 = <!DIVISION_BY_ZERO!>1.0 / 0<!>
+val prop3 = 1.0 / 0
 
 // val prop4: 10.0.toDouble()
 val prop4 = 1 / 0.1
@@ -35,49 +35,49 @@ val prop10 = 1.0 / 0.toFloat()
 val prop11 = 1.0 / 0.toDouble()
 
 // val prop12: -Infinity.toDouble()
-val prop12 = <!DIVISION_BY_ZERO!>-1.0 / 0<!>
+val prop12 = -1.0 / 0
 
 // val prop13: Infinity.toFloat()
-val prop13 = <!DIVISION_BY_ZERO!>1f / 0<!>
+val prop13 = 1f / 0
 
 // val prop14: -Infinity.toFloat()
-val prop14 = <!DIVISION_BY_ZERO!>-1f / 0<!>
+val prop14 = -1f / 0
 
 // val prop15: NaN.toDouble()
-val prop15 = <!DIVISION_BY_ZERO!>0.0 / 0<!>
+val prop15 = 0.0 / 0
 
 // val prop16: NaN.toFloat()
-val prop16 = <!DIVISION_BY_ZERO!>0f / 0<!>
+val prop16 = 0f / 0
 
 // val prop17: NaN.toDouble()
-val prop17 = <!DIVISION_BY_ZERO!>-0.0 / 0<!>
+val prop17 = -0.0 / 0
 
 // val prop18: NaN.toDouble()
-val prop18 = <!DIVISION_BY_ZERO!>1.0 / 0<!> - <!DIVISION_BY_ZERO!>1.0 / 0<!>
+val prop18 = 1.0 / 0 - 1.0 / 0
 
 // val prop19: NaN.toFloat()
-val prop19 = <!DIVISION_BY_ZERO!>1f / 0<!> - <!DIVISION_BY_ZERO!>1f / 0<!>
+val prop19 = 1f / 0 - 1f / 0
 
 // val prop20: NaN.toDouble()
-val prop20 = <!DIVISION_BY_ZERO!>1.0 % 0<!>
+val prop20 = 1.0 % 0
 
 // val prop21: NaN.toDouble()
-val prop21 = <!DIVISION_BY_ZERO!>0.0 % 0<!>
+val prop21 = 0.0 % 0
 
 // val prop22: NaN.toFloat()
-val prop22 = <!DIVISION_BY_ZERO!>1f % 0<!>
+val prop22 = 1f % 0
 
 // val prop23: NaN.toDouble()
-val prop23 = <!DIVISION_BY_ZERO!>-1.0 % 0<!>
+val prop23 = -1.0 % 0
 
 // val prop24: NaN.toDouble()
-val prop24 = <!DIVISION_BY_ZERO!>-0.0 % 0<!>
+val prop24 = -0.0 % 0
 
 // val prop26: NaN.toDouble()
-val prop26 = <!DIVISION_BY_ZERO!>1.0.rem(0)<!>
+val prop26 = 1.0.rem(0)
 
 // val prop27: Infinity.toDouble()
-val prop27 = <!DIVISION_BY_ZERO!>1.0.div(0)<!>
+val prop27 = 1.0.div(0)
 
 /* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, multiplicativeExpression, propertyDeclaration,
 unaryExpression */
