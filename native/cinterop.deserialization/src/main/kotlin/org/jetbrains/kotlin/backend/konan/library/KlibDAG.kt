@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.library
 
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -160,12 +161,13 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
 
     private val signatureExtractors: Map<KotlinLibrary, IdSignaturesExtractor> = buildMap {
         for (library in libraries) {
-            this[library] = when {
+            val extractor = when {
                 library.isNativeStdlib -> continue
                 library.isCInteropLibrary() -> IdSignaturesExtractorFromCInteropKlib(library)
                 library.ir != null -> IdSignaturesExtractorFromRegularKlib(library)
                 else -> error("This library does not have IR and is not a C-interop library: ${library.path}")
             }
+            this[library] = IdSignaturesExtractorFromKlibWithIndices(library, extractor)
         }
     }
 

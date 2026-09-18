@@ -31,6 +31,8 @@ inline fun <KCL : KlibComponentLayout> IrArrayReader(
 class IrArrayReader(private val buffer: ReadByteBufferProvider) {
     private val indexToOffset: IndexToOffset = buffer.use { it.readIndexToOffset(0) }
 
+    val effectiveSize: Int get() = indexToOffset.last()
+
     fun entryCount() = indexToOffset.size - 1
     fun tableItemBytes(index: Int): ByteArray = buffer.use { it.readTableItemBytes(indexToOffset, index) }
 }
