@@ -58,8 +58,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - roots: [stdlib, Foundation]
      * - target: macos_arm64
      * - number of libraries: 177 (stdlib + platform libs)
-     * - average duration is 718 ms
-     * - median duration is 712 ms
+     * - average duration is 700 ms
+     * - median duration is 706 ms
      */
     @Test
     fun `stdlib and platform libraries only (roots = stdlib + Foundation)`(testInfo: TestInfo) {
@@ -73,14 +73,34 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
 
     /**
      * Benchmarking results (Apple M2 Max):
-     * - roots: 20 user libs
+     * - roots: 20 regular user libs
      * - target: macos_arm64
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
-     * - average duration is 200 ms
-     * - median duration is 200 ms
+     * - average duration is 46 ms
+     * - median duration is 46 ms
      */
     @Test
-    fun `stdlib and platform libraries with 20 user libraries`(testInfo: TestInfo) {
+    fun `stdlib and platform libraries with 20+0 user libraries`(testInfo: TestInfo) {
+        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 20, cInteropLibsNumber = 0)
+
+        benchmark(
+            testName = testInfo.testMethod.get().name,
+            extraLibraryPaths = userLibraryPaths,
+            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
+            expectedRootsNumber = 20,
+        )
+    }
+
+    /**
+     * Benchmarking results (Apple M2 Max):
+     * - roots: 15 regular + 5 C-interop user libs
+     * - target: macos_arm64
+     * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
+     * - average duration is 197 ms
+     * - median duration is 196 ms
+     */
+    @Test
+    fun `stdlib and platform libraries with 15+5 user libraries`(testInfo: TestInfo) {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 15, cInteropLibsNumber = 5)
 
         benchmark(
@@ -93,14 +113,74 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
 
     /**
      * Benchmarking results (Apple M2 Max):
-     * - roots: 100 user libs
+     * - roots: 10 regular + 10 C-interop user libs
      * - target: macos_arm64
-     * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
-     * - average duration is 3.34 s
-     * - median duration is 3.34 s
+     * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
+     * - average duration is 578 ms
+     * - median duration is 577 ms
      */
     @Test
-    fun `stdlib and platform libraries with 100 user libraries`(testInfo: TestInfo) {
+    fun `stdlib and platform libraries with 10+10 user libraries`(testInfo: TestInfo) {
+        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 10, cInteropLibsNumber = 10)
+
+        benchmark(
+            testName = testInfo.testMethod.get().name,
+            extraLibraryPaths = userLibraryPaths,
+            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
+            expectedRootsNumber = 20,
+        )
+    }
+
+    /**
+     * Benchmarking results (Apple M2 Max):
+     * - roots: 100 regular user libs
+     * - target: macos_arm64
+     * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
+     * - average duration is 235 ms
+     * - median duration is 234 ms
+     */
+    @Test
+    fun `stdlib and platform libraries with 100+0 user libraries`(testInfo: TestInfo) {
+        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 100, cInteropLibsNumber = 0)
+
+        benchmark(
+            testName = testInfo.testMethod.get().name,
+            extraLibraryPaths = userLibraryPaths,
+            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
+            expectedRootsNumber = 100,
+        )
+    }
+
+    /**
+     * Benchmarking results (Apple M2 Max):
+     * - roots: 75 regular and 25 C-interop user libs
+     * - target: macos_arm64
+     * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
+     * - average duration is 3.39 s
+     * - median duration is 3.39 s
+     */
+    @Test
+    fun `stdlib and platform libraries with 75+25 user libraries`(testInfo: TestInfo) {
+        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 75, cInteropLibsNumber = 25)
+
+        benchmark(
+            testName = testInfo.testMethod.get().name,
+            extraLibraryPaths = userLibraryPaths,
+            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
+            expectedRootsNumber = 100,
+        )
+    }
+
+    /**
+     * Benchmarking results (Apple M2 Max):
+     * - roots: 50 regular and 50 C-interop user libs
+     * - target: macos_arm64
+     * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
+     * - average duration is 3.43 s
+     * - median duration is 3.43 s
+     */
+    @Test
+    fun `stdlib and platform libraries with 50+50 user libraries`(testInfo: TestInfo) {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 75, cInteropLibsNumber = 25)
 
         benchmark(
@@ -112,8 +192,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
     }
 
     private fun generateUserLibraries(regularLibsNumber: Int, cInteropLibsNumber: Int): Set<String> {
-        require(regularLibsNumber > 0)
-        require(cInteropLibsNumber > 0)
+        require(regularLibsNumber + cInteropLibsNumber > 0)
 
         val generatedLibraries = hashSetOf<String>()
 
