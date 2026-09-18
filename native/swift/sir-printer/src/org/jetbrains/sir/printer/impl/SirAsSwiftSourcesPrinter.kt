@@ -158,6 +158,9 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         printVisibility()
         print("protocol ")
         printName()
+        if (primaryAssociatedTypes.isNotEmpty()) {
+            print(primaryAssociatedTypes.joinToString(prefix = "<", separator = ", ", postfix = ">"))
+        }
         printInheritanceClause()
         printBody()
     }
