@@ -523,6 +523,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
     }
 
     @DisplayName("KT-89285 - a successful xcodebuild run is quiet by default and verbose with --info")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun `KT-89285 - successful xcodebuild output is hidden by default and shown with --info`(version: GradleVersion) {
         project("empty", version) {
