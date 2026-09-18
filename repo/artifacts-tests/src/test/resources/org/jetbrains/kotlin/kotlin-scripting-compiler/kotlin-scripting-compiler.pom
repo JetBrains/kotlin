@@ -51,13 +51,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.jline</groupId>
-      <artifactId>jline</artifactId>
-      <version>3.30.16</version>
-      <classifier>jdk8</classifier>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-power-assert-compiler-plugin</artifactId>
       <version>ArtifactsTest.version</version>

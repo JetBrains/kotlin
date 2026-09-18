@@ -197,7 +197,6 @@ dependencies {
     buildNumber(project(":prepare:build.version", configuration = "buildVersion"))
 
     fatJarContents(commonDependency("javax.inject"))
-    fatJarContents(variantOf(libs.jline) { classifier("jdk8") })
     fatJarContents(commonDependency("org.fusesource.jansi", "jansi"))
     fatJarContents(protobufFull())
     fatJarContents(commonDependency("com.google.code.findbugs", "jsr305"))
@@ -315,7 +314,6 @@ val proguard = tasks.register<CacheableProguardTask>("proguard") {
             !org/apache/log4j/net/SMTP*,
             !org/apache/log4j/or/jms/MessageRenderer*,
             !org/jdom/xpath/Jaxen*,
-            !org/jline/builtins/ssh/**,
             !org/mozilla/javascript/xml/impl/xmlbeans/**,
             !net/sf/cglib/**,
             !META-INF/maven**,
