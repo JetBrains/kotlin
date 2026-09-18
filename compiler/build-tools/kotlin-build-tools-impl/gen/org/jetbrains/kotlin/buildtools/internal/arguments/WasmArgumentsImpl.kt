@@ -26,6 +26,7 @@ import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WasmTarget
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.findPropertyWithSerialName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -55,148 +56,134 @@ internal class WasmArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE")
-  protected var `Xir-dce-dump-reachability-info-to-file`: Path? =
+  internal var `Xir-dce-dump-reachability-info-to-file`: Path? =
       defaultArguments.irDceDumpReachabilityInfoToFile?.let { kotlin.io.path.Path(it) }
 
   @SerialName("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE")
-  protected var `Xir-dump-declaration-ir-sizes-to-file`: Path? =
+  internal var `Xir-dump-declaration-ir-sizes-to-file`: Path? =
       defaultArguments.irDceDumpDeclarationIrSizesToFile?.let { kotlin.io.path.Path(it) }
 
   @SerialName("X_WASM")
-  protected var Xwasm: Boolean = defaultArguments.wasm
+  @Suppress("DEPRECATION")
+  internal var Xwasm: Boolean = defaultArguments.wasm
 
   @SerialName("X_WASM_IC_GENERATE_UNCHANGED_MODULES")
-  protected var `Xwasm-IC-generate-unchanged-modules`: Boolean =
+  internal var `Xwasm-IC-generate-unchanged-modules`: Boolean =
       defaultArguments.regenerateUnchangedModules
 
   @SerialName("X_WASM_DEBUG_FRIENDLY")
-  protected var `Xwasm-debug-friendly`: Boolean = defaultArguments.forceDebugFriendlyCompilation
+  internal var `Xwasm-debug-friendly`: Boolean = defaultArguments.forceDebugFriendlyCompilation
 
   @SerialName("X_WASM_DEBUG_INFO")
-  protected var `Xwasm-debug-info`: Boolean = defaultArguments.wasmDebug
+  internal var `Xwasm-debug-info`: Boolean = defaultArguments.wasmDebug
 
   @SerialName("X_WASM_DEBUGGER_CUSTOM_FORMATTERS")
-  protected var `Xwasm-debugger-custom-formatters`: Boolean =
+  internal var `Xwasm-debugger-custom-formatters`: Boolean =
       defaultArguments.debuggerCustomFormatters
 
   @SerialName("X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION")
-  protected var `Xwasm-disable-array-range-checks-safe-elimination`: Boolean =
+  internal var `Xwasm-disable-array-range-checks-safe-elimination`: Boolean =
       defaultArguments.wasmDisableArrayRangeChecksSafeElimination
 
   @SerialName("X_WASM_ENABLE_ARRAY_RANGE_CHECKS")
-  protected var `Xwasm-enable-array-range-checks`: Boolean =
+  internal var `Xwasm-enable-array-range-checks`: Boolean =
       defaultArguments.wasmEnableArrayRangeChecks
 
   @SerialName("X_WASM_ENABLE_ASSERTS")
-  protected var `Xwasm-enable-asserts`: Boolean = defaultArguments.wasmEnableAsserts
+  internal var `Xwasm-enable-asserts`: Boolean = defaultArguments.wasmEnableAsserts
 
   @SerialName("X_WASM_ENABLE_TAIL_CALLS")
-  protected var `Xwasm-enable-tail-calls`: Boolean = defaultArguments.wasmEnableTailCalls
+  internal var `Xwasm-enable-tail-calls`: Boolean = defaultArguments.wasmEnableTailCalls
 
   @SerialName("X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE")
-  protected var `Xwasm-generate-closed-world-multimodule`: Boolean =
+  internal var `Xwasm-generate-closed-world-multimodule`: Boolean =
       defaultArguments.wasmGenerateClosedWorldMultimodule
 
   @SerialName("X_WASM_GENERATE_DWARF")
-  protected var `Xwasm-generate-dwarf`: Boolean = defaultArguments.generateDwarf
+  internal var `Xwasm-generate-dwarf`: Boolean = defaultArguments.generateDwarf
 
   @SerialName("X_WASM_GENERATE_WAT")
-  protected var `Xwasm-generate-wat`: Boolean = defaultArguments.wasmGenerateWat
+  internal var `Xwasm-generate-wat`: Boolean = defaultArguments.wasmGenerateWat
 
   @SerialName("X_WASM_INCLUDED_MODULE_ONLY")
-  protected var `Xwasm-included-module-only`: Boolean = defaultArguments.wasmIncludedModuleOnly
+  internal var `Xwasm-included-module-only`: Boolean = defaultArguments.wasmIncludedModuleOnly
 
   @SerialName("X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX")
-  protected var `Xwasm-internal-local-variable-prefix`: String =
+  internal var `Xwasm-internal-local-variable-prefix`: String =
       defaultArguments.wasmInternalLocalVariablePrefix
 
   @SerialName("X_WASM_KCLASS_FQN")
-  protected var `Xwasm-kclass-fqn`: Boolean = defaultArguments.wasmKClassFqn
+  internal var `Xwasm-kclass-fqn`: Boolean = defaultArguments.wasmKClassFqn
 
   @SerialName("X_WASM_NO_JSTAG")
-  protected var `Xwasm-no-jstag`: Boolean = defaultArguments.wasmNoJsTag
+  internal var `Xwasm-no-jstag`: Boolean = defaultArguments.wasmNoJsTag
 
   @SerialName("X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES")
-  protected var `Xwasm-source-map-include-mappings-from-unavailable-sources`: Boolean =
+  internal var `Xwasm-source-map-include-mappings-from-unavailable-sources`: Boolean =
       defaultArguments.includeUnavailableSourcesIntoSourceMap
 
   @SerialName("X_WASM_TARGET")
-  protected var `Xwasm-target`: WasmTarget? =
+  internal var `Xwasm-target`: WasmTarget? =
       defaultArguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") }
 
   @SerialName("X_WASM_USE_NEW_EXCEPTION_PROPOSAL")
-  protected var `Xwasm-use-new-exception-proposal`: Boolean? =
+  internal var `Xwasm-use-new-exception-proposal`: Boolean? =
       defaultArguments.wasmUseNewExceptionProposal
 
   @SerialName("X_WASM_USE_STACK_SWITCHING_PROPOSAL")
-  protected var `Xwasm-use-stack-switching-proposal`: Boolean =
+  internal var `Xwasm-use-stack-switching-proposal`: Boolean =
       defaultArguments.wasmUseStackSwitchingProposal
 
   @SerialName("X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS")
-  protected var `Xwasm-use-traps-instead-of-exceptions`: Boolean =
+  internal var `Xwasm-use-traps-instead-of-exceptions`: Boolean =
       defaultArguments.wasmUseTrapsInsteadOfExceptions
   init {
     applyCompilerArguments(KotlinWasmCompilerArguments())
   }
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: WasmArgument<V>): V = optionsMap[key.id] as V
+  public operator fun <V> `get`(key: WasmArgument<V>): V = WasmArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V
 
   public operator fun <V> `set`(key: WasmArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+    WasmArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, `value`)
   }
 
-  public operator fun contains(key: WasmArgument<*>): Boolean = key.id in optionsMap
-
-  private operator fun `get`(key: String): Any? = WasmArgumentValueAdapter.toApi(optionsMap[key])
-
-  private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = WasmArgumentValueAdapter.toImpl(`value`)
-  }
+  public operator fun contains(key: WasmArgument<*>): Boolean = true
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: WasmCompilerArguments.WasmCompilerArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: WasmCompilerArguments.WasmCompilerArgument<V>): V = WasmArgumentValueAdapter.toApi(WasmArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerArguments.WasmCompilerArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    WasmArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, WasmArgumentValueAdapter.toImpl(value))
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): V = WasmArgumentValueAdapter.toApi(WasmArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    WasmArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, WasmArgumentValueAdapter.toImpl(value))
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): V = WasmArgumentValueAdapter.toApi(WasmArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    WasmArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, WasmArgumentValueAdapter.toImpl(value))
   }
 
   override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }

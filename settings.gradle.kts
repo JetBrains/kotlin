@@ -653,7 +653,7 @@ include(
     ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-tools-api-backports",
     ":compiler:build-tools:kotlin-build-tools-impl",
-    ":compiler:build-tools:kotlin-build-tools-compat",
+//    ":compiler:build-tools:kotlin-build-tools-compat",
     ":compiler:build-tools:kotlin-build-tools-api-tests",
     ":compiler:build-tools:kotlin-build-tools-api-forward-tests",
     ":compiler:build-tools:kotlin-build-tools-api-forward-tests:shared",

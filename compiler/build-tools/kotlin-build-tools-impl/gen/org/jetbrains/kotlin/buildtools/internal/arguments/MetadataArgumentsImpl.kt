@@ -32,6 +32,7 @@ import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.MetadataTargetPlatform
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.findPropertyWithSerialName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -56,65 +57,56 @@ internal class MetadataArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_FRIEND_PATHS")
-  protected var `Xfriend-paths`: List<Path> =
+  internal var `Xfriend-paths`: List<Path> =
       defaultArguments.friendPaths.mapOrEmpty { kotlin.io.path.Path(it) }
 
   @SerialName("X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT")
-  protected var `Xklib-zip-file-accessor-cache-limit`: Int =
+  internal var `Xklib-zip-file-accessor-cache-limit`: Int =
       defaultArguments.klibZipFileAccessorCacheLimit.let { it.toInt() }
 
   @SerialName("X_LEGACY_METADATA_JAR_K2")
-  protected var `Xlegacy-metadata-jar-k2`: Boolean = defaultArguments.legacyMetadataJar
+  internal var `Xlegacy-metadata-jar-k2`: Boolean = defaultArguments.legacyMetadataJar
 
   @SerialName("X_REFINES_PATHS")
-  protected var `Xrefines-paths`: List<Path> =
+  internal var `Xrefines-paths`: List<Path> =
       defaultArguments.refinesPaths.mapOrEmpty { kotlin.io.path.Path(it) }
 
   @SerialName("X_TARGET_PLATFORM")
-  protected var `Xtarget-platform`: List<MetadataTargetPlatform> =
+  internal var `Xtarget-platform`: List<MetadataTargetPlatform> =
       defaultArguments.targetPlatform.map { MetadataTargetPlatform.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") }
 
   @SerialName("CLASSPATH")
-  protected var classpath: List<Path>? =
+  internal var classpath: List<Path>? =
       defaultArguments.classpath?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
 
   @SerialName("D")
-  protected var d: String? = defaultArguments.destination
+  internal var d: String? = defaultArguments.destination
 
   @SerialName("MODULE_NAME")
-  protected var `module-name`: String? = defaultArguments.moduleName
+  internal var `module-name`: String? = defaultArguments.moduleName
   init {
     applyCompilerArguments(K2MetadataCompilerArguments())
   }
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: MetadataArgument<V>): V = optionsMap[key.id] as V
+  public operator fun <V> `get`(key: MetadataArgument<V>): V = MetadataArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V
 
   public operator fun <V> `set`(key: MetadataArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+    MetadataArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, `value`)
   }
 
-  public operator fun contains(key: MetadataArgument<*>): Boolean = key.id in optionsMap
-
-  private operator fun `get`(key: String): Any? = MetadataArgumentValueAdapter.toApi(optionsMap[key])
-
-  private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = MetadataArgumentValueAdapter.toImpl(`value`)
-  }
+  public operator fun contains(key: MetadataArgument<*>): Boolean = true
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: MetadataArguments.MetadataArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: MetadataArguments.MetadataArgument<V>): V = MetadataArgumentValueAdapter.toApi(MetadataArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: MetadataArguments.MetadataArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    MetadataArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, MetadataArgumentValueAdapter.toImpl(value))
   }
 
   override fun deepCopy(): MetadataArgumentsImpl = MetadataArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }

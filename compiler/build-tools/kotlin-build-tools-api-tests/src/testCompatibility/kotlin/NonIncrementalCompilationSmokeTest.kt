@@ -78,6 +78,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
                 compilerVersion.startsWith("2.0") -> assertFailsWith("X_USE_K2_KAPT is available only since 2.1.0")
                 compilerVersion.startsWith("2.1") -> assertSucceeds()
                 compilerVersion.startsWith("2.2") -> assertSucceeds()
+                compilerVersion.startsWith("2.5") -> assertFailsWith("Property with serial name X_USE_K2_KAPT not found in class org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl")
                 compilerVersion.startsWith("2.3") -> assertFailsWith("Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: ${kotlinToolchain.getCompilerVersion()}, but the argument was introduced in 2.1.0 and removed in 2.3.0") {
                     it?.replace("}", "") // there was an extra "}" in 2.3.0 by mistake
                 }

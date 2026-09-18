@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.DuplicatedUniq
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.KlibIrInlinerMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.PartialLinkageLogLevel
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.PartialLinkageMode
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.findPropertyWithSerialName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments
@@ -54,98 +55,84 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_KLIB_ABI_VERSION")
-  protected var `Xklib-abi-version`: String? = defaultArguments.customKlibAbiVersion
+  internal var `Xklib-abi-version`: String? = defaultArguments.customKlibAbiVersion
 
   @SerialName("X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY")
-  protected var `Xklib-duplicated-unique-name-strategy`: DuplicatedUniqueNameStrategy? =
+  internal var `Xklib-duplicated-unique-name-strategy`: DuplicatedUniqueNameStrategy? =
       defaultArguments.duplicatedUniqueNameStrategy?.let { DuplicatedUniqueNameStrategy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::duplicatedUniqueNameStrategy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-duplicated-unique-name-strategy value: $it") }
 
   @SerialName("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS")
-  protected var `Xklib-enable-signature-clash-checks`: Boolean =
+  internal var `Xklib-enable-signature-clash-checks`: Boolean =
       defaultArguments.enableSignatureClashChecks
 
   @SerialName("X_KLIB_IR_INLINER")
-  protected var `Xklib-ir-inliner`: KlibIrInlinerMode =
+  internal var `Xklib-ir-inliner`: KlibIrInlinerMode =
       defaultArguments.irInlinerBeforeKlibSerialization.let { KlibIrInlinerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::irInlinerBeforeKlibSerialization, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-ir-inliner value: $it") }
 
   @SerialName("X_KLIB_RELATIVE_PATH_BASE")
-  protected var `Xklib-relative-path-base`: List<Path> =
+  internal var `Xklib-relative-path-base`: List<Path> =
       defaultArguments.relativePathBases.mapOrEmpty { kotlin.io.path.Path(it) }
 
   @SerialName("X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT")
-  protected var `Xklib-zip-file-accessor-cache-limit`: Int =
+  internal var `Xklib-zip-file-accessor-cache-limit`: Int =
       defaultArguments.klibZipFileAccessorCacheLimit.let { it.toInt() }
 
   @SerialName("X_PARTIAL_LINKAGE")
-  protected var `Xpartial-linkage`: PartialLinkageMode? =
+  @Suppress("DEPRECATION")
+  internal var `Xpartial-linkage`: PartialLinkageMode? =
       defaultArguments.partialLinkageMode?.let { PartialLinkageMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::partialLinkageMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage value: $it") }
 
   @SerialName("X_PARTIAL_LINKAGE_LOGLEVEL")
-  protected var `Xpartial-linkage-loglevel`: PartialLinkageLogLevel? =
+  internal var `Xpartial-linkage-loglevel`: PartialLinkageLogLevel? =
       defaultArguments.partialLinkageLogLevel?.let { PartialLinkageLogLevel.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::partialLinkageLogLevel, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage-loglevel value: $it") }
 
   @SerialName("X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS")
-  protected var `Xskip-library-special-compatibility-checks`: Boolean =
+  internal var `Xskip-library-special-compatibility-checks`: Boolean =
       defaultArguments.skipLibrarySpecialCompatibilityChecks
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = optionsMap[key.id] as V
+  public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = CommonKlibBasedArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V
 
   public operator fun <V> `set`(key: CommonKlibBasedArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+    CommonKlibBasedArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, `value`)
   }
 
-  public operator fun contains(key: CommonKlibBasedArgument<*>): Boolean = key.id in optionsMap
-
-  private operator fun `get`(key: String): Any? = CommonKlibBasedArgumentValueAdapter.toApi(optionsMap[key])
-
-  private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = CommonKlibBasedArgumentValueAdapter.toImpl(`value`)
-  }
+  public operator fun contains(key: CommonKlibBasedArgument<*>): Boolean = true
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>): V = CommonKlibBasedArgumentValueAdapter.toApi(CommonKlibBasedArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    CommonKlibBasedArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, CommonKlibBasedArgumentValueAdapter.toImpl(value))
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>): V = CommonKlibBasedArgumentValueAdapter.toApi(CommonKlibBasedArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    CommonKlibBasedArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, CommonKlibBasedArgumentValueAdapter.toImpl(value))
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>): V = CommonKlibBasedArgumentValueAdapter.toApi(CommonKlibBasedArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    CommonKlibBasedArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, CommonKlibBasedArgumentValueAdapter.toImpl(value))
   }
 
   abstract override fun build(): CommonKlibBasedArgumentsImpl

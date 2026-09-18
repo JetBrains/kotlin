@@ -229,29 +229,29 @@ class BtaVersionsCompilationTestArgumentProvider : ArgumentsProvider {
                 val temporaryKotlinToolchains = kotlinToolchainsProvider()
                 val version = temporaryKotlinToolchains.getCompilerVersion()
 
-                @Suppress("DEPRECATION_ERROR") val kotlinToolchainV1Adapter =
-                    if (KotlinToolingVersion(version) < KotlinToolingVersion(2, 4, 0, null)) {
-                        {
-                            val asKotlinToolchainsMethod =
-                                btaClassloader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1AdapterKt")
-                                    .getDeclaredMethod("asKotlinToolchains", CompilationService::class.java)
-                            asKotlinToolchainsMethod.invoke(
-                                null, CompilationService.loadImplementation(
-                                    btaClassloader
-                                )
-                            ) as KotlinToolchains
-                        }
-                    } else null
-                if (kotlinToolchainV1Adapter != null) {
-                    add(
-                        named("[v1][$version]", kotlinToolchainV1Adapter)
-                    )
-                }
-                if (kotlinToolchainV1Adapter == null || kotlinToolchainV1Adapter()::class != temporaryKotlinToolchains::class) {
+//                @Suppress("DEPRECATION_ERROR") val kotlinToolchainV1Adapter =
+//                    if (KotlinToolingVersion(version) < KotlinToolingVersion(2, 4, 0, null)) {
+//                        {
+//                            val asKotlinToolchainsMethod =
+//                                btaClassloader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1AdapterKt")
+//                                    .getDeclaredMethod("asKotlinToolchains", CompilationService::class.java)
+//                            asKotlinToolchainsMethod.invoke(
+//                                null, CompilationService.loadImplementation(
+//                                    btaClassloader
+//                                )
+//                            ) as KotlinToolchains
+//                        }
+//                    } else null
+//                if (kotlinToolchainV1Adapter != null) {
+//                    add(
+//                        named("[v1][$version]", kotlinToolchainV1Adapter)
+//                    )
+//                }
+//                if (kotlinToolchainV1Adapter == null || kotlinToolchainV1Adapter()::class != temporaryKotlinToolchains::class) {
                     add(
                         named("[v2][$version]", kotlinToolchainsProvider)
                     )
-                }
+//                }
             }
         }
     }

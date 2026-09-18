@@ -26,6 +26,7 @@ import kotlin.collections.toMutableList
 import kotlin.collections.toMutableSet
 import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.findPropertyWithSerialName
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments
@@ -45,25 +46,25 @@ internal abstract class CommonToolArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("WERROR")
-  protected var Werror: Boolean = defaultArguments.allWarningsAsErrors
+  internal var Werror: Boolean = defaultArguments.allWarningsAsErrors
 
   @SerialName("WEXTRA")
-  protected var Wextra: Boolean = defaultArguments.extraWarnings
+  internal var Wextra: Boolean = defaultArguments.extraWarnings
 
   @SerialName("X")
-  protected var X: Boolean = defaultArguments.extraHelp
+  internal var X: Boolean = defaultArguments.extraHelp
 
   @SerialName("HELP")
-  protected var help: Boolean = defaultArguments.help
+  internal var help: Boolean = defaultArguments.help
 
   @SerialName("NOWARN")
-  protected var nowarn: Boolean = defaultArguments.suppressWarnings
+  internal var nowarn: Boolean = defaultArguments.suppressWarnings
 
   @SerialName("VERBOSE")
-  protected var verbose: Boolean = defaultArguments.verbose
+  internal var verbose: Boolean = defaultArguments.verbose
 
   @SerialName("VERSION")
-  protected var version: Boolean = defaultArguments.version
+  internal var version: Boolean = defaultArguments.version
 
   protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> =
       restrictedArgViolations.toMutableList()
@@ -78,33 +79,24 @@ internal abstract class CommonToolArgumentsImpl(
     get() = _argumentValidationErrors
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
+  public operator fun <V> `get`(key: CommonToolArgument<V>): V = CommonToolArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V
 
   public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+    CommonToolArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, `value`)
   }
 
-  public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
-
-  private operator fun `get`(key: String): Any? = CommonToolArgumentValueAdapter.toApi(optionsMap[key])
-
-  private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = CommonToolArgumentValueAdapter.toImpl(`value`)
-  }
+  public operator fun contains(key: CommonToolArgument<*>): Boolean = true
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V = CommonToolArgumentValueAdapter.toApi(CommonToolArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    CommonToolArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, CommonToolArgumentValueAdapter.toImpl(value))
   }
 
   @Deprecated(

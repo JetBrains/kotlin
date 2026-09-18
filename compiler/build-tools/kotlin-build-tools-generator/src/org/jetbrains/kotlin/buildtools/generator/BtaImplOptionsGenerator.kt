@@ -113,16 +113,16 @@ internal class BtaImplOptionsGenerator(
                 val adapterClassName = ClassName(targetPackage, "${argumentTypeNameString}ValueAdapter")
 
                 generateOptionsMap()
-                generateOwnGetPutFunctions(argumentImplTypeName, adapterClassName)
+                generateOwnGetPutFunctions(implClassName, argumentImplTypeName, adapterClassName)
 
                 if (syntheticInterfaces.isEmpty()) {
                     val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
-                    generateGetPutFunctions(argumentTypeName, level)
+                    generateGetPutFunctions(implClassName, argumentTypeName, level, adapterClassName)
                 } else {
                     syntheticInterfaces.forEach { syntheticInterface ->
                         val argumentTypeName =
                             ClassName(API_ARGUMENTS_PACKAGE, syntheticInterface.name, syntheticInterface.name.removeSuffix("s"))
-                        generateGetPutFunctions(argumentTypeName, level)
+                        generateGetPutFunctions(implClassName, argumentTypeName, level, adapterClassName)
                     }
                 }
                 val companionSpec = TypeSpec.companionObjectBuilder().apply {
@@ -379,10 +379,15 @@ internal class BtaImplOptionsGenerator(
             companion.property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
                 initializer("%T(%S)", argumentTypeName, name)
             }
-            val argumentProperty = PropertySpec.builder(argument.name, argumentTypeParameter, KModifier.PROTECTED).apply {
+            val argumentProperty = PropertySpec.builder(argument.name, argumentTypeParameter, KModifier.INTERNAL).apply {
                 mutable(true)
                 annotation(ClassName("kotlinx.serialization", "SerialName")) {
                     addMember("%S", name)
+                }
+                if (argument.deprecatedSinceVersion != null) {
+                    annotation<Suppress> {
+                        addMember("%S", "DEPRECATION")
+                    }
                 }
             }
 
@@ -766,9 +771,12 @@ internal class BtaImplOptionsGenerator(
     }
 
     fun TypeSpec.Builder.generateOwnGetPutFunctions(
+        implClassName: String,
         implParameter: ClassName,
         adapterClassName: ClassName,
     ) {
+        val findPropertyWithSerialName =
+            MemberName("org.jetbrains.kotlin.buildtools.internal.serializability", "findPropertyWithSerialName", isExtension = true)
         function("get") {
             val typeParameter = TypeVariableName("V")
             annotation<Suppress> {
@@ -778,7 +786,7 @@ internal class BtaImplOptionsGenerator(
             addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", implParameter.parameterizedBy(typeParameter))
-            addStatement("return optionsMap[key.id] as %T", typeParameter)
+            addStatement("return %L::class.%M(key.id).getter.call(this) as %T", implClassName, findPropertyWithSerialName, typeParameter)
         }
         function("set") {
             val typeParameter = TypeVariableName("V")
@@ -786,31 +794,39 @@ internal class BtaImplOptionsGenerator(
             addTypeVariable(typeParameter)
             addParameter("key", implParameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
-            addStatement("optionsMap[key.id] = %N", "value")
+            addStatement("%L::class.%M(key.id).setter.call(this, %N)", implClassName, findPropertyWithSerialName, "value")
         }
 
         function("contains") {
             addModifiers(KModifier.OPERATOR)
             returns(BOOLEAN)
             addParameter("key", implParameter.parameterizedBy(STAR))
-            addStatement("return key.id in optionsMap")
+            addStatement("return true")
         }
 
-        function("get") {
-            returns(Any::class.asClassName().copy(nullable = true))
-            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
-            addParameter("key", String::class)
-            addStatement("return %T.toApi(optionsMap[key])", adapterClassName)
-        }
-        function("set") {
-            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
-            addParameter("key", String::class)
-            addParameter("value", Any::class.asClassName().copy(nullable = true))
-            addStatement("optionsMap[key] = %T.toImpl(%N)", adapterClassName, "value")
-        }
+//        function("get") {
+//            returns(Any::class.asClassName().copy(nullable = true))
+//            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
+//            addParameter("key", String::class)
+//            addStatement("return %T.toApi(optionsMap[key])", adapterClassName)
+//        }
+//        function("set") {
+//            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
+//            addParameter("key", String::class)
+//            addParameter("value", Any::class.asClassName().copy(nullable = true))
+//            addStatement("optionsMap[key] = %T.toImpl(%N)", adapterClassName, "value")
+//        }
     }
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, level: KotlinCompilerArgumentsLevel) {
+    fun TypeSpec.Builder.generateGetPutFunctions(
+        implClassName: String,
+        parameter: ClassName,
+        level: KotlinCompilerArgumentsLevel,
+        adapterClassName: ClassName,
+    ) {
+        val findPropertyWithSerialName =
+            MemberName("org.jetbrains.kotlin.buildtools.internal.serializability", "findPropertyWithSerialName", isExtension = true)
+
         function("get") {
             val typeParameter = TypeVariableName("V")
             annotation<Suppress> {
@@ -823,8 +839,13 @@ internal class BtaImplOptionsGenerator(
             addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
-            addStatement($$"check(key.id in optionsMap) { \"Argument ${key.id} is not set and has no default value\" }")
-            addStatement("return this[key.id] as %T", typeParameter)
+            addStatement(
+                "return %T.toApi(%L::class.%M(key.id).getter.call(this)) as %T",
+                adapterClassName,
+                implClassName,
+                findPropertyWithSerialName,
+                typeParameter
+            )
         }
         function("set") {
             if (targetPackage == IMPL_ARGUMENTS_PACKAGE) {
@@ -864,7 +885,12 @@ internal class BtaImplOptionsGenerator(
                     .endControlFlow()
                     .build()
             )
-            addStatement("this[key.id] = %N", "value")
+            addStatement(
+                "%L::class.%M(key.id).setter.call(this, %T.toImpl(value))",
+                implClassName,
+                findPropertyWithSerialName,
+                adapterClassName
+            )
         }
 
         if (levelsSince[level.name] == KDOC_SINCE_2_3_0) {

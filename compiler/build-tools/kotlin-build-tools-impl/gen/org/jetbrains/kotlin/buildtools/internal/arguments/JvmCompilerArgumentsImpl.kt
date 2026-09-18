@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SamConversions
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.StringConcatMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ValhallaSupportMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WhenExpressionsMode
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.findPropertyWithSerialName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -70,271 +71,262 @@ internal class JvmCompilerArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_ABI_STABILITY")
-  protected var `Xabi-stability`: AbiStabilityMode? =
+  internal var `Xabi-stability`: AbiStabilityMode? =
       defaultArguments.abiStability?.let { AbiStabilityMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::abiStability, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xabi-stability value: $it") }
 
   @SerialName("X_ADD_MODULES")
-  protected var `Xadd-modules`: List<String> =
-      defaultArguments.additionalJavaModules.toListOrEmpty()
+  internal var `Xadd-modules`: List<String> = defaultArguments.additionalJavaModules.toListOrEmpty()
 
   @SerialName("X_ALLOW_NO_SOURCE_FILES")
-  protected var `Xallow-no-source-files`: Boolean = defaultArguments.allowNoSourceFiles
+  internal var `Xallow-no-source-files`: Boolean = defaultArguments.allowNoSourceFiles
 
   @SerialName("X_ALLOW_UNSTABLE_DEPENDENCIES")
-  protected var `Xallow-unstable-dependencies`: Boolean = defaultArguments.allowUnstableDependencies
+  internal var `Xallow-unstable-dependencies`: Boolean = defaultArguments.allowUnstableDependencies
 
   @SerialName("X_ANNOTATIONS_IN_METADATA")
-  protected var `Xannotations-in-metadata`: Boolean = defaultArguments.annotationsInMetadata
+  internal var `Xannotations-in-metadata`: Boolean = defaultArguments.annotationsInMetadata
 
   @SerialName("X_ASSERTIONS")
-  protected var Xassertions: AssertionsMode? =
+  internal var Xassertions: AssertionsMode? =
       defaultArguments.assertionsMode?.let { AssertionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::assertionsMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xassertions value: $it") }
 
   @SerialName("X_BACKEND_THREADS")
-  protected var `Xbackend-threads`: Int = defaultArguments.backendThreads.let { it.toInt() }
+  internal var `Xbackend-threads`: Int = defaultArguments.backendThreads.let { it.toInt() }
 
   @SerialName("X_BUILD_FILE")
-  protected var `Xbuild-file`: String? = defaultArguments.buildFile
+  internal var `Xbuild-file`: String? = defaultArguments.buildFile
 
   @SerialName("X_DEBUG")
-  protected var Xdebug: Boolean = defaultArguments.enableDebugMode
+  internal var Xdebug: Boolean = defaultArguments.enableDebugMode
 
   @SerialName("X_DEFAULT_SCRIPT_EXTENSION")
-  protected var `Xdefault-script-extension`: String? = defaultArguments.defaultScriptExtension
+  internal var `Xdefault-script-extension`: String? = defaultArguments.defaultScriptExtension
 
   @SerialName("X_DIRECT_JAVA_ACTUALIZATION")
-  protected var `Xdirect-java-actualization`: Boolean = defaultArguments.directJavaActualization
+  internal var `Xdirect-java-actualization`: Boolean = defaultArguments.directJavaActualization
 
   @SerialName("X_DISABLE_STANDARD_SCRIPT")
-  protected var `Xdisable-standard-script`: Boolean = defaultArguments.disableStandardScript
+  internal var `Xdisable-standard-script`: Boolean = defaultArguments.disableStandardScript
 
   @SerialName("X_EMIT_JVM_TYPE_ANNOTATIONS")
-  protected var `Xemit-jvm-type-annotations`: Boolean = defaultArguments.emitJvmTypeAnnotations
+  internal var `Xemit-jvm-type-annotations`: Boolean = defaultArguments.emitJvmTypeAnnotations
 
   @SerialName("X_ENHANCED_COROUTINES_DEBUGGING")
-  protected var `Xenhanced-coroutines-debugging`: Boolean =
+  internal var `Xenhanced-coroutines-debugging`: Boolean =
       defaultArguments.enhancedCoroutinesDebugging
 
   @SerialName("X_FRIEND_PATHS")
-  protected var `Xfriend-paths`: List<Path> =
+  internal var `Xfriend-paths`: List<Path> =
       defaultArguments.friendPaths.mapOrEmpty { kotlin.io.path.Path(it) }
 
   @SerialName("X_GENERATE_STRICT_METADATA_VERSION")
-  protected var `Xgenerate-strict-metadata-version`: Boolean =
+  internal var `Xgenerate-strict-metadata-version`: Boolean =
       defaultArguments.strictMetadataVersionSemantics
 
   @SerialName("X_IGNORED_ANNOTATIONS_FOR_BRIDGES")
-  protected var `Xignored-annotations-for-bridges`: List<String> =
+  internal var `Xignored-annotations-for-bridges`: List<String> =
       defaultArguments.ignoredAnnotationsForBridges.toListOrEmpty()
 
   @SerialName("X_INDY_ALLOW_ANNOTATED_LAMBDAS")
-  protected var `Xindy-allow-annotated-lambdas`: Boolean? =
+  internal var `Xindy-allow-annotated-lambdas`: Boolean? =
       defaultArguments.indyAllowAnnotatedLambdas
 
   @SerialName("X_JAVA_DIRECT")
-  protected var `Xjava-direct`: Boolean = defaultArguments.javaDirect
+  internal var `Xjava-direct`: Boolean = defaultArguments.javaDirect
 
   @SerialName("X_JAVA_PACKAGE_PREFIX")
-  protected var `Xjava-package-prefix`: String? = defaultArguments.javaPackagePrefix
+  internal var `Xjava-package-prefix`: String? = defaultArguments.javaPackagePrefix
 
   @SerialName("X_JAVA_SOURCE_ROOTS")
-  protected var `Xjava-source-roots`: List<Path> =
+  internal var `Xjava-source-roots`: List<Path> =
       defaultArguments.javaSourceRoots.mapOrEmpty { kotlin.io.path.Path(it) }
 
   @SerialName("X_JDK_RELEASE")
-  protected var `Xjdk-release`: JdkRelease? =
+  internal var `Xjdk-release`: JdkRelease? =
       defaultArguments.jdkRelease?.let { JdkRelease.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::jdkRelease, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xjdk-release value: $it") }
 
   @SerialName("X_JSPECIFY_ANNOTATIONS")
-  protected var `Xjspecify-annotations`: JspecifyAnnotationsMode? =
+  internal var `Xjspecify-annotations`: JspecifyAnnotationsMode? =
       defaultArguments.jspecifyAnnotations?.let { JspecifyAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::jspecifyAnnotations, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xjspecify-annotations value: $it") }
 
   @SerialName("X_JVM_DEFAULT")
-  protected var `Xjvm-default`: String? = defaultArguments.jvmDefault
+  @Suppress("DEPRECATION")
+  internal var `Xjvm-default`: String? = defaultArguments.jvmDefault
 
   @SerialName("X_JVM_ENABLE_PREVIEW")
-  protected var `Xjvm-enable-preview`: Boolean = defaultArguments.enableJvmPreview
+  internal var `Xjvm-enable-preview`: Boolean = defaultArguments.enableJvmPreview
 
   @SerialName("X_JVM_EXPOSE_BOXED")
-  protected var `Xjvm-expose-boxed`: Boolean = defaultArguments.jvmExposeBoxed
+  internal var `Xjvm-expose-boxed`: Boolean = defaultArguments.jvmExposeBoxed
 
   @SerialName("X_LAMBDAS")
-  protected var Xlambdas: LambdasMode? =
+  internal var Xlambdas: LambdasMode? =
       defaultArguments.lambdas?.let { LambdasMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::lambdas, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xlambdas value: $it") }
 
   @SerialName("X_MODULE_PATH")
-  protected var `Xmodule-path`: List<Path>? =
+  internal var `Xmodule-path`: List<Path>? =
       defaultArguments.javaModulePath?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
 
   @SerialName("X_MULTIFILE_PARTS_INHERIT")
-  protected var `Xmultifile-parts-inherit`: Boolean = defaultArguments.inheritMultifileParts
+  internal var `Xmultifile-parts-inherit`: Boolean = defaultArguments.inheritMultifileParts
 
   @SerialName("X_NO_CALL_ASSERTIONS")
-  protected var `Xno-call-assertions`: Boolean = defaultArguments.noCallAssertions
+  internal var `Xno-call-assertions`: Boolean = defaultArguments.noCallAssertions
 
   @SerialName("X_NO_NEW_JAVA_ANNOTATION_TARGETS")
-  protected var `Xno-new-java-annotation-targets`: Boolean =
+  internal var `Xno-new-java-annotation-targets`: Boolean =
       defaultArguments.noNewJavaAnnotationTargets
 
   @SerialName("X_NO_OPTIMIZE")
-  protected var `Xno-optimize`: Boolean = defaultArguments.noOptimize
+  internal var `Xno-optimize`: Boolean = defaultArguments.noOptimize
 
   @SerialName("X_NO_PARAM_ASSERTIONS")
-  protected var `Xno-param-assertions`: Boolean = defaultArguments.noParamAssertions
+  internal var `Xno-param-assertions`: Boolean = defaultArguments.noParamAssertions
 
   @SerialName("X_NO_RECEIVER_ASSERTIONS")
-  protected var `Xno-receiver-assertions`: Boolean = defaultArguments.noReceiverAssertions
+  internal var `Xno-receiver-assertions`: Boolean = defaultArguments.noReceiverAssertions
 
   @SerialName("X_NO_RESET_JAR_TIMESTAMPS")
-  protected var `Xno-reset-jar-timestamps`: Boolean = defaultArguments.noResetJarTimestamps
+  internal var `Xno-reset-jar-timestamps`: Boolean = defaultArguments.noResetJarTimestamps
 
   @SerialName("X_NO_SOURCE_DEBUG_EXTENSION")
-  protected var `Xno-source-debug-extension`: Boolean = defaultArguments.noSourceDebugExtension
+  internal var `Xno-source-debug-extension`: Boolean = defaultArguments.noSourceDebugExtension
 
   @SerialName("X_NO_UNIFIED_NULL_CHECKS")
-  protected var `Xno-unified-null-checks`: Boolean = defaultArguments.noUnifiedNullChecks
+  internal var `Xno-unified-null-checks`: Boolean = defaultArguments.noUnifiedNullChecks
 
   @SerialName("X_OUTPUT_BUILTINS_METADATA")
-  protected var `Xoutput-builtins-metadata`: Boolean = defaultArguments.outputBuiltinsMetadata
+  internal var `Xoutput-builtins-metadata`: Boolean = defaultArguments.outputBuiltinsMetadata
 
   @SerialName("X_SAM_CONVERSIONS")
-  protected var `Xsam-conversions`: SamConversionsMode? =
+  internal var `Xsam-conversions`: SamConversionsMode? =
       defaultArguments.samConversions?.let { SamConversionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::samConversions, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $it") }
 
   @SerialName("X_SANITIZE_PARENTHESES")
-  protected var `Xsanitize-parentheses`: Boolean = defaultArguments.sanitizeParentheses
+  internal var `Xsanitize-parentheses`: Boolean = defaultArguments.sanitizeParentheses
 
   @SerialName("X_SCRIPT_RESOLVER_ENVIRONMENT")
-  protected var `Xscript-resolver-environment`: List<String> =
+  internal var `Xscript-resolver-environment`: List<String> =
       defaultArguments.scriptResolverEnvironment.toListOrEmpty()
 
   @SerialName("X_STRING_CONCAT")
-  protected var `Xstring-concat`: StringConcatMode? =
+  internal var `Xstring-concat`: StringConcatMode? =
       defaultArguments.stringConcat?.let { StringConcatMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::stringConcat, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xstring-concat value: $it") }
 
   @SerialName("X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS")
-  protected var `Xsupport-compatqual-checker-framework-annotations`: CompatqualAnnotationsMode? =
+  internal var `Xsupport-compatqual-checker-framework-annotations`: CompatqualAnnotationsMode? =
       defaultArguments.supportCompatqualCheckerFrameworkAnnotations?.let { CompatqualAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::supportCompatqualCheckerFrameworkAnnotations, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $it") }
 
   @SerialName("X_SUPPRESS_MISSING_BUILTINS_ERROR")
-  protected var `Xsuppress-missing-builtins-error`: Boolean =
+  internal var `Xsuppress-missing-builtins-error`: Boolean =
       defaultArguments.suppressMissingBuiltinsError
 
   @SerialName("X_USE_14_INLINE_CLASSES_MANGLING_SCHEME")
-  protected var `Xuse-14-inline-classes-mangling-scheme`: Boolean =
+  internal var `Xuse-14-inline-classes-mangling-scheme`: Boolean =
       defaultArguments.useOldInlineClassesManglingScheme
 
   @SerialName("X_USE_FAST_JAR_FILE_SYSTEM")
-  protected var `Xuse-fast-jar-file-system`: Boolean? = defaultArguments.useFastJarFileSystem
+  internal var `Xuse-fast-jar-file-system`: Boolean? = defaultArguments.useFastJarFileSystem
 
   @SerialName("X_USE_INLINE_SCOPES_NUMBERS")
-  protected var `Xuse-inline-scopes-numbers`: Boolean = defaultArguments.useInlineScopesNumbers
+  internal var `Xuse-inline-scopes-numbers`: Boolean = defaultArguments.useInlineScopesNumbers
 
   @SerialName("X_USE_METADATA_ON_INCREMENTAL_CLASSPATH")
-  protected var `Xuse-metadata-on-incremental-classpath`: Boolean =
+  internal var `Xuse-metadata-on-incremental-classpath`: Boolean =
       defaultArguments.useMetadataOnIncrementalClasspath
 
   @SerialName("X_USE_OLD_CLASS_FILES_READING")
-  protected var `Xuse-old-class-files-reading`: Boolean = defaultArguments.useOldClassFilesReading
+  internal var `Xuse-old-class-files-reading`: Boolean = defaultArguments.useOldClassFilesReading
 
   @SerialName("X_USE_TYPE_TABLE")
-  protected var `Xuse-type-table`: Boolean = defaultArguments.useTypeTable
+  internal var `Xuse-type-table`: Boolean = defaultArguments.useTypeTable
 
   @SerialName("X_VALHALLA_SUPPORT")
-  protected var `Xvalhalla-support`: ValhallaSupportMode? =
+  internal var `Xvalhalla-support`: ValhallaSupportMode? =
       defaultArguments.valhallaSupport?.let { ValhallaSupportMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::valhallaSupport, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xvalhalla-support value: $it") }
 
   @SerialName("X_VALIDATE_BYTECODE")
-  protected var `Xvalidate-bytecode`: Boolean = defaultArguments.validateBytecode
+  internal var `Xvalidate-bytecode`: Boolean = defaultArguments.validateBytecode
 
   @SerialName("X_WHEN_EXPRESSIONS")
-  protected var `Xwhen-expressions`: WhenExpressionsMode? =
+  internal var `Xwhen-expressions`: WhenExpressionsMode? =
       defaultArguments.whenExpressionsGeneration?.let { WhenExpressionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::whenExpressionsGeneration, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $it") }
 
   @SerialName("CLASSPATH")
-  protected var classpath: List<Path>? =
+  internal var classpath: List<Path>? =
       defaultArguments.classpath?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
 
   @SerialName("D")
-  protected var d: String? = defaultArguments.destination
+  internal var d: String? = defaultArguments.destination
 
   @SerialName("EXPRESSION")
-  protected var expression: String? = defaultArguments.expression
+  internal var expression: String? = defaultArguments.expression
 
   @SerialName("INCLUDE_RUNTIME")
-  protected var `include-runtime`: Boolean = defaultArguments.includeRuntime
+  internal var `include-runtime`: Boolean = defaultArguments.includeRuntime
 
   @SerialName("JAVA_PARAMETERS")
-  protected var `java-parameters`: Boolean = defaultArguments.javaParameters
+  internal var `java-parameters`: Boolean = defaultArguments.javaParameters
 
   @SerialName("JDK_HOME")
-  protected var `jdk-home`: Path? = defaultArguments.jdkHome?.let { kotlin.io.path.Path(it) }
+  internal var `jdk-home`: Path? = defaultArguments.jdkHome?.let { kotlin.io.path.Path(it) }
 
   @SerialName("JVM_DEFAULT")
-  protected var `jvm-default`: JvmDefaultMode? =
+  internal var `jvm-default`: JvmDefaultMode? =
       defaultArguments.jvmDefaultStable?.let { JvmDefaultMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::jvmDefaultStable, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -jvm-default value: $it") }
 
   @SerialName("JVM_TARGET")
-  protected var `jvm-target`: JvmTarget? =
+  internal var `jvm-target`: JvmTarget? =
       defaultArguments.jvmTarget?.let { JvmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::jvmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -jvm-target value: $it") }
 
   @SerialName("MODULE_NAME")
-  protected var `module-name`: String? = defaultArguments.moduleName
+  internal var `module-name`: String? = defaultArguments.moduleName
 
   @SerialName("NO_JDK")
-  protected var `no-jdk`: Boolean = defaultArguments.noJdk
+  internal var `no-jdk`: Boolean = defaultArguments.noJdk
 
   @SerialName("NO_REFLECT")
-  protected var `no-reflect`: Boolean = defaultArguments.noReflect
+  internal var `no-reflect`: Boolean = defaultArguments.noReflect
 
   @SerialName("NO_STDLIB")
-  protected var `no-stdlib`: Boolean = defaultArguments.noStdlib
+  internal var `no-stdlib`: Boolean = defaultArguments.noStdlib
 
   @SerialName("SCRIPT_TEMPLATES")
-  protected var `script-templates`: List<String> = defaultArguments.scriptTemplates.toListOrEmpty()
+  internal var `script-templates`: List<String> = defaultArguments.scriptTemplates.toListOrEmpty()
 
   @SerialName("X_PROFILE")
-  protected var Xprofile: ProfileCompilerCommand? =
+  internal var Xprofile: ProfileCompilerCommand? =
       applyProfileCompilerCommand(null, defaultArguments)
 
   @SerialName("X_NULLABILITY_ANNOTATIONS")
-  protected var `Xnullability-annotations`: List<NullabilityAnnotation> =
+  internal var `Xnullability-annotations`: List<NullabilityAnnotation> =
       applyNullabilityAnnotations(emptyList<NullabilityAnnotation>(), defaultArguments)
 
   @SerialName("X_JSR305")
-  protected var Xjsr305: List<Jsr305> = applyJsr305(emptyList<Jsr305>(), defaultArguments)
+  internal var Xjsr305: List<Jsr305> = applyJsr305(emptyList<Jsr305>(), defaultArguments)
   init {
     applyCompilerArguments(K2JVMCompilerArguments())
   }
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = optionsMap[key.id] as V
+  public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = JvmCompilerArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V
 
   public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+    JvmCompilerArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, `value`)
   }
 
-  public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
-
-  private operator fun `get`(key: String): Any? = JvmCompilerArgumentValueAdapter.toApi(optionsMap[key])
-
-  private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = JvmCompilerArgumentValueAdapter.toImpl(`value`)
-  }
+  public operator fun contains(key: JvmCompilerArgument<*>): Boolean = true
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V = JvmCompilerArgumentValueAdapter.toApi(JvmCompilerArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JvmCompilerArguments.JvmCompilerArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    JvmCompilerArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, JvmCompilerArgumentValueAdapter.toImpl(value))
   }
 
   @Deprecated(
