@@ -11,23 +11,12 @@ plugins {
 }
 
 dependencies {
-    implementation(intellijCore())
-    implementation(project(":core:descriptors.jvm"))
-    implementation(project(":core:language.targets.jvm"))
-    implementation(project(":compiler:config.jvm"))
-    implementation(project(":compiler:psi:parser"))
-    implementation(project(":compiler:psi:psi-api"))
+    api(project(":compiler:psi:psi-api"))
     api(project(":analysis:analysis-api"))
-    api(project(":analysis:analysis-api-platform-interface"))
-    api(project(":analysis:analysis-api-fir"))
-    api(project(":analysis:low-level-api-fir"))
-    api(project(":analysis:symbol-light-classes"))
-    api(project(":analysis:decompiled:light-classes-for-decompiled"))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
-    testImplementation(testFixtures(project(":compiler:psi:psi-api")))
+    testFixturesApi(testFixtures(project(":compiler:psi:psi-api")))
     testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
 
     testFixturesApi(kotlinTest("junit5"))

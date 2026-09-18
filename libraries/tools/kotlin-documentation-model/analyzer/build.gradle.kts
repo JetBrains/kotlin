@@ -61,6 +61,7 @@ dependencies {
 
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-standalone"))
+    implementation(project(":analysis:light-classes-base"))
     runtimeOnly(project(":analysis:analysis-api-platform-interface"))
     runtimeOnly(project(":analysis:analysis-api-fir"))
     runtimeOnly(project(":analysis:low-level-api-fir"))
