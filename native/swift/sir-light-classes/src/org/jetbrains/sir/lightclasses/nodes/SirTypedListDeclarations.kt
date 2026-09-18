@@ -12,17 +12,21 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.allSupertypes
 import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.SirExtension
 import org.jetbrains.kotlin.sir.SirFunctionBody
 import org.jetbrains.kotlin.sir.SirFunctionalType
 import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
 import org.jetbrains.kotlin.sir.SirStruct
 import org.jetbrains.kotlin.sir.SirTypeVariance
 import org.jetbrains.kotlin.sir.SirTypealias
+import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.builder.buildExtension
 import org.jetbrains.kotlin.sir.builder.buildGetter
+import org.jetbrains.kotlin.sir.builder.buildInit
 import org.jetbrains.kotlin.sir.builder.buildProtocol
 import org.jetbrains.kotlin.sir.builder.buildStruct
 import org.jetbrains.kotlin.sir.builder.buildTypealias
@@ -67,9 +71,9 @@ internal fun createSirTypedListDeclarations(
             primaryAssociatedTypes.add("Element")
             protocols.add(if (isMutable) KotlinRuntimeSupportModule.typedMutableList else KotlinRuntimeSupportModule.typedList)
         }.apply { this.parent = parent }
+        val declarationType = SirNominalType(declaration)
         val typedListExtension = buildExtension {
             extendedType = SirNominalType(typedListProtocol)
-            val declarationType = SirNominalType(declaration)
             buildVariable {
                 name = "rawList"
                 type = declarationType
@@ -90,15 +94,28 @@ internal fun createSirTypedListDeclarations(
                 name = "__rawCollection"
                 type = SirNominalType(KotlinRuntimeModule.kotlinBase)
             }.also(declarations::add)
+            val conformsToType = SirFunctionalType(
+                parameterTypes = listOf(SirNominalType(SirSwiftModule.anyClass).optional()),
+                returnType = SirNominalType(SirSwiftModule.bool)
+            )
             buildVariable {
                 isConstant = true
                 name = "__conformsTo"
-                type = SirFunctionalType(
-                    parameterTypes = listOf(SirNominalType(SirSwiftModule.anyClass).optional()),
-                    returnType = SirNominalType(SirSwiftModule.bool)
-                )
+                type = conformsToType
             }.also(declarations::add)
-            // TODO: Add init KT-88831
+            buildInit {
+                visibility = SirVisibility.PACKAGE
+                isFailable = false
+                SirParameter(
+                    argumentName = "rawList",
+                    type = declarationType
+                ).also(parameters::add)
+                SirParameter(
+                    argumentName = "conformsTo",
+                    type = conformsToType.copyAppendingAttributes(SirAttribute.Escaping)
+                ).also(parameters::add)
+                body = SirFunctionBody(listOf("self.__rawCollection = rawList", "self.__conformsTo = conformsTo"))
+            }.also(declarations::add)
         }.apply {
             declarations.forEach { it.parent = this }
             this.parent = parent

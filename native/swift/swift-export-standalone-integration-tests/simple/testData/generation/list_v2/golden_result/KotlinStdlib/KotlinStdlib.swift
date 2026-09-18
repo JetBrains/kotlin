@@ -103,8 +103,8 @@ extension ExportedKotlinPackages.kotlin.collections.List where Self : ExportedKo
     public func subList(
         fromIndex: Swift.Int32,
         toIndex: Swift.Int32
-    ) -> any KotlinRuntimeSupport.TypedList<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinRuntimeSupport.TypedListImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(rawCollection: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), fromIndex, toIndex), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+    ) -> any ExportedKotlinPackages.kotlin.collections.List {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), fromIndex, toIndex), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List
     }
     public static func ~=(
         this: Self,
@@ -144,6 +144,13 @@ extension ExportedKotlinPackages.kotlin.collections.ListIterator where Self : Ex
     }
 }
 extension ExportedKotlinPackages.kotlin.collections.ListIterator {
+}
+extension ExportedKotlinPackages.kotlin.collections.List_Typed {
+    public var rawList: ExportedKotlinPackages.kotlin.collections.List {
+        get {
+            return __rawCollection as! ExportedKotlinPackages.kotlin.collections.List
+        }
+    }
 }
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.MutableCollection where Self : ExportedKotlinPackages.kotlin.collections.__MutableCollection {
@@ -261,8 +268,8 @@ extension ExportedKotlinPackages.kotlin.collections.MutableList where Self : Exp
     public func subList(
         fromIndex: Swift.Int32,
         toIndex: Swift.Int32
-    ) -> any KotlinRuntimeSupport.TypedMutableList<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinRuntimeSupport.TypedMutableListImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(rawCollection: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableList_subList__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), fromIndex, toIndex), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList, conformsTo: KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+    ) -> any ExportedKotlinPackages.kotlin.collections.MutableList {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableList_subList__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), fromIndex, toIndex), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList
     }
 }
 extension ExportedKotlinPackages.kotlin.collections.MutableList {
@@ -290,6 +297,13 @@ extension ExportedKotlinPackages.kotlin.collections.MutableListIterator where Se
     }
 }
 extension ExportedKotlinPackages.kotlin.collections.MutableListIterator {
+}
+extension ExportedKotlinPackages.kotlin.collections.MutableList_Typed {
+    public var rawList: ExportedKotlinPackages.kotlin.collections.MutableList {
+        get {
+            return __rawCollection as! ExportedKotlinPackages.kotlin.collections.MutableList
+        }
+    }
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.List, ExportedKotlinPackages.kotlin.collections.__List where Wrapped : ExportedKotlinPackages.kotlin.collections._List {
@@ -400,7 +414,7 @@ extension ExportedKotlinPackages.kotlin.collections {
         func subList(
             fromIndex: Swift.Int32,
             toIndex: Swift.Int32
-        ) -> any KotlinRuntimeSupport.TypedList<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+        ) -> any ExportedKotlinPackages.kotlin.collections.List
     }
     public protocol ListIterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections._ListIterator {
         func hasNext() -> Swift.Bool
@@ -409,6 +423,8 @@ extension ExportedKotlinPackages.kotlin.collections {
         func nextIndex() -> Swift.Int32
         func previous() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         func previousIndex() -> Swift.Int32
+    }
+    public protocol List_Typed<Element>: KotlinRuntimeSupport.TypedList {
     }
     public protocol MutableCollection: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Collection, ExportedKotlinPackages.kotlin.collections.MutableIterable, ExportedKotlinPackages.kotlin.collections._MutableCollection {
         func add(
@@ -474,7 +490,7 @@ extension ExportedKotlinPackages.kotlin.collections {
         func subList(
             fromIndex: Swift.Int32,
             toIndex: Swift.Int32
-        ) -> any KotlinRuntimeSupport.TypedMutableList<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+        ) -> any ExportedKotlinPackages.kotlin.collections.MutableList
     }
     public protocol MutableListIterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.ListIterator, ExportedKotlinPackages.kotlin.collections.MutableIterator, ExportedKotlinPackages.kotlin.collections._MutableListIterator {
         func add(
@@ -486,6 +502,8 @@ extension ExportedKotlinPackages.kotlin.collections {
         func set(
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void
+    }
+    public protocol MutableList_Typed<Element>: KotlinRuntimeSupport.TypedMutableList {
     }
     @objc(_ExportedKotlinPackages_kotlin_collections_Collection)
     public protocol _Collection: ExportedKotlinPackages.kotlin.collections._Iterable {
@@ -536,6 +554,28 @@ extension ExportedKotlinPackages.kotlin.collections {
     public protocol __MutableList: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__List, ExportedKotlinPackages.kotlin.collections.__MutableCollection {
     }
     public protocol __MutableListIterator: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__ListIterator, ExportedKotlinPackages.kotlin.collections.__MutableIterator {
+    }
+    public struct List_TypedImpl<Element>: ExportedKotlinPackages.kotlin.collections.List_Typed {
+        public let __conformsTo: (Swift.AnyClass?) -> Swift.Bool
+        public let __rawCollection: KotlinRuntime.KotlinBase
+        package init(
+            rawList: ExportedKotlinPackages.kotlin.collections.List,
+            conformsTo: @escaping (Swift.AnyClass?) -> Swift.Bool
+        ) {
+            self.__rawCollection = rawList
+            self.__conformsTo = conformsTo
+        }
+    }
+    public struct MutableList_TypedImpl<Element>: ExportedKotlinPackages.kotlin.collections.MutableList_Typed {
+        public let __conformsTo: (Swift.AnyClass?) -> Swift.Bool
+        public let __rawCollection: KotlinRuntime.KotlinBase
+        package init(
+            rawList: ExportedKotlinPackages.kotlin.collections.MutableList,
+            conformsTo: @escaping (Swift.AnyClass?) -> Swift.Bool
+        ) {
+            self.__rawCollection = rawList
+            self.__conformsTo = conformsTo
+        }
     }
 }
 @_cdecl("kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
@@ -709,8 +749,8 @@ package func kotlin_collections_List_size_get__reverse_swift(_ `self`: Swift.Uns
 @_cdecl("kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")
 package func kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ fromIndex: Swift.Int32, _ toIndex: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List
-    let _result: any KotlinRuntimeSupport.TypedList<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = _self.subList(fromIndex: fromIndex, toIndex: toIndex)
-    return _result.__rawCollection.__externalRCRef()
+    let _result: any ExportedKotlinPackages.kotlin.collections.List = _self.subList(fromIndex: fromIndex, toIndex: toIndex)
+    return _result.__externalRCRef()
 }
 
 @_cdecl("kotlin_collections_MutableCollection_addAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
@@ -898,6 +938,6 @@ package func kotlin_collections_MutableList_set__TypesOfArguments__Swift_Int32_S
 @_cdecl("kotlin_collections_MutableList_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")
 package func kotlin_collections_MutableList_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ fromIndex: Swift.Int32, _ toIndex: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList
-    let _result: any KotlinRuntimeSupport.TypedMutableList<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = _self.subList(fromIndex: fromIndex, toIndex: toIndex)
-    return _result.__rawCollection.__externalRCRef()
+    let _result: any ExportedKotlinPackages.kotlin.collections.MutableList = _self.subList(fromIndex: fromIndex, toIndex: toIndex)
+    return _result.__externalRCRef()
 }

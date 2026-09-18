@@ -4,8 +4,8 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
-@ExportedBridge("list2_testListOptAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList__")
-public fun list2_testListOptAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList__(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("list2_testListOptAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Typed_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____")
+public fun list2_testListOptAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Typed_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __l = kotlin.native.internal.ref.dereferenceExternalRCRef(l) as list2.MyList<kotlin.Any?>
     val _result = run { list2.testListOptAny(__l) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
