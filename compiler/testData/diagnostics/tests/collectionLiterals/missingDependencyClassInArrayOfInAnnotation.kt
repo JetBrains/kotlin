@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -CollectionLiterals
 // LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
+// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-89259
 
@@ -27,11 +28,11 @@ package p3
 
 import kotlin.reflect.KClass
 
-@p2.WithMissingInParams(<!MISSING_DEPENDENCY_CLASS!>[]<!>)
+@p2.WithMissingInParams([])
 @p2.WithChildOfMissingInParams([])
 class Annotated
 
-@p2.WithMissingInParams(<!MISSING_DEPENDENCY_CLASS!>arrayOf<!>())
+@p2.WithMissingInParams(arrayOf())
 @p2.WithChildOfMissingInParams(arrayOf())
 class Annotated2
 
