@@ -51,6 +51,7 @@ nativeInteropPlugin {
             // To enforce linking with proper libc++, pass the default path explicitly:
             add("-L${nativeDependencies.hostPlatform.absoluteTargetSysRoot}/usr/lib")
         } else if (PlatformInfo.isLinux()) {
+            add("-fuse-ld=lld")
             add("-Wl,-z,noexecstack")
             addAll(listOf("-lrt", "-ldl", "-lpthread", "-lz", "-lm"))
         } else if (PlatformInfo.isWindows()) {
