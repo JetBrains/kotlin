@@ -13,8 +13,21 @@ fun interface IFoo {
 
 fun foo(iFoo: IFoo) = iFoo.foo()
 
+fun bar(f: (Array<String>) -> Unit): Any = f
+
+inline fun make(crossinline f: (String) -> Unit): Any = bar { f(it[0]) }
+
 // FILE: 2.kt
-fun box() =
-    cross {
-        foo { "OK" }
-    }.toString()
+private fun getBar() = bar { it.size }
+
+private fun getMake() = make { it.length }
+
+fun box(): String {
+    if (cross { foo { "OK" } }.toString() != "OK") return "Crossinline behavior failed"
+
+    if (getBar() !== getBar()) return "Stateless lambda was not reused"
+    if (getMake() !== getMake()) return "Regenerated stateless lambda was not reused"
+    if (getMake() === make { it.length }) return "Different lambdas were reused"
+
+    return "OK"
+}

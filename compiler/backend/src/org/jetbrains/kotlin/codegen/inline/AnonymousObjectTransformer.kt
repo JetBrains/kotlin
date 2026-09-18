@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
@@ -142,6 +144,12 @@ class AnonymousObjectTransformer(
 
         generateConstructorAndFields(classBuilder, constructorParamBuilder, parentRemapper)
 
+        if (header?.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS) {
+            transformationInfo.computeLambdaTransformedIntoSingleton()
+        } else {
+            transformationInfo.notLambdaTransformedIntoSingleton()
+        }
+
         val coroutineTransformer = CoroutineTransformer(
             inliningContext,
             classBuilder,
@@ -211,6 +219,9 @@ class AnonymousObjectTransformer(
 
         if (header != null) {
             writeTransformedMetadata(header, classBuilder)
+            if (transformationInfo.isLambdaTransformedIntoSingleton) {
+                synthesizeSingletonMembers(classBuilder)
+            }
         }
 
         // debugMetadataAnnotation can be null in LV < 1.3
@@ -236,6 +247,28 @@ class AnonymousObjectTransformer(
         }
 
         return transformationResult
+    }
+
+    private fun synthesizeSingletonMembers(classBuilder: ClassBuilder) {
+        val internalClassName = transformationInfo.newClassName
+        val classType = Type.getObjectType(internalClassName)
+        classBuilder.newField(
+            null,
+            Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC or Opcodes.ACC_FINAL,
+            JvmAbi.INSTANCE_FIELD,
+            classType.descriptor,
+            null,
+            null
+        )
+        val clinit = classBuilder.newMethod(null, Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
+        val adapter = InstructionAdapter(clinit)
+        adapter.anew(classType)
+        adapter.dup()
+        adapter.invokespecial(internalClassName, "<init>", "()V", false)
+        adapter.putstatic(internalClassName, JvmAbi.INSTANCE_FIELD, classType.descriptor)
+        adapter.visitInsn(Opcodes.RETURN)
+        adapter.visitMaxs(-1, -1)
+        adapter.visitEnd()
     }
 
     private fun isAccessorOfSkippedCapturedParameter(
