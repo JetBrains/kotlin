@@ -154,6 +154,7 @@ KDouble Kotlin_math_cbrt(KDouble x) { return cbrt(x); }
 KDouble Kotlin_math_Double_pow(KDouble thiz, KDouble x) {
   // Kotlin corner cases
   if (x == 0.0 || x == -0.0) return 1.0;
+  if (isnan(x)) return NAN;
   if (isinf(x) && (thiz == 1.0 || thiz == -1.0)) return NAN;
   return pow(thiz, x);
 }
@@ -231,6 +232,7 @@ KFloat Kotlin_math_cbrtf(KFloat x) { return cbrtf(x); }
 KFloat Kotlin_math_Float_pow(KFloat thiz, KFloat x) {
   // Kotlin corner cases
   if (x == 0.0 || x == -0.0) return 1.0;
+  if (isnan(x)) return NAN;
   if (isinf(x) && (thiz == 1.0 || thiz == -1.0)) return NAN;
   return powf(thiz, x);
 }
