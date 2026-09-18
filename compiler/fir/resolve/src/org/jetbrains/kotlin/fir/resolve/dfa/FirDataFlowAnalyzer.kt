@@ -363,14 +363,9 @@ abstract class FirDataFlowAnalyzer(
 
         val assignedInside = context.variableAssignmentAnalyzer.enterFunction(function)
 
-        val [localFunctionNode, functionEnterNode] = if (function is FirAnonymousFunction) {
-            null to graphBuilder.enterAnonymousFunction(function)
-        } else {
-            graphBuilder.enterFunction(function)
-        }
-        localFunctionNode?.mergeIncomingFlow()
-        functionEnterNode.mergeIncomingFlow { _, flow ->
-            if (function is FirAnonymousFunction) {
+        if (function is FirAnonymousFunction) {
+            val enterNode = graphBuilder.enterAnonymousFunction(function)
+            enterNode.mergeIncomingFlow { _, flow ->
                 /*
              * Anonymous functions which can be revisited, either in-place or not in-place, are treated as repeatable statements. This
              * causes any assignments to local variables within the anonymous function body to clear type statements for those local
@@ -383,6 +378,10 @@ abstract class FirDataFlowAnalyzer(
                     processConditionalContract(flow, it, null, targetLambdaArgument = function)
                 }
             }
+        } else {
+            val (localEnterNode, functionEnterNode) = graphBuilder.enterFunction(function)
+            localEnterNode?.mergeIncomingFlow()
+            functionEnterNode.mergeIncomingFlow()
         }
     }
 
@@ -391,8 +390,9 @@ abstract class FirDataFlowAnalyzer(
 
         context.variableAssignmentAnalyzer.exitFunction()
 
-        val [node, graph] = graphBuilder.exitFunction(function)
-        node.mergeIncomingFlow()
+        val (functionExitNode, localExitNode, graph) = graphBuilder.exitFunction(function)
+        functionExitNode.mergeIncomingFlow()
+        localExitNode?.mergeIncomingFlow()
         resetSmartCastPosition()
         return FirControlFlowGraphReferenceImpl(graph)
     }
@@ -439,6 +439,7 @@ abstract class FirDataFlowAnalyzer(
         staticGraph?.enterNode?.mergeIncomingFlow()
         staticGraph?.exitNode?.mergeIncomingFlow()
         memberGraph?.exitNode?.mergeIncomingFlow()
+        result?.localExitNode?.mergeIncomingFlow()
 
         if (memberGraph == null || !memberGraph.exitNode.isUnion) {
             resetSmartCastPosition() // to state before class initialization
@@ -455,10 +456,6 @@ abstract class FirDataFlowAnalyzer(
         val [node, graph] = graphBuilder.exitEnumEntry()
         node.mergeIncomingFlow()
         return graph
-    }
-
-    fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression) {
-        graphBuilder.exitAnonymousObjectExpression(anonymousObjectExpression)?.mergeIncomingFlow()
     }
 
     // ----------------------------------- Scripts ------------------------------------------
@@ -944,7 +941,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun CFGNode<*>.mergeWhenBranchEntryFlow(): Unit = mergeIncomingFlow { _, flow ->
-        val previousConditionExitNode = previousNodes.singleOrNull() as? WhenBranchConditionExitNode ?: return@mergeIncomingFlow
+        val previousConditionExitNode = previousNodes.singleOrNull { it is WhenBranchConditionExitNode } as? WhenBranchConditionExitNode ?: return@mergeIncomingFlow
         val previousCondition = previousConditionExitNode.fir.condition
         if (!previousCondition.resolvedType.isBoolean) return@mergeIncomingFlow
         val previousConditionVariable = flow.getKnownVariableIfUsed(previousCondition) ?: return@mergeIncomingFlow
@@ -1515,6 +1512,12 @@ abstract class FirDataFlowAnalyzer(
             }
             processConditionalContract(flow, assignment, callArgsExit = null)
         }
+    }
+
+    fun exitAugmentedAssignment(assignment: FirAugmentedAssignment, leftArgument: FirExpression, resolvedType: ConeKotlinType) {
+        // TODO(KT-57563): Operator assignments should be treated just like any other assignment.
+        // I.e., this should record a new assignment index.
+        graphBuilder.exitAugmentedAssignment(assignment).mergeIncomingFlow()
     }
 
     private fun exitVariableInitialization(
