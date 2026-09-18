@@ -287,6 +287,38 @@ class DoubleMathTest {
         assertFails { Double.NaN.roundToInt() }
     }
 
+    @Test fun roundingConversionBoundaries() {
+        val cases = listOf(
+            0.0 to 0L,
+            -0.0 to 0L,
+            Double.MIN_VALUE to 0L,
+            -Double.MIN_VALUE to 0L,
+            0.49999999999999994 to 0L,
+            0.5 to 1L,
+            0.5000000000000001 to 1L,
+            -0.49999999999999994 to 0L,
+            -0.5 to 0L,
+            -0.5000000000000001 to -1L,
+            1.4999999999999998 to 1L,
+            1.5 to 2L,
+            -1.5 to -1L,
+            -1.5000000000000002 to -2L,
+            4503599627370495.5 to 4503599627370496L,
+            4503599627370497.0 to 4503599627370497L,
+            9007199254740991.0 to 9007199254740991L,
+            -4503599627370495.5 to -4503599627370495L,
+            -4503599627370497.0 to -4503599627370497L,
+            -9007199254740991.0 to -9007199254740991L
+        )
+        for ([value, expected] in cases) {
+            assertEquals(expected, value.roundToLong(), "$value.roundToLong()")
+            assertEquals(
+                expected.coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt(),
+                value.roundToInt(), "$value.roundToInt()"
+            )
+        }
+    }
+
     @Test fun absoluteValue() {
         assertTrue(abs(Double.NaN).isNaN())
         assertTrue(Double.NaN.absoluteValue.isNaN())
@@ -652,6 +684,38 @@ class FloatMathTest {
         assertEquals(Int.MIN_VALUE, Float.NEGATIVE_INFINITY.roundToInt())
 
         assertFails { Float.NaN.roundToInt() }
+    }
+
+    @Test fun roundingConversionBoundaries() {
+        val cases = listOf(
+            0.0f to 0L,
+            -0.0f to 0L,
+            Float.MIN_VALUE to 0L,
+            -Float.MIN_VALUE to 0L,
+            0.49999997f to 0L,
+            0.5f to 1L,
+            0.50000006f to 1L,
+            -0.49999997f to 0L,
+            -0.5f to 0L,
+            -0.50000006f to -1L,
+            1.4999999f to 1L,
+            1.5f to 2L,
+            -1.5f to -1L,
+            -1.5000001f to -2L,
+            8388607.5f to 8388608L,
+            8388609f to 8388609L,
+            16777215f to 16777215L,
+            -8388607.5f to -8388607L,
+            -8388609f to -8388609L,
+            -16777215f to -16777215L
+        )
+        for ([value, expected] in cases) {
+            assertEquals(expected, value.roundToLong(), "$value.roundToLong()")
+            assertEquals(
+                expected.coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt(),
+                value.roundToInt(), "$value.roundToInt()"
+            )
+        }
     }
 
     @Test fun absoluteValue() {
