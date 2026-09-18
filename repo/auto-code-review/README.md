@@ -97,10 +97,11 @@ So, at the beginning of the file, there are optional include directives that sta
 * `@../foo/code-rules.md` uses relative path, so the path is resolved as a relative path from the directory the current file is in.
 * `@/bar/baz.md` uses "absolute" path, which is in fact resolved as relative from the root of the repository.
 
-The include directive includes the rules defined in the included file and also all same-named files in its enclosing directories.
+The include directive includes the rules defined in the included file.
+Note that the file name in the include directive is not required to be `code-rules.md`.
 
-Note that the file name in the include directive is not required to be `code-rules.md`. So, including `@/foo/bar/baz.md`
-adds rules from `$repo/foo/bar/baz.md`, `$repo/foo/baz.md` and `$repo/baz.md`.
+Only the included file itself is included, the rule files in its enclosing directories aren't included automatically.
+For example, including `@/foo/bar/code-rules.md` doesn't include `/foo/code-rules.md`.
 
 The includes are transitive.
 
