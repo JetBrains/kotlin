@@ -69,8 +69,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - target: macos_arm64
      * - number of libraries: 177 (stdlib + platform libs)
      * - resulting DAG size: 10
-     * - average duration is 677 ms
-     * - median duration is 679 ms
+     * - average duration is 51 ms
+     * - median duration is 51 ms
      */
     @Test
     fun `stdlib and platform libraries only (roots = stdlib + Foundation)`() {
@@ -109,8 +109,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - target: macos_arm64
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
      * - resulting DAG size: 21
-     * - average duration is 179 ms
-     * - median duration is 177 ms
+     * - average duration is 52 ms
+     * - median duration is 52 ms
      */
     @Test
     fun `stdlib and platform libraries (roots = 15 + 5 user libs)`() {
@@ -130,8 +130,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - target: macos_arm64
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
      * - resulting DAG size: 21
-     * - average duration is 514 ms
-     * - median duration is 514 ms
+     * - average duration is 78 ms
+     * - median duration is 78 ms
      */
     @Test
     fun `stdlib and platform libraries (roots = 10 + 10 user libs)`() {
@@ -172,8 +172,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - target: macos_arm64
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
      * - resulting DAG size: 101
-     * - average duration is 3.06 s
-     * - median duration is 3.05 s
+     * - average duration is 580 ms
+     * - median duration is 578 ms
      */
     @Test
     fun `stdlib and platform libraries (roots = 75 + 25 user libs)`() {
@@ -193,8 +193,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - target: macos_arm64
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
      * - resulting DAG size: 101
-     * - average duration is 2.99 s
-     * - median duration is 2.98 s
+     * - average duration is 584 ms
+     * - median duration is 585 ms
      */
     @Test
     fun `stdlib and platform libraries (roots = 50 + 50 user libs)`() {
