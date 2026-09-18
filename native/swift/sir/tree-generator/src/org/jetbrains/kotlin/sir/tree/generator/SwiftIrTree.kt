@@ -128,6 +128,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(scopeDefiningDeclaration)
         parent(declarationContainer)
         parent(protocolConformingDeclaration)
+
+        +listField("typeParameters", string)
     }
 
     val protocol: Element by element {
