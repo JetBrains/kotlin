@@ -21,17 +21,31 @@ import kotlin.reflect.KProperty
 
 class LocalClaudeAgent private constructor(
     private val project: LocalProject,
+    private val authMethod: AuthMethod,
     private val command: List<String>,
 ) : Agent {
+    sealed class AuthMethod {
+        /**
+         * Use the authentication configured for Claude Code in `~/.claude/settings.json` or environment variables.
+         */
+        object LocalConfiguration : AuthMethod()
+
+        /**
+         * Run Claude Code with `central run`, which provides the authentication.
+         * See https://www.jetbrains.com/help/central-cli/cli-agents.html.
+         */
+        class JetBrainsCentralRun(val binary: String) : AuthMethod()
+    }
+
     companion object {
-        suspend fun create(project: LocalProject): LocalClaudeAgent =
-            LocalClaudeAgent(project, createCommand())
+        suspend fun create(project: LocalProject, authMethod: AuthMethod): LocalClaudeAgent =
+            LocalClaudeAgent(project, authMethod, createCommand(authMethod))
 
         private val json = Json {
             ignoreUnknownKeys = true
         }
 
-        private suspend fun createCommand(): List<String> = buildList {
+        private suspend fun createCommand(authMethod: AuthMethod): List<String> = buildList {
             val prompt = """
                 The input contains a code rule and a git diff of files subject to the rule.
                 Your task is to check whether this diff meets this rule, and report any violations.
@@ -40,8 +54,6 @@ class LocalClaudeAgent private constructor(
                 You can also read any files in the repository. It is available at the current working directory
                 and already has the patch applied.
             """.trimIndent()
-
-            val authSettingsString = json.encodeToString(getAuthSettings())
 
             val jsonSchema = SerializationClassJsonSchemaGenerator.Default
                 .generateSchema(ClaudeOutput::structuredOutput.propertyTypeSerializer().descriptor)
@@ -60,10 +72,21 @@ class LocalClaudeAgent private constructor(
 
             val model = "claude-sonnet-4-6"
 
-            add("claude")
+            when (authMethod) {
+                AuthMethod.LocalConfiguration -> {
+                    add("claude")
 
-            add("--settings")
-            add(authSettingsString)
+                    add("--settings")
+                    add(json.encodeToString(getAuthSettings()))
+                }
+                is AuthMethod.JetBrainsCentralRun -> {
+                    // `central run` provides the authentication to Claude Code through environment variables.
+                    add(authMethod.binary)
+                    add("run")
+                    add("claude")
+                    add("--")
+                }
+            }
 
             add("--bare")
             add("-p")
@@ -110,12 +133,7 @@ class LocalClaudeAgent private constructor(
                 authSettings.env?.anthropicApiKey == null &&
                 System.getenv(ANTHROPIC_API_KEY) == null
             ) {
-                error(
-                    """
-                        No Anthropic API key or auth token found in environment or ${allSettingsFile.toURI().toURL()}.
-                        Please make sure that either "$ANTHROPIC_API_KEY", "$ANTHROPIC_AUTH_TOKEN" or "apiKeyHelper" is defined.
-                    """.trimIndent()
-                )
+                error("No Anthropic API credentials found. See repo/auto-code-review/README.md for how to provide them.")
             }
 
             authSettings
@@ -194,7 +212,16 @@ class LocalClaudeAgent private constructor(
                 @OptIn(ExperimentalPathApi::class)
                 temporaryConfigDir.deleteRecursively()
             }
-            output = json.decodeFromString<ClaudeOutput>(executionResult.stdout)
+            val claudeStdout = when (authMethod) {
+                AuthMethod.LocalConfiguration -> executionResult.stdout
+                is AuthMethod.JetBrainsCentralRun -> {
+                    // `central run` prints a message to stdout before running Claude Code.
+                    // Reported as https://youtrack.jetbrains.com/issue/JCP-8529.
+                    // Claude Code prints the JSON output as a single line, so take only the last line as a workaround.
+                    executionResult.stdout.lines().last()
+                }
+            }
+            output = json.decodeFromString<ClaudeOutput>(claudeStdout)
             executionResult.checkExitCode()
             check(!output.isError) { "Claude returned an error: is_error = true in the output" }
             check(output.type == "result" && output.subtype == "success") {
