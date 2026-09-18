@@ -1,4 +1,4 @@
-// This is a reproducer for KT-85888
+// This is a reproducer for KT-85888 and KT-87777
 // DISABLE_NATIVE: targetFamily=MINGW
 MODULES: lib, main
 
