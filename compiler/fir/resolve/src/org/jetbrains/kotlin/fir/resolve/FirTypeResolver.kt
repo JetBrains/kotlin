@@ -26,6 +26,7 @@ abstract class FirTypeResolver : FirSessionComponent {
         // TODO: Consider putting other parameters to TypeResolutionConfiguration
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
+        skipBoundedByRichErrorCheck: Boolean,
         resolveDeprecations: Boolean,
         supertypeSupplier: SupertypeSupplier,
         expandTypeAliases: Boolean = true,

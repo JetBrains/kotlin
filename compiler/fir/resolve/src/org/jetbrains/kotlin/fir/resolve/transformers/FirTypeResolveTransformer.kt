@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
@@ -41,9 +42,11 @@ import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstit
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class FirTypeResolveProcessor(
@@ -164,9 +167,8 @@ open class FirTypeResolveTransformer(
                 this.scopes = staticScopes
             }
             addTypeParametersScope(regularClass)
-            regularClass.typeParameters.forEach {
-                it.accept(this, data)
-            }
+
+            resolveTypeParameterBounds(regularClass)
             unboundCyclesInTypeParametersSupertypes(regularClass)
         }
     }
@@ -242,7 +244,8 @@ open class FirTypeResolveTransformer(
 
             withDeclaration(property) {
                 addTypeParametersScope(property)
-                property.transformTypeParameters(this, data)
+                resolveTypeParameterBounds(property)
+                property
                     .transformReturnTypeRef(this, data)
                     .transformReceiverParameter(this, data)
                     .transformContextParameters(this, data)
@@ -315,9 +318,9 @@ open class FirTypeResolveTransformer(
             withDeclaration(namedFunction) {
                 addTypeParametersScope(namedFunction)
 
-                val result = namedFunction
-                    // Type parameters must be resolved first so that we can inspect RichError bounds for union type resolution
-                    .transformTypeParameters(this, data)
+                resolveTypeParameterBounds(namedFunction)
+
+                namedFunction
                     .transformReturnTypeRef(this, data)
                     .transformReceiverParameter(this, data)
                     .transformContextParameters(this, data)
@@ -328,16 +331,65 @@ open class FirTypeResolveTransformer(
                         unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
                     }
 
-                if (result.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction &&
-                    result.name == StandardNames.DATA_CLASS_COPY
+                if (namedFunction.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction &&
+                    namedFunction.name == StandardNames.DATA_CLASS_COPY
                 ) {
-                    for (valueParameter in result.valueParameters) {
+                    for (valueParameter in namedFunction.valueParameters) {
                         valueParameter.moveOrDeleteIrrelevantAnnotations()
                     }
                 }
 
-                result
+                namedFunction
             }
+        }
+    }
+
+    private fun <T> resolveTypeParameterBounds(declaration: T) where T : FirTypeParameterRefsOwner, T : FirDeclaration {
+        if (declaration.typeParameters.isEmpty()) return
+
+        // Type parameter bounds can contain union types which can depend on other type parameters.
+        // When resolving these union types, we have to inspect the dependency's bounds which might not be resolved yet.
+        // Example: T : List<F | Foo>, F : Value
+        // As a solution, we resolve the bounds once while skipping the check for the primary type.
+        // Then we sort the type parameters topologically (reversed) and resolve them again while enabling the primary type check.
+
+        typeResolverTransformer.withFirstRoundOfTypeParameterBounds {
+            declaration.transformTypeParameters(this, null)
+        }
+
+        val sorted = DFS.topologicalOrder(
+            declaration.typeParameters.filterIsInstance<FirTypeParameter>()
+        ) { typeParameter ->
+            buildList {
+                typeParameter.bounds.forEach { bound ->
+                    bound.coneType.forEachType { type ->
+                        if (type is ConeTypeParameterType) {
+                            val symbol = type.lookupTag.symbol
+                            if (symbol.containingDeclarationSymbol == declaration.symbol) {
+                                add(symbol.fir)
+                            }
+                        }
+                    }
+                }
+            }
+        }.asReversed()
+
+        for (typeParameter in sorted) {
+            // Recursively replace all resolved type refs with their delegated type refs
+            typeParameter.transformChildren(object : FirTransformer<Nothing?>() {
+                override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+                    @Suppress("UNCHECKED_CAST")
+                    return element.transformChildren(this, data) as E
+                }
+
+                override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): FirTypeRef {
+                    return resolvedTypeRef.delegatedTypeRef?.transformSingle(this, data) ?: resolvedTypeRef
+                }
+            }, null)
+
+            typeParameter.replaceBounds(typeParameter.bounds.map {
+                it.transform(this, null)
+            })
         }
     }
 

@@ -4,7 +4,7 @@
 
 typealias TA = RichError
 
-fun <T, V : Value, E : RichError, E2 : TA, E3 : E> test(
+fun <T, V : Value, E : RichError, E2 : TA, E3 : E, E4 : V | Foo, E5: E | Foo> test(
     a: T | Foo,
     b: V | Foo,
     c: E | Foo,
@@ -14,6 +14,8 @@ fun <T, V : Value, E : RichError, E2 : TA, E3 : E> test(
     g: Foo | E,
     h: Foo | E2,
     i: String | E3,
+    j: E4 | Foo,
+    k: E5 | Foo,
 ) {}
 
 val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>E : RichError<!>> (E | Foo).prop get() = 1
@@ -30,5 +32,9 @@ class C<T, V : Value, E : RichError, E2 : TA> {
         h: Foo | E2,
     ) {}
 }
+
+fun <G : CharSequence, T : List<F | Foo>, F : G | Foo> boundsWithUnionAndDependency() {}
+val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>G : CharSequence<!>, T : List<F | Foo>, <!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>F : G | Foo<!>> T.boundsWithUnionAndDependency get() = 1
+interface I<G : CharSequence, T : List<F | Foo>, F : G | Foo>
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeConstraint, typeParameter */

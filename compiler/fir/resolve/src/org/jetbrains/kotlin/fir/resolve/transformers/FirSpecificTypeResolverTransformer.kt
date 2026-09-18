@@ -68,6 +68,20 @@ class FirSpecificTypeResolverTransformer(
         }
     }
 
+    @set:PrivateForInline
+    var isFirstRoundOfTypeParameterBounds: Boolean = false
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withFirstRoundOfTypeParameterBounds(block: () -> R): R {
+        val oldValue = isFirstRoundOfTypeParameterBounds
+        isFirstRoundOfTypeParameterBounds = true
+        return try {
+            block()
+        } finally {
+            isFirstRoundOfTypeParameterBounds = oldValue
+        }
+    }
+
     @OptIn(PrivateForInline::class)
     override fun transformTypeRef(typeRef: FirTypeRef, data: TypeResolutionConfiguration): FirResolvedTypeRef {
         withBareTypes(allowed = false) {
@@ -117,6 +131,7 @@ class FirSpecificTypeResolverTransformer(
             configuration,
             areBareTypesAllowed,
             isOperandOfIsOperator,
+            isFirstRoundOfTypeParameterBounds,
             resolveDeprecations,
             supertypeSupplier,
             expandTypeAliases,
