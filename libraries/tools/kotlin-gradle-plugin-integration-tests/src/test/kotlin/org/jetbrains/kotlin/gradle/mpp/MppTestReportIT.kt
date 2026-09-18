@@ -133,7 +133,7 @@ class MppTestReportIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("TestReporter.publishEntry metadata is included in the JVM XML report")
+    @DisplayName("TestReporter.publishEntry metadata is included in JVM XML and HTML reports")
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_4)
     fun testTestReporterMetadataIsIncludedInXmlReport(gradleVersion: GradleVersion) {
@@ -141,7 +141,10 @@ class MppTestReportIT : KGPBaseTest() {
             buildScriptInjection {
                 val jvmTarget = kotlinMultiplatform.jvm()
                 jvmTarget.testRuns.configureEach {
-                    it.executionTask.configure { it.useJUnitPlatform() }
+                    it.executionTask.configure {
+                        it.useJUnitPlatform()
+                        it.ignoreFailures = true
+                    }
                 }
                 kotlinMultiplatform.sourceSets.getByName("jvmTest").dependencies {
                     implementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -158,6 +161,12 @@ class MppTestReportIT : KGPBaseTest() {
                     fun publishEntry(reporter: TestReporter) {
                         reporter.publishEntry("metadata-key", "metadata-value")
                     }
+
+                    @Test
+                    fun publishEntryAndFail(reporter: TestReporter) {
+                        reporter.publishEntry("failed-metadata-key", "failed-metadata-value")
+                        error("Expected failure")
+                    }
                 }
                 """.trimIndent()
             }
@@ -168,14 +177,30 @@ class MppTestReportIT : KGPBaseTest() {
                 .allFilesWithExtension("xml")
                 .single()
             val testSuite = JDOMUtil.load(testResultXml.toFile())
-            val testCase = testSuite.getChildren("testcase").singleOrNull()
-                ?: testSuite.getChildren("testsuite").single().getChildren("testcase").single()
-            val properties = assertNotNull(testCase.getChild("properties"), "Expected test properties")
-            val property = assertNotNull(properties.getChild("property"), "Expected published test metadata")
+            val testCases = testSuite.getChildren("testcase").ifEmpty {
+                testSuite.getChildren("testsuite").flatMap { it.getChildren("testcase") }
+            }
+            assertEquals(2, testCases.size)
 
-            assertEquals("metadata-key", property.getAttributeValue("name"))
-            assertEquals("metadata-value", property.getAttributeValue("value"))
-            assertTrue(testCase.getAttributeValue("name").contains("[jvm]"))
+            val expectedMetadata = mapOf(
+                "publishEntry(TestReporter)" to ("metadata-key" to "metadata-value"),
+                "publishEntryAndFail(TestReporter)" to ("failed-metadata-key" to "failed-metadata-value"),
+            )
+            testCases.forEach { testCase ->
+                val testName = testCase.getAttributeValue("name")
+                val properties = assertNotNull(testCase.getChild("properties"), "Expected test properties")
+                val property = assertNotNull(properties.getChild("property"), "Expected published test metadata")
+                val expectedMetadataValues = expectedMetadata.entries
+                    .single { testName.startsWith(it.key) }
+                    .value
+
+                assertEquals(expectedMetadataValues.first, property.getAttributeValue("name"))
+                assertEquals(expectedMetadataValues.second, property.getAttributeValue("value"))
+                assertTrue(testName.contains("[jvm]"))
+            }
+
+            val failedTestCase = testCases.single { it.getAttributeValue("name").startsWith("publishEntryAndFail") }
+            assertNotNull(failedTestCase.getChild("failure"), "Expected failure information")
 
             val htmlReport = testClassHtmlReport(
                 ":jvmTest",
@@ -187,6 +212,8 @@ class MppTestReportIT : KGPBaseTest() {
                 htmlReport.parent.allFilesWithExtension("html"),
                 "metadata-key",
                 "metadata-value",
+                "failed-metadata-key",
+                "failed-metadata-value",
             )
         }
     }
