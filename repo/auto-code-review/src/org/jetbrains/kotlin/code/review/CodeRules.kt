@@ -44,6 +44,7 @@ data class CodeRulePatterns(val patterns: List<String>) {
 const val CODE_RULES_MD = "code-rules.md"
 private const val INCLUDE_PREFIX = "@"
 private const val RULE_NAME_PREFIX = "# "
+private const val EXCLUSION_PATTERN_PREFIX = "!"
 
 class CodeRuleRepository(val project: Project) {
     suspend fun getRules(path: ProjectFilePath): Set<CodeRule> {
@@ -144,6 +145,22 @@ internal object CodeRuleParser {
             while (lines.firstOrNull()?.startsWith(PATTERN_PREFIX) == true) {
                 add(lines.removeFirst().removePrefix(PATTERN_PREFIX).trim())
                 lines.dropFirstBlankLines()
+            }
+        }
+
+        // With exclusion patterns going last, the `.gitignore`-like matching
+        // doesn't depend on the order: a file is matched if it matches any regular pattern and no exclusion pattern.
+        // This is an artificial restriction to make the model more understandable.
+        // `.gitignore` supports arbitrary order, and the implementation in `CodeRulePatterns.match` supports it too.
+        patterns.zipWithNext().forEach { [previous, next] ->
+            check(!previous.startsWith(EXCLUSION_PATTERN_PREFIX) || next.startsWith(EXCLUSION_PATTERN_PREFIX)) {
+                """
+                    |In $source, rule "$name":
+                    |exclusion patterns ($EXCLUSION_PATTERN_PREFIX) must go after all other patterns, but got
+                    |$next
+                    |after
+                    |$previous
+                """.trimMargin()
             }
         }
 

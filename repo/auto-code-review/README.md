@@ -109,8 +109,10 @@ Only files matching those patterns will be checked.
 The pattern syntax follows [`.gitignore` syntax](https://git-scm.com/docs/gitignore).
 But don't be confused: the patterns in code rules files list which files are checked and not which files are ignored.
 
-To include or exclude a file, it is enough to have a single matching pattern.
-An exclusion pattern can be defined using `!`. In other words,
+An exclusion pattern can be defined using `!`.
+Exclusion patterns must go after all other patterns.
+A rule applies to a file if the file matches at least one of the regular patterns and none of the exclusion patterns.
+For example,
 
 ```markdown
 Pattern: *.kt
@@ -119,7 +121,6 @@ Pattern: !test
 ```
 
 means that the rule applies to all Kotlin files except those inside directories named `test`.
-The matching process starts from the last pattern and goes backwards, just like in `.gitignore`.
 
 When deciding whether a rule applies to a file, the tool checks two paths against the patterns:
 * If the file is inside the rule file directory, the relative path from that directory to the file is checked.
