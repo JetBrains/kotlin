@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
+import org.jetbrains.kotlin.fir.analysis.checkers.isInsideAnnotationCall
 import org.jetbrains.kotlin.fir.analysis.checkers.nthLastContainer
 import org.jetbrains.kotlin.fir.analysis.checkers.secondToLastContainer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -127,7 +128,7 @@ object FirUnsupportedCollectionLiteralWithCollectionLiteralResolutionChecker : F
         if (LanguageFeature.CollectionLiterals.isDisabled() && LanguageFeature.CollectionLiteralsBasedAnnotationResolution.isEnabled()) {
 
             if (!expression.isCollectionLiteralCall()) return
-            if (isInsideAnnotationCall() || isInsideAnnotationConstructor()) return
+            if (context.isInsideAnnotationCall || isInsideAnnotationConstructor()) return
 
             reporter.reportOn(
                 expression.source,
@@ -141,11 +142,6 @@ object FirUnsupportedCollectionLiteralWithCollectionLiteralResolutionChecker : F
         return (calleeReference.name == OperatorNameConventions.OF && origin == FirFunctionCallOrigin.Operator)
                 || origin == FirFunctionCallOrigin.StdlibCollectionLiteral
     }
-}
-
-context(context: CheckerContext)
-private fun isInsideAnnotationCall(): Boolean {
-    return context.callsOrAssignments.any { it is FirAnnotationCall }
 }
 
 context(context: CheckerContext)
