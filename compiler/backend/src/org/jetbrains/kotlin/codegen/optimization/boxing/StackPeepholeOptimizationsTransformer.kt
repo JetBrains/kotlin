@@ -16,15 +16,19 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.inline.operationKind
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnNode
 import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class StackPeepholeOptimizationsTransformer : MethodTransformer() {
@@ -46,6 +50,14 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                         (it.nodeType != AbstractInsnNode.LABEL || isMergeNode[instructions.indexOf(it)])
             }
 
+        fun beforePopElimination(insn: AbstractInsnNode) {
+            if (insn.isLdcForReifiedJavaClass() || insn.isNullForReifiedTypeOf()) {
+                instructions.set(insn.previous.previous.previous, InsnNode(Opcodes.NOP)) // operation kind
+                instructions.set(insn.previous.previous, InsnNode(Opcodes.NOP)) // type argument
+                instructions.set(insn.previous, InsnNode(Opcodes.NOP)) // marker
+            }
+        }
+
         var insn: AbstractInsnNode?
         var next = instructions.first
         while (next != null) {
@@ -57,6 +69,7 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                 Opcodes.POP -> {
                     when {
                         prev.isEliminatedByPop() -> {
+                            beforePopElimination(prev)
                             instructions.set(insn, InsnNode(Opcodes.NOP))
                             instructions.set(prev, InsnNode(Opcodes.NOP))
                             changed = true
@@ -102,6 +115,8 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                     } else {
                         val prev2 = prev.previousMeaningful() ?: continue
                         if (prev.isEliminatedByPop() && prev2.isEliminatedByPop()) {
+                            beforePopElimination(prev2)
+                            beforePopElimination(prev)
                             instructions.set(insn, InsnNode(Opcodes.NOP))
                             instructions.set(prev, InsnNode(Opcodes.NOP))
                             instructions.set(prev2, InsnNode(Opcodes.NOP))
@@ -159,6 +174,16 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
 
     private fun AbstractInsnNode.isLdcOfSize2(): Boolean =
         opcode == Opcodes.LDC && this is LdcInsnNode && (this.cst is Double || this.cst is Long)
+
+    private fun AbstractInsnNode.isLdcForReifiedJavaClass(): Boolean {
+        val marker = (previous as? MethodInsnNode)?.takeIf { ReifiedTypeInliner.isOperationReifiedMarker(it) } ?: return false
+        return opcode == Opcodes.LDC && this is LdcInsnNode && this.cst is Type && marker.operationKind == ReifiedTypeInliner.OperationKind.JAVA_CLASS
+    }
+
+    private fun AbstractInsnNode.isNullForReifiedTypeOf(): Boolean {
+        val marker = (previous as? MethodInsnNode)?.takeIf { ReifiedTypeInliner.isOperationReifiedMarker(it) } ?: return false
+        return opcode == Opcodes.ACONST_NULL && marker.operationKind == ReifiedTypeInliner.OperationKind.TYPE_OF
+    }
 
     private fun AbstractInsnNode.isKotlinJvmInternalIntrinsicsCompareInt() =
         isMethodInsnWith(Opcodes.INVOKESTATIC) {
