@@ -30,6 +30,8 @@ import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlin.text.split
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.AbiStabilityMode
@@ -51,7 +53,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.NullabilityAnnotation
-import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -59,15 +60,13 @@ import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal class JvmCompilerArgumentsImpl(
-  defaultArguments: K2JVMCompilerArguments = K2JVMCompilerArguments(),
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonCompilerArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
-    JvmCompilerArguments,
-    JvmCompilerArguments.Builder,
-    DeepCopyable<JvmCompilerArgumentsImpl> {
+@Serializable
+internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCompilerArguments,
+    JvmCompilerArguments.Builder, DeepCopyable<JvmCompilerArgumentsImpl> {
+  @Transient
+  private val defaultArguments: K2JVMCompilerArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_ABI_STABILITY")
@@ -294,18 +293,28 @@ internal class JvmCompilerArgumentsImpl(
   internal var `script-templates`: List<String> = defaultArguments.scriptTemplates.toListOrEmpty()
 
   @SerialName("X_PROFILE")
-  internal var Xprofile: ProfileCompilerCommand? =
-      applyProfileCompilerCommand(null, defaultArguments)
+  internal var Xprofile: ProfileCompilerCommandImpl? =
+      @Suppress("UNCHECKED_CAST") applyProfileCompilerCommand(JvmCompilerArgumentValueAdapter.toImpl(null) as ProfileCompilerCommandImpl?, defaultArguments)
 
   @SerialName("X_NULLABILITY_ANNOTATIONS")
-  internal var `Xnullability-annotations`: List<NullabilityAnnotation> =
-      applyNullabilityAnnotations(emptyList<NullabilityAnnotation>(), defaultArguments)
+  internal var `Xnullability-annotations`: List<NullabilityAnnotationImpl> =
+      @Suppress("UNCHECKED_CAST") applyNullabilityAnnotations(JvmCompilerArgumentValueAdapter.toImpl(emptyList<NullabilityAnnotation>()) as List<NullabilityAnnotationImpl>, defaultArguments)
 
   @SerialName("X_JSR305")
-  internal var Xjsr305: List<Jsr305> = applyJsr305(emptyList<Jsr305>(), defaultArguments)
-  init {
-    applyCompilerArguments(K2JVMCompilerArguments())
+  internal var Xjsr305: List<Jsr305Impl> =
+      @Suppress("UNCHECKED_CAST") applyJsr305(JvmCompilerArgumentValueAdapter.toImpl(emptyList<Jsr305>()) as List<Jsr305Impl>, defaultArguments)
+
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
   }
+
+  override fun createDefaultArguments(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = JvmCompilerArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V
@@ -810,12 +819,12 @@ internal class JvmCompilerArgumentsImpl(
     public val SCRIPT_TEMPLATES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("SCRIPT_TEMPLATES")
 
-    public val X_PROFILE: JvmCompilerArgument<ProfileCompilerCommand?> =
+    public val X_PROFILE: JvmCompilerArgument<ProfileCompilerCommandImpl?> =
         JvmCompilerArgument("X_PROFILE")
 
-    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<List<NullabilityAnnotation>> =
+    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<List<NullabilityAnnotationImpl>> =
         JvmCompilerArgument("X_NULLABILITY_ANNOTATIONS")
 
-    public val X_JSR305: JvmCompilerArgument<List<Jsr305>> = JvmCompilerArgument("X_JSR305")
+    public val X_JSR305: JvmCompilerArgument<List<Jsr305Impl>> = JvmCompilerArgument("X_JSR305")
   }
 }

@@ -26,6 +26,8 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ExplicitApiMode
@@ -46,14 +48,13 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as Comm
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal abstract class CommonCompilerArgumentsImpl(
-  defaultArguments: CommonCompilerArguments,
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonToolArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
-    ArgumentsCommonCompilerArguments,
-    ArgumentsCommonCompilerArguments.Builder {
+@Serializable
+internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(),
+    ArgumentsCommonCompilerArguments, ArgumentsCommonCompilerArguments.Builder {
+  @Transient
+  private val defaultArguments: CommonCompilerArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("P")
@@ -384,12 +385,24 @@ internal abstract class CommonCompilerArgumentsImpl(
   internal var script: Boolean = defaultArguments.script
 
   @SerialName("COMPILER_PLUGINS")
-  internal var `compiler-plugins`: List<CompilerPlugin> =
-      applyCompilerPlugins(emptyList<CompilerPlugin>(), defaultArguments)
+  internal var `compiler-plugins`: List<CompilerPluginImpl> =
+      @Suppress("UNCHECKED_CAST") applyCompilerPlugins(CommonCompilerArgumentValueAdapter.toImpl(emptyList<CompilerPlugin>()) as List<CompilerPluginImpl>, defaultArguments)
 
   @SerialName("X_WARNING_LEVEL")
-  internal var `Xwarning-level`: List<WarningLevel> =
-      applyWarningLevels(emptyList<WarningLevel>(), defaultArguments)
+  internal var `Xwarning-level`: List<WarningLevelImpl> =
+      @Suppress("UNCHECKED_CAST") applyWarningLevels(CommonCompilerArgumentValueAdapter.toImpl(emptyList<WarningLevel>()) as List<WarningLevelImpl>, defaultArguments)
+
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
+  }
+
+  abstract override fun createDefaultArguments(): CommonCompilerArguments
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonCompilerArgument<V>): V = CommonCompilerArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V
@@ -1025,10 +1038,10 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val SCRIPT: CommonCompilerArgument<Boolean> = CommonCompilerArgument("SCRIPT")
 
-    public val COMPILER_PLUGINS: CommonCompilerArgument<List<CompilerPlugin>> =
+    public val COMPILER_PLUGINS: CommonCompilerArgument<List<CompilerPluginImpl>> =
         CommonCompilerArgument("COMPILER_PLUGINS")
 
-    public val X_WARNING_LEVEL: CommonCompilerArgument<List<WarningLevel>> =
+    public val X_WARNING_LEVEL: CommonCompilerArgument<List<WarningLevelImpl>> =
         CommonCompilerArgument("X_WARNING_LEVEL")
   }
 }

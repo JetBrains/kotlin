@@ -30,6 +30,8 @@ import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlin.text.split
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.MetadataTargetPlatform
@@ -46,15 +48,13 @@ import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal class MetadataArgumentsImpl(
-  defaultArguments: K2MetadataCompilerArguments = K2MetadataCompilerArguments(),
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonCompilerArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
-    MetadataArguments,
-    MetadataArguments.Builder,
-    DeepCopyable<MetadataArgumentsImpl> {
+@Serializable
+internal class MetadataArgumentsImpl() : CommonCompilerArgumentsImpl(), MetadataArguments,
+    MetadataArguments.Builder, DeepCopyable<MetadataArgumentsImpl> {
+  @Transient
+  private val defaultArguments: K2MetadataCompilerArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_FRIEND_PATHS")
@@ -85,9 +85,18 @@ internal class MetadataArgumentsImpl(
 
   @SerialName("MODULE_NAME")
   internal var `module-name`: String? = defaultArguments.moduleName
-  init {
-    applyCompilerArguments(K2MetadataCompilerArguments())
+
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
   }
+
+  override fun createDefaultArguments(): K2MetadataCompilerArguments = K2MetadataCompilerArguments()
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: MetadataArgument<V>): V = MetadataArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V

@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
-import kotlin.Enum
 import kotlin.OptIn
 import kotlin.collections.List
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
+import org.jetbrains.kotlin.buildtools.api.arguments.NullabilityAnnotation
+import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.AbiStabilityMode as InternalArgumentsEnumsAbiStabilityMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.AssertionsMode as InternalArgumentsEnumsAssertionsMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.CompatqualAnnotationsMode as InternalArgumentsEnumsCompatqualAnnotationsMode
@@ -40,7 +42,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode a
  */
 internal object JvmCompilerArgumentValueAdapter {
   public fun toApi(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toApi(it) }
+    is List<*> -> value.map { toApi(it) }
     is InternalArgumentsEnumsAbiStabilityMode -> value.toApiEnum<ApiArgumentsEnumsAbiStabilityMode>()
     is InternalArgumentsEnumsAssertionsMode -> value.toApiEnum<ApiArgumentsEnumsAssertionsMode>()
     is InternalArgumentsEnumsJdkRelease -> value.toApiEnum<ApiArgumentsEnumsJdkRelease>()
@@ -52,11 +54,14 @@ internal object JvmCompilerArgumentValueAdapter {
     is InternalArgumentsEnumsWhenExpressionsMode -> value.toApiEnum<ApiArgumentsEnumsWhenExpressionsMode>()
     is InternalArgumentsEnumsJvmDefaultMode -> value.toApiEnum<ApiArgumentsEnumsJvmDefaultMode>()
     is InternalArgumentsEnumsJvmTarget -> value.toApiEnum<ApiArgumentsEnumsJvmTarget>()
+    is ProfileCompilerCommandImpl -> value.toApi()
+    is NullabilityAnnotationImpl -> value.toApi()
+    is Jsr305Impl -> value.toApi()
     else -> value
   }
 
   public fun toImpl(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toImpl(it) }
+    is List<*> -> value.map { toImpl(it) }
     is ApiArgumentsEnumsAbiStabilityMode -> value.toImplEnum<InternalArgumentsEnumsAbiStabilityMode>()
     is ApiArgumentsEnumsAssertionsMode -> value.toImplEnum<InternalArgumentsEnumsAssertionsMode>()
     is ApiArgumentsEnumsJdkRelease -> value.toImplEnum<InternalArgumentsEnumsJdkRelease>()
@@ -68,6 +73,9 @@ internal object JvmCompilerArgumentValueAdapter {
     is ApiArgumentsEnumsWhenExpressionsMode -> value.toImplEnum<InternalArgumentsEnumsWhenExpressionsMode>()
     is ApiArgumentsEnumsJvmDefaultMode -> value.toImplEnum<InternalArgumentsEnumsJvmDefaultMode>()
     is ApiArgumentsEnumsJvmTarget -> value.toImplEnum<InternalArgumentsEnumsJvmTarget>()
+    is ProfileCompilerCommand -> value.toImpl()
+    is NullabilityAnnotation -> value.toImpl()
+    is Jsr305 -> value.toImpl()
     else -> value
   }
 }

@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
+import kotlinx.serialization.Serializable
+
 /**
  * Represents a violation of a restricted compiler argument detected during
  * [applyArgumentStrings][org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.applyArgumentStrings] or
  * [applyCompilerArguments][org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.applyCompilerArguments].
  */
+@Serializable
 internal sealed class RestrictedArgViolation {
     abstract val message: String
 

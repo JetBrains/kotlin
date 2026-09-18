@@ -26,6 +26,8 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.text.split
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsMainCallMode
@@ -43,18 +45,15 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal abstract class CommonJsAndWasmArgumentsImpl(
-  defaultArguments: CommonJsAndWasmCompilerArguments,
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonKlibBasedArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
-    CommonJsAndWasmArguments,
-    CommonJsAndWasmArguments.Builder,
-    CommonJsAndWasmCompilerKlibArguments,
-    CommonJsAndWasmCompilerKlibArguments.Builder,
-    CommonJsAndWasmCompilerLinkingArguments,
-    CommonJsAndWasmCompilerLinkingArguments.Builder {
+@Serializable
+internal abstract class CommonJsAndWasmArgumentsImpl() : CommonKlibBasedArgumentsImpl(),
+    CommonJsAndWasmArguments, CommonJsAndWasmArguments.Builder,
+    CommonJsAndWasmCompilerKlibArguments, CommonJsAndWasmCompilerKlibArguments.Builder,
+    CommonJsAndWasmCompilerLinkingArguments, CommonJsAndWasmCompilerLinkingArguments.Builder {
+  @Transient
+  private val defaultArguments: CommonJsAndWasmCompilerArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_CACHE_DIRECTORY")
@@ -147,6 +146,18 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
 
   @SerialName("SOURCE_MAP_PREFIX")
   internal var `source-map-prefix`: String? = defaultArguments.sourceMapPrefix
+
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
+  }
+
+  abstract override fun createDefaultArguments(): CommonJsAndWasmCompilerArguments
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = CommonJsAndWasmArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V

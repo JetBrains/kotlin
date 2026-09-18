@@ -23,6 +23,8 @@ import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsEcmaVersion
@@ -42,19 +44,14 @@ import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal class JsArgumentsImpl(
-  defaultArguments: K2JSCompilerArguments = K2JSCompilerArguments(),
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonJsAndWasmArgumentsImpl(defaultArguments, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
-    JsCompilerArguments,
-    JsCompilerArguments.Builder,
-    JsCompilerKlibArguments,
-    JsCompilerKlibArguments.Builder,
-    JsCompilerLinkingArguments,
-    JsCompilerLinkingArguments.Builder,
-    DeepCopyable<JsArgumentsImpl> {
+@Serializable
+internal class JsArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), JsCompilerArguments,
+    JsCompilerArguments.Builder, JsCompilerKlibArguments, JsCompilerKlibArguments.Builder,
+    JsCompilerLinkingArguments, JsCompilerLinkingArguments.Builder, DeepCopyable<JsArgumentsImpl> {
+  @Transient
+  private val defaultArguments: K2JSCompilerArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_DTS_USE_UNKNOWN_INSTEAD_ANY")
@@ -136,9 +133,18 @@ internal class JsArgumentsImpl(
   @SerialName("TARGET")
   internal var target: JsEcmaVersion? =
       defaultArguments.target?.let { JsEcmaVersion.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") }
-  init {
-    applyCompilerArguments(K2JSCompilerArguments())
+
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
   }
+
+  override fun createDefaultArguments(): K2JSCompilerArguments = K2JSCompilerArguments()
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JsArgument<V>): V = JsArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V

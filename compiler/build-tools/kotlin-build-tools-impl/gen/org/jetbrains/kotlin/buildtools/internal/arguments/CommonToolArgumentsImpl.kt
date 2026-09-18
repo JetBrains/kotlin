@@ -20,11 +20,12 @@ import kotlin.collections.MutableSet
 import kotlin.collections.Set
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
-import kotlin.collections.toMutableList
-import kotlin.collections.toMutableSet
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.serializability.findPropertyWithSerialName
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -34,15 +35,15 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonTo
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal abstract class CommonToolArgumentsImpl(
-  defaultArguments: CommonToolArguments,
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  internal val argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : ArgumentsCommonToolArguments,
+@Serializable
+internal abstract class CommonToolArgumentsImpl() : ArgumentsCommonToolArguments,
     ArgumentsCommonToolArguments.Builder {
   protected val internalArguments: MutableSet<String> = mutableSetOf()
 
+  @Transient
+  private val defaultArguments: CommonToolArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("WERROR")
@@ -66,17 +67,30 @@ internal abstract class CommonToolArgumentsImpl(
   @SerialName("VERSION")
   internal var version: Boolean = defaultArguments.version
 
-  protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> =
-      restrictedArgViolations.toMutableList()
+  protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> = mutableListOf()
 
   internal val restrictedArgViolations: List<RestrictedArgViolation>
     get() = _restrictedArgViolations
 
-  protected val _argumentValidationErrors: MutableSet<String> =
-      argumentValidationErrors.toMutableSet()
+  protected val _argumentValidationErrors: MutableSet<String> = mutableSetOf()
 
   internal val argumentValidationErrors: Set<String>
     get() = _argumentValidationErrors
+
+  @Transient
+  internal val argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics()
+
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
+  }
+
+  public abstract fun createDefaultArguments(): CommonToolArguments
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonToolArgument<V>): V = CommonToolArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V

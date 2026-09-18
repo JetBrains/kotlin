@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
-import kotlin.Enum
 import kotlin.OptIn
 import kotlin.collections.List
+import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.WarningLevel
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.AnnotationDefaultTargetMode as InternalArgumentsEnumsAnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ExplicitApiMode as InternalArgumentsEnumsExplicitApiMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.HeaderMode as InternalArgumentsEnumsHeaderMode
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode as ApiAr
  */
 internal object CommonCompilerArgumentValueAdapter {
   public fun toApi(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toApi(it) }
+    is List<*> -> value.map { toApi(it) }
     is InternalArgumentsEnumsExplicitApiMode -> value.toApiEnum<ApiArgumentsEnumsExplicitApiMode>()
     is InternalArgumentsEnumsAnnotationDefaultTargetMode -> value.toApiEnum<ApiArgumentsEnumsAnnotationDefaultTargetMode>()
     is InternalArgumentsEnumsHeaderMode -> value.toApiEnum<ApiArgumentsEnumsHeaderMode>()
@@ -40,11 +41,13 @@ internal object CommonCompilerArgumentValueAdapter {
     is InternalArgumentsEnumsReturnValueCheckerMode -> value.toApiEnum<ApiArgumentsEnumsReturnValueCheckerMode>()
     is InternalArgumentsEnumsVerifyIrMode -> value.toApiEnum<ApiArgumentsEnumsVerifyIrMode>()
     is InternalArgumentsEnumsKotlinVersion -> value.toApiEnum<ApiArgumentsEnumsKotlinVersion>()
+    is CompilerPluginImpl -> value.toApi()
+    is WarningLevelImpl -> value.toApi()
     else -> value
   }
 
   public fun toImpl(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toImpl(it) }
+    is List<*> -> value.map { toImpl(it) }
     is ApiArgumentsEnumsExplicitApiMode -> value.toImplEnum<InternalArgumentsEnumsExplicitApiMode>()
     is ApiArgumentsEnumsAnnotationDefaultTargetMode -> value.toImplEnum<InternalArgumentsEnumsAnnotationDefaultTargetMode>()
     is ApiArgumentsEnumsHeaderMode -> value.toImplEnum<InternalArgumentsEnumsHeaderMode>()
@@ -52,6 +55,8 @@ internal object CommonCompilerArgumentValueAdapter {
     is ApiArgumentsEnumsReturnValueCheckerMode -> value.toImplEnum<InternalArgumentsEnumsReturnValueCheckerMode>()
     is ApiArgumentsEnumsVerifyIrMode -> value.toImplEnum<InternalArgumentsEnumsVerifyIrMode>()
     is ApiArgumentsEnumsKotlinVersion -> value.toImplEnum<InternalArgumentsEnumsKotlinVersion>()
+    is CompilerPlugin -> value.toImpl()
+    is WarningLevel -> value.toImpl()
     else -> value
   }
 }
