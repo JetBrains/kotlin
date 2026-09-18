@@ -22,8 +22,8 @@ fun dependencyFunction(parameter: AnInlineClass = AnInlineClass("default")) {
 // FILE: use.kt
 
 fun main() {
-    <!MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE!>DependencyClass<!>()
-    <!MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE!>dependencyFunction<!>()
+    <!MISSING_DEPENDENCY_CLASS!>DependencyClass<!>()
+    <!MISSING_DEPENDENCY_CLASS!>dependencyFunction<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration, value */
