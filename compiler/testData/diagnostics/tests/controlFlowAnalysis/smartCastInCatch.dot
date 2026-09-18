@@ -542,43 +542,47 @@ digraph smartCastInCatch_kt {
                     subgraph cluster_52 {
                         color=blue
                         194 [label="Enter block"];
-                        195 [label="Local function declaration"];
-                        196 [label="Exit block"];
+                        subgraph cluster_53 {
+                            color=blue
+                            195 [label="Enter local function declaration"];
+                            subgraph cluster_54 {
+                                color=blue
+                                196 [label="Enter function local" style="filled" fillcolor=red];
+                                subgraph cluster_55 {
+                                    color=blue
+                                    197 [label="Enter block"];
+                                    198 [label="Const: Int(1)"];
+                                    199 [label="Assignment: R|<local>/x|"];
+                                    200 [label="Exit block"];
+                                }
+                                201 [label="Exit function local" style="filled" fillcolor=red];
+                            }
+                            202 [label="Exit local function declaration"];
+                        }
+                        203 [label="Exit block"];
                     }
-                    197 [label="Try main block exit"];
+                    204 [label="Try main block exit"];
                 }
-                subgraph cluster_53 {
+                subgraph cluster_56 {
                     color=blue
-                    198 [label="Enter function local" style="filled" fillcolor=red];
-                    subgraph cluster_54 {
+                    205 [label="Catch enter"];
+                    206 [label="Enter variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
+                    207 [label="Exit variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
+                    subgraph cluster_57 {
                         color=blue
-                        199 [label="Enter block"];
-                        200 [label="Const: Int(1)"];
-                        201 [label="Assignment: R|<local>/x|"];
-                        202 [label="Exit block"];
+                        208 [label="Enter block"];
+                        209 [label="Access variable R|<local>/x|"];
+                        210 [label="Smart cast: R|<local>/x|"];
+                        211 [label="Access variable <Unresolved name: length>#"];
+                        212 [label="Exit block"];
                     }
-                    203 [label="Exit function local" style="filled" fillcolor=red];
+                    213 [label="Catch exit"];
                 }
-                subgraph cluster_55 {
-                    color=blue
-                    204 [label="Catch enter"];
-                    205 [label="Enter variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
-                    206 [label="Exit variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
-                    subgraph cluster_56 {
-                        color=blue
-                        207 [label="Enter block"];
-                        208 [label="Access variable R|<local>/x|"];
-                        209 [label="Smart cast: R|<local>/x|"];
-                        210 [label="Access variable <Unresolved name: length>#"];
-                        211 [label="Exit block"];
-                    }
-                    212 [label="Catch exit"];
-                }
-                213 [label="Try expression exit"];
+                214 [label="Try expression exit"];
             }
-            214 [label="Exit block"];
+            215 [label="Exit block"];
         }
-        215 [label="Exit function testExceptionWithinLocalFunction" style="filled" fillcolor=red];
+        216 [label="Exit function testExceptionWithinLocalFunction" style="filled" fillcolor=red];
     }
     185 -> {186};
     186 -> {187};
@@ -587,21 +591,22 @@ digraph smartCastInCatch_kt {
     189 -> {190};
     190 -> {191};
     191 -> {192};
-    192 -> {193 204};
+    192 -> {193 205};
     193 -> {194};
     194 -> {195};
-    195 -> {196 198};
-    195 -> {198} [style=dashed];
+    195 -> {196 202};
+    195 -> {196} [style=dashed];
     196 -> {197};
-    197 -> {204 213};
+    197 -> {198};
     198 -> {199};
     199 -> {200};
+    199 -> {205} [color=red];
     200 -> {201};
-    201 -> {202};
-    201 -> {204} [color=red];
+    201 -> {202} [color=blue];
+    201 -> {196} [color=green style=dashed];
     202 -> {203};
-    203 -> {198} [color=green style=dashed];
-    204 -> {205};
+    203 -> {204};
+    204 -> {205 214};
     205 -> {206};
     206 -> {207};
     207 -> {208};
@@ -612,5 +617,6 @@ digraph smartCastInCatch_kt {
     212 -> {213};
     213 -> {214};
     214 -> {215};
+    215 -> {216};
 
 }

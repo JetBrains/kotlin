@@ -1254,6 +1254,7 @@ digraph flowFromInplaceLambda_kt {
     405 -> {406};
     406 -> {407};
     407 -> {408};
+    408 -> {411} [color=blue];
     408 -> {398} [color=green style=dashed];
     409 -> {410};
     410 -> {412};
@@ -1285,6 +1286,7 @@ digraph flowFromInplaceLambda_kt {
     433 -> {434};
     434 -> {435};
     435 -> {436};
+    436 -> {439} [color=blue];
     436 -> {421} [color=green style=dashed];
     437 -> {438};
     438 -> {440};
@@ -2353,6 +2355,7 @@ digraph flowFromInplaceLambda_kt {
     801 -> {802};
     802 -> {803};
     803 -> {804};
+    804 -> {807} [color=blue];
     804 -> {784} [color=green style=dashed];
     805 -> {806};
     806 -> {808};
@@ -2384,6 +2387,7 @@ digraph flowFromInplaceLambda_kt {
     829 -> {830};
     830 -> {831};
     831 -> {832};
+    832 -> {835} [color=blue];
     832 -> {815} [color=green style=dashed];
     833 -> {834};
     834 -> {836};
@@ -2647,6 +2651,7 @@ digraph flowFromInplaceLambda_kt {
     922 -> {932} [color=red label="Postponed"];
     923 -> {924};
     924 -> {925};
+    925 -> {928} [color=blue];
     925 -> {907} [color=green style=dashed];
     926 -> {927};
     927 -> {929};

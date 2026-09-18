@@ -133,9 +133,11 @@ data class Edge(
         val Normal_Forward: Edge = Edge(NormalPath, EdgeKind.Forward)
         private val Normal_DfgForward: Edge = Edge(NormalPath, EdgeKind.DfgForward)
         private val Normal_CfgForward: Edge = Edge(NormalPath, EdgeKind.CfgForward)
+        private val Normal_LexicalForward: Edge = Edge(NormalPath, EdgeKind.LexicalForward)
         private val Normal_DeadForward: Edge = Edge(NormalPath, EdgeKind.DeadForward)
         private val Normal_DeadDfgForward: Edge = Edge(NormalPath, EdgeKind.DeadDfgForward)
         private val Normal_DeadCfgForward: Edge = Edge(NormalPath, EdgeKind.DeadCfgForward)
+        private val Normal_DeadLexicalForward: Edge = Edge(NormalPath, EdgeKind.DeadLexicalForward)
         private val Normal_CfgBackward: Edge = Edge(NormalPath, EdgeKind.CfgBackward)
         private val Normal_DeadCfgBackward: Edge = Edge(NormalPath, EdgeKind.DeadCfgBackward)
 
@@ -146,9 +148,11 @@ data class Edge(
                         EdgeKind.Forward -> Normal_Forward
                         EdgeKind.DfgForward -> Normal_DfgForward
                         EdgeKind.CfgForward -> Normal_CfgForward
+                        EdgeKind.LexicalForward -> Normal_LexicalForward
                         EdgeKind.DeadForward -> Normal_DeadForward
                         EdgeKind.DeadDfgForward -> Normal_DeadDfgForward
                         EdgeKind.DeadCfgForward -> Normal_DeadCfgForward
+                        EdgeKind.DeadLexicalForward -> Normal_DeadLexicalForward
                         EdgeKind.CfgBackward -> Normal_CfgBackward
                         EdgeKind.DeadCfgBackward -> Normal_DeadCfgBackward
                     }
@@ -190,10 +194,12 @@ enum class EdgeKind(
     Forward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = false),
     DfgForward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = false, isBack = false, isDead = false),
     CfgForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = false, isDead = false),
+    LexicalForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = false, isBack = false, isDead = false),
 
     DeadForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = true),
     DeadDfgForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = false, isBack = false, isDead = true),
     DeadCfgForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = false, isDead = true),
+    DeadLexicalForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = false, isBack = false, isDead = true),
 
     CfgBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = false),
     DeadCfgBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true),
@@ -203,9 +209,11 @@ enum class EdgeKind(
         Forward -> DeadForward
         DfgForward -> DeadDfgForward
         CfgForward -> DeadCfgForward
+        LexicalForward -> DeadLexicalForward
         DeadForward -> DeadForward
         DeadDfgForward -> DeadDfgForward
         DeadCfgForward -> DeadCfgForward
+        DeadLexicalForward -> DeadLexicalForward
         CfgBackward -> DeadCfgBackward
         DeadCfgBackward -> DeadCfgBackward
     }

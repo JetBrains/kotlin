@@ -72,8 +72,11 @@ fun ControlFlowGraphBuilder.createFunctionEnterNode(fir: FirFunction): FunctionE
 fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction): FunctionExitNode =
     FunctionExitNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createLocalFunctionDeclarationNode(fir: FirFunction): LocalFunctionDeclarationNode =
-    LocalFunctionDeclarationNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createLocalFunctionDeclarationEnterNode(fir: FirFunction): LocalFunctionDeclarationEnterNode =
+    LocalFunctionDeclarationEnterNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createLocalFunctionDeclarationExitNode(fir: FirFunction): LocalFunctionDeclarationExitNode =
+    LocalFunctionDeclarationExitNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createBooleanOperatorExitNode(
     fir: FirBooleanOperatorExpression,
@@ -144,6 +147,9 @@ fun ControlFlowGraphBuilder.createStringConcatenationCallNode(fir: FirStringConc
 
 fun ControlFlowGraphBuilder.createVariableAssignmentNode(fir: FirVariableAssignment): VariableAssignmentNode =
     VariableAssignmentNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createAugmentedAssignmentNode(fir: FirAugmentedAssignment): AugmentedAssignmentNode =
+    AugmentedAssignmentNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createElvisLhsIsNotNullNode(fir: FirElvisExpression): ElvisLhsIsNotNullNode =
     ElvisLhsIsNotNullNode(currentGraph, fir, levelCounter)
@@ -229,8 +235,8 @@ fun ControlFlowGraphBuilder.createAnonymousFunctionExpressionNode(fir: FirAnonym
 fun ControlFlowGraphBuilder.createAnonymousObjectEnterNode(fir: FirAnonymousObject): AnonymousObjectEnterNode =
     AnonymousObjectEnterNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createAnonymousObjectExpressionExitNode(fir: FirAnonymousObjectExpression): AnonymousObjectExpressionExitNode =
-    AnonymousObjectExpressionExitNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createAnonymousObjectExitNode(fir: FirAnonymousObject): AnonymousObjectExitNode =
+    AnonymousObjectExitNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createScriptEnterNode(fir: FirScript): ScriptEnterNode =
     ScriptEnterNode(currentGraph, fir, levelCounter)
@@ -261,6 +267,9 @@ fun ControlFlowGraphBuilder.createStaticEnterNode(fir: FirClass): StaticEnterNod
 
 fun ControlFlowGraphBuilder.createStaticExitNode(fir: FirClass): StaticExitNode =
     StaticExitNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createLocalClassEnterNode(fir: FirRegularClass): LocalClassEnterNode =
+    LocalClassEnterNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createLocalClassExitNode(fir: FirRegularClass): LocalClassExitNode =
     LocalClassExitNode(currentGraph, fir, levelCounter)

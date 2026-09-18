@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.util.*
+import kotlin.collections.set
 import kotlin.math.max
 
 abstract class LogicSystem(private val context: ConeInferenceContext) {
@@ -30,9 +31,15 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
      * resulting join flow.
      * @param statementFlows A *subset* of [flows] used to determine what [TypeStatement]s and [Implication]s will be copied to the joined
      * flow.
+     * @param lexicalFlows A *disjunct set* of [flows] used to determine what additional [AssignmentKey]s copied to the joined flow.
      * @param union Determines if [TypeStatement]s from different flows should be combined with union or intersection logic.
      */
-    fun joinFlow(flows: Collection<PersistentFlow>, statementFlows: Collection<PersistentFlow>, union: Boolean): MutableFlow {
+    fun joinFlow(
+        flows: Collection<PersistentFlow>,
+        statementFlows: Collection<PersistentFlow>,
+        lexicalFlows: Collection<PersistentFlow>,
+        union: Boolean,
+    ): MutableFlow {
         when (flows.size) {
             0 -> return MutableFlow()
             1 -> return flows.first().fork()
@@ -43,7 +50,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val commonFlow = flows.reduce { a, b -> a.lowestCommonAncestor(b) ?: error("no common ancestor in $a, $b") }
         val result = commonFlow.fork()
         result.mergeVariables(flows)
-        result.mergeAssignments(flows)
+        result.mergeAssignments(flows, lexicalFlows)
         if (union) {
             result.copyNonConflictingAliases(flows, commonFlow)
         } else {
@@ -146,6 +153,31 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         flow.assignmentIndex[variable] = index
     }
 
+    fun recordAssignmentType(flow: MutableFlow, variable: RealVariable, key: AssignmentKey, type: ConeKotlinType) {
+        flow.knownAssignments[key] = type
+    }
+
+    fun addCapturedAssignments(
+        flow: MutableFlow,
+        variable: RealVariable,
+        scopeKey: LexicalScopeKey,
+        assignmentKeys: Collection<AssignmentKey>,
+    ) {
+        val existingScopes = flow.capturedAssignments[variable] ?: persistentMapOf()
+        if (scopeKey in existingScopes) error("existing scope key $scopeKey")
+        flow.capturedAssignments[variable] = existingScopes.putting(scopeKey, assignmentKeys.toPersistentSet())
+    }
+
+    fun removeCapturedAssignments(flow: MutableFlow, scopeKey: LexicalScopeKey) {
+        for (entry in flow.capturedAssignments.entries) {
+            val existing = entry.value
+            val new = existing.removing(scopeKey)
+            if (new !== existing) {
+                entry.setValue(new)
+            }
+        }
+    }
+
     fun isSameValueIn(a: PersistentFlow, b: PersistentFlow, variable: RealVariable): Boolean =
         a.assignmentIndex[variable] == b.assignmentIndex[variable]
 
@@ -162,7 +194,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         }
     }
 
-    private fun MutableFlow.mergeAssignments(flows: Collection<PersistentFlow>) {
+    private fun MutableFlow.mergeAssignments(flows: Collection<PersistentFlow>, lexicalFlows: Collection<PersistentFlow>) {
         // If a variable was reassigned in one branch, it was reassigned at the join point.
         val reassignedVariables = mutableMapOf<RealVariable, Int>()
         for (flow in flows) {
@@ -176,6 +208,22 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         }
         for ([variable, index] in reassignedVariables) {
             recordNewAssignment(this, variable, index)
+        }
+
+        for (other in flows) {
+            knownAssignments.putAll(other.knownAssignments)
+            for ([variable, assignments] in other.capturedAssignments) {
+                val existing = capturedAssignments[variable]
+                if (existing != null) {
+                    capturedAssignments[variable] = existing.puttingAll(assignments)
+                } else {
+                    capturedAssignments[variable] = assignments
+                }
+            }
+        }
+
+        for (other in lexicalFlows) {
+            knownAssignments.putAll(other.knownAssignments)
         }
     }
 
