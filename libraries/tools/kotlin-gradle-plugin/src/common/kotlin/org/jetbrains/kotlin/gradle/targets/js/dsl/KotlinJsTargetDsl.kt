@@ -258,17 +258,6 @@ interface KotlinJsTargetDsl :
     override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
 
     override val binaries: KotlinJsBinaryContainer
-
-    //region Deprecated Properties
-    @Deprecated(
-        message = "produceExecutable() was changed on binaries.executable(). Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("binaries.executable()"),
-        level = DeprecationLevel.ERROR
-    )
-    fun produceExecutable() {
-        throw GradleException("Please change produceExecutable() on binaries.executable()")
-    }
-    //endregion
 }
 
 /**

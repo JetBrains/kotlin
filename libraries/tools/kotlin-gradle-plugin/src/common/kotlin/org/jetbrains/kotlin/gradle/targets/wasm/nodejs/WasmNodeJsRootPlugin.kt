@@ -76,9 +76,6 @@ internal constructor(
     ) {
         val nodeJsRoot = target.extensions.getByName(WasmNodeJsRootExtension.EXTENSION_NAME) as WasmNodeJsRootExtension
 
-        @Suppress("DEPRECATION_ERROR")
-        nodeJsRoot.version = "26.2.0"
-
         val nodeJs = target.extensions.getByName(WasmNodeJsEnvSpec.EXTENSION_NAME) as WasmNodeJsEnvSpec
 
         val packageManagerName = nodeJsRoot.packageManagerExtension.map { it.name }

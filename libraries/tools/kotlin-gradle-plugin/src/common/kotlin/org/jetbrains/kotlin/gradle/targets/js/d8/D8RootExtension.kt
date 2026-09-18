@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.utils.property
         "D8EnvSpec",
         "org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec"
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 @OptIn(ExperimentalWasmDsl::class)
 open class D8RootExtension(

@@ -49,13 +49,6 @@ constructor(
     }
 
     companion object {
-        @Deprecated(
-            "Use binaryenSetupTaskProvider from BinaryenEnvSpec instead. " +
-                    "Scheduled for removal in Kotlin 2.4.",
-            level = DeprecationLevel.ERROR
-        )
-        const val NAME: String = "kotlinBinaryenSetup"
-
         @InternalKotlinGradlePluginApi
         const val BASE_NAME: String = "binaryenSetup"
     }

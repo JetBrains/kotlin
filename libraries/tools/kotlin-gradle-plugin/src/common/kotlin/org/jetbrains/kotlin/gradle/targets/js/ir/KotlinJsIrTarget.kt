@@ -198,13 +198,6 @@ internal constructor(
         }
     }
 
-    @Deprecated(
-        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
-    }
-
     internal open fun KotlinBrowserJsIr.bundleConfigurator() {
         subTargetConfigurators.add(WebpackConfigurator(this))
     }
