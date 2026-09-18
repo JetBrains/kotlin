@@ -22,6 +22,7 @@ abstract class SirStruct : SirElementBase(), SirScopeDefiningDeclaration, SirDec
     abstract override val name: String
     abstract override val declarations: List<SirDeclaration>
     abstract override val protocols: List<SirProtocol>
+    abstract val typeParameters: List<String>
     override fun toString(): String {
         return this.debugString
     }
