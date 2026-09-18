@@ -1,91 +1,98 @@
 # Task-backed Kotlin import models - profiling the POC
 
-A [gradle-profiler](https://github.com/gradle/gradle-profiler) setup that compares two ways of serving Kotlin import
-models to an IDE:
+A [gradle-profiler](https://github.com/gradle/gradle-profiler) setup that compares three ways of serving Kotlin import
+models to an IDE, without Isolated Projects and with `--configuration-cache` on:
 
 * **baseline** - the Kotlin Gradle plugin of the parent commit: `KotlinModelBuilder` computes the models in-process on
   every request;
-* **task-backed** (this commit) - the `generateKotlinImportModels` task writes serialized `Result` protobuf files under
-  `build/kotlin/import-models/`, the model builder only reads them.
+* **task via `forTasks`** (this commit) - one invocation: `generateKotlinImportModels` runs first
+  (`BuildActionExecuter.forTasks`) and writes serialized `Result` protobuf files under `build/kotlin/import-models/`,
+  then the model builder only reads them;
+* **separate invocations** (this commit) - `generateKotlinImportModels` as a plain task invocation, then the sync as a
+  second invocation that reads the already generated files.
 
 The POC has no switch, so the baseline is the plugin built from the parent commit. Both have the same version
-(`2.5.255-SNAPSHOT`); the baseline lives in its own Maven repository, which the generated project prefers when
-`-PkotlinBaseline` is passed (`*_baseline` scenarios).
+(`2.5.255-SNAPSHOT`); the baseline artifacts live in their own Maven repository, which the generated project prefers
+(plugins and dependencies) when `-PkotlinBaseline` is passed (`*_baseline` scenarios).
 
 The "sync" is `KotlinImportModelsAllProjectsBuildAction` (integration tests module): it requests every Kotlin import
-model of every project sequentially, the way the IntelliJ IDEA counterpart (`KotlinImportModelsProvider`) does. The
-`*_task_backed` scenarios add `tasks = ["generateKotlinImportModels"]` (`BuildActionExecuter.forTasks`); the
-`tasks_only_*` / `sync_only_*` scenarios run the task and the sync as two separate invocations.
+model of every project sequentially, the way the IntelliJ IDEA counterpart (`KotlinImportModelsProvider`) does.
 
 ## Running
 
 ```bash
-# baseline plugin (parent commit) -> build/import-models-profiler/baseline-repo
-git checkout HEAD~1 && ./gradlew :kotlin-gradle-plugin:install && git checkout -
-BASELINE=build/import-models-profiler/baseline-repo/org/jetbrains/kotlin/kotlin-gradle-plugin
-mkdir -p $BASELINE && cp -R ~/.m2/repository/org/jetbrains/kotlin/kotlin-gradle-plugin/2.5.255-SNAPSHOT $BASELINE/
+# baseline (parent commit) -> build/import-models-profiler/baseline-repo: all Kotlin artifacts of that version, so the
+# baseline plugin never picks up artifacts of this commit from ~/.m2 (only kotlin-gradle-plugin differs today)
+git checkout HEAD~1 && ./gradlew install && git checkout -
+BASELINE=build/import-models-profiler/baseline-repo/org/jetbrains/kotlin
+for m in ~/.m2/repository/org/jetbrains/kotlin/*/2.5.255-SNAPSHOT; do
+    mkdir -p "$BASELINE/$(basename "$(dirname "$m")")" && cp -R "$m" "$BASELINE/$(basename "$(dirname "$m")")/"
+done
 # this commit -> ~/.m2, plus the build action classes
 ./gradlew install :kotlin-gradle-plugin-integration-tests:testClasses
 brew install gradle-profiler
 
 P=libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/import-models-profiler
 $P/generate-project.sh build/import-models-profiler/project 30      # 30 JVM modules, baseline repo: ../baseline-repo
-$P/run-profiler.sh build/import-models-profiler/project             # default scenarios, --warmups 3 --iterations 10
-$P/run-profiler.sh build/import-models-profiler/project --warmups 2 --iterations 5 \
-    tasks_only_no_cc tasks_only_cc sync_only_task_backed_no_ip      # selected scenarios / other settings
+# sanity check: the task exists only in the POC plugin, so this must print nothing
+(cd build/import-models-profiler/project && gradle -PkotlinBaseline tasks --all -q | grep generateKotlinImportModels)
+$P/run-profiler.sh build/import-models-profiler/project --warmups 5 --iterations 10   # all 12 scenarios
+$P/run-profiler.sh build/import-models-profiler/project no_change_task no_change_sync # selected scenarios
 ```
 
 Everything after the project directory goes to gradle-profiler; `run-profiler.sh` only adds defaults for missing
 arguments (`--benchmark`, `--gradle-version 9.7.0`, `--scenario-file`, `--output-dir`). Results: `benchmark.csv` /
 `benchmark.html`; `profile.log` has the build output (`Reusing configuration cache.`, `UP-TO-DATE`, and the
-`Kotlin import models: N projects, M compilation units, K models` line printed by the action). Use
-`--profile async-profiler` instead of `--benchmark` to see where the time goes.
+`Kotlin import models: N projects, M compilation units, K models` line printed by the action).
 
-## Results (2026-09-17)
+## Results (2026-09-18)
 
-Gradle 9.7.0, 30 JVM modules (60 compilation units, 240 models per sync), Apple Silicon laptop, warm daemon,
-`--warmups 2 --iterations 5`, median in ms.
+Gradle 9.7.0, 30 JVM modules (60 compilation units, 240 models per sync; each module `api`-depends on its predecessor
+and on ktor/spring-boot/jackson/kotlinx), Apple Silicon laptop, warm daemon, `--warmups 5 --iterations 10`, median in
+ms. The "separate" total is the sum of the two invocations.
 
-| scenario | baseline | task-backed | notes |
-|---|---:|---:|---|
-| CC + IP, no change | 58 | 70 | both `Reusing configuration cache.`, no project configured; task-backed also restores the task graph and checks 30 tasks `UP-TO-DATE` |
-| CC + IP, source change | 45 | 69 | same - a source edit is not a configuration input |
-| no IP, no change | 449 | 366 | CC is not used at all; full configuration in both, task-backed saves only the in-process model computation (~18 %) |
-| CC + IP, build script change | 446 | 357 | CC invalidated, all projects reconfigured and all models recomputed in both |
+| change between builds | baseline | task via `forTasks` | separate: task | separate: sync | separate: total |
+|---|---:|---:|---:|---:|---:|
+| none | 457 | 387 | **56** | 259 | 315 |
+| source file (`Jvm1.kt`) | 460 | 368 | **56** | 252 | 308 |
+| build script (`jvm-1/build.gradle.kts`) | 591 | 530 | 632 | 336 | 968 |
 
-Task and sync as separate invocations, no IP (the `.pb` files are regenerated by an unmeasured build before every sync):
+Raw data: `benchmark.csv` of the run (stdev 7 ms for the task-only columns, 15-55 ms for everything that configures;
+the first measured build of each series is still 50-150 ms slower than the last, so treat gaps below ~50 ms as noise).
 
-| invocation | ms | what Gradle does |
-|---|---:|---|
-| `generateKotlinImportModels`, no CC | 406 | configures all projects, evaluates the task input (= computes all models), tasks `UP-TO-DATE` |
-| `generateKotlinImportModels`, `--configuration-cache` | **68** | `Reusing configuration cache.`: no project configured, no model computed - **without Isolated Projects** |
-| sync only, `--configuration-cache` | 310 | no CC message: all projects configured, then 240 file reads |
+What `profile.log` shows for every measured build:
+
+* **baseline**, **task via `forTasks`**, **separate: sync** - no configuration cache message at all; all 30 projects
+  are configured (`CONFIGURE SUCCESSFUL in ~250-500ms`, or `BUILD SUCCESSFUL` with `30 actionable tasks: 30 up-to-date`
+  for `forTasks`). Gradle puts any model-building invocation without Isolated Projects into "vintage" mode regardless of
+  `--configuration-cache` and `forTasks(...)` (`BuildModelParametersProvider`: "CC by itself does not yet support
+  caching models or caching of the work graph that runs before model building"). With `forTasks` the tasks' `models`
+  input is evaluated once per project for the up-to-date check, i.e. the models are still computed on every sync.
+* **separate: task**, no change / source change - `Reusing configuration cache.`, no project configured, no model
+  computed, 30 tasks `UP-TO-DATE`.
+* **separate: task**, build script change - `Calculating task graph as configuration cache cannot be reused because
+  file 'jvm-1/build.gradle.kts' has changed`: all projects configured, all models recomputed for the input hash, new
+  entry stored; the tasks are still `UP-TO-DATE` because the mutation does not change the models.
 
 ### Takeaways
 
-**The main result of this POC: the same model computation is a 68 ms configuration cache hit when invoked as a task
-and a 310 ms full configuration when requested as a model of the already serialized files - without Isolated Projects,
-the configuration cache applies to task invocations but not to model-building ones.** If model requests were cached
-the way task invocations are, a warm sync without IP would drop from ~450 ms to the order of the `tasks_only_cc` row.
+**The same model computation is a 56 ms configuration cache hit when invoked as a task and a ~255 ms full
+configuration when requested as a model of the already serialized files: without Isolated Projects, the configuration
+cache applies to task invocations but not to model-building ones.** If model requests were cached the way task
+invocations are, a warm sync would drop from ~450 ms to the order of the "separate: task" column.
 
-1. **With Isolated Projects, Gradle already caches the whole sync result** (`BuildTreeConfigurationCache.loadOrCreateModel`,
-   since Gradle 7.5): the baseline serves all models without configuring anything, the task-backed variant only adds
-   task-graph overhead. The per-project *intermediate* model cache is a different mechanism - off by default since
-   Gradle 9.3 (`-Dorg.gradle.internal.isolated-projects.caching`), it would matter for the build-script-change row.
-2. **Without Isolated Projects the configuration cache is never used for a model-building invocation**, even with
-   `--configuration-cache` and `forTasks(...)`: `BuildModelParametersProvider` puts it into vintage mode ("CC by itself
-   does not yet support caching models or caching of the work graph that runs before model building"). Both variants
-   reconfigure everything on every sync; configuration, not model computation, is the cost.
-3. The ~90 ms gap on the CC miss (build script change) is within the per-iteration JIT drift of this run; use more
-   iterations (`--warmups 5 --iterations 15`) before reading anything into it.
+1. **Task via `forTasks` saves at most the in-process model computation** (70-90 ms here, ~0-20 % across runs). Both
+   variants configure all 30 projects on every sync; the task only moves the model computation from 240 sequential
+   builder calls into 30 task up-to-date checks (which run in parallel with `org.gradle.parallel`). Nothing is cached.
+2. **A source change costs the same as no change** for every variant: it is neither a configuration input nor a task
+   input (the task has no file inputs; the models hold paths, not contents).
+3. **A build script change makes the separate invocations the worst option**: the task loses its CC hit and reconfigures
+   everything (632 ms, incl. storing a new entry), then the sync reconfigures everything again (336 ms) - configured
+   twice, 968 ms versus 591 ms baseline. Without Isolated Projects the CC entry is all-or-nothing, so one changed
+   script reconfigures all 30 projects.
+4. The separate "sync" is still ~255 ms for 240 file reads: that is pure configuration cost, paid by every model
+   request no matter how cheap the model builder is.
 
-Caveats: the POC task's input is the serialized model map computed at CC store time, so it is invalidated together
-with the CC entry (a build script change recomputes all models, like the baseline on every sync); `--isolated-projects`
-needs Gradle 9.7+ (`-Dorg.gradle.unsafe.isolated-projects=true` before); the synthetic project configures in well under
-a second, a real project would widen the no-IP gap in absolute terms but not change the IP picture.
-
-## Without gradle-profiler
-
-`KotlinImportModelsConfigurationCacheIT` runs the task as a separate invocation with Isolated Projects (task with CC
-store → sync → task with CC reuse → sync) and asserts that the second task run is a CC hit with the task `UP-TO-DATE`
-and that both syncs return identical models. The no-IP behaviour is only covered by the profiler scenarios.
+Caveat: the POC task's single input is the serialized model map, evaluated at CC store time (or in the up-to-date
+check), so on a CC miss all models of a project are recomputed to produce the input hash - the incremental build only
+saves rewriting the files, never the computation.
