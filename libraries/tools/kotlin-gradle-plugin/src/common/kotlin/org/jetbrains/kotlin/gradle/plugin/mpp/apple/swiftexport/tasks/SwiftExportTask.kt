@@ -173,7 +173,7 @@ internal abstract class SwiftExportTask @Inject constructor(
                     is SwiftExportDependencySelector.ProjectPath -> "project|${selector.projectPath}"
                     is SwiftExportDependencySelector.Module -> "module|${selector.group}|${selector.name}"
                 }
-                "$selectorKey|${options.moduleName}|${options.rootPackage}"
+                "$selectorKey|${options.moduleName}|${options.rootPackage}|${options.visibility}"
             }
             .sorted()
 
