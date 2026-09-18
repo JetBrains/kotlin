@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
