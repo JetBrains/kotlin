@@ -139,6 +139,9 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         printVisibility()
         print("struct ")
         printName()
+        if (typeParameters.isNotEmpty()) {
+            print(typeParameters.joinToString(prefix = "<", separator = ", ", postfix = ">"))
+        }
         printInheritanceClause()
         printBody()
     }

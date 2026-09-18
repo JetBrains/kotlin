@@ -187,6 +187,7 @@ internal class SirSealedTypeStruct(
     name: String? = null,
 ) : SirStruct(), SirFromKtSymbol<KaNamedClassSymbol> {
     override val name: String = name ?: (declaration.name + "_SealedType")
+    override val typeParameters: List<String> get() = emptyList()
     override val origin: SirOrigin get() = SirOrigin.SealedType(KotlinSource(ktSymbol))
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val documentation: String? = null

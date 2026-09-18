@@ -61,7 +61,6 @@ internal fun createSirTypedListDeclarations(
             elementTypeAlias = elementTypeAlias,
         )
     } else {
-        // TODO: Add missing generic to protocol, struct and init KT-88831
         val parent = declaration.parent
         val typedListProtocol = buildProtocol {
             name = "${declaration.name}_Typed"
@@ -84,6 +83,7 @@ internal fun createSirTypedListDeclarations(
         }
         val typedListStruct = buildStruct {
             name = "${typedListProtocol.name}Impl"
+            typeParameters.add("Element")
             protocols.add(typedListProtocol)
             buildVariable {
                 isConstant = true
