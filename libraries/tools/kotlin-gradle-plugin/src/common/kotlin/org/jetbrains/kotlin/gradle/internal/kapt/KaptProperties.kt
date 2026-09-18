@@ -26,6 +26,10 @@ internal object KaptProperties {
     )
     private val CLASSLOADERS_CACHE_DISABLE_FOR_PROCESSORS = StringGradleProperty("kapt.classloaders.cache.disableForProcessors", "")
     private val CLASSLOADERS_CACHE_SIZE = IntGradleProperty("kapt.classloaders.cache.size", 0)
+    private val KAPT_ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH = BooleanGradleProperty(
+        "kapt.isolate.processors.from.build.classpath",
+        false
+    )
 
     fun isKaptVerbose(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
         it.property(KAPT_VERBOSE, project)
@@ -53,5 +57,9 @@ internal object KaptProperties {
 
     fun getClassloadersCacheSize(project: Project): Provider<Int> = project.propertiesService.flatMap {
         it.property(CLASSLOADERS_CACHE_SIZE, project)
+    }
+
+    fun isIsolateProcessorsFromBuildClasspath(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
+        it.property(KAPT_ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH, project)
     }
 }

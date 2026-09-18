@@ -201,6 +201,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-strip-metadata", FLAG)
     ),
 
+    ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH_OPTION(
+        "isolateProcessorsFromBuildClasspath",
+        "true | false",
+        "Hide the build process classpath from annotation processors, exposing only JDK classes",
+        cliToolOption = CliToolOption("-Kapt-isolate-processors-from-build-classpath", FLAG)
+    ),
+
     STUB_GENERATION_SCHEME_OPTION(
         "stubGenerationScheme",
         "<direct|jtree>",
