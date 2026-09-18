@@ -101,6 +101,9 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeMap(definedRttiSuperType, ::serializeIdSignature, ::serializeClassSuperType)
     }
 
+    private fun serializeEquivalentDeclarations(declarations: List<Pair<String, IdSignature>>) =
+        serializeList(declarations) { serializePair(it, ::serializeString, ::serializeIdSignature) }
+
     fun serializeCompiledLinkerData(linkerData: WasmCompiledLinkerDataFileFragment) = with(linkerData) {
         serializeGlobalLiterals(globalLiterals)
         serializeMap(globalLiteralsId, ::serializeString, ::serializeIntSymbol)
@@ -112,7 +115,8 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeList(exports, ::serializeWasmExport)
         serializeList(mainFunctionWrappers, ::serializeMainFunctionWrapper)
         serializeList(testFunctionDeclarators, ::serializeIdSignature)
-        serializeList(equivalentFunctions) { serializePair(it, ::serializeString, ::serializeIdSignature) }
+        serializeEquivalentDeclarations(equivalentFunctions)
+        serializeEquivalentDeclarations(equivalentTypes)
         serializeSet(jsModuleAndQualifierReferences, ::serializeJsModuleAndQualifierReference)
         serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
         serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
