@@ -24,6 +24,11 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -78,7 +83,7 @@ class IrValidatorTest {
     private fun buildInvalidIrExpressionWithNoLocations(): IrElement {
         val stringConcatenationWithWrongType = IrStringConcatenationImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType)
 
-        val function1 = IrFactoryImpl.buildFun {
+        val function1 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }.apply {
@@ -99,7 +104,7 @@ class IrValidatorTest {
                 arguments[0] = stringConcatenationWithWrongType
                 arguments[1] = stringConcatenationWithWrongType
             }
-        val function2 = IrFactoryImpl.buildFun {
+        val function2 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("bar")
             returnType = TestIrBuiltins.anyType
         }
@@ -125,7 +130,7 @@ class IrValidatorTest {
 
     private fun buildInvalidIrTreeWithLocations(): IrElement {
         val file = createIrFile()
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }.apply {
@@ -156,7 +161,7 @@ class IrValidatorTest {
 
     private fun buildValidIrTree(): IrElement {
         val file = createIrFile()
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -407,7 +412,7 @@ class IrValidatorTest {
         val klass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyClass")
         }
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -439,14 +444,14 @@ class IrValidatorTest {
     @Test
     fun `private functions can't be referenced from a different file`() {
         val file1 = createIrFile("a.kt")
-        val function1 = IrFactoryImpl.buildFun {
+        val function1 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
             visibility = DescriptorVisibilities.PRIVATE
         }
         file1.addChild(function1)
         val file2 = createIrFile("b.kt")
-        val function2 = IrFactoryImpl.buildFun {
+        val function2 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("bar")
             returnType = TestIrBuiltins.unitType
         }
@@ -499,7 +504,7 @@ class IrValidatorTest {
         )
         privateClass.addChild(constructor)
         val file2 = createIrFile("b.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -543,7 +548,7 @@ class IrValidatorTest {
             visibility = DescriptorVisibilities.PRIVATE
         }
         val file2 = createIrFile("b.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -617,7 +622,7 @@ class IrValidatorTest {
     @Test
     fun `out-of scope usages of value parameters are reported`() {
         val file = createIrFile()
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -746,7 +751,7 @@ class IrValidatorTest {
 
         val file2 = createIrFile(name = "file2.kt")
 
-        buildFun {
+        buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
             startOffset = 3
@@ -851,7 +856,7 @@ class IrValidatorTest {
             clazz.addField("memberField").also { it.visibility = DescriptorVisibilities.PRIVATE}
         }
 
-        buildFun {
+        buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
             startOffset = 3
@@ -983,7 +988,7 @@ class IrValidatorTest {
         outerClass.addChild(nestedClass)
 
         fun createMethod(methodName: String, startOffset: Int, endOffset: Int) =
-            IrFactoryImpl.buildFun {
+            IrFactoryImpl.buildSimpleFunction {
                 name = Name.identifier(methodName)
                 returnType = IrSimpleTypeImpl(
                     outerClass.symbol,
@@ -1060,7 +1065,7 @@ class IrValidatorTest {
 
     @Test
     fun `not validated, if vararg param of type BooleanArray does not have varargElementType=Boolean`() {
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
@@ -1089,7 +1094,7 @@ class IrValidatorTest {
 
     @Test
     fun `not validated, if vararg param of type Array of String does not have varargElementType=String`() {
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
@@ -1118,7 +1123,7 @@ class IrValidatorTest {
 
     @Test
     fun `not validated, if passed vararg of type BooleanArray does not have varargElementType=Boolean`() {
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
@@ -1162,7 +1167,7 @@ class IrValidatorTest {
 
     @Test
     fun `not validated, if passed vararg of type Array of String does not have varargElementType=String`() {
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
@@ -1206,17 +1211,17 @@ class IrValidatorTest {
 
     @Test
     fun `accesses to not permitted inline function use site are reported`() {
-        val function1 = IrFactoryImpl.buildFun {
+        val function1 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("inlineFunctionUseSiteNotPermitted")
             returnType = TestIrBuiltins.anyType
             isInline = true
         }
-        val function2 = IrFactoryImpl.buildFun {
+        val function2 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("inlineFunctionUseSitePermitted")
             returnType = TestIrBuiltins.anyType
             isInline = true
         }
-        val function3 = IrFactoryImpl.buildFun {
+        val function3 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
@@ -1262,7 +1267,7 @@ class IrValidatorTest {
             annotations = emptyList(),
             variance = Variance.INVARIANT
         )
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -1313,7 +1318,7 @@ class IrValidatorTest {
     @Test
     fun `functions with incorrect parameter index are reported`() {
         val file = createIrFile()
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
@@ -1356,7 +1361,7 @@ class IrValidatorTest {
     @Test
     fun `functions with incorrect parameters order are reported`() {
         val file = createIrFile()
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
@@ -1412,7 +1417,7 @@ class IrValidatorTest {
     @Test
     fun `functions with multiple receiver parameters are reported`() {
         val file = createIrFile()
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
@@ -1460,14 +1465,14 @@ class IrValidatorTest {
             name = Name.identifier("p")
         }
 
-        val correctPropertyGetter = IrFactoryImpl.buildFun {
+        val correctPropertyGetter = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("bar")
             returnType = TestIrBuiltins.anyType
         }
         correctPropertyGetter.correspondingPropertySymbol = property.symbol
         property.getter = correctPropertyGetter
 
-        val orphanedPropertyFunction = IrFactoryImpl.buildFun {
+        val orphanedPropertyFunction = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
@@ -1514,11 +1519,11 @@ class IrValidatorTest {
         val property = IrFactoryImpl.buildProperty {
             name = Name.identifier("p")
         }.apply {
-            getter = IrFactoryImpl.buildFun {
+            getter = IrFactoryImpl.buildSimpleFunction {
                 name = Name.identifier("foo")
                 returnType = TestIrBuiltins.anyType
             }
-            setter = IrFactoryImpl.buildFun {
+            setter = IrFactoryImpl.buildSimpleFunction {
                 name = Name.identifier("bar")
                 returnType = TestIrBuiltins.anyType
             }
@@ -1554,7 +1559,7 @@ class IrValidatorTest {
     @Test
     fun `assignments to value parameters not marked assignable are reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -1619,7 +1624,7 @@ class IrValidatorTest {
     @Test
     fun `loops, breaks and continues with incorrect type are reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -1706,7 +1711,7 @@ class IrValidatorTest {
     @Test
     fun `getters and setters for values and fields with incorrect type are reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -1852,7 +1857,7 @@ class IrValidatorTest {
             superTypes = listOf(IrSimpleTypeImpl(klass.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()))
         }
 
-        val privateFunction = IrFactoryImpl.buildFun {
+        val privateFunction = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
             visibility = DescriptorVisibilities.PRIVATE
@@ -1861,7 +1866,7 @@ class IrValidatorTest {
         }
         klass.declarations.add(privateFunction)
 
-        val privateFunctionOverride = IrFactoryImpl.buildFun {
+        val privateFunctionOverride = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }.apply {
@@ -1870,7 +1875,7 @@ class IrValidatorTest {
         }
         subclass.declarations.add(privateFunctionOverride)
 
-        val publicFunction = IrFactoryImpl.buildFun {
+        val publicFunction = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("bar")
             returnType = TestIrBuiltins.unitType
             visibility = DescriptorVisibilities.PUBLIC
@@ -1879,7 +1884,7 @@ class IrValidatorTest {
         }
         klass.declarations.add(publicFunction)
 
-        val publicFunctionOverride = IrFactoryImpl.buildFun {
+        val publicFunctionOverride = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("bar")
             returnType = TestIrBuiltins.unitType
         }.apply {
@@ -1953,7 +1958,7 @@ class IrValidatorTest {
     @Test
     fun `implicit coercions to unit with incorrect type are reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -2015,7 +2020,7 @@ class IrValidatorTest {
     @Test
     fun `null constants with non-nullable type are reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -2061,7 +2066,7 @@ class IrValidatorTest {
     @Test
     fun `GetObjectValue with incorrect type are reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -2117,7 +2122,7 @@ class IrValidatorTest {
     @Test
     fun `type operator calls with incorrect types are reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -2236,7 +2241,7 @@ class IrValidatorTest {
     @Test
     fun `redundant IMPLICIT_CAST is reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -2292,7 +2297,7 @@ class IrValidatorTest {
     @Test
     fun `calls with incorrect type are reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -2342,7 +2347,7 @@ class IrValidatorTest {
         }.apply {
             parent = myClass
         }
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -2399,7 +2404,7 @@ class IrValidatorTest {
         }.apply {
             superTypes = listOf(TestIrBuiltins.anyType)
         }
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
@@ -2448,7 +2453,7 @@ class IrValidatorTest {
     @Test
     fun `return expressions with incorrect type are reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.booleanType
         }
@@ -2498,11 +2503,11 @@ class IrValidatorTest {
     @Test
     fun `throw expressions with incorrect type are reported`() {
         val file = createIrFile("test.kt")
-        val function = IrFactoryImpl.buildFun {
+        val function = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
-        val errorFunction = IrFactoryImpl.buildFun {
+        val errorFunction = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("myError")
             returnType = TestIrBuiltins.nothingType
         }
@@ -2603,7 +2608,7 @@ class IrValidatorTest {
     @Test
     fun `functions with body of type IrExpressionBody are reported`() {
         val file = createIrFile("test.kt")
-        val functionWithExpressionBody = IrFactoryImpl.buildFun {
+        val functionWithExpressionBody = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.booleanType
         }.apply {
@@ -2635,7 +2640,7 @@ class IrValidatorTest {
     fun `elements with invalid offsets are reported`() {
         val file = createIrFile("test.kt")
 
-        val functionWithTooSmallOffsets = IrFactoryImpl.buildFun {
+        val functionWithTooSmallOffsets = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("tooSmall")
             returnType = TestIrBuiltins.unitType
         }.apply {
@@ -2645,7 +2650,7 @@ class IrValidatorTest {
             )
         }
 
-        val functionWithMismatchedNegativeOffsets = IrFactoryImpl.buildFun {
+        val functionWithMismatchedNegativeOffsets = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("mismatchNegatives")
             returnType = TestIrBuiltins.unitType
         }.apply {
@@ -2655,7 +2660,7 @@ class IrValidatorTest {
             )
         }
 
-        val functionWithStartGreaterThanEnd = IrFactoryImpl.buildFun {
+        val functionWithStartGreaterThanEnd = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("startGreater")
             returnType = TestIrBuiltins.unitType
         }.apply {
@@ -2723,7 +2728,7 @@ class IrValidatorTest {
                 val funName = buildString {
                     append("f_").appendOffset(start).append("_").appendOffset(end)
                 }
-                val function = IrFactoryImpl.buildFun builder@{
+                val function = IrFactoryImpl.buildSimpleFunction builder@{
                     this@builder.name = Name.identifier(funName)
                     this@builder.startOffset = start
                     this@builder.endOffset = end
@@ -3190,21 +3195,21 @@ class IrValidatorTest {
             sealedSubclasses = listOf(IrClassSymbolImpl())
         }
 
-        val function1 = IrFactoryImpl.buildFun {
+        val function1 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }.apply {
             overriddenSymbols = listOf(IrSimpleFunctionSymbolImpl())
         }
 
-        val function2 = IrFactoryImpl.buildFun {
+        val function2 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("bar")
             returnType = TestIrBuiltins.unitType
         }.apply {
             correspondingPropertySymbol = IrPropertySymbolImpl()
         }
 
-        val function3 = IrFactoryImpl.buildFun {
+        val function3 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("baz")
             returnType = IrSimpleTypeImpl(IrClassSymbolImpl(), SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
         }

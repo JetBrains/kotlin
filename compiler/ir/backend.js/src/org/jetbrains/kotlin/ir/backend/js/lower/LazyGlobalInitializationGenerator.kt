@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.types.IrType
@@ -94,7 +94,7 @@ abstract class LazyGlobalInitializationGenerator {
         visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
         beforeAll: IrBlockBuilder.() -> Unit = {},
     ): IrSimpleFunction {
-        val initFunction = backendContext.irFactory.buildFun {
+        val initFunction = backendContext.irFactory.buildSimpleFunction {
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
             this.origin = origin

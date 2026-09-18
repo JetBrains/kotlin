@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -51,7 +51,6 @@ class KlibSyntheticAccessorGenerator(
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.name
             visibility = DescriptorVisibilities.PUBLIC
-            modality = Modality.FINAL
         }.also { accessor ->
             accessor.parent = parent
 
@@ -155,7 +154,7 @@ class KlibSyntheticAccessorGenerator(
         val accessorName = Name.identifier("<outer-this-$levelDifference>")
         val innerClassThisReceiver = innerClass.thisReceiver!!
 
-        return innerClass.factory.buildFun {
+        return innerClass.factory.buildSimpleFunction {
             startOffset = innerClass.startOffset
             endOffset = innerClass.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR

@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.excludeFromJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsStaticDeclaration
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -60,7 +60,7 @@ class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTra
 
     private fun IrSimpleFunction.generateStaticMethodProxy(proxyParent: IrClass): IrSimpleFunction {
         val originalFun = this
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             updateFrom(originalFun)
             name = originalFun.name
         }.apply proxy@{

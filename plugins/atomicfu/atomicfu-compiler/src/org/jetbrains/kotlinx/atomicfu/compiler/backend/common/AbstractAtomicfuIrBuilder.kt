@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -362,7 +365,7 @@ abstract class AbstractAtomicfuIrBuilder(
         IrFunctionExpressionImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             type = atomicfuSymbols.function0Type(irPropertyReference.type),
-            function = irBuiltIns.irFactory.buildFun {
+            function = irBuiltIns.irFactory.buildSimpleFunction {
                 name = Name.identifier("<$propertyName-getter>")
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
                 returnType = irPropertyReference.type

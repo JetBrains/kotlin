@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isExplicitlyExported
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -124,7 +126,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         if (resultAdapter == null && valueParametersAdapters.all { it == null })
             return null
 
-        val jsFunction = context.irFactory.buildFun {
+        val jsFunction = context.irFactory.buildSimpleFunction {
             origin = JS_CALL_INTEROP_FUNCTION
             name = function.name
             visibility = DescriptorVisibilities.PUBLIC
@@ -502,7 +504,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     private fun createKotlinClosureCaller(info: FunctionTypeInfo): IrSimpleFunction {
-        val result = context.irFactory.buildFun {
+        val result = context.irFactory.buildSimpleFunction {
             name = Name.identifier("$CALL_FUNCTION${info.signatureString}")
             returnType = info.adaptedResultType
             origin = KOTLIN_TO_JS_CLOSURE_ORIGIN
@@ -541,7 +543,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     private fun createKotlinToJsClosureConvertor(arity: Int): IrSimpleFunction {
-        val result = context.irFactory.buildFun {
+        val result = context.irFactory.buildSimpleFunction {
             name = Name.identifier("__convertKotlinClosureToJsClosure_${arity}")
             returnType = jsRelatedSymbols.jsAnyType
             isExternal = true
@@ -580,7 +582,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         jsClosureCaller: IrSimpleFunction,
     ): IrSimpleFunction {
         val functionType = info.functionType
-        val result = context.irFactory.buildFun {
+        val result = context.irFactory.buildSimpleFunction {
             name = Name.identifier("__convertJsClosureToKotlinClosure_${info.signatureString}")
             returnType = functionType
         }
@@ -661,7 +663,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     private fun createJsClosureCaller(info: FunctionTypeInfo): IrSimpleFunction {
-        val result = context.irFactory.buildFun {
+        val result = context.irFactory.buildSimpleFunction {
             name = Name.identifier("__callJsClosure_${info.signatureString}")
             returnType = info.adaptedResultType
             isExternal = true

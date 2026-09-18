@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.parcelize
 
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
@@ -679,7 +679,7 @@ class IrUuidParcelSerializer(
     private val longParcelSerializer: IrParcelSerializer,
 ): IrParcelSerializer {
     override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression {
-        val lambdaFunction = context.irFactory.buildFun {
+        val lambdaFunction = context.irFactory.buildSimpleFunction {
             origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             name = SpecialNames.NO_NAME_PROVIDED
             visibility = DescriptorVisibilities.LOCAL

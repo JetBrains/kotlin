@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -145,7 +145,7 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
         val origin = getBridgeOrigin(bridge)
 
         // TODO: Support offsets for debug info
-        val irFunction = context.irFactory.buildFun {
+        val irFunction = context.irFactory.buildSimpleFunction {
             updateFrom(bridge)
             this.startOffset = UNDEFINED_OFFSET
             this.endOffset = UNDEFINED_OFFSET

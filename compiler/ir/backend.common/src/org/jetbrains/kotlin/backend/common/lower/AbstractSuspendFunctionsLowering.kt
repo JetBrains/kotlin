@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.capturedConstructor
 import org.jetbrains.kotlin.ir.capturedFields
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
@@ -198,7 +198,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
 
         private fun buildInvokeSuspendMethod(stateMachineFunction: IrSimpleFunction): IrSimpleFunction {
-            val function = context.irFactory.buildFun {
+            val function = context.irFactory.buildSimpleFunction {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
@@ -240,7 +240,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         // i.sn = pn
         // return i
         private fun buildCreateMethod(superCreateFunction: IrSimpleFunction?, constructor: IrConstructor): IrSimpleFunction =
-            context.irFactory.buildFun {
+            context.irFactory.buildSimpleFunction {
                 startOffset = UNDEFINED_OFFSET
                 endOffset = UNDEFINED_OFFSET
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL

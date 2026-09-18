@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -25,6 +22,8 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irRichFunctionReference
 import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
@@ -52,12 +51,13 @@ fun IrReturnTarget.returnType(context: CommonBackendContext) =
     }
 
 fun IrSimpleFunction.createExtensionReceiver(type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
-    IrValueParameterBuilder().run {
+    factory.buildValueParameter {
         this.type = type
         this.origin = origin
         this.name = "receiver".synthesizedName
         this.kind = IrParameterKind.ExtensionReceiver
-        factory.buildValueParameter(this, this@createExtensionReceiver)
+    }.apply {
+        parent = this@createExtensionReceiver
     }
 
 // TODO: support more cases like built-in operator call and so on
@@ -140,7 +140,7 @@ val IrFile.isBytecodeGenerationSuppressed: Boolean get() = hasAnnotation(Standar
 
 fun IrFunction.wrapWithLambdaCall(parent: IrDeclarationParent, context: LoweringContext): IrRichFunctionReference {
     require(this.typeParameters.isEmpty())
-    val wrapper = factory.buildFun {
+    val wrapper = factory.buildSimpleFunction {
         setSourceRange(this@wrapWithLambdaCall)
         name = this@wrapWithLambdaCall.name
         visibility = DescriptorVisibilities.LOCAL

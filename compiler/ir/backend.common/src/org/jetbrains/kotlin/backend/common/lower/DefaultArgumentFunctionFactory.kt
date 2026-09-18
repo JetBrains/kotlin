@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.ir.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
@@ -208,7 +208,7 @@ abstract class DefaultArgumentFunctionFactory(
                 }
             is IrSimpleFunction ->
                 context.irFactory.stageController.restrictTo(declaration) {
-                    declaration.factory.buildFun {
+                    declaration.factory.buildSimpleFunction {
                         updateFrom(declaration)
                         name = declaration.generateDefaultArgumentsFunctionName()
                         origin = newOrigin

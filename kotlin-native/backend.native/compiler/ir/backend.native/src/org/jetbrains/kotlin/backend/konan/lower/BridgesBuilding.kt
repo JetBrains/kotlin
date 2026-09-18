@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -114,7 +114,7 @@ internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val symbols: BackendNa
 
         // Note: bridgeDirection.type() = null only for BridgeDirectionKind.NONE (no conversion required),
         // so in this case the type is taken from target - the function to be called.
-        return irFactory.buildFun {
+        return irFactory.buildSimpleFunction {
             startOffset = function.startOffset
             endOffset = function.endOffset
             origin = DECLARATION_ORIGIN_BRIDGE_METHOD(target)

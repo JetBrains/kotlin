@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStrictSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -122,7 +122,7 @@ class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : 
         val constructor = this
         val irClass = parentAsClass
         val constructorName = "init_${irClass.constructorPostfix}"
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             name = Name.identifier(constructorName)
             returnType = context.irBuiltIns.unitType
             visibility = DescriptorVisibilities.PRIVATE
@@ -225,7 +225,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         val irClass = parentAsClass
         val constructorName = "new_${irClass.constructorPostfix}"
 
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             name = Name.identifier(constructorName)
             visibility = constructor.visibility
             modality = Modality.FINAL

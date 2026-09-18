@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.TestIrBuiltins
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -53,7 +53,7 @@ abstract class IrSignatureWithUnboundIrTest {
 
         val type = unboundType("org.sample", "Class")
 
-        val func = IrFactoryImpl.buildFun {
+        val func = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
             startOffset = 0
@@ -74,7 +74,7 @@ abstract class IrSignatureWithUnboundIrTest {
 
         val type = unboundType("", "Class")
 
-        val func = IrFactoryImpl.buildFun {
+        val func = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
             startOffset = 0

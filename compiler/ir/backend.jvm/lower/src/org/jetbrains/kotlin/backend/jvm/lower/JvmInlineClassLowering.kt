@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -81,7 +81,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
     // but unfortunately this is a special case in the old backend. The bridge method is not marked as such and does not follow the normal
     // visibility rules for bridge methods.
     private fun createBridgeDeclaration(source: IrSimpleFunction, mangledName: Name): IrSimpleFunction =
-        context.irFactory.buildFun {
+        context.irFactory.buildSimpleFunction {
             updateFrom(source)
             name = mangledName
         }.apply {

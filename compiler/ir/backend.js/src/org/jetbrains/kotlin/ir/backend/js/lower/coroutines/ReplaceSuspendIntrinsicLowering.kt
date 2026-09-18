@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -89,7 +89,7 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
     }
 
     private fun IrExpression.toGeneratorSuspensionExpression(container: IrDeclaration): IrExpression {
-        val wrapperFunction = context.irFactory.buildFun {
+        val wrapperFunction = context.irFactory.buildSimpleFunction {
             name = SpecialNames.NO_NAME_PROVIDED
             visibility = DescriptorVisibilities.LOCAL
             isSuspend = false

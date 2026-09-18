@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.IrSimpleFunctionBuilder
+import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -60,9 +63,17 @@ class MemoizedInlineClassReplacements(
         function: IrFunction,
         noFakeOverride: Boolean,
         body: IrFunction.() -> Unit,
-        builderBody: IrFunctionBuilder.() -> Unit,
-    ): IrSimpleFunction = irFactory.buildFun {
-        updateFrom(function)
+        builderBody: IrSimpleFunctionBuilder.() -> Unit,
+    ): IrSimpleFunction = irFactory.buildSimpleFunction {
+        when (function) {
+            is IrSimpleFunction -> updateFrom(function)
+            is IrConstructor -> {
+                startOffset = function.startOffset
+                endOffset = function.endOffset
+                origin = function.origin
+                visibility = function.visibility
+            }
+        }
         builderBody()
         if (noFakeOverride) {
             isFakeOverride = false
@@ -199,7 +210,7 @@ class MemoizedInlineClassReplacements(
     val getBoxFunction: (IrClass) -> IrSimpleFunction =
         storageManager.createMemoizedFunction { irClass ->
             require(irClass.isInlineClass)
-            irFactory.buildFun {
+            irFactory.buildSimpleFunction {
                 name = Name.identifier(KotlinTypeMapper.BOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
                 returnType = irClass.defaultType
@@ -220,7 +231,7 @@ class MemoizedInlineClassReplacements(
     val getUnboxFunction: (IrClass) -> IrSimpleFunction =
         storageManager.createMemoizedFunction { irClass ->
             require(irClass.isInlineClass)
-            irFactory.buildFun {
+            irFactory.buildSimpleFunction {
                 name = Name.identifier(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
                 returnType = irClass.inlineClassRepresentation!!.underlyingType
@@ -234,7 +245,7 @@ class MemoizedInlineClassReplacements(
     fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
         require(irClass.isInlineClass)
         return specializedEqualsCache.computeIfAbsent(irClass) {
-            irFactory.buildFun {
+            irFactory.buildSimpleFunction {
                 name = InlinedEqualsNames.SPECIALIZED_EQUALS_NAME
                 // TODO: Revisit this once we allow user defined equals methods in inline classes.
                 origin = JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD

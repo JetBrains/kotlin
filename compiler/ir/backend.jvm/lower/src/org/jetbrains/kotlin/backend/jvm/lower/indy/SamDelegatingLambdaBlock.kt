@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -96,7 +96,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         val invokeFunction = invocableFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }
         val typeSubstitutor = createTypeSubstitutor(superType)
 
-        return jvmContext.irFactory.buildFun {
+        return jvmContext.irFactory.buildSimpleFunction {
             name = Name.special("<anonymous>")
             returnType = typeSubstitutor.substitute(superMethod.returnType)
             visibility = DescriptorVisibilities.LOCAL

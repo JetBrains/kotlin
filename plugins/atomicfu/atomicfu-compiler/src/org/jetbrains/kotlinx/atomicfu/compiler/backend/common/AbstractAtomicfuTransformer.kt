@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -580,7 +580,7 @@ abstract class AbstractAtomicfuTransformer(
                         it.checkActionParameter() &&
                         (it.returnType == irBuiltIns.unitType || it.returnType == valueType)
             }?.let { return it }
-            return pluginContext.irFactory.buildFun {
+            return pluginContext.irFactory.buildSimpleFunction {
                 name = Name.identifier(mangledName)
                 isInline = true
                 visibility = DescriptorVisibilities.PRIVATE
@@ -861,7 +861,7 @@ abstract class AbstractAtomicfuTransformer(
     ): IrSimpleFunction {
         val valueType = atomicfuSymbols.atomicToPrimitiveType(atomicExtension.extensionReceiverParameterType!!)
         val mangledName = mangleAtomicExtension(atomicExtension.name.asString(), atomicHandlerType, valueType)
-        return pluginContext.irFactory.buildFun {
+        return pluginContext.irFactory.buildSimpleFunction {
             name = Name.identifier(mangledName)
             isInline = true
             visibility = atomicExtension.visibility
