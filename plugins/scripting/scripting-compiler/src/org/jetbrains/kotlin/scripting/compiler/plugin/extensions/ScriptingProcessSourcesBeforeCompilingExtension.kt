@@ -34,13 +34,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.powerassert.diagram.SourceFile
 import org.jetbrains.kotlin.powerassert.diagram.irExplain
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNonPublicApi
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.isSnippetDefinition
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptCompilationConfiguration
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.explainField
 import kotlin.script.experimental.api.isStandalone
+import kotlin.script.experimental.api.repl
 
 class KotlinScriptExpressionExplainTransformer(
     private val sourceFile: SourceFile,
@@ -222,7 +226,21 @@ class ScriptingProcessSourcesBeforeCompilingExtension : ProcessSourcesBeforeComp
             return scriptDefinition?.compilationConfiguration?.get(ScriptCompilationConfiguration.isStandalone) ?: true
         }
 
-        if (configuration.getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)) return sources
+        fun KtFile.isReplSnippet(): Boolean =
+            definitionProvider?.findDefinition(KtFileScriptSource(this))
+                ?.compilationConfiguration?.get(ScriptCompilationConfiguration.repl.isSnippetDefinition) == true
+
+        if (configuration.getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)) {
+            if (configuration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_STATELESS_MODE)) {
+                @OptIn(KtNonPublicApi::class)
+                for (ktFile in sources) {
+                    if (ktFile.isReplSnippet()) {
+                        ktFile.script?.markAsReplSnippet()
+                    }
+                }
+            }
+            return sources
+        }
         // TODO: see comment at LazyScriptDefinitionProvider.Companion.getNonScriptFilenameSuffixes
         val nonScriptFilenameSuffixes = arrayOf(".${KotlinFileType.EXTENSION}", ".${JavaFileType.DEFAULT_EXTENSION}")
         // filter out scripts that are not suitable for source roots, according to the compiler configuration and script definitions

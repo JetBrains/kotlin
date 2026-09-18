@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.jvmhost.jsr223
+package kotlin.script.experimental.jvm.jsr223
 
 import javax.script.ScriptContext
 import kotlin.script.experimental.api.*
@@ -30,6 +30,7 @@ open class Jsr223CompilationConfigurationBuilder : PropertiesCollection.Builder(
     companion object : Jsr223CompilationConfigurationBuilder()
 }
 
+@Suppress("UnusedReceiverParameter")
 val ScriptCompilationConfigurationKeys.jsr223 get() = Jsr223CompilationConfigurationBuilder()
 
 val Jsr223CompilationConfigurationKeys.getScriptContext by PropertiesCollection.key<() -> ScriptContext?>(
@@ -48,6 +49,7 @@ open class Jsr223EvaluationConfigurationBuilder : PropertiesCollection.Builder()
     companion object : Jsr223EvaluationConfigurationBuilder()
 }
 
+@Suppress("UnusedReceiverParameter")
 val ScriptEvaluationConfigurationKeys.jsr223 get() = Jsr223EvaluationConfigurationBuilder()
 
 val Jsr223EvaluationConfigurationKeys.getScriptContext by PropertiesCollection.key<() -> ScriptContext?>(
@@ -56,5 +58,3 @@ val Jsr223EvaluationConfigurationKeys.getScriptContext by PropertiesCollection.k
     },
     isTransient = true
 )
-
-

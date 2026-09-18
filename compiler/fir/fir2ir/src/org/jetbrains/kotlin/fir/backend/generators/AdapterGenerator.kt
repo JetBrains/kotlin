@@ -136,8 +136,8 @@ class AdapterGenerator(
         val substitutor: ConeSubstitutor =
             callableReferenceAccess.createConeSubstitutorFromTypeArguments(session) ?: ConeSubstitutor.Empty
         val boundDispatchReceiver: IrExpression? = when {
-            // Dispatch receivers for previous snippet declarations are injected later by ReplSnippetToClassTransformer.
-            firAdaptee.originalReplSnippetSymbol != null -> IrErrorCallExpressionImpl(
+            // Dispatch receivers for other snippets' declarations are injected later by ReplSnippetToClassTransformer.
+            conversionScope.isFromAnotherReplSnippet(firAdaptee.symbol, session) -> IrErrorCallExpressionImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, builtins.nothingType,
                 description = "No REPL snippet class instance."
             )
