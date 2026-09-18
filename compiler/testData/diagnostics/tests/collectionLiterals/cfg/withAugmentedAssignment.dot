@@ -115,9 +115,10 @@ digraph withAugmentedAssignment_kt {
             34 [label="Function call exit: Q|A.Companion|.R|/A.Companion.of|()" style="filled" fillcolor=yellow];
             35 [label="Function call enter: R|<local>/a|.R|/A.plusAssign|(...)"];
             36 [label="Function call exit: R|<local>/a|.R|/A.plusAssign|(...)" style="filled" fillcolor=yellow];
-            37 [label="Exit block"];
+            37 [label="Assignment via PLUS_ASSIGN"];
+            38 [label="Exit block"];
         }
-        38 [label="Exit function test" style="filled" fillcolor=red];
+        39 [label="Exit function test" style="filled" fillcolor=red];
     }
     28 -> {29};
     29 -> {30};
@@ -129,28 +130,29 @@ digraph withAugmentedAssignment_kt {
     35 -> {36};
     36 -> {37};
     37 -> {38};
+    38 -> {39};
 
     subgraph cluster_14 {
         color=red
-        39 [label="Enter function ref" style="filled" fillcolor=red];
+        40 [label="Enter function ref" style="filled" fillcolor=red];
         subgraph cluster_15 {
             color=blue
-            40 [label="Enter block"];
-            41 [label="Access variable R|<local>/a|"];
+            41 [label="Enter block"];
+            42 [label="Access variable R|<local>/a|"];
             subgraph cluster_16 {
                 color=blue
-                42 [label="Function call arguments enter"];
-                43 [label="Function call arguments exit"];
+                43 [label="Function call arguments enter"];
+                44 [label="Function call arguments exit"];
             }
-            44 [label="Function call enter: Q|A.Companion|.R|/A.Companion.of|()"];
-            45 [label="Function call exit: Q|A.Companion|.R|/A.Companion.of|()" style="filled" fillcolor=yellow];
-            46 [label="Function call enter: R|<local>/a|.R|/A.plusAssign|(...)"];
-            47 [label="Function call exit: R|<local>/a|.R|/A.plusAssign|(...)" style="filled" fillcolor=yellow];
-            48 [label="Exit block"];
+            45 [label="Function call enter: Q|A.Companion|.R|/A.Companion.of|()"];
+            46 [label="Function call exit: Q|A.Companion|.R|/A.Companion.of|()" style="filled" fillcolor=yellow];
+            47 [label="Function call enter: R|<local>/a|.R|/A.plusAssign|(...)"];
+            48 [label="Function call exit: R|<local>/a|.R|/A.plusAssign|(...)" style="filled" fillcolor=yellow];
+            49 [label="Assignment via PLUS_ASSIGN"];
+            50 [label="Exit block"];
         }
-        49 [label="Exit function ref" style="filled" fillcolor=red];
+        51 [label="Exit function ref" style="filled" fillcolor=red];
     }
-    39 -> {40};
     40 -> {41};
     41 -> {42};
     42 -> {43};
@@ -160,5 +162,7 @@ digraph withAugmentedAssignment_kt {
     46 -> {47};
     47 -> {48};
     48 -> {49};
+    49 -> {50};
+    50 -> {51};
 
 }

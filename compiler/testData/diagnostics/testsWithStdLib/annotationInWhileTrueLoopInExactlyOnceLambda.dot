@@ -85,31 +85,31 @@ digraph annotationInWhileTrueLoopInExactlyOnceLambda_kt {
                                             32 [label="Equality operator ==" style="filled" fillcolor=yellow];
                                             33 [label="Exit when branch condition"];
                                         }
+                                        34 [label="Enter when branch result"];
                                         subgraph cluster_15 {
                                             color=blue
-                                            34 [label="Enter when branch condition else"];
-                                            35 [label="Exit when branch condition"];
+                                            35 [label="Enter block"];
+                                            36 [label="Access variable this@R|special/anonymous|"];
+                                            37 [label="Type operator: (this@R|special/anonymous| as R|java/lang/Object|)"];
+                                            38 [label="Exit block"];
                                         }
-                                        36 [label="Enter when branch result"];
+                                        39 [label="Exit when branch result"];
                                         subgraph cluster_16 {
                                             color=blue
-                                            37 [label="Enter block"];
-                                            38 [label="Access variable R|<local>/result|"];
-                                            39 [label="Smart cast: R|<local>/result|"];
-                                            40 [label="Jump: ^foo R|<local>/result|"];
-                                            41 [label="Stub" style="filled" fillcolor=gray];
-                                            42 [label="Exit block" style="filled" fillcolor=gray];
+                                            40 [label="Enter when branch condition else"];
+                                            41 [label="Exit when branch condition"];
                                         }
-                                        43 [label="Exit when branch result" style="filled" fillcolor=gray];
-                                        44 [label="Enter when branch result"];
+                                        42 [label="Enter when branch result"];
                                         subgraph cluster_17 {
                                             color=blue
-                                            45 [label="Enter block"];
-                                            46 [label="Access variable this@R|special/anonymous|"];
-                                            47 [label="Type operator: (this@R|special/anonymous| as R|java/lang/Object|)"];
-                                            48 [label="Exit block"];
+                                            43 [label="Enter block"];
+                                            44 [label="Access variable R|<local>/result|"];
+                                            45 [label="Smart cast: R|<local>/result|"];
+                                            46 [label="Jump: ^foo R|<local>/result|"];
+                                            47 [label="Stub" style="filled" fillcolor=gray];
+                                            48 [label="Exit block" style="filled" fillcolor=gray];
                                         }
-                                        49 [label="Exit when branch result"];
+                                        49 [label="Exit when branch result" style="filled" fillcolor=gray];
                                         50 [label="Exit when"];
                                     }
                                     51 [label="Exit block"];
@@ -158,24 +158,25 @@ digraph annotationInWhileTrueLoopInExactlyOnceLambda_kt {
     30 -> {31};
     31 -> {32};
     32 -> {33};
-    33 -> {34 44};
+    33 -> {34 40};
     34 -> {35};
     35 -> {36};
     36 -> {37};
     37 -> {38};
     38 -> {39};
-    39 -> {40};
-    40 -> {61};
-    40 -> {41} [style=dotted];
-    41 -> {42} [style=dotted];
-    42 -> {43} [style=dotted];
-    43 -> {50} [style=dotted];
+    39 -> {50};
+    39 -> {40} [color=blue];
+    40 -> {41};
+    41 -> {42};
+    42 -> {43};
+    43 -> {44};
     44 -> {45};
     45 -> {46};
-    46 -> {47};
-    47 -> {48};
-    48 -> {49};
-    49 -> {50};
+    46 -> {61};
+    46 -> {47} [style=dotted];
+    47 -> {48} [style=dotted];
+    48 -> {49} [style=dotted];
+    49 -> {50} [style=dotted];
     50 -> {51};
     51 -> {52};
     52 -> {18} [color=green style=dashed];

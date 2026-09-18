@@ -274,27 +274,27 @@ digraph nullability_kt {
                     83 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     84 [label="Exit when branch condition"];
                 }
+                85 [label="Enter when branch result"];
                 subgraph cluster_34 {
                     color=blue
-                    85 [label="Enter when branch condition else"];
-                    86 [label="Exit when branch condition"];
-                }
-                87 [label="Enter when branch result"];
-                subgraph cluster_35 {
-                    color=blue
-                    88 [label="Enter block"];
-                    subgraph cluster_36 {
+                    86 [label="Enter block"];
+                    subgraph cluster_35 {
                         color=blue
-                        89 [label="Function call arguments enter"];
-                        90 [label="Access variable R|<local>/x|"];
-                        91 [label="Smart cast: R|<local>/x|"];
-                        92 [label="Function call arguments exit"];
+                        87 [label="Function call arguments enter"];
+                        88 [label="Access variable R|<local>/x|"];
+                        89 [label="Smart cast: R|<local>/x|"];
+                        90 [label="Function call arguments exit"];
                     }
-                    93 [label="Function call enter: R|<local>/x|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()"];
-                    94 [label="Function call exit: R|<local>/x|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
-                    95 [label="Exit block"];
+                    91 [label="Function call enter: R|<local>/x|.R|/A.foo|()"];
+                    92 [label="Function call exit: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
+                    93 [label="Exit block"];
                 }
-                96 [label="Exit when branch result"];
+                94 [label="Exit when branch result"];
+                subgraph cluster_36 {
+                    color=blue
+                    95 [label="Enter when branch condition else"];
+                    96 [label="Exit when branch condition"];
+                }
                 97 [label="Enter when branch result"];
                 subgraph cluster_37 {
                     color=blue
@@ -306,8 +306,8 @@ digraph nullability_kt {
                         101 [label="Smart cast: R|<local>/x|"];
                         102 [label="Function call arguments exit"];
                     }
-                    103 [label="Function call enter: R|<local>/x|.R|/A.foo|()"];
-                    104 [label="Function call exit: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
+                    103 [label="Function call enter: R|<local>/x|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()"];
+                    104 [label="Function call exit: R|<local>/x|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
                     105 [label="Exit block"];
                 }
                 106 [label="Exit when branch result"];
@@ -332,7 +332,7 @@ digraph nullability_kt {
     81 -> {82};
     82 -> {83};
     83 -> {84};
-    84 -> {85 97};
+    84 -> {85 95};
     85 -> {86};
     86 -> {87};
     87 -> {88};
@@ -342,9 +342,10 @@ digraph nullability_kt {
     91 -> {92};
     92 -> {93};
     93 -> {94};
-    94 -> {95};
+    94 -> {107};
+    94 -> {95} [color=blue];
     95 -> {96};
-    96 -> {107};
+    96 -> {97};
     97 -> {98};
     98 -> {99};
     99 -> {100};
@@ -380,27 +381,27 @@ digraph nullability_kt {
                     121 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     122 [label="Exit when branch condition"];
                 }
+                123 [label="Enter when branch result"];
                 subgraph cluster_44 {
                     color=blue
-                    123 [label="Enter when branch condition else"];
-                    124 [label="Exit when branch condition"];
-                }
-                125 [label="Enter when branch result"];
-                subgraph cluster_45 {
-                    color=blue
-                    126 [label="Enter block"];
-                    subgraph cluster_46 {
+                    124 [label="Enter block"];
+                    subgraph cluster_45 {
                         color=blue
-                        127 [label="Function call arguments enter"];
-                        128 [label="Access variable R|<local>/x|"];
-                        129 [label="Smart cast: R|<local>/x|"];
-                        130 [label="Function call arguments exit"];
+                        125 [label="Function call arguments enter"];
+                        126 [label="Access variable R|<local>/x|"];
+                        127 [label="Smart cast: R|<local>/x|"];
+                        128 [label="Function call arguments exit"];
                     }
-                    131 [label="Function call enter: R|<local>/x|.R|/A.foo|()"];
-                    132 [label="Function call exit: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
-                    133 [label="Exit block"];
+                    129 [label="Function call enter: R|<local>/x|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()"];
+                    130 [label="Function call exit: R|<local>/x|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
+                    131 [label="Exit block"];
                 }
-                134 [label="Exit when branch result"];
+                132 [label="Exit when branch result"];
+                subgraph cluster_46 {
+                    color=blue
+                    133 [label="Enter when branch condition else"];
+                    134 [label="Exit when branch condition"];
+                }
                 135 [label="Enter when branch result"];
                 subgraph cluster_47 {
                     color=blue
@@ -412,8 +413,8 @@ digraph nullability_kt {
                         139 [label="Smart cast: R|<local>/x|"];
                         140 [label="Function call arguments exit"];
                     }
-                    141 [label="Function call enter: R|<local>/x|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()"];
-                    142 [label="Function call exit: R|<local>/x|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
+                    141 [label="Function call enter: R|<local>/x|.R|/A.foo|()"];
+                    142 [label="Function call exit: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     143 [label="Exit block"];
                 }
                 144 [label="Exit when branch result"];
@@ -438,7 +439,7 @@ digraph nullability_kt {
     119 -> {120};
     120 -> {121};
     121 -> {122};
-    122 -> {123 135};
+    122 -> {123 133};
     123 -> {124};
     124 -> {125};
     125 -> {126};
@@ -448,9 +449,10 @@ digraph nullability_kt {
     129 -> {130};
     130 -> {131};
     131 -> {132};
-    132 -> {133};
+    132 -> {145};
+    132 -> {133} [color=blue];
     133 -> {134};
-    134 -> {145};
+    134 -> {135};
     135 -> {136};
     136 -> {137};
     137 -> {138};

@@ -67,24 +67,24 @@ digraph expectedSomeTypesCrash_TypeVariableInDfa_kt {
                                 26 [label="Const: Boolean(true)"];
                                 27 [label="Exit when branch condition"];
                             }
+                            28 [label="Enter when branch result"];
                             subgraph cluster_12 {
                                 color=blue
-                                28 [label="Enter when branch condition else"];
-                                29 [label="Exit when branch condition"];
+                                29 [label="Enter block"];
+                                30 [label="Const: Int(10)"];
+                                31 [label="Exit block"];
                             }
-                            30 [label="Enter when branch result"];
+                            32 [label="Exit when branch result"];
                             subgraph cluster_13 {
                                 color=blue
-                                31 [label="Enter block"];
-                                32 [label="Const: String(20)"];
-                                33 [label="Exit block"];
+                                33 [label="Enter when branch condition else"];
+                                34 [label="Exit when branch condition"];
                             }
-                            34 [label="Exit when branch result"];
                             35 [label="Enter when branch result"];
                             subgraph cluster_14 {
                                 color=blue
                                 36 [label="Enter block"];
-                                37 [label="Const: Int(10)"];
+                                37 [label="Const: String(20)"];
                                 38 [label="Exit block"];
                             }
                             39 [label="Exit when branch result"];
@@ -143,14 +143,15 @@ digraph expectedSomeTypesCrash_TypeVariableInDfa_kt {
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {28 35};
+    27 -> {28 33};
     28 -> {29};
     29 -> {30};
     30 -> {31};
     31 -> {32};
-    32 -> {33};
+    32 -> {40};
+    32 -> {33} [color=blue];
     33 -> {34};
-    34 -> {40};
+    34 -> {35};
     35 -> {36};
     36 -> {37};
     37 -> {38};

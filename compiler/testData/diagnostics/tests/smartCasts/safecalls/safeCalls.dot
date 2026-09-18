@@ -279,6 +279,7 @@ digraph safeCalls_kt {
     87 -> {88};
     88 -> {89};
     89 -> {90};
+    90 -> {93} [color=blue];
     90 -> {81} [color=green style=dashed];
     91 -> {92};
     92 -> {94};

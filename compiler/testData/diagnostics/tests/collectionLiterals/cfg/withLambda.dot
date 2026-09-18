@@ -247,6 +247,7 @@ digraph withLambda_kt {
     70 -> {71} [style=dotted];
     71 -> {72} [style=dotted];
     72 -> {73} [style=dotted];
+    73 -> {76} [color=blue];
     73 -> {68} [color=green style=dashed];
     74 -> {75};
     75 -> {77};
@@ -303,6 +304,7 @@ digraph withLambda_kt {
     89 -> {90} [style=dotted];
     90 -> {91} [style=dotted];
     91 -> {92} [style=dotted];
+    92 -> {95} [color=blue];
     92 -> {87} [color=green style=dashed];
     93 -> {94};
     94 -> {96};

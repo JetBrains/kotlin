@@ -218,31 +218,31 @@ digraph boundSmartcastsInBranches_kt {
                     75 [label="Access variable R|<local>/b|"];
                     76 [label="Exit when branch condition"];
                 }
+                77 [label="Enter when branch result"];
                 subgraph cluster_23 {
                     color=blue
-                    77 [label="Enter when branch condition else"];
-                    78 [label="Exit when branch condition"];
+                    78 [label="Enter block"];
+                    subgraph cluster_24 {
+                        color=blue
+                        79 [label="Function call arguments enter"];
+                        80 [label="Function call arguments exit"];
+                    }
+                    81 [label="Function call enter: R|/A.A|()"];
+                    82 [label="Function call exit: R|/A.A|()" style="filled" fillcolor=yellow];
+                    83 [label="Assignment: R|<local>/x|"];
+                    84 [label="Exit block"];
                 }
-                79 [label="Enter when branch result"];
-                subgraph cluster_24 {
-                    color=blue
-                    80 [label="Enter block"];
-                    81 [label="Access variable R|<local>/a|"];
-                    82 [label="Assignment: R|<local>/x|"];
-                    83 [label="Exit block"];
-                }
-                84 [label="Exit when branch result"];
-                85 [label="Enter when branch result"];
+                85 [label="Exit when branch result"];
                 subgraph cluster_25 {
                     color=blue
-                    86 [label="Enter block"];
-                    subgraph cluster_26 {
-                        color=blue
-                        87 [label="Function call arguments enter"];
-                        88 [label="Function call arguments exit"];
-                    }
-                    89 [label="Function call enter: R|/A.A|()"];
-                    90 [label="Function call exit: R|/A.A|()" style="filled" fillcolor=yellow];
+                    86 [label="Enter when branch condition else"];
+                    87 [label="Exit when branch condition"];
+                }
+                88 [label="Enter when branch result"];
+                subgraph cluster_26 {
+                    color=blue
+                    89 [label="Enter block"];
+                    90 [label="Access variable R|<local>/a|"];
                     91 [label="Assignment: R|<local>/x|"];
                     92 [label="Exit block"];
                 }
@@ -263,7 +263,7 @@ digraph boundSmartcastsInBranches_kt {
     73 -> {74};
     74 -> {75};
     75 -> {76};
-    76 -> {77 85};
+    76 -> {77 86};
     77 -> {78};
     78 -> {79};
     79 -> {80};
@@ -271,8 +271,9 @@ digraph boundSmartcastsInBranches_kt {
     81 -> {82};
     82 -> {83};
     83 -> {84};
-    84 -> {94};
-    85 -> {86};
+    84 -> {85};
+    85 -> {94};
+    85 -> {86} [color=blue];
     86 -> {87};
     87 -> {88};
     88 -> {89};
@@ -304,34 +305,34 @@ digraph boundSmartcastsInBranches_kt {
                     106 [label="Access variable R|<local>/b|"];
                     107 [label="Exit when branch condition"];
                 }
+                108 [label="Enter when branch result"];
                 subgraph cluster_31 {
                     color=blue
-                    108 [label="Enter when branch condition else"];
-                    109 [label="Exit when branch condition"];
+                    109 [label="Enter block"];
+                    subgraph cluster_32 {
+                        color=blue
+                        110 [label="Function call arguments enter"];
+                        111 [label="Function call arguments exit"];
+                    }
+                    112 [label="Function call enter: R|/A.A|()"];
+                    113 [label="Function call exit: R|/A.A|()" style="filled" fillcolor=yellow];
+                    114 [label="Assignment: R|<local>/x|"];
+                    115 [label="Exit block"];
                 }
-                110 [label="Enter when branch result"];
-                subgraph cluster_32 {
-                    color=blue
-                    111 [label="Enter block"];
-                    112 [label="Access variable R|<local>/a|"];
-                    113 [label="Assignment: R|<local>/x|"];
-                    114 [label="Access variable R|<local>/a|"];
-                    115 [label="Type operator: (R|<local>/a| as R|A|)"];
-                    116 [label="Exit block"];
-                }
-                117 [label="Exit when branch result"];
-                118 [label="Enter when branch result"];
+                116 [label="Exit when branch result"];
                 subgraph cluster_33 {
                     color=blue
-                    119 [label="Enter block"];
-                    subgraph cluster_34 {
-                        color=blue
-                        120 [label="Function call arguments enter"];
-                        121 [label="Function call arguments exit"];
-                    }
-                    122 [label="Function call enter: R|/A.A|()"];
-                    123 [label="Function call exit: R|/A.A|()" style="filled" fillcolor=yellow];
-                    124 [label="Assignment: R|<local>/x|"];
+                    117 [label="Enter when branch condition else"];
+                    118 [label="Exit when branch condition"];
+                }
+                119 [label="Enter when branch result"];
+                subgraph cluster_34 {
+                    color=blue
+                    120 [label="Enter block"];
+                    121 [label="Access variable R|<local>/a|"];
+                    122 [label="Assignment: R|<local>/x|"];
+                    123 [label="Access variable R|<local>/a|"];
+                    124 [label="Type operator: (R|<local>/a| as R|A|)"];
                     125 [label="Exit block"];
                 }
                 126 [label="Exit when branch result"];
@@ -351,7 +352,7 @@ digraph boundSmartcastsInBranches_kt {
     104 -> {105};
     105 -> {106};
     106 -> {107};
-    107 -> {108 118};
+    107 -> {108 117};
     108 -> {109};
     109 -> {110};
     110 -> {111};
@@ -360,8 +361,9 @@ digraph boundSmartcastsInBranches_kt {
     113 -> {114};
     114 -> {115};
     115 -> {116};
-    116 -> {117};
-    117 -> {127};
+    116 -> {127};
+    116 -> {117} [color=blue];
+    117 -> {118};
     118 -> {119};
     119 -> {120};
     120 -> {121};
@@ -394,34 +396,34 @@ digraph boundSmartcastsInBranches_kt {
                     139 [label="Access variable R|<local>/b|"];
                     140 [label="Exit when branch condition"];
                 }
+                141 [label="Enter when branch result"];
                 subgraph cluster_39 {
                     color=blue
-                    141 [label="Enter when branch condition else"];
-                    142 [label="Exit when branch condition"];
+                    142 [label="Enter block"];
+                    subgraph cluster_40 {
+                        color=blue
+                        143 [label="Function call arguments enter"];
+                        144 [label="Function call arguments exit"];
+                    }
+                    145 [label="Function call enter: R|/A.A|()"];
+                    146 [label="Function call exit: R|/A.A|()" style="filled" fillcolor=yellow];
+                    147 [label="Assignment: R|<local>/x|"];
+                    148 [label="Exit block"];
                 }
-                143 [label="Enter when branch result"];
-                subgraph cluster_40 {
-                    color=blue
-                    144 [label="Enter block"];
-                    145 [label="Access variable R|<local>/a|"];
-                    146 [label="Type operator: (R|<local>/a| as R|A|)"];
-                    147 [label="Access variable R|<local>/a|"];
-                    148 [label="Smart cast: R|<local>/a|"];
-                    149 [label="Assignment: R|<local>/x|"];
-                    150 [label="Exit block"];
-                }
-                151 [label="Exit when branch result"];
-                152 [label="Enter when branch result"];
+                149 [label="Exit when branch result"];
                 subgraph cluster_41 {
                     color=blue
+                    150 [label="Enter when branch condition else"];
+                    151 [label="Exit when branch condition"];
+                }
+                152 [label="Enter when branch result"];
+                subgraph cluster_42 {
+                    color=blue
                     153 [label="Enter block"];
-                    subgraph cluster_42 {
-                        color=blue
-                        154 [label="Function call arguments enter"];
-                        155 [label="Function call arguments exit"];
-                    }
-                    156 [label="Function call enter: R|/A.A|()"];
-                    157 [label="Function call exit: R|/A.A|()" style="filled" fillcolor=yellow];
+                    154 [label="Access variable R|<local>/a|"];
+                    155 [label="Type operator: (R|<local>/a| as R|A|)"];
+                    156 [label="Access variable R|<local>/a|"];
+                    157 [label="Smart cast: R|<local>/a|"];
                     158 [label="Assignment: R|<local>/x|"];
                     159 [label="Exit block"];
                 }
@@ -442,7 +444,7 @@ digraph boundSmartcastsInBranches_kt {
     137 -> {138};
     138 -> {139};
     139 -> {140};
-    140 -> {141 152};
+    140 -> {141 150};
     141 -> {142};
     142 -> {143};
     143 -> {144};
@@ -451,9 +453,10 @@ digraph boundSmartcastsInBranches_kt {
     146 -> {147};
     147 -> {148};
     148 -> {149};
-    149 -> {150};
+    149 -> {161};
+    149 -> {150} [color=blue];
     150 -> {151};
-    151 -> {161};
+    151 -> {152};
     152 -> {153};
     153 -> {154};
     154 -> {155};
@@ -486,20 +489,20 @@ digraph boundSmartcastsInBranches_kt {
                     173 [label="Access variable R|<local>/b|"];
                     174 [label="Exit when branch condition"];
                 }
+                175 [label="Enter when branch result"];
                 subgraph cluster_47 {
                     color=blue
-                    175 [label="Enter when branch condition else"];
-                    176 [label="Exit when branch condition"];
+                    176 [label="Enter block"];
+                    177 [label="Access variable R|<local>/a|"];
+                    178 [label="Assignment: R|<local>/x|"];
+                    179 [label="Exit block"];
                 }
-                177 [label="Enter when branch result"];
+                180 [label="Exit when branch result"];
                 subgraph cluster_48 {
                     color=blue
-                    178 [label="Enter block"];
-                    179 [label="Access variable R|<local>/a|"];
-                    180 [label="Assignment: R|<local>/x|"];
-                    181 [label="Exit block"];
+                    181 [label="Enter when branch condition else"];
+                    182 [label="Exit when branch condition"];
                 }
-                182 [label="Exit when branch result"];
                 183 [label="Enter when branch result"];
                 subgraph cluster_49 {
                     color=blue
@@ -530,15 +533,16 @@ digraph boundSmartcastsInBranches_kt {
     171 -> {172};
     172 -> {173};
     173 -> {174};
-    174 -> {175 183};
+    174 -> {175 181};
     175 -> {176};
     176 -> {177};
     177 -> {178};
     178 -> {179};
     179 -> {180};
-    180 -> {181};
+    180 -> {189};
+    180 -> {181} [color=blue];
     181 -> {182};
-    182 -> {189};
+    182 -> {183};
     183 -> {184};
     184 -> {185};
     185 -> {186};
@@ -573,20 +577,20 @@ digraph boundSmartcastsInBranches_kt {
                     206 [label="Access variable R|<local>/b|"];
                     207 [label="Exit when branch condition"];
                 }
+                208 [label="Enter when branch result"];
                 subgraph cluster_54 {
                     color=blue
-                    208 [label="Enter when branch condition else"];
-                    209 [label="Exit when branch condition"];
+                    209 [label="Enter block"];
+                    210 [label="Access variable R|<local>/a|"];
+                    211 [label="Assignment: R|<local>/x|"];
+                    212 [label="Exit block"];
                 }
-                210 [label="Enter when branch result"];
+                213 [label="Exit when branch result"];
                 subgraph cluster_55 {
                     color=blue
-                    211 [label="Enter block"];
-                    212 [label="Access variable R|<local>/a|"];
-                    213 [label="Assignment: R|<local>/x|"];
-                    214 [label="Exit block"];
+                    214 [label="Enter when branch condition else"];
+                    215 [label="Exit when branch condition"];
                 }
-                215 [label="Exit when branch result"];
                 216 [label="Enter when branch result"];
                 subgraph cluster_56 {
                     color=blue
@@ -617,15 +621,16 @@ digraph boundSmartcastsInBranches_kt {
     204 -> {205};
     205 -> {206};
     206 -> {207};
-    207 -> {208 216};
+    207 -> {208 214};
     208 -> {209};
     209 -> {210};
     210 -> {211};
     211 -> {212};
     212 -> {213};
-    213 -> {214};
+    213 -> {222};
+    213 -> {214} [color=blue];
     214 -> {215};
-    215 -> {222};
+    215 -> {216};
     216 -> {217};
     217 -> {218};
     218 -> {219};
@@ -1357,21 +1362,21 @@ digraph boundSmartcastsInBranches_kt {
                     527 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     528 [label="Exit when branch condition"];
                 }
+                529 [label="Enter when branch result"];
                 subgraph cluster_103 {
                     color=blue
-                    529 [label="Enter when branch condition else"];
-                    530 [label="Exit when branch condition"];
+                    530 [label="Enter block"];
+                    531 [label="Access variable R|<local>/a|"];
+                    532 [label="Smart cast: R|<local>/a|"];
+                    533 [label="Assignment: R|<local>/b|"];
+                    534 [label="Exit block"];
                 }
-                531 [label="Enter when branch result"];
+                535 [label="Exit when branch result"];
                 subgraph cluster_104 {
                     color=blue
-                    532 [label="Enter block"];
-                    533 [label="Access variable R|<local>/a|"];
-                    534 [label="Smart cast: R|<local>/a|"];
-                    535 [label="Assignment: R|<local>/b|"];
-                    536 [label="Exit block"];
+                    536 [label="Enter when branch condition else"];
+                    537 [label="Exit when branch condition"];
                 }
-                537 [label="Exit when branch result"];
                 538 [label="Enter when branch result"];
                 subgraph cluster_105 {
                     color=blue
@@ -1426,16 +1431,17 @@ digraph boundSmartcastsInBranches_kt {
     525 -> {526};
     526 -> {527};
     527 -> {528};
-    528 -> {529 538};
+    528 -> {529 536};
     529 -> {530};
     530 -> {531};
     531 -> {532};
     532 -> {533};
     533 -> {534};
     534 -> {535};
-    535 -> {536};
+    535 -> {545};
+    535 -> {536} [color=blue];
     536 -> {537};
-    537 -> {545};
+    537 -> {538};
     538 -> {539};
     539 -> {540};
     540 -> {541};

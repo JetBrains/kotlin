@@ -98,20 +98,20 @@ digraph dependentContext_kt {
                     43 [label=< <TABLE BORDER="0"><TR><TD>Equality operator ==</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
                     44 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch condition</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
                 }
+                45 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
                 subgraph cluster_13 {
                     color=blue
-                    45 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch condition "else"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
-                    46 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch condition</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    46 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    47 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/b|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    48 [label=< <TABLE BORDER="0"><TR><TD>Access variable &lt;Unresolved name: x&gt;#</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    49 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
                 }
-                47 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                50 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
                 subgraph cluster_14 {
                     color=blue
-                    48 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
-                    49 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/b|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
-                    50 [label=< <TABLE BORDER="0"><TR><TD>Access variable &lt;Unresolved name: x&gt;#</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
-                    51 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    51 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch condition "else"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    52 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch condition</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
                 }
-                52 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
                 53 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
                 subgraph cluster_15 {
                     color=blue
@@ -163,15 +163,16 @@ digraph dependentContext_kt {
     41 -> {43} [color=red label="Postponed"];
     42 -> {43};
     43 -> {44};
-    44 -> {45 53};
+    44 -> {45 51};
     45 -> {46};
     46 -> {47};
     47 -> {48};
     48 -> {49};
     49 -> {50};
-    50 -> {51};
+    50 -> {59};
+    50 -> {51} [color=blue];
     51 -> {52};
-    52 -> {59};
+    52 -> {53};
     53 -> {54};
     54 -> {55};
     55 -> {56};
@@ -235,26 +236,26 @@ digraph dependentContext_kt {
                     }
                     94 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch condition</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
                 }
+                95 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
                 subgraph cluster_24 {
                     color=blue
-                    95 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch condition "else"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
-                    96 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch condition</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
-                }
-                97 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
-                subgraph cluster_25 {
-                    color=blue
-                    98 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
-                    subgraph cluster_26 {
+                    96 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    subgraph cluster_25 {
                         color=blue
-                        99 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments enter</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
-                        100 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/r|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
-                        101 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments exit</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                        97 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments enter</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                        98 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/r|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                        99 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments exit</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
                     }
-                    102 [label=< <TABLE BORDER="0"><TR><TD>Function call enter: R|&lt;local&gt;/r|.R|/accept&lt;Inapplicable(UNSAFE_CALL): /accept&gt;#|()</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
-                    103 [label=< <TABLE BORDER="0"><TR><TD>Function call exit: R|&lt;local&gt;/r|.R|/accept&lt;Inapplicable(UNSAFE_CALL): /accept&gt;#|()</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
-                    104 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    100 [label=< <TABLE BORDER="0"><TR><TD>Function call enter: R|&lt;local&gt;/r|.R|/accept&lt;Inapplicable(UNSAFE_CALL): /accept&gt;#|()</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    101 [label=< <TABLE BORDER="0"><TR><TD>Function call exit: R|&lt;local&gt;/r|.R|/accept&lt;Inapplicable(UNSAFE_CALL): /accept&gt;#|()</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
+                    102 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
                 }
-                105 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                103 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                subgraph cluster_26 {
+                    color=blue
+                    104 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch condition "else"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    105 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch condition</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                }
                 106 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
                 subgraph cluster_27 {
                     color=blue
@@ -312,7 +313,7 @@ digraph dependentContext_kt {
     91 -> {92};
     92 -> {93};
     93 -> {94};
-    94 -> {95 106};
+    94 -> {95 104};
     95 -> {96};
     96 -> {97};
     97 -> {98};
@@ -321,9 +322,10 @@ digraph dependentContext_kt {
     100 -> {101};
     101 -> {102};
     102 -> {103};
-    103 -> {104};
+    103 -> {115};
+    103 -> {104} [color=blue];
     104 -> {105};
-    105 -> {115};
+    105 -> {106};
     106 -> {107};
     107 -> {108};
     108 -> {109};
