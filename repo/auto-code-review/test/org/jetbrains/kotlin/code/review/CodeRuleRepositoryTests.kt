@@ -78,13 +78,13 @@ class CodeRuleRepositoryTests {
                 """
                     |# ${irNodeRule.name}
                     |
-                    |Pattern: ${irNodeRule.patterns.patterns.single()}
+                    |Applies to: `${irNodeRule.patterns.patterns.single()}`
                     |
                     |${irNodeRule.text}
                     |
                     |# ${irTestRule.name}
                     |
-                    |Pattern:${irTestRule.patterns.patterns.single()}
+                    |Applies to:`${irTestRule.patterns.patterns.single()}`
                     |
                     |
                     |${irTestRule.text}
@@ -109,9 +109,11 @@ class CodeRuleRepositoryTests {
                     
                     
                     # ${kotlinNativeRule.name}
-                    Pattern: ${kotlinNativeRule.patterns.patterns.first()}
-                    
-                    Pattern: ${kotlinNativeRule.patterns.patterns.last()}
+                    Applies to:
+                    ```
+                    ${kotlinNativeRule.patterns.patterns.first()}
+                    ${kotlinNativeRule.patterns.patterns.last()}
+                    ```
                     
                     ${kotlinNativeRule.text}
                 """.trimIndent()
