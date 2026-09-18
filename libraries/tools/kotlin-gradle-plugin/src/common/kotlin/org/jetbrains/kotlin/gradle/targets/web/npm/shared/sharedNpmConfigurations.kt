@@ -11,9 +11,11 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.utils.createDependencyScope
 import org.jetbrains.kotlin.gradle.utils.createResolvable
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 
@@ -25,6 +27,12 @@ internal val HasPlatformDisambiguator.npmSharedDependenciesConfigurationName: St
 
 internal val HasPlatformDisambiguator.npmSharedDependenciesResolverConfigurationName: String
     get() = extensionName("npmSharedDependenciesResolver")
+
+internal val KotlinJsIrTarget.sharedPackageJsonElementsConfigurationName: String
+    get() = lowerCamelCaseName(disambiguationClassifier, "sharedPackageJsonElements")
+
+internal val HasPlatformDisambiguator.sharedPackageJsonUsageName: String
+    get() = extensionName("npmSharedPackageJsonElements")
 
 /** Subproject side: publishes this project's package.json files, consumed by the root's [createSubprojectPackageJsonsResolver]. */
 internal fun Project.maybeCreatePackageJsonsForRoot(platform: HasPlatformDisambiguator): Configuration =
@@ -50,3 +58,14 @@ internal fun Project.createSubprojectPackageJsonsResolver(platform: HasPlatformD
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
     }
 }
+
+internal fun Project.maybeCreatePackageJsonForDependents(
+    target: KotlinJsIrTarget,
+    platform: HasPlatformDisambiguator,
+): Configuration =
+    configurations.maybeCreateConsumable(target.sharedPackageJsonElementsConfigurationName) {
+        setInvisibleIfSupported()
+        description = "Shared package.json of the '${target.name}' target for dependent projects."
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(platform.sharedPackageJsonUsageName))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
+    }
