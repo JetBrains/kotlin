@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -49,6 +49,7 @@ class MultiThreadedRandomSmokeTest {
             it.execute(TransferMode.SAFE, { subject to canStart }) { [subject, canStart] ->
                 var result1 = 0
                 var result2 = -1
+                @Suppress("ControlFlowWithEmptyBody")
                 while (canStart.value == 0) {}
                 repeat(100) {
                     val r = subject.nextInt()
@@ -70,6 +71,48 @@ class MultiThreadedRandomSmokeTest {
         assertEquals(0, result2, "All zero bits should present")
         workers.forEach {
             it.requestTermination().result
+        }
+    }
+}
+
+class NativeRandomTest {
+    @Test
+    fun behavesAsXorWow() {
+        for (seed in listOf(0L, 1L, -1L, Long.MIN_VALUE, Long.MAX_VALUE, 0x123456789abcdefL)) {
+            val reference = XorWowRandom(seed1 = seed.toInt(), seed2 = (seed shr 32).toInt())
+            NativeRandom.overrideSeed(seed)
+            repeat(100) {
+                for (bitCount in 0..32) {
+                    assertEquals(reference.nextBits(bitCount), NativeRandom.nextBits(bitCount),
+                            "Seed $seed, bitCount $bitCount")
+                }
+            }
+        }
+    }
+
+    @Test
+    fun stateIsThreadLocal() {
+        val workers = Array(2) { Worker.start() }
+        try {
+            // Seed both workers before drawing, so shared state cannot pass this test.
+            workers.forEachIndexed { index, worker ->
+                worker.execute(TransferMode.SAFE, { index.toLong() }) { seed ->
+                    NativeRandom.overrideSeed(seed)
+                }.result
+            }
+            repeat(2) { round ->
+                workers.forEachIndexed { index, worker ->
+                    val actual = worker.execute(TransferMode.SAFE, { }) {
+                        List(100) { NativeRandom.nextInt() }
+                    }.result
+                    val seed = index.toLong()
+                    val reference = XorWowRandom(seed1 = seed.toInt(), seed2 = (seed shr 32).toInt())
+                    repeat(round * 100) { val _ = reference.nextInt() }
+                    assertEquals(List(100) { reference.nextInt() }, actual)
+                }
+            }
+        } finally {
+            workers.forEach { it.requestTermination().result }
         }
     }
 }
