@@ -80,5 +80,7 @@ internal fun <T> interceptedIntrinsic(cont: Continuation<T>): Continuation<T> =
 @InlineOnly
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(noinline block: (Continuation<T>) -> Any?): T =
-    suspendCoroutineUninterceptedOrReturnIntrinsic(block)
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T {
+    val blockKotlinContinuation = getBlockKotlinContinuation<T>()
+    return processSuspendBlockResult<T>(block(blockKotlinContinuation), blockKotlinContinuation)
+}

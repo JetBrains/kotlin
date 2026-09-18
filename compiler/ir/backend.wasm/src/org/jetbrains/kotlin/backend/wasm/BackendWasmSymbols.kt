@@ -258,8 +258,10 @@ class BackendWasmSymbols(
         val createCoroutineUninterceptedIntrinsic0StackSwitching by CallableIds.createCoroutineUninterceptedIntrinsic0StackSwitching.functionSymbol()
         val createCoroutineUninterceptedIntrinsic1StackSwitching by CallableIds.createCoroutineUninterceptedIntrinsic1StackSwitching.functionSymbol()
 
-        val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching by
-        CallableIds.suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching.functionSymbol()
+        val getBlockKotlinContinuationStackSwitching by
+        CallableIds.getBlockKotlinContinuationStackSwitching.functionSymbol()
+        val processSuspendBlockResultStackSwitching by
+        CallableIds.processSuspendBlockResultStackSwitching.functionSymbol()
 
         val intercepted by
         CallableIds.coroutineImplStackSwitchingIntercepted.functionSymbol()
@@ -279,8 +281,10 @@ class BackendWasmSymbols(
     val createCoroutineUninterceptedIntrinsic0 by CallableIds.createCoroutineUninterceptedIntrinsic0.functionSymbol()
     val createCoroutineUninterceptedIntrinsic1 by CallableIds.createCoroutineUninterceptedIntrinsic1.functionSymbol()
 
-    val suspendCoroutineUninterceptedOrReturnIntrinsic by
-    CallableIds.suspendCoroutineUninterceptedOrReturnIntrinsic.functionSymbol()
+    val getBlockKotlinContinuation by
+    CallableIds.getBlockKotlinContinuation.functionSymbol()
+    val processSuspendBlockResult by
+    CallableIds.processSuspendBlockResult.functionSymbol()
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = ClassIds.KLocalDelegatedPropertyImpl.classSymbol()
@@ -631,8 +635,11 @@ private object CallableIds {
 
     val interceptedIntrinsic = "interceptedIntrinsic".wasmCallableId
 
-    val suspendCoroutineUninterceptedOrReturnIntrinsic = "suspendCoroutineUninterceptedOrReturnIntrinsic".wasmCallableId
-    val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching = "suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching".wasmCallableId
+    val getBlockKotlinContinuation = "getBlockKotlinContinuation".wasmCallableId
+    val processSuspendBlockResult = "processSuspendBlockResult".wasmCallableId
+
+    val getBlockKotlinContinuationStackSwitching = "getBlockKotlinContinuationStackSwitching".wasmCallableId
+    val processSuspendBlockResultStackSwitching = "processSuspendBlockResultStackSwitching".wasmCallableId
 
     val suspendFunction0ToContref = "suspendFunction0ToContref".wasmCallableId
     val suspendFunction1ToContref = "suspendFunction1ToContref".wasmCallableId
