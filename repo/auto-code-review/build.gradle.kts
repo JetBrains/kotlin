@@ -83,6 +83,12 @@ tasks.register<CodeReviewTask>("reviewCode") {
             rootDir.absolutePath
         ) + listOfNotNull(base.getOrNull())
     }
+
+    val jetbrainsCentralProperty = "kotlin.autoCodeReview.useJetBrainsCentralCLI"
+    val jetbrainsCentralBinary = kotlinBuildProperties.stringProperty(jetbrainsCentralProperty)
+    jvmArgumentProviders.add {
+        listOfNotNull(jetbrainsCentralBinary.orNull?.let { "-D$jetbrainsCentralProperty=$it" })
+    }
 }
 
 projectTests {

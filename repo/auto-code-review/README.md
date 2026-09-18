@@ -9,7 +9,32 @@ Install Claude Code CLI: https://code.claude.com/docs/en/quickstart.
 
 The tool runs Claude Code in [bare mode](#operation), which supports only API authentication.
 Logging in with a Claude subscription is not supported.
-Make sure that one of the following is defined:
+The authentication can be provided in one of the following ways.
+
+### JetBrains Central CLI
+
+[JetBrains Central CLI](https://www.jetbrains.com/help/central-cli/quickstart.html) provides access to Claude
+with a JetBrains AI subscription. Install it and log in with `central login`.
+Then choose one of the two ways to [use it with Claude Code](https://www.jetbrains.com/help/central-cli/cli-agents.html):
+
+* Connect Claude Code to JetBrains Central permanently with `central add claude`.
+  This sets `apiKeyHelper` and `ANTHROPIC_BASE_URL` in `~/.claude/settings.json`, which the tool picks up,
+  so no additional configuration is needed.
+* Make the tool run Claude Code through JetBrains Central, like `central run claude -- ...`.
+  This doesn't change the Claude Code configuration, so it is preferable when you want to keep using Claude Code
+  in a different way otherwise, e.g. with a Claude subscription.
+  To enable it, set the `kotlin.autoCodeReview.useJetBrainsCentralCLI` Gradle property to the `central` binary
+  in `local.properties` in the repository root or in `~/.gradle/gradle.properties`:
+
+  ```properties
+  kotlin.autoCodeReview.useJetBrainsCentralCLI=central
+  ```
+
+  Use the full path to the binary if it isn't in `PATH`.
+
+### API key
+
+To use this authentication method, make sure that one of the following is defined:
 
 * `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN`, as an environment variable
   or in the `env` section of `~/.claude/settings.json`;
