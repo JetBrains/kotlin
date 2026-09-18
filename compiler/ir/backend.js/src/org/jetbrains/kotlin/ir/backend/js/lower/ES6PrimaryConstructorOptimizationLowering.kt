@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.MutableReference
 import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
 import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
 import org.jetbrains.kotlin.ir.backend.js.utils.mutableReferenceOf
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -70,7 +70,9 @@ internal class ES6PrimaryConstructorOptimizationLowering(private val context: Js
         val classThisSymbol = irClass.thisReceiver!!.symbol
 
         return factory.buildConstructor {
-            updateFrom(original)
+            startOffset = original.startOffset
+            endOffset = original.endOffset
+            visibility = original.visibility
             isPrimary = true
             origin = IrDeclarationOrigin.DEFINED
         }.also { constructor ->

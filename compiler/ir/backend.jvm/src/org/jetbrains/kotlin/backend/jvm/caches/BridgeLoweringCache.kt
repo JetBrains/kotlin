@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.jvm.caches
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.SpecialBridge
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.name.Name
@@ -89,7 +89,7 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
                     else param.type
                 }
 
-            val substitutedOverride = context.irFactory.buildFun {
+            val substitutedOverride = context.irFactory.buildSimpleFunction {
                 updateFrom(specialBridge.overridden)
                 name = Name.identifier(specialBridge.signature.name)
                 returnType = function.returnType

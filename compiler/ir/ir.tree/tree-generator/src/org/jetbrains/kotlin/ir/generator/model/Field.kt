@@ -16,9 +16,16 @@ sealed class Field(
 ) : AbstractField<Field>() {
     abstract val symbolClass: Symbol?
 
-    override var defaultValueInBuilder: String?
-        get() = null
-        set(_) = error("Builders are not supported")
+    override var defaultValueInBuilder: String? = null
+
+    /**
+     * Whether a generated builder should assign this field on the constructed element only when it was actually set.
+     *
+     * The element declares the field as `lateinit`, so there is no value to fall back on. The builder exposes it as nullable and
+     * leaves it uninitialized when it is `null`, the same way `IrFactory.createSimpleFunction(returnType = null)` leaves
+     * [org.jetbrains.kotlin.ir.declarations.IrFunction.returnType] uninitialized.
+     */
+    var assignedInBuilderIfNotNull: Boolean = false
 
     override var customSetter: String? = null
 
@@ -42,6 +49,8 @@ sealed class Field(
         copy.symbolFieldRole = symbolFieldRole
         copy.deepCopyExcludeFromConstructor = deepCopyExcludeFromConstructor
         copy.deepCopyExcludeFromApply = deepCopyExcludeFromApply
+        copy.defaultValueInBuilder = defaultValueInBuilder
+        copy.assignedInBuilderIfNotNull = assignedInBuilderIfNotNull
     }
 }
 

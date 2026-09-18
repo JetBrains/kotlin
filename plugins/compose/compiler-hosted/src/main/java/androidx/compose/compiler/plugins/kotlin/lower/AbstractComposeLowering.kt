@@ -42,6 +42,9 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -757,7 +760,7 @@ abstract class AbstractComposeLowering(
         returnType: IrType,
         body: (IrSimpleFunction) -> Unit,
     ): IrExpression {
-        val function = context.irFactory.buildFun {
+        val function = context.irFactory.buildSimpleFunction {
             this.startOffset = SYNTHETIC_OFFSET
             this.endOffset = SYNTHETIC_OFFSET
             this.returnType = returnType
@@ -929,7 +932,7 @@ abstract class AbstractComposeLowering(
 
         val stabilityField = stabilityProp.backingField!!
 
-        context.irFactory.buildFun {
+        context.irFactory.buildSimpleFunction {
             startOffset = this@buildStabilityGetterJvm.startOffset
             endOffset = this@buildStabilityGetterJvm.endOffset
             name = getterName
@@ -954,7 +957,7 @@ abstract class AbstractComposeLowering(
         // we could have created getter instead of separate function,
         // but `registerFunctionAsMetadataVisible` is not working for field getter for some reason
         // and there is no api to register properties as metadata-visible
-        val stabilityGetter = context.irFactory.buildFun {
+        val stabilityGetter = context.irFactory.buildSimpleFunction {
             startOffset = this@buildStabilityGetterNonJvm.startOffset
             endOffset = this@buildStabilityGetterNonJvm.endOffset
             name = getterName
@@ -1242,7 +1245,7 @@ abstract class AbstractComposeLowering(
     // This code should be kept in sync with the declaration in JvmSymbols.kt.
     private val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? by lazy {
         if (context.platform.isJvm()) {
-            context.irFactory.buildFun {
+            context.irFactory.buildSimpleFunction {
                 name = Name.special("<unsafe-coerce>")
                 origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             }.apply {

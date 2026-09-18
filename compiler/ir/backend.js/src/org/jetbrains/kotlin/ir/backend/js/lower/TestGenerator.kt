@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -83,7 +83,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
     ): IrSimpleFunction {
         val body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
 
-        val function = context.irFactory.buildFun {
+        val function = context.irFactory.buildSimpleFunction {
             this.name = Name.identifier("$name test fun")
             this.returnType = if (this@createInvocation == context.symbols.suiteFun!!) context.irBuiltIns.unitType else context.irBuiltIns.anyNType
             this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
@@ -221,7 +221,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
                 )
             }
 
-            val afterFunction = context.irFactory.buildFun {
+            val afterFunction = context.irFactory.buildSimpleFunction {
                 this.name = Name.identifier("${irClass.name.asString()} after test fun")
                 this.returnType = context.irBuiltIns.unitType
                 this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
