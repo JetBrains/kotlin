@@ -133,6 +133,9 @@ fun CompilerConfiguration.reportCompilationException(e: CompilationException) {
     )
 }
 
+private const val deprecatedCliArgThatEnablesLanguageFeaturesMessage =
+    " It enables the features that are already on by default in every supported language version."
+
 /**
  * Returns a warning message and status if the argument is deprecated or removed, null otherwise.
  */
@@ -179,15 +182,21 @@ fun ArgumentField.generateLifecycleWarning(forExtraHelp: Boolean): Pair<String, 
                     append(argument.removedVersion)
                 }
                 append('.')
-                deprecatedAnnotation?.message?.takeIf { it.isNotEmpty() }?.let {
+                val deprecatedMessage = deprecatedAnnotation?.message
+                if (deprecatedMessage?.isNotEmpty() == true) {
                     append(' ')
-                    append(it)
+                    append(deprecatedMessage)
+                } else if (changesLanguageFeatures) {
+                    append(deprecatedCliArgThatEnablesLanguageFeaturesMessage)
                 }
             }
             ArgumentLifecycleStatus.REMOVED -> {
                 append("was removed in Kotlin ")
                 append(argument.removedVersion)
                 append(". It has no effect.")
+                if (changesLanguageFeatures) {
+                    append(deprecatedCliArgThatEnablesLanguageFeaturesMessage)
+                }
             }
         }
     }
