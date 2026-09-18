@@ -1,0 +1,16 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/foo/Foo2Kt.class
+End of files
+Cleaning output files:
+  out/production/module/use/UseFKt.class
+End of files
+Compiling files:
+  src/foo3.kt
+  src/useF.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED

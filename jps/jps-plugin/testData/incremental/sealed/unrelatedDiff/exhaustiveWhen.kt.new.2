@@ -1,0 +1,5 @@
+private val baseTypeVal: IBar = BigBar()
+private val localVal = when(baseTypeVal) {
+    is BigBar -> 111
+    is SmallBar -> 222
+}

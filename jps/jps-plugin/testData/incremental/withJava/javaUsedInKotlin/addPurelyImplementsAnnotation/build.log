@@ -1,0 +1,21 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/SmartList.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/SmartList.java
+End of files
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/TestClassKt.class
+End of files
+Compiling files:
+  src/TestClass.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Null cannot be a value of a non-null type 'kotlin.String'.

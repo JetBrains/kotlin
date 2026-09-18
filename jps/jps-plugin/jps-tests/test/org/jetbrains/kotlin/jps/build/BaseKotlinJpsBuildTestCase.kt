@@ -25,20 +25,25 @@ import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.jps.build.fixtures.JpsDependencyGraphFixture
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 @Suppress("UnstableApiUsage")
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
+    private val dependencyGraphFixture = JpsDependencyGraphFixture()
+
     @BeforeEach
     open fun setUp() {
         System.setProperty("kotlin.jps.tests", "true")
+        dependencyGraphFixture.setUp()
     }
 
     @AfterEach
     override fun tearDown() {
         RunAll(
             {
+                dependencyGraphFixture.tearDown()
                 System.clearProperty("kotlin.jps.tests")
                 myBuildParams.clear()
             },
