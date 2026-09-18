@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadat
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.shareSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.swiftExportDependencySelectorFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration
+import org.jetbrains.kotlin.gradle.plugin.statistics.SwiftExportDslMetrics
 
 internal object SwiftExportDSLConstants {
     const val SWIFT_EXPORT_EXTENSION_NAME = "swiftExport"
@@ -48,11 +49,20 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
 
     if (appleTargets.isEmpty()) return@KotlinProjectSetupCoroutine
 
+    if (exportExtension.isSwiftExportConfigured) {
+        SwiftExportDslMetrics.collectSwiftExportConfigured(project)
+    }
+
     // Runs before isSwiftExportXcodeIntegrationActivated()'s early return: publishing metadata is independent
     // of the Xcode integration. AfterFinaliseDsl still precedes any afterEvaluate {} a build script registers,
     // so configuring the DSL from there publishes nothing.
     val swiftExportConfiguration = exportExtension.swiftExportConfiguration
     if (swiftExportConfiguration.moduleName.isPresent || swiftExportConfiguration.rootPackage.isPresent) {
+        SwiftExportDslMetrics.collectModuleMetrics(
+            project,
+            moduleNameOverridden = swiftExportConfiguration.moduleName.isPresent,
+            rootPackageOverridden = swiftExportConfiguration.rootPackage.isPresent,
+        )
         locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration(swiftExportConfiguration)
 
         // Published dependencies expose their metadata through the `swiftExportMetadataElements` variant registered
@@ -75,6 +85,10 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
 
     // The targets are awaited above, so the DSL is finalised by now and the activation is order-independent.
     if (!multiplatformExtension.isSwiftExportXcodeIntegrationActivated()) return@KotlinProjectSetupCoroutine
+
+    swiftExportConfiguration.activatedXcodeIntegration?.let { activatedXcodeIntegration ->
+        SwiftExportDslMetrics.collectXcodeIntegrationMetrics(project, activatedXcodeIntegration)
+    }
 
     initSwiftExportClasspathConfigurations()
     registerSwiftExportPipeline(legacySwiftExportExtension, exportExtension)

@@ -90,6 +90,8 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     // Native features
     ENABLED_SWIFT_EXPORT(OR, SAFE),
+    SWIFT_EXPORT_DSL_CONFIGURED(OR, SAFE),
+    SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED(OR, SAFE),
 
     //Build reports
     FILE_BUILD_REPORT(OR, SAFE),
@@ -143,6 +145,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 32
+        const val VERSION = 33
     }
 }
