@@ -359,39 +359,39 @@ digraph casts_kt {
                     131 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     132 [label="Exit when branch condition"];
                 }
+                133 [label="Enter when branch result"];
                 subgraph cluster_34 {
                     color=blue
-                    133 [label="Enter when branch condition else"];
-                    134 [label="Exit when branch condition"];
-                }
-                135 [label="Enter when branch result"];
-                subgraph cluster_35 {
-                    color=blue
-                    136 [label="Enter block"];
-                    subgraph cluster_36 {
+                    134 [label="Enter block"];
+                    subgraph cluster_35 {
                         color=blue
-                        137 [label="Function call arguments enter"];
-                        138 [label="Access variable R|<local>/b|"];
-                        139 [label="Function call arguments exit"];
+                        135 [label="Function call arguments enter"];
+                        136 [label="Access variable R|<local>/b|"];
+                        137 [label="Smart cast: R|<local>/b|"];
+                        138 [label="Function call arguments exit"];
                     }
-                    140 [label="Function call enter: R|<local>/b|.<Unresolved name: not>#()"];
-                    141 [label="Function call exit: R|<local>/b|.<Unresolved name: not>#()" style="filled" fillcolor=yellow];
-                    142 [label="Exit block"];
+                    139 [label="Function call enter: R|<local>/b|.R|kotlin/Boolean.not|()"];
+                    140 [label="Function call exit: R|<local>/b|.R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
+                    141 [label="Exit block"];
                 }
-                143 [label="Exit when branch result"];
-                144 [label="Enter when branch result"];
+                142 [label="Exit when branch result"];
+                subgraph cluster_36 {
+                    color=blue
+                    143 [label="Enter when branch condition else"];
+                    144 [label="Exit when branch condition"];
+                }
+                145 [label="Enter when branch result"];
                 subgraph cluster_37 {
                     color=blue
-                    145 [label="Enter block"];
+                    146 [label="Enter block"];
                     subgraph cluster_38 {
                         color=blue
-                        146 [label="Function call arguments enter"];
-                        147 [label="Access variable R|<local>/b|"];
-                        148 [label="Smart cast: R|<local>/b|"];
+                        147 [label="Function call arguments enter"];
+                        148 [label="Access variable R|<local>/b|"];
                         149 [label="Function call arguments exit"];
                     }
-                    150 [label="Function call enter: R|<local>/b|.R|kotlin/Boolean.not|()"];
-                    151 [label="Function call exit: R|<local>/b|.R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
+                    150 [label="Function call enter: R|<local>/b|.<Unresolved name: not>#()"];
+                    151 [label="Function call exit: R|<local>/b|.<Unresolved name: not>#()" style="filled" fillcolor=yellow];
                     152 [label="Exit block"];
                 }
                 153 [label="Exit when branch result"];
@@ -417,39 +417,39 @@ digraph casts_kt {
                     165 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     166 [label="Exit when branch condition"];
                 }
+                167 [label="Enter when branch result"];
                 subgraph cluster_42 {
                     color=blue
-                    167 [label="Enter when branch condition else"];
-                    168 [label="Exit when branch condition"];
-                }
-                169 [label="Enter when branch result"];
-                subgraph cluster_43 {
-                    color=blue
-                    170 [label="Enter block"];
-                    subgraph cluster_44 {
+                    168 [label="Enter block"];
+                    subgraph cluster_43 {
                         color=blue
-                        171 [label="Function call arguments enter"];
-                        172 [label="Access variable R|<local>/b|"];
-                        173 [label="Smart cast: R|<local>/b|"];
-                        174 [label="Function call arguments exit"];
+                        169 [label="Function call arguments enter"];
+                        170 [label="Access variable R|<local>/b|"];
+                        171 [label="Function call arguments exit"];
                     }
-                    175 [label="Function call enter: R|<local>/b|.R|kotlin/Boolean.not|()"];
-                    176 [label="Function call exit: R|<local>/b|.R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
-                    177 [label="Exit block"];
+                    172 [label="Function call enter: R|<local>/b|.<Unresolved name: not>#()"];
+                    173 [label="Function call exit: R|<local>/b|.<Unresolved name: not>#()" style="filled" fillcolor=yellow];
+                    174 [label="Exit block"];
                 }
-                178 [label="Exit when branch result"];
-                179 [label="Enter when branch result"];
+                175 [label="Exit when branch result"];
+                subgraph cluster_44 {
+                    color=blue
+                    176 [label="Enter when branch condition else"];
+                    177 [label="Exit when branch condition"];
+                }
+                178 [label="Enter when branch result"];
                 subgraph cluster_45 {
                     color=blue
-                    180 [label="Enter block"];
+                    179 [label="Enter block"];
                     subgraph cluster_46 {
                         color=blue
-                        181 [label="Function call arguments enter"];
-                        182 [label="Access variable R|<local>/b|"];
+                        180 [label="Function call arguments enter"];
+                        181 [label="Access variable R|<local>/b|"];
+                        182 [label="Smart cast: R|<local>/b|"];
                         183 [label="Function call arguments exit"];
                     }
-                    184 [label="Function call enter: R|<local>/b|.<Unresolved name: not>#()"];
-                    185 [label="Function call exit: R|<local>/b|.<Unresolved name: not>#()" style="filled" fillcolor=yellow];
+                    184 [label="Function call enter: R|<local>/b|.R|kotlin/Boolean.not|()"];
+                    185 [label="Function call exit: R|<local>/b|.R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
                     186 [label="Exit block"];
                 }
                 187 [label="Exit when branch result"];
@@ -475,7 +475,7 @@ digraph casts_kt {
     129 -> {130};
     130 -> {131};
     131 -> {132};
-    132 -> {133 144};
+    132 -> {133 143};
     133 -> {134};
     134 -> {135};
     135 -> {136};
@@ -485,8 +485,9 @@ digraph casts_kt {
     139 -> {140};
     140 -> {141};
     141 -> {142};
-    142 -> {143};
-    143 -> {154};
+    142 -> {154};
+    142 -> {143} [color=blue];
+    143 -> {144};
     144 -> {145};
     145 -> {146};
     146 -> {147};
@@ -509,7 +510,7 @@ digraph casts_kt {
     163 -> {164};
     164 -> {165};
     165 -> {166};
-    166 -> {167 179};
+    166 -> {167 176};
     167 -> {168};
     168 -> {169};
     169 -> {170};
@@ -518,10 +519,11 @@ digraph casts_kt {
     172 -> {173};
     173 -> {174};
     174 -> {175};
-    175 -> {176};
+    175 -> {188};
+    175 -> {176} [color=blue];
     176 -> {177};
     177 -> {178};
-    178 -> {188};
+    178 -> {179};
     179 -> {180};
     180 -> {181};
     181 -> {182};
