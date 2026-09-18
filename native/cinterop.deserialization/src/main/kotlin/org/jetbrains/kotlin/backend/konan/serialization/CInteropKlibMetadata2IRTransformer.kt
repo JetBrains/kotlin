@@ -534,7 +534,9 @@ class CInteropKlibMetadata2IRTransformer(
         )
     }
 
-    private fun findReferencedClass(className: ClassName): IrClassSymbol {
+    private val findReferencedClassCache = hashMapOf<ClassName, IrClassSymbol>()
+
+    private fun findReferencedClass(className: ClassName): IrClassSymbol = findReferencedClassCache.getOrPut(className) {
         require(!className.isLocalClassName()) { "Local/anonymous classes are not supported: $className" }
 
         val classId = ClassId.fromString(className)
@@ -549,7 +551,7 @@ class CInteropKlibMetadata2IRTransformer(
         // or otherwise, from C-interop Klib. This information is necessary to construct a proper IdSignature.
         val classSignature = classId.toCInteropSignature(isCInterop = !classId.definitelyNotFromCInterop())
 
-        return getReferencedDeclarationSymbol(classSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL) as IrClassSymbol
+        getReferencedDeclarationSymbol(classSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL) as IrClassSymbol
     }
 
     private fun deserializeAnnotationArgument(kmArgument: KmAnnotationArgument): IrExpression {
