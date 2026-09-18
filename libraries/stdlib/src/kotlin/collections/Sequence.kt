@@ -5,6 +5,8 @@
 
 package kotlin.sequences
 
+import kotlin.internal.InlineOnly
+
 /**
  * A sequence that returns values through its iterator. The values are evaluated lazily, and the sequence
  * is potentially infinite.
@@ -35,7 +37,8 @@ public interface Sequence<out T> {
          */
         @ExperimentalCollectionLiteralsApi
         @SinceKotlin("2.5")
-        public operator fun <T> of(): Sequence<T> =
+        @InlineOnly
+        public inline operator fun <T> of(): Sequence<T> =
             emptySequence()
 
         /**
@@ -47,7 +50,8 @@ public interface Sequence<out T> {
          */
         @ExperimentalCollectionLiteralsApi
         @SinceKotlin("2.5")
-        public operator fun <T> of(element: T): Sequence<T> =
+        @InlineOnly
+        public inline operator fun <T> of(element: T): Sequence<T> =
             sequenceOf(element)
 
         /**
