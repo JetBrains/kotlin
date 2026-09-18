@@ -30,7 +30,7 @@ internal class CharCategoryTestGenerator(private val outputFile: File) {
 
         val isStart = line.name.endsWith(", First>")
 
-        writer?.appendLine("    CharProperties(char = '\\u${line.char}', isStartOfARange = $isStart, categoryCode = \"${line.categoryCode}\"),")
+        writer?.appendLine("    CharProperties(code = 0x${line.char}, isStartOfARange = $isStart, categoryCode = \"${line.categoryCode}\"),")
 
         arraySize++
         if (arraySize == 2048) {
@@ -75,7 +75,7 @@ internal class CharCategoryTestGenerator(private val outputFile: File) {
         val file = outputFile.resolveSibling("_CharProperties.kt")
         generateFileHeader(file)
 
-        writer?.appendLine("data class CharProperties(val char: Char, val isStartOfARange: Boolean, val categoryCode: String)")
+        writer?.appendLine("data class CharProperties(val code: Int, val isStartOfARange: Boolean, val categoryCode: String)")
         writer?.close()
     }
 
@@ -83,53 +83,73 @@ internal class CharCategoryTestGenerator(private val outputFile: File) {
         generateFileHeader(outputFile)
 
         writer?.appendLine(
-            """
+            $$"""
+import kotlin.text.unicode.*
 import kotlin.test.*
+import test.TestPlatform
+import test.current
 
+@OptIn(ExperimentalUnicodeApi::class, ExperimentalKotlinTestApi::class)
 class CharCategoryTest {
     @Test
     fun category() {
-        val charProperties = hashMapOf<Char, CharProperties>()
+        val charProperties = hashMapOf<Int, CharProperties>()
 
         for (properties in unicodeData) {
-            charProperties[properties.char] = properties
+            charProperties[properties.code] = properties
         }
 
         var properties: CharProperties? = null
 
-        for (char in Char.MIN_VALUE..Char.MAX_VALUE) {
-            if (charProperties.containsKey(char)) {
-                properties = charProperties.getValue(char)
+        for (codePoint in CodePoint.MIN_VALUE..CodePoint.MAX_VALUE) {
+            if (charProperties.containsKey(codePoint.code)) {
+                properties = charProperties.getValue(codePoint.code)
             } else if (properties?.isStartOfARange != true) {
                 properties = null
             }
 
-            val charCode = char.code.toString(radix = 16).padStart(length = 4, padChar = '0')
             val expectedCategoryCode = properties?.categoryCode ?: CharCategory.UNASSIGNED.code
+            val expectedIsDigit = isDigit(expectedCategoryCode)
+            val expectedIsLetter = isLetter(expectedCategoryCode)
+            val expectedIsLetterOrDigit = expectedIsLetter || expectedIsDigit
+            val expectedIsLowerCase = isLowerCase(codePoint.code, expectedCategoryCode)
+            val expectedIsUpperCase = isUpperCase(codePoint.code, expectedCategoryCode)
+            val expectedIsWhitespace = isWhitespace(codePoint.code, expectedCategoryCode)
 
-            fun <T> test(expected: T, actual: T, name: String) {
-                assertEquals(expected, actual, "Char:[${"$"}char] with code:[${"$"}charCode] in Unicode has ${"$"}name = ${"$"}expected, but in Kotlin ${"$"}name = ${"$"}actual")
+            fun <T> test(expected: T, actual: T, property: String) {
+                if (expected != actual) {
+                    val charCode = "U+" + codePoint.code.toString(radix = 16).padStart(length = 4, padChar = '0')
+                    if (TestPlatform.current == TestPlatform.Jvm) {
+                        // it's expected that on JVM different Unicode version can have some characters unassigned or assigned
+                        // just report it
+                        println("Character $charCode [$codePoint] $property differs: expected $expected, actual $actual")
+                    } else {
+                        assertEquals(expected, actual) { "Character $charCode [$codePoint] $property differs" }
+                    }
+                }
             }
 
-            test(expectedCategoryCode, char.category.code, "category")
+            test(expectedCategoryCode, codePoint.category.code, "CodePoint.category")
+            if (expectedCategoryCode != codePoint.category.code &&
+                (expectedCategoryCode == CharCategory.UNASSIGNED.code || codePoint.category == CharCategory.UNASSIGNED) &&
+                TestPlatform.current == TestPlatform.Jvm) continue
 
-            val expectedIsDigit = isDigit(expectedCategoryCode)
-            test(expectedIsDigit, char.isDigit(), "isDigit()")
-            
-            val expectedIsLetter = isLetter(expectedCategoryCode)
-            test(expectedIsLetter, char.isLetter(), "isLetter()")
-            
-            val expectedIsLetterOrDigit = expectedIsLetter || expectedIsDigit
-            test(expectedIsLetterOrDigit, char.isLetterOrDigit(), "isLetterOrDigit()")
-            
-            val expectedIsLowerCase = isLowerCase(char, expectedCategoryCode)
-            test(expectedIsLowerCase, char.isLowerCase(), "isLowerCase()")
-
-            val expectedIsUpperCase = isUpperCase(char, expectedCategoryCode)
-            test(expectedIsUpperCase, char.isUpperCase(), "isUpperCase()")
-
-            val expectedIsWhitespace = isWhitespace(char, expectedCategoryCode)
-            test(expectedIsWhitespace, char.isWhitespace(), "isWhitespace()")
+            test(expectedIsDigit, codePoint.isDigit(), "CodePoint.isDigit()")
+            test(expectedIsLetter, codePoint.isLetter(), "CodePoint.isLetter()")
+            test(expectedIsLetterOrDigit, codePoint.isLetterOrDigit(), "CodePoint.isLetterOrDigit()")
+            test(expectedIsLowerCase, codePoint.isLowerCase(), "CodePoint.isLowerCase()")
+            test(expectedIsUpperCase, codePoint.isUpperCase(), "CodePoint.isUpperCase()")
+            test(expectedIsWhitespace, codePoint.isWhitespace(), "CodePoint.isWhitespace()")
+            if (codePoint.isBasic) {
+                val char = codePoint.toSingleChar()
+                test(expectedCategoryCode, char.category.code, "Char.category")
+                test(expectedIsDigit, char.isDigit(), "Char.isDigit()")
+                test(expectedIsLetter, char.isLetter(), "Char.isLetter()")
+                test(expectedIsLetterOrDigit, char.isLetterOrDigit(), "Char.isLetterOrDigit()")
+                test(expectedIsLowerCase, char.isLowerCase(), "Char.isLowerCase()")
+                test(expectedIsUpperCase, char.isUpperCase(), "Char.isUpperCase()")
+                test(expectedIsWhitespace, char.isWhitespace(), "Char.isWhitespace()")
+            }
         }
     }
 
@@ -137,38 +157,42 @@ class CharCategoryTest {
         return categoryCode == CharCategory.DECIMAL_DIGIT_NUMBER.code
     }
 
-    private fun isLetter(categoryCode: String): Boolean {
-        return categoryCode in listOf(
+    private val letterCodes = listOf(
             CharCategory.UPPERCASE_LETTER,
             CharCategory.LOWERCASE_LETTER,
             CharCategory.TITLECASE_LETTER,
             CharCategory.MODIFIER_LETTER,
             CharCategory.OTHER_LETTER
-        ).map { it.code }
+        ).map { it.code }.toSet()
+        
+    private fun isLetter(categoryCode: String): Boolean {
+        return categoryCode in letterCodes
     }
 
     private val otherLowerChars = listOf<IntRange>(
-        ${otherLowercaseRanges.joinToString { it.hexIntRangeLiteral() }}
+        $${otherLowercaseRanges.joinToString { it.hexIntRangeLiteral() }}
     ).flatten().toHashSet()
 
-    private fun isLowerCase(char: Char, categoryCode: String): Boolean {
-        return categoryCode == CharCategory.LOWERCASE_LETTER.code || otherLowerChars.contains(char.code)
+    private fun isLowerCase(code: Int, categoryCode: String): Boolean {
+        return categoryCode == CharCategory.LOWERCASE_LETTER.code || otherLowerChars.contains(code)
     }
 
     private val otherUpperChars = listOf<IntRange>(
-        ${otherUppercaseRanges.joinToString { it.hexIntRangeLiteral() }}
+        $${otherUppercaseRanges.joinToString { it.hexIntRangeLiteral() }}
     ).flatten().toHashSet()
 
-    private fun isUpperCase(char: Char, categoryCode: String): Boolean {
-        return categoryCode == CharCategory.UPPERCASE_LETTER.code || otherUpperChars.contains(char.code)
+    private fun isUpperCase(code: Int, categoryCode: String): Boolean {
+        return categoryCode == CharCategory.UPPERCASE_LETTER.code || otherUpperChars.contains(code)
     }
 
-    private fun isWhitespace(char: Char, categoryCode: String): Boolean {
-        return categoryCode in listOf(
+    private val whitespaceCodes = setOf(
             CharCategory.SPACE_SEPARATOR.code,
             CharCategory.LINE_SEPARATOR.code,
             CharCategory.PARAGRAPH_SEPARATOR.code
-        ) || char in '\u0009'..'\u000D' || char in '\u001C'..'\u001F'
+        )
+        
+    private fun isWhitespace(code: Int, categoryCode: String): Boolean {
+        return categoryCode in whitespaceCodes || code in 0x0009..0x000D || code in 0x001C..0x001F
     }
 }
             """.trimIndent()
