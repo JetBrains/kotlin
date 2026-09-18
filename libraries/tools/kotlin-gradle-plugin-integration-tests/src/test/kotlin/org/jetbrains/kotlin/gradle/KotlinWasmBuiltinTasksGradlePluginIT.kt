@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
@@ -35,7 +36,7 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
                     @OptIn(ExperimentalWasmDsl::class)
                     wasmJs {
                         binaries.executable()
-                        browser(bundler = org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserBundler.NONE)
+                        browser(bundler = KotlinBrowserBundler.NONE)
                     }
 
                     sourceSets.wasmJsMain.get().compileSource(
@@ -83,7 +84,7 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
                     @OptIn(ExperimentalWasmDsl::class)
                     wasmJs {
                         binaries.executable()
-                        browser(bundler = org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserBundler.NONE)
+                        browser(bundler = KotlinBrowserBundler.NONE)
                     }
 
                     sourceSets.wasmJsMain.get().compileSource(
