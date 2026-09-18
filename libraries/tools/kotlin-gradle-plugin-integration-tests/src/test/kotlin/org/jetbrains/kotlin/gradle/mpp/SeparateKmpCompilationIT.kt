@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.*
@@ -757,6 +760,101 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 """.trimIndent()
             }
             build(":compileTestKotlinJs")
+        }
+    }
+
+    @DisplayName("Non-default `concurrentMain` sourceSet in project with tests")
+    @GradleTest
+    @Disabled("KT-89505")
+    fun `test of concurrentMain sourceSet`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(separateCompilation = true),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    js()
+                    applyDefaultHierarchyTemplate()
+
+                    fun NamedDomainObjectContainer<KotlinSourceSet>.groupSourceSets(
+                        groupName: String,
+                        reverseDependencies: List<String>,
+                        dependencies: List<String>
+                    ) {
+                        val sourceSetSuffixes = listOf("Main", "Test")
+                        for (suffix in sourceSetSuffixes) {
+                            register(groupName + suffix) {
+                                for (dep in dependencies) {
+                                    it.dependsOn(get(dep + suffix))
+                                }
+                                for (revDep in reverseDependencies) {
+                                    get(revDep + suffix).dependsOn(it)
+                                }
+                            }
+                        }
+                    }
+
+                    sourceSets {
+                        it.groupSourceSets("concurrent", listOf("jvm", "js"), listOf("common"))
+                    }
+
+                    sourceSets.commonTest {
+                        dependencies {
+                            implementation(kotlin("test"))
+                        }
+                    }
+                }
+            }
+            kotlinSourcesDir("commonMain").source("common.kt") {
+                """
+                    expect open class CancellationException(message: String?) : IllegalStateException
+
+                    fun getException(s: String): CancellationException {
+                        return CancellationException(s)
+                    }
+                """.trimIndent()
+            }
+            kotlinSourcesDir("concurrentMain").source("concurrent.kt"){
+                "fun foo() {}"
+            }
+            kotlinSourcesDir("jvmMain").source("jvm.kt") {
+                "actual typealias CancellationException = java.util.concurrent.CancellationException"
+            }
+            kotlinSourcesDir("commonTest").source("commonTest.kt") {
+                """
+                    fun test_common(x: Any) {
+                        if (x is CancellationException) {
+                            throw x
+                        }
+                    }
+                """.trimIndent()
+            }
+            kotlinSourcesDir("concurrentTest").source("concurrentTest.kt") {
+                """
+                    fun test_inter(): String {
+                        foo()
+                        return getException("OK").message ?: "<no cause>"
+                    }
+                """.trimIndent()
+            }
+            kotlinSourcesDir("jvmTest").source("jvmTest.kt") {
+                """
+                    import kotlin.test.Test
+                    
+                    class TestContainer {
+                        @Test
+                        fun test() {
+                            require(test_inter() == "OK")                    
+                        }
+                    }
+                """.trimIndent()
+            }
+            build(":jvmTest")
         }
     }
 
