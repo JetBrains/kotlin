@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATI
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+import kotlin.reflect.KMutableProperty0
 
 private var IrEnumEntry.declaringField: IrField? by irAttribute(copyByDefault = false)
 private var IrProperty.staticBackingFields: IrField? by irAttribute(copyByDefault = false)
@@ -37,6 +39,10 @@ private var IrSimpleFunction.defaultImplsMethod: IrSimpleFunction? by irAttribut
 private var IrClass.defaultImplsClass: IrClass? by irAttribute(copyByDefault = false)
 private var IrSimpleFunction.classFakeOverrideReplacement: ClassFakeOverrideReplacement? by irAttribute(copyByDefault = false)
 var IrSimpleFunction.originalFunctionForDefaultImpl: IrSimpleFunction? by irAttribute(copyByDefault = false)
+
+private var IrClass.interfacePrivateFields1Class: IrClass? by irAttribute(copyByDefault = false)
+private var IrClass.interfacePrivateFields2Class: IrClass? by irAttribute(copyByDefault = false)
+private var IrClass.syntheticClassInitTrigger: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 private var IrClass.repeatedAnnotationSyntheticContainer: IrClass? by irAttribute(copyByDefault = false)
 
@@ -247,6 +253,38 @@ class JvmCachedDeclarations(
             }.apply {
                 parent = interfaceClass
                 createThisReceiverParameter()
+            }
+        }
+
+    private fun getInterfacePrivateFieldsClass(interfaceClass: IrClass, prop: KMutableProperty0<IrClass?>, suffix: String): IrClass =
+        prop.getOrSetIfNull {
+            context.irFactory.buildClass {
+                startOffset = interfaceClass.startOffset
+                endOffset = interfaceClass.endOffset
+                origin = JvmLoweredDeclarationOrigin.INTERFACE_PRIVATE_FIELDS_CLASS
+                name = Name.identifier(JvmAbi.INTERFACE_PRIVATE_FIELDS_CLASS_NAME + suffix)
+                visibility = DescriptorVisibilities.PRIVATE
+            }.apply {
+                parent = interfaceClass
+                createThisReceiverParameter()
+                declarations.add(getSyntheticClassInitTrigger(this@apply))
+            }
+        }
+
+    fun getInterfacePrivateFields1Class(interfaceClass: IrClass) =
+        getInterfacePrivateFieldsClass(interfaceClass, interfaceClass::interfacePrivateFields1Class, "1")
+
+    fun getInterfacePrivateFields2Class(interfaceClass: IrClass) =
+        getInterfacePrivateFieldsClass(interfaceClass, interfaceClass::interfacePrivateFields2Class, "2")
+
+    fun getSyntheticClassInitTrigger(irClass: IrClass): IrSimpleFunction =
+        irClass::syntheticClassInitTrigger.getOrSetIfNull {
+            context.irFactory.buildFun {
+                name = Name.identifier("syntheticInitTrigger")
+                returnType = context.irBuiltIns.unitType
+            }.apply {
+                parent = irClass
+                body = irClass.factory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             }
         }
 

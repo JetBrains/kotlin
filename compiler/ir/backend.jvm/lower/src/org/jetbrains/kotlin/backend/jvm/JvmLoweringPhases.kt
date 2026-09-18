@@ -91,6 +91,7 @@ private val jvmFilePhases = createFilePhases(
     ::JvmDefaultParameterInjector,
     ::JvmDefaultParameterCleaner,
 
+    ::JvmInterfacePrivateFieldsLowering,
     ::InterfaceLowering,
     ::InheritedDefaultMethodsOnClassesLowering,
     ::GenerateJvmDefaultCompatibilityBridges,
