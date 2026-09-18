@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -5,6 +6,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.konan.target.HostManager
 
 description = "Atomicfu Compiler Plugin"
+val buildFeatures = serviceOf<BuildFeatures>()
 
 plugins {
     id("common-configuration")
@@ -124,7 +126,9 @@ dependencies {
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
     atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.25.0") { isTransitive = false }
-    atomicfuJsIrRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        atomicfuJsIrRuntimeForTests(project(":kotlinx-atomicfu-runtime")) { isTransitive = false }
+    }
     atomicfuJvmClasspath("org.jetbrains.kotlinx:atomicfu:0.25.0") { isTransitive = false }
     atomicfuNativeKlib("org.jetbrains.kotlinx:atomicfu:0.25.0") { isTransitive = false }
     atomicfuCompilerPluginForTests(project(":kotlin-atomicfu-compiler-plugin"))
@@ -154,16 +158,16 @@ dependencies {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         }
     }
-
-    embedded(project(":kotlinx-atomicfu-runtime")) {
-        attributes {
-            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-            attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        embedded(project(":kotlinx-atomicfu-runtime")) {
+            attributes {
+                attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+                attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
+            }
+            isTransitive = false
         }
-        isTransitive = false
     }
-
     testImplementation("org.jetbrains.kotlinx:atomicfu:0.25.0")
 }
 

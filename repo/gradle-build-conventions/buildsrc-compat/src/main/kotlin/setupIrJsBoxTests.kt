@@ -2,10 +2,12 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.build.d8.D8Extension
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
@@ -14,10 +16,12 @@ import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 fun Test.useJsIrBoxTests(
     buildDir: Provider<Directory>,
 ) {
-    with(project.the<D8Extension>()) {
-        setupV8()
+    val buildFeatures = project.serviceOf<BuildFeatures>()
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        with(project.the<D8Extension>()) {
+            setupV8()
+        }
     }
-
     val stdLibJsClasses = project.configurations.maybeCreate("stdLibJsClasses").apply {
         isTransitive = false
         attributes {

@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.support.serviceOf
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
@@ -13,16 +14,20 @@ plugins {
 
 group = "org.jetbrains.kotlin"
 
-kotlin {
-    js {
-        browser()
-        nodejs()
-    }
+val buildFeatures = serviceOf<BuildFeatures>()
 
-    sourceSets {
-        jsMain {
-            dependencies {
-                compileOnly(project(":kotlin-stdlib"))
+kotlin {
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        js {
+            browser()
+            nodejs()
+        }
+
+        sourceSets {
+            jsMain {
+                dependencies {
+                    compileOnly(project(":kotlin-stdlib"))
+                }
             }
         }
     }
@@ -31,18 +36,18 @@ kotlin {
 val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
     archiveClassifier.set("javadoc")
 }
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            // FIXME: Remove customized publication in KT-83065
-            from(kotlin.js().components.single())
-            configureKotlinPomAttributes(project, "Runtime library for the Atomicfu compiler plugin", packaging = "klib")
-        }
-        withType<MavenPublication> {
-            artifact(emptyJavadocJar)
+if (!buildFeatures.isolatedProjects.active.get()) {
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                // FIXME: Remove customized publication in KT-83065
+                from(kotlin.js().components.single())
+                configureKotlinPomAttributes(project, "Runtime library for the Atomicfu compiler plugin", packaging = "klib")
+            }
+            withType<MavenPublication> {
+                artifact(emptyJavadocJar)
+            }
         }
     }
 }
-
 configureDefaultPublishing()

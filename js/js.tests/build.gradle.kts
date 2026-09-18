@@ -1,4 +1,5 @@
 import com.github.gradle.node.npm.task.NpmTask
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -110,8 +111,11 @@ sourceSets {
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 
 fun Test.setUpJsBoxTests() {
-    with(nodeJsKotlinBuild) {
-        setupNodeJs(nodejsVersion)
+    val buildFeatures = project.serviceOf<BuildFeatures>()
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        with(nodeJsKotlinBuild) {
+            setupNodeJs(nodejsVersion)
+        }
     }
 
     dependsOn(npmInstall)

@@ -1,4 +1,5 @@
 import com.github.gradle.node.npm.task.NpmTask
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
@@ -246,7 +247,7 @@ sourceSets {
 optInToK1Deprecation()
 fun Test.setupGradlePropertiesForwarding() {
     val rootLocalProperties = Properties().apply {
-        rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
+        File(rootDir,"local.properties").takeIf { it.isFile }?.inputStream()?.use {
             load(it)
         }
     }
@@ -376,20 +377,22 @@ projectTests {
             enableGroupingTestEngine = true,
             maxHeapSize = testMaxHeapSizeLarge,
         ) {
-            with(d8KotlinBuild) {
-                setupV8()
+            val buildFeatures = project.serviceOf<BuildFeatures>()
+            if (!buildFeatures.isolatedProjects.active.get()) {
+                with(d8KotlinBuild) {
+                    setupV8()
+                }
+                with(wasmNodeJsKotlinBuild) {
+                    setupNodeJs(nodejsVersion)
+                    dependsOn(":js:js.tests:npmInstall")
+                }
+                // it is necessary for TypeScript tests
+                with(nodeJsKotlinBuild) {
+                    setupNodeJs(nodejsVersion)
+                }
             }
             with(wasmtimeKotlinBuild) {
                 setupWasmtime()
-            }
-            with(wasmNodeJsKotlinBuild) {
-                setupNodeJs(nodejsVersion)
-                dependsOn(":js:js.tests:npmInstall")
-            }
-            // it is necessary for TypeScript tests
-            with(nodeJsKotlinBuild) {
-                setupNodeJs(nodejsVersion)
-                dependsOn(":js:js.tests:npmInstall")
             }
             with(binaryenKotlinBuild) {
                 setupBinaryen()
