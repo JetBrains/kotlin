@@ -71,6 +71,7 @@ interface KtDoubleColonExpression : KtExpression, KtResolvable {
             "this.setDoubleColonReceiverExpression(newReceiverExpression)",
             "org.jetbrains.kotlin.idea.base.psi.setDoubleColonReceiverExpression",
         ),
+        level = DeprecationLevel.ERROR,
     )
     @OptIn(KtNonPublicApi::class)
     fun setReceiverExpression(newReceiverExpression: KtExpression) {
