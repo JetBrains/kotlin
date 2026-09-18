@@ -80,6 +80,16 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
 
     val fieldsInBody by lazy { allFields.filter { withDefault(it) || it.customSetter != null } }
 
+    /**
+     * The fields that a generated builder exposes as its properties.
+     *
+     * By default these are exactly the fields the implementation's constructor accepts, which is what a tree whose implementations
+     * take all of their fields in the constructor needs. A tree that splits initialization between the constructor and stored
+     * properties, like IR does, overrides this to also include the fields that [AbstractBuilderPrinter.printBuildFunctionBody]
+     * assigns on the constructed element.
+     */
+    open val fieldsForBuilder: List<Field> get() = fieldsInConstructor
+
     var requiresOptIn = false
 
     override var kind: ImplementationKind? = null
