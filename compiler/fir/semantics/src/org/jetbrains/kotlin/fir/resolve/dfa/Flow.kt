@@ -33,6 +33,9 @@ sealed class Flow(protected val previousFlow: PersistentFlow?) {
     internal abstract val realVariables: Map<RealVariable, RealVariable>
     internal abstract val memberVariables: Map<RealVariable, PersistentSet<RealVariable>>
 
+    internal abstract val knownAssignments: Map<AssignmentKey, ConeKotlinType>
+    internal abstract val capturedAssignments: Map<RealVariable, PersistentMap<LexicalScopeKey, PersistentSet<AssignmentKey>>>
+
     val knownVariables: Set<DataFlowVariable>
         get() = approvedTypeStatements.keys + directAliasMap.keys
 
@@ -123,6 +126,20 @@ sealed class Flow(protected val previousFlow: PersistentFlow?) {
     fun getVariableIfKnown(variable: RealVariable): RealVariable? {
         return realVariables[variable]
     }
+
+    // =======================
+    // ===== Assignments =====
+    // =======================
+
+    fun getAssignments(variable: RealVariable): Map<AssignmentKey, ConeKotlinType?> {
+        val scopes = capturedAssignments[variable] ?: return emptyMap()
+        if (scopes.isEmpty()) return emptyMap()
+
+        val keys = scopes.flatMapTo(mutableSetOf()) { it.value }
+        if (keys.isEmpty()) return emptyMap()
+
+        return keys.associateWith { knownAssignments[it] }
+    }
 }
 
 class PersistentFlow internal constructor(
@@ -135,6 +152,8 @@ class PersistentFlow internal constructor(
     override val oneWayAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
     override val realVariables: PersistentMap<RealVariable, RealVariable>,
     override val memberVariables: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
+    override val knownAssignments: PersistentMap<AssignmentKey, ConeKotlinType>,
+    override val capturedAssignments: PersistentMap<RealVariable, PersistentMap<LexicalScopeKey, PersistentSet<AssignmentKey>>>,
 ) : Flow(previousFlow) {
     private val level: Int = if (previousFlow != null) previousFlow.level + 1 else 0
 
@@ -167,6 +186,8 @@ class PersistentFlow internal constructor(
         oneWayAliasMap.builder(),
         realVariables.builder(),
         memberVariables.builder(),
+        knownAssignments.builder(),
+        capturedAssignments.builder(),
     )
 }
 
@@ -180,9 +201,13 @@ class MutableFlow internal constructor(
     override val oneWayAliasMap: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
     override val realVariables: PersistentMap.Builder<RealVariable, RealVariable>,
     override val memberVariables: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
+    override val knownAssignments: PersistentMap.Builder<AssignmentKey, ConeKotlinType>,
+    override val capturedAssignments: PersistentMap.Builder<RealVariable, PersistentMap<LexicalScopeKey, PersistentSet<AssignmentKey>>>,
 ) : Flow(previousFlow) {
     constructor() : this(
         null,
+        emptyPersistentHashMapBuilder(),
+        emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
@@ -203,6 +228,8 @@ class MutableFlow internal constructor(
         oneWayAliasMap.build(),
         realVariables.build(),
         memberVariables.build(),
+        knownAssignments.build(),
+        capturedAssignments.build(),
     )
 
     // =====================
