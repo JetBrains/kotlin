@@ -9,7 +9,6 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceOrAnnotationClass {
+internal class SymbolLightClassForInterface : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
         useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
@@ -28,7 +27,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         require(classSymbol.classKind == KaClassKind.INTERFACE)
     }
 
-    protected constructor(
+    private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
