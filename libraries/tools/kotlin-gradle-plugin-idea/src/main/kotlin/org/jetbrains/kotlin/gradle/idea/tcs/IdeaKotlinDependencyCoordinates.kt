@@ -95,8 +95,23 @@ class IdeaKotlinBinaryCoordinates(
      */
     val displayString: String
         get() {
+            /**
+             * For dependency with the following capabilities (i.e. kotlin-test):
+             *   - `group:module-prefix-capabilityA`
+             *   - `group:module-prefix-capabilityB`
+             *
+             * We present display string as `group:module-prefix-(capabilityA, capabilityB)`.
+             *
+             * Which looks nice, however with Kotlin Archive we now can have this:
+             *    - `group:module-prefix` [duplicate of default capability, because Gradle remove it if anything is specified]
+             *    - `group:module-prefix-capabilityA`
+             *
+             * It would look ugly in the IDEA as `group:module-prefix-(, capabilityA)`, so it makes sense to filter out capability with the same name.
+             */
             val classifyingCapabilities =
-                capabilities.filter { capability -> capability.group == group && capability.name.startsWith(module) }
+                capabilities.filter { capability ->
+                    capability.group == group && capability.name.startsWith(module) && capability.name != module
+                }
             return when {
                 classifyingCapabilities.size == 1 -> buildString {
                     append(classifyingCapabilities.single())

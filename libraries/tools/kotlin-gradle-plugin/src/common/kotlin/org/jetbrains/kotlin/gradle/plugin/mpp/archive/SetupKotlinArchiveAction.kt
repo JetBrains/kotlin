@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.archive
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.artifacts.publishedMetadataCompilations
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.archivesName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal val Project.karPackTask: TaskProvider<PackKotlinArchiveTask>
     get() = project.locateOrRegisterTask<PackKotlinArchiveTask>(KarLayout.PACK_TASK_NAME)
@@ -92,10 +95,56 @@ private fun KotlinTarget.requestKarPlatformArtifactsForCompilation() {
 
         configurations.compileDependencyConfiguration.apply {
             attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
+            selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict(targetName.toLowerCaseAsciiOnly())
         }
 
         configurations.runtimeDependencyConfiguration?.apply {
             attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
+            selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict(targetName.toLowerCaseAsciiOnly())
         }
+    }
+}
+
+/**
+ * This code tries to handle the case, where you have both "library-platform" in old publication format
+ * and "library" in kar format in your configuration. In that case we need to remove older variant.
+ *
+ * [defaultKotlinUsageContextMaybeReplacedWithKar] sets both current module and platform module
+ * capabilities on Kotlin Archive platform variant, which creates capabilities conflict, resolved by this rule.
+ *
+ * Unfortunately, as old one didn't have any special capabilities we can't distinguish detect it from unrelated conflict.
+ * We use the following heuristic to check if it's indeed KAR:
+ * - Both should have the same group
+ * - Both should have the same variant name (e.g. `iosArm64ApiElements-published`)
+ *   - As additional safety measure to not detect something irrelevant this variant name should have `-published` suffix,
+ *     as we know that our variants always have it.
+ * - Module name of old component is same as capability name
+ * - Module name of new component is same as capability name without [platformSuffix] (as it's root publication component)
+ * - There should be exactly 2 of them (legacy and kar)
+ *   - If we have several legacy vs several kar versions all except newest is already filtered out.
+ *
+ * If all our heuristic checks matched, we're removing older of 2 versions, assuming that indeed was platform and root version
+ * of the same library.
+ */
+private fun Configuration.selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict(platformSuffix: String) {
+    resolutionStrategy.capabilitiesResolution.all { details ->
+        if (details.candidates.size != 2) return@all
+
+        val requestedCapability = details.capability
+        val legacyPublicationCandidate = details.candidates.singleOrNull { candidate ->
+            val candidateComponent = candidate.id as? ModuleComponentIdentifier ?: return@singleOrNull false
+            candidateComponent.group == requestedCapability.group && candidateComponent.module == requestedCapability.name
+        } ?: return@all
+
+        val replacementCandidate = details.candidates.singleOrNull { candidate ->
+            val candidateComponent = candidate.id as? ModuleComponentIdentifier ?: return@singleOrNull false
+            candidateComponent.group == requestedCapability.group && "${candidateComponent.module}-$platformSuffix" == requestedCapability.name
+        } ?: return@all
+
+        if (legacyPublicationCandidate.variantName != replacementCandidate.variantName) return@all
+        if (!replacementCandidate.variantName.endsWith("-published")) return@all
+
+        details.selectHighestVersion()
+            .because("Kotlin Archive ${replacementCandidate.id.displayName} represents the same library as ${legacyPublicationCandidate.id.displayName}")
     }
 }
