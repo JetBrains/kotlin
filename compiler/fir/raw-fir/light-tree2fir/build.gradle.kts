@@ -35,10 +35,7 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -54,10 +51,12 @@ kotlin {
 
 projectTests {
     testTask {
-        workingDir = rootDir
+        useJUnitPlatform()
     }
 
-    testGenerator("org.jetbrains.kotlin.fir.lightTree.TestGeneratorForLightTree2FirKt")
+    testGenerator("org.jetbrains.kotlin.fir.lightTree.TestGeneratorForLightTree2FirKt", generateTestsInBuildDirectory = true)
+
+    testData(project(":compiler").isolated, "testData/rawFir")
 }
 
 testsJar()

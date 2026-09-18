@@ -25,25 +25,25 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 fun main(args: Array<String>) {
     val generatedTestRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup(generatedTestRoot, "compiler/fir/raw-fir/psi2fir/testData") {
+        testGroup(generatedTestRoot, "compiler/testData") {
             testClass<AbstractLLSourceLikeLazyBodiesCalculatorTest> {
-                model("rawBuilder", pattern = KT_OR_KTS)
+                model("rawFir/rawBuilder", pattern = KT_OR_KTS)
             }
 
             testClass<AbstractFirOutOfContentRootLazyBodiesCalculatorTest> {
-                model("rawBuilder", pattern = TestGeneratorUtil.KT)
+                model("rawFir/rawBuilder", pattern = TestGeneratorUtil.KT)
             }
 
             testClass<AbstractLLSourceAnnotationArgumentsCalculatorTest> {
-                model("rawBuilder", pattern = KT_OR_KTS)
+                model("rawFir/rawBuilder", pattern = KT_OR_KTS)
             }
 
             testClass<AbstractLLSourceLikeStubBasedResolutionTest> {
-                model("rawBuilder", pattern = KT_OR_KTS)
+                model("rawFir/rawBuilder", pattern = KT_OR_KTS)
             }
 
             testClass<AbstractLLSourceLikeRawFirBuilderLazyBodiesTest> {
-                model("rawBuilder", pattern = KT_OR_KTS)
+                model("rawFir/rawBuilder", pattern = KT_OR_KTS)
             }
         }
 
