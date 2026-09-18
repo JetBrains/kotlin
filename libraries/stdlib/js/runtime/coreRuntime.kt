@@ -84,19 +84,21 @@ internal fun getBooleanHashCode(value: Boolean): Int {
 @OptIn(JsIntrinsic::class)
 @UsedFromCompilerGeneratedCode
 internal fun getBigIntHashCode(value: BigInt): Int {
-    val shiftNumber = BigInt(32)
+    val shift32 = BigInt(32)
+    val shift64 = BigInt(64)
     // In Kotlin the 0xffffffff literal has the Long type, which is boxed, so we use a Double literal instead
     val mask = BigInt(4294967295.0)
+    val bigintZero = BigInt(0)
 
     var hashCode = 0
-    var prevValue = BigInt(-1)
-    var currentValue = value
+    var bigNumber = value
+    val endValue = if (jsLt(value, bigintZero)) BigInt(-1) else bigintZero
 
-    while (!jsEqeqeq(currentValue, prevValue)) {
-        val chunk = (currentValue and mask).toNumber().unsafeCast<Int>()
-        hashCode = hashCode xor chunk
-        prevValue = currentValue
-        currentValue = currentValue shr shiftNumber
+    while (!jsEqeqeq(bigNumber, endValue)) {
+        val low = (bigNumber and mask).toNumber().unsafeCast<Int>()
+        val high = ((bigNumber shr shift32) and mask).toNumber().unsafeCast<Int>()
+        hashCode = hashCode xor low xor high
+        bigNumber = bigNumber shr shift64
     }
 
     return hashCode
