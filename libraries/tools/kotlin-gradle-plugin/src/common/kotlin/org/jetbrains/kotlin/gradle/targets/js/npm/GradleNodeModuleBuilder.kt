@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.GsonBuilder
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
@@ -59,9 +58,8 @@ internal class GradleNodeModuleBuilder(
         if (files.isEmpty() && srcPackageJsonFile == null) return null
 
         val packageJson = fromSrcPackageJson(srcPackageJsonFile)?.apply {
-            // Gson set nulls reflectively no matter on default values and non-null types
-            @Suppress("USELESS_ELVIS")
-            version = version ?: moduleVersion
+            // "version" is optional in a source package.json, see parsePackageJson
+            version = version.ifEmpty { moduleVersion }
         } ?: PackageJson(moduleName, moduleVersion)
 
         val metaJsExt = ".meta.js"
@@ -118,16 +116,9 @@ private fun createNodeModule(
         "Cannot create directory: $dir"
     }
 
-    val gson = GsonBuilder()
-        .setPrettyPrinting()
-        .disableHtmlEscaping()
-        .create()
-
     files(dir)
 
-    dir.resolve("package.json").writer().use {
-        gson.toJson(packageJson, it)
-    }
+    packageJson.saveTo(dir.resolve("package.json"))
 
     return dir
 }
