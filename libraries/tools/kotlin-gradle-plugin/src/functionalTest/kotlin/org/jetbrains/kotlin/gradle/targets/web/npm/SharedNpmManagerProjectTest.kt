@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSetupSharedNpmProjectTask
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -45,7 +44,7 @@ class SharedNpmManagerProjectTest {
     private fun packageJsonFiles(vararg projects: Project): List<File> = projects
         .flatMap { it.multiplatformExtension.targets.filterIsInstance<KotlinJsIrTarget>() }
         .flatMap { it.compilations }
-        .map { it.npmProject.packageJsonFile.get().asFile }
+        .map { it.sharedPackageJsonFile() }
         .sorted()
 
     private fun resolvedFiles(configurationName: String): List<File> =

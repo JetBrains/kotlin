@@ -7,18 +7,17 @@
 
 package org.jetbrains.kotlin.gradle.js
 
-import kotlinx.serialization.json.Json
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
+import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
-import kotlin.io.path.createTempFile
-import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
 @JsGradlePluginTests
@@ -26,6 +25,17 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+
+    private val versions = NpmVersions()
+
+    private val karmaTools = mapOf(
+        versions.karma.name to versions.karma.version,
+        versions.webpack.name to versions.webpack.version,
+    )
+
+    private val mochaTools = mapOf(
+        versions.mocha.name to versions.mocha.version,
+    )
 
     @DisplayName("Shared npm projects contain a package.json per compilation of the declared JS and WasmJS projects")
     @GradleTest
@@ -47,8 +57,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     kotlinMultiplatform.apply {
                         js { nodejs() }
                         sourceSets.getByName("jsMain").dependencies {
-                            implementation(npm("is-even", "1.0.0"))
-                            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+                            npm("is-even", "1.0.0")
                         }
                     }
                 }
@@ -61,20 +70,20 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                         js { browser() }
                         wasmJs { browser() }
                         sourceSets.getByName("commonMain").dependencies {
-                            implementation(npm("cowsay", "9.9.9"))
+                            npm("cowsay", "9.9.9")
                         }
                     }
                 }
             }
 
+            val libADependencies = mapOf("is-even" to "1.0.0")
+            val libBDependencies = mapOf("cowsay" to "9.9.9")
+
             build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertTasksExecuted(
-                    ":lib-a:jsPackageJson",
-                    ":lib-a:jsTestPackageJson",
-                    ":lib-b:jsPackageJson",
-                    ":lib-b:jsTestPackageJson",
-                    ":lib-b:wasmJsPackageJson",
-                    ":lib-b:wasmJsTestPackageJson",
+                    ":lib-a:kotlinSharedPackageJson",
+                    ":lib-b:kotlinSharedPackageJson",
+                    ":lib-b:kotlinWasmSharedPackageJson",
                     ":kotlinSetupSharedNpmProject",
                     ":kotlinWasmSetupSharedNpmProject",
                 )
@@ -82,77 +91,103 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 val js = projectPath.resolve("build/js/shared-npm-project")
                 val wasm = projectPath.resolve("build/wasm/shared-npm-project")
 
-                assertPackageJson(js.resolve("package.json"), PackageJson("emptyKts", "unspecified").apply {
-                    private = true
+                assertRootPackageJson(
+                    js.resolve("package.json"),
                     workspaces = listOf(
                         "packages/emptyKts-lib-a",
                         "packages/emptyKts-lib-a-test",
                         "packages/emptyKts-lib-b",
-                        "packages/emptyKts-lib-b-test"
-                    )
-                })
-                assertPackageJson(
+                        "packages/emptyKts-lib-b-test",
+                    ),
+                )
+                assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-a/package.json"),
-                    PackageJson("emptyKts-lib-a", "0.0.0-unspecified").apply {
-                        main = "kotlin/emptyKts-lib-a.js"
-                        dependencies["is-even"] = "1.0.0"
-                        dependencies["@js-joda/core"] = "3.2.0"
-                        dependencies["format-util"] = "^1.0.5"
-                    })
-                assertPackageJson(
+                    name = "emptyKts-lib-a",
+                    main = "kotlin/emptyKts-lib-a.js",
+                    dependencies = libADependencies,
+                )
+                assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-a-test/package.json"),
-                    PackageJson("emptyKts-lib-a-test", "0.0.0-unspecified").apply {
-                        main = "kotlin/emptyKts-lib-a-test.js"
-                        dependencies["is-even"] = "1.0.0"
-                        dependencies["@js-joda/core"] = "3.2.0"
-                        dependencies["format-util"] = "^1.0.5"
-                    })
-                assertPackageJson(
+                    name = "emptyKts-lib-a-test",
+                    main = "kotlin/emptyKts-lib-a-test.js",
+                    dependencies = libADependencies,
+                    requiredDevDependencies = mochaTools,
+                )
+                assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-b/package.json"),
-                    PackageJson("emptyKts-lib-b", "0.0.0-unspecified").apply {
-                        main = "kotlin/emptyKts-lib-b.js"
-                        dependencies["cowsay"] = "9.9.9"
-                    })
-                assertPackageJson(
+                    name = "emptyKts-lib-b",
+                    main = "kotlin/emptyKts-lib-b.js",
+                    dependencies = libBDependencies,
+                )
+                assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-b-test/package.json"),
-                    PackageJson("emptyKts-lib-b-test", "0.0.0-unspecified").apply {
-                        main = "kotlin/emptyKts-lib-b-test.js"
-                        dependencies["cowsay"] = "9.9.9"
-                    })
+                    name = "emptyKts-lib-b-test",
+                    main = "kotlin/emptyKts-lib-b-test.js",
+                    dependencies = libBDependencies,
+                    requiredDevDependencies = karmaTools,
+                )
 
-                assertPackageJson(wasm.resolve("package.json"), PackageJson("emptyKts", "unspecified").apply {
-                    private = true
-                    workspaces = listOf("packages/emptyKts-lib-b", "packages/emptyKts-lib-b-test")
-                })
-                assertPackageJson(
+                assertRootPackageJson(
+                    wasm.resolve("package.json"),
+                    workspaces = listOf("packages/emptyKts-lib-b", "packages/emptyKts-lib-b-test"),
+                )
+                assertWorkspacePackageJson(
                     wasm.resolve("packages/emptyKts-lib-b/package.json"),
-                    PackageJson("emptyKts-lib-b", "0.0.0-unspecified").apply {
-                        main = "kotlin/emptyKts-lib-b.mjs"
-                        dependencies["cowsay"] = "9.9.9"
-                    })
-                assertPackageJson(
+                    name = "emptyKts-lib-b",
+                    main = "kotlin/emptyKts-lib-b.mjs",
+                    dependencies = libBDependencies,
+                )
+                assertWorkspacePackageJson(
                     wasm.resolve("packages/emptyKts-lib-b-test/package.json"),
-                    PackageJson("emptyKts-lib-b-test", "0.0.0-unspecified").apply {
-                        main = "kotlin/emptyKts-lib-b-test.mjs"
-                        dependencies["cowsay"] = "9.9.9"
-                    })
+                    name = "emptyKts-lib-b-test",
+                    main = "kotlin/emptyKts-lib-b-test.mjs",
+                    dependencies = libBDependencies,
+                    requiredDevDependencies = karmaTools,
+                )
             }
 
             build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertConfigurationCacheReused()
-                assertTasksUpToDate(":kotlinSetupSharedNpmProject", ":kotlinWasmSetupSharedNpmProject")
+                assertTasksUpToDate(
+                    ":lib-a:kotlinSharedPackageJson",
+                    ":lib-b:kotlinSharedPackageJson",
+                    ":lib-b:kotlinWasmSharedPackageJson",
+                    ":kotlinSetupSharedNpmProject",
+                    ":kotlinWasmSetupSharedNpmProject",
+                )
             }
         }
     }
 
-    private fun assertPackageJson(file: Path, expected: PackageJson) {
+    private fun readPackageJson(file: Path): PackageJson {
         assertFileExists(file)
-        val expectedFile = createTempFile("expected-", ".json")
-        expected.saveTo(expectedFile.toFile())
+        return fromSrcPackageJson(file.toFile()) ?: error("Cannot parse $file")
+    }
+
+    private fun assertRootPackageJson(file: Path, workspaces: List<String>) {
+        val packageJson = readPackageJson(file)
+        assertEquals("emptyKts", packageJson.name, "name of $file")
+        assertEquals("unspecified", packageJson.version, "version of $file")
+        assertEquals(true, packageJson.private, "private of $file")
+        assertEquals(workspaces, packageJson.workspaces?.toList(), "workspaces of $file")
+    }
+
+    private fun assertWorkspacePackageJson(
+        file: Path,
+        name: String,
+        main: String,
+        dependencies: Map<String, String>,
+        requiredDevDependencies: Map<String, String> = emptyMap(),
+    ) {
+        val packageJson = readPackageJson(file)
+        assertEquals(name, packageJson.name, "name of $file")
+        assertEquals("0.0.0-unspecified", packageJson.version, "version of $file")
+        assertEquals(main, packageJson.main, "main of $file")
+        assertEquals(dependencies.toSortedMap(), packageJson.dependencies.toSortedMap(), "dependencies of $file")
         assertEquals(
-            Json.parseToJsonElement(expectedFile.readText()),
-            Json.parseToJsonElement(file.readText()),
-            "Unexpected content of $file"
+            requiredDevDependencies.toSortedMap(),
+            packageJson.devDependencies.filterKeys { it in requiredDevDependencies }.toSortedMap(),
+            "devDependencies of $file",
         )
     }
 }
