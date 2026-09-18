@@ -111,6 +111,12 @@ fun updateIncrementalCache(
     javaChangesTracker: JavaClassesTrackerImpl?,
     jvmMetadataTracker: ICJvmMetadataTrackerImpl?,
 ) {
+    // Store common-fragment metadata before class files: an `expect` declaration and its `actual` share an FqName, and
+    // `ChangesCollector.protoDataChanges()` keeps the last proto recorded under it, and the platform proto has precedence.
+    jvmMetadataTracker?.metadataByModule?.forEach { [moduleName, metadata] ->
+        cache.saveMetadataToCache(moduleName, metadata, changesCollector)
+    }
+
     for (generatedFile in generatedFiles) {
         when {
             generatedFile is GeneratedJvmClass -> cache.saveFileToCache(generatedFile, changesCollector)
@@ -123,10 +129,6 @@ fun updateIncrementalCache(
 
     javaChangesTracker?.javaClassesUpdates?.forEach { (val source, val serializedJavaClass = proto) ->
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
-    }
-
-    jvmMetadataTracker?.metadataByModule?.forEach { [moduleName, metadata] ->
-        cache.saveMetadataToCache(moduleName, metadata)
     }
 
     cache.clearCacheForRemovedClasses(changesCollector)
