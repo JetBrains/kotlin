@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
@@ -47,8 +48,9 @@ internal val SetupSharedPackageJsonSideEffect = KotlinTargetSideEffect { target 
     val packageJsonsForRoot = project.maybeCreatePackageJsonsForRoot(platform)
 
     target.compilations.all { compilation ->
+        val resolver = project.createCompilationPackageJsonResolver(compilation)
         sharedPackageJsonTask.configure { task ->
-            task.compilations.add(project.compilationPackageJsonInputs(compilation))
+            task.compilations.add(project.compilationPackageJsonInputs(compilation, resolver, platform))
         }
 
         val packageJsonFile = sharedPackageJsonTask.flatMap { task ->
@@ -63,6 +65,8 @@ internal val SetupSharedPackageJsonSideEffect = KotlinTargetSideEffect { target 
 
 private fun Project.compilationPackageJsonInputs(
     compilation: KotlinJsIrCompilation,
+    resolver: Configuration,
+    platform: HasPlatformDisambiguator,
 ): CompilationPackageJsonInputs = objects.newInstance(CompilationPackageJsonInputs::class.java).apply {
     val npmProject = compilation.npmProject
     moduleName.set(compilation.outputModuleName)
@@ -71,6 +75,7 @@ private fun Project.compilationPackageJsonInputs(
     types.set(npmProject.typesFilePath)
     directDependencies.set(provider { collectDirectDeclaredNpmDependencies(compilation) })
     toolDependencies.set(provider { collectDevNpmDependencies(compilation) })
+    transitiveArtifacts.from(sharedPackageJsonArtifacts(resolver, platform))
 }
 
 private fun collectDirectDeclaredNpmDependencies(compilation: KotlinJsIrCompilation): Set<DefaultKotlinNpmDependency> =

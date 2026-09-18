@@ -8,23 +8,33 @@
 package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeclaration
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyScopeDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.isCompatibleArchive
 import org.jetbrains.kotlin.gradle.targets.js.npm.packageJson
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.disambiguateDependencies
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import java.io.File
+import java.util.zip.ZipFile
 
 /**
  * Writes one `package.json` per compilation of a JS or WasmJS target into [outputDirectory].
@@ -44,17 +54,37 @@ internal abstract class KotlinSharedPackageJsonTask : DefaultTask() {
 
         compilations.get().forEach { compilation ->
             val moduleName = compilation.moduleName.get()
-            val npmDependencies = compilation.directDependencies.get() + compilation.toolDependencies.get()
+            val direct = compilation.directDependencies.get()
+            val others = compilation.toolDependencies.get() + compilation.transitiveArtifacts.files.flatMap { it.collectNpmDependencies() }
 
             packageJson(
                 name = moduleName,
                 version = compilation.packageVersion.get(),
                 main = compilation.main.get(),
                 types = compilation.types.orNull,
-                npmDependencies = npmDependencies.map { it.toDeclaration() },
+                npmDependencies = disambiguateDependencies(
+                    direct.map { it.toDeclaration() },
+                    others.map { it.toDeclaration() },
+                    logger,
+                    moduleName,
+                ),
                 packageJsonHandlers = emptyList(),
             ).saveTo(outputDirectory.resolve(moduleName).resolve(NpmProject.PACKAGE_JSON))
         }
+    }
+
+    /** Either `package.json`, or a klib with its `package.json` inside. */
+    private fun File.collectNpmDependencies(): Collection<KotlinNpmDependency> {
+        val packageJsonText = when {
+            name == NpmProject.PACKAGE_JSON -> readText()
+            isCompatibleArchive -> ZipFile(this).use { zip ->
+                zip.getEntry(NpmProject.PACKAGE_JSON)
+                    ?.let { zip.getInputStream(it).reader().use { reader -> reader.readText() } }
+            }
+            else -> null
+        } ?: return emptyList()
+
+        return KgpJson.default.decodeFromString<PackageJsonDependencies>(packageJsonText).npmDependencies()
     }
 
     companion object {
@@ -85,6 +115,21 @@ internal abstract class CompilationPackageJsonInputs {
     /** Required by this compilation's tasks, test framework, webpack, etc. */
     @get:Input
     abstract val toolDependencies: SetProperty<DefaultKotlinNpmDependency>
+
+    /** Dependency projects' package.json and Maven klibs. */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val transitiveArtifacts: ConfigurableFileCollection
+}
+
+/** `devDependencies` are not inherited. */
+private fun PackageJsonDependencies.npmDependencies(): List<KotlinNpmDependency> {
+    fun scope(scope: KotlinNpmDependency.Scope, dependencies: Map<String, String>) =
+        dependencies.map { (name, version) -> DefaultKotlinNpmDependency(name, version, scope) }
+
+    return scope(KotlinNpmDependency.Scope.NORMAL, dependencies) +
+            scope(KotlinNpmDependency.Scope.PEER, peerDependencies) +
+            scope(KotlinNpmDependency.Scope.OPTIONAL, optionalDependencies)
 }
 
 private fun KotlinNpmDependency.toDeclaration(): NpmDependencyDeclaration =
