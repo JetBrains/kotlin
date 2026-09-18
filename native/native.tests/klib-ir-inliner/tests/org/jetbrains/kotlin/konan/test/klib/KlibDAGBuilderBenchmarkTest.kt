@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
@@ -48,6 +49,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - roots: []
      * - target: macos_arm64
      * - number of libraries: 177 (stdlib + platform libs)
+     * - resulting DAG size: 1
      * - average duration is < 1ms
      * - median duration is < 1ms
      */
@@ -66,6 +68,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - roots: [stdlib, Foundation]
      * - target: macos_arm64
      * - number of libraries: 177 (stdlib + platform libs)
+     * - resulting DAG size: 10
      * - average duration is 700 ms
      * - median duration is 706 ms
      */
@@ -84,6 +87,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - roots: 20 regular user libs
      * - target: macos_arm64
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
+     * - resulting DAG size: 21
      * - average duration is 46 ms
      * - median duration is 46 ms
      */
@@ -104,6 +108,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - roots: 15 regular + 5 C-interop user libs
      * - target: macos_arm64
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
+     * - resulting DAG size: 21
      * - average duration is 197 ms
      * - median duration is 196 ms
      */
@@ -124,6 +129,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - roots: 10 regular + 10 C-interop user libs
      * - target: macos_arm64
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
+     * - resulting DAG size: 21
      * - average duration is 578 ms
      * - median duration is 577 ms
      */
@@ -144,6 +150,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - roots: 100 regular user libs
      * - target: macos_arm64
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
+     * - resulting DAG size: 101
      * - average duration is 235 ms
      * - median duration is 234 ms
      */
@@ -164,6 +171,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - roots: 75 regular and 25 C-interop user libs
      * - target: macos_arm64
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
+     * - resulting DAG size: 101
      * - average duration is 3.39 s
      * - median duration is 3.39 s
      */
@@ -184,6 +192,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - roots: 50 regular and 50 C-interop user libs
      * - target: macos_arm64
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
+     * - resulting DAG size: 101
      * - average duration is 3.43 s
      * - median duration is 3.43 s
      */
@@ -293,15 +302,19 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         // Sanity check.
         assertEquals(expectedRootsNumber, roots.size)
 
+        var latestDag: KlibDAG? = null
+
         // Run the benchmark.
         runBenchWithWarmup(
             name = "$testName ($target, ${allLibraries.size} libraries)",
             warmupRounds = 10,
             benchmarkRounds = 5,
             pre = System::gc,
-            post = {},
+            post = {
+                println("The computed DAG size is: ${latestDag!!.librariesReverseTopoSorted.size}")
+            },
         ) {
-            KlibDAGBuilder(allLibraries) { it in roots }.build()
+            latestDag = KlibDAGBuilder(allLibraries) { it in roots }.build()
         }
     }
 
