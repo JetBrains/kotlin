@@ -1,0 +1,5 @@
+@file:[JvmName("Test1") JvmMultifileClass]
+
+package test
+
+fun b() = "b"
