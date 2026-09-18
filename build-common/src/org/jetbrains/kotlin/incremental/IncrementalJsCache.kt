@@ -22,15 +22,8 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import org.jetbrains.kotlin.incremental.storage.*
-import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
@@ -283,27 +276,5 @@ private class IrTranslationResultMap(
             IrTranslationResultValue(
                 newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, debugInfos, fileEntries
             )
-    }
-}
-
-private class ProtoDataProvider(private val serializerProtocol: SerializerExtensionProtocol) {
-    operator fun invoke(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData> {
-        val classes = hashMapOf<ClassId, ProtoData>()
-        val proto = ProtoBuf.PackageFragment.parseFrom(metadata, serializerProtocol.extensionRegistry)
-        val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
-
-        proto.class_List.forEach {
-            val classId = nameResolver.getClassId(it.fqName)
-            classes[classId] = ClassProtoData(it, nameResolver)
-        }
-
-        proto.`package`.apply {
-            val packageNameId = getExtensionOrNull(serializerProtocol.packageFqName)
-            val packageFqName = packageNameId?.let { FqName(nameResolver.getPackageFqName(it)) } ?: FqName.ROOT
-            val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalizeAsciiOnly() + "Kt"))
-            classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
-        }
-
-        return classes
     }
 }
