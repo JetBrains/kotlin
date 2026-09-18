@@ -132,19 +132,31 @@ class CodeRuleRepository(val project: Project) {
 }
 
 internal object CodeRuleParser {
-    private const val PATTERN_PREFIX = "Pattern:"
+    private const val APPLIES_TO_LABEL = "Applies to:"
+    private const val CODE_SPAN_DELIMITER = "`"
+    private const val CODE_FENCE = "```"
 
     fun parseRule(lines: List<String>, source: ProjectFilePath): CodeRule {
         val lines = ArrayDeque(lines)
 
         val name = lines.removeFirst().removePrefix(RULE_NAME_PREFIX)
+        val ruleLocation = """$source, rule "$name""""
 
         lines.dropFirstBlankLines()
 
-        val patterns = buildList {
-            while (lines.firstOrNull()?.startsWith(PATTERN_PREFIX) == true) {
-                add(lines.removeFirst().removePrefix(PATTERN_PREFIX).trim())
-                lines.dropFirstBlankLines()
+        val patterns = if (lines.firstOrNull()?.startsWith(APPLIES_TO_LABEL) == true) {
+            parseAppliesTo(lines, ruleLocation).also { lines.dropFirstBlankLines() }
+        } else {
+            emptyList()
+        }
+
+        lines.forEach {
+            check(!it.startsWith(APPLIES_TO_LABEL)) {
+                """
+                    |In $ruleLocation,
+                    |`$APPLIES_TO_LABEL` is allowed only right after the rule name, but got:
+                    |$it
+                """.trimMargin()
             }
         }
 
@@ -155,7 +167,7 @@ internal object CodeRuleParser {
         patterns.zipWithNext().forEach { [previous, next] ->
             check(!previous.startsWith(EXCLUSION_PATTERN_PREFIX) || next.startsWith(EXCLUSION_PATTERN_PREFIX)) {
                 """
-                    |In $source, rule "$name":
+                    |In $ruleLocation,
                     |exclusion patterns ($EXCLUSION_PATTERN_PREFIX) must go after all other patterns, but got
                     |$next
                     |after
@@ -174,6 +186,67 @@ internal object CodeRuleParser {
             patterns = CodeRulePatterns(patterns),
             source = source
         )
+    }
+
+    /**
+     * Parses the patterns defined either as
+     * ```
+     * Applies to: `pattern`
+     * ```
+     * or as
+     * ````
+     * Applies to:
+     * ```
+     * pattern1
+     * pattern2
+     * ```
+     * ````
+     */
+    private fun parseAppliesTo(lines: ArrayDeque<String>, ruleLocation: String): List<String> {
+        val labelLine = lines.removeFirst()
+        val value = labelLine.removePrefix(APPLIES_TO_LABEL).trim()
+
+        if (value.isNotEmpty()) {
+            val pattern = value.removePrefix(CODE_SPAN_DELIMITER).removeSuffix(CODE_SPAN_DELIMITER)
+            check(
+                value.startsWith(CODE_SPAN_DELIMITER) && value.endsWith(CODE_SPAN_DELIMITER) &&
+                        pattern.isNotBlank() && CODE_SPAN_DELIMITER !in pattern
+            ) {
+                """
+                    |In $ruleLocation,
+                    |expected `$APPLIES_TO_LABEL` to be followed by a single pattern in backticks
+                    |or by a code block with patterns on the next lines, but got:
+                    |$labelLine
+                """.trimMargin()
+            }
+            return listOf(pattern)
+        }
+
+        lines.dropFirstBlankLines()
+        val openingFence = lines.removeFirstOrNull()
+        check(openingFence?.startsWith(CODE_FENCE) == true) {
+            """
+                |In $ruleLocation,
+                |expected a code block with patterns ($CODE_FENCE) right after `$APPLIES_TO_LABEL`, but got:
+                |${openingFence.orEmpty()}
+            """.trimMargin()
+        }
+
+        val patterns = buildList {
+            while (true) {
+                val line = checkNotNull(lines.removeFirstOrNull()) {
+                    "In $ruleLocation, the code block with patterns is not closed ($CODE_FENCE)"
+                }
+                if (line.trim() == CODE_FENCE) break
+                if (line.isNotBlank()) add(line)
+            }
+        }
+
+        check(patterns.isNotEmpty()) {
+            "In $ruleLocation, the code block with patterns is empty"
+        }
+
+        return patterns
     }
 
 }

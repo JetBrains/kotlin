@@ -1,5 +1,5 @@
 # Use @SinceKotlin
 
-Pattern: **/src/**/*.kt
+Applies to: `**/src/**/*.kt`
 
 When adding a public Kotlin declaration, make sure it has `@SinceKotlin`.
