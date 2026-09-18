@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.types
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.name.ClassId
 
@@ -20,10 +19,12 @@ import org.jetbrains.kotlin.name.ClassId
  *
  * Compiler plugins may introduce additional custom function type families.
  *
+ * Families are compared by value: two instances are equal if they represent the same family, so a type's family can be
+ * checked with `==` against the [built-in families][KaBuiltinFunctionTypeFamilies].
+ *
  * @see functionTypeFamily
  * @see KaBuiltinFunctionTypeFamilies
  */
-@KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaFunctionTypeFamily {
     /**
