@@ -196,7 +196,6 @@ fun compileIrFile(
             skipCommentInstructions = skipCommentInstructions,
             skipLocations = skipLocations,
             enableMultimoduleExports = enableMultimoduleExports,
-            moduleName = moduleName,
         )
     }
 
@@ -226,10 +225,10 @@ fun compileIrFile(
             // Register callable reference class declarations for deduplication at link time.
             // Multiple files may create classes with the same structure (e.g., Function1_bound1_I, SuspendLambda_2AA),
             // and we want to deduplicate them to a single canonical set of definitions.
-            if (it.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) {
+            if (it.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL
+                || it.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS
+            ) {
                 linkerDataContext.addEquivalentType(it.name.asString(), it.symbol)
-            } else if (it.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS) {
-                linkerDataContext.addEquivalentType("${moduleName}_${it.name.asString()}", it.symbol)
             }
         }
     }

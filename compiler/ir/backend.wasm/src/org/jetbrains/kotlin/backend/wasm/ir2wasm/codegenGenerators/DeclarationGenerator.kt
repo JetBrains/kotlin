@@ -98,7 +98,6 @@ class DeclarationGenerator(
     private val skipCommentInstructions: Boolean,
     skipLocations: Boolean,
     private val enableMultimoduleExports: Boolean,
-    private val moduleName: String,
 ) {
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
@@ -248,11 +247,10 @@ class DeclarationGenerator(
         // and we want all calls to resolve to a single canonical set of functions.
         val parentClass = declaration.parentClassOrNull
         if (parentClass != null) {
-            if (parentClass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) {
+            if (parentClass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL
+                || parentClass.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS
+            ) {
                 val equivalenceKey = "${parentClass.name.asString()}.${declaration.name.asString()}"
-                linkerDataContext.addEquivalentFunction(equivalenceKey, declaration.symbol)
-            } else if (parentClass.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS) {
-                val equivalenceKey = "${moduleName}_${parentClass.name.asString()}.${declaration.name.asString()}"
                 linkerDataContext.addEquivalentFunction(equivalenceKey, declaration.symbol)
             }
         }
