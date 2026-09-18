@@ -168,7 +168,7 @@ private fun ProblematicLibrary.computeMessageText(): String {
 
             val abiVersionCheckExplanation: String = when {
                 isLowerBoundaryExceeded && minSupportedCompilerVersionHint != null ->
-                    "produced by at least $minSupportedCompilerVersionHint compiler"
+                    "produced by compiler >= $minSupportedCompilerVersionHint"
 
                 minPermittedAbiVersion != null && maxPermittedAbiVersion != null ->
                     "having ABI version in the range [$minPermittedAbiVersion, $maxPermittedAbiVersion]"
@@ -184,8 +184,8 @@ private fun ProblematicLibrary.computeMessageText(): String {
                 val actionText = when {
                     isLowerBoundaryExceeded -> buildString {
                         append("Please upgrade the library to a newer version ")
-                        if (minSupportedCompilerVersionHint != null) append("compatible with $minSupportedCompilerVersionHint compiler ")
-                        append("(ABI version $minPermittedAbiVersion or higher).")
+                        if (minSupportedCompilerVersionHint != null) append("compatible with compiler version $minSupportedCompilerVersionHint or later ")
+                        append("(ABI version $minPermittedAbiVersion or later).")
                     }
                     else -> "Please upgrade your Kotlin compiler version to consume this library."
                 }
