@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import com.intellij.openapi.util.JDOMUtil
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.testFederation.MustRunAlways
@@ -129,6 +130,52 @@ class MppTestReportIT : KGPBaseTest() {
 
             val htmlReport = testClassHtmlReport(":jvmTest", "$testPackage.$testClass", gradleVersion, targetName = "jvm")
             assertFileExists(htmlReport)
+        }
+    }
+
+    @DisplayName("TestReporter.publishEntry metadata is included in the JVM XML report")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_4)
+    fun testTestReporterMetadataIsIncludedInXmlReport(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            buildScriptInjection {
+                val jvmTarget = kotlinMultiplatform.jvm()
+                jvmTarget.testRuns.configureEach {
+                    it.executionTask.configure { it.useJUnitPlatform() }
+                }
+                kotlinMultiplatform.sourceSets.getByName("jvmTest").dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test-junit5")
+                }
+            }
+
+            kotlinSourcesDir("jvmTest").source("TestReporterTest.kt") {
+                """
+                import org.junit.jupiter.api.Test
+                import org.junit.jupiter.api.TestReporter
+
+                class TestReporterTest {
+                    @Test
+                    fun publishEntry(reporter: TestReporter) {
+                        reporter.publishEntry("metadata-key", "metadata-value")
+                    }
+                }
+                """.trimIndent()
+            }
+
+            build(":jvmTest")
+
+            val testResultXml = projectPath.resolve("build/test-results/jvmTest")
+                .allFilesWithExtension("xml")
+                .single()
+            val testSuite = JDOMUtil.load(testResultXml.toFile())
+            val testCase = testSuite.getChildren("testcase").singleOrNull()
+                ?: testSuite.getChildren("testsuite").single().getChildren("testcase").single()
+            val properties = assertNotNull(testCase.getChild("properties"), "Expected test properties")
+            val property = assertNotNull(properties.getChild("property"), "Expected published test metadata")
+
+            assertEquals("metadata-key", property.getAttributeValue("name"))
+            assertEquals("metadata-value", property.getAttributeValue("value"))
+            assertTrue(testCase.getAttributeValue("name").contains("[jvm]"))
         }
     }
 }
