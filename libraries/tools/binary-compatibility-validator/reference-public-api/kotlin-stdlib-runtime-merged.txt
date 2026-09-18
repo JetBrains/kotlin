@@ -4035,13 +4035,19 @@ public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/Clas
 	public fun getVisibility ()Lkotlin/reflect/KVisibility;
 	public fun hashCode ()I
 	public fun isAbstract ()Z
+	public fun isAnnotation ()Z
 	public fun isCompanion ()Z
 	public fun isData ()Z
+	public fun isEnumClass ()Z
+	public fun isEnumEntry ()Z
 	public fun isFinal ()Z
 	public fun isFun ()Z
 	public fun isInner ()Z
 	public fun isInstance (Ljava/lang/Object;)Z
+	public fun isInterface ()Z
+	public fun isObject ()Z
 	public fun isOpen ()Z
+	public fun isRegularClass ()Z
 	public fun isSealed ()Z
 	public fun isValue ()Z
 	public fun toString ()Ljava/lang/String;
@@ -5311,13 +5317,19 @@ public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotate
 	public abstract fun getVisibility ()Lkotlin/reflect/KVisibility;
 	public abstract fun hashCode ()I
 	public abstract fun isAbstract ()Z
+	public abstract fun isAnnotation ()Z
 	public abstract fun isCompanion ()Z
 	public abstract fun isData ()Z
+	public abstract fun isEnumClass ()Z
+	public abstract fun isEnumEntry ()Z
 	public abstract fun isFinal ()Z
 	public abstract fun isFun ()Z
 	public abstract fun isInner ()Z
 	public abstract fun isInstance (Ljava/lang/Object;)Z
+	public abstract fun isInterface ()Z
+	public abstract fun isObject ()Z
 	public abstract fun isOpen ()Z
+	public abstract fun isRegularClass ()Z
 	public abstract fun isSealed ()Z
 	public abstract fun isValue ()Z
 }
