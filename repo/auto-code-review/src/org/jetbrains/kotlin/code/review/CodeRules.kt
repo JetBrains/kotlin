@@ -47,13 +47,19 @@ private const val RULE_NAME_PREFIX = "# "
 private const val EXCLUSION_PATTERN_PREFIX = "!"
 
 class CodeRuleRepository(val project: Project) {
-    suspend fun getRules(path: ProjectFilePath): Set<CodeRule> {
-        val rulesFile = path.dir.file(CODE_RULES_MD)
-        return getRulesFromRulesFile(rulesFile)
-            .filterTo(mutableSetOf()) { it.patternsMatch(path) }
+    suspend fun getRules(path: ProjectFilePath): Set<CodeRule> = buildSet {
+        // The file is covered by `code-rules.md` files in its directory and all enclosing directories:
+        for (dir in generateSequence(path.dir) { it.parent }) {
+            getRulesFromRulesFile(dir.file(CODE_RULES_MD))
+                .filterTo(this) { it.patternsMatch(path) }
+        }
     }
 
     private val ruleFileToRules = mutableMapOf<ProjectFilePath, Set<CodeRule>>()
+
+    /**
+     * Returns the rules defined in [rulesFile] and in the files it includes (transitively).
+     */
     internal suspend fun getRulesFromRulesFile(rulesFile: ProjectFilePath) =
         ruleFileToRules.getOrPut(rulesFile) {
             buildSet {
@@ -79,9 +85,6 @@ class CodeRuleRepository(val project: Project) {
         val lines = ArrayDeque(project.readLines(file).orEmpty())
 
         val includes = buildList {
-            // `foo/bar/baz.md` includes `foo/baz.md`:
-            dir.parent?.let { add(it.file(file.fileName)) }
-
             lines.dropFirstBlankLines()
 
             while (lines.firstOrNull()?.startsWith(INCLUDE_PREFIX) == true) {

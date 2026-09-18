@@ -10,6 +10,17 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CodeRuleRepositoryTests {
+    private fun projectOf(vararg files: Pair<String, String>): Project {
+        val pathToText = files.associate { [path, text] -> ProjectFilePath(path) to text }
+        return projectOf(pathToText)
+    }
+
+    private fun projectOf(files: Map<ProjectFilePath, String>): Project = object : Project {
+        override suspend fun readLines(path: ProjectFilePath): List<String>? =
+            files[path]?.lines()
+
+        override suspend fun fileExists(path: ProjectFilePath): Boolean = path in files
+    }
 
     @Test
     fun `smoke test`() = runBlocking {
@@ -125,14 +136,7 @@ class CodeRuleRepositoryTests {
             )
         }
 
-        val project = object : Project {
-            override suspend fun readLines(path: ProjectFilePath): List<String>? =
-                files[path]?.lines()
-
-            override suspend fun fileExists(path: ProjectFilePath): Boolean = path in files
-        }
-
-        val ruleRepo = CodeRuleRepository(project)
+        val ruleRepo = CodeRuleRepository(projectOf(files))
 
         assertEquals(
             setOf(irNodeRule, todoRule),
@@ -158,5 +162,27 @@ class CodeRuleRepositoryTests {
             setOf(irTestRule, todoRule),
             ruleRepo.getRules(ProjectFilePath("js/js.ir/test/baz.kt"))
         )
+    }
+
+    private suspend fun CodeRuleRepository.getRuleNames(path: String): Set<String> =
+        getRules(ProjectFilePath(path)).mapTo(mutableSetOf()) { it.name }
+
+    @Test
+    fun `include doesn't include files in enclosing directories`() = runBlocking {
+        val ruleRepo = CodeRuleRepository(
+            projectOf(
+                "lib/code-rules.md" to "# Lib rule",
+                "lib/sub/code-rules.md" to "# Lib sub rule",
+                "lib/shared.md" to "# Lib shared rule",
+                "lib/sub/shared.md" to "# Lib sub shared rule",
+                "app/code-rules.md" to """
+                    @/lib/sub/code-rules.md
+                    @/lib/sub/shared.md
+                """.trimIndent(),
+            )
+        )
+
+        assertEquals(setOf("Lib rule", "Lib sub rule"), ruleRepo.getRuleNames("lib/sub/foo.kt"))
+        assertEquals(setOf("Lib sub rule", "Lib sub shared rule"), ruleRepo.getRuleNames("app/foo.kt"))
     }
 }
