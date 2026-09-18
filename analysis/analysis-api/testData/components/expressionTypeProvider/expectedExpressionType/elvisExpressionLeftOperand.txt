@@ -1,5 +1,14 @@
-expression: av
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/Int?
+expression:
+  av
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int?
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int?

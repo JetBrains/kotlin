@@ -1,14 +1,32 @@
-expression: av
-expected type: KaFunctionType:
-  annotations: []
-  typeArguments: [
-    KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Int
-    KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/String
-  ]
-  type: (kotlin/Int) -> kotlin/String
+expression:
+  av
+
+expectedType:
+  KaFunctionType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+    ]
+    type: (kotlin/Int) -> kotlin/String
+
+inferredExpectedType:
+  KaFunctionType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+    ]
+    type: (kotlin/Int) -> kotlin/String

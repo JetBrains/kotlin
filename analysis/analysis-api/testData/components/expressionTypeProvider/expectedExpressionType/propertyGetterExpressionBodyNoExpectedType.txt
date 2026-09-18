@@ -1,2 +1,8 @@
-expression: somePrefix
-expected type: null
+expression:
+  somePrefix
+
+expectedType:
+  null
+
+inferredExpectedType:
+  null
