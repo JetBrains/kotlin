@@ -14,8 +14,8 @@ val a7 = 1.div(a1)
 val a8 = 1.div(a2)
 val a9 = 2 * (<!DIVISION_BY_ZERO!>1.div(0)<!>)
 
-val a10 = <!DIVISION_BY_ZERO!>1 / 0.0f<!>
-val a11 = <!DIVISION_BY_ZERO!>1 / 0.0<!>
+val a10 = 1 / 0.0f
+val a11 = 1 / 0.0
 val a12 = <!DIVISION_BY_ZERO!>1L / 0<!>
 
 val b1: Byte <!INITIALIZER_TYPE_MISMATCH!>=<!> <!DIVISION_BY_ZERO!>1 / 0<!>

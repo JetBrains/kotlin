@@ -18,12 +18,16 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.isDivisionOperation
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.isDouble
+import org.jetbrains.kotlin.fir.types.isFloat
+import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirDivisionByZeroChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val firstValue = (expression.arguments.singleOrNull() as? FirLiteralExpression)?.value
-        if (firstValue != null && (firstValue == 0L || firstValue == 0.0f || firstValue == 0.0)) {
+        val isFloatingPoint = expression.resolvedType.isFloat || expression.resolvedType.isDouble
+        if (firstValue == 0L && !isFloatingPoint) {
             val callableId = (expression.calleeReference.toResolvedNamedFunctionSymbol())?.callableId
             if (callableId != null && callableId.isDivisionOperation) {
                 // Do not report DIVISION_BY_ZERO for const properties. It will be done by `FirConstPropertyChecker`.
