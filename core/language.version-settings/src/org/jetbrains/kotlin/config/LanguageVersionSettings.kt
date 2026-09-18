@@ -577,7 +577,6 @@ enum class LanguageFeature(
     ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-416"),
     EnforceNamedArgumentsOnJavaAnnotationInAccessors(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-418"),
     JsIntegerDivisionCheck(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-17719"),
-    ForbidUsingParameterWithDefaultValueTypesWithInaccessibleContent(KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-422"),
 
     // End of 2.* language features --------------------------------------------------
 
@@ -651,6 +650,7 @@ enum class LanguageFeature(
     EnableNameBasedDestructuringShortForm(sinceVersion = null, issue = "KT-19627", enabledInLatestLVTests = true),
     LocalTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-81404", enabledInLatestLVTests = false),
     ErrorAboutDataClassCopyVisibilityChange(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-11914", enabledInLatestLVTests = false), // Was postponed in KT-89123
+    ForbidUsingParameterWithDefaultValueTypesWithInaccessibleContent(sinceVersion = null, enabledInProgressiveMode = false, issue = "KTLC-422", enabledInLatestLVTests = false), // Postponed indefinitely
 
     // We don't want to turn it on by default (so to show an error instead of a warning) until there will be a possibility to export declarations from libraries
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009", enabledInLatestLVTests = false),

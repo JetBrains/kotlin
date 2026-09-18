@@ -1144,7 +1144,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE,
-            "Cannot access class ''{0}'' in the parameter type. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.",
+            "Cannot access class ''{0}'' in the parameter type when a default value of that parameter is in use. This may cause problems in cases such as when this type is based on an inline class. Check the module classpath for missing or conflicting dependencies.",
             RENDER_TYPE,
         )
         map.put(

@@ -1,8 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-87904
-// LATEST_LV_DIFFERENCE
 // WITH_STDLIB
-// See also compiler/testData/codegen/boxJvm/inlineClasses/inaccessibleTypeInDefaultArg.kt
 
 // MODULE: base
 // FILE: base.kt
