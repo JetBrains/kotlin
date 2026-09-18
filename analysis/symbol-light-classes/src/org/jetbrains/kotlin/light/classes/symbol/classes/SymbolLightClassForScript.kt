@@ -30,13 +30,13 @@ internal class SymbolLightClassForScript private constructor(
 ) : KtLightClassForScript, SymbolLightClassBaseImpl<KaScriptSymbol>(script.manager) {
     internal constructor(
         script: KtScript,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
     ) : this(
         script,
-        analyzeForLightClasses(ktModule) {
+        analyzeForLightClasses(useSiteModule) {
             script.symbol.createPointer()
         },
-        ktModule,
+        useSiteModule,
     )
 
     private fun MutableList<PsiMethod>.addScriptDefaultMethods(scriptSymbol: KaScriptSymbol) {

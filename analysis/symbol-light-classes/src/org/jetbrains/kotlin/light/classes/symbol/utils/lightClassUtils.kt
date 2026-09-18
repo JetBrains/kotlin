@@ -31,7 +31,7 @@ internal inline fun <R> analyzeForLightClasses(context: KtElement, crossinline a
         analyze(context, action = action)
     }
 
-internal inline fun <R> analyzeForLightClasses(useSiteKtModule: KaModule, crossinline action: context(KaSession) () -> R): R =
+internal inline fun <R> analyzeForLightClasses(useSiteModule: KaModule, crossinline action: context(KaSession) () -> R): R =
     allowLightClassesOnEdt {
-        analyze(useSiteKtModule, action = action)
+        analyze(useSiteModule, action = action)
     }
