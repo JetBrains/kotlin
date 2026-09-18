@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsModuleKind
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.findPropertyWithSerialName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -57,146 +58,131 @@ internal class JsArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_DTS_USE_UNKNOWN_INSTEAD_ANY")
-  protected var `Xdts-use-unknown-instead-any`: Boolean = defaultArguments.useUnknownInsteadAny
+  internal var `Xdts-use-unknown-instead-any`: Boolean = defaultArguments.useUnknownInsteadAny
 
   @SerialName("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS")
-  protected var `Xenable-extension-functions-in-externals`: Boolean =
+  internal var `Xenable-extension-functions-in-externals`: Boolean =
       defaultArguments.extensionFunctionsInExternals
 
   @SerialName("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT")
-  protected var `Xenable-implementing-interfaces-from-typescript`: Boolean =
+  internal var `Xenable-implementing-interfaces-from-typescript`: Boolean =
       defaultArguments.allowImplementableInterfacesExporting
 
   @SerialName("X_ENABLE_SUSPEND_FUNCTION_EXPORTING")
-  protected var `Xenable-suspend-function-exporting`: Boolean =
+  internal var `Xenable-suspend-function-exporting`: Boolean =
       defaultArguments.allowExportingSuspendFunctions
 
   @SerialName("X_ES_ARROW_FUNCTIONS")
-  protected var `Xes-arrow-functions`: Boolean? = defaultArguments.useEsArrowFunctions
+  internal var `Xes-arrow-functions`: Boolean? = defaultArguments.useEsArrowFunctions
 
   @SerialName("X_ES_CLASSES")
-  protected var `Xes-classes`: Boolean? = defaultArguments.useEsClasses
+  internal var `Xes-classes`: Boolean? = defaultArguments.useEsClasses
 
   @SerialName("X_ES_GENERATORS")
-  protected var `Xes-generators`: Boolean? = defaultArguments.useEsGenerators
+  internal var `Xes-generators`: Boolean? = defaultArguments.useEsGenerators
 
   @SerialName("X_ES_LONG_AS_BIGINT")
-  protected var `Xes-long-as-bigint`: Boolean? = defaultArguments.compileLongAsBigInt
+  internal var `Xes-long-as-bigint`: Boolean? = defaultArguments.compileLongAsBigInt
 
   @SerialName("X_EXPORT_KDOC")
-  protected var `Xexport-kdoc`: Boolean = defaultArguments.exportKDoc
+  internal var `Xexport-kdoc`: Boolean = defaultArguments.exportKDoc
 
   @SerialName("X_GENERATE_POLYFILLS")
-  protected var `Xgenerate-polyfills`: Boolean = defaultArguments.generatePolyfills
+  internal var `Xgenerate-polyfills`: Boolean = defaultArguments.generatePolyfills
 
   @SerialName("X_INTEGER_DIVISION_CHECK")
-  protected var `Xinteger-division-check`: Boolean = defaultArguments.integerDivisionCheck
+  internal var `Xinteger-division-check`: Boolean = defaultArguments.integerDivisionCheck
 
   @SerialName("X_IR_BUILD_CACHE")
-  protected var `Xir-build-cache`: Boolean = defaultArguments.irBuildCache
+  internal var `Xir-build-cache`: Boolean = defaultArguments.irBuildCache
 
   @SerialName("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS")
-  protected var `Xir-generate-inline-anonymous-functions`: Boolean =
+  internal var `Xir-generate-inline-anonymous-functions`: Boolean =
       defaultArguments.irGenerateInlineAnonymousFunctions
 
   @SerialName("X_IR_KEEP")
-  protected var `Xir-keep`: String? = defaultArguments.irKeep
+  internal var `Xir-keep`: String? = defaultArguments.irKeep
 
   @SerialName("X_IR_MINIMIZED_MEMBER_NAMES")
-  protected var `Xir-minimized-member-names`: Boolean = defaultArguments.irMinimizedMemberNames
+  internal var `Xir-minimized-member-names`: Boolean = defaultArguments.irMinimizedMemberNames
 
   @SerialName("X_IR_PER_FILE")
-  protected var `Xir-per-file`: Boolean = defaultArguments.irPerFile
+  internal var `Xir-per-file`: Boolean = defaultArguments.irPerFile
 
   @SerialName("X_IR_PER_MODULE")
-  protected var `Xir-per-module`: Boolean = defaultArguments.irPerModule
+  internal var `Xir-per-module`: Boolean = defaultArguments.irPerModule
 
   @SerialName("X_IR_SAFE_EXTERNAL_BOOLEAN")
-  protected var `Xir-safe-external-boolean`: Boolean = defaultArguments.irSafeExternalBoolean
+  internal var `Xir-safe-external-boolean`: Boolean = defaultArguments.irSafeExternalBoolean
 
   @SerialName("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
-  protected var `Xir-safe-external-boolean-diagnostic`: JsIrDiagnosticMode? =
+  internal var `Xir-safe-external-boolean-diagnostic`: JsIrDiagnosticMode? =
       defaultArguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") }
 
   @SerialName("X_OPTIMIZE_GENERATED_JS")
-  protected var `Xoptimize-generated-js`: Boolean = defaultArguments.optimizeGeneratedJs
+  internal var `Xoptimize-generated-js`: Boolean = defaultArguments.optimizeGeneratedJs
 
   @SerialName("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION")
-  protected var `Xplatform-arguments-in-main-function`: String? =
+  internal var `Xplatform-arguments-in-main-function`: String? =
       defaultArguments.platformArgumentsProviderJsExpression
 
   @SerialName("X_SUSPEND_LAMBDA_EXPORTING")
-  protected var `Xsuspend-lambda-exporting`: Boolean = defaultArguments.allowExportingSuspendLambdas
+  internal var `Xsuspend-lambda-exporting`: Boolean = defaultArguments.allowExportingSuspendLambdas
 
   @SerialName("MODULE_KIND")
-  protected var `module-kind`: JsModuleKind? =
+  internal var `module-kind`: JsModuleKind? =
       defaultArguments.moduleKind?.let { JsModuleKind.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") }
 
   @SerialName("TARGET")
-  protected var target: JsEcmaVersion? =
+  internal var target: JsEcmaVersion? =
       defaultArguments.target?.let { JsEcmaVersion.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") }
   init {
     applyCompilerArguments(K2JSCompilerArguments())
   }
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: JsArgument<V>): V = optionsMap[key.id] as V
+  public operator fun <V> `get`(key: JsArgument<V>): V = JsArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V
 
   public operator fun <V> `set`(key: JsArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+    JsArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, `value`)
   }
 
-  public operator fun contains(key: JsArgument<*>): Boolean = key.id in optionsMap
-
-  private operator fun `get`(key: String): Any? = JsArgumentValueAdapter.toApi(optionsMap[key])
-
-  private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = JsArgumentValueAdapter.toImpl(`value`)
-  }
+  public operator fun contains(key: JsArgument<*>): Boolean = true
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsCompilerArguments.JsCompilerArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: JsCompilerArguments.JsCompilerArgument<V>): V = JsArgumentValueAdapter.toApi(JsArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JsCompilerArguments.JsCompilerArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    JsArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, JsArgumentValueAdapter.toImpl(value))
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>): V = JsArgumentValueAdapter.toApi(JsArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    JsArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, JsArgumentValueAdapter.toImpl(value))
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>): V = JsArgumentValueAdapter.toApi(JsArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    JsArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, JsArgumentValueAdapter.toImpl(value))
   }
 
   override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }

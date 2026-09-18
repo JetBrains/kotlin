@@ -40,7 +40,7 @@ val scriptingCompilerPluginClasspath = configurations.create("scriptingCompilerP
 
 dependencies {
     add(btaImplClasspath.name, project(":compiler:build-tools:kotlin-build-tools-impl"))
-    add(btaImplClasspath.name, project(":compiler:build-tools:kotlin-build-tools-compat"))
+//    add(btaImplClasspath.name, project(":compiler:build-tools:kotlin-build-tools-compat"))
     add(scriptingCompilerPluginClasspath.name, project(":kotlin-scripting-compiler-embeddable"))
 }
 

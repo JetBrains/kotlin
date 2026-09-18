@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnostic
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsMainCallMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SourceMapEmbedSources
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SourceMapNamesPolicy
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.findPropertyWithSerialName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
@@ -57,152 +58,139 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @SerialName("X_CACHE_DIRECTORY")
-  protected var `Xcache-directory`: Path? =
+  internal var `Xcache-directory`: Path? =
       defaultArguments.cacheDirectory?.let { kotlin.io.path.Path(it) }
 
   @SerialName("X_ENABLE_ADVANCED_OPTIMIZATIONS")
-  protected var `Xenable-advanced-optimizations`: Boolean =
+  internal var `Xenable-advanced-optimizations`: Boolean =
       defaultArguments.enableAdvancedOptimizations
 
   @SerialName("X_FRIEND_MODULES")
-  protected var `Xfriend-modules`: List<Path>? =
+  internal var `Xfriend-modules`: List<Path>? =
       defaultArguments.friendModules?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
 
   @SerialName("X_FRIEND_MODULES_DISABLED")
-  protected var `Xfriend-modules-disabled`: Boolean = defaultArguments.friendModulesDisabled
+  internal var `Xfriend-modules-disabled`: Boolean = defaultArguments.friendModulesDisabled
 
   @SerialName("X_GENERATE_DTS")
-  protected var `Xgenerate-dts`: Boolean = defaultArguments.generateDts
+  internal var `Xgenerate-dts`: Boolean = defaultArguments.generateDts
 
   @SerialName("X_INCLUDE")
-  protected var Xinclude: Path? = defaultArguments.includes?.let { kotlin.io.path.Path(it) }
+  internal var Xinclude: Path? = defaultArguments.includes?.let { kotlin.io.path.Path(it) }
 
   @SerialName("X_IR_DCE")
-  protected var `Xir-dce`: Boolean = defaultArguments.irDce
+  internal var `Xir-dce`: Boolean = defaultArguments.irDce
 
   @SerialName("X_IR_DCE_PRINT_REACHABILITY_INFO")
-  protected var `Xir-dce-print-reachability-info`: Boolean =
+  internal var `Xir-dce-print-reachability-info`: Boolean =
       defaultArguments.irDcePrintReachabilityInfo
 
   @SerialName("X_IR_DCE_RUNTIME_DIAGNOSTIC")
-  protected var `Xir-dce-runtime-diagnostic`: JsIrDiagnosticMode? =
+  internal var `Xir-dce-runtime-diagnostic`: JsIrDiagnosticMode? =
       defaultArguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") }
 
   @SerialName("X_IR_MODULE_NAME")
-  protected var `Xir-module-name`: String? = defaultArguments.irModuleName
+  internal var `Xir-module-name`: String? = defaultArguments.irModuleName
 
   @SerialName("X_IR_PER_MODULE_OUTPUT_NAME")
-  protected var `Xir-per-module-output-name`: String? = defaultArguments.irPerModuleOutputName
+  internal var `Xir-per-module-output-name`: String? = defaultArguments.irPerModuleOutputName
 
   @SerialName("X_IR_PRODUCE_JS")
-  protected var `Xir-produce-js`: Boolean = defaultArguments.irProduceJs
+  internal var `Xir-produce-js`: Boolean = defaultArguments.irProduceJs
 
   @SerialName("X_IR_PRODUCE_KLIB_DIR")
-  protected var `Xir-produce-klib-dir`: Boolean? = defaultArguments.irProduceKlibDir
+  @Suppress("DEPRECATION")
+  internal var `Xir-produce-klib-dir`: Boolean? = defaultArguments.irProduceKlibDir
 
   @SerialName("X_IR_PRODUCE_KLIB_FILE")
-  protected var `Xir-produce-klib-file`: Boolean? = defaultArguments.irProduceKlibFile
+  @Suppress("DEPRECATION")
+  internal var `Xir-produce-klib-file`: Boolean? = defaultArguments.irProduceKlibFile
 
   @SerialName("X_IR_PROPERTY_LAZY_INITIALIZATION")
-  protected var `Xir-property-lazy-initialization`: Boolean =
+  internal var `Xir-property-lazy-initialization`: Boolean =
       defaultArguments.irPropertyLazyInitialization
 
   @SerialName("X_STRICT_IMPLICIT_EXPORT_TYPES")
-  protected var `Xstrict-implicit-export-types`: Boolean = defaultArguments.strictImplicitExportType
+  internal var `Xstrict-implicit-export-types`: Boolean = defaultArguments.strictImplicitExportType
 
   @SerialName("IR_OUTPUT_DIR")
-  protected var `ir-output-dir`: Path? = defaultArguments.outputDir?.let { kotlin.io.path.Path(it) }
+  internal var `ir-output-dir`: Path? = defaultArguments.outputDir?.let { kotlin.io.path.Path(it) }
 
   @SerialName("IR_OUTPUT_NAME")
-  protected var `ir-output-name`: String? = defaultArguments.moduleName
+  internal var `ir-output-name`: String? = defaultArguments.moduleName
 
   @SerialName("LIBRARIES")
-  protected var libraries: List<Path>? =
+  internal var libraries: List<Path>? =
       defaultArguments.libraries?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
 
   @SerialName("MAIN")
-  protected var main: JsMainCallMode? =
+  internal var main: JsMainCallMode? =
       defaultArguments.main?.let { JsMainCallMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") }
 
   @SerialName("NOPACK")
-  protected var nopack: Boolean = defaultArguments.nopack
+  internal var nopack: Boolean = defaultArguments.nopack
 
   @SerialName("SOURCE_MAP")
-  protected var `source-map`: Boolean = defaultArguments.sourceMap
+  internal var `source-map`: Boolean = defaultArguments.sourceMap
 
   @SerialName("SOURCE_MAP_BASE_DIRS")
-  protected var `source-map-base-dirs`: List<Path>? =
+  internal var `source-map-base-dirs`: List<Path>? =
       defaultArguments.sourceMapBaseDirs?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
 
   @SerialName("SOURCE_MAP_EMBED_SOURCES")
-  protected var `source-map-embed-sources`: SourceMapEmbedSources? =
+  internal var `source-map-embed-sources`: SourceMapEmbedSources? =
       defaultArguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") }
 
   @SerialName("SOURCE_MAP_NAMES_POLICY")
-  protected var `source-map-names-policy`: SourceMapNamesPolicy? =
+  internal var `source-map-names-policy`: SourceMapNamesPolicy? =
       defaultArguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") }
 
   @SerialName("SOURCE_MAP_PREFIX")
-  protected var `source-map-prefix`: String? = defaultArguments.sourceMapPrefix
+  internal var `source-map-prefix`: String? = defaultArguments.sourceMapPrefix
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = optionsMap[key.id] as V
+  public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = CommonJsAndWasmArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this) as V
 
   public operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+    CommonJsAndWasmArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, `value`)
   }
 
-  public operator fun contains(key: CommonJsAndWasmArgument<*>): Boolean = key.id in optionsMap
-
-  private operator fun `get`(key: String): Any? = CommonJsAndWasmArgumentValueAdapter.toApi(optionsMap[key])
-
-  private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = CommonJsAndWasmArgumentValueAdapter.toImpl(`value`)
-  }
+  public operator fun contains(key: CommonJsAndWasmArgument<*>): Boolean = true
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>): V = CommonJsAndWasmArgumentValueAdapter.toApi(CommonJsAndWasmArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    CommonJsAndWasmArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, CommonJsAndWasmArgumentValueAdapter.toImpl(value))
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V = CommonJsAndWasmArgumentValueAdapter.toApi(CommonJsAndWasmArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    CommonJsAndWasmArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, CommonJsAndWasmArgumentValueAdapter.toImpl(value))
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
-  }
+  override operator fun <V> `get`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V = CommonJsAndWasmArgumentValueAdapter.toApi(CommonJsAndWasmArgumentsImpl::class.findPropertyWithSerialName(key.id).getter.call(this)) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    CommonJsAndWasmArgumentsImpl::class.findPropertyWithSerialName(key.id).setter.call(this, CommonJsAndWasmArgumentValueAdapter.toImpl(value))
   }
 
   abstract override fun build(): CommonJsAndWasmArgumentsImpl

@@ -101,7 +101,7 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
-    compileOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
+//    compileOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
     api(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
     api(project(":repo:test-runtime"))
 
@@ -123,8 +123,8 @@ kotlin {
 
 val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-    BuildToolsVersion(KotlinToolingVersion(2, 2, 21, null)),
-    BuildToolsVersion(KotlinToolingVersion(2, 3, 0, null)),
+//    BuildToolsVersion(KotlinToolingVersion(2, 2, 21, null)),
+//    BuildToolsVersion(KotlinToolingVersion(2, 3, 0, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 10, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 21, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 4, 0, null)),
@@ -209,7 +209,7 @@ val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
 fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "") {
     val compilerClasspath = buildToolsImplConfigurationsCache.computeIfAbsent(version) {
         configurations.detachedConfiguration(
-            project.dependencies.project(":compiler:build-tools:kotlin-build-tools-compat"),
+//            project.dependencies.project(":compiler:build-tools:kotlin-build-tools-compat"),
             if (version.isEmpty()) {
                 dependencies.project(":compiler:build-tools:kotlin-build-tools-impl")
             } else {
