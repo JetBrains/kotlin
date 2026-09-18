@@ -13,10 +13,42 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmExposeBoxedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.jvmDefaultMode
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.utils.computeSimpleModality
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
-internal fun isSuppressedFinalModifier(string: String, containingClass: SymbolLightClassBase, symbol: KaCallableSymbol): Boolean {
-    return string == PsiModifier.FINAL && (containingClass.isEnum && symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED || containingClass.isInterface)
+/**
+ * Computes the JVM modality modifier of the light method for [symbol] in [containingClass], or `null` if it has none.
+ *
+ * The modifier follows the Kotlin modality of [symbol], with two exceptions:
+ * - An interface member with a body which is not compiled to a JVM `default` method is `abstract`. With `-jvm-default=disable`,
+ *   the JVM backend moves such an implementation to the `DefaultImpls` class and leaves an abstract method in the interface, the
+ *   same way as for a member without a body. Otherwise, the implementation is compiled to a `default` method, see
+ *   [SymbolLightMemberModifierList]. Static members of an interface (`@JvmStatic` members of its companion object and members of
+ *   its companion block) keep their implementation in the interface class in any mode, so they are not affected. This mirrors
+ *   `org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault`.
+ * - `final` is suppressed for interface members and generated enum members.
+ */
+context(_: KaSession)
+internal fun computeMethodModality(symbol: KaCallableSymbol, containingClass: SymbolLightClassBase): String? {
+    fun isMovedToDefaultImpls(): Boolean = when {
+        !containingClass.isInterface -> false
+        containingClass.jvmDefaultMode.isEnabled -> false
+        symbol.modality == KaSymbolModality.ABSTRACT -> false
+        symbol.isCompanion -> false
+        // A `@JvmStatic` member of the companion object is materialized in the interface, but it belongs to the companion object
+        (symbol.containingDeclaration as? KaClassSymbol)?.classKind != KaClassKind.INTERFACE -> false
+        else -> true
+    }
+
+    fun String.isSuppressedFinalModifier(): Boolean = this == PsiModifier.FINAL &&
+            (containingClass.isEnum && symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED || containingClass.isInterface)
+
+    return when {
+        isMovedToDefaultImpls() -> PsiModifier.ABSTRACT
+        else -> symbol.computeSimpleModality()?.takeUnless { it.isSuppressedFinalModifier() }
+    }
 }
 
 /**

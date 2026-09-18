@@ -79,9 +79,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
                 isTopLevel -> PsiModifier.FINAL
                 containingClass is SymbolLightClassForInterfaceDefaultImpls -> null
                 this is SymbolLightMethodForMappedKotlinCollectionMethod -> if (this.isFinal) PsiModifier.FINAL else null
-                else -> withFunctionSymbol { functionSymbol ->
-                    functionSymbol.computeSimpleModality()?.takeUnless { isSuppressedFinalModifier(it, containingClass, functionSymbol) }
-                }
+                else -> withFunctionSymbol { computeMethodModality(it, containingClass) }
             }
 
             GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
