@@ -290,8 +290,12 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
 
     reportUnsafeInternalArgumentsIfAny(arguments)
 
-    for ([severity, internalArgumentsProblem] in errors.internalArgumentsParsingProblems) {
-        report(severity, internalArgumentsProblem)
+    errors.internalArgumentsParsingErrors.forEach {
+        report(CompilerMessageSeverity.ERROR, it)
+    }
+
+    errors.internalArgumentsParsingWarnings.forEach {
+        report(CompilerMessageSeverity.STRONG_WARNING, it)
     }
 }
 

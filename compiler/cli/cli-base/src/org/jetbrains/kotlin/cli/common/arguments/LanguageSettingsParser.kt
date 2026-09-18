@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LanguageFeature
 
 // Arguments of form '-XXLanguage:+LanguageFeature' or '-XXLanguage:-LanguageFeature', which enable or disable corresponding LanguageFeature.
@@ -43,7 +42,7 @@ object LanguageSettingsParser {
         if (languageFeature.testOnly && !areTestOnlyLanguageFeaturesAllowed) {
             errors.reportAndReturnNull(
                 "Language feature '$languageFeatureName' is test-only and cannot be enabled from command line",
-                severity = CompilerMessageSeverity.ERROR
+                isError = true,
             )
         }
 
@@ -52,9 +51,10 @@ object LanguageSettingsParser {
 
     private fun ArgumentParseErrors.reportAndReturnNull(
         message: String,
-        severity: CompilerMessageSeverity = CompilerMessageSeverity.STRONG_WARNING
+        isError: Boolean = false,
     ): Nothing? {
-        internalArgumentsParsingProblems += severity to message
+        val internalArgumentParsingProblems = if (isError) internalArgumentsParsingErrors else internalArgumentsParsingWarnings
+        internalArgumentParsingProblems += message
         return null
     }
 }
