@@ -1,7 +1,7 @@
 [versions]
 kotlin-release = "2.4.20"
 dexMemberList = "4.1.1"
-dokka = "2.2.0"
+dokka = "2.3.0"
 gradle-custom-user-data = "2.4.0"
 develocity = "4.3.3"
 develocity-plugin-adapter = "1.2.1"
