@@ -86,10 +86,20 @@ enum class StringListMetrics(
     JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("enable", "no-compatibility", "disable"))),
     USE_FIR(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     KOTLIN_COMPILER_EXECUTION_POLICY(CONCAT, AllowedListAnonymizer(listOf("in-process", "daemon"))),
-    JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
+    JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
+
+    // options overridden via the `export { swift { } }` DSL
+    SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES(CONCAT, AllowedListAnonymizer(listOf("moduleName", "rootPackage"))),
+
+    // options overridden via the `export { swift { xcodeIntegration { configure(dependency) { } } } }` DSL
+    SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES(
+        CONCAT,
+        AllowedListAnonymizer(listOf("exposed", "hidden", "moduleName", "rootPackage", "settings"))
+    ),
+    ;
 
 
     companion object {
-        const val VERSION = 5
+        const val VERSION = 6
     }
 }

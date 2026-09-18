@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportXcodeIntegrationConfiguration
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -547,6 +549,50 @@ internal object KotlinSourceSetMetrics : FusMetrics {
                         }
                     }
             }
+        }
+    }
+}
+
+internal object SwiftExportDslMetrics : FusMetrics {
+    internal fun collectSwiftExportConfigured(project: Project) {
+        project.addConfigurationMetrics {
+            it.put(BooleanMetrics.SWIFT_EXPORT_DSL_CONFIGURED, true)
+        }
+    }
+
+    internal fun collectModuleMetrics(project: Project, moduleNameOverridden: Boolean, rootPackageOverridden: Boolean) {
+        val overriddenOptions = buildList {
+            if (moduleNameOverridden) add("moduleName")
+            if (rootPackageOverridden) add("rootPackage")
+        }
+        if (overriddenOptions.isEmpty()) return
+        project.addConfigurationMetrics {
+            it.put(StringListMetrics.SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES, overriddenOptions)
+        }
+    }
+
+    internal fun collectXcodeIntegrationMetrics(
+        project: Project,
+        activatedXcodeIntegration: SwiftExportXcodeIntegrationConfiguration,
+    ) {
+        project.addConfigurationMetrics {
+            it.put(BooleanMetrics.SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED, true)
+        }
+        val overriddenOptions = buildSet {
+            if (activatedXcodeIntegration.settings.get().isNotEmpty()) add("settings")
+            for ((moduleName, rootPackage, visibility) in activatedXcodeIntegration.dependencyOverrides.get().values) {
+                if (moduleName != null) add("moduleName")
+                if (rootPackage != null) add("rootPackage")
+                when (visibility) {
+                    SwiftExportVisibility.EXPOSED -> add("exposed")
+                    SwiftExportVisibility.HIDDEN -> add("hidden")
+                    null -> Unit
+                }
+            }
+        }
+        if (overriddenOptions.isEmpty()) return
+        project.addConfigurationMetrics {
+            it.put(StringListMetrics.SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES, overriddenOptions.sorted())
         }
     }
 }
