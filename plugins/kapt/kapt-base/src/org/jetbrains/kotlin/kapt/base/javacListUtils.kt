@@ -47,6 +47,3 @@ fun pairedListToMap(valuePairs: List<Any>?): Map<String, Any?> {
 operator fun <T : Any> JavacList<T>.plus(other: JavacList<T>): JavacList<T> {
     return this.appendList(other)
 }
-
-fun <T : JCTree> List<Pair<T, String>>.getJavacList(): JavacList<T> =
-    mapJList(this) { it.first }
