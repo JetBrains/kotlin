@@ -5,10 +5,16 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.types.IrType
 
+/**
+ * This class cannot be marked as deprecated as there are methods in declarationBuilders.kt that still use the builders
+ * and are not yet part of the builders migration (addX)
+ */
+@OptIn(DeprecatedCompilerApi::class)
 class IrFieldBuilder : IrDeclarationBuilder() {
 
     lateinit var type: IrType
