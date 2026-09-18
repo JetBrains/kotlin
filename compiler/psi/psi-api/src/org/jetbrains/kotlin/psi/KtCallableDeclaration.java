@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.psi.PsiElement;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -123,7 +124,8 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
             replaceWith = @ReplaceWith(
                     expression = "this.setCallableTypeReference(null, typeRef)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setCallableTypeReference"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     @Nullable

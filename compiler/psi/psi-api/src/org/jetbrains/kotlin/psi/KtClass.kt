@@ -109,6 +109,7 @@ open class KtClass : KtClassOrObject {
         "this.getOrCreatePrimaryConstructor()",
         "org.jetbrains.kotlin.idea.base.psi.getOrCreatePrimaryConstructor",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @OptIn(KtNonPublicApi::class)
 fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor =
@@ -120,6 +121,7 @@ fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor =
         "this.getOrCreatePrimaryConstructorParameterList()",
         "org.jetbrains.kotlin.idea.base.psi.getOrCreatePrimaryConstructorParameterList",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @OptIn(KtNonPublicApi::class)
 fun KtClass.createPrimaryConstructorParameterListIfAbsent(): KtParameterList =

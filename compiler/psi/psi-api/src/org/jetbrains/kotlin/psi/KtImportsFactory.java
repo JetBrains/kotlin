@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.openapi.project.Project;
+import kotlin.DeprecationLevel;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.resolve.ImportPath;
@@ -29,7 +30,8 @@ import java.util.Map;
  * @deprecated This class is not used in the kotlin plugin/compiler and will be removed soon
  */
 @kotlin.Deprecated(
-        message = "This class is not used in the kotlin plugin/compiler and will be removed soon"
+        message = "This class is not used in the kotlin plugin/compiler and will be removed soon",
+        level = DeprecationLevel.ERROR
 )
 @Deprecated
 public class KtImportsFactory {

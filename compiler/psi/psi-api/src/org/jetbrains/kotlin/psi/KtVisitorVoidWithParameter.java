@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi;
 
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -357,7 +358,8 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
      * @deprecated This method is obsolete because {@link KtSelfType} is obsolete.
      */
     @kotlin.Deprecated(
-            message = "This method is obsolete because 'KtSelfType' is obsolete."
+            message = "This method is obsolete because 'KtSelfType' is obsolete.",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public void visitSelfTypeVoid(@NotNull KtSelfType type, P data) {
@@ -931,7 +933,8 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
      * @deprecated This method is obsolete because {@link KtSelfType} is obsolete.
      */
     @kotlin.Deprecated(
-            message = "This method is obsolete because 'KtSelfType' is obsolete."
+            message = "This method is obsolete because 'KtSelfType' is obsolete.",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     @Override

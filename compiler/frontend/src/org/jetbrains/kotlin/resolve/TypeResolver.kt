@@ -472,7 +472,7 @@ class TypeResolver(
             }
 
             @Deprecated("Deprecated in Java")
-            override fun visitSelfType(type: @Suppress("DEPRECATION") KtSelfType) {
+            override fun visitSelfType(type: @Suppress("DEPRECATION_ERROR") KtSelfType) {
                 c.trace.report(UNSUPPORTED.on(type, "Self-types are not supported"))
             }
 
