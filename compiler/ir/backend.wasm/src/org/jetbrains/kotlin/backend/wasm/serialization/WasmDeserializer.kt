@@ -698,7 +698,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         exports = deserializeExports(),
         mainFunctionWrappers = deserializeMainFunctionWrappers(),
         testFunctionDeclarators = deserializeTestFunctionDeclarators(),
-        equivalentFunctions = deserializeClosureCallExports(),
+        equivalentFunctions = deserializeEquivalentDeclarations(),
+        equivalentTypes = deserializeEquivalentDeclarations(),
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
         classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
         objectInstanceFieldInitializers = deserializeList(::deserializeIdSignature),
@@ -744,7 +745,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeExports() = deserializeList(::deserializeExport)
     private fun deserializeMainFunctionWrappers() = deserializeList(::deserializeMainFunctionWrapper)
     private fun deserializeTestFunctionDeclarators() = deserializeList(::deserializeIdSignature)
-    private fun deserializeClosureCallExports() = deserializeList { deserializePair(::deserializeString, ::deserializeIdSignature) }
+    private fun deserializeEquivalentDeclarations() = deserializeList { deserializePair(::deserializeString, ::deserializeIdSignature) }
     private fun deserializeJsModuleAndQualifierReferences() = deserializeSet(::deserializeJsModuleAndQualifierReference)
     private fun deserializeClassAssociatedObjectInstanceGetters() = deserializeList(::deserializeClassAssociatedObjects)
 
