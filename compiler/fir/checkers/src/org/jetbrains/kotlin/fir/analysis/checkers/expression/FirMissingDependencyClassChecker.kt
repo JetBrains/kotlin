@@ -81,8 +81,10 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
                 if (parameterSymbol in visitedParameterSymbols) return@forEach
                 val type = parameterSymbol.resolvedReturnTypeRef.coneType
                 considerType(type, missingTypesFromDefaultValue)
-                type.forEachType {
-                    considerType(it, if (type.isArrayTypeOrNullableArrayType) missingTypes else missingTypesFromDefaultValue)
+                if (type.isArrayTypeOrNullableArrayType) {
+                    type.forEachType {
+                        considerType(it, missingTypes)
+                    }
                 }
             }
         }
