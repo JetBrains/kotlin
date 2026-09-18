@@ -138,6 +138,30 @@ abstract class AbstractJsCodegenBoxInlineTest : AbstractJsCodegenBoxTestBase(
     }
 }
 
+abstract class AbstractJsSwcCodegenBoxTest : AbstractJsCodegenBoxTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION
+            }
+        }
+        builder.configureLoweredIrDumpHandlers()
+    }
+}
+
+abstract class AbstractJsSwcCodegenBoxInlineTest : AbstractJsCodegenBoxInlineTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION
+            }
+        }
+        builder.configureLoweredIrDumpHandlers()
+    }
+}
+
 abstract class AbstractJsKlibSyntheticAccessorsBoxTest : AbstractJsCodegenBoxTestBase(
     pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
     testGroupOutputDirPrefix = "klib/syntheticAccessors/"

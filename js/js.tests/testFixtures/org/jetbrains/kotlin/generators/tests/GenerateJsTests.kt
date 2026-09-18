@@ -155,6 +155,14 @@ fun main(args: Array<String>) {
                 model("boxInline")
             }
 
+            testClass<AbstractJsSwcCodegenBoxTest> {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
+            testClass<AbstractJsSwcCodegenBoxInlineTest> {
+                model("boxInline")
+            }
+
             testClass<AbstractFirJsLightTreeHeaderModeCodegenTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }

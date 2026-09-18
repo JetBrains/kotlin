@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.js.test.tools
 
-import kotlinx.serialization.encodeToString
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import java.io.File
 import kotlin.test.fail
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.platform.js.SwcConfig
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 object SwcRunner {
     private val swcPath = System.getProperty("swc.path")
@@ -32,7 +36,7 @@ object SwcRunner {
         )
 
         val configFile = artifactsDirectory.resolve(".swcrc").apply {
-            writeText(Json.encodeToString(config))
+            writeText(Json.encodeToString(config.toJsonElement()))
         }
 
         val command = arrayOf(
@@ -55,4 +59,21 @@ object SwcRunner {
             fail("swc exited with non-zero exit code $exitValue")
         }
     }
+}
+
+/**
+ * kotlinx.serialization fails to serialize generic map of Anys.
+ *
+ * This little helper manually transform the (possibly nested) maps into JsonElements.
+ */
+fun Any?.toJsonElement(): JsonElement = when (this) {
+    null -> JsonNull
+    is String -> JsonPrimitive(this)
+    is Number -> JsonPrimitive(this)
+    is Boolean -> JsonPrimitive(this)
+    is Map<*, *> -> JsonObject(this.map { it.key.toString() to it.value.toJsonElement() }.toMap())
+    is Iterable<*> -> JsonArray(this.map { it.toJsonElement() })
+    is Array<*> -> JsonArray(this.map { it.toJsonElement() })
+    is JsonElement -> this
+    else -> throw IllegalArgumentException("Unsupported type: ${this::class}")
 }
