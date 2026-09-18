@@ -1,0 +1,57 @@
+public final class Empty {
+    // source: 'fullValueClasses.kt'
+    public final static field INSTANCE: Empty
+    static method <clinit>(): void
+    private method <init>(): void
+    public method equals(p0: java.lang.Object): boolean
+    public method getSize(): int
+    public method hashCode(): int
+    public method toString(): java.lang.String
+}
+
+public final class FullValueClassesKt {
+    // source: 'fullValueClasses.kt'
+    public final static method copyPoint(p0: Point): Point
+    public final static method createPoint(p0: int): Point
+    public final static method same(p0: Point, p1: Point): boolean
+    public final static method size(p0: Result): int
+}
+
+public final class Point {
+    // source: 'fullValueClasses.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: Point): void
+    public method <init>(p0: int, p1: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public method equals(p0: java.lang.Object): boolean
+    public method getSize(): int
+    public final method getX(): int
+    public final method getY(): int
+    public method hashCode(): int
+    public method toString(): java.lang.String
+}
+
+public final class RegularResult {
+    // source: 'fullValueClasses.kt'
+    private final field size: int
+    public method <init>(p0: int): void
+    public method getSize(): int
+}
+
+public abstract class Result {
+    // source: 'fullValueClasses.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public abstract method getSize(): int
+}
+
+public final class SingleField {
+    // source: 'fullValueClasses.kt'
+    private final field value: int
+    public method <init>(p0: int): void
+    public method equals(p0: java.lang.Object): boolean
+    public final method getValue(): int
+    public method hashCode(): int
+    public method toString(): java.lang.String
+}

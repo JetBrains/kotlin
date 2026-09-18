@@ -1,0 +1,12 @@
+Classifier names:
+
+Callable names:
+  <init>
+  choose
+  equals
+  first
+  firstValue
+  hashCode
+  last
+  second
+  toString

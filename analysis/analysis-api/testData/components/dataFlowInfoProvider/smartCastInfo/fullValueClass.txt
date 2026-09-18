@@ -1,0 +1,5 @@
+expression: value
+smartCastInfo:
+    originalType: kotlin.Any
+    smartCastType: Point
+    isStable: true
