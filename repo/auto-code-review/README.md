@@ -68,25 +68,27 @@ When updating rule files, it is reasonable to run those tests. The tests are als
 `code-rules.md` files work akin to `.gitignore` files: each `code-rules.md` covers files inside its directory.
 
 Here is an example of the file:
-```markdown
+````markdown
 @../foo/code-rules.md
 
 @/bar/baz.md
 
 # Rule 1 Name
 
-Pattern: *.kt
-
-Pattern: !test
+Applies to:
+```
+*.kt
+!test
+```
 
 Rule 1 description
 
 # Rule 2 Name
 
-Pattern: test
+Applies to: `test`
 
 Rule 2 Description
-```
+````
 
 ### Include directives
 
@@ -106,21 +108,41 @@ The includes are transitive.
 
 Apart from name and description, each rule can have optional file patterns.
 Only files matching those patterns will be checked.
+
+The patterns are defined with the `Applies to:` directive right after the rule name.
+A single pattern can be put on the same line, in backticks:
+
+```markdown
+Applies to: `test`
+```
+
+Any number of patterns can be put into a code block right after the directive, one pattern per line:
+
+````markdown
+Applies to:
+```
+*.kt
+!test
+```
+````
+
 The pattern syntax follows [`.gitignore` syntax](https://git-scm.com/docs/gitignore).
 But don't be confused: the patterns in code rules files list which files are checked and not which files are ignored.
 
 An exclusion pattern can be defined using `!`.
 Exclusion patterns must go after all other patterns.
 A rule applies to a file if the file matches at least one of the regular patterns and none of the exclusion patterns.
-For example,
+For example, the patterns 
 
-```markdown
-Pattern: *.kt
-
-Pattern: !test
+````markdown
+Applies to:
 ```
+*.kt
+!test
+```
+````
 
-means that the rule applies to all Kotlin files except those inside directories named `test`.
+mean that the rule applies to all Kotlin files except those inside directories named `test`.
 
 When deciding whether a rule applies to a file, the tool checks two paths against the patterns:
 * If the file is inside the rule file directory, the relative path from that directory to the file is checked.
