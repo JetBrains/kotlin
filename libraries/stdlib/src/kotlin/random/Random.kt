@@ -372,7 +372,11 @@ public fun Random.nextLong(range: LongRange): Long = when {
     else -> nextLong()
 }
 
-
+/**
+ * An expectation for a platform-provided implementation of [Random.Default]. Actual value can be annotated with
+ * [kotlin.native.concurrent.ThreadLocal], meaning that this value should always be read explicitly and should never be cached in
+ * properties, global variables and whatnot.
+ */
 internal expect val defaultRandom: Random
 internal expect fun doubleFromParts(hi26: Int, low27: Int): Double
 
