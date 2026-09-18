@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSharedPackageJsonTask
+import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.junit.jupiter.api.Test
@@ -159,5 +160,30 @@ class SharedNpmSubprojectTest {
         assertEquals("kotlin/test.js", main.main.get())
         assertNull(main.types.orNull)
         assertEquals("1.2.3", main.packageVersion.get())
+    }
+
+    @Test
+    fun `the shared package json of a dependency project is an input of the dependent one`() {
+        val root = buildProject(projectBuilder = { withName("root") })
+        val lib = buildProjectWithMPP(projectBuilder = { withParent(root).withName("lib") }) {
+            kotlin { js { nodejs() } }
+        }
+        val app = buildProjectWithMPP(projectBuilder = { withParent(root).withName("app") }) {
+            kotlin {
+                js { nodejs() }
+                sourceSets.getByName("jsMain").dependencies {
+                    implementation(project(":lib"))
+                }
+            }
+        }
+        lib.evaluate()
+        app.evaluate()
+
+        val appMain = app.jsTarget().compilations.getByName("main")
+        val transitive = app.sharedPackageJsonCompilation("kotlinSharedPackageJson", appMain.outputModuleName.get()).transitiveArtifacts
+        assertTrue(
+            transitive.buildDependencies.getDependencies(null).any { it.name == "kotlinSharedPackageJson" && it.project == lib },
+            "app's shared package.json must be built after lib's",
+        )
     }
 }

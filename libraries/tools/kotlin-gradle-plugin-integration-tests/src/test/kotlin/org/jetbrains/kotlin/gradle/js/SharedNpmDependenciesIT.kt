@@ -48,6 +48,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
                 project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
                 project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
+                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-web")))
                 project.dependencies.add("kotlinWasmNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
             }
 
@@ -58,6 +59,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                         js { nodejs() }
                         sourceSets.getByName("jsMain").dependencies {
                             npm("is-even", "1.0.0")
+                            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
                         }
                     }
                 }
@@ -72,20 +74,48 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                         sourceSets.getByName("commonMain").dependencies {
                             npm("cowsay", "9.9.9")
                         }
+                        sourceSets.getByName("jsMain").dependencies {
+                            implementation(project(":lib-a"))
+                        }
                     }
                 }
             }
 
-            val libADependencies = mapOf("is-even" to "1.0.0")
-            val libBDependencies = mapOf("cowsay" to "9.9.9")
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-web") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        js { browser() }
+                        sourceSets.getByName("jsMain").dependencies {
+                            implementation(project(":lib-b"))
+                        }
+                    }
+                }
+            }
+
+            val libADependencies = mapOf(
+                "is-even" to "1.0.0",
+                "@js-joda/core" to "3.2.0",
+                "format-util" to "^1.0.5",
+            )
+            val libBJsDependencies = mapOf("cowsay" to "9.9.9") + libADependencies
+            val libBWasmDependencies = mapOf("cowsay" to "9.9.9")
+            val libWebDependencies = libBJsDependencies
 
             build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertTasksExecuted(
                     ":lib-a:kotlinSharedPackageJson",
                     ":lib-b:kotlinSharedPackageJson",
                     ":lib-b:kotlinWasmSharedPackageJson",
+                    ":lib-web:kotlinSharedPackageJson",
                     ":kotlinSetupSharedNpmProject",
                     ":kotlinWasmSetupSharedNpmProject",
+                )
+                assertTasksAreNotInTaskGraph(
+                    ":lib-a:compileKotlinJs",
+                    ":lib-b:compileKotlinJs",
+                    ":lib-b:compileKotlinWasmJs",
+                    ":lib-web:compileKotlinJs",
                 )
 
                 val js = projectPath.resolve("build/js/shared-npm-project")
@@ -98,6 +128,8 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                         "packages/emptyKts-lib-a-test",
                         "packages/emptyKts-lib-b",
                         "packages/emptyKts-lib-b-test",
+                        "packages/emptyKts-lib-web",
+                        "packages/emptyKts-lib-web-test",
                     ),
                 )
                 assertWorkspacePackageJson(
@@ -117,13 +149,27 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     js.resolve("packages/emptyKts-lib-b/package.json"),
                     name = "emptyKts-lib-b",
                     main = "kotlin/emptyKts-lib-b.js",
-                    dependencies = libBDependencies,
+                    dependencies = libBJsDependencies,
                 )
                 assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-b-test/package.json"),
                     name = "emptyKts-lib-b-test",
                     main = "kotlin/emptyKts-lib-b-test.js",
-                    dependencies = libBDependencies,
+                    dependencies = libBJsDependencies,
+                    requiredDevDependencies = karmaTools,
+                )
+
+                assertWorkspacePackageJson(
+                    js.resolve("packages/emptyKts-lib-web/package.json"),
+                    name = "emptyKts-lib-web",
+                    main = "kotlin/emptyKts-lib-web.js",
+                    dependencies = libWebDependencies,
+                )
+                assertWorkspacePackageJson(
+                    js.resolve("packages/emptyKts-lib-web-test/package.json"),
+                    name = "emptyKts-lib-web-test",
+                    main = "kotlin/emptyKts-lib-web-test.js",
+                    dependencies = libWebDependencies,
                     requiredDevDependencies = karmaTools,
                 )
 
@@ -135,13 +181,13 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     wasm.resolve("packages/emptyKts-lib-b/package.json"),
                     name = "emptyKts-lib-b",
                     main = "kotlin/emptyKts-lib-b.mjs",
-                    dependencies = libBDependencies,
+                    dependencies = libBWasmDependencies,
                 )
                 assertWorkspacePackageJson(
                     wasm.resolve("packages/emptyKts-lib-b-test/package.json"),
                     name = "emptyKts-lib-b-test",
                     main = "kotlin/emptyKts-lib-b-test.mjs",
-                    dependencies = libBDependencies,
+                    dependencies = libBWasmDependencies,
                     requiredDevDependencies = karmaTools,
                 )
             }
@@ -152,6 +198,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     ":lib-a:kotlinSharedPackageJson",
                     ":lib-b:kotlinSharedPackageJson",
                     ":lib-b:kotlinWasmSharedPackageJson",
+                    ":lib-web:kotlinSharedPackageJson",
                     ":kotlinSetupSharedNpmProject",
                     ":kotlinWasmSetupSharedNpmProject",
                 )
