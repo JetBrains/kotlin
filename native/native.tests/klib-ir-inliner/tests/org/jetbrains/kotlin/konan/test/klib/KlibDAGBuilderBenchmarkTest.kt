@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.uniqueName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -35,6 +36,13 @@ import kotlin.time.measureTime
 @Execution(ExecutionMode.SAME_THREAD)
 class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
 
+    private lateinit var testInfo: TestInfo
+
+    @BeforeEach
+    fun setUp(testInfo: TestInfo) {
+        this.testInfo = testInfo
+    }
+
     /**
      * Benchmarking results (Apple M2 Max):
      * - roots: []
@@ -44,7 +52,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - median duration is < 1ms
      */
     @Test
-    fun `stdlib and platform libraries only (no roots)`(testInfo: TestInfo) {
+    fun `stdlib and platform libraries only (no roots)`() {
         benchmark(
             testName = testInfo.testMethod.get().name,
             extraLibraryPaths = emptySet(),
@@ -62,7 +70,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - median duration is 706 ms
      */
     @Test
-    fun `stdlib and platform libraries only (roots = stdlib + Foundation)`(testInfo: TestInfo) {
+    fun `stdlib and platform libraries only (roots = stdlib + Foundation)`() {
         benchmark(
             testName = testInfo.testMethod.get().name,
             extraLibraryPaths = emptySet(),
@@ -80,7 +88,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - median duration is 46 ms
      */
     @Test
-    fun `stdlib and platform libraries with 20+0 user libraries`(testInfo: TestInfo) {
+    fun `stdlib and platform libraries (roots = 20 + 0 user libs)`() {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 20, cInteropLibsNumber = 0)
 
         benchmark(
@@ -100,7 +108,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - median duration is 196 ms
      */
     @Test
-    fun `stdlib and platform libraries with 15+5 user libraries`(testInfo: TestInfo) {
+    fun `stdlib and platform libraries (roots = 15 + 5 user libs)`() {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 15, cInteropLibsNumber = 5)
 
         benchmark(
@@ -120,7 +128,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - median duration is 577 ms
      */
     @Test
-    fun `stdlib and platform libraries with 10+10 user libraries`(testInfo: TestInfo) {
+    fun `stdlib and platform libraries (roots = 10 + 10 user libs)`() {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 10, cInteropLibsNumber = 10)
 
         benchmark(
@@ -140,7 +148,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - median duration is 234 ms
      */
     @Test
-    fun `stdlib and platform libraries with 100+0 user libraries`(testInfo: TestInfo) {
+    fun `stdlib and platform libraries (roots = 100 + 0 user libs)`() {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 100, cInteropLibsNumber = 0)
 
         benchmark(
@@ -160,7 +168,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - median duration is 3.39 s
      */
     @Test
-    fun `stdlib and platform libraries with 75+25 user libraries`(testInfo: TestInfo) {
+    fun `stdlib and platform libraries (roots = 75 + 25 user libs)`() {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 75, cInteropLibsNumber = 25)
 
         benchmark(
@@ -180,7 +188,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - median duration is 3.43 s
      */
     @Test
-    fun `stdlib and platform libraries with 50+50 user libraries`(testInfo: TestInfo) {
+    fun `stdlib and platform libraries (roots = 50 + 50 user libs)`() {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 75, cInteropLibsNumber = 25)
 
         benchmark(
