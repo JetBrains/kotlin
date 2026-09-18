@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.name.ClassId
@@ -98,7 +99,7 @@ private fun FirMemberDeclaration.toMemberRefVisibility(): SnippetArtifactMetadat
  */
 internal fun replMemberOverloadSignature(declaration: FirCallableDeclaration): String? {
     if (declaration !is FirFunction) return null
-    fun FirTypeRef.render(): String = coneTypeOrNull?.toString() ?: "?"
+    fun FirTypeRef.render(): String = coneTypeOrNull?.computeJvmDescriptorRepresentation() ?: "?"
     val receiver = declaration.receiverParameter?.typeRef?.render()
     val contextTypes = declaration.contextParameters.map { it.returnTypeRef.render() }
     val valueTypes = declaration.valueParameters.map { it.returnTypeRef.render() }

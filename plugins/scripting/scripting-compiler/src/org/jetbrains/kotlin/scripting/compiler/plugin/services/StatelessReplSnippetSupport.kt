@@ -6,29 +6,17 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
-import org.jetbrains.kotlin.fir.declarations.FirScriptReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.CallableId
@@ -63,21 +51,6 @@ internal fun SnippetArtifactMetadata.MemberRef.Visibility.toFirVisibility(): Vis
     SnippetArtifactMetadata.MemberRef.Visibility.PROTECTED -> Visibilities.Protected
     SnippetArtifactMetadata.MemberRef.Visibility.PRIVATE -> Visibilities.Private
     SnippetArtifactMetadata.MemberRef.Visibility.UNKNOWN -> null
-}
-
-internal fun updateVisibility(
-    fir: FirMemberDeclaration,
-    newVisibility: Visibility,
-    ownerSymbol: FirRegularClassSymbol,
-) {
-    val current = fir.status
-    val modality = current.modality ?: Modality.FINAL
-    val forClass = fir is FirRegularClass || fir is FirTypeAlias
-    val newEffective = newVisibility.toEffectiveVisibility(ownerSymbol, forClass = forClass)
-    val newStatus = (current as? FirDeclarationStatusImpl)
-        ?.resolved(newVisibility, modality, newEffective)
-        ?: FirResolvedDeclarationStatusImpl(newVisibility, modality, newEffective)
-    fir.replaceStatus(newStatus)
 }
 
 @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)

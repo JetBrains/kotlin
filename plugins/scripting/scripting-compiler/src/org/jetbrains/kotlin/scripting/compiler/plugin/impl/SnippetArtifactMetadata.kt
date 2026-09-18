@@ -12,6 +12,13 @@ import java.io.DataOutputStream
 
 /**
  * REPL-specific metadata for reconstructing REPL history from snippets compiled to classfiles
+ *
+ * Intended for transient use during a single REPL session when the stateless compilation of the snippet
+ * (see `REPL_SNIPPET_STATELESS_MODE_OPTION`) is used. Produced by the compiler (scripting plugin) on compiling the snippet
+ * and consumed by the compiler (scripting plugin) on compiling the subsequent snippets to restore the state of the REPL session.
+ *
+ * Versioning should provide compatibility for some peace of mind and error detection, but in general this artefact is not intended
+ * for any long preservation or publishing.
  */
 data class SnippetArtifactMetadata(
     val version: Int,
@@ -59,8 +66,8 @@ data class SnippetArtifactMetadata(
     }
 
     companion object {
-        const val CURRENT_VERSION: Int = 8
-        const val MIN_SUPPORTED_VERSION: Int = 8
+        const val CURRENT_VERSION: Int = 1
+        const val MIN_SUPPORTED_VERSION: Int = 1
     }
 }
 

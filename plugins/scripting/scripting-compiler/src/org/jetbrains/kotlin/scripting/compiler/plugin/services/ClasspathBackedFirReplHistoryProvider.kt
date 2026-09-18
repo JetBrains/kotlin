@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -16,12 +18,15 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.extensions.FirReplHistoryProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -170,4 +175,19 @@ internal class ClasspathBackedFirReplHistoryProvider(
         val signature = (fir as? FirCallableDeclaration)?.let { replMemberOverloadSignature(it) }
         return candidates.firstOrNull { it.signature == signature } ?: candidates.first()
     }
+}
+
+private fun updateVisibility(
+    fir: FirMemberDeclaration,
+    newVisibility: Visibility,
+    ownerSymbol: FirRegularClassSymbol,
+) {
+    val current = fir.status
+    val modality = current.modality ?: Modality.FINAL
+    val forClass = fir is FirRegularClass || fir is FirTypeAlias
+    val newEffective = newVisibility.toEffectiveVisibility(ownerSymbol, forClass = forClass)
+    val newStatus = (current as? FirDeclarationStatusImpl)
+        ?.resolved(newVisibility, modality, newEffective)
+        ?: FirResolvedDeclarationStatusImpl(newVisibility, modality, newEffective)
+    fir.replaceStatus(newStatus)
 }
