@@ -8,6 +8,7 @@
 package kotlin.wasm.internal
 
 import kotlin.coroutines.*
+import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
@@ -27,6 +28,7 @@ internal suspend inline fun getCoroutineContext(): CoroutineContext =
     getCoroutineContextImpl()
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal suspend fun getCoroutineContextImpl(): CoroutineContext =
     getContinuation<Any?>().context
 
@@ -77,8 +79,25 @@ internal val EmptyContinuation: Continuation<Any?> = Continuation(EmptyCoroutine
 internal fun <T> interceptedIntrinsic(cont: Continuation<T>): Continuation<T> =
     implementedAsIntrinsic
 
+// Is replaced with suspendCoroutineUninterceptedOrReturnStackSwitching or
+// suspendCoroutineUninterceptedOrReturnStateMachine
+//
+// TODO: `suspendCoroutineUninterceptedOrReturn` is replaced and it's body does not play role,
+// but for stdlib tests we cannot place there NotImplementedError yet and we use
+// outdated suspendCoroutineUninterceptedOrReturnIntrinsic with non-inlinable block.
+// Replace the body with `throw NotImplementedError` and remove suppress `USAGE_IS_NOT_INLINABLE`.
+@Suppress("UNUSED_PARAMETER", "USAGE_IS_NOT_INLINABLE")
 @InlineOnly
 @PublishedApi
+@DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
-internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(noinline block: (Continuation<T>) -> Any?): T =
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
     suspendCoroutineUninterceptedOrReturnIntrinsic(block)
+// TODO: replace after bootstrap
+//    throw NotImplementedError("Suspend coroutine unintercepted")
+
+// TODO: remove after bootstrap
+@PublishedApi
+@UsedFromCompilerGeneratedCode
+internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsic(block: (Continuation<T>) -> Any?): T =
+    returnIfSuspended<T>(block(getContinuation<T>()))
