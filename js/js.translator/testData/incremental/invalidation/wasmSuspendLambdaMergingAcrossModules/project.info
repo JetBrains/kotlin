@@ -1,5 +1,6 @@
 TARGET_BACKEND: WASM
 // ^^^ Link-time deduplication of equivalent type declarations is Wasm-only.
+// KT-89418, KT-89474
 
 MODULES: lib1, main
 
