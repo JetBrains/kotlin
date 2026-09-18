@@ -152,7 +152,7 @@ internal class SymbolLightAccessorMethod private constructor(
             val modality = when {
                 // Annotation class members are abstract on the JVM regardless of their Kotlin modality
                 containingClass.isAnnotationType -> PsiModifier.ABSTRACT
-                else -> withPropertySymbol { propertySymbol -> computeMethodModality(propertySymbol, containingClass) }
+                else -> withPropertySymbol { computeMethodModality(it, containingClass) }
             }
 
             GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
