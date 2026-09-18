@@ -15,8 +15,12 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.load.java.JvmAbi
 
+/**
+ * The `DefaultImpls` nested class of an interface, which holds the implementations of the interface members that are not compiled
+ * to JVM `default` methods. It has no symbol of its own and is backed by the interface symbol.
+ */
 internal class SymbolLightClassForInterfaceDefaultImpls(private val containingClass: SymbolLightClassForInterface) :
-    SymbolLightClassForInterface(
+    SymbolLightClassForNamedClassLike(
         containingClass.classOrObjectDeclaration,
         containingClass.symbolPointer,
         containingClass.useSiteModule,
@@ -40,10 +44,12 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
-    override fun computeModifierList(): PsiModifierList = SymbolLightClassModifierList(
-        containingDeclaration = this,
-        modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL),
-    )
+    override fun getModifierList(): PsiModifierList = cachedValue {
+        SymbolLightClassModifierList(
+            containingDeclaration = this,
+            modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL),
+        )
+    }
 
     override fun classKind(): KaClassKind = KaClassKind.CLASS
 
@@ -62,6 +68,8 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     }
 
     override fun getContainingClass() = containingClass
+
+    override val ownConstructors: Array<PsiMethod> get() = PsiMethod.EMPTY_ARRAY
 
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
 
