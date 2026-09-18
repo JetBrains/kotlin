@@ -6,15 +6,6 @@
 #include "Memory.h"
 #include "mm/MemoryPrivate.hpp"
 
-// tvOS/watchOS sysroots mark fork(2) unavailable; dump there stays in-process.
-#if !KONAN_WINDOWS && !KONAN_TVOS && !KONAN_WATCHOS
-#define KONAN_DUMP_MAY_FORK 1
-#include <errno.h>
-#include <string.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#endif
-
 #include "alloc/Allocator.hpp"
 #include "CallsChecker.hpp"
 #include "Exceptions.h"
@@ -241,7 +232,7 @@ extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
 
 namespace {
 
-bool dumpMemoryFromRuntime(int fd, bool omitPayloads, bool gzip, bool shortenPause) {
+bool dumpMemoryFromRuntime(int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
     mm::DumpGuard dumpGuard;
     if (!dumpGuard) {
         return false;
@@ -256,30 +247,7 @@ bool dumpMemoryFromRuntime(int fd, bool omitPayloads, bool gzip, bool shortenPau
     // It's fine to wait for that suspension and execute long-running operations (I/O) here.
     mm::WaitForThreadsSuspension();
 
-#if KONAN_DUMP_MAY_FORK
-    if (shortenPause) {
-        pid_t pid = fork();
-        if (pid == 0) {
-            bool success = mm::DumpMemory(fd, omitPayloads, gzip);
-            _exit(success ? 0 : 1);
-        }
-        if (pid > 0) {
-            // Resume mutators immediately; the child writes the dump from a COW snapshot.
-            // Keep gcLock until waitpid returns so the parent GC cannot mutate pages
-            // the child is still reading.
-            mm::ResumeThreads();
-            int status = 0;
-            if (waitpid(pid, &status, 0) < 0) {
-                RuntimeLogError({kotlin::logging::Tag::kMemoryDump}, "waitpid failed: %s", strerror(errno));
-                return false;
-            }
-            return WIFEXITED(status) && WEXITSTATUS(status) == 0;
-        }
-        RuntimeLogError({kotlin::logging::Tag::kMemoryDump}, "fork failed: %s", strerror(errno));
-        // Fall through to an in-process dump.
-    }
-#endif
-    bool success = mm::DumpMemory(fd, omitPayloads, gzip);
+    bool success = mm::DumpMemory(fd, omitPrimitiveArrayPayloads, gzip);
     mm::ResumeThreads();
     return success;
 }
@@ -287,12 +255,12 @@ bool dumpMemoryFromRuntime(int fd, bool omitPayloads, bool gzip, bool shortenPau
 } // namespace
 
 extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd) {
-    return dumpMemoryFromRuntime(fd, false, false, /* shortenPause */ false);
+    return dumpMemoryFromRuntime(fd, false, false);
 }
 
 extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryWithOptions(
-        ObjHeader*, int fd, bool omitPayloads, bool gzip) {
-    return dumpMemoryFromRuntime(fd, omitPayloads, gzip, /* shortenPause */ true);
+        ObjHeader*, int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
+    return dumpMemoryFromRuntime(fd, omitPrimitiveArrayPayloads, gzip);
 }
 
 extern "C" void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, KBoolean value) {

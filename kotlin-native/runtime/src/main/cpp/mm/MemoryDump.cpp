@@ -108,8 +108,8 @@ public:
         if (dupFd < 0) {
             throw std::system_error(errno, std::generic_category());
         }
-        // "wb1": gzip container at Z_BEST_SPEED. The dump often runs in a forked
-        // child; finishing quickly limits how long COW pages stay duplicated.
+        // "wb1": gzip container at Z_BEST_SPEED. The dump runs during STW;
+        // finishing quickly keeps that pause shorter.
         gz_ = gzdopen(dupFd, "wb1");
         if (gz_ == nullptr) {
             KN_CLOSE(dupFd);
@@ -156,11 +156,12 @@ DumpGuard::~DumpGuard() {
 
 class MemoryDumper {
 public:
-    explicit MemoryDumper(DumpWriter& writer, bool omitPayloads) : writer_(writer), omitPayloads_(omitPayloads) {}
+    explicit MemoryDumper(DumpWriter& writer, bool omitPrimitiveArrayPayloads)
+        : writer_(writer), omitPrimitiveArrayPayloads_(omitPrimitiveArrayPayloads) {}
 
-    // Dumps the memory and returns the success flag.
+    // Dumps the memory.
     void Dump() {
-        RuntimeLogInfo({kTagMemDump}, "Starting to dump memory omitPayloads=%d", omitPayloads_ ? 1 : 0);
+        RuntimeLogInfo({kTagMemDump}, "Starting to dump memory omitPrimitiveArrayPayloads=%d", omitPrimitiveArrayPayloads_ ? 1 : 0);
 
         DumpStr("Kotlin/Native dump 1.0.8");
         DumpBool(konan::isLittleEndian());
@@ -275,7 +276,7 @@ private:
 
         // Keep object and native-ptr arrays: they are the heap graph. Primitive
         // arrays (including String contents) are the bulky/sensitive payloads.
-        if (omitPayloads_ && type != theArrayTypeInfo && type != theNativePtrArrayTypeInfo) {
+        if (omitPrimitiveArrayPayloads_ && type != theArrayTypeInfo && type != theNativePtrArrayTypeInfo) {
             DumpU32(0);
             return;
         }
@@ -471,7 +472,7 @@ private:
     const uint8_t TYPE_FLAG_OBJECT_ARRAY = 1 << 2;
 
     DumpWriter& writer_;
-    bool omitPayloads_;
+    bool omitPrimitiveArrayPayloads_;
 
     // A set of already dumped type pointers.
     std::unordered_set<const TypeInfo*> dumpedTypes_;
@@ -487,17 +488,17 @@ void PrepareForMemoryDump() {
     mm::GlobalData::Instance().threadRegistry().PublishAll();
 }
 
-void DumpMemoryOrThrow(int fd, bool omitPayloads, bool gzip) {
+void DumpMemoryOrThrow(int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
 #if KONAN_HAS_ZLIB
     if (gzip) {
         GzipStream gz(fd);
         DumpWriter writer(gz.get());
-        MemoryDumper(writer, omitPayloads).Dump();
+        MemoryDumper(writer, omitPrimitiveArrayPayloads).Dump();
         gz.closeOrThrow();
         return;
     }
 #else
-    // Still produce a dump when gzip was requested: omitPayloads remains usable.
+    // Still produce a dump when gzip was requested: omitPrimitiveArrayPayloads remains usable.
     if (gzip) {
         RuntimeLogInfo({kTagMemDump}, "gzip is not available on this target; writing an uncompressed dump");
     }
@@ -509,7 +510,7 @@ void DumpMemoryOrThrow(int fd, bool omitPayloads, bool gzip) {
     }
 
     DumpWriter writer(file);
-    MemoryDumper(writer, omitPayloads).Dump();
+    MemoryDumper(writer, omitPrimitiveArrayPayloads).Dump();
     writer.flush();
 }
 
@@ -517,12 +518,12 @@ bool DumpMemory(int fd) noexcept {
     return DumpMemory(fd, false, false);
 }
 
-bool DumpMemory(int fd, bool omitPayloads, bool gzip) noexcept {
+bool DumpMemory(int fd, bool omitPrimitiveArrayPayloads, bool gzip) noexcept {
     PrepareForMemoryDump();
 
     bool success = true;
     try {
-        DumpMemoryOrThrow(fd, omitPayloads, gzip);
+        DumpMemoryOrThrow(fd, omitPrimitiveArrayPayloads, gzip);
     } catch (const std::system_error& e) {
         success = false;
         RuntimeLogError({kTagMemDump}, "Memory dump error: %s", e.what());

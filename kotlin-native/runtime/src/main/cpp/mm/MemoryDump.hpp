@@ -40,14 +40,14 @@ bool DumpMemory(int fd) noexcept;
  * Like [DumpMemory], with optional omitted primitive-array payloads and gzip
  * wrapping. Must be called during STW.
  *
- * When `omitPayloads` is true, primitive array contents are omitted (count is
- * preserved). Object arrays and native-pointer arrays are still written in full
- * so the heap graph can be reconstructed.
+ * When `omitPrimitiveArrayPayloads` is true, primitive array contents are omitted
+ * (count is preserved). Object arrays and native-pointer arrays are still written
+ * in full so the heap graph can be reconstructed.
  *
  * When `gzip` is true, the dump is written as a gzip member. `kdumputil` detects
  * the gzip magic and decompresses before parsing. Ignored on targets whose
  * sysroot has no libz (tvOS, watchOS); those dumps stay uncompressed.
  */
-bool DumpMemory(int fd, bool omitPayloads, bool gzip) noexcept;
+bool DumpMemory(int fd, bool omitPrimitiveArrayPayloads, bool gzip) noexcept;
 
 } // namespace kotlin::mm
