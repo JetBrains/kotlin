@@ -65,6 +65,7 @@ internal fun createSirTypedListDeclarations(
         val parent = declaration.parent
         val typedListProtocol = buildProtocol {
             name = "${declaration.name}_Typed"
+            primaryAssociatedTypes.add("Element")
             protocols.add(if (isMutable) KotlinRuntimeSupportModule.typedMutableList else KotlinRuntimeSupportModule.typedList)
         }.apply { this.parent = parent }
         val typedListExtension = buildExtension {

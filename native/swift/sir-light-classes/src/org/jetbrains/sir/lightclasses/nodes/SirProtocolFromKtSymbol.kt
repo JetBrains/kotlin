@@ -44,6 +44,8 @@ internal open class SirProtocolFromKtSymbol(
     override val name: String by lazyWithSessions {
         (this.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
     }
+    override val primaryAssociatedTypes: List<String>
+        get() = emptyList()
     override var parent: SirDeclarationParent
         get() = withSessions {
             ktSymbol.getSirParent()
@@ -182,6 +184,7 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val attributes: List<SirAttribute>
         get() = listOf(SirAttribute.ObjC("_${target.swiftFqName}".replace("`", "").replace('.', '_')))
     override val name: String get() = "_${target.name}"
+    override val primaryAssociatedTypes: List<String> get() = emptyList()
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
     override val superClass: SirNominalType? get() = null
     override val protocols: List<SirProtocol>
@@ -228,6 +231,7 @@ internal class SirImplementationMarkerProtocolFromKtSymbol(
         }
     }
     override val name: String get() = "__${target.name}"
+    override val primaryAssociatedTypes: List<String> get() = emptyList()
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
     override val superClass: SirNominalType? get() = null
     override val protocols: List<SirProtocol>
