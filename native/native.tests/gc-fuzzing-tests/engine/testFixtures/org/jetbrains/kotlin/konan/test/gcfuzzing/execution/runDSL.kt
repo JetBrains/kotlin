@@ -22,11 +22,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.Exec
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.TestFiltering
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Output
-import org.junit.jupiter.api.Assumptions
 import java.io.File
 import kotlin.time.Duration
 
@@ -40,7 +38,6 @@ fun AbstractNativeSimpleTest.runDSL(
 ) {
     val baseDir = resolveTestBuildDir(testName)
     val dslGeneratedDir = resolveDslDir(testName)
-    Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
     val cinterop = cinteropToLibrary(
         dslGeneratedDir.resolve(dslOutput.cinterop.defFilename),
         baseDir,

@@ -76,7 +76,7 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
         linkingFlags: List<String>,
         expectedMagic: List<Int>,
     ) {
-        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
 
         val image = createUniversal(imageType = includedImageType)
 
