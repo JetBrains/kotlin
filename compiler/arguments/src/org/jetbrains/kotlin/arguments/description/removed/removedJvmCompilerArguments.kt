@@ -206,4 +206,23 @@ See KT-45671 for more details.""".asReleaseDependent()
             removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
+
+    compilerArgument {
+        name = "Xrepl"
+        compilerName = "repl"
+        val introducedVersion = KotlinReleaseVersion.v2_2_0
+        description = ReleaseDependent(
+            "Run Kotlin REPL.",
+            introducedVersion..KotlinReleaseVersion.v2_4_20 to "Run Kotlin REPL (deprecated)"
+        )
+        valueType = BooleanType.defaultFalse
+        deprecatedMessage = "REPL is deprecated."
+
+        lifecycle(
+            introducedVersion = introducedVersion,
+            deprecatedVersion = introducedVersion, // According to https://github.com/JetBrains/kotlin/commit/79a2a82637064e19f81e1d837b5b7f6ff20988be
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
 }
