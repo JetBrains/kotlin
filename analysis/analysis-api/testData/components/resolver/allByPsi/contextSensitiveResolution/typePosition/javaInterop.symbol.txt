@@ -283,7 +283,6 @@ KtNameReferenceExpression(282,290): 'instance'
 KtOperationReferenceExpression(291,293): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(294,303): 'SCOption1'
@@ -364,7 +363,6 @@ KtNameReferenceExpression(351,359): 'instance'
 KtOperationReferenceExpression(360,362): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(363,372): 'SCOption2'
@@ -673,7 +671,6 @@ KtNameReferenceExpression(657,665): 'instance'
 KtOperationReferenceExpression(666,668): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(669,678): 'SCOption1'
@@ -742,7 +739,6 @@ KtNameReferenceExpression(701,709): 'instance'
 KtOperationReferenceExpression(710,712): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(713,722): 'SCOption2'

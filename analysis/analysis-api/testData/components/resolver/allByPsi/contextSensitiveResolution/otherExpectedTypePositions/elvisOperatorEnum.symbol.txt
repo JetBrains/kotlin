@@ -223,7 +223,6 @@ KtNameReferenceExpression(372,379): 'Option1'
 KtOperationReferenceExpression(380,382): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(383,390): 'Option2'
@@ -280,7 +279,6 @@ KtNameReferenceExpression(414,421): 'Option1'
 KtOperationReferenceExpression(422,424): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(425,432): 'Option2'
@@ -331,7 +329,6 @@ KtNameReferenceExpression(455,463): 'enumProp'
 KtOperationReferenceExpression(464,466): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(467,474): 'Option2'
@@ -382,7 +379,6 @@ KtNameReferenceExpression(497,505): 'enumProp'
 KtOperationReferenceExpression(506,508): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(509,519): 'stringProp'
@@ -433,7 +429,6 @@ KtNameReferenceExpression(542,552): 'stringProp'
 KtOperationReferenceExpression(553,555): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(556,564): 'enumProp'
@@ -491,7 +486,6 @@ KtValueArgumentList(596,598): '()'
 KtOperationReferenceExpression(599,601): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(602,610): 'enumProp'
@@ -566,7 +560,6 @@ KtNameReferenceExpression(632,639): 'Option1'
 KtOperationReferenceExpression(640,642): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(643,650): 'Option2'
@@ -643,7 +636,6 @@ KtNameReferenceExpression(672,680): 'enumProp'
 KtOperationReferenceExpression(681,683): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(684,694): 'stringProp'
@@ -718,7 +710,6 @@ KtNameReferenceExpression(716,724): 'enumProp'
 KtOperationReferenceExpression(725,727): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtCallExpression(728,739): 'getOption()'
