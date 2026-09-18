@@ -156,6 +156,15 @@ typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCom
 // TODO consider dropping and using disambiguation of the sources collection (KT-83502)
 val ScriptCompilationConfigurationKeys.resolvedImportScripts by PropertiesCollection.key<List<SourceCode>>(isTransient = true)
 
+// The hashes are taken from the sources about to be compiled rather than reread from the disk, so that the compiled script is
+// always paired with the hashes of exactly the sources it was compiled from. Only the file-backed ones can be rechecked later.
+fun ScriptCompilationConfiguration.Builder.importedScriptsHashesFrom(resolvedImports: List<SourceCode>) {
+    val hashes = resolvedImports.mapNotNull { source ->
+        source.locationId?.takeIf { File(it).isFile }?.to(importedScriptHash(source.text))
+    }.toMap()
+    if (hashes.isNotEmpty()) importedScriptsHashes(hashes)
+}
+
 // left for binary compatibility with Kotlin Notebook plugin
 fun refineScriptCompilationConfiguration(
     script: SourceCode,
@@ -254,7 +263,10 @@ fun ScriptCompilationConfiguration.resolveImportsToVirtualFiles(
         }
     }
 
-    val updatedConfiguration = if (resolvedImports.isNullOrEmpty()) this else this.with { resolvedImportScripts(resolvedImports) }
+    val updatedConfiguration = if (resolvedImports.isNullOrEmpty()) this else this.with {
+        resolvedImportScripts(resolvedImports)
+        importedScriptsHashesFrom(resolvedImports)
+    }
     return updatedConfiguration.asSuccess()
 }
 
