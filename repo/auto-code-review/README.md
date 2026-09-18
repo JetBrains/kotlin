@@ -5,7 +5,15 @@ and instructing it to check the changed files against rules defined in `code-rul
 
 ## Requirements for running locally
 
-Install Claude Code CLI and log in: https://code.claude.com/docs/en/quickstart.
+Install Claude Code CLI: https://code.claude.com/docs/en/quickstart.
+
+The tool runs Claude Code in [bare mode](#operation), which supports only API authentication.
+Logging in with a Claude subscription is not supported.
+Make sure that one of the following is defined:
+
+* `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN`, as an environment variable
+  or in the `env` section of `~/.claude/settings.json`;
+* `apiKeyHelper` in `~/.claude/settings.json`.
 
 ## Run locally
 
