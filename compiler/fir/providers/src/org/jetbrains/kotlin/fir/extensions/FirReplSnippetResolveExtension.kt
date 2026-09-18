@@ -52,6 +52,9 @@ abstract class FirReplHistoryProvider : FirSessionComponent {
     abstract fun getSnippetCount(): Int
     open fun getSnippetImports(symbol: FirReplSnippetSymbol): List<FirImport>? = null
 
+    /**
+     * The snippet whose class declares [declaration] directly.
+     */
     fun getContainingSnippet(declaration: FirDeclaration): FirReplSnippetSymbol? {
         if (declaration.isReplSnippetDeclaration != true) return null
         val containerClassId = declaration.snippetContainerClassId() ?: return null
