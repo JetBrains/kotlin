@@ -209,6 +209,12 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
                 "SWIFT_ENABLE_EXPLICIT_MODULES=NO",
             )
 
+            // KT-89285: xcodebuild echoes every clang/ld invocation, several megabytes per run.
+            // Without --info, ask for warnings and errors only, so failures stay visible.
+            if (!logger.isInfoEnabled) {
+                args.add("-quiet")
+            }
+
             args.addAll(parameters.additionalXcodeArgs.get())
 
             exec.commandLine(args)
