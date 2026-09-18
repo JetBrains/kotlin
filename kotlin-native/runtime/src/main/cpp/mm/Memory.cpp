@@ -230,18 +230,37 @@ extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
     mm::GlobalData::Instance().gcScheduler().schedule();
 }
 
-extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd) {
+namespace {
+
+bool dumpMemoryFromRuntime(int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
+    mm::DumpGuard dumpGuard;
+    if (!dumpGuard) {
+        return false;
+    }
+
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     threadData->suspensionData().requestThreadsSuspension("Memory dump");
-    CallsCheckerIgnoreGuard guard;
+    CallsCheckerIgnoreGuard ignoreGuard;
     // We're in the runnable state, but everything else (including the GC thread) will be suspended.
     // It's fine to wait for that suspension and execute long-running operations (I/O) here.
     mm::WaitForThreadsSuspension();
-    bool success = mm::DumpMemory(fd);
+
+    bool success = mm::DumpMemory(fd, omitPrimitiveArrayPayloads, gzip);
     mm::ResumeThreads();
     return success;
+}
+
+} // namespace
+
+extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd) {
+    return dumpMemoryFromRuntime(fd, false, false);
+}
+
+extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryWithOptions(
+        ObjHeader*, int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
+    return dumpMemoryFromRuntime(fd, omitPrimitiveArrayPayloads, gzip);
 }
 
 extern "C" void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, KBoolean value) {

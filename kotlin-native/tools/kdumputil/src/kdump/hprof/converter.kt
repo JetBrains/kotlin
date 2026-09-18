@@ -577,10 +577,17 @@ class Converter(
             else -> {
                 val [runtimeElementType, hprofElementType] =
                         type.relativeName.primitiveArrayClassNameToElementTypePair()
+                // Omitted primitive payloads: count is present, byteArray is empty.
+                // Zero-fill so MAT can still compute shallowSize from the hprof dump.
+                val payload = if (byteArray.isEmpty() && count > 0) {
+                    ByteArray(count * size(runtimeElementType))
+                } else {
+                    byteArray
+                }
                 hprofPrimitiveArrayDump(
                         objectId,
                         hprofElementType,
-                        byteArray,
+                        payload,
                         offset,
                         count,
                         runtimeElementType
