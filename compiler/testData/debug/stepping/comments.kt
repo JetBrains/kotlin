@@ -32,7 +32,7 @@ class A {
     }
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:6 box
 // test.kt:16 <init>
 // test.kt:6 box

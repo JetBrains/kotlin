@@ -19,7 +19,7 @@ fun box(): String =
     foo() +
             C().foo()
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:19 box
 // test.kt:10 foo
 // test.kt:19 box

@@ -10,7 +10,7 @@ fun box() {
     y++
 }
 
-// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
 // test.kt:8 box:
 // test.kt:2 <init>:
 // test.kt:8 box:
@@ -20,7 +20,7 @@ fun box() {
 // test.kt:10 box: a:A=A, y:int=1:int
 // test.kt:11 box: a:A=A, y:int=2:int
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:8 box:
 // test.kt:2 <init>:
 // test.kt:8 box:

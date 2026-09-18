@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 
 var initOrder = ""
 

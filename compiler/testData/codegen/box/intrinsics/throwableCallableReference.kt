@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 
 import kotlin.reflect.KFunction2
 import kotlin.reflect.KFunction1

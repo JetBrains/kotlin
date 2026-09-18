@@ -1,5 +1,5 @@
 // LANGUAGE: +EagerLambdaAnalysis, +CallCompletionRefinementsFor25, +UnitConversionsOnArbitraryExpressions, +InferThrowableTypeParameterToUpperBound
-// IGNORE_BACKEND: JVM, JVM_IR
+// IGNORE_BACKEND: JVM
 
 class Main {
    lateinit var result: String

@@ -2,7 +2,7 @@
 
 // For value classes, JVM backend needs usage of @kotlin.jvm.JvmInline annotation, which is not present in other backends.
 // The goal of this test case is to test behavior of IR inliner, which is not being used in JVM backend.
-// DONT_TARGET_EXACT_BACKEND: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: JVM
 // IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 
 // FILE: lib.kt

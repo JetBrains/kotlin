@@ -16,7 +16,7 @@ fun baz(v:(() -> Unit)) {
     v()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:6 box
 // test1.kt:12 box
 // test1.kt:13 box

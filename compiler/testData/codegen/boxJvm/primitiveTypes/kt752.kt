@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 package demo_range
 
 operator fun Int?.rangeTo(other : Int?) : IntRange = this!!.rangeTo(other!!)

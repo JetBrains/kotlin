@@ -19,7 +19,7 @@ fun box() {
     val z0 = A().z
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:19 box
 // test.kt:2 <init>
 // test.kt:5 <init>

@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // WITH_STDLIB
 // OPT_IN: kotlin.ExperimentalContextParameters
 // ISSUE: KT-86452

@@ -1,5 +1,5 @@
 // ISSUE: KT-67652
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 

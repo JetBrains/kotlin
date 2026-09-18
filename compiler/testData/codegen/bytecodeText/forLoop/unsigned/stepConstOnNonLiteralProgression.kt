@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // WITH_STDLIB
 fun box(): String {
     val uintProgression = 1u..7u step 3  // `step` ensures type is UIntProgression, NOT UIntRange

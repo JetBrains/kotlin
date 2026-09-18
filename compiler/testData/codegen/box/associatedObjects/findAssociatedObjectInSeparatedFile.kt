@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: JVM
 // ^ @AssociatedObjectKey is not available in Kotlin/JVM
 // IGNORE_BACKEND_MULTI_MODULE: ANY
 // ^^^ Cannot split to two modules due to cyclic import

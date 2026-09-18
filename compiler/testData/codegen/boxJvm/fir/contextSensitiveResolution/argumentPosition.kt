@@ -1,5 +1,5 @@
 // ISSUE: KT-75315
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 // FILE: JavaClass.java

@@ -1,7 +1,7 @@
 // DIAGNOSTICS: -IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE
 // ^^^ Kotlin/JS partially forbids implementing suspend function interfaces and report this diagnostic
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 // FIR status: not supported in JVM
 
 import kotlin.coroutines.*

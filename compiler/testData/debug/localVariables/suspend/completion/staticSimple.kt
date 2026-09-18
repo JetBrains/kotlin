@@ -4,7 +4,7 @@
 suspend fun box() {}
 
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:4 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 
 // EXPECTATIONS JS_IR

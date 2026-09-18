@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR, JS_IR, JS_IR_ES6
-// IGNORE_HEADER_MODE: JVM_IR
+// IGNORE_BACKEND: JVM, JS_IR, JS_IR_ES6
+// IGNORE_HEADER_MODE: JVM
 // FIR status: don't support legacy feature (see https://youtrack.jetbrains.com/issue/KT-37591). UNRESOLVED_REFERENCE at '+'
 // WITH_STDLIB
 // MODULE: lib

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 fun f(x: Throwable) { throw x }
 fun f(x: Exception) { throw x }

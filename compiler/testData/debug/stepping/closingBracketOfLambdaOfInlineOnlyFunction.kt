@@ -18,7 +18,7 @@ fun box() {
     flaf()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:18 box
 // test.kt:10 flaf
 // test.kt:7 flaf

@@ -8,7 +8,7 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR NATIVE
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 // ^^^ IR serialization/deserialization is not tested with K1.
 
 // FILE: 1.kt

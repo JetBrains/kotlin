@@ -9,7 +9,7 @@ fun box() {
     x.Bar()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:8 box:
 // test.kt:2 <init>:
 // test.kt:8 box:
