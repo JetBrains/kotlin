@@ -15,6 +15,7 @@ enum class Domain {
     BuildToolsApi,
     SwiftExport,
     CompilerPlugins,
+    KotlinDocumentationModel,
     Gradle,
     Maven,
     IntelliJ,
@@ -109,6 +110,13 @@ internal object CompilerPluginsDomainInfo : DomainInfo {
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CompilerInfrastructureDomainInfo, FrontendDomainInfo, CommonBackendDomainInfo, CoreLibsDomainInfo) }
 }
 
+internal object KotlinDocumentationModelDomainInfo : DomainInfo {
+    override val domain = Domain.KotlinDocumentationModel
+    override val include: List<String> = listOf("libraries/tools/kotlin-documentation-model")
+    override val exclude: List<String> = listOf()
+    override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf() }
+}
+
 internal object GradleDomainInfo : DomainInfo {
     override val domain = Domain.Gradle
     override val include: List<String> = listOf("build-common", "libraries/tools/*gradle*", "compiler/build-tools/kotlin-build-statistics")
@@ -159,6 +167,7 @@ val allDomainInfos: List<DomainInfo> by lazy {
         BuildToolsApiDomainInfo,
         SwiftExportDomainInfo,
         CompilerPluginsDomainInfo,
+        KotlinDocumentationModelDomainInfo,
         GradleDomainInfo,
         MavenDomainInfo,
         IntelliJDomainInfo,

@@ -201,6 +201,12 @@ CompilerPlugins:
     - CommonBackend
     - CoreLibs
 
+KotlinDocumentationModel:
+  include:
+    - "libraries/tools/kotlin-documentation-model"
+  fullyAffectedBy:
+    - AnalysisApi
+
 Gradle:
   include:
     - "build-common"

@@ -214,6 +214,9 @@ CompilerPlugins:
  - plugins/sam-with-receiver
  - plugins/test-plugins
 
+KotlinDocumentationModel:
+ - libraries/tools/kotlin-documentation-model
+
 Gradle:
  - libraries/tools/gradle
  - libraries/tools/kotlin-gradle-build-metrics
@@ -312,7 +315,6 @@ Unknown:
  - libraries/tools/kotlin-compose-compiler
  - libraries/tools/kotlin-dataframe
  - libraries/tools/kotlin-dist-for-jps-meta
- - libraries/tools/kotlin-documentation-model
  - libraries/tools/kotlin-lombok
  - libraries/tools/kotlin-noarg
  - libraries/tools/kotlin-osgi-bundle
