@@ -137,15 +137,15 @@ annotation class MustRunOnChangesInSwiftExport
 annotation class MustRunOnChangesInCompilerPlugins
 
 /**
-* Requires the annotated tests to run and pass before merging to master when [Domain.KotlinDocumentationModel] contains changed files.
+* Requires the annotated tests to run and pass before merging to master when [Domain.DocumentationModel] contains changed files.
 * The tests still run whenever all tests in their own domain must run.
 * Other test filters, including [NightlyTest], still apply.
 *
 * ### Extra: Contract tests
 * Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("contract:KotlinDocumentationModel")
-annotation class MustRunOnChangesInKotlinDocumentationModel
+@Tag("contract:DocumentationModel")
+annotation class MustRunOnChangesInDocumentationModel
 
 /**
 * Requires the annotated tests to run and pass before merging to master when [Domain.Gradle] contains changed files.
@@ -215,7 +215,7 @@ fun mustRunOnChangesInAnnotationOf(domain: Domain) = when (domain) {
     Domain.BuildToolsApi -> MustRunOnChangesInBuildToolsApi::class
     Domain.SwiftExport -> MustRunOnChangesInSwiftExport::class
     Domain.CompilerPlugins -> MustRunOnChangesInCompilerPlugins::class
-    Domain.KotlinDocumentationModel -> MustRunOnChangesInKotlinDocumentationModel::class
+    Domain.DocumentationModel -> MustRunOnChangesInDocumentationModel::class
     Domain.Gradle -> MustRunOnChangesInGradle::class
     Domain.Maven -> MustRunOnChangesInMaven::class
     Domain.IntelliJ -> MustRunOnChangesInIntelliJ::class

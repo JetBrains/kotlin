@@ -214,7 +214,7 @@ CompilerPlugins:
  - plugins/sam-with-receiver
  - plugins/test-plugins
 
-KotlinDocumentationModel:
+DocumentationModel:
  - libraries/tools/kotlin-documentation-model
 
 Gradle:

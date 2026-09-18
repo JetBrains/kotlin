@@ -201,7 +201,7 @@ CompilerPlugins:
     - CommonBackend
     - CoreLibs
 
-KotlinDocumentationModel:
+DocumentationModel:
   include:
     - "libraries/tools/kotlin-documentation-model"
   fullyAffectedBy:

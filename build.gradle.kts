@@ -585,7 +585,6 @@ tasks {
         dependsOn(":libraries:tools:abi-validation:abi-tools-api:check")
         dependsOn(":libraries:tools:abi-validation:abi-tools-embeddable:check")
         dependsOn(":libraries:tools:abi-validation:abi-tools-tests:check")
-        dependsOn(":tools:kotlin-documentation-model:analyzer:check")
     }
 
     val examplesTest = testLifecycleTask("examplesTest", QualityGate.Master) {
@@ -593,6 +592,10 @@ tasks {
         project(":examples").subprojects.forEach { p ->
             dependsOn("${p.path}:check")
         }
+    }
+
+    testLifecycleTask("kdmTest", QualityGate.Master) {
+        dependsOn(":tools:kotlin-documentation-model:analyzer:check")
     }
 
     testLifecycleTask("miscTest", QualityGate.Master) {
