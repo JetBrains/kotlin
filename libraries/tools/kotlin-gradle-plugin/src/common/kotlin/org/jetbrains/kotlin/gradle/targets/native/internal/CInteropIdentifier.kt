@@ -13,6 +13,7 @@ import java.io.Serializable
 /**
  * Project unique identifier for all cinterops
  */
+@ConsistentCopyVisibility
 internal data class CInteropIdentifier internal constructor(
     val scope: Scope,
     val interopName: String

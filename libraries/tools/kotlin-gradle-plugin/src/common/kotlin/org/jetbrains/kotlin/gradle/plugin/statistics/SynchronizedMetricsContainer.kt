@@ -10,7 +10,7 @@ import java.io.Serializable
 
 internal class SynchronizedMetricsContainer : NonSynchronizedMetricsContainer(), Serializable {
 
-    private val metricsLock = Object()
+    private val metricsLock = Any()
 
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?): Boolean {
         synchronized(metricsLock) {

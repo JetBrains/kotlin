@@ -86,8 +86,8 @@ sealed class NativeBinary(
      * @param reason A descriptive explanation clarifying why the compiler caches are being disabled.
      * @param issueUrl An optional issue tracker URL that provides additional context or links to a documented issue.
      */
-    @Suppress("unused")
     @KotlinNativeCacheApi
+    @Suppress("unused", "DSL_MARKER_APPLIED_TO_WRONG_TARGET")
     fun disableNativeCache(version: DisableCacheInKotlinVersion, reason: String, issueUrl: URI? = null) {
         disableCacheSettings.add(
             DisableNativeCacheSettings(

@@ -187,7 +187,7 @@ fun Project.configureKotlinCompilationOptions() {
                         "-opt-in=kotlin.RequiresOptIn",
                         "-progressive".takeIf { project.kotlinBuildProperties.booleanProperty("test.progressive.mode", false).get() },
                         "-Xdont-warn-on-error-suppression",
-                        "-Xcontext-parameters", // KT-72222
+                        "-Xcontext-parameters".takeUnless { skipNewLanguageFeatures }, // KT-72222
                         "-Xexplicit-backing-fields".takeUnless { skipNewLanguageFeatures }, // KT-14663
                         "-Xname-based-destructuring=complete".takeUnless { skipNewLanguageFeatures },
                         "-Xcollection-literals".takeUnless { skipNewLanguageFeatures },

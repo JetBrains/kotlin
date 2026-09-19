@@ -92,6 +92,7 @@ internal class ToolingDiagnosticRenderingOptions(
 
 private fun showColoredDiagnostics(consoleOutput: ConsoleOutput, isAttachedToTerminal: Boolean): Boolean {
     // Based on Gradle's console output mode, determine if we should use colors
+    @Suppress("REDUNDANT_ELSE_IN_WHEN")
     return when (consoleOutput) {
         // In Auto mode, check if we're in a terminal that supports colors
         ConsoleOutput.Auto -> isAttachedToTerminal

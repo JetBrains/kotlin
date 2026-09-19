@@ -505,9 +505,9 @@ class MingwLinker(targetProperties: MingwConfigurables)
         require(!isDynamic) {
             "Dynamic compiler rt librares are unsupported"
         }
-        val targetSuffix = when (target) {
+        val targetSuffix = when (val definedTarget = target) {
             KonanTarget.MINGW_X64 -> "x86_64"
-            else -> error("$target is not supported.")
+            else -> error("$definedTarget is not supported.")
         }
         val dir = Path("$absoluteLlvmHome/lib/clang/").listDirectoryEntries().firstOrNull()?.absolutePathString()
         return if (dir != null) "$dir/lib/windows/libclang_rt.$libraryName-$targetSuffix.a" else null
