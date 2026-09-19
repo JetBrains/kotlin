@@ -377,6 +377,13 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                 }
             }
 
+            val expectedTransitiveDependencyModuleName = when {
+                transitiveSubproject == null -> null
+                transitiveModuleNameOverride != null -> transitiveModuleNameOverride
+                transitivePublished -> "ComBarBazEmpty"
+                else -> "SharedTransitiveSubproject"
+            }
+
             build(
                 ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
@@ -406,12 +413,6 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                     "SharedBridge_$expectedDirectDependencyModuleName",
                 )
 
-                val expectedTransitiveDependencyModuleName = when {
-                    transitiveSubproject == null -> null
-                    transitiveModuleNameOverride != null -> transitiveModuleNameOverride
-                    transitivePublished -> "ComBarBazEmpty"
-                    else -> "SharedTransitiveSubproject"
-                }
                 if (expectedTransitiveDependencyModuleName != null) {
                     assertSubdirectoriesExist(
                         buildProductsDir,
@@ -437,6 +438,37 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                     assertFileDoesNotContain(
                         subprojectSwiftPath,
                         "public typealias LibBar = ExportedKotlinPackages.$transitiveRootPackageOverride.LibBar",
+                    )
+                }
+            }
+
+            // Verify that changes in the published transitive dependency's metadata are picked up and trigger
+            // task state invalidation. See KT-89495.
+            if (transitivePublished && transitiveSubproject != null && transitivePublishedSubproject != null) {
+                val updatedTransitiveModuleName = requireNotNull(expectedTransitiveDependencyModuleName) + "Updated"
+
+                transitiveSubproject.buildScriptInjection {
+                    project.applyMultiplatform {
+                        export.swift {
+                            this.moduleName.set(updatedTransitiveModuleName)
+                        }
+                    }
+                }
+                transitiveSubproject.publish(publisherConfiguration = PublisherConfiguration(group = "com.bar.baz"))
+
+                build(
+                    ":embedSwiftExportForXcode",
+                    environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+                ) {
+                    assertTasksExecuted(":iosArm64DebugSwiftExport")
+
+                    val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                    assertNotNull(buildProductsDir)
+
+                    assertSubdirectoriesExist(
+                        buildProductsDir,
+                        "$updatedTransitiveModuleName.swiftmodule",
+                        "SharedBridge_$updatedTransitiveModuleName",
                     )
                 }
             }

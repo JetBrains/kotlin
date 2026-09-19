@@ -7,18 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.component.ModuleComponentIdentifier
-import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
-import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SWIFT_EXPORT_METADATA_USAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.consumeSwiftExportMetadata
-import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.configureSwiftExportMetadataArtifactView
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -194,14 +189,7 @@ private fun Project.registerSwiftExportRun(
     val metadataConfigurationProvider = provider {
         LazyResolvedConfigurationWithArtifacts(
             exportConfiguration,
-            configureArtifactView = {
-                withVariantReselection()
-                componentFilter { it is ModuleComponentIdentifier }
-            },
-            configureArtifactViewAttributes = { attributes ->
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(SWIFT_EXPORT_METADATA_USAGE))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
-            }
+            configureArtifactView = configureSwiftExportMetadataArtifactView(),
         )
     }
 
@@ -212,6 +200,9 @@ private fun Project.registerSwiftExportRun(
         task.inputs.files(exportConfiguration)
         if (apiConfiguration != null) {
             task.inputs.files(apiConfiguration)
+        }
+        if (shouldResolvePublishedMetadata) {
+            task.inputs.files(exportConfiguration.incoming.artifactView(configureSwiftExportMetadataArtifactView()).files)
         }
         task.inputs.files(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
