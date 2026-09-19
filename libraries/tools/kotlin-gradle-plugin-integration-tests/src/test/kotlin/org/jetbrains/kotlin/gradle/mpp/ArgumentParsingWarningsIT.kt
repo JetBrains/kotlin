@@ -108,7 +108,7 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
                 forEachCompileTask { taskOutput ->
                     assertWarningReportedOnce(
                         taskOutput,
-                        "Flag is not supported by this version of the compiler: -Xnot-a-real-flag".toRegex(RegexOption.LITERAL),
+                        "Flag is not supported by this version of the compiler: '-Xnot-a-real-flag'.".toRegex(RegexOption.LITERAL),
                     )
                 }
             }
@@ -139,7 +139,7 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
             // `--continue` so that every platform is attempted, not just the first compilation to fail
             buildAndFail(*ALL_COMPILE_TASKS.toTypedArray(), "--continue") {
                 assertTasksFailed(ALL_COMPILE_TASKS)
-                assertOutputContains("Invalid argument: -not-a-real-flag")
+                assertOutputContains("Invalid argument: '-not-a-real-flag'.")
             }
         }
     }

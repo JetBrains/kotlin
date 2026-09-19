@@ -118,18 +118,18 @@ private sealed class CliDiagnosticReporterWrapper<T> {
             }
 
             val message = when (diagnostic) {
-                is ArgumentWithoutValue -> "No value passed for argument ${diagnostic.argument}"
+                is ArgumentWithoutValue -> "No value passed for argument '${diagnostic.argument}'."
                 is BooleanArgumentWithIncorrectValue -> "Incorrect value for boolean argument '${diagnostic.argument}'. Only 'true' and 'false' are allowed."
                 is BooleanLanguageFeatureArgumentWithValue -> "No value is expected for argument '${diagnostic.argument}'."
                 is StringLanguageFeatureArgumentWithIncorrectValue -> {
                     val allowedValuesString = diagnostic.allowedValues.joinToString(", ") { "'$it'" }
-                    "Incorrect value for argument '${diagnostic.argument}'. " +
-                            "Actual value: '${diagnostic.value}', but allowed values: $allowedValuesString."
+                    "Incorrect value '${diagnostic.value}' for argument '${diagnostic.argument}'. " +
+                            "Allowed values: $allowedValuesString."
                 }
-                is InvalidArgument -> "Invalid argument: ${diagnostic.argument}"
-                is UnknownExtraFlag -> "Flag is not supported by this version of the compiler: ${diagnostic.argument}"
-                is ExtraArgumentInObsoleteForm -> "Advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: ${diagnostic.argument}=..."
-                is ArgumentWithDeprecatedName -> "Argument ${diagnostic.deprecatedName} is deprecated. Please use ${diagnostic.newName} instead"
+                is InvalidArgument -> "Invalid argument: '${diagnostic.argument}'."
+                is UnknownExtraFlag -> "Flag is not supported by this version of the compiler: '${diagnostic.argument}'."
+                is ExtraArgumentInObsoleteForm -> "Advanced option value is passed in an obsolete form. To specify the value, use the '=' character: '${diagnostic.argument}=...'."
+                is ArgumentWithDeprecatedName -> "Argument '${diagnostic.deprecatedName}' is deprecated. Use '${diagnostic.newName}' instead."
                 is ArgfileError -> diagnostic.message
                 is InternalArgumentError -> diagnostic.message
                 is InternalArgumentWarning -> diagnostic.message

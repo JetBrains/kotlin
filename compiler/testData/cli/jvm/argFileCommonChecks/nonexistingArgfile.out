@@ -1,2 +1,2 @@
-warning: argfile not found: $TESTDATA_DIR$/nonexisting.argfile
+warning: argfile not found: '$TESTDATA_DIR$/nonexisting.argfile'.
 OK

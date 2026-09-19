@@ -1,4 +1,4 @@
-warning: advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: -Xcommon-sources=...
+warning: advanced option value is passed in an obsolete form. To specify the value, use the '=' character: '-Xcommon-sources=...'.
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
