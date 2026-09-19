@@ -18,17 +18,20 @@ internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
     override fun apply(descriptor: TestDescriptor): FilterResult {
         val source = descriptor.source.getOrNull() as? MethodSource
             ?: return included("Not a method-based test")
-        if (testFederationMode == null) return included("$TEST_FEDERATION_MODE_KEY is not set")
-        if (testFederationMode == TestFederationMode.Full) return included("'TestFederationMode.Full' is set")
+        val clusters = testFederationClusters
+            ?: return included("$TEST_FEDERATION_SUBSETS_KEY is not set")
 
-        if (isAutoSmokeTest(descriptor, source)) return included("Auto smoke test selected")
-        if (isMustRunAlways(descriptor)) return included("@${MustRunAlways::class.java.simpleName}")
+        if (TestSubset.AllTests in clusters) return included("'${TestSubset.AllTests}' is requested")
 
-        /* Select tests marked to run for one of the changed domains. */
-        val changedDomains = testFederationChangedDomains
-            ?: return excluded("Missing '${TEST_FEDERATION_CHANGED_DOMAINS_KEY}'")
-        val contracts = changedDomains.filter { domain -> isContract(domain, descriptor) }
-        if (contracts.isNotEmpty()) return included("Contracts: ${contracts.joinToString(", ")}")
+        if (TestSubset.SmokeTests in clusters) {
+            if (isAutoSmokeTest(descriptor, source)) return included("Auto smoke test selected")
+            if (isMustRunAlways(descriptor)) return included("@${MustRunAlways::class.java.simpleName}")
+        }
+
+        val matchedContracts = clusters.mapNotNull(::contractTagOf).filter { tag -> descriptor.tags.any { it.name == tag } }
+        if (matchedContracts.isNotEmpty()) {
+            return included("Contracts: ${matchedContracts.joinToString(", ") { it.removePrefix("contract:") }}")
+        }
         return excluded("Not selected automatically / Not @MustRunAlways / Not a contract test")
     }
 }
@@ -49,6 +52,3 @@ private fun isAutoSmokeTest(descriptor: TestDescriptor, source: MethodSource): B
 
 private fun isMustRunAlways(descriptor: TestDescriptor): Boolean =
     descriptor.tags.any { it.name == "smoke" }
-
-private fun isContract(domain: Domain, descriptor: TestDescriptor) =
-    descriptor.tags.any { it.name == "contract:${domain.name}" }

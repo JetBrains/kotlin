@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
