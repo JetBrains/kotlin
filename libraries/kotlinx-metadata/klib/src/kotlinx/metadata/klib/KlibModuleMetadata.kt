@@ -177,10 +177,10 @@ class KlibModuleMetadata(
 
         val groupedFragments = fragments
             .groupBy(KmModuleFragment::fqNameOrFail)
-            .mapValues { writeStrategy.processPackageParts(it.value) }
+            .mapValues { writeStrategy.processPackageParts(it.value).filterNot(KmModuleFragment::isEmpty) }
+            .filterValues { it.isNotEmpty() }
 
         val packageFragmentNames: List<String> = groupedFragments.map { it.key }
-        val emptyPackageFragmentNames: List<String> = groupedFragments.filter { it.value.all(KmModuleFragment::isEmpty) }.map { it.key }
         val versionExt = KlibMetadataVersionWriteExtension(metadataVersion)
         val groupedProtos = groupedFragments.mapValues { [_, fragments] ->
             fragments.map { mf ->
@@ -193,7 +193,6 @@ class KlibModuleMetadata(
             KlibMetadataProtoBuf.Header.newBuilder().also { proto ->
                 proto.moduleName = wrapModuleName(name)
                 proto.addAllPackageFragmentName(packageFragmentNames)
-                proto.addAllEmptyPackage(emptyPackageFragmentNames)
             }.build().toByteArray(),
             groupedProtos.map { it.value.map(ProtoBuf.PackageFragment::toByteArray) },
             packageFragmentNames,

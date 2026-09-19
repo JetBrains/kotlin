@@ -77,11 +77,7 @@ class ChunkedKlibModuleFragmentWriteStrategy(
                 }
             }
 
-        return chunks.ifEmpty {
-            // We still need to emit empty packages because they may represent parts of package declarations
-            // (e.g. platform.* in C-interop KLIBs).
-            parts
-        }
+        return chunks
     }
 }
 
