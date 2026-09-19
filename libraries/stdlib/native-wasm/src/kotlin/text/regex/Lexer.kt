@@ -164,6 +164,9 @@ internal class Lexer(val patternString: String, flags: Int) {
         // curTokenIndex is an index of closing bracket ')'
         index = curTokenIndex + 1
         lookAheadTokenIndex = curTokenIndex
+        if (flags and Pattern.COMMENTS != 0) {
+            skipComments()
+        }
         movePointer()
     }
 
@@ -650,6 +653,8 @@ internal class Lexer(val patternString: String, flags: Int) {
                     throw PatternSyntaxException("Unknown inline modifier", patternString, curTokenIndex)
                 }
             }
+            // Apply inline flags before skipping subsequent whitespace and comments.
+            flags = result
             nextIndex()
         }
         throw PatternSyntaxException("Illegal inline construct", patternString, curTokenIndex)
