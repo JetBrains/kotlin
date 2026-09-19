@@ -10,13 +10,13 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.getFatalDiagnosticsMessage
+import org.jetbrains.kotlin.cli.common.arguments.hasFatalError
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
+import org.jetbrains.kotlin.cli.common.arguments.reportCliArgumentFatalDiagnostics
 import org.jetbrains.kotlin.cli.common.checkPluginsArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.*
@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginR
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import kotlin.script.experimental.api.*
@@ -135,13 +134,10 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
     isRefinement: Boolean
 ) {
     updateWithCompilerOptions(compilerOptions) {
-        validateArgumentsAllErrors(it.errors).takeIf { errors -> errors.isNotEmpty() }?.let { errors ->
-            errors.forEach { error ->
-                messageCollector.report(CompilerMessageSeverity.ERROR, error)
-            }
+        if (it.diagnostics.hasFatalError) {
+            messageCollector.reportCliArgumentFatalDiagnostics(it)
             false
-        } ?: run {
-            messageCollector.reportArgumentParseProblems(it)
+        } else {
             val error = reportArgumentsNotAllowed(it, messageCollector, ignoredOptionsReportingState)
             reportArgumentsIgnoredGenerally(it, messageCollector, ignoredOptionsReportingState)
             if (isRefinement) {
@@ -155,7 +151,11 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
 fun CompilerConfiguration.updateWithCompilerOptions(
     compilerOptions: List<String>,
     validate: (K2JVMCompilerArguments) -> Boolean = {
-        validateArguments(it.errors)?.let { throw Exception("Error parsing arguments: $it") } ?: true
+        if (it.diagnostics.hasFatalError) {
+            throw Exception("Error parsing arguments: ${it.getFatalDiagnosticsMessage()}")
+        } else {
+            true
+        }
     }
 ) {
     val compilerArguments = makeScriptCompilerArguments(compilerOptions)

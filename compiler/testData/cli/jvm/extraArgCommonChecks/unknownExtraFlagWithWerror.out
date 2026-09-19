@@ -1,2 +1,3 @@
-warning: flag is not supported by this version of the compiler: -Xnot-a-real-flag
-OK
+warning: flag is not supported by this version of the compiler: '-Xnot-a-real-flag'.
+error: warnings found and -Werror specified
+COMPILATION_ERROR

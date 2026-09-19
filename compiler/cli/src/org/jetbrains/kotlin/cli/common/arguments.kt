@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_FRIEND_DEPENDENCIES
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_REFINES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_SOURCES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
@@ -79,6 +77,8 @@ fun CompilerConfiguration.setupCommonArguments(
     setupMetadataVersion(arguments, createMetadataVersion)
 
     setupLanguageVersionSettings(arguments)
+
+    reportCliArgumentNonFatalDiagnostics(arguments)
 
     checkArgumentsLifecycle(arguments)
 
@@ -258,63 +258,6 @@ fun computeKotlinPaths(configuration: CompilerConfiguration, arguments: CommonCo
         }
     }?.also {
         configuration.reportLog("Using Kotlin home directory " + it.homePath, null)
-    }
-}
-
-fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
-    for ([key, values] in arguments.explicitArguments) {
-        if (values.size <= 1 || values.distinct().size == 1) continue
-
-        val argName = key.argument.value
-        val valuesString = values.joinToString("', '")
-        val message = "Argument '$argName' is passed multiple times: '$valuesString'. The last value will be used."
-        report(CompilerMessageSeverity.STRONG_WARNING, message)
-    }
-
-    val errors = arguments.errors ?: return
-    for (flag in errors.unknownExtraFlags) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
-    }
-    for (argument in errors.extraArgumentsPassedInObsoleteForm) {
-        report(
-            CompilerMessageSeverity.STRONG_WARNING,
-            "Advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: $argument=..."
-        )
-    }
-    for ([deprecatedName, newName] in errors.deprecatedArguments) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
-    }
-    for (argfileError in errors.argfileErrors) {
-        report(CompilerMessageSeverity.STRONG_WARNING, argfileError)
-    }
-
-    reportUnsafeInternalArgumentsIfAny(arguments)
-
-    for ([severity, internalArgumentsProblem] in errors.internalArgumentsParsingProblems) {
-        report(severity, internalArgumentsProblem)
-    }
-}
-
-private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: CommonToolArguments) {
-    val unsafeArguments = arguments.internalArguments.filterNot {
-        // -XXLanguage which turns on BUG_FIX considered safe
-        it.languageFeature.actuallyEnabledInProgressiveMode && it.state == LanguageFeature.State.ENABLED
-    }
-
-    if (unsafeArguments.isNotEmpty()) {
-        val unsafeArgumentsString = unsafeArguments.joinToString(prefix = "\n", postfix = "\n\n", separator = "\n") {
-            it.stringRepresentation
-        }
-
-        report(
-            CompilerMessageSeverity.STRONG_WARNING,
-            "ATTENTION!\n" +
-                    "This build uses unsafe internal compiler arguments:\n" +
-                    unsafeArgumentsString +
-                    "This mode is not recommended for production use,\n" +
-                    "as no stability/compatibility guarantees are given on\n" +
-                    "compiler or generated code. Use it at your own risk!\n"
-        )
     }
 }
 
