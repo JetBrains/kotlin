@@ -163,6 +163,8 @@ where advanced options include:
                              A list of IR checkers to disable, specified by a simple name of the checker class. A name of an annotation can also be used to match all tagged checkers.
                              Only has effect if '-Xverify-ir' is not 'none'.
   -Xdisable-phases           Disable backend phases.
+  -Xdo-not-normalize-nan-values-in-const-context
+                             Disables `NormalizeNaNValuesInConstContext` language feature.`
   -Xdont-sort-source-files   Disable automatic sorting of source files.
   -Xdont-warn-on-error-suppression
                              Don't report warnings when errors are suppressed. This only affects K2.
