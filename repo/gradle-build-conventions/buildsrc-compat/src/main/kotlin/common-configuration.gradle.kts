@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
@@ -27,6 +28,7 @@ project.configureKotlinJavaCompileHygiene()
 project.addEmbeddedConfigurations()
 project.configureJavaCompile()
 project.configureKotlinCompilationOptions()
+project.configureCompilerParameterAssertions()
 project.configureArtifacts()
 project.configureTests()
 project.registerApiSurfaceTasks()
@@ -272,6 +274,31 @@ fun Project.configureKotlinCompilationOptions() {
                     jvmDefault = JvmDefaultMode.DISABLE
                 }
 
+            }
+        }
+    }
+}
+
+fun Project.configureCompilerParameterAssertions() {
+    if (path !in CompilerModules.compilerModules) return
+
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        extensions.configure<KotlinJvmProjectExtension> {
+            target.compilations.named("main") {
+                compileTaskProvider.configure {
+                    compilerOptions.freeCompilerArgs.add("-Xno-param-assertions")
+                }
+            }
+        }
+    }
+    plugins.withId("org.jetbrains.kotlin.multiplatform") {
+        extensions.configure<KotlinMultiplatformExtension> {
+            targets.withType<KotlinJvmTarget>().configureEach {
+                compilations.named("main") {
+                    compileTaskProvider.configure {
+                        compilerOptions.freeCompilerArgs.add("-Xno-param-assertions")
+                    }
+                }
             }
         }
     }

@@ -17,11 +17,15 @@
 package org.jetbrains.kotlin.compiler.embeddable
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
+import java.lang.reflect.InvocationTargetException
+import java.net.URLClassLoader
 
 
 private val COMPILER_CLASS_FQN = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
@@ -51,6 +55,25 @@ public class CompilerEmbeddableSmokeTests {
     fun testSmoke() {
         val [out, code] = runCompiler(File("testData/projects/smoke/Smoke.kt").absolutePath)
         assertEquals(0, code, "compilation failed:\n" + out)
+    }
+
+    @Test
+    fun testGeneratedCodeRetainsParameterAssertions() {
+        // KT-89530 disables parameter assertions in the compiler implementation, not in code compiled by it.
+        val source = tmpDir.resolve("GeneratedAssertions.kt").apply {
+            writeText("fun accepts(value: String): String = \"OK\"")
+        }
+        val [out, code] = runCompiler(source.absolutePath, "-d", tmpDir.absolutePath)
+        assertEquals(0, code, "compilation failed:\n" + out)
+
+        URLClassLoader(arrayOf(tmpDir.toURI().toURL()), javaClass.classLoader).use { classLoader ->
+            val method = classLoader.loadClass("GeneratedAssertionsKt").getMethod("accepts", String::class.java)
+            assertEquals("OK", method.invoke(null, "value"))
+            val exception = assertThrows(InvocationTargetException::class.java) {
+                method.invoke(null, null)
+            }
+            assertTrue(exception.cause is NullPointerException, "Expected a generated parameter assertion: $exception")
+        }
     }
 
 
