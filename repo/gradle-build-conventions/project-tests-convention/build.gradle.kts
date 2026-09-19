@@ -20,6 +20,22 @@ kotlin {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+
+    // 'TestBuildCacheTeamCityCompatibilityFunctionalTest' drives a build of the whole repository, so
+    // the repository is its input - all of it, which cannot be declared.
+    doNotTrackState("Runs a build of the repository, whose state is not declared as an input")
+
+    // The functional tests run Gradle against the repository itself, so they have to be started from
+    // its build - './gradlew :gradle-build-conventions:project-tests-convention:test' - rather than
+    // from a standalone build of these conventions, which knows no repository to run.
+    val repositoryBuild = generateSequence(gradle.parent) { it.parent }.lastOrNull()
+        ?: error("Run this task from the repository build: ':gradle-build-conventions:${project.name}:test'")
+    workingDir = repositoryBuild.rootProject.isolated.projectDirectory.asFile
+    environment("GRADLE_USER_HOME", gradle.gradleUserHomeDir.absolutePath)
+}
+
 dependencies {
     api(project(":utilities"))
 
@@ -30,6 +46,12 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     compileOnly(libs.node.gradlePlugin)
 
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(kotlin("test-junit5"))
+    testImplementation(gradleTestKit())
+
     constraints {
         api(libs.apache.commons.lang)
     }
@@ -37,6 +59,7 @@ dependencies {
 
 listOf(
     org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main",
+    org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Test",
     "compilePluginsBlocksPluginClasspathElements",
 ).forEach { confName ->
     project.configurations.named(confName) {
