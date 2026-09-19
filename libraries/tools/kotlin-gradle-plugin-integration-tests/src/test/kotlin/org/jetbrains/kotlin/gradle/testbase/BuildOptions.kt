@@ -494,7 +494,7 @@ fun BuildOptions.suppressingGradlePluginErrors(vararg diagnosticIds: String) =
     copy(suppressedGradlePluginErrors = suppressedGradlePluginErrors + diagnosticIds)
 
 // KT-75899: Support Gradle Project Isolation in KGP JS & Wasm
-fun BuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899() = disableIsolatedProjects()
+fun BuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899() = this // disableIsolatedProjects()
 
 fun BuildOptions.suppressWarningForOldKotlinVersion(
     currentGradleVersion: GradleVersion,
