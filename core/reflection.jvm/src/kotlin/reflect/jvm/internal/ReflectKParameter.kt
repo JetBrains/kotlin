@@ -105,9 +105,13 @@ internal val ReflectKParameter.javaParameter: JavaParameter?
         }
         is Constructor<*> -> {
             val shift = when {
-                // Inner class constructors before JDK 9 did not have the outer class parameter in `parameterAnnotations`, see
-                // https://bugs.java.com/bugdatabase/view_bug?bug_id=8074977.
-                member.declaringClass.kotlin.isInner && isJdk8() -> -1
+                member.declaringClass.kotlin.isInner -> {
+                    val boundShift = if (callable.isBound) 1 else 0
+                    // Inner class constructors before JDK 9 did not have the outer class parameter in `parameterAnnotations`, see
+                    // https://bugs.java.com/bugdatabase/view_bug?bug_id=8074977.
+                    val jdk8Shift = if (isJdk8()) -1 else 0
+                    boundShift + jdk8Shift
+                }
                 // Enum constructors before JDK 17 did not have additional name/ordinal parameters in case there was at least one annotation
                 // on any constructor parameter. (Probably some fixed bug in the JDK as well.)
                 member.declaringClass.isEnum -> member.parameterAnnotations.size - member.parameterTypes.size + 2
