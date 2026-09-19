@@ -948,18 +948,29 @@ class PatternTest2 {
     }
 
     @Test fun testInlineCommentsFlag() {
-        // TODO: Ignored: KT-85425
-        // testRegexMatching("(?x)#a b c\nd", listOf("d"), listOf("b c\nd"))
-        // testRegexMatching("(?x)(?-x)#a b c", listOf("#a b c"))
-        // testRegexMatching("(?-x:#a b c)", listOf("#a b c"), emptyList(), RegexOption.COMMENTS)
+        testRegexMatching("(?x)#a b c\nd", listOf("d"), listOf("b c\nd"))
+        testRegexMatching("(?x)(?-x)#a b c", listOf("#a b c"))
+        testRegexMatching("(?-x:#a b c)", listOf("#a b c"), emptyList(), RegexOption.COMMENTS)
         testRegexMatching("(?x)a b", listOf("ab"), listOf("a b"))
         testRegexMatching("(?x)a b #comment\nc", listOf("abc"))
         testRegexMatching("(?x)a b(?-x)c d", listOf("abc d"), listOf("a bc d", "abcd"))
         testRegexMatching("(?-x)a b c", listOf("a b c"), listOf("abc"), RegexOption.COMMENTS)
         testRegexMatching(" (?x:a b) ", listOf(" ab "), listOf(" a b "))
-        // TODO: Ignored: KT-85425
-        //testRegexMatching(" (?-x:a b) ", listOf("a b"), listOf("ab", " a b "), RegexOption.COMMENTS)
+        testRegexMatching(" (?-x:a b) ", listOf("a b"), listOf("ab", " a b "), RegexOption.COMMENTS)
         testRegexMatching("(?x:(?-x:(?x:a b c)))", listOf("abc"))
+    }
+
+    @Test fun testInlineCommentsFlagBoundaries() {
+        testRegexMatching("(?x) a", listOf("a"), listOf(" a"))
+        testRegexMatching("(?x:#comment\na)", listOf("a"))
+        testRegexMatching("(?x)(?-x) a", listOf(" a"), listOf("a"))
+        testRegexMatching("(?-x) #a", listOf(" #a"), listOf("a"), RegexOption.COMMENTS)
+        testRegexMatching("(?x #comment\n:a)", listOf("a"))
+
+        testRegexMatching("(?-x:a) #comment\n b", listOf("ab"), listOf("a b"), RegexOption.COMMENTS)
+        testRegexMatching("(?x:a) #b", listOf("a #b"), listOf("ab", "a"))
+        testRegexMatching("(?x:(?-x: a #b ) #comment\n c)", listOf(" a #b c"), listOf("abc"))
+        testRegexMatching("(?x:(?-x:a)) #b", listOf("a #b"), listOf("ab", "a"))
     }
 
     @Test fun testInlineMultilineFlag() {
