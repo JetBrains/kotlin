@@ -40,7 +40,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
     put(actualCommonCompilerArguments.name, buildMap {
         with(actualCommonCompilerArguments) {
             drop("script")
-            restrict("Xrepl", warningSince = KotlinReleaseVersion.v2_4_0, errorSince = KotlinReleaseVersion.v2_5_0)
             drop("Xstdlib-compilation")
             drop("Xallow-kotlin-package")
             drop("P")
@@ -130,6 +129,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xuse-javac")
             drop("Xcompile-java")
             drop("Xjavac-arguments")
+            drop("Xrepl")
         }
     })
     put(SyntheticArgumentNames.commonJsAndWasmCompilerKlibArguments, buildMap {
