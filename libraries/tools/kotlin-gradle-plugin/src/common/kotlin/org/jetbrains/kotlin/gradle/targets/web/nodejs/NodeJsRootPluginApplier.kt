@@ -57,7 +57,6 @@ internal class NodeJsRootPluginApplier(
             nodeJsRootName,
             nodeJsRootKlass.java,
             project,
-            { singleNodeJsPluginApply(project) },
             rootDirectoryName,
         )
 

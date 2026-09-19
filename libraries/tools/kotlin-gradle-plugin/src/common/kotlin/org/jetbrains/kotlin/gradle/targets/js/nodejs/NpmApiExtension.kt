@@ -52,7 +52,3 @@ interface NpmApiExtension<out Env : PackageManagerEnvironment, out NpmApi : NpmA
     @InternalKotlinGradlePluginApi
     val lockFileNameProvider: Provider<String>
 }
-
-@Deprecated("No longer used. Scheduled for removal in Kotlin 2.3.", ReplaceWith("NpmApiExtension<*, *>"))
-@Suppress("unused")
-typealias NpmApiExt = NpmApiExtension<PackageManagerEnvironment, NpmApiExecution<PackageManagerEnvironment>>

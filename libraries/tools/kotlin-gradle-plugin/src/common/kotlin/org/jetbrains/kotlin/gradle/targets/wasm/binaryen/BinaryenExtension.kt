@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.property
         "BinaryenEnvSpec",
         "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec"
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 @OptIn(ExperimentalWasmDsl::class)
 open class BinaryenExtension(
