@@ -44,10 +44,10 @@ private fun File.expand(diagnostics: MutableList<ArgumentParseDiagnostic>): List
         }
     } catch (e: FileNotFoundException) {
         // Process FNFE separately to render absolutePath in error message
-        diagnostics += ArgumentParseDiagnostic.ArgfileError("Argfile not found: $absolutePath")
+        diagnostics += ArgumentParseDiagnostic.ArgfileError("Argfile not found: '$absolutePath'.")
         emptyList()
     } catch (e: IOException) {
-        diagnostics += ArgumentParseDiagnostic.ArgfileError("Error while reading argfile: $e")
+        diagnostics += ArgumentParseDiagnostic.ArgfileError("Cannot read argfile '$absolutePath': $e")
         emptyList()
     }
 }

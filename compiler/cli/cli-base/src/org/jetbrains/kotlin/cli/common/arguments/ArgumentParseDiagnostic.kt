@@ -118,19 +118,19 @@ private sealed class CliDiagnosticReporterWrapper<T> {
             }
 
             val [factory, message] = when (diagnostic) {
-                is ArgumentWithoutValue -> CLI_ARGUMENT_WITHOUT_VALUE to "No value passed for argument ${diagnostic.argument}"
+                is ArgumentWithoutValue -> CLI_ARGUMENT_WITHOUT_VALUE to "No value passed for argument '${diagnostic.argument}'."
                 is BooleanArgumentWithIncorrectValue -> CLI_BOOLEAN_ARGUMENT_WITH_INCORRECT_VALUE to "Incorrect value for boolean argument '${diagnostic.argument}'. Only 'true' and 'false' are allowed."
                 is BooleanLanguageFeatureArgumentWithValue -> CLI_BOOLEAN_LANGUAGE_FEATURE_ARGUMENT_WITH_VALUE to "No value is expected for argument '${diagnostic.argument}'."
                 is StringLanguageFeatureArgumentWithIncorrectValue -> {
                     val allowedValuesString = diagnostic.allowedValues.joinToString(", ") { "'$it'" }
                     CLI_STRING_LANGUAGE_FEATURE_ARGUMENT_WITH_INCORRECT_VALUE to
-                            ("Incorrect value for argument '${diagnostic.argument}'. " +
-                                "Actual value: '${diagnostic.value}', but allowed values: $allowedValuesString.")
+                            ("Incorrect value '${diagnostic.value}' for argument '${diagnostic.argument}'. " +
+                                "Allowed values: $allowedValuesString.")
                 }
-                is InvalidArgument -> CLI_INVALID_ARGUMENT to "Invalid argument: ${diagnostic.argument}"
-                is UnknownExtraFlag -> CLI_UNKNOWN_EXTRA_ARGUMENT to "Flag is not supported by this version of the compiler: ${diagnostic.argument}"
-                is ExtraArgumentInObsoleteForm -> CLI_EXTRA_ARGUMENT_IN_OBSOLETE_FORM to "Advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: ${diagnostic.argument}=..."
-                is ArgumentWithDeprecatedName -> CLI_ARGUMENT_WITH_DEPRECATED_NAME to "Argument ${diagnostic.deprecatedName} is deprecated. Please use ${diagnostic.newName} instead"
+                is InvalidArgument -> CLI_INVALID_ARGUMENT to "Invalid argument: '${diagnostic.argument}'."
+                is UnknownExtraFlag -> CLI_UNKNOWN_EXTRA_ARGUMENT to "Flag is not supported by this version of the compiler: '${diagnostic.argument}'."
+                is ExtraArgumentInObsoleteForm -> CLI_EXTRA_ARGUMENT_IN_OBSOLETE_FORM to "Advanced option value is passed in an obsolete form. To specify the value, use the '=' character: '${diagnostic.argument}=...'."
+                is ArgumentWithDeprecatedName -> CLI_ARGUMENT_WITH_DEPRECATED_NAME to "Argument '${diagnostic.deprecatedName}' is deprecated. Use '${diagnostic.newName}' instead."
                 is ArgfileError -> CLI_ARGFILE_ERROR to diagnostic.message
                 is InternalArgumentError -> CLI_INTERNAL_ARGUMENT_ERROR to diagnostic.message
                 is InternalArgumentWarning -> CLI_INTERNAL_ARGUMENT_WARNING to diagnostic.message

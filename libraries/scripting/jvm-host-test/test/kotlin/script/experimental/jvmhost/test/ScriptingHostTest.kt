@@ -727,7 +727,7 @@ class ScriptingHostTest {
         }
         val res1 = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(
-            res1 is ResultWithDiagnostics.Failure && res1.reports.find { it.message == "Invalid argument: -jvm-target->1.8" } != null,
+            res1 is ResultWithDiagnostics.Failure && res1.reports.find { it.message == "Invalid argument: '-jvm-target->1.8'." } != null,
             "Expected failure with invalid JVM target option, but got: $res1"
         )
 
@@ -742,7 +742,7 @@ class ScriptingHostTest {
         }
         val res2 = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration2, null)
         assertTrue(
-            res2 is ResultWithDiagnostics.Failure && res2.reports.find { it.message == "Invalid argument: -jvm-target->1.6" } != null,
+            res2 is ResultWithDiagnostics.Failure && res2.reports.find { it.message == "Invalid argument: '-jvm-target->1.6'." } != null,
             "Expected failure with invalid JVM target option, but got: $res2"
         )
     }
@@ -762,8 +762,8 @@ class ScriptingHostTest {
         }
         val res = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
         assertTrue(res is ResultWithDiagnostics.Success)
-        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: -Xunknown1" })
-        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: -Xunknown2" })
+        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: '-Xunknown1'." })
+        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: '-Xunknown2'." })
     }
 
     @Test

@@ -696,7 +696,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertFailed()
         val errors = result.getMessages(BuildMessage.Kind.ERROR).joinToString("\n\n") { it.messageText }
 
-        assertEquals("Invalid argument: -abcdefghij-invalid-argument", errors)
+        assertEquals("Invalid argument: '-abcdefghij-invalid-argument'.", errors)
     }
 
     @Test
