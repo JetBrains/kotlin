@@ -32,7 +32,11 @@ tasks.withType<Test>().configureEach {
     // from a standalone build of these conventions, which knows no repository to run.
     val repositoryBuild = generateSequence(gradle.parent) { it.parent }.lastOrNull()
         ?: error("Run this task from the repository build: ':gradle-build-conventions:${project.name}:test'")
-    workingDir = repositoryBuild.rootProject.isolated.projectDirectory.asFile
+    // 'isolated' is incubating, and is still the accessor to use: it is the one that keeps working
+    // when project isolation does. 'test-federation-convention' reads the repository root the same way.
+    @Suppress("UnstableApiUsage")
+    val repositoryRoot = repositoryBuild.rootProject.isolated.projectDirectory.asFile
+    workingDir = repositoryRoot
     environment("GRADLE_USER_HOME", gradle.gradleUserHomeDir.absolutePath)
 }
 
