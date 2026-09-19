@@ -129,7 +129,7 @@ kotlin {
 
 val compatibilityTestsVersions = listOf(
     KotlinToolingVersion(2, 4, 0, null),
-    KotlinToolingVersion(2, 4, 20, "Beta1"),
+    KotlinToolingVersion(2, 4, 20, null),
 )
 
 val KotlinToolingVersion.sourceSetName get() = "shared" + this.toString().replace(".", "_").replace("-", "_")
