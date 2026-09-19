@@ -22,6 +22,8 @@ object CliDiagnostics : KtDiagnosticsContainer() {
     val ROOTS_RESOLUTION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val ROOTS_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
+    val CLI_ARGFILE_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
     val CLI_ARGUMENT_WITHOUT_VALUE: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val CLI_BOOLEAN_ARGUMENT_WITH_INCORRECT_VALUE: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val CLI_BOOLEAN_LANGUAGE_FEATURE_ARGUMENT_WITH_VALUE: KtSourcelessDiagnosticFactory by errorWithoutSource()
@@ -33,7 +35,6 @@ object CliDiagnostics : KtDiagnosticsContainer() {
     val CLI_EXTRA_ARGUMENT_IN_OBSOLETE_FORM: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     // Arguments where [Argument.deprecatedName] was used; the key is the deprecated name, the value is the new name ([Argument.value])
     val CLI_ARGUMENT_WITH_DEPRECATED_NAME: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
-    val CLI_ARGFILE_ERROR: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
 
     // Reports from internal arguments parsers
     val CLI_INTERNAL_ARGUMENT_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()

@@ -45,10 +45,6 @@ internal fun transformArgs(args: List<String>, messageCollector: MessageCollecto
     val kotlincTransformed = preprocessCommandLineArguments(args, cliDiagnostics)
 
     if (cliDiagnostics.hasFatalError) {
-        // The branch is actually unreachable because `preprocessCommandLineArguments` only ever produces non-fatal `ArgfileError`s (bug)
-        // But keep behaviour for now for consistency.
-        // TODO: change the behavior to report all diagnostics disregarding the `hasFatalError` value
-        // Otherwise a broken `@argfile` is swallowed and kapt silently continues with a truncated argument list.
         messageCollector.reportCliArgumentFatalDiagnostics(cliDiagnostics)
         return emptyList()
     }

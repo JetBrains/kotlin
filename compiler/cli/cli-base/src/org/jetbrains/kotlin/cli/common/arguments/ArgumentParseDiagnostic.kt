@@ -38,6 +38,12 @@ fun CommonToolArguments.getFatalDiagnosticsMessage(): String {
     return StringReporterWrapper().reportDiagnostics(this, fatal = true)
 }
 
+fun List<ArgumentParseDiagnostic>.getFatalDiagnosticsMessage(): String {
+    return StringReporterWrapper().apply {
+        reportParseDiagnostics(this@getFatalDiagnosticsMessage, fatal = true)
+    }.prepareResult()
+}
+
 fun MessageCollector.reportCliArgumentFatalDiagnostics(diagnostics: List<ArgumentParseDiagnostic>) {
     MessageReporterWrapper(this).reportParseDiagnostics(diagnostics, fatal = true)
 }
@@ -59,6 +65,9 @@ fun MutableCollection<String>.appendFatalErrors(arguments: CommonToolArguments) 
 }
 
 sealed class ArgumentParseDiagnostic(val factory: KtSourcelessDiagnosticFactory, val isFatal: Boolean = false) {
+    class ArgfileError(val message: String) :
+        ArgumentParseDiagnostic(CLI_ARGFILE_ERROR, isFatal = true)
+
     class ArgumentWithoutValue(val argument: String) :
         ArgumentParseDiagnostic(CLI_ARGUMENT_WITHOUT_VALUE, isFatal = true)
 
@@ -82,9 +91,6 @@ sealed class ArgumentParseDiagnostic(val factory: KtSourcelessDiagnosticFactory,
 
     class ArgumentWithDeprecatedName(val deprecatedName: String, val newName: String) :
         ArgumentParseDiagnostic(CLI_ARGUMENT_WITH_DEPRECATED_NAME)
-
-    class ArgfileError(val message: String) :
-        ArgumentParseDiagnostic(CLI_ARGFILE_ERROR)
 
     class InternalArgumentError(val message: String) :
         ArgumentParseDiagnostic(CLI_INTERNAL_ARGUMENT_ERROR)
@@ -175,7 +181,7 @@ private sealed class CliDiagnosticReporterWrapper<T> {
 
     protected abstract fun report(factory: KtSourcelessDiagnosticFactory, message: String)
 
-    protected abstract fun prepareResult(): T
+    abstract fun prepareResult(): T
 }
 
 private class MessageReporterWrapper(val messageCollector: MessageCollector) : CliDiagnosticReporterWrapper<MessageCollector>() {
