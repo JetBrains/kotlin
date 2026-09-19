@@ -64,25 +64,49 @@ internal fun String?.qualifying(methodName: String): String = this?.let { "$it.$
  *
  * The runner's init script drops the same ones, see `SuiteDescriptorWrapper.isIgnored`.
  */
-internal fun isSyntheticSuiteName(suiteName: String, taskName: String, className: String?): Boolean =
+internal fun isGradleInsertedSuiteName(suiteName: String, taskName: String): Boolean =
     suiteName.startsWith("Gradle Test Executor") ||
             suiteName.startsWith("Gradle Test Run") ||
             suiteName.startsWith("Partition") ||
-            suiteName == taskName ||
-            suiteName == "$taskName.$className"
+            suiteName == taskName
 
 /**
- * The suites enclosing this descriptor, outermost first, with only the synthetic ones removed.
+ * Whether a suite of this name carries nothing of its own in a test's TeamCity name - either Gradle
+ * inserted it, or it stands for the test's own class, which TeamCity spells as part of the test name
+ * rather than as an enclosing suite.
+ *
+ * A task may name a class suite after itself as well: Kotlin/JS reports
+ * `jsNodeTest.kotlin.powerassert.DefaultMessageTest` where the JVM tasks report the bare class name.
+ */
+internal fun isSyntheticSuiteName(suiteName: String, taskName: String, className: String?): Boolean =
+    isGradleInsertedSuiteName(suiteName, taskName) || suiteName == "$taskName.$className"
+
+/**
+ * The name [TestExecutionsListener] records this suite under: its class, for a task that prefixes a
+ * class suite with its own name, and the name Gradle reports otherwise.
+ *
+ * Only that exact spelling is rewritten, rather than every suite that has a class. A JUnit 5
+ * `@Nested` or parameterized container also carries a `className` while standing for something
+ * narrower than the class, and must keep the name of its own.
+ */
+internal fun TestDescriptor.recordedSuiteName(taskName: String): String {
+    val className = className ?: return name
+    return if (name == "$taskName.$className") className else name
+}
+
+/**
+ * The suites enclosing this descriptor, outermost first, with only the ones Gradle inserted removed.
  *
  * Unlike [toTestPath] this keeps the suite that repeats the test's own class: it is the structure
- * Gradle reports, which is what [TestExecutionsListener] records so that per-class timings survive.
- * Collapsing it into the test name is TeamCity's convention and belongs at the point the tests are
- * replayed, not in the recorded file.
+ * Gradle reports, which is what [TestExecutionsListener] records so that per-class timings survive -
+ * including on the tasks that name such a suite after the task, see [recordedSuiteName]. Collapsing
+ * it into the test name is TeamCity's convention and belongs at the point the tests are replayed,
+ * not in the recorded file.
  */
 internal fun TestDescriptor.enclosingSuiteNames(taskName: String): List<String> =
     generateSequence(parent) { it.parent }
-        .map { it.name }
-        .filterNot { isSyntheticSuiteName(it, taskName, className) }
+        .filterNot { isGradleInsertedSuiteName(it.name, taskName) }
+        .map { it.recordedSuiteName(taskName) }
         .toList()
         .asReversed()
 

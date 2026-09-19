@@ -29,24 +29,51 @@ import java.io.File
  * The file is a declared output of the test task, so the build cache restores it along with the
  * task's other outputs - which is what lets a task that never ran still report its tests.
  *
+ * A recording of `:kotlin-util-klib-abi:test`, abridged to one test per suite and two of its nine
+ * top level suites - a plain test class, and one whose tests sit a suite deeper:
+ *
  * ```json
  * {
  *   "formatVersion": 1,
- *   "taskPath": ":native:unsafe-mem:test",
- *   "duration": 1007,
+ *   "taskPath": ":kotlin-util-klib-abi:test",
+ *   "duration": 5398,
  *   "suites": [
  *     {
- *       "name": "org.jetbrains.kotlin.utils.CrossValidationTest",
- *       "duration": 23,
+ *       "name": "org.jetbrains.kotlin.library.abi.parser.CursorTest",
+ *       "duration": 44,
  *       "suites": [],
  *       "tests": [
- *         { "name": "testFloatCrossRead()", "status": "Ignored", "duration": 3 }
+ *         { "name": "skipWhitespace()", "status": "OK", "duration": 0 }
  *       ]
+ *     },
+ *     {
+ *       "name": "org.jetbrains.kotlin.library.abi.AbiTypeArgumentRenderingTest",
+ *       "duration": 115,
+ *       "suites": [
+ *         {
+ *           "name": "test$org_jetbrains_kotlin_kotlin_util_klib_abi_test(Supported)",
+ *           "duration": 95,
+ *           "suites": [],
+ *           "tests": [
+ *             {
+ *               "name": "test$org_jetbrains_kotlin_kotlin_util_klib_abi_test([1] V1)",
+ *               "className": "org.jetbrains.kotlin.library.abi.AbiTypeArgumentRenderingTest",
+ *               "status": "OK",
+ *               "duration": 32
+ *             }
+ *           ]
+ *         }
+ *       ],
+ *       "tests": []
  *     }
  *   ],
  *   "tests": []
  * }
  * ```
+ *
+ * The second suite is the shape worth reading twice: a class whose tests are not directly in it.
+ * JUnit 5 reports a parameterized method as a container of its own, so the class suite holds no
+ * test and the invocations sit one level further in, each naming the class it belongs to.
  *
  * - `formatVersion` - currently `1`.
  * - `taskPath` - the task this file was recorded for, so that a file lifted out of its build
@@ -58,7 +85,10 @@ import java.io.File
  * - `suites` and `tests` - always written, even when empty, so that a reader never has to tell an
  *   absent member from an empty one.
  * - suite `name` - as Gradle reports it, minus the suites Gradle inserts itself (the test run, the
- *   executor, the partitions a task is split into, the task's own name), see [isSyntheticSuiteName].
+ *   executor, the partitions a task is split into, the task's own name), see
+ *   [isGradleInsertedSuiteName]. A task that prefixes a class suite with its own name, as Kotlin/JS
+ *   and Kotlin/Wasm do, is recorded under the bare class instead, so that every task family records
+ *   the same shape, see [recordedSuiteName].
  *   The suite standing for a test's own class is **kept**: that is where per-class timings hang.
  *   Collapsing it into the test name is TeamCity's convention and is applied when replaying, not
  *   when recording.
@@ -68,11 +98,10 @@ import java.io.File
  *   `.`, see [qualifying].
  * - test `className` - three states, and they differ:
  *     - **absent** means the enclosing suite is the test's class, which is the usual case and why
- *       the example above writes no class at all;
- *     - **present** names a class that is not the enclosing suite - a test reported outside any
- *       suite, as Kotlin/JS tasks do, where every test sits at the top level and carries its own
- *       class: `{ "name": "testSimpleExplanation[js, node]", "className":
- *       "kotlin.powerassert.DefaultMessageTest", "status": "OK", "duration": 1 }`;
+ *       `skipWhitespace()` above writes no class at all;
+ *     - **present** names a class the enclosing suite does not stand for, because that suite is
+ *       narrower than the class - the parameterized invocation above, whose own suite is the
+ *       container rather than the class;
  *     - **explicitly `null`** means the test has no class at all, which only needs saying inside a
  *       suite, where absence would otherwise mean "the suite's class".
  * - test `status` - `OK`, `Failure` or `Ignored`, the names TeamCity's own integration uses, see
@@ -151,8 +180,8 @@ class TestExecutionsListener(
      */
     private fun nodeOf(suite: TestDescriptor): SuiteNode? = when {
         suite.parent == null -> root
-        isSyntheticSuiteName(suite.name, taskName, suite.className) -> null
-        else -> nodeFor(suite.enclosingSuiteNames(taskName) + suite.name)
+        isGradleInsertedSuiteName(suite.name, taskName) -> null
+        else -> nodeFor(suite.enclosingSuiteNames(taskName) + suite.recordedSuiteName(taskName))
     }
 
     /**
