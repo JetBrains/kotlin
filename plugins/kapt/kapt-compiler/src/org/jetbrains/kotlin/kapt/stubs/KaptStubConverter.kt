@@ -16,15 +16,11 @@
 
 package org.jetbrains.kotlin.kapt.stubs
 
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.sun.tools.javac.code.Flags
-import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.parser.Tokens
-import com.sun.tools.javac.tree.JCTree
-import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
-import com.sun.tools.javac.tree.TreeScanner
+import com.sun.tools.javac.util.Context
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -79,8 +75,6 @@ import org.jetbrains.kotlin.kapt.base.javac.kaptError
 import org.jetbrains.kotlin.kapt.base.javac.reportKaptError
 import org.jetbrains.kotlin.kapt.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt.base.stubs.KotlinPosition
-import org.jetbrains.kotlin.kapt.base.util.TopLevelJava9Aware
-import org.jetbrains.kotlin.kapt.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt.stubs.SignatureParser.ClassGenericSignature
@@ -100,10 +94,66 @@ import java.io.File
 import java.lang.Deprecated
 import java.util.*
 import javax.lang.model.element.ElementKind
-import kotlin.math.sign
-import com.sun.tools.javac.util.List as JavacList
+import kotlin.collections.emptyList
 
-class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val generateNonExistentClass: Boolean) {
+abstract class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val generateNonExistentClass: Boolean) {
+    internal companion object {
+        val NON_EXISTENT_CLASS_NAME = FqName("error.NonExistentClass")
+
+        fun create(kaptContext: KaptContextForStubGeneration, generateNonExistentClass: Boolean): KaptStubConverter =
+            when (kaptContext.options.stubGenerationScheme) {
+                StubGenerationScheme.JTREE -> KaptStubJTreeConverter(kaptContext, generateNonExistentClass)
+                StubGenerationScheme.DIRECT -> KaptStubDirectConverter(kaptContext, generateNonExistentClass)
+            }
+    }
+
+    abstract fun convert(): List<KaptStub>
+
+    abstract class KaptStub(
+        private val kaptMetadata: ByteArray? = null,
+    ) {
+        internal abstract fun packageName(): String
+
+        internal abstract fun simpleClassName(): String
+
+        internal abstract fun sourceFileName(): String
+
+        abstract fun getText(context: Context): String
+
+        fun writeMetadataIfNeeded(forSource: File, report: ((File) -> Unit)? = null) {
+            if (kaptMetadata == null) {
+                return
+            }
+
+            val metadataFile = File(
+                forSource.parentFile,
+                forSource.nameWithoutExtension + KaptStubLineInformation.KAPT_METADATA_EXTENSION
+            )
+
+            report?.invoke(metadataFile)
+            metadataFile.writeBytes(kaptMetadata)
+        }
+    }
+
+}
+
+abstract class ParameterizedKaptStubConverter<
+        Element,
+        Expression : Element,
+        Statement : Element,
+        ClassDecl : Statement,
+        VariableDecl : Statement,
+        Annotation : Expression,
+        TypeParameter : Element,
+        MethodDecl : Element,
+        Modifiers : Element,
+        Block : Statement,
+        >(
+    kaptContext: KaptContextForStubGeneration,
+    generateNonExistentClass: Boolean,
+) :
+    KaptStubConverter(kaptContext, generateNonExistentClass) {
+
     internal companion object {
         private const val VISIBILITY_MODIFIERS = (Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED).toLong()
         private const val MODALITY_MODIFIERS = (Opcodes.ACC_FINAL or Opcodes.ACC_ABSTRACT).toLong()
@@ -127,8 +177,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         private val KOTLIN_METADATA_ANNOTATION = Metadata::class.java.name
 
-        val NON_EXISTENT_CLASS_NAME = FqName("error.NonExistentClass")
-
         private val JAVA_KEYWORD_FILTER_REGEX = "[a-z]+".toRegex()
 
         @Suppress("UselessCallOnNotNull") // nullable toString(), KT-27724
@@ -141,25 +189,17 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private val strictMode = kaptContext.options[KaptFlag.STRICT]
     private val stripMetadata = kaptContext.options[KaptFlag.STRIP_METADATA]
 
-    // Whether Kapt shall generate syntactically correct Java source code, or may generate incorrect (but good for the annotation
-    // processing) stubs. Currently, it is mostly a marker for the known cases of potentially incorrect syntax rather than a public flag
-    private val avoidIncorrectJavaCode = false
-
     private val typeMapper = KaptTypeMapper
 
     val treeMaker = TreeMaker.instance(kaptContext.context) as KaptTreeMaker
 
-    private val signatureParser = SignatureParser(treeMaker)
-
-    private val kdocCommentKeeper = KaptDocCommentKeeper(kaptContext)
+    private val signatureParser = SignatureParser(this)
 
     private val importsFromRoot by lazy(::collectImportsFromRootPackage)
 
     private val compiledClassByName = kaptContext.compiledClassByName
 
     private var done = false
-
-    private val treeMakerImportMethod = TreeMaker::class.java.declaredMethods.single { it.name == "Import" }
 
     internal val typeReferenceToFirType = mutableMapOf<KtTypeReference, ConeKotlinType>().apply {
         for (file in kaptContext.firFiles) {
@@ -192,7 +232,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private fun projectLegacyFunctionTypeKindsIfNeeded(
         typeReference: KtTypeReference?,
         typeMappingMode: TypeMappingMode,
-    ): Pair<JCExpression, String>? {
+    ): Expression? {
         val firType = typeReference?.let(typeReferenceToFirType::get) ?: return null
         val projectedType = legacyFunctionTypeKindProjector?.projectIfNeeded(firType) ?: return null
         val typeMapper = firJvmTypeMapper ?: return null
@@ -202,14 +242,14 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return parseFieldSignatureOrUseAsmType(signature, asmType)
     }
 
-    private fun parseFieldSignatureOrUseAsmType(signature: String?, asmType: Type): Pair<JCExpression, String> =
+    private fun parseFieldSignatureOrUseAsmType(signature: String?, asmType: Type): Expression =
         if (signature == null) {
-            treeMaker.Type(asmType) to treeMaker.convertAsmTypeToJavaText(asmType)
+            makeType(asmType)
         } else {
             signatureParser.parseFieldSignature(signature)
         }
 
-    fun convert(): List<KaptStub> {
+    override fun convert(): List<KaptStub> {
         if (kaptContext.logger.isVerbose) {
             dumpDeclarationOrigins()
         }
@@ -220,13 +260,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val stubs = kaptContext.compiledClasses.mapNotNullTo(mutableListOf()) { convertTopLevelClass(it) }
 
         if (generateNonExistentClass) {
-            stubs += KaptStub(
-                generateNonExistentClass(),
-                NON_EXISTENT_CLASS_NAME.parent().asString(),
-                NON_EXISTENT_CLASS_NAME.shortName().asString(),
-                "package ${NON_EXISTENT_CLASS_NAME.parent().asString()};\n\n" +
-                        "public final class ${NON_EXISTENT_CLASS_NAME.shortName().asString()} {\n}\n"
-            )
+            stubs += makeNonExistentClassStub()
         }
 
         return stubs
@@ -245,50 +279,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
     }
 
-    private fun generateNonExistentClass(): JCCompilationUnit {
-        val nonExistentClass = treeMaker.ClassDef(
-            treeMaker.Modifiers((Flags.PUBLIC or Flags.FINAL).toLong()),
-            treeMaker.name(NON_EXISTENT_CLASS_NAME.shortName().asString()),
-            JavacList.nil(),
-            null,
-            JavacList.nil(),
-            JavacList.nil()
-        )
-
-        val topLevel = treeMaker.TopLevelJava9Aware(treeMaker.FqName(NON_EXISTENT_CLASS_NAME.parent()), JavacList.of(nonExistentClass))
-
-        topLevel.sourcefile = KaptJavaFileObject(topLevel, nonExistentClass)
-
-        // We basically don't need to add binding for NonExistentClass
-        return topLevel
-    }
-
-    class KaptStub(
-        val jtreeFile: JCCompilationUnit,
-        val directPackageName: String,
-        val directSimpleClassName: String,
-        val directFileContent: String,
-        private val kaptMetadata: ByteArray? = null,
-    ) {
-        internal val directClassFilePathWithoutExtension: String
-            get() = if (directPackageName.isEmpty()) directSimpleClassName else
-                directPackageName.replace('.', '/') + "/" + directSimpleClassName
-
-        fun writeMetadataIfNeeded(forSource: File, report: ((File) -> Unit)? = null) {
-            if (kaptMetadata == null) {
-                return
-            }
-
-            val metadataFile = File(
-                forSource.parentFile,
-                forSource.nameWithoutExtension + KaptStubLineInformation.KAPT_METADATA_EXTENSION
-            )
-
-            report?.invoke(metadataFile)
-            metadataFile.writeBytes(kaptMetadata)
-        }
-    }
-
     private fun convertTopLevelClass(clazz: ClassNode): KaptStub? {
         val declaration = kaptContext.origins[clazz]?.declaration ?: return null
 
@@ -299,107 +289,42 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         val packageName = declaration.fileParent.packageFqName.asString()
 
-        val packageClause = if (packageName.isEmpty()) null else treeMaker.FqName(packageName)
-
-        val [classDeclaration, classText] = convertClass(clazz, lineMappings, packageName) ?: return null
-
-        val firFile = findFirFile(declaration)
-        val [imports, importsText] = convertImports(firFile, classDeclaration)
-
-        val classes = JavacList.of<JCTree>(classDeclaration)
-
-        val topLevel = treeMaker.TopLevelJava9Aware(packageClause, imports + classes)
-        topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
-
-        val text = buildString {
-            if (packageName.isNotEmpty()) {
-                append("package ").append(packageName).append(";\n\n")
-            }
-            append(importsText)
-            append(classText)
-        }
-
-        topLevel.sourcefile = KaptJavaFileObject(topLevel, classDeclaration)
-
-        postProcess(topLevel)
-
-        return KaptStub(topLevel, packageName, classDeclaration.simpleName.toString(), text, lineMappings.serialize())
+        return makeStubForTopLevelClass(declaration, lineMappings, packageName, clazz)
     }
 
-    private fun findFirFile(irClass: IrDeclaration): FirFile? =
+    protected fun findFirFile(irClass: IrDeclaration): FirFile? =
         when (val metadata = (irClass as? IrClass)?.metadata) {
             is FirMetadataSource.Class -> kaptContext.firSession?.firProvider?.getFirClassifierContainerFile(metadata.fir.symbol)
             is FirMetadataSource.File -> metadata.fir
             else -> null
         }
 
-    private fun postProcess(topLevel: JCCompilationUnit) {
-        topLevel.accept(object : TreeScanner() {
-            override fun visitClassDef(clazz: JCClassDecl) {
-                // Delete enums inside enum values
-                if (clazz.isEnum()) {
-                    for (child in clazz.defs) {
-                        if (child is JCVariableDecl) {
-                            deleteAllEnumsInside(child)
-                        }
-                    }
-                }
+    protected fun convertImports(firFile: FirFile?, classSimpleName: String): List<Element> {
+        if (!correctErrorTypes) return emptyList()
 
-                super.visitClassDef(clazz)
-            }
-
-            private fun JCClassDecl.isEnum() = mods.flags and Opcodes.ACC_ENUM.toLong() != 0L
-
-            private fun deleteAllEnumsInside(def: JCTree) {
-                def.accept(object : TreeScanner() {
-                    override fun visitClassDef(clazz: JCClassDecl) {
-                        clazz.defs = mapJList(clazz.defs) { child ->
-                            if (child is JCClassDecl && child.isEnum()) null else child
-                        }
-
-                        super.visitClassDef(clazz)
-                    }
-                })
-            }
-        })
-    }
-
-    private fun convertImports(firFile: FirFile?, classDeclaration: JCClassDecl): Pair<JavacList<JCTree>, String> {
-        if (!correctErrorTypes) return JavacList.nil<JCTree>() to ""
-
-        val imports = mutableListOf<JCImport>()
-        val importsText = StringBuilder()
+        val imports = mutableListOf<Element>()
         val importedShortNames = mutableSetOf<String>()
 
         val addImport = fun(fqName: FqName, isAllUnder: Boolean) {
-            val importedExpr = treeMaker.FqName(fqName.asString())
             if (isAllUnder) {
-                imports += treeMakerImportMethod.invoke(
-                    treeMaker, treeMaker.Select(importedExpr, treeMaker.nameTable.names.asterisk), false
-                ) as JCImport
-                importsText.append("import ").append(fqName.asString()).append(".*;\n")
+                imports += makeStarImport(fqName)
             } else {
                 if (importedShortNames.add(fqName.shortName().asString())) {
-                    imports += treeMakerImportMethod.invoke(treeMaker, importedExpr, false) as JCImport
-                    importsText.append("import ").append(fqName.asString()).append(";\n")
+                    imports += makeSingleImport(fqName)
                 }
             }
         }
 
         if (firFile != null) {
-            convertImportsFir(firFile, classDeclaration, addImport)
+            convertImportsFir(firFile, classSimpleName, addImport)
         }
 
-        if (importsText.isNotEmpty()) {
-            importsText.append("\n")
-        }
-
-        return JavacList.from<JCTree>(imports) to importsText.toString()
+        return imports
     }
 
     private fun convertImportsFir(
         file: FirFile,
-        classDeclaration: JCClassDecl,
+        classSimpleName: String,
         addImport: (fqName: FqName, isAllUnder: Boolean) -> Unit,
     ) {
         val firSession = file.moduleData.session
@@ -413,7 +338,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             if (!isValidQualifiedName(importedFqName)) continue
 
             val shortName = importedFqName.shortName()
-            if (shortName.asString() == classDeclaration.simpleName.toString()) continue
+            if (shortName.asString() == classSimpleName) continue
 
             val isTopLevelCallable = firSession.symbolProvider.getTopLevelCallableSymbols(importedFqName.parent(), shortName).isNotEmpty()
             if (isTopLevelCallable) continue
@@ -435,7 +360,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
     }
 
-    private fun convertClass(clazz: ClassNode, lineMappings: KaptLineMappingCollector, packageFqName: String): Pair<JCClassDecl, String>? {
+    protected fun convertClass(clazz: ClassNode, lineMappings: KaptLineMappingCollector, packageFqName: String): Pair<String, ClassDecl>? {
         if (isSynthetic(clazz.access)) return null
         if (!checkIfValidTypeName(clazz, Type.getObjectType(clazz.name))) return null
 
@@ -456,11 +381,10 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val simpleName = declaration.name.asString()
         if (!isValidIdentifier(simpleName)) return null
 
-        val rawSuperClass = treeMaker.FqName(clazz.superName) to treeMaker.getQualifiedName(clazz.superName)
+        val rawSuperClass = makeQualifiedName(clazz.superName)
         val rawInterfaces = clazz.interfaces.mapNotNull {
             if (isAnnotation && it == "java/lang/annotation/Annotation") return@mapNotNull null
-            val interfaceText = treeMaker.getQualifiedName(it)
-            treeMaker.FqName(interfaceText) to interfaceText
+            makeQualifiedName(it)
         }
 
         lineMappings.registerClass(clazz)
@@ -492,7 +416,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             EnumValueData(field, foundInnerClass, correspondingClass)
         }
 
-        val enumValues: List<Pair<JCTree, String>> = enumValuesData.mapNotNull { data ->
+        val enumValues: List<VariableDecl> = enumValuesData.mapNotNull { data ->
             // Historically, the first available constructor is used for all values
             // First two arguments are synthetic and are dropped
             val constructorArguments = Type.getArgumentTypes(clazz.methods.firstOrNull {
@@ -503,32 +427,19 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 convertLiteral(clazz, getDefaultValue(it))
             }
 
-            val def = data.correspondingClass?.let { convertClass(it, lineMappings, packageFqName)?.first }
-
-            @Suppress("InconsistentCommentForJavaParameter")
-            val jcInitializer = treeMaker.NewClass(
-                /* enclosing = */ null,
-                /* typeArgs = */ JavacList.nil(),
-                /* clazz = */ treeMaker.Ident(treeMaker.name(data.field.name)),
-                /* args = */ args.getJavacList(),
-                /* def = */ def
-            )
-
-            val initializerText = buildString {
-                append(data.field.name)
-                appendListIfNonEmpty(args, "(", ")") { it.second }
-            }
+            val def = data.correspondingClass?.let { convertClass(it, lineMappings, packageFqName)?.second }
+            val initializer = makeEnumValueInitializer(data.field.name, args, def)
 
             convertField(
-                data.field, clazz, lineMappings, packageFqName, jcInitializer to initializerText
+                data.field, clazz, lineMappings, packageFqName, initializer
             )
         }
 
-        val convertedFieldsWithNode: List<Pair<FieldNode, Pair<JCVariableDecl, String>>> =
+        val convertedFieldsWithNode: List<Pair<FieldNode, VariableDecl>> =
             clazz.fields.filter { !it.isEnumValue() }.mapNotNull { fieldNode ->
                 convertField(fieldNode, clazz, lineMappings, packageFqName)?.let { fieldNode to it }
             }
-        val sortedConvertedFields: List<Pair<JCVariableDecl, String>> = sortClassMembers(convertedFieldsWithNode, classPosition) {
+        val sortedConvertedFields: List<VariableDecl> = sortClassMembers(convertedFieldsWithNode, classPosition) {
             val fieldNode = it.first
             MemberData(fieldNode.name, fieldNode.desc, lineMappings.getPosition(clazz, fieldNode))
         }.map { it.second }
@@ -537,79 +448,35 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 name == "values" && desc == "()[L${clazz.name};" ||
                         name == "valueOf" && desc == "(Ljava/lang/String;)L${clazz.name};")
 
-        val convertedMethodsWithNode: List<Pair<MethodNode, Pair<JCMethodDecl, String>>> =
+        val convertedMethodsWithNode: List<Pair<MethodNode, MethodDecl>> =
             clazz.methods.filter { !it.isImplicitEnumMethod() }.mapNotNull { methodNode ->
                 convertMethod(methodNode, clazz, lineMappings, packageFqName, declaration)?.let { methodNode to it }
             }
-        val sortedConvertedMethods: List<Pair<JCMethodDecl, String>> = sortClassMembers(convertedMethodsWithNode, classPosition) {
+        val sortedConvertedMethods: List<MethodDecl> = sortClassMembers(convertedMethodsWithNode, classPosition) {
             val methodNode = it.first
             MemberData(methodNode.name, methodNode.desc, lineMappings.getPosition(clazz, methodNode))
         }.map { it.second }
 
-        val nestedClasses: List<Pair<JCTree, String>> = clazz.innerClasses.mapNotNull { innerClass ->
+        val nestedClasses: List<ClassDecl> = clazz.innerClasses.mapNotNull { innerClass ->
             if (enumValuesData.any { it.innerClass == innerClass }) return@mapNotNull null
             if (innerClass.outerName != clazz.name) return@mapNotNull null
             val innerClassNode = compiledClassByName[innerClass.name] ?: return@mapNotNull null
-            convertClass(innerClassNode, lineMappings, packageFqName)
+            convertClass(innerClassNode, lineMappings, packageFqName)?.second
         }
 
         val superTypes = calculateSuperTypes(clazz, genericType, declaration)
 
-        val classTree = treeMaker.ClassDef(
-            modifiers.first,
-            treeMaker.name(simpleName),
-            genericType.typeParameters.getJavacList(),
-            superTypes.superClass?.first,
-            superTypes.interfaces.getJavacList(),
-            enumValues.getJavacList() +
-                    sortedConvertedFields.getJavacList() +
-                    sortedConvertedMethods.getJavacList() +
-                    nestedClasses.getJavacList()
-        ).keepKdocCommentsIfNecessary(clazz)
-
-        val text = buildString {
-            appendKDocCommentIfNecessary(clazz)
-            append(modifiers.second)
-            val classKindText = when {
-                isEnum -> "enum"
-                isAnnotation -> "@interface"
-                clazz.isInterface() -> "interface"
-                else -> "class"
-            }
-            append(classKindText).append(" ").append(simpleName)
-            clazz.isInterface()
-            if (!isAnnotation || !avoidIncorrectJavaCode) {
-                // interface cannot have type parameters or extends clause, but they are allowed (not reported)
-                // during the annotations processing
-                appendListIfNonEmpty(genericType.typeParameters, "<", ">") { it.second }
-                if (clazz.isInterface()) {
-                    kaptContext.textGenerationRequire(superTypes.superClass == null) {
-                        "Interface ${clazz.name} has an unexpected superclass in Java text generation"
-                    }
-                    appendListIfNonEmpty(superTypes.interfaces, " extends ", "") { it.second }
-                } else {
-                    superTypes.superClass?.let {
-                        append(" extends ").append(it.second)
-                    }
-                    appendListIfNonEmpty(superTypes.interfaces, " implements ", "") { it.second }
-                }
-            }
-            append(" {\n")
-            if (isEnum) {
-                for ([_, enumValue] in enumValues)
-                    append(enumValue)
-                append(";\n")
-            }
-            for ([_, field] in sortedConvertedFields)
-                append(field).append("\n")
-            for ([_, method] in sortedConvertedMethods)
-                append(method).append("\n")
-            for ([_, nestedClass] in nestedClasses)
-                append(nestedClass).append("\n")
-            append("}\n")
-        }
-
-        return classTree to text
+        return simpleName to makeClassDecl(
+            clazz,
+            simpleName,
+            modifiers,
+            genericType,
+            superTypes,
+            enumValues,
+            sortedConvertedFields,
+            sortedConvertedMethods,
+            nestedClasses
+        )
     }
 
     private inline fun <T> sortClassMembers(
@@ -623,11 +490,12 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return members.sortedWith(MembersPositionComparator(classPosition, positionsMap))
     }
 
-    private class ClassSupertypes(val superClass: Pair<JCExpression, String>?, val interfaces: List<Pair<JCExpression, String>>)
+    protected class ClassSupertypes<Expr>(val superClass: Expr?, val interfaces: List<Expr>)
+    private class SuperTypeCalculationFailure : RuntimeException()
 
     private fun calculateSuperTypes(
-        clazz: ClassNode, genericType: ClassGenericSignature, declaration: IrDeclaration,
-    ): ClassSupertypes {
+        clazz: ClassNode, genericType: ClassGenericSignature<Expression, TypeParameter>, declaration: IrDeclaration,
+    ): ClassSupertypes<Expression> {
         val hasSuperClass = clazz.superName != "java/lang/Object" && !clazz.isEnum()
 
         val defaultSuperTypes = ClassSupertypes(
@@ -658,12 +526,10 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             return defaultSuperTypes
         }
 
-        class SuperTypeCalculationFailure : RuntimeException()
-
-        fun nonErrorType(ref: () -> KtTypeReference?): Pair<JCExpression, String> {
+        fun nonErrorType(ref: () -> KtTypeReference?): Expression {
             assert(correctErrorTypes)
 
-            return getNonErrorType<Pair<JCExpression, String>>(true, SUPER_TYPE, ref) { throw SuperTypeCalculationFailure() }
+            return getNonErrorType<Expression>(true, SUPER_TYPE, ref) { throw SuperTypeCalculationFailure() }
         }
 
         return try {
@@ -811,8 +677,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         containingClass: ClassNode,
         lineMappings: KaptLineMappingCollector,
         packageFqName: String,
-        explicitInitializer: Pair<JCExpression, String>? = null,
-    ): Pair<JCVariableDecl, String>? {
+        explicitInitializer: Expression? = null,
+    ): VariableDecl? {
         if (isSynthetic(field.access) || isIgnored(field.invisibleAnnotations)) return null
         val declaration = kaptContext.origins[field]?.declaration
 
@@ -850,7 +716,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         // Enum type must be an identifier (Javac requirement)
         val convertedType = if (isEnumField) {
             val name = treeMaker.getQualifiedName(asmType).substringAfterLast('.')
-            treeMaker.SimpleName(name) to name
+            makeSimpleName(name)
         } else {
             getNonErrorType(
                 irField?.type?.containsErrorTypes() == true,
@@ -867,27 +733,10 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         val initializer = explicitInitializer ?: convertPropertyInitializer(containingClass, field)
 
-        val text = buildString {
-            if (!isEnumField) {
-                appendKDocCommentIfNecessary(field)
-            }
-            append(modifiers.second)
-            if (isEnumField) {
-                append(initializer?.second ?: name)
-                append(",\n")
-            } else {
-                append(convertedType.second).append(" ")
-                append(name)
-                initializer?.let { append(" = ").append(it.second) }
-                append(";\n")
-            }
-        }
-
-        return treeMaker.VarDef(modifiers.first, treeMaker.name(name), convertedType.first, initializer?.first)
-            .keepKdocCommentsIfNecessary(field) to text
+        return makeField(field, modifiers, initializer, convertedType)
     }
 
-    private fun convertPropertyInitializer(containingClass: ClassNode, field: FieldNode): Pair<JCExpression, String>? {
+    private fun convertPropertyInitializer(containingClass: ClassNode, field: FieldNode): Expression? {
         val value = field.value
 
         val irField = kaptContext.origins[field]?.declaration as? IrField
@@ -919,7 +768,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     }
 
     @OptIn(SymbolInternals::class)
-    private fun convertNonConstPropertyInitializerFir(property: FirProperty, containingClass: ClassNode): Pair<JCExpression, String>? {
+    private fun convertNonConstPropertyInitializerFir(property: FirProperty, containingClass: ClassNode): Expression? {
         val propertyInitializer = property.initializer ?: return null
         val reference = propertyInitializer.toReference(kaptContext.firSession!!)
         val expression =
@@ -988,7 +837,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         lineMappings: KaptLineMappingCollector,
         packageFqName: String,
         irClass: IrClass,
-    ): Pair<JCMethodDecl, String>? {
+    ): MethodDecl? {
         if (isIgnored(method.invisibleAnnotations)) return null
         val declaration = kaptContext.origins[method]?.declaration as? IrFunction ?: return null
 
@@ -1019,7 +868,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         )
 
         val asmReturnType = Type.getReturnType(method.desc)
-        val jcReturnType = if (isConstructor) null else treeMaker.Type(asmReturnType)
+        val returnType = if (isConstructor) null else makeType(asmReturnType)
 
         val parametersInfo = method.getParametersInfo(containingClass, irClass.isInner, declaration)
 
@@ -1029,18 +878,14 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             return null
         }
 
-        val parameterTypes = parametersInfo.map { info ->
-            treeMaker.Type(info.type) to treeMaker.convertAsmTypeToJavaText(info.type)
-        }
+        val parameterTypes = parametersInfo.map { info -> makeType(info.type) }
 
         // Kotlin @Throws arguments are class literals, so cannot be generic and do not need refinement from the generic signature.
-        val exceptionTypes = method.exceptions.map {
-            treeMaker.FqName(it) to treeMaker.getQualifiedName(it)
-        }
+        val exceptionTypes = method.exceptions.map { makeQualifiedName(it) }
 
-        val genericSignature = extractMethodSignatureTypes(declaration, exceptionTypes, jcReturnType, method, parameterTypes)
+        val genericSignature = extractMethodSignatureTypes(declaration, exceptionTypes, returnType, method, parameterTypes)
 
-        val parameters: List<Pair<JCVariableDecl, String>> = parametersInfo.mapIndexed { index, info ->
+        val parameters: List<VariableDecl> = parametersInfo.mapIndexed { index, info ->
             val lastParameter = index == parametersInfo.lastIndex
             val isArrayType = info.type.sort == Type.ARRAY
 
@@ -1061,23 +906,18 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 else -> "p" + index + "_" + info.name.hashCode().ushr(1)
             }
             val type = genericSignature.parameterTypes[index]
-            val paramText = buildString {
-                append(modifiers.second)
-                append(if (varargs != 0L) type.second.removeSuffix("[]") + "..." else type.second)
-                append(' ')
-                append(name)
-            }
-            treeMaker.VarDef(modifiers.first, treeMaker.name(name), type.first, null) to paramText
+
+            makeParameter(name, type, modifiers, varargs != 0L)
         }
 
         val defaultValue = method.annotationDefault?.let { convertLiteral(containingClass, it) }
 
-        val body: Pair<JCBlock, String>? = if (defaultValue != null) {
+        val body: Block? = if (defaultValue != null) {
             null
         } else if (isAbstract(method.access)) {
             null
         } else if (isConstructor && containingClass.isEnum()) {
-            treeMaker.Block(0, JavacList.nil()) to ""
+            makeBlock(emptyList())
         } else if (isConstructor) {
             val superClass = declaration.parentAsClass.getNonErrorSuperClassNotAny()
             val superClassConstructor =
@@ -1086,63 +926,37 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                             it.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR
                 }
 
-            val superClassConstructorCall: Pair<JavacList<JCStatement>, String> = if (superClassConstructor != null) {
+            val superClassConstructorCall: List<Statement> = if (superClassConstructor != null) {
                 val args = superClassConstructor.parameters.map { param ->
                     val defaultValue = IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, param.type)
                     convertLiteral(containingClass, defaultValue.value)
                 }
-                val text = joinPairedText(args, "super(", ");")
-                val call = treeMaker.Apply(JavacList.nil(), treeMaker.SimpleName("super"), args.getJavacList())
-                JavacList.of<JCStatement>(treeMaker.Exec(call)) to text
+                listOf(makeSimpleCallStatement("super", args))
             } else {
-                JavacList.nil<JCStatement>() to ""
+                emptyList()
             }
 
-            treeMaker.Block(0, superClassConstructorCall.first) to superClassConstructorCall.second
+            makeBlock(superClassConstructorCall)
         } else if (asmReturnType == Type.VOID_TYPE) {
-            treeMaker.Block(0, JavacList.nil()) to ""
+            makeBlock(emptyList())
         } else {
             val convertedDefaultValue = convertLiteral(containingClass, getDefaultValue(asmReturnType))
-            val text = "return " + convertedDefaultValue.second + ";"
-            val returnStatement = treeMaker.Return(convertedDefaultValue.first)
-            treeMaker.Block(0, JavacList.of(returnStatement)) to text
+            val returnStatement = makeReturn(convertedDefaultValue)
+            makeBlock(listOf(returnStatement))
         }
 
         lineMappings.registerMethod(containingClass, method)
 
-        val text = buildString {
-            appendKDocCommentIfNecessary(method)
-            append(modifiers.second)
-
-            if (isConstructor) {
-                append(irClass.name)
-            } else {
-                appendListIfNonEmpty(genericSignature.typeParameters, "<", ">") { it.second }
-                append(genericSignature.returnType!!.second)
-                append(" ")
-                append(name)
-            }
-            appendList(parameters, "(", ")") { it.second }
-            appendListIfNonEmpty(exceptionTypes, " throws ", "") { it.second }
-            if (body != null) {
-                append(" {\n").append(body.second).append("\n}")
-            } else if (defaultValue != null) {
-                append(" default ").append(defaultValue.second).append(";")
-            } else {
-                append(";")
-            }
+        val paramSignatureTypes = List(parametersInfo.size) { index ->
+            genericSignature.parameterTypes[index].toString()
         }
+        val signature = buildString {
+            append(name)
+            paramSignatureTypes.joinTo(this, prefix = "(", postfix = ")")
+        }
+        lineMappings.registerSignature(signature, method)
 
-        return treeMaker.MethodDef(
-            modifiers.first,
-            treeMaker.name(name),
-            genericSignature.returnType?.first,
-            genericSignature.typeParameters.getJavacList(),
-            parameters.getJavacList(),
-            exceptionTypes.getJavacList(),
-            body?.first,
-            defaultValue?.first
-        ).keepSignature(lineMappings, method).keepKdocCommentsIfNecessary(method) to text
+        return makeMethod(method, irClass, modifiers, genericSignature, parameters, exceptionTypes, body, defaultValue)
     }
 
     private fun IrClass.getNonErrorSuperClassNotAny(): IrClass {
@@ -1164,11 +978,11 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     private fun extractMethodSignatureTypes(
         declaration: IrFunction,
-        rawExceptionTypes: List<Pair<JCExpression, String>>,
-        jcReturnType: JCExpression?,
+        rawExceptionTypes: List<Expression>,
+        returnType: Expression?,
         method: MethodNode,
-        parameterTypes: List<Pair<JCExpression, String>>,
-    ): SignatureParser.MethodGenericSignature {
+        parameterTypes: List<Expression>,
+    ): SignatureParser.MethodGenericSignature<Expression, TypeParameter> {
         val irValueParameters = declaration.parameters.filter { it.kind == IrParameterKind.Regular }
         val contextParameters = declaration.parameters.filter { it.kind == IrParameterKind.Context }
         val extensionReceiver = declaration.parameters.find { it.kind == IrParameterKind.ExtensionReceiver }
@@ -1183,8 +997,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }
         val returnTypeMappingMode = MethodSignatureMapper.getTypeMappingModeForReturnType(irTypeSystem, declaration, declaration.returnType)
 
-        fun nonErrorParameterTypeProvider(index: Int, lazyType: () -> Pair<JCExpression, String>): Pair<JCExpression, String> {
-            fun getNonErrorMethodParameterType(type: IrType, ktTypeProvider: () -> KtTypeReference?): Pair<JCExpression, String> {
+        fun nonErrorParameterTypeProvider(index: Int, lazyType: () -> Expression): Expression {
+            fun getNonErrorMethodParameterType(type: IrType, ktTypeProvider: () -> KtTypeReference?): Expression {
                 val typeReference = ktTypeProvider()
                 val typeMappingMode = MethodSignatureMapper.getTypeMappingModeForParameter(irTypeSystem, declaration, type)
                 return getNonErrorType(
@@ -1275,9 +1089,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                                 if (argument == null) {
                                     lazyType()
                                 } else {
-                                    val continuationTypeFqName = StandardNames.CONTINUATION_INTERFACE_FQ_NAME
-                                    treeMaker.TypeApply(treeMaker.FqName(continuationTypeFqName), JavacList.of(argument.first)) to
-                                            "$continuationTypeFqName<${argument.second}>"
+                                    makeTypeApply(makeQualifiedName(StandardNames.CONTINUATION_INTERFACE_FQ_NAME), listOf(argument))
                                 }
                             } else getNonErrorMethodParameterType(irParameter.type) {
                                 sourceElement?.valueParameters?.getOrNull(valueParameterIndex)?.typeReference
@@ -1295,11 +1107,10 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             val nonErrorParameterTypes = parameterTypes.mapIndexed { index, parameterType ->
                 nonErrorParameterTypeProvider(index) { parameterType }
             }
-            val returnTypeText = if (jcReturnType == null) "" else treeMaker.convertAsmTypeToJavaText(Type.getReturnType(method.desc))
-            SignatureParser.MethodGenericSignature(emptyList(), nonErrorParameterTypes, rawExceptionTypes, jcReturnType?.to(returnTypeText))
+            SignatureParser.MethodGenericSignature(emptyList(), nonErrorParameterTypes, rawExceptionTypes, returnType)
         } else {
             signatureParser.parseMethodSignature(
-                method.signature, parameterTypes, hasReturnType = jcReturnType != null,
+                method.signature, parameterTypes, hasReturnType = returnType != null,
                 ::nonErrorParameterTypeProvider
             )
         }
@@ -1319,7 +1130,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         parameter.name.asString() == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME &&
                 parameter.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
 
-    private fun <T : Pair<JCExpression, String>?> getNonErrorType(
+    private fun <T : Expression?> getNonErrorType(
         containsErrorTypes: Boolean,
         kind: ErrorTypeCorrector.TypeKind,
         ktTypeProvider: () -> KtTypeReference?,
@@ -1339,25 +1150,15 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
 
         val nonErrorType = ifNonError()
-        val jcNonErrorType = nonErrorType?.first
-
-        val isJTreeTypeNonExistentClass = jcNonErrorType is JCFieldAccess &&
-                jcNonErrorType.name.toString() == NON_EXISTENT_CLASS_NAME.shortName().asString() &&
-                (jcNonErrorType.selected as? JCIdent)?.name.toString() == NON_EXISTENT_CLASS_NAME.parent().asString()
-        val isDirectTypeNonExistentClass = nonErrorType != null && nonErrorType.second == NON_EXISTENT_CLASS_NAME.asString()
-        kaptContext.textGenerationRequire(isJTreeTypeNonExistentClass == isDirectTypeNonExistentClass) {
-            "Inconsistent non-existent class rendering between JCTree and Java text"
-        }
-
-        if (isJTreeTypeNonExistentClass) {
+        if (nonErrorType != null && isNonExistentClass(nonErrorType)) {
             @Suppress("UNCHECKED_CAST")
-            return (treeMaker.FqName("java.lang.Object") to "java.lang.Object") as T
+            return makeQualifiedName("java.lang.Object") as T
         }
 
         return nonErrorType
     }
 
-    private fun FirAnnotation.convertNonErrorAnnotationType(type: IrType): Pair<JCExpression, String>? =
+    private fun FirAnnotation.convertNonErrorAnnotationType(type: IrType): Expression? =
         if (correctErrorTypes && type.containsErrorTypes())
             convertFirType(resolvedType)
         else null
@@ -1389,13 +1190,13 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         visibleAnnotations: List<AnnotationNode>?,
         invisibleAnnotations: List<AnnotationNode>?,
         irAnnotations: List<IrAnnotation>,
-    ): Pair<JCModifiers, String> {
-        val sb = StringBuilder()
+    ): Modifiers {
+        val convertedAnnotations = mutableListOf<Annotation>()
         var seenOverride = false
         val seenAnnotations = mutableSetOf<IrAnnotation>()
-        fun convertAndAdd(list: JavacList<JCAnnotation>, annotation: AnnotationNode): JavacList<JCAnnotation> {
+        fun convertAndAdd(annotation: AnnotationNode) {
             if (annotation.desc == "Ljava/lang/Override;") {
-                if (seenOverride) return list  // KT-34569: skip duplicate @Override annotations
+                if (seenOverride) return  // KT-34569: skip duplicate @Override annotations
                 seenOverride = true
             }
             // Missing annotation classes can match against multiple annotation descriptors
@@ -1404,18 +1205,14 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }?.also {
                 seenAnnotations += it
             }
-            val annotationData = filterAndConvertAnnotation(containingClass, annotation, packageFqName, irAnnotation) ?: return list
-            sb.append(annotationData.second).append("\n")
-            return list.append(annotationData.first)
+            filterAndConvertAnnotation(containingClass, annotation, packageFqName, irAnnotation)?.let { convertedAnnotations.add(it) }
         }
 
-        var annotations = visibleAnnotations?.fold(JavacList.nil(), ::convertAndAdd) ?: JavacList.nil()
-        annotations = invisibleAnnotations?.fold(annotations, ::convertAndAdd) ?: annotations
+        visibleAnnotations?.forEach { convertAndAdd(it) }
+        invisibleAnnotations?.forEach { convertAndAdd(it) }
 
         if (isDeprecated(access)) {
-            val type = treeMaker.Type(Type.getType(Deprecated::class.java))
-            annotations = annotations.append(treeMaker.Annotation(type, JavacList.nil()))
-            sb.append("@java.lang.Deprecated()\n")
+            convertedAnnotations.add(makeAnnotation(makeType(Type.getType(Deprecated::class.java)), emptyList()))
         }
 
         val flags = when (kind) {
@@ -1430,35 +1227,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
 
         val isEnumField = kind == ElementKind.FIELD && isEnum(access.toInt())
-        if (!isEnumField)
-            sb.appendModifiers(flags, kind)
-
-        return treeMaker.Modifiers(flags, annotations) to sb.toString()
-    }
-
-    private fun StringBuilder.appendModifiers(flags: Long, kind: ElementKind) {
-        fun appendModifierIfPresent(flag: Long, modifier: String) {
-            if (flags and flag != 0L) {
-                append(modifier).append(" ")
-            }
-        }
-
-        fun appendModifierIfPresent(flag: Int, modifier: String) = appendModifierIfPresent(flag.toLong(), modifier)
-
-        appendModifierIfPresent(Opcodes.ACC_PUBLIC, "public")
-        appendModifierIfPresent(Opcodes.ACC_PROTECTED, "protected")
-        appendModifierIfPresent(Opcodes.ACC_PRIVATE, "private")
-        appendModifierIfPresent(Opcodes.ACC_STATIC, "static")
-        appendModifierIfPresent(Opcodes.ACC_ABSTRACT, "abstract")
-        appendModifierIfPresent(Opcodes.ACC_FINAL, "final")
-        appendModifierIfPresent(Opcodes.ACC_NATIVE, "native")
-        appendModifierIfPresent(Opcodes.ACC_SYNCHRONIZED, "synchronized")
-        if (kind == ElementKind.FIELD) {
-            appendModifierIfPresent(Opcodes.ACC_TRANSIENT, "transient")
-        } // varargs for methods have the same code, but do not contribute to modifiers
-        appendModifierIfPresent(Opcodes.ACC_VOLATILE, "volatile")
-        appendModifierIfPresent(Opcodes.ACC_STRICT, "strictfp")
-        appendModifierIfPresent(Flags.DEFAULT, "default")
+        return makeModifiers(kind, isEnumField, flags, convertedAnnotations)
     }
 
     private fun filterAndConvertAnnotation(
@@ -1466,7 +1235,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         annotation: AnnotationNode,
         packageFqName: String? = "",
         irAnnotation: IrAnnotation? = null
-    ): Pair<JCAnnotation, String>? {
+    ): Annotation? {
         val annotationType = Type.getType(annotation.desc)
         val fqName = treeMaker.getQualifiedName(annotationType)
         val filterOut = BLACKLISTED_ANNOTATIONS.any { fqName.startsWith(it) } ||
@@ -1483,7 +1252,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         annotation: AnnotationNode,
         packageFqName: String? = "",
         irAnnotation: IrAnnotation? = null
-    ): Pair<JCAnnotation, String> {
+    ): Annotation {
         val annotationType = Type.getType(annotation.desc)
         val fqName = treeMaker.getQualifiedName(annotationType)
         reportIfIllegalTypeUsage(containingClass, annotationType)
@@ -1498,13 +1267,13 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val ktAnnotation = irAnnotation?.source?.getPsi() as? KtAnnotationEntry
         val firSource = irAnnotation?.source as? FirAnnotationSourceElement
         val firAnnotation = firSource?.fir
-        val convertedAnnotationType: Pair<JCExpression, String> =
+        val convertedAnnotationType: Expression =
             firAnnotation?.convertNonErrorAnnotationType(irAnnotation.type) ?: getNonErrorType(
                 irAnnotation?.type?.containsErrorTypes() == true,
                 ANNOTATION,
                 { ktAnnotation?.typeReference },
                 {
-                    treeMaker.FqName(nameFromNode) to treeMaker.getQualifiedName(nameFromNode)
+                    makeQualifiedName(nameFromNode)
                 }
             )
 
@@ -1514,7 +1283,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         val constantValues = pairedListToMap(annotation.values)
 
-        val convertedArguments: List<Pair<JCExpression, String>> = when {
+        val convertedArguments: List<Expression> = when {
             firArgMapping.isNotEmpty() -> {
                 val allParameterNames = firArgMapping.keys.mapTo(mutableSetOf()) { it.asString() } + constantValues.keys
                 allParameterNames.mapNotNull { strName ->
@@ -1528,27 +1297,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }
         }
 
-        val text = buildString {
-            append('@')
-            append(convertedAnnotationType.second)
-            appendListIfNonEmpty(convertedArguments, "(", ")") { it.second }
-            append("\n")
-        }
-
-        return treeMaker.Annotation(convertedAnnotationType.first, convertedArguments.getJavacList()) to text
-    }
-
-    private fun StringBuilder.appendJavaStringLiteral(str: String) {
-        append('"')
-        StringUtil.escapeStringCharacters(str.length, str, "\"", this)
-        append('"')
-    }
-
-    private fun StringBuilder.appendJavaCharLiteral(ch: Char) {
-        append('\'')
-        val str = ch.toString()
-        StringUtil.escapeStringCharacters(str.length, str, "\'", this)
-        append('\'')
+        return makeAnnotation(convertedAnnotationType, convertedArguments)
     }
 
     private fun convertAnnotationArgumentWithNameFir(
@@ -1556,9 +1305,9 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         constantValue: Any?,
         value: FirExpression?,
         name: String,
-    ): Pair<JCExpression, String>? {
+    ): Expression? {
         if (!isValidIdentifier(name)) return null
-        val expr: Pair<JCExpression, String> = when (value) {
+        val expr = when (value) {
             is FirCollectionLiteral -> {
                 convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments)
             }
@@ -1576,28 +1325,26 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 convertConstantValueArgumentsFir(containingClass, constantValue, listOfNotNull(value))
             }
         } ?: return null
-        val text = name + " = " + expr.second
-        return treeMaker.Assign(treeMaker.SimpleName(name), expr.first) to text
+
+        return makeAssignExpression(name, expr)
     }
 
     private fun convertConstantValueArgumentsFir(
         containingClass: ClassNode,
         constantValue: Any?,
         args: List<FirExpression>
-    ): Pair<JCExpression, String> {
+    ): Expression {
         if (constantValue is List<*>) {
             if (args.size > constantValue.size) {
                 // the expected reason for "extra" args is class literals with error (missing) types
 
                 if (args.size == 1 && args[0] is FirSpreadArgumentExpression) {
-                    val converted = convertFirSpreadArgumentExpression(args[0] as FirSpreadArgumentExpression)
-                    return treeMaker.NewArray(null, null, converted.first) to converted.second
+                    return convertFirSpreadArgumentExpression(args[0] as FirSpreadArgumentExpression)
                 }
 
                 val convertedLiterals = args.mapNotNull(::convertFirGetClassCall)
                 if (convertedLiterals.size == args.size) {
-                    val text = joinPairedText(convertedLiterals, "{", "}")
-                    return treeMaker.NewArray(null, null, convertedLiterals.getJavacList()) to text
+                    return makeArray(convertedLiterals)
                 }
             }
         }
@@ -1612,39 +1359,38 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         ) {
             val parsed = args.mapNotNull(::tryParseReferenceToIntConstant)
             if (parsed.size == args.size) {
-                val text = joinPairedText(parsed, "{", "}")
-                return treeMaker.NewArray(null, null, parsed.getJavacList()) to text
+                return makeArray(parsed)
             }
         }
 
         return convertLiteral(containingClass, constantValue)
     }
 
-    private fun tryParseReferenceToIntConstant(expression: FirExpression): Pair<JCExpression, String>? {
+    private fun tryParseReferenceToIntConstant(expression: FirExpression): Expression? {
         if (expression !is FirPropertyAccessExpression) return null
         val field = expression.calleeReference.resolved?.resolvedSymbol as? FirFieldSymbol ?: return null
         if (!field.isJavaOrEnhancement || field.dispatchReceiverType != null) return null
         val containingClass = field.containingClassLookupTag() ?: return null
         val fqName = containingClass.classId.asSingleFqName().child(field.name)
-        return treeMaker.FqName(fqName) to fqName.asString()
+        return makeQualifiedName(fqName)
     }
 
-    private fun convertFirSpreadArgumentExpression(argumentExpression: FirSpreadArgumentExpression): Pair<JavacList<JCExpression>, String> {
-        val literal = argumentExpression.expression as? FirCollectionLiteral ?: return JavacList.nil<JCExpression>() to "{}"
+    private fun convertFirSpreadArgumentExpression(argumentExpression: FirSpreadArgumentExpression): Expression {
+        val literal = argumentExpression.expression as? FirCollectionLiteral
+            ?: return makeArray(emptyList())
         val converted = literal.arguments.mapNotNull(::convertFirGetClassCall)
-        val text = joinPairedText(converted, "{", "}")
-        return converted.getJavacList() to text
+        return makeArray(converted)
     }
 
-    private fun convertFirGetClassCall(expression: FirExpression): Pair<JCExpression, String>? {
+    private fun convertFirGetClassCall(expression: FirExpression): Expression? {
         if (expression !is FirGetClassCall) return null
         val kClassType = expression.resolvedType
         val type = kClassType.typeArguments.single().type ?: return null
         val convertedType = convertFirType(type) ?: return null
-        return treeMaker.Select(convertedType.first, treeMaker.name("class")) to "${convertedType.second}.class"
+        return makeSelect(convertedType, "class")
     }
 
-    private fun convertFirType(originalType: ConeKotlinType): Pair<JCExpression, String>? {
+    private fun convertFirType(originalType: ConeKotlinType): Expression? {
         val possiblyArrayType = originalType.fullyExpandedType(kaptContext.firSession!!)
         var type = possiblyArrayType
         var arrayDimensions = 0
@@ -1653,25 +1399,19 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             arrayDimensions++
         }
         val result = convertFirNonArrayType(type) ?: return null
-        val text = result.second + "[]".repeat(arrayDimensions)
-        var resultExpression = result.first
-        while (arrayDimensions > 0) {
-            resultExpression = treeMaker.TypeArray(resultExpression)
-            arrayDimensions--
-        }
-        return resultExpression to text
+        return makeArrayType(result, arrayDimensions)
     }
 
-    private fun convertFirNonArrayType(type: ConeKotlinType): Pair<JCExpression, String>? {
+    private fun convertFirNonArrayType(type: ConeKotlinType): Expression? {
         if (type is ConeErrorType) {
             val diagnostic = type.diagnostic as? ConeUnresolvedError
             val simpleName = diagnostic?.qualifier ?: return null
             val outerType = (diagnostic as? ConeUnresolvedNameError)?.receiverInfo?.type
             return if (outerType == null) {
-                treeMaker.SimpleName(simpleName) to simpleName
+                makeSimpleName(simpleName)
             } else {
                 val convertedOuterType = convertFirType(outerType) ?: return null
-                treeMaker.Select(convertedOuterType.first, treeMaker.name(simpleName)) to "${convertedOuterType.second}.$simpleName"
+                makeSelect(convertedOuterType, simpleName)
             }
         }
         if (type !is ConeLookupTagBasedType) return null
@@ -1681,96 +1421,26 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             val primitiveType = PrimitiveType.getByShortName(classId.relativeClassName.asString())
             if (primitiveType != null) {
                 val asmType = Type.getType(JvmPrimitiveType.get(primitiveType).desc)
-                return treeMaker.Type(asmType) to treeMaker.convertAsmTypeToJavaText(asmType)
+                return makeType(asmType)
             }
             val primitiveArrayType = PrimitiveType.getByShortArrayName(classId.relativeClassName.asString())
             if (primitiveArrayType != null) {
                 val asmType = Type.getType("[" + JvmPrimitiveType.get(primitiveArrayType).desc)
-                return treeMaker.Type(asmType) to treeMaker.convertAsmTypeToJavaText(asmType)
+                return makeType(asmType)
             }
         }
-        val javaName = JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName()?.asString() ?: fqName.asString()
-        return treeMaker.FqName(javaName) to treeMaker.getQualifiedName(javaName)
+        val javaFqName = JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName() ?: fqName
+        return makeQualifiedName(javaFqName)
     }
 
     private fun convertAnnotationArgumentWithName(
         containingClass: ClassNode,
         constantValue: Any?,
         name: String,
-    ): Pair<JCExpression, String>? {
+    ): Expression? {
         if (!isValidIdentifier(name)) return null
         val initializer = convertLiteral(containingClass, constantValue)
-        val text = name + " = " + initializer.second
-        return treeMaker.Assign(treeMaker.SimpleName(name), initializer.first) to text
-    }
-
-    private fun convertAndAppendValueOfPrimitiveTypeOrString(value: Any?, sb: StringBuilder): JCExpression? {
-        fun specialFpValueNumerator(value: Double): Double = if (value.isNaN()) 0.0 else 1.0 * value.sign
-
-        return when (value) {
-            is Char -> {
-                sb.appendJavaCharLiteral(value)
-                treeMaker.Literal(TypeTag.CHAR, value.code)
-            }
-            is Byte -> {
-                sb.append("(byte)").append(value.toInt())
-                treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.BYTE), treeMaker.Literal(TypeTag.INT, value.toInt()))
-            }
-            is Short -> {
-                sb.append("(short)").append(value.toInt())
-                treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.SHORT), treeMaker.Literal(TypeTag.INT, value.toInt()))
-            }
-            is Boolean, is Int -> {
-                sb.append(value)
-                treeMaker.Literal(value)
-            }
-            is Long -> {
-                sb.append(value).append("L")
-                treeMaker.Literal(value)
-            }
-            is String -> {
-                sb.appendJavaStringLiteral(value)
-                treeMaker.Literal(value)
-            }
-            is Float if value.isFinite() -> {
-                sb.append(value.toString()).append("F")
-                treeMaker.Literal(value)
-            }
-            is Float -> {
-                sb.append(specialFpValueNumerator(value.toDouble())).append("F / 0.0F")
-                treeMaker.Binary(
-                    Tag.DIV,
-                    treeMaker.Literal(specialFpValueNumerator(value.toDouble()).toFloat()),
-                    treeMaker.Literal(0.0F)
-                )
-            }
-            is Double if value.isFinite() -> {
-                sb.append(value.toString())
-                treeMaker.Literal(value)
-            }
-            is Double -> {
-                sb.append(specialFpValueNumerator(value)).append(" / 0.0")
-                treeMaker.Binary(Tag.DIV, treeMaker.Literal(specialFpValueNumerator(value)), treeMaker.Literal(0.0))
-            }
-            is UByte -> {
-                sb.append("(byte)").append(value.toInt())
-                treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.BYTE), treeMaker.Literal(TypeTag.INT, value.toInt()))
-            }
-            is UShort -> {
-                sb.append("(short)").append(value.toInt())
-                treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.SHORT), treeMaker.Literal(TypeTag.INT, value.toInt()))
-            }
-            is UInt -> {
-                sb.append(value.toInt())
-                treeMaker.Literal(value.toInt())
-            }
-            is ULong -> {
-                sb.append(value.toLong()).append("L")
-                treeMaker.Literal(value.toLong())
-            }
-
-            else -> null
-        }
+        return makeAssignExpression(name, initializer)
     }
 
     private fun checkIfAnnotationValueMatches(asm: Any?, desc: ConstantValue<*>): Boolean {
@@ -1827,43 +1497,23 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
     }
 
-    private fun convertLiteral(containingClass: ClassNode, value: Any?): Pair<JCExpression, String> {
-        val sb = StringBuilder()
-        val jcExpression = convertAndAppendLiteral(containingClass, value, sb)
-        return jcExpression to sb.toString()
-    }
+    private fun convertLiteral(containingClass: ClassNode, value: Any?): Expression {
+        fun convertArray(elements: List<*>): Expression =
+            makeArray(elements.map { convertLiteral(containingClass, it) })
 
-    private fun convertAndAppendLiteral(containingClass: ClassNode, value: Any?, sb: StringBuilder): JCExpression {
-        fun convertAndAppendArray(elements: List<*>): JCNewArray {
-            sb.append("{")
-            val jList = mapJList(elements) {
-                val element = convertAndAppendLiteral(containingClass, it, sb)
-                sb.append(", ")
-                element
-            }
-            if (elements.isNotEmpty()) {
-                sb.setLength(sb.length - ", ".length)
-            }
-            sb.append("}")
-            return treeMaker.NewArray(null, JavacList.nil(), jList)
-        }
-
-        convertAndAppendValueOfPrimitiveTypeOrString(value, sb)?.let { return it }
+        makeValueOfPrimitiveTypeOrString(value)?.let { return it }
 
         return when (value) {
-            null -> {
-                sb.append("null")
-                treeMaker.Literal(TypeTag.BOT, null)
-            }
+            null -> makeNullLiteral()
 
-            is ByteArray -> convertAndAppendArray(value.asList())
-            is BooleanArray -> convertAndAppendArray(value.asList())
-            is CharArray -> convertAndAppendArray(value.asList())
-            is ShortArray -> convertAndAppendArray(value.asList())
-            is IntArray -> convertAndAppendArray(value.asList())
-            is LongArray -> convertAndAppendArray(value.asList())
-            is FloatArray -> convertAndAppendArray(value.asList())
-            is DoubleArray -> convertAndAppendArray(value.asList())
+            is ByteArray -> convertArray(value.asList())
+            is BooleanArray -> convertArray(value.asList())
+            is CharArray -> convertArray(value.asList())
+            is ShortArray -> convertArray(value.asList())
+            is IntArray -> convertArray(value.asList())
+            is LongArray -> convertArray(value.asList())
+            is FloatArray -> convertArray(value.asList())
+            is DoubleArray -> convertArray(value.asList())
             is Array<*> -> { // Two-element String array for enumerations ([desc, fieldName])
                 assert(value.size == 2)
                 val enumType = Type.getType(value[0] as String)
@@ -1872,27 +1522,22 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                     "InvalidFieldName"
                 }
 
-                sb.append(treeMaker.convertAsmTypeToJavaText(enumType)).append(".").append(valueName)
-                treeMaker.Select(treeMaker.Type(enumType), treeMaker.name(valueName))
+                makeSelect(makeType(enumType), valueName)
             }
 
-            is List<*> -> convertAndAppendArray(value)
+            is List<*> -> convertArray(value)
 
             is Type -> {
                 checkIfValidTypeName(containingClass, value)
-                sb.append(treeMaker.convertAsmTypeToJavaText(value)).append(".class")
-                treeMaker.Select(treeMaker.Type(value), treeMaker.name("class"))
+                makeSelect(makeType(value), "class")
             }
 
-            is AnnotationNode -> {
-                val nestedAnnotation = convertAnnotation(containingClass, value, packageFqName = null)
-                sb.append(nestedAnnotation.second)
-                nestedAnnotation.first
-            }
+            is AnnotationNode ->
+                convertAnnotation(containingClass, value, packageFqName = null)
+
             else -> throw IllegalArgumentException("Illegal literal expression value: $value (${value::class.java.canonicalName})")
         }
     }
-
 
     private fun getDefaultValue(type: Type): Any? = when (type) {
         Type.BYTE_TYPE -> 0
@@ -1904,41 +1549,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         Type.FLOAT_TYPE -> 0.0F
         Type.DOUBLE_TYPE -> 0.0
         else -> null
-    }
-
-    private fun <T : JCTree> T.keepKdocCommentsIfNecessary(node: Any): T {
-        kdocCommentKeeper.saveKDocComment(this, node)
-        return this
-    }
-
-    private fun StringBuilder.appendKDocCommentIfNecessary(node: Any) {
-        val origin = kaptContext.origins[node] ?: return
-        val psiElement = origin.element as? KtDeclaration ?: return
-        val docComment = psiElement.docComment ?: return
-
-        if (origin.declaration is IrConstructor && psiElement is KtClassOrObject) {
-            // We don't want the class comment to be duplicated on <init>()
-            return
-        }
-
-        appendKDocComment(extractComment(docComment))
-    }
-
-    private fun StringBuilder.appendKDocComment(text: String) {
-        append("/**\n")
-        for (line in text.lines()) {
-            append(" *")
-            if (line.firstOrNull()?.let { it > ' ' } == true) {
-                append(' ')
-            }
-            append(line).append('\n')
-        }
-        append(" */\n")
-    }
-
-    private fun JCMethodDecl.keepSignature(lineMappings: KaptLineMappingCollector, node: MethodNode): JCMethodDecl {
-        lineMappings.registerSignature(this, node)
-        return this
     }
 
     private fun getFileForClass(c: ClassNode): KtFile? = kaptContext.origins[c]?.element?.containingFile as? KtFile
@@ -1964,6 +1574,96 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             importsFromRoot.mapTo(mutableSetOf()) { it.asString() }
         }
 
+    //
+    // making of stub elements
+    //
+
+    protected abstract fun makeNonExistentClassStub(): KaptStub
+
+    protected abstract fun isNonExistentClass(type: Expression): Boolean
+
+    protected abstract fun makeAnnotation(type: Expression, arguments: List<Expression>): Annotation
+
+    internal abstract fun makeQualifiedName(javaName: String): Expression
+
+    internal abstract fun makeQualifiedName(fqName: FqName): Expression
+
+    internal abstract fun makeType(asmType: Type): Expression
+
+    internal abstract fun makeSelect(left: Expression, simpleName: String): Expression
+
+    internal abstract fun makeSimpleName(simpleName: String): Expression
+
+    internal abstract fun makeArrayType(baseType: Expression, arrayDimensions: Int): Expression
+
+    internal abstract fun makePrimitiveType(primitiveTypeSig: Char): Expression
+
+    protected abstract fun makeArray(expressions: List<Expression>): Expression
+
+    protected abstract fun makeField(
+        field: FieldNode,
+        modifiers: Modifiers,
+        initializer: Expression?,
+        convertedType: Expression
+    ): VariableDecl
+
+    protected abstract fun makeEnumValueInitializer(
+        name: String,
+        args: List<Expression>,
+        def: ClassDecl?,
+    ): Expression
+
+    protected abstract fun makeClassDecl(
+        clazz: ClassNode,
+        simpleName: String,
+        modifiers: Modifiers,
+        genericType: ClassGenericSignature<Expression, TypeParameter>,
+        superTypes: ClassSupertypes<Expression>,
+        enumValues: List<VariableDecl>,
+        sortedConvertedFields: List<VariableDecl>,
+        sortedConvertedMethods: List<MethodDecl>,
+        nestedClasses: List<ClassDecl>,
+    ): ClassDecl
+
+    protected abstract fun makeValueOfPrimitiveTypeOrString(value: Any?): Expression?
+
+    protected abstract fun makeNullLiteral(): Expression
+
+    protected abstract fun makeStubForTopLevelClass(
+        declaration: IrDeclaration,
+        lineMappings: KaptLineMappingCollector,
+        packageName: String,
+        clazz: ClassNode,
+    ): KaptStub?
+
+    internal abstract fun makeTypeApply(type: Expression, typeArguments: List<Expression>): Expression
+
+    protected abstract fun makeAssignExpression(name: String, expression: Expression): Expression
+
+    protected abstract fun makeSingleImport(fqName: FqName): Element
+    protected abstract fun makeStarImport(fqName: FqName): Element
+
+    protected abstract fun makeParameter(name: String, type: Expression, modifiers: Modifiers, isVararg: Boolean): VariableDecl
+    protected abstract fun makeBlock(statements: List<Statement>): Block
+    protected abstract fun makeSimpleCallStatement(name: String, args: List<Expression>): Statement
+    protected abstract fun makeReturn(arg: Expression): Statement
+
+    protected abstract fun makeMethod(
+        method: MethodNode,
+        irClass: IrClass,
+        modifiers: Modifiers,
+        genericSignature: SignatureParser.MethodGenericSignature<Expression, TypeParameter>,
+        parameters: List<VariableDecl>,
+        exceptionTypes: List<Expression>,
+        body: Block?,
+        defaultValue: Expression?,
+    ): MethodDecl
+
+    protected abstract fun makeModifiers(kind: ElementKind, isEnumField: Boolean, flags: Long, annotations: List<Annotation>): Modifiers
+
+    internal abstract fun makeTypeParameter(name: String, allBounds: List<Expression>): TypeParameter
+    internal abstract fun makeUnboundWildcard(): Expression
+    internal abstract fun makeWildcard(asmWilcard: Char, bound: Expression): Expression
 }
 
 private class LegacyFunctionTypeKindProjector(private val session: FirSession) : AbstractConeSubstitutor(session.typeContext) {
