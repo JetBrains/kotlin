@@ -36,10 +36,7 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -55,10 +52,12 @@ kotlin {
 
 projectTests {
     testTask {
-        workingDir = rootDir
+        useJUnitPlatform()
     }
 
-    testGenerator("org.jetbrains.kotlin.fir.builder.TestGeneratorForPsi2FirKt")
+    testGenerator("org.jetbrains.kotlin.fir.builder.TestGeneratorForPsi2FirKt", generateTestsInBuildDirectory = true)
+
+    testData(project(":compiler").isolated, "testData/rawFir")
 }
 
 testsJar()
