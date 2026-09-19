@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.Vision
+
+modules = Vision
+compilerOpts = -framework Vision
+linkerOpts = -framework Vision
+#Disabled: Not officially available for watchos

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.AppIntentsTypeSupport
+
+modules = AppIntentsTypeSupport
+compilerOpts = -framework AppIntentsTypeSupport
+linkerOpts = -framework AppIntentsTypeSupport
+#Disabled: Unavailable
