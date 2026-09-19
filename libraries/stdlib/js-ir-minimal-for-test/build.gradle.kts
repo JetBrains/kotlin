@@ -216,8 +216,8 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
                 "-Xdont-warn-on-error-suppression",
                 "-opt-in=kotlin.ExperimentalMultiplatform",
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
-                "-Xcontext-parameters",
                 "-Xreturn-value-checker=full",
+                "-Xcompanion-blocks",
             )
         )
     }
