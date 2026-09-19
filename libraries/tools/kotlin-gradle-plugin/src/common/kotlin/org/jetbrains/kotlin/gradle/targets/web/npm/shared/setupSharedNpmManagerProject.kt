@@ -8,8 +8,14 @@ package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
-import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.KotlinIsolatedNpmInstallTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.KotlinAggregatedNpmWorkspaceService
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.isIsolatedNpmResolutionEnabled
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 internal val HasPlatformDisambiguator.setupSharedNpmProjectTaskName: String
     get() = extensionName("setupSharedNpmProject")
@@ -25,7 +31,11 @@ internal fun setupSharedNpmProject(
 ) {
     val sharedDependenciesResolver = project.createResolvableNpmSharedPackageJsonFilesConfiguration(platform)
 
-    project.registerTask<KotlinSetupSharedNpmProjectTask>(platform.setupSharedNpmProjectTaskName) { task ->
+    if (project.isIsolatedNpmResolutionEnabled) {
+        project.declareAllProjectsAsSharedNpmDependencies(platform)
+    }
+
+    val setupSharedNpmProjectTask = project.registerTask<KotlinSetupSharedNpmProjectTask>(platform.setupSharedNpmProjectTaskName) { task ->
         task.description =
             "Assembles the '$rootDirectoryName' shared npm project from the projects declared on '${platform.npmSharedDependenciesConfigurationName}'"
         task.packageJsonFiles.from(
@@ -36,5 +46,42 @@ internal fun setupSharedNpmProject(
         task.outputDirectory.set(project.layout.buildDirectory.dir("$rootDirectoryName/shared-npm-project"))
         task.usesService(project.kotlinToolingDiagnosticsCollectorProvider)
         task.setupKotlinToolingDiagnosticsParameters(project)
+    }
+
+    // The npm dependencies of the whole build are installed into a single shared npm root project,
+    // so they are installed only once, for the JS platform.
+    if (project.isIsolatedNpmResolutionEnabled && platform == JsPlatformDisambiguator) {
+        val nodeJsRequest = project.requestDefaultNodeJs()
+        val nodeExecutable = NodeJsToolchainService.registerIfAbsent(project)
+            .flatMap { toolchain -> nodeJsRequest.flatMap { request -> toolchain.request(request) } }
+            .flatMap { it.executable }
+
+        project.registerTask<KotlinIsolatedNpmInstallTask>(KotlinIsolatedNpmInstallTask.NAME) { task ->
+            task.description = "Installs the npm dependencies of the '$rootDirectoryName' shared npm project"
+            task.sharedNpmProjectDirectory.set(setupSharedNpmProjectTask.flatMap { it.outputDirectory })
+            task.nodeExecutable.set(nodeExecutable)
+            // Matches the default of `org.jetbrains.kotlin.gradle.targets.js.npm.BaseNpmExtension.ignoreScripts`.
+            task.ignoreScripts.set(true)
+        }
+
+        // The project that assembles the shared npm project does not necessarily have a Kotlin target,
+        // so the tasks that use the service are wired here as well.
+        KotlinAggregatedNpmWorkspaceService.useFromTasks(project)
+    }
+}
+
+/**
+ * Declares every project of the build as a contributor to the shared npm project.
+ *
+ * A project cannot be inspected from another project when Isolated Projects are enabled,
+ * so only the isolated view of each project is used, which exposes just its path.
+ */
+private fun Project.declareAllProjectsAsSharedNpmDependencies(platform: HasPlatformDisambiguator) {
+    val configurationName = platform.npmSharedDependenciesConfigurationName
+    gradle.allprojects { contributor ->
+        dependencies.add(
+            configurationName,
+            dependencies.project(contributor.isolated.path),
+        )
     }
 }

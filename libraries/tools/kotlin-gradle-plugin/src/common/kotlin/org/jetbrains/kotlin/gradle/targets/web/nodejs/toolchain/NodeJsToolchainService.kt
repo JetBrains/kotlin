@@ -72,7 +72,7 @@ interface NodeJsToolchainService<P : NodeJsToolchainService.Parameters> : BuildS
         private val serviceClass = NodeJsToolchainService::class.java
         internal val nodeJsServiceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 
-        private fun registerIfAbsent(
+        internal fun registerIfAbsent(
             project: Project,
         ): Provider<out NodeJsToolchainService<out Parameters>> {
             project.gradle.sharedServices.registrations.findByName(nodeJsServiceName)?.let {

@@ -14,6 +14,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.KotlinIsolatedNpmWorkspaceSyncTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.isIsolatedNpmResolutionEnabled
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -88,6 +91,24 @@ sealed class JsIrBinary(
             }
         }
 
+    /**
+     * Puts the output of [_linkSyncTask] into the npm workspace of the compilation.
+     *
+     * Only registered when the Isolated Projects compatible NPM resolution is enabled: the legacy NPM resolution
+     * syncs the files directly into the npm root project of the root project, which is not available
+     * when Gradle Isolated Projects are enabled.
+     */
+    internal val npmWorkspaceSyncTask: TaskProvider<KotlinIsolatedNpmWorkspaceSyncTask>? =
+        if (_linkSyncTask == null || !project.isIsolatedNpmResolutionEnabled || target.platformType == KotlinPlatformType.wasm) {
+            null
+        } else {
+            project.registerTask<KotlinIsolatedNpmWorkspaceSyncTask>(npmWorkspaceSyncTaskName()) { task ->
+                task.description = "Syncs the $name binary of the ${compilation.name} compilation into its npm workspace"
+                task.from.from(_linkSyncTask)
+                task.npmProjectName.set(compilation.npmProject.name)
+            }
+        }
+
     internal val defaultLinkSyncTaskInput: Provider<Directory>
         get() = linkTask.flatMap(KotlinJsIrLink::destinationDirectory)
 
@@ -142,6 +163,14 @@ sealed class JsIrBinary(
             compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
             name,
             COMPILE_SYNC
+        )
+
+    private fun npmWorkspaceSyncTaskName(): String =
+        lowerCamelCaseName(
+            compilation.target.disambiguationClassifier,
+            compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            name,
+            NPM_WORKSPACE_SYNC
         )
 
     private fun validateTypeScriptTaskName(): String =
@@ -417,3 +446,5 @@ class LibraryWasm(
 
 
 internal const val COMPILE_SYNC = "compileSync"
+
+private const val NPM_WORKSPACE_SYNC = "npmWorkspaceSync"

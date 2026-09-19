@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.isIsolatedNpmResolutionEnabled
 import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 
 /**
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
  * Only intended for internal use, to prototype Isolated Projects support.
  */
 internal fun Project.jsToolingProject(): Project {
-    return if (npmSharedProjectsPerProject && isProjectIsolationEnabled) {
+    return if (isIsolatedNpmResolutionEnabled || (npmSharedProjectsPerProject && isProjectIsolationEnabled)) {
         this
     } else {
         rootProject

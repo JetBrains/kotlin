@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.KotlinIsolatedPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.isIsolatedNpmResolutionEnabled
 
 internal val PublishSharedPackageJsonSideEffect = KotlinTargetSideEffect { target ->
     if (target !is KotlinJsIrTarget) return@KotlinTargetSideEffect
@@ -27,7 +29,15 @@ internal val PublishSharedPackageJsonSideEffect = KotlinTargetSideEffect { targe
 
     val packageJsonFilesConfiguration = project.maybeCreateConsumableNpmSharedPackageJsonFilesConfiguration(platform)
 
+    val isIsolatedNpmResolutionEnabled = project.isIsolatedNpmResolutionEnabled
+
     target.compilations.all { compilation ->
+        if (isIsolatedNpmResolutionEnabled) {
+            // The legacy `package.json` task is registered by `KotlinCompilationNpmResolver`,
+            // which is not used when the Isolated Projects compatible NPM resolution is enabled.
+            KotlinIsolatedPackageJsonTask.register(compilation, platform)
+        }
+
         val packageJsonTaskName = compilation.disambiguateName("packageJson")
         val packageJsonFile = project.provider { compilation.npmProject.packageJsonFile }.flatMap { it }
         project.artifacts.add(packageJsonFilesConfiguration.name, packageJsonFile) {

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.web.npm.internal.JsNpmInfrastructure
+import org.jetbrains.kotlin.gradle.targets.web.npm.internal.jsNpmInfrastructure
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
@@ -16,10 +18,14 @@ abstract class KotlinJsIrNpmBasedSubTarget(
     target: KotlinJsIrTarget,
     disambiguationClassifier: String,
 ) : KotlinJsIrSubTarget(target, disambiguationClassifier) {
-    protected val nodeJsRoot = target.webTargetVariant(
-        { project.jsToolingProject().kotlinNodeJsRootExtension },
-        { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
-    )
+    protected val nodeJsRoot by lazy {
+        target.webTargetVariant(
+            { project.jsToolingProject().kotlinNodeJsRootExtension },
+            { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
+        )
+    }
+
+    internal val npmInfrastructure: JsNpmInfrastructure = target.jsNpmInfrastructure()
 
     protected val nodeJsEnvSpec = target.webTargetVariant(
         { project.kotlinNodeJsEnvSpec },

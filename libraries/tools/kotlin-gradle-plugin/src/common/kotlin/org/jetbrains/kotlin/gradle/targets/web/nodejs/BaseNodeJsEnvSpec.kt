@@ -10,6 +10,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
@@ -30,6 +31,16 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
      * Specify a platform information with name and architecture
      */
     internal abstract val platform: Property<Platform>
+
+    /**
+     * Versions of the npm packages used by the Kotlin Gradle Plugin tooling.
+     *
+     * Unlike [BaseNodeJsRootExtension.versions], this instance is project-local,
+     * so it can be used when Isolated Projects are enabled.
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.web.nodejs.npmVersions
+     */
+    internal val versions: NpmVersions = NpmVersions()
 
     final override val env: Provider<NodeJsEnv> = produceEnv()
 

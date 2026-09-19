@@ -55,6 +55,9 @@ internal constructor(
         if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
             test.dependsOnNpmTooling(binary.compilation)
             test.dependsOn(binary.linkSyncTask)
+            // The tested files are executed from the npm workspace of the compilation,
+            // so they must be synced into it first.
+            binary.npmWorkspaceSyncTask?.let { test.dependsOn(it) }
         }
         test.dependsOn(binary.linkTask)
     }
@@ -65,7 +68,7 @@ internal constructor(
                 test.useMocha { }
             }
             if (test.enabled) {
-                nodeJsRoot.taskRequirements.addTaskRequirements(test)
+                npmInfrastructure.addTaskRequirements(test)
             }
         } else {
             test.testFramework = KotlinWasmNode(test)

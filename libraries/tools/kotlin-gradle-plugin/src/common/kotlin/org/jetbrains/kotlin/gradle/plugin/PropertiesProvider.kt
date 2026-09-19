@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainM
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.utils.localProperties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
@@ -802,6 +803,19 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val npmSharedDependenciesProjectMode: Provider<String>
         get() = property(PropertyNames.NPM_SHARED_DEPENDENCIES_PROJECT_MODE)
 
+    /**
+     * Enables the Isolated Projects compatible NPM dependencies resolution for Kotlin/JS targets.
+     *
+     * When disabled, the legacy root-project based NPM resolution is used.
+     *
+     * By default, it is enabled when Isolated Projects are enabled.
+     *
+     * Temporary internal property, must be removed after KT-80311.
+     */
+    val isolatedNpmResolution: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.ISOLATED_NPM_RESOLUTION)
+            .orElse(project.providers.provider { project.isProjectIsolationEnabled })
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = get(deprecatedPropName)
         if (deprecatedProperty != null) {
@@ -981,6 +995,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
 
         val NPM_SHARED_DEPENDENCIES_PROJECT_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.npm.sharedNpmDependenciesProjectMode")
+
+        val ISOLATED_NPM_RESOLUTION = property("$KOTLIN_INTERNAL_NAMESPACE.js.isolatedNpmResolution")
     }
 
     companion object {

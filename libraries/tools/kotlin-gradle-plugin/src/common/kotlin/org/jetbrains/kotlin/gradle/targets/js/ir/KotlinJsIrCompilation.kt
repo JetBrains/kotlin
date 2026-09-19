@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.npm.internal.jsNpmInfrastructure
+import org.jetbrains.kotlin.gradle.targets.web.npm.internal.legacyOrNull
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import java.io.File
 import javax.inject.Inject
@@ -76,13 +78,15 @@ internal fun KotlinJsIrCompilation.npmToolingDir(): Provider<Directory> {
 internal fun Task.dependsOnNpmTooling(compilation: KotlinJsIrCompilation) {
     val task = this
     with(compilation) {
-        val nodeJsRoot = nodeJsRoot()
+        val npmInfrastructure = jsNpmInfrastructure()
 
-        task.dependsOn(nodeJsRoot.npmInstallTaskProvider)
-        task.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+        npmInfrastructure.dependsOnNpmInstall(task)
 
         if (isWasm) {
-            task.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+            val nodeJsRoot = npmInfrastructure.legacyOrNull?.nodeJsRoot
+            if (nodeJsRoot != null) {
+                task.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+            }
         }
     }
 }

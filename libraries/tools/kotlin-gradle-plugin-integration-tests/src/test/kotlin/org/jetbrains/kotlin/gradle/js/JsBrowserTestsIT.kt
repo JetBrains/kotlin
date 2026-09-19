@@ -163,13 +163,16 @@ class JsBrowserTestsIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     fun `smoke js browser test`(
         gradleVersion: GradleVersion,
     ) {
         project(
             "empty",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+            buildOptions = defaultBuildOptions
+                .enableIsolatedProjects()
+                .enableNpmResolution()
         ) {
             plugins {
                 kotlin("multiplatform")

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webp
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
-import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
@@ -43,6 +42,8 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackRunner
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.npmVersions
+import org.jetbrains.kotlin.gradle.targets.web.npm.internal.jsNpmInfrastructure
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
@@ -257,8 +258,7 @@ internal fun KotlinJsIrCompilation.locateOrRegisterBrowserTestBundleTask(
         val task = this
         val compilation = this@locateOrRegisterBrowserTestBundleTask
 
-        val nodeJsRoot = compilation.nodeJsRoot()
-        task.versions.value(nodeJsRoot.versions).disallowChanges()
+        task.versions.value(compilation.npmVersions).disallowChanges()
 
         task.npmToolingEnvDir.set(compilation.npmToolingDir())
         task.npmToolingEnvDir.disallowChanges()
@@ -274,7 +274,7 @@ internal fun KotlinJsIrCompilation.locateOrRegisterBrowserTestBundleTask(
         task.usesService(httpServerService)
         task.httpServerService.convention(httpServerService)
 
-        nodeJsRoot.taskRequirements.addTaskRequirements(this)
+        compilation.jsNpmInfrastructure().addTaskRequirements(this)
 
         configure()
     }

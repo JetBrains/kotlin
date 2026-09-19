@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.web.npm.internal.npmProjectLayout
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.Serializable
@@ -57,7 +58,7 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         )
     }
 
-    val dir: Provider<Directory> = nodeJsRoot.projectPackagesDirectory.zip(name) { directory, name ->
+    val dir: Provider<Directory> = compilation.npmProjectLayout.projectPackagesDirectory.zip(name) { directory, name ->
         directory.dir(name)
     }
 
@@ -67,7 +68,7 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
     val project: Project
         get() = target.project
 
-    val nodeModulesDir: Provider<Directory> = nodeJsRoot.rootPackageDirectory.map { it.dir(NODE_MODULES) }
+    val nodeModulesDir: Provider<Directory> = compilation.npmProjectLayout.nodeModulesDirectory
 
     val packageJsonFile: Provider<RegularFile>
         get() = dir.map { it.file(PACKAGE_JSON) }

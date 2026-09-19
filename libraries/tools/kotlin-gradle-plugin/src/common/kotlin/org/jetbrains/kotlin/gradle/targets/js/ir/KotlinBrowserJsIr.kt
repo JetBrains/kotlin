@@ -42,7 +42,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         }
 
         if (target.platformType != KotlinPlatformType.wasm && test.enabled) {
-            nodeJsRoot.taskRequirements.addTaskRequirements(test)
+            npmInfrastructure.addTaskRequirements(test)
         }
     }
 

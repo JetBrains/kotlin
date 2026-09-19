@@ -12,21 +12,19 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
-import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.npmVersions
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.isIsolatedNpmResolutionEnabled
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 class KotlinMocha internal constructor(
     @Transient
@@ -38,17 +36,19 @@ class KotlinMocha internal constructor(
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
 
-    @Transient
-    private val nodeJsRoot = compilation.webTargetVariant(
-        { project.jsToolingProject().kotlinNodeJsRootExtension },
-        { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
-    )
-
     private val versions by lazy {
-        nodeJsRoot.versions
+        compilation.npmVersions
     }
 
     private val npmProjectDir by project.provider { npmProject.dir }
+
+    private val npmProjectName by project.provider { npmProject.name }
+
+    /**
+     * When the Isolated Projects compatible NPM resolution is used, the npm dependencies are installed
+     * into the shared npm root project, whose location is only known to `NpmDependenciesService`.
+     */
+    private val isIsolatedNpmResolution: Boolean = project.isIsolatedNpmResolutionEnabled
 
     @Transient
     private val nodeJs = project.kotlinNodeJsEnvSpec
@@ -95,15 +95,34 @@ class KotlinMocha internal constructor(
             exclude = task.excludePatterns
         )
 
-        val modules = NpmProjectModules(npmProjectDir.getFile())
+        val localFile = task.inputFileProperty.getFile()
 
-        val mocha = modules.require("mocha/bin/mocha")
+        // When the Isolated Projects compatible NPM resolution is used, the tested files are executed
+        // from the npm workspace of the compilation, where its npm dependencies are installed,
+        // see `KotlinAggregatedNpmWorkspaceService.syncCompiledJsFiles`.
+        val file = if (isIsolatedNpmResolution) {
+            task.aggregatedNpmWorkspaceService.get()
+                .npmProjectDistDirectory(npmProjectName.get())
+                .resolve(localFile.name)
+                .toString()
+        } else {
+            localFile.toString()
+        }
 
-        val file = task.inputFileProperty.getFile().toString()
+        val modules = if (isIsolatedNpmResolution) {
+            task.aggregatedNpmWorkspaceService.get()
+                .npmProjectModules(npmProjectName.get())
+                .also { launchOpts.workingDir.set(it.dir) }
+        } else {
+            NpmProjectModules(npmProjectDir.getFile())
+        }
+        val requireModule: (String) -> String = modules::require
+
+        val mocha = requireModule("mocha/bin/mocha")
 
         val args = nodeJsArgs + mutableListOf(
             "--require",
-            modules.require("source-map-support/register.js")
+            requireModule("source-map-support/register.js")
         ).apply {
             if (debug) {
                 add("--inspect-brk")
@@ -111,8 +130,8 @@ class KotlinMocha internal constructor(
             add(mocha)
             add(file)
             addAll(cliArgs.toList())
-            addAll(cliArg("--reporter", modules.require("kotlin-web-helpers/dist/mocha-kotlin-reporter.js")))
-            addAll(cliArg("--require", modules.require("kotlin-web-helpers/dist/kotlin-test-nodejs-runner.js")))
+            addAll(cliArg("--reporter", requireModule("kotlin-web-helpers/dist/mocha-kotlin-reporter.js")))
+            addAll(cliArg("--require", requireModule("kotlin-web-helpers/dist/kotlin-test-nodejs-runner.js")))
             if (debug) {
                 add(NO_TIMEOUT_ARG)
             } else {
@@ -125,12 +144,12 @@ class KotlinMocha internal constructor(
         else {
             nodeJsArgs + mutableListOf(
                 "--require",
-                modules.require("source-map-support/register.js")
+                requireModule("source-map-support/register.js")
             ).apply {
                 add(mocha)
                 add(file)
                 addAll(cliArgs.toList())
-                addAll(cliArg("--require", modules.require("kotlin-web-helpers/dist/kotlin-test-nodejs-empty-runner.js")))
+                addAll(cliArg("--require", requireModule("kotlin-web-helpers/dist/kotlin-test-nodejs-empty-runner.js")))
             }
         }
 

@@ -168,6 +168,7 @@ data class BuildOptions(
         val incrementalJsKlib: Boolean? = null,
         val incrementalJsIr: Boolean? = null,
         val yarn: Boolean? = null,
+        val nodeJsToolchainMode: String? = null,
     )
 
     @Suppress("EXPOSED_PARAMETER_TYPE")
@@ -278,6 +279,7 @@ data class BuildOptions(
         jsOptions.incrementalJsKlib?.let { arguments.add("-Pkotlin.incremental.js.klib=$it") }
         jsOptions.incrementalJsIr?.let { arguments.add("-Pkotlin.incremental.js.ir=$it") }
         jsOptions.yarn?.let { arguments.add("-Pkotlin.js.yarn=$it") }
+        jsOptions.nodeJsToolchainMode?.let { arguments.add("-Pkotlin.js.nodejs.toolchain=$it") }
 
         wasmOptions?.compilationMode?.let { arguments.add("-Pkotlin.wasm.compilationMode=${it.toArgument()}") }
 
@@ -551,3 +553,11 @@ fun BuildOptions.suppressDeprecatedJdkWarningWithGradle814(
 } else this
 
 fun rerunTask(taskName: String) = arrayOf(taskName, "--rerun")
+
+fun BuildOptions.enableNpmResolution() = copy(jsOptions = jsOptions.copy(yarn = false))
+
+/**
+ * Provisions Node.js through the `NodeJsToolchainService` shared build service,
+ * which is required by the Isolated Projects compatible NPM resolution.
+ */
+fun BuildOptions.enableNodeJsToolchain() = copy(jsOptions = jsOptions.copy(nodeJsToolchainMode = "download"))

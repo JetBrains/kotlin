@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
-import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
@@ -26,6 +25,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.npmVersions
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.UsesKotlinAggregatedNpmWorkspaceService
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.isIsolatedNpmResolutionEnabled
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
@@ -38,7 +40,7 @@ constructor(
     @Internal
     @Transient
     final override val compilation: KotlinJsIrCompilation,
-) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependenciesTask {
+) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependenciesTask, UsesKotlinAggregatedNpmWorkspaceService {
 
     @get:Internal
     internal abstract val versions: Property<NpmVersions>
@@ -56,6 +58,14 @@ constructor(
 
     @get:Internal
     internal abstract val npmToolingEnvDir: DirectoryProperty
+
+    /**
+     * The name of the npm workspace of the compilation, set only when the Isolated Projects compatible
+     * NPM resolution is enabled: in that case both the executed files and the node modules
+     * come from the npm workspace owned by [org.jetbrains.kotlin.gradle.targets.web.npm.isolated.KotlinAggregatedNpmWorkspaceService].
+     */
+    @get:Internal
+    internal abstract val npmWorkspaceName: Property<String>
 
     @Input
     var nodeArgs: MutableList<String> = mutableListOf()
@@ -79,17 +89,30 @@ constructor(
             }
 
     override fun exec() {
+        val npmWorkspaceName = npmWorkspaceName.orNull
+        val npmWorkspace = npmWorkspaceName?.let { aggregatedNpmWorkspaceService.get() }
+
         val newArgs = mutableListOf<String>()
         newArgs.addAll(nodeArgs)
         if (inputFileProperty.isPresent) {
-            newArgs.add(inputFileProperty.asFile.get().normalize().absolutePath)
+            val inputFile = inputFileProperty.asFile.get().normalize()
+            // The files are executed from the npm workspace of the compilation,
+            // where its npm dependencies are installed and configured.
+            val executedFile = if (npmWorkspace != null) {
+                npmWorkspace.npmProjectDistDirectory(npmWorkspaceName).resolve(inputFile.name)
+            } else {
+                inputFile
+            }
+            newArgs.add(executedFile.absolutePath)
         }
         args?.let { newArgs.addAll(it) }
         args = newArgs
 
-        val modules = NpmProjectModules(
-            npmToolingEnvDir.getFile()
-        )
+        val modules = if (npmWorkspace != null) {
+            npmWorkspace.npmProjectModules(npmWorkspaceName).also { workingDir = it.dir }
+        } else {
+            NpmProjectModules(npmToolingEnvDir.getFile())
+        }
 
         if (sourceMapStackTraces) {
             val sourceMapSupportArgs = mutableListOf(
@@ -114,7 +137,7 @@ constructor(
             val target = compilation.target
             val project = target.project
 
-            val nodeJsRoot = compilation.nodeJsRoot()
+            val npmVersions = compilation.npmVersions
             val nodeJsEnvSpec = compilation.nodeJsEnvSpec
 
             val npmProject = compilation.npmProject
@@ -124,7 +147,7 @@ constructor(
                 name,
                 listOf(compilation)
             ) {
-                it.versions.value(nodeJsRoot.versions)
+                it.versions.value(npmVersions)
                     .disallowChanges()
                 it.executable = nodeJsEnvSpec.executable.get()
                 if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
@@ -134,6 +157,11 @@ constructor(
 
                 it.npmToolingEnvDir.set(npmToolingDir)
                 it.npmToolingEnvDir.disallowChanges()
+
+                if (project.isIsolatedNpmResolutionEnabled && compilation.wasmTarget == null) {
+                    it.npmWorkspaceName.set(npmProject.name)
+                }
+                it.npmWorkspaceName.disallowChanges()
 
                 with(nodeJsEnvSpec) {
                     it.dependsOn(project.nodeJsSetupTaskProvider)

@@ -43,6 +43,9 @@ class NodeJsEnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
                 }
             } else {
                 dependsOn(binary.linkSyncTask)
+                // The files are executed from the npm workspace of the compilation,
+                // so they must be synced into it first.
+                binary.npmWorkspaceSyncTask?.let { dependsOn(it) }
                 binary.mainFileSyncPath
             }
 

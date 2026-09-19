@@ -10,9 +10,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.internal.service.ServiceRegistry
 import org.gradle.process.ExecOperations
-import org.jetbrains.kotlin.gradle.internal.execWithProgress
-import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.web.npm.internal.npmInstallExec
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
@@ -100,33 +99,18 @@ class Npm internal constructor(
         description: String,
         args: List<String>,
     ) {
-        val progressLogger = objects.newBuildOpLogger()
-        execWithProgress(progressLogger, description, execOps = execOps) { execSpec ->
-            val arguments = buildList {
-                add("install")
-                addAll(args.filter(String::isNotEmpty))
-                if (logger.isDebugEnabled) add("--verbose")
-                if (environment.ignoreScripts) add("--ignore-scripts")
-            }
-
-            val nodeExecutable = nodeJs.nodeExecutable
-            if (!environment.standalone) {
-                val nodePath = File(nodeExecutable).parent
-                execSpec.environment["PATH"] =
-                    "$nodePath${File.pathSeparator}${System.getenv("PATH")}"
-            }
-
-            val command = environment.executable
-            if (environment.standalone) {
-                execSpec.executable = command
-                execSpec.setArgs(arguments)
-            } else {
-                execSpec.executable = nodeExecutable
-                execSpec.setArgs(listOf(command) + arguments)
-            }
-
-            execSpec.workingDir = dir.get()
-        }
+        npmInstallExec(
+            objects = objects,
+            execOps = execOps,
+            logger = logger,
+            description = description,
+            nodeExecutable = nodeJs.nodeExecutable,
+            npmExecutable = environment.executable,
+            standalone = environment.standalone,
+            ignoreScripts = environment.ignoreScripts,
+            workingDir = dir.get(),
+            args = args,
+        )
     }
 
     private fun saveRootProjectWorkspacesPackageJson(

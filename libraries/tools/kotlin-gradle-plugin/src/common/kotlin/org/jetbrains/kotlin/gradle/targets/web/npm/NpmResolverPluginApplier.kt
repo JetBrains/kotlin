@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.KotlinAggregatedNpmWorkspaceService
+import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.isIsolatedNpmResolutionEnabled
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.withType
 
@@ -41,6 +43,19 @@ internal class NpmResolverPluginApplier(
     private val requiredNpmDependenciesPredicate: (task: RequiresNpmDependenciesTask) -> Boolean,
 ) {
     fun apply(project: Project) {
+        if (project.isIsolatedNpmResolutionEnabled) {
+            // The root Node.js extension is owned by the root project and registers the whole build's
+            // npm resolution state, which is incompatible with Gradle Isolated Projects.
+            // Under Isolated Projects each project only produces the `package.json` files of its own
+            // compilations, and the project that applies `KotlinSharedNpmProjectPlugin`
+            // assembles and installs the shared npm root project out of them.
+            singleNodeJsApply(project)
+            // The tasks of this project resolve the installed npm dependencies through the build service,
+            // which every project of the build may use.
+            KotlinAggregatedNpmWorkspaceService.useFromTasks(project)
+            return
+        }
+
         val nodeJsRoot = nodeJsRootApply(project)
         singleNodeJsApply(project)
         nodeJsRoot.resolver.addProject(project)
@@ -84,6 +99,12 @@ internal class NpmResolverPluginApplier(
         project: Project,
         matcher: (task: RequiresNpmDependenciesTask) -> Boolean,
     ) {
+        if (project.isIsolatedNpmResolutionEnabled) {
+            // Both the lock files and the file-based npm dependencies are only known
+            // to the root project's npm resolution, which is not available under Isolated Projects.
+            return
+        }
+
         project.tasks.withType<RequiresNpmDependenciesTask>().configureEach { task ->
             if (!matcher(task)) return@configureEach
 
