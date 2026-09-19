@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.commonizer.cli
 
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseDiagnostic
 import org.jetbrains.kotlin.cli.common.arguments.preprocessCommandLineArguments
 import org.jetbrains.kotlin.commonizer.cli.Task.Category
 import kotlin.system.exitProcess
@@ -36,12 +36,13 @@ internal fun parseTasksFromCommandLineArguments(args: Array<String>): MutableLis
  * Returns an original [args] with @argfile-arguments inlined.
  */
 private fun preprocessCommandLineArguments(args: Array<String>): List<String> {
-    val errors = lazy { ArgumentParseErrors() }
-    val argumentsWithArgfilesExpanded = preprocessCommandLineArguments(args.asList(), errors)
-    // We're using kotlinc infra for argfiles parsing, so general API of ArgumentParseErrors is a bit wider than what we need
+    val diagnostics = mutableListOf<ArgumentParseDiagnostic>()
+    val argumentsWithArgfilesExpanded = preprocessCommandLineArguments(args.asList(), diagnostics)
+    // We're using kotlinc infra for argfiles parsing, so general API of hasFatalErrors is a bit wider than what we need
     // In fact, 'errors' will contain only 'argfileErrors'
-    if (errors.value.argfileErrors.isNotEmpty()) {
-        printUsageAndExit("Errors while using @argfiles\n" + errors.value.argfileErrors.joinToString("\n"))
+    val argFileErrors = diagnostics.filterIsInstance<ArgumentParseDiagnostic.ArgfileError>()
+    if (argFileErrors.isNotEmpty()) {
+        printUsageAndExit("Errors while using @argfiles\n" + argFileErrors.joinToString("\n") { it.message })
     }
     return argumentsWithArgfilesExpanded
 }

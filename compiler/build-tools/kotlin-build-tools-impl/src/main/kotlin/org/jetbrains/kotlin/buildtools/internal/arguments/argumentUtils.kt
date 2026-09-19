@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ArgumentLifecycleStatus
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.getArgumentsInfo
+import org.jetbrains.kotlin.cli.common.arguments.reportCliArgumentNonFatalDiagnostics
 import org.jetbrains.kotlin.cli.common.generateLifecycleWarning
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.nio.file.Path
 import kotlin.enums.enumEntries
@@ -58,7 +58,7 @@ internal fun CommonToolArgumentsImpl.reportArgumentParseWarnings(
 ) {
     if (argumentParseDiagnostics.isEmpty()) return
     val arguments = argumentParseDiagnostics.buildReportableArguments(finalArguments) ?: return
-    collector.reportArgumentParseProblems(arguments)
+    collector.reportCliArgumentNonFatalDiagnostics(arguments)
     // `REMOVED_CLI_ARG` is reported by the compiler out of `explicitArguments`, but a removed argument has no property
     // on the arguments class, so it can never reach the compiler through the Build Tools API argument model.
     for (field in arguments.explicitArguments.keys) {

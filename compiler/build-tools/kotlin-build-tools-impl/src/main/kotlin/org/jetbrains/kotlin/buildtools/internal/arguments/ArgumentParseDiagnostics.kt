@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.cli.common.arguments.getArgumentsInfo
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 
 /**
- * Remembers everything needed to reproduce the warnings that the CLI compiler reports while parsing its arguments
- * (see [org.jetbrains.kotlin.cli.common.reportArgumentParseProblems]).
+ * Remembers everything needed to reproduce the warnings that the CLI compiler reports while parsing its arguments.
  */
 internal class ArgumentParseDiagnostics private constructor(
     private var argumentsClass: Class<out CommonToolArguments>?,
@@ -73,7 +72,7 @@ internal class ArgumentParseDiagnostics private constructor(
     }
 
     /**
-     * Builds a throwaway arguments instance carrying the [CommonToolArguments.errors] and the multi-valued
+     * Builds a throwaway arguments instance carrying the [CommonToolArguments.diagnostics] and the multi-valued
      * [CommonToolArguments.explicitArguments] that the Build Tools API argument model cannot represent.
      *
      * [finalArguments] are the arguments as they will be handed to the compiler. They are what makes a value configured

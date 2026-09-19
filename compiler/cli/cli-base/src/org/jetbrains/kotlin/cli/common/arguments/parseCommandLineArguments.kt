@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.lang.reflect.Constructor
@@ -111,39 +110,6 @@ private const val ADVANCED_ARGUMENT_PREFIX = "-X"
 internal const val INTERNAL_ARGUMENT_PREFIX = "-XX"
 private const val FREE_ARGS_DELIMITER = "--"
 
-data class ArgumentParseErrors(
-    val unknownArgs: MutableList<String> = SmartList(),
-
-    val unknownExtraFlags: MutableList<String> = SmartList(),
-
-    // Names of extra (-X...) arguments which have been passed in an obsolete form ("-Xaaa bbb", instead of "-Xaaa=bbb")
-    val extraArgumentsPassedInObsoleteForm: MutableList<String> = SmartList(),
-
-    // Arguments where [Argument.deprecatedName] was used; the key is the deprecated name, the value is the new name ([Argument.value])
-    val deprecatedArguments: MutableMap<String, String> = mutableMapOf(),
-
-    var argumentsWithoutValue: MutableList<String> = SmartList(),
-
-    var booleanArgumentsWithIncorrectValue: MutableList<String> = SmartList(),
-
-    var booleanLangFeatureArgumentsWithValue: MutableList<String> = SmartList(),
-
-    val stringLangFeatureArgumentsWithIncorrectValue: MutableList<StringLangFeatureArgumentWithIncorrectValueInfo> = SmartList(),
-
-    val argfileErrors: MutableList<String> = SmartList(),
-
-    // Reports from internal arguments parsers
-    val internalArgumentsParsingErrors: MutableList<String> = SmartList(),
-
-    val internalArgumentsParsingWarnings: MutableList<String> = SmartList(),
-) {
-    data class StringLangFeatureArgumentWithIncorrectValueInfo(
-        val key: String,
-        val value: String,
-        val allowedValues: Set<String>
-    )
-}
-
 inline fun <reified T : CommonToolArguments> parseCommandLineArguments(args: List<String>): T {
     return parseCommandLineArguments(T::class, args)
 }
@@ -158,9 +124,8 @@ fun <T : CommonToolArguments> parseCommandLineArguments(clazz: KClass<T>, args: 
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
 fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A, overrideArguments: Boolean = false) {
-    val errors = lazy { result.errors ?: ArgumentParseErrors().also { result.errors = it } }
-    val preprocessed = preprocessCommandLineArguments(args, errors)
-    parsePreprocessedCommandLineArguments(preprocessed, result, errors, overrideArguments)
+    val preprocessed = preprocessCommandLineArguments(args, result.diagnostics)
+    parsePreprocessedCommandLineArguments(preprocessed, result, overrideArguments)
 }
 
 fun <A : CommonToolArguments> parseCommandLineArgumentsFromEnvironment(arguments: A) {
@@ -275,9 +240,10 @@ private fun extractArgumentsInfo(klass: Class<*>): ArgumentsInfo = ArgumentsInfo
 private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     args: List<String>,
     result: A,
-    errors: Lazy<ArgumentParseErrors>,
     overrideArguments: Boolean
 ) {
+    val diagnostics = result.diagnostics
+
     val properties = getArgumentsInfo(result::class.java).cliArgNameToArguments
 
     var freeArgsStarted = false
@@ -324,8 +290,8 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         if (argumentField == null) {
             when {
                 // Unknown -X argument
-                key.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.value.unknownExtraFlags.add(arg)
-                key.startsWith('-') -> errors.value.unknownArgs.add(arg)
+                key.startsWith(ADVANCED_ARGUMENT_PREFIX) -> diagnostics += ArgumentParseDiagnostic.UnknownExtraFlag(arg)
+                key.startsWith('-') -> diagnostics += ArgumentParseDiagnostic.InvalidArgument(arg)
                 else -> freeArgs.add(arg)
             }
             continue
@@ -336,29 +302,29 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 
         // Tests for -shortName=value, which isn't currently allowed.
         if (key != arg && key == argument.shortName) {
-            errors.value.unknownArgs.add(arg)
+            diagnostics += ArgumentParseDiagnostic.InvalidArgument(arg)
             continue
         }
 
         val deprecatedName = argument.deprecatedName
         if (deprecatedName == key) {
-            errors.value.deprecatedArguments[deprecatedName] = argument.value
+            diagnostics += ArgumentParseDiagnostic.ArgumentWithDeprecatedName(deprecatedName, argument.value)
         }
 
         if (argument.value == arg) {
             if (argument.isAdvanced && getterReturnType != Boolean::class) {
-                errors.value.extraArgumentsPassedInObsoleteForm.add(arg)
+                diagnostics += ArgumentParseDiagnostic.ExtraArgumentInObsoleteForm(arg)
             }
         }
 
         val existingValues by lazy(LazyThreadSafetyMode.NONE) { explicitArgs.getOrPut(argumentField) { mutableListOf() } }
 
         val newValue: Any = if (getterReturnType == Boolean::class) {
-            parseBooleanValue(key, value, argumentField, errors).also { existingValues.add(it) }
+            parseBooleanValue(key, value, argumentField, diagnostics).also { existingValues.add(it) }
         } else {
             val stringValue = value ?: run {
                 if (i == args.size) {
-                    errors.value.argumentsWithoutValue.add(arg)
+                    diagnostics += ArgumentParseDiagnostic.ArgumentWithoutValue(arg)
                     break@loop
                 }
                 args[i++]
@@ -370,13 +336,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
                     argumentField.disablesAnnotations.forEach { add(it.ifValueIs) }
                 }
                 if (!allowedValues.contains(stringValue)) {
-                    errors.value.stringLangFeatureArgumentsWithIncorrectValue.add(
-                        ArgumentParseErrors.StringLangFeatureArgumentWithIncorrectValueInfo(
-                            key = key,
-                            value = stringValue,
-                            allowedValues = allowedValues
-                        )
-                    )
+                    diagnostics += ArgumentParseDiagnostic.StringLanguageFeatureArgumentWithIncorrectValue(key, stringValue, allowedValues)
                 }
             }
 
@@ -399,8 +359,8 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 
     if (result is CommonCompilerArguments) {
         val internalArguments = ArrayList<ManualLanguageFeatureSetting>()
-        for (arg in result.manuallyConfiguredFeatures.orEmpty()) {
-            val featureSetting = LanguageSettingsParser.parseLanguageFeature(arg, "-XXLanguage:$arg", errors.value) ?: continue
+        for (arg in result.manuallyConfiguredFeatures) {
+            val featureSetting = LanguageSettingsParser.parseLanguageFeature(arg, "-XXLanguage:$arg", diagnostics) ?: continue
             internalArguments.removeIf {
                 it.languageFeature == featureSetting.languageFeature
             }
@@ -414,7 +374,7 @@ private fun parseBooleanValue(
     key: String,
     value: String?,
     argumentField: ArgumentField,
-    errors: Lazy<ArgumentParseErrors>,
+    diagnostics: MutableList<ArgumentParseDiagnostic>,
 ): Boolean {
     return if (value != null) {
         val changesLangFeatures = argumentField.changesLanguageFeatures
@@ -423,12 +383,12 @@ private fun parseBooleanValue(
             "false" -> false
             else -> true.also {
                 if (!changesLangFeatures) {
-                    errors.value.booleanArgumentsWithIncorrectValue.add(key)
+                    diagnostics += ArgumentParseDiagnostic.BooleanArgumentWithIncorrectValue(key)
                 }
             }
         }.also {
             if (changesLangFeatures) {
-                errors.value.booleanLangFeatureArgumentsWithValue.add(key)
+                diagnostics += ArgumentParseDiagnostic.BooleanLanguageFeatureArgumentWithValue(key)
             }
         }
     } else {
@@ -474,42 +434,3 @@ private fun <A : CommonToolArguments> A.updateInternalArguments(
 
     internalArguments = filteredExistingArguments + newInternalArguments
 }
-
-/**
- * @return comprehensive error message (all child error messages separated by line break) if arguments are parsed incorrectly.
- * Avoid changing the signature because it's used externally.
- */
-fun validateArguments(errors: ArgumentParseErrors?): String? {
-    return validateArgumentsAllErrors(errors).takeIf { it.isNotEmpty() }?.joinToString("\n")
-}
-
-/**
- * @return all error messages encountered during arguments parsing.
- */
-fun validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String> {
-    if (errors == null) return emptyList()
-    return buildList {
-        errors.argumentsWithoutValue.forEach {
-            add("No value passed for argument $it")
-        }
-        errors.booleanArgumentsWithIncorrectValue.forEach { arg ->
-            add("Incorrect value for boolean argument '$arg'. Only 'true' and 'false' are allowed.")
-        }
-        errors.booleanLangFeatureArgumentsWithValue.forEach { arg ->
-            add(
-                "No value is expected for argument '$arg'."
-            )
-        }
-        errors.stringLangFeatureArgumentsWithIncorrectValue.forEach { (key, value, allowedValues) ->
-            val allowedValuesString = allowedValues.joinToString(", ") { "'$it'" }
-            add(
-                "Incorrect value for argument '$key'. " +
-                        "Actual value: '$value', but allowed values: $allowedValuesString."
-            )
-        }
-        errors.unknownArgs.forEach {
-            add("Invalid argument: $it")
-        }
-    }
-}
-

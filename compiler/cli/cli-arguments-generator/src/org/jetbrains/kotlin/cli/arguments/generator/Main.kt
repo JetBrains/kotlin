@@ -618,7 +618,7 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
     generateSetter("List<ManualLanguageFeatureSetting>", argument = null)
     println()
     println("@Transient")
-    println("var errors: ArgumentParseErrors? = null")
+    println("val diagnostics: MutableList<ArgumentParseDiagnostic> = mutableListOf()")
     println()
     println("@Transient")
     println("var explicitArguments: Map<ArgumentField, List<Any>> = emptyMap()")
