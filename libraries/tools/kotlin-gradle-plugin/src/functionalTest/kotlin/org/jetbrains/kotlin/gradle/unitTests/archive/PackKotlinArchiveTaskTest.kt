@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalWasmDsl::class)
-
 package org.jetbrains.kotlin.gradle.unitTests.archive
 
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
@@ -12,26 +10,20 @@ import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileTree
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPublicationFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.archive.PackKotlinArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.AssembleKotlinArchiveTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.PackKotlinArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
-import org.jetbrains.kotlin.gradle.util.buildProject
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
-import org.jetbrains.kotlin.gradle.util.enableMppResourcesPublication
-import org.jetbrains.kotlin.gradle.util.kotlin
-import org.jetbrains.kotlin.gradle.util.populateTaskGraph
-import org.jetbrains.kotlin.gradle.util.setAndroidSdkDirProperty
+import org.jetbrains.kotlin.gradle.util.*
 import java.io.File
 import java.util.zip.ZipInputStream
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class PackKotlinArchiveTaskTest {
     @Test

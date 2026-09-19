@@ -9,7 +9,6 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -23,12 +22,11 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
-@OptIn(ExperimentalWasmDsl::class)
 open class KotlinJsBinaryContainer
 @Inject
 constructor(
     val target: KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>,
-    backingContainer: DomainObjectSet<JsIrBinary>,
+    private val backingContainer: DomainObjectSet<JsIrBinary>,
 ) : DomainObjectSet<JsIrBinary> by backingContainer {
     val project: Project
         get() = target.project
@@ -153,6 +151,10 @@ constructor(
         }
 
         return binary
+    }
+
+    override fun disallowChanges() {
+        backingContainer.disallowChanges()
     }
 
     companion object {

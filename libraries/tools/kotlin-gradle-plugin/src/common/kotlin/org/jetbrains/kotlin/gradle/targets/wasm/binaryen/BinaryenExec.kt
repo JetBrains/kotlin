@@ -14,7 +14,6 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.supportsPerKlibCompilation
@@ -80,12 +79,10 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
      *         }
      *     }
      *
-     *     @OptIn(ExperimentalWasmDsl::class)
      *     it.perFileBinaryenArguments.putAll(perFileArguments)
      * }
      * ```
      */
-    @ExperimentalWasmDsl
     @get:Input
     abstract val perFileBinaryenArguments: MapProperty<File, List<String>>
 
@@ -120,7 +117,6 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
             workQueue.submit(BinaryenWorkAction::class.java) {
                 it.executable.set(this@BinaryenExec.executable)
                 it.workingDir.set(inputFile.parentFile)
-                @OptIn(ExperimentalWasmDsl::class)
                 it.args.set(
                     binaryenArguments.get() + (perFileBinaryenArguments.get()[inputFile] ?: emptyList())
                 )
@@ -131,7 +127,6 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     }
 
     companion object {
-        @ExperimentalWasmDsl
         fun register(
             compilation: KotlinJsIrCompilation,
             name: String,
@@ -157,7 +152,6 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
             }
         }
 
-        @ExperimentalWasmDsl
         @Deprecated(
             "Use register instead",
             ReplaceWith("register(compilation, name, configuration)")

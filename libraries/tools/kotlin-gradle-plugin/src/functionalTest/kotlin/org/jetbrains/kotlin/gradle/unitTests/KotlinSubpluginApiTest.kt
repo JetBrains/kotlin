@@ -34,7 +34,6 @@ class KotlinSubpluginApiTest {
                 linuxX64()
                 js()
 
-                @OptIn(ExperimentalWasmDsl::class)
                 wasmJs()
                 @OptIn(ExperimentalWasmDsl::class)
                 wasmWasi()

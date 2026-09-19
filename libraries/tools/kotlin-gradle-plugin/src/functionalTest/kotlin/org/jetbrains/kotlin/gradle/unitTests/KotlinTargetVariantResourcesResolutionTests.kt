@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalWasmDsl::class)
-
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
@@ -51,6 +49,7 @@ class KotlinTargetVariantResourcesResolutionTests {
         )
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     @Test
     fun `test direct dependency - for wasmJs, wasmWasi, js targets - when using artifact view`() {
         listOf<TargetProvider>(

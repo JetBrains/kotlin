@@ -104,7 +104,6 @@ internal constructor(
         )
     }
 
-    @ExperimentalWasmDsl
     override fun wasmJs(
         name: String,
         configure: KotlinWasmJsTargetDsl.() -> Unit,

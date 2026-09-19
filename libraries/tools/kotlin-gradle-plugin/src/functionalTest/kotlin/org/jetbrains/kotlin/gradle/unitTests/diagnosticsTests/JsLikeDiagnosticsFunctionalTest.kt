@@ -26,7 +26,6 @@ class JsLikeDiagnosticsFunctionalTest {
     }
 
     @Test
-    @OptIn(ExperimentalWasmDsl::class)
     fun testWasmJsLikeReportWarning() {
         val project = buildProjectWithMPP {
             kotlin {
@@ -69,7 +68,6 @@ class JsLikeDiagnosticsFunctionalTest {
     }
 
     @Test
-    @OptIn(ExperimentalWasmDsl::class)
     fun testWasmJsNotReportWarning() {
         val project = buildProjectWithMPP {
             kotlin {

@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalWasmDsl::class)
-
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
@@ -13,7 +11,6 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -192,7 +189,6 @@ sealed class JsIrBinary(
     }
 }
 
-@ExperimentalWasmDsl
 interface WasmBinary {
     val compilation: KotlinJsIrCompilation
 
@@ -272,7 +268,6 @@ open class Executable(
         )
 }
 
-@ExperimentalWasmDsl
 class ExecutableWasm(
     compilation: KotlinJsIrCompilation,
     name: String,
@@ -352,7 +347,6 @@ open class Library(
     mode
 )
 
-@ExperimentalWasmDsl
 class LibraryWasm(
     compilation: KotlinJsIrCompilation,
     name: String,
@@ -379,7 +373,6 @@ class LibraryWasm(
         }
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
     override val optimizeTask: TaskProvider<BinaryenExec> = BinaryenExec.register(compilation, optimizeTaskName()) {
         val compileWasmDestDir = linkTask.map {
             it.destinationDirectory

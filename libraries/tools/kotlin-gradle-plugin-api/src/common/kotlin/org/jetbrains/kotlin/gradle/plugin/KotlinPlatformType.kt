@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Named
 import org.gradle.api.attributes.*
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import java.io.Serializable
 
 /**

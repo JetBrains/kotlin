@@ -9,7 +9,6 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
 
-@OptIn(ExperimentalWasmDsl::class)
 internal val WasmBinaryTransformRegisteringSetupAction = KotlinCompilationSideEffect { compilation ->
     if (compilation !is KotlinJsIrCompilation) return@KotlinCompilationSideEffect
     val project = compilation.project

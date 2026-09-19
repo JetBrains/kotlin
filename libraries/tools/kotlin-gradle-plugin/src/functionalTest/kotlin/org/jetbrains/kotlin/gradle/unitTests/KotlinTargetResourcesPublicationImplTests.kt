@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalWasmDsl::class)
 
 package org.jetbrains.kotlin.gradle.unitTests
 
@@ -122,6 +121,7 @@ class KotlinTargetResourcesPublicationImplTests {
         )
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     @Test
     fun `test targets that can publish resources`() {
         buildProjectWithMPP {
@@ -146,6 +146,7 @@ class KotlinTargetResourcesPublicationImplTests {
         }
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     @Test
     fun `test targets that can resolve resources`() {
         buildProjectWithMPP {
