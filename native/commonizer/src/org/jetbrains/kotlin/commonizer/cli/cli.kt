@@ -50,7 +50,7 @@ private fun preprocessCommandLineArguments(args: Array<String>): List<String> {
 // - first, execute all informational tasks
 // - then, all commonization tasks
 private fun executeTasks(tasks: MutableList<Task>) {
-    Category.values().forEach { category ->
+    Category.entries.forEach { category ->
         val sortedTasks = tasks.filter { it.category == category }.sorted()
         if (sortedTasks.isNotEmpty()) {
             category.prologue?.let(::println)
@@ -138,7 +138,7 @@ private fun printUsageAndExit(errorMessage: String? = null): Nothing {
     println("Usage: ${::printUsageAndExit.javaClass.`package`.name}.CommonizerCLI <task> <options> [<task> <options>...]")
     println()
     println("Tasks:")
-    for (taskType in TaskType.values()) {
+    for (taskType in TaskType.entries) {
         println(formatBoth(1, taskType.alias, taskType.description))
         println(formatLeft(1, if (taskType.optionTypes.isNotEmpty()) "Options:" else "No options."))
         for (optionType in taskType.optionTypes) {
