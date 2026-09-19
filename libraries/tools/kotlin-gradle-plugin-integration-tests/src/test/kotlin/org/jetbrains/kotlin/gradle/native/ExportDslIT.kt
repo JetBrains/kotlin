@@ -548,6 +548,138 @@ class ExportDslIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-89480: Changing a dependency visibility override invalidates the Swift Export task")
+    @GradleTest
+    fun testDependencyVisibilityOverrideIsTrackedAsTaskInput(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        val visibilityProperty = "subVisibilityOverride"
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                // The visibility override is read from a Gradle property so that it can be changed between builds.
+                // Crucially, none of the task's tracked file inputs (the sources or the resolved klib) change when
+                // only this property changes.
+                val visibilityOverride = project.providers.gradleProperty(visibilityProperty)
+                    .map { SwiftExportVisibility.valueOf(it) }
+                    .orElse(SwiftExportVisibility.EXPOSED)
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain {
+                        compileSource(
+                            """
+                            fun makeOne(): com.example.sub.One = com.example.sub.One()
+                            """.trimIndent()
+                        )
+                        dependencies {
+                            // Only transitively exported by default; the override below is what makes it FULL/HIDDEN.
+                            implementation(project(":sub"))
+                        }
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration {
+                        configure(project.dependencies.project(mapOf("path" to ":sub"))) {
+                            visibility.set(visibilityOverride)
+                        }
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileSource(
+                            """
+                            package com.example.sub
+                            class One
+                            class TwoNeverReferenced
+                            """.trimIndent()
+                        )
+                    }
+                }
+            }
+
+            include(subproject, "sub")
+
+            val builtProductsDir = projectPath.resolve("build/builtProductsDir")
+
+            // 1) First build with the override set to EXPOSED: the whole public API of `:sub` is translated.
+            build(
+                ":$EMBED_SWIFT_EXPORT_TASK_NAME",
+                "-P$visibilityProperty=EXPOSED",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
+            ) {
+                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertSwiftModuleSymbols(
+                    workingDir = projectPath.toFile(),
+                    moduleName = "Sub",
+                    target = "arm64-apple-ios$IOS_DEPLOYMENT_TARGET",
+                    searchPaths = listOf(builtProductsDir.toFile()),
+                    expectedSymbols = setOf(
+                        SwiftSymbol(
+                            demangledId = "(extension in Sub):ExportedKotlinPackages.com.example.sub.One",
+                            pathComponents = listOf("com", "example", "sub", "One")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "(extension in Sub):ExportedKotlinPackages.com.example.sub.One.init() -> (extension in Sub):ExportedKotlinPackages.com.example.sub.One",
+                            pathComponents = listOf("com", "example", "sub", "One", "init()")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "(extension in Sub):ExportedKotlinPackages.com.example.sub.TwoNeverReferenced",
+                            pathComponents = listOf("com", "example", "sub", "TwoNeverReferenced")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "(extension in Sub):ExportedKotlinPackages.com.example.sub.TwoNeverReferenced.init() -> (extension in Sub):ExportedKotlinPackages.com.example.sub.TwoNeverReferenced",
+                            pathComponents = listOf("com", "example", "sub", "TwoNeverReferenced", "init()")
+                        ),
+                    )
+                )
+            }
+
+            // 2) Re-running with the same override keeps the task UP-TO-DATE, as expected.
+            build(
+                ":$EMBED_SWIFT_EXPORT_TASK_NAME",
+                "-P$visibilityProperty=EXPOSED",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
+            ) {
+                assertTasksUpToDate(":iosArm64DebugSwiftExport")
+            }
+
+            // 3) Change ONLY the visibility override to HIDDEN. The override drives the task's output and is tracked
+            // via the `dependencyOptionsOverridesInputs` task input, so up-to-date checking sees the change: the
+            // task re-executes and now emits only an empty stub for the referenced `One`, dropping the unreferenced
+            // `TwoNeverReferenced` and `One`'s own synthetic constructor.
+            build(
+                ":$EMBED_SWIFT_EXPORT_TASK_NAME",
+                "-P$visibilityProperty=HIDDEN",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
+            ) {
+                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertSwiftModuleSymbols(
+                    workingDir = projectPath.toFile(),
+                    moduleName = "Sub",
+                    target = "arm64-apple-ios$IOS_DEPLOYMENT_TARGET",
+                    searchPaths = listOf(builtProductsDir.toFile()),
+                    expectedSymbols = setOf(
+                        SwiftSymbol(
+                            demangledId = "(extension in Sub):ExportedKotlinPackages.com.example.sub.One",
+                            pathComponents = listOf("com", "example", "sub", "One")
+                        ),
+                    )
+                )
+            }
+        }
+    }
+
     private fun TestProject.isEmbedSwiftExportTaskRegistered(): Boolean = buildScriptReturn {
         project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME) != null
     }.buildAndReturn()
