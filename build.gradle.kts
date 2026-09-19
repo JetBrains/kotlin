@@ -595,6 +595,10 @@ tasks {
         }
     }
 
+    testLifecycleTask("documentationModelTest", QualityGate.Master) {
+        dependsOn(":tools:kotlin-documentation-model:analyzer:check")
+    }
+
     testLifecycleTask("miscTest", QualityGate.Master) {
         dependsOn(coreLibsTest)
         dependsOn(toolsTest)

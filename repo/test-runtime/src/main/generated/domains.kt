@@ -16,6 +16,7 @@ enum class Domain {
     BuildToolsApi,
     SwiftExport,
     CompilerPlugins,
+    DocumentationModel,
     Gradle,
     Maven,
     IntelliJ,
