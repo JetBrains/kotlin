@@ -89,7 +89,6 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeDefinedStructDeclarations(definedVTableGcTypes)
         serializeDefinedFunctionTypesDeclarations(definedFunctionTypes)
         serializeMap(contTypes, ::serializeInt, ::serializeWasmContType)
-        serializeMap(contFunctionTypes, ::serializeInt, ::serializeWasmFunctionType)
     }
 
     fun serializeCompiledDeclarations(definedDeclarations: WasmCompiledDeclarationsFileFragment) = with(definedDeclarations) {
@@ -241,7 +240,6 @@ class WasmSerializer(outputStream: OutputStream) {
             is GcHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_GC_TYPE) { serializeIdSignature(type.type) }
             is VTableHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_VT_TYPE) { serializeIdSignature(type.type) }
             is FunctionHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_FUNC_TYPE) { serializeIdSignature(type.type) }
-            is ContFunctionHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_CONT_FUNC_TYPE) { serializeInt(type.arity) }
             is ContHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_CONT_TYPE) { serializeInt(type.arity) }
             WasmHeapType.Simple.Cont -> setTag(HeapTypeTags.CONT)
             WasmHeapType.Simple.NoCont -> setTag(HeapTypeTags.NO_CONT)

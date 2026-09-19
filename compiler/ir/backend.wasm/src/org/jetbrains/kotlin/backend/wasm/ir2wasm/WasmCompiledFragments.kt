@@ -23,7 +23,6 @@ class WasmCompiledTypesFileFragment(
     val definedVTableGcTypes: MutableMap<IdSignature, WasmStructDeclaration> = mutableMapOf(),
     val definedFunctionTypes: MutableMap<IdSignature, WasmFunctionType> = mutableMapOf(),
     val contTypes: MutableMap<Int, WasmContType> = mutableMapOf(),
-    val contFunctionTypes: MutableMap<Int, WasmFunctionType> = mutableMapOf(),
 )
 
 val WasmCompiledDeclarationsFileFragment.hasDeclarations: Boolean
@@ -103,26 +102,7 @@ fun WasmCompiledTypesFileFragment.makeProjection(onTypes: ModuleReferencedTypes)
     WasmCompiledTypesFileFragment().also { newFragment ->
         definedGcTypes.filterTo(newFragment.definedGcTypes) { it.key in onTypes.gcTypes }
         definedVTableGcTypes.filterTo(newFragment.definedVTableGcTypes) { it.key in onTypes.gcTypes }
-
-        // cont types are keyed by arity (not IdSignature) and are few in number; always include all of them
-        // since they can be transitively referenced by gc/function types without direct codegen references
-        newFragment.contTypes.putAll(contTypes)
-        newFragment.contFunctionTypes.putAll(contFunctionTypes)
-
-        // Collect function type signatures needed by cont types:
-        // - direct FunctionHeapTypeSymbol references (funType of WasmContType)
-        // - signatures of contFunctionTypes values (the underlying function types of cont function types)
-        val contDependentFunctionTypeSignatures = buildSet {
-            for (contType in newFragment.contTypes.values) {
-                (contType.funType as? FunctionHeapTypeSymbol)?.type?.let { add(it) }
-            }
-            for (contFuncType in newFragment.contFunctionTypes.values) {
-                add(getFunctionTypeSignature(contFuncType))
-            }
-        }
-        definedFunctionTypes.filterTo(newFragment.definedFunctionTypes) {
-            it.key in onTypes.functionTypes || it.key in contDependentFunctionTypeSignatures
-        }
+        definedFunctionTypes.filterTo(newFragment.definedFunctionTypes) { it.key in onTypes.functionTypes }
     }
 
 fun WasmCompiledDeclarationsFileFragment.makeProjection(onDeclarations: ModuleReferencedDeclarations): WasmCompiledDeclarationsFileFragment =
@@ -132,4 +112,3 @@ fun WasmCompiledDeclarationsFileFragment.makeProjection(onDeclarations: ModuleRe
         definedGlobalClassITables.filterTo(newFragment.definedGlobalClassITables) { it.key in onDeclarations.globalClassITable }
         definedRttiGlobal.filterTo(newFragment.definedRttiGlobal) { it.key in onDeclarations.rttiGlobal }
     }
-

@@ -47,7 +47,6 @@ sealed class WasmHeapType {
         abstract class VTableType : Type()
         abstract class FunctionType : Type()
         abstract class ContType : Type()
-        abstract class ContFunctionType : FunctionType()
     }
 
     sealed class Simple(val name: String, val code: Byte) : WasmHeapType() {
