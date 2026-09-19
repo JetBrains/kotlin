@@ -143,7 +143,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
 
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(
-            replayedFailedTest("$FIXTURE_CLASS.failing()"),
+            replayedFailedTest,
             result.replayedTestMessages.about("failing()"),
         )
     }
@@ -164,7 +164,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
 
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(
-            List(4) { replayedFailedTest("$FIXTURE_CLASS.failing()") }.flatten(),
+            List(4) { replayedFailedTest }.flatten(),
             result.replayedTestMessages.about("failing()"),
             "The first attempt and its three retries should each be replayed",
         )
@@ -173,7 +173,9 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
 
 private const val FIXTURE_TASK_PATH = ":repo:test-inventory-fixture:test"
 private const val FIXTURE_CLASS = "org.jetbrains.kotlin.testInventory.TestInventoryFixtureTest"
-private const val FIXTURE_NESTED_CLASS = "$FIXTURE_CLASS\$NestedTests"
+private const val FIXTURE_NESTED_CLASS = $$"$$FIXTURE_CLASS$NestedTests"
+private const val FIXTURE_IGNORED_TEST = "$FIXTURE_CLASS.ignored()"
+private const val FIXTURE_FAILING_TEST = "$FIXTURE_CLASS.failing()"
 
 private const val REPLAY_FLOW_ID = "TestReplay$FIXTURE_TASK_PATH"
 
@@ -229,6 +231,34 @@ private val expectedRecording = """
 
 """.trimIndent()
 
+/** The replay of the fixture's one ignored test, which TeamCity is told about before it is finished. */
+private val replayedIgnoredTest = listOf(
+    "##teamcity[testStarted name='$FIXTURE_IGNORED_TEST' flowId='$REPLAY_FLOW_ID']",
+    "##teamcity[testIgnored name='$FIXTURE_IGNORED_TEST' flowId='$REPLAY_FLOW_ID']",
+    "##teamcity[testFinished name='$FIXTURE_IGNORED_TEST' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
+)
+
+/** The replay of one attempt at the fixture's one failing test. */
+private val replayedFailedTest = listOf(
+    "##teamcity[testStarted name='$FIXTURE_FAILING_TEST' flowId='$REPLAY_FLOW_ID']",
+    "##teamcity[testFailed name='$FIXTURE_FAILING_TEST' message='$FAILURE_DETAILS_UNAVAILABLE' flowId='$REPLAY_FLOW_ID']",
+    "##teamcity[testFinished name='$FIXTURE_FAILING_TEST' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
+)
+
+private fun replayedTest(name: String) = listOf(
+    "##teamcity[testStarted name='$name' flowId='$REPLAY_FLOW_ID']",
+    "##teamcity[testFinished name='$name' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
+)
+
+private fun replayedSuite(name: String, vararg contents: List<String>): List<String> = buildList {
+    add("##teamcity[testSuiteStarted name='$name' flowId='$REPLAY_FLOW_ID']")
+    contents.forEach(::addAll)
+    add("##teamcity[testSuiteFinished name='$name' flowId='$REPLAY_FLOW_ID']")
+}
+
+/** The messages of [groups], one after another, so that a nesting can be written as one. */
+private fun replayedMessages(vararg groups: List<String>): List<String> = groups.flatMap { it }
+
 /**
  * What a replay of [expectedRecording] has to say.
  *
@@ -238,41 +268,20 @@ private val expectedRecording = """
  * class nor nothing, so it survives, with the class still in the names of its invocations.
  * The `|[` and `|]` are how a service message spells a bracket.
  */
-private val expectedReplay =
-    replayedTest("$FIXTURE_CLASS.failing()") +
-            replayedTest("$FIXTURE_CLASS.passing()") +
-            replayedIgnoredTest("$FIXTURE_CLASS.ignored()") +
-            replayedSuite(
-                FIXTURE_CLASS,
-                replayedTest("$FIXTURE_NESTED_CLASS.nested()") +
-                        replayedSuite(
-                            "parameterized(int)",
-                            replayedTest("$FIXTURE_CLASS.parameterized(|[1|] 1)") +
-                                    replayedTest("$FIXTURE_CLASS.parameterized(|[2|] 2)"),
-                        ),
-            )
-
-private fun replayedTest(name: String) = listOf(
-    "##teamcity[testStarted name='$name' flowId='$REPLAY_FLOW_ID']",
-    "##teamcity[testFinished name='$name' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
+private val expectedReplay = replayedMessages(
+    replayedTest("$FIXTURE_CLASS.failing()"),
+    replayedTest("$FIXTURE_CLASS.passing()"),
+    replayedIgnoredTest,
+    replayedSuite(
+        FIXTURE_CLASS,
+        replayedTest("$FIXTURE_NESTED_CLASS.nested()"),
+        replayedSuite(
+            "parameterized(int)",
+            replayedTest("$FIXTURE_CLASS.parameterized(|[1|] 1)"),
+            replayedTest("$FIXTURE_CLASS.parameterized(|[2|] 2)"),
+        ),
+    ),
 )
-
-private fun replayedIgnoredTest(name: String) = listOf(
-    "##teamcity[testStarted name='$name' flowId='$REPLAY_FLOW_ID']",
-    "##teamcity[testIgnored name='$name' flowId='$REPLAY_FLOW_ID']",
-    "##teamcity[testFinished name='$name' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
-)
-
-private fun replayedFailedTest(name: String) = listOf(
-    "##teamcity[testStarted name='$name' flowId='$REPLAY_FLOW_ID']",
-    "##teamcity[testFailed name='$name' message='$FAILURE_DETAILS_UNAVAILABLE' flowId='$REPLAY_FLOW_ID']",
-    "##teamcity[testFinished name='$name' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
-)
-
-private fun replayedSuite(name: String, contents: List<String>) =
-    listOf("##teamcity[testSuiteStarted name='$name' flowId='$REPLAY_FLOW_ID']") +
-            contents +
-            "##teamcity[testSuiteFinished name='$name' flowId='$REPLAY_FLOW_ID']"
 
 /** The test task's working directory is the root of the repository, see this module's build script. */
 private val repoRoot: File get() = Path("").toAbsolutePath().toFile()
