@@ -499,6 +499,8 @@ public interface SirTypeNamer {
     }
 
     public fun swiftFqName(type: SirType): String
+
+    context(session: SirSession)
     public fun kotlinFqName(sirType: SirType, nameType: KotlinNameType): String
     public fun kotlinPrimitiveFqNameIfAny(sirType: SirType): String?
 }
