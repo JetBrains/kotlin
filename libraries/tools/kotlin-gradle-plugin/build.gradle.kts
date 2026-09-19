@@ -103,6 +103,18 @@ val unpublishedCompilerRuntimeDependencies = listOf(
     ":wasm:wasm.config", // for k/js task
 )
 
+// Embedded, but deliberately kept off the compile classpath: these modules are not limited to the
+// language version KGP is compiled with (see `gradle-plugin-compiler-dependency-configuration`), so
+// compiling against them fails with a metadata version mismatch. They are only needed at runtime, by
+// `CliDiagnostics`, which backs the argument parse diagnostics carried by `CommonToolArguments.diagnostics`:
+// frontend.common holds its supertype `KtDiagnosticsContainer`, frontend.common-psi the
+// `...WithoutSource()` delegates declaring its factories.
+val unpublishedCompilerRuntimeOnlyDependencies = listOf(
+    // TODO: remove in KT-70247
+    ":compiler:frontend.common",
+    ":compiler:frontend.common-psi",
+)
+
 configurations.embedded.configure {
     // excludes stdlib and other dependencies provided by Gradle runtime
     excludeGradleCommonDependencies()
@@ -179,7 +191,7 @@ dependencies {
     commonRuntimeOnly(project(":kotlin-compiler-runner")) { // TODO: consider removing in KT-70247
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
     }
-    for (compilerRuntimeDependency in unpublishedCompilerRuntimeDependencies) {
+    for (compilerRuntimeDependency in unpublishedCompilerRuntimeDependencies + unpublishedCompilerRuntimeOnlyDependencies) {
         embedded(project(compilerRuntimeDependency)) { isTransitive = false }
     }
 
