@@ -25,14 +25,16 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     private var data = data
     private var lazy: IntSet? = null
 
-    internal val isLazy: Boolean get() = lazy != null
+    // A freshly created bitset stays in the "virgin" state — no storage at all — until the
+    // first [set]. It behaves as an empty sparse set; [set] materializes the lazy storage.
+    private val isVirgin: Boolean get() = lazy == null && data === EMPTY
+
+    internal val isLazy: Boolean get() = lazy != null || data === EMPTY
 
     /** For testing: the length of the underlying word array (independent of [size]). */
     internal val dataCapacity: Int get() = data.size
 
-    constructor() : this(0, EMPTY) {
-        lazy = IntArraySet(LAZY_CONVERSION_THRESHOLD)
-    }
+    constructor() : this(0, EMPTY)
 
     constructor(nodesCount: Int) : this(0, LongArray((nodesCount shr 6) + 1))
 
@@ -44,7 +46,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     private fun ensureCapacity(index: Int) {
-        check(!isLazy) { "ensureCapacity called while in lazy mode" }
+        check(lazy == null) { "ensureCapacity called while in lazy mode" }
         if (data.size <= index) {
             val oldData = data
             data = LongArray((oldData.size * 2).coerceAtLeast(index + 1))
@@ -59,11 +61,13 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     private fun shrinkDenseSize() {
-        check(!isLazy) { "shrinkDenseSize called while in lazy mode" }
+        check(lazy == null) { "shrinkDenseSize called while in lazy mode" }
         while (size > 0 && data[size - 1] == 0L) size--
     }
 
     fun set(bitIndex: Int) {
+        if (isVirgin)
+            lazy = IntArraySet(LAZY_CONVERSION_THRESHOLD)
         lazy?.let { lazy ->
             size = size.coerceAtLeast(bitIndex.ushr(6) + 1)
             lazy.add(bitIndex)
@@ -153,6 +157,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
 
     fun or(another: CustomBitSet) {
         require(another !== this) { "or() must not be called with this as the argument" }
+        if (another.isVirgin) return // Or with an empty set is a no-op; don't densify this.
         another.lazy?.let { alazy ->
             alazy.forEach { set(it) }
             return
@@ -168,6 +173,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
 
     fun orHasChanged(another: CustomBitSet): Boolean {
         require(another !== this) { "orHasChanged() must not be called with this as the argument" }
+        if (another.isVirgin) return false // Or with an empty set is a no-op; don't densify this.
         another.lazy?.let { alazy ->
             var changed = false
             alazy.forEach {
@@ -194,6 +200,8 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     fun orWithFilterHasChanged(another: CustomBitSet, filter: CustomBitSet): Boolean {
         require(another !== this) { "orWithFilterHasChanged() must not be called with this as `another`" }
         require(filter !== this) { "orWithFilterHasChanged() must not be called with this as `filter`" }
+        // Or with an empty set (or through an empty filter) is a no-op; don't densify this.
+        if (another.isVirgin || filter.isVirgin) return false
         another.lazy?.let { alazy ->
             var changed = false
             alazy.forEach {
@@ -329,10 +337,12 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     fun copy(): CustomBitSet {
+        if (isVirgin)
+            return CustomBitSet()
         lazy?.let { lazy ->
             val res = CustomBitSet()
             res.size = this.size
-            res.lazy!!.addAll(lazy)
+            res.lazy = IntArraySet(LAZY_CONVERSION_THRESHOLD).also { it.addAll(lazy) }
             return res
         }
         return CustomBitSet(size, data.copyOf())
