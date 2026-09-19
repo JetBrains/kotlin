@@ -175,11 +175,13 @@ BuildToolsApi:
  - compiler/build-tools/kotlin-build-tools-api
  - compiler/build-tools/kotlin-build-tools-api-backports
  - compiler/build-tools/kotlin-build-tools-api-forward-tests
+ - compiler/build-tools/kotlin-build-tools-api-jps
  - compiler/build-tools/kotlin-build-tools-api-tests
  - compiler/build-tools/kotlin-build-tools-compat
  - compiler/build-tools/kotlin-build-tools-cri-impl
  - compiler/build-tools/kotlin-build-tools-generator
  - compiler/build-tools/kotlin-build-tools-impl
+ - compiler/build-tools/kotlin-build-tools-impl-jps
  - compiler/build-tools/kotlin-build-tools-jdk-utils
  - compiler/build-tools/kotlin-build-tools-version-coverage-check
  - compiler/build-tools/util-kotlinpoet
