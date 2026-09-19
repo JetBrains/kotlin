@@ -1,0 +1,44 @@
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/sources
+
+# kotlinc
+-d output/ap
+ap/LeakingProcessor.kt
+
+# kapt
+-Xallow-pre-17-runtime-jdk
+-Kapt-detect-memory-leaks=paranoid
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.LeakingProcessor
+-d output/classes
+-cp output/ap
+Test.kt
+
+# output
+warning: [kapt] Memory leak detected!
+Location: 'apt.LeakingProcessor', static field 'leakedProcessor'
+Field leaks an Annotation Processing component (LeakingProcessor).
+
+# kapt
+-Xallow-pre-17-runtime-jdk
+-Kapt-detect-memory-leaks=none
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.LeakingProcessor
+-d output/classes
+-cp output/ap
+Test.kt
+
+# output
+
+# after

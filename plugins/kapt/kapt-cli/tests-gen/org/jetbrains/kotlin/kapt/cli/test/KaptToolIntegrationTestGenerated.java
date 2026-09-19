@@ -88,6 +88,30 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   }
 
   @Test
+  @TestMetadata("detectMemoryLeaks")
+  public void testDetectMemoryLeaks() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/detectMemoryLeaks/");
+  }
+
+  @Test
+  @TestMetadata("includeCompileClasspath")
+  public void testIncludeCompileClasspath() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/includeCompileClasspath/");
+  }
+
+  @Test
+  @TestMetadata("incrementalData")
+  public void testIncrementalData() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/incrementalData/");
+  }
+
+  @Test
+  @TestMetadata("infoAsWarnings")
+  public void testInfoAsWarnings() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/infoAsWarnings/");
+  }
+
+  @Test
   @TestMetadata("kotlinFileGeneration")
   public void testKotlinFileGeneration() {
     runTest("plugins/kapt/kapt-cli/testData/integration/kotlinFileGeneration/");
@@ -121,6 +145,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   @TestMetadata("noOutput")
   public void testNoOutput() {
     runTest("plugins/kapt/kapt-cli/testData/integration/noOutput/");
+  }
+
+  @Test
+  @TestMetadata("processIncrementally")
+  public void testProcessIncrementally() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/processIncrementally/");
   }
 
   @Test
