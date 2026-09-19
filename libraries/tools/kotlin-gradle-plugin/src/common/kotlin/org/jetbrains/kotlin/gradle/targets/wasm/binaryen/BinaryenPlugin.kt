@@ -23,7 +23,7 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
 
         val spec = project.extensions.createBinaryenEnvSpec()
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val settings = project.extensions.create(
             BinaryenExtension.EXTENSION_NAME,
             BinaryenExtension::class.java,
@@ -57,7 +57,7 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
         )
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun BinaryenEnvSpec.initializeBinaryenRootEnvSpec(
         rootBinaryen: BinaryenExtension,
     ) {
@@ -71,7 +71,7 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
         platform.convention(rootBinaryen.platform)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun addPlatform(project: Project, extension: BinaryenExtension) {
         val uname = project.providers.unameExecResult
 

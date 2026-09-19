@@ -49,49 +49,6 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
     @ExperimentalWasmDsl
     fun wasmWasi(configure: Action<KotlinWasmWasiTargetDsl>) = wasmWasi { configure.execute(this) }
 
-    @Deprecated(
-        "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("wasmJs(name, configure)"),
-        level = DeprecationLevel.ERROR
-    )
-    @ExperimentalWasmDsl
-    fun wasm(
-        name: String = DEFAULT_WASM_JS_NAME,
-        configure: KotlinWasmJsTargetDsl.() -> Unit = { },
-    ): KotlinWasmJsTargetDsl = wasmJs(name, configure)
-
-    @Deprecated(
-        "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("wasmJs()"),
-        level = DeprecationLevel.ERROR
-    )
-    @ExperimentalWasmDsl
-    fun wasm() = wasmJs()
-
-    @Deprecated(
-        "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("wasmJs(name)"),
-        level = DeprecationLevel.ERROR
-    )
-    @ExperimentalWasmDsl
-    fun wasm(name: String) = wasmJs(name)
-
-    @Deprecated(
-        "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("wasmJs(name, configure)"),
-        level = DeprecationLevel.ERROR
-    )
-    @ExperimentalWasmDsl
-    fun wasm(name: String, configure: Action<KotlinWasmJsTargetDsl>) = wasmJs(name, configure)
-
-    @Deprecated(
-        "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("wasmJs(configure)"),
-        level = DeprecationLevel.ERROR
-    )
-    @ExperimentalWasmDsl
-    fun wasm(configure: Action<KotlinWasmJsTargetDsl>) = wasmJs(configure)
-
     @InternalKotlinGradlePluginApi
     companion object {
         internal const val DEFAULT_WASM_JS_NAME = "wasmJs"

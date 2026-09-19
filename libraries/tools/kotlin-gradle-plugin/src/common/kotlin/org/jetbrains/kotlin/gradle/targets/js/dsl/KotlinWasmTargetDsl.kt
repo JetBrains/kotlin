@@ -30,30 +30,4 @@ interface KotlinWasmTargetDsl : KotlinTarget, HasBinaries<KotlinJsBinaryContaine
     override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
 
     override val binaries: KotlinJsBinaryContainer
-
-    //region deprecated options
-    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
-    @Deprecated(
-        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    fun applyBinaryen() = applyBinaryen { }
-
-    @Deprecated(
-        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    fun applyBinaryen(body: BinaryenExec.() -> Unit)
-
-    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
-    @Deprecated(
-        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    fun applyBinaryen(fn: Action<BinaryenExec>) {
-        applyBinaryen {
-            fn.execute(this)
-        }
-    }
-    //endregion
 }
