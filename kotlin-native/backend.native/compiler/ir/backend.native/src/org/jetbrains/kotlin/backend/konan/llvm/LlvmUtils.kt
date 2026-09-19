@@ -139,7 +139,7 @@ internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported:
     return LLVMAddGlobal(llvm.module, type, name)!!
 }
 
-private fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef): LLVMValueRef {
+internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef): LLVMValueRef {
     val found = LLVMGetNamedGlobal(llvm.module, name)
     return if (found == null)
         addGlobal(name, type, isExported = false)
@@ -149,11 +149,6 @@ private fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef): LLVMValu
         found
     }
 }
-
-internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, declaration: IrDeclaration) =
-        importGlobal(name, type).also { generationState.dependenciesTracker.add(declaration) }
-
-internal fun ContextUtils.importObjCGlobal(name: String, type: LLVMTypeRef) = importGlobal(name, type)
 
 internal fun ContextUtils.importNativeRuntimeGlobal(name: String, type: LLVMTypeRef) =
         importGlobal(name, type).also { generationState.dependenciesTracker.addNativeRuntime() }

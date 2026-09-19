@@ -75,13 +75,13 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
         // TODO: refactor usages and use [Global] class.
         val llvmGlobal = LLVMGetNamedGlobal(llvm.module, globalName)
-                ?: codegen.importObjCGlobal(globalName, classObjectType)
+                ?: codegen.importGlobal(globalName, classObjectType)
 
         return constPointer(llvmGlobal)
     }
 
     private val emptyCache = constPointer(
-            codegen.importObjCGlobal("_objc_empty_cache", codegen.runtime.objCCache)
+            codegen.importGlobal("_objc_empty_cache", codegen.runtime.objCCache)
     )
 
     fun emitEmptyClass(name: String, superName: String) {

@@ -95,7 +95,12 @@ class TestCompilationFactory {
         ).klib
     }
 
-    fun testCaseToBinaryLibrary(testCase: TestCase, settings: Settings, kind: BinaryLibraryKind): BinaryLibraryCompilation {
+    fun testCaseToBinaryLibrary(
+        testCase: TestCase,
+        settings: Settings,
+        kind: BinaryLibraryKind,
+        produceStaticCache: ProduceStaticCache = ProduceStaticCache.No,
+    ): BinaryLibraryCompilation {
         val rootModules = testCase.rootModules
         val cacheKey = BinaryLibraryCacheKey(testCase.rootModules, kind)
         cachedBinaryLibraryCompilations[cacheKey]?.let { return it }
@@ -104,7 +109,7 @@ class TestCompilationFactory {
             dependencies: Iterable<CompiledDependency<*>>,
             sourceModules: Set<TestModule.Exclusive>
                 ] = getDependenciesAndSourceModules(settings, testCase.rootModules, testCase.freeCompilerArgs) {
-            ProduceStaticCache.No
+            produceStaticCache
         }
         val expectedArtifact = BinaryLibrary(settings.artifactFileForBinaryLibrary(rootModules, kind))
         return cachedBinaryLibraryCompilations.computeIfAbsent(cacheKey) {
