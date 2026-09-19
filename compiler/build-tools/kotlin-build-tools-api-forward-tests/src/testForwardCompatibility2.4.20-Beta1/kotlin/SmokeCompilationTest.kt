@@ -174,18 +174,24 @@ class SmokeCompilationTest : BaseCompilationTest() {
         }
     }
 
-    private fun jvmNonIncrementalCompilationOperation(
-        sources: List<Path>,
-        destination: Path,
-        extraClasspath: List<Path> = emptyList(),
-        additionalConfiguration: JvmCompilationOperation.Builder.() -> Unit = {},
-    ): JvmCompilationOperation = toolchain.jvm.jvmCompilationOperation(sources, destination) {
-        val stdlibPath = KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath()
-        compilerArguments[JvmCompilerArguments.MODULE_NAME] = "a"
-        compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17
-        compilerArguments[NO_REFLECT] = true
-        compilerArguments[NO_STDLIB] = true
-        compilerArguments[CLASSPATH] = (listOf(stdlibPath) + extraClasspath)
-        additionalConfiguration()
+    companion object {
+        internal fun jvmNonIncrementalCompilationOperation(
+            sources: List<Path>,
+            destination: Path,
+            extraClasspath: List<Path> = emptyList(),
+            rawArguments: List<String> = emptyList(),
+            additionalConfiguration: JvmCompilationOperation.Builder.() -> Unit = {},
+        ): JvmCompilationOperation = toolchain.jvm.jvmCompilationOperation(sources, destination) {
+            if (rawArguments.isNotEmpty()) {
+                compilerArguments.applyArgumentStrings(rawArguments)
+            }
+            val stdlibPath = KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath()
+            compilerArguments[JvmCompilerArguments.MODULE_NAME] = "a"
+            compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17
+            compilerArguments[NO_REFLECT] = true
+            compilerArguments[NO_STDLIB] = true
+            compilerArguments[CLASSPATH] = (listOf(stdlibPath) + extraClasspath)
+            additionalConfiguration()
+        }
     }
 }
