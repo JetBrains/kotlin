@@ -60,6 +60,6 @@ internal object KaptProperties {
     }
 
     fun isIsolateProcessorsFromBuildClasspath(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH, project)
+        it.typedProperty(KAPT_ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH, project)
     }
 }
