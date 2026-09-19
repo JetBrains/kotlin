@@ -363,7 +363,12 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
                 generateFunction(this, proto, needSafePoint = false, startLocation = location, endLocation = location) {
                     val args = proto.signature.parameterTypes.indices.map { param(it) }
                     val receiver = param(0)
-                    val callee = with(VirtualTablesLookup) { getVirtualImpl(receiver, irFunction) }
+                    val callee = if (irFunction.isOverridable) {
+                        with(VirtualTablesLookup) { getVirtualImpl(receiver, irFunction) }
+                    } else {
+                        // KT-87777: reference the inherited implementation directly, without relying on virtual lookups.
+                        codegen.getLlvmFunctionFrom(irFunction.target)
+                    }
                     val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                     ret(result)
                 }.also { llvmFunction ->

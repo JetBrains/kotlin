@@ -726,10 +726,16 @@ internal class CodeGeneratorVisitor(
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        context.log{"visitFunction                  : ${ir2string(declaration)}"}
+        context.log { "visitFunction                  : ${ir2string(declaration)}" }
 
-        if (declaration.needsVirtualTrampoline)
+        // KT-87777: Cached callers may still reference the trampoline of an inherited method that has become final.
+        // The solution is still building the "trampoline", but its body will directly call the parent's method.
+        val producingCache = context.config.produce.isCache
+        val isFinalFakeOverride = declaration.isFakeOverride && declaration.modality == Modality.FINAL
+
+        if (declaration.needsVirtualTrampoline || (producingCache && isFinalFakeOverride && declaration.isExported())) {
             buildVirtualFunctionTrampoline(declaration)
+        }
 
         handleStaticInitializer(declaration)
 
