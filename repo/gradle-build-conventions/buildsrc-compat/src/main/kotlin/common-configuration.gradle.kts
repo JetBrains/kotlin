@@ -193,7 +193,6 @@ fun Project.configureKotlinCompilationOptions() {
                         "-Xcollection-literals".takeUnless { skipNewLanguageFeatures },
                         "-Xcontext-sensitive-resolution".takeUnless { skipNewLanguageFeatures },
                         "-Xexplicit-context-arguments".takeUnless { skipNewLanguageFeatures },
-                        "-Xallow-pre-17-runtime-jdk", // KT-88174
                         // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
                         // But this produces a warning
                         // "The argument ... is redundant for the current language version ..."
