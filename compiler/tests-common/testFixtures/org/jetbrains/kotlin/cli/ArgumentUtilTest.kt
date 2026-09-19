@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli
 
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseDiagnostic
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyBeanTo
 import org.junit.jupiter.api.Assertions.*
@@ -16,19 +16,19 @@ import kotlin.reflect.jvm.javaField
 class ArgumentUtilTest {
     @Test
     fun testCopyDoesNotCopyTransientFields() {
-        assertTrue(Modifier.isTransient(K2JVMCompilerArguments::errors.javaField!!.modifiers))
+        assertTrue(Modifier.isTransient(K2JVMCompilerArguments::diagnostics.javaField!!.modifiers))
 
         val a = K2JVMCompilerArguments()
-        a.errors = ArgumentParseErrors()
+        a.diagnostics.add(ArgumentParseDiagnostic.InvalidArgument("-unknown"))
         a.moduleName = "my module name"
 
         val b = K2JVMCompilerArguments()
-        assertNull(b.errors)
+        assertTrue(b.diagnostics.isEmpty())
         assertNull(b.moduleName)
 
         copyBeanTo(a, b)
 
-        assertNull(b.errors)
+        assertTrue(b.diagnostics.isEmpty())
         assertEquals("my module name", b.moduleName)
     }
 }

@@ -56,8 +56,8 @@ import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerKlibArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerLinkingArguments
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.appendFatalErrors
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -243,7 +243,7 @@ internal class WasmArgumentsImpl(
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
-    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    _argumentValidationErrors.appendFatalErrors(compilerArgs)
     argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
     applyCompilerArguments(compilerArgs)
   }
@@ -254,7 +254,7 @@ internal class WasmArgumentsImpl(
     parseCommandLineArguments(arguments, compilerArgs, false)
     handleCustomPluginArguments(this, compilerArgs)
     collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
-    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    _argumentValidationErrors.appendFatalErrors(compilerArgs)
     argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
     applyCompilerArguments(compilerArgs)
   }

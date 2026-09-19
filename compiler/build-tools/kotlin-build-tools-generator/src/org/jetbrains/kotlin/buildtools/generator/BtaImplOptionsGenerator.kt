@@ -1134,10 +1134,7 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
             )
             if (!generateCompatLayer) {
                 addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
-                addStatement(
-                    "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
-                    MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
-                )
+                addAppendCliDiagnosticsStatement()
                 // has to run before the values are applied, so that values previously set through the typed argument API
                 // are still observable
                 addStatement("argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }")
@@ -1177,10 +1174,7 @@ private fun TypeSpec.Builder.maybeAddApplyCommandLineArgumentsFun(
                 MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "handleCustomPluginArguments")
             )
             addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
-            addStatement(
-                "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
-                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
-            )
+            addAppendCliDiagnosticsStatement()
             // has to run before the values are applied, so that values previously set through the typed argument API
             // are still observable
             addStatement("argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }")
@@ -1221,6 +1215,13 @@ private fun FunSpec.Builder.addSafeMethodAccessStatement(
         repeat(catches.size) { append(" %L") }
     }
     return addStatement(format, codeBlock, *catches.toTypedArray())
+}
+
+private fun FunSpec.Builder.addAppendCliDiagnosticsStatement() {
+    addStatement(
+        "_argumentValidationErrors.%M(compilerArgs)",
+        MemberName("org.jetbrains.kotlin.cli.common.arguments", "appendFatalErrors"),
+    )
 }
 
 private fun catchCompilerArgumentsParseException(): CodeBlock = CodeBlock.of(
