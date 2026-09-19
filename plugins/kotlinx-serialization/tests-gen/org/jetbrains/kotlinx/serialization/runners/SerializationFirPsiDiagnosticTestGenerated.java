@@ -387,6 +387,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("genericWithClassUpperBound.kt")
+    public void testGenericWithClassUpperBound() {
+      run("genericWithClassUpperBound.kt");
+    }
+
+    @Test
     @TestMetadata("inlineClasses.kt")
     public void testInlineClasses() {
       run("inlineClasses.kt");
