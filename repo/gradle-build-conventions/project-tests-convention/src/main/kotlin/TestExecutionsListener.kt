@@ -24,6 +24,64 @@ import java.io.File
  * against the names TeamCity registers; this file records the form that has to be *sent* to arrive at
  * them. For all but a handful of tests the two are identical.
  *
+ * ### Format
+ *
+ * The file is a declared output of the test task, so the build cache restores it along with the
+ * task's other outputs - which is what lets a task that never ran still report its tests.
+ *
+ * ```json
+ * {
+ *   "formatVersion": 1,
+ *   "taskPath": ":native:unsafe-mem:test",
+ *   "duration": 1007,
+ *   "suites": [
+ *     {
+ *       "name": "org.jetbrains.kotlin.utils.CrossValidationTest",
+ *       "duration": 23,
+ *       "suites": [],
+ *       "tests": [
+ *         { "name": "testFloatCrossRead()", "status": "Ignored", "duration": 3 }
+ *       ]
+ *     }
+ *   ],
+ *   "tests": []
+ * }
+ * ```
+ *
+ * - `formatVersion` - currently `1`.
+ * - `taskPath` - the task this file was recorded for, so that a file lifted out of its build
+ *   directory still says where it came from; the directory name alone only carries the task name.
+ * - `duration` - milliseconds. At the top level the whole test run, on a suite Gradle's own timing
+ *   for that suite. Both are **optional**, written only where Gradle reported one; on a test it is
+ *   always present. TeamCity has nowhere to put a suite's duration - `testSuiteFinished` carries
+ *   none - so these exist for other consumers, such as distributing tests by how long they take.
+ * - `suites` and `tests` - always written, even when empty, so that a reader never has to tell an
+ *   absent member from an empty one.
+ * - suite `name` - as Gradle reports it, minus the suites Gradle inserts itself (the test run, the
+ *   executor, the partitions a task is split into, the task's own name), see [isSyntheticSuiteName].
+ *   The suite standing for a test's own class is **kept**: that is where per-class timings hang.
+ *   Collapsing it into the test name is TeamCity's convention and is applied when replaying, not
+ *   when recording.
+ * - test `name` - the **method part only**, in the form TeamCity's own Gradle runner sends, which is
+ *   why an ordinary method keeps its `()` here and loses it once the server has registered it (see
+ *   [teamCityRunnerMethodName]). The name TeamCity is told is `className` and `name` joined with a
+ *   `.`, see [qualifying].
+ * - test `className` - three states, and they differ:
+ *     - **absent** means the enclosing suite is the test's class, which is the usual case and why
+ *       the example above writes no class at all;
+ *     - **present** names a class that is not the enclosing suite - a test reported outside any
+ *       suite, as Kotlin/JS tasks do, where every test sits at the top level and carries its own
+ *       class: `{ "name": "testSimpleExplanation[js, node]", "className":
+ *       "kotlin.powerassert.DefaultMessageTest", "status": "OK", "duration": 1 }`;
+ *     - **explicitly `null`** means the test has no class at all, which only needs saying inside a
+ *       suite, where absence would otherwise mean "the suite's class".
+ * - test `status` - `OK`, `Failure` or `Ignored`, the names TeamCity's own integration uses, see
+ *   [statusName]. A `Failure` can appear in a file recorded by a *successful* task: tests are
+ *   retried, and passing after a retry is not a failure by default, see [configureTestRetries].
+ * - Tests appear in **execution order**, which is significant for exactly that reason: a retried
+ *   test is recorded once per attempt, its `Failure` before its `OK`, and replaying them in that
+ *   order is what lets TeamCity see it as flaky rather than as simply failed.
+ *
  * ### Why JSON rather than YAML
  *
  * The document has to round-trip test names containing `:`, `#`, quotes, apostrophes, leading and
