@@ -1,0 +1,272 @@
+@Builder
+class Mixed {
+  val a: Int
+    field = a
+    get
+
+  var c: Long
+    field = c
+    get
+    set
+
+  val fromParameter: String
+    field = b.plus(other = "!")
+    get
+
+  val computed: Int
+    field = <this>.<get-a>().times(other = 2)
+    get
+
+  open class MixedBuilder {
+    private var a: Int
+      private get
+      private set
+
+    private var b: String
+      private get
+      private set
+
+    private var c: Long
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun a(a: Int): MixedBuilder {
+      <this>.#a = a
+      return <this>
+    }
+
+    open fun b(b: String): MixedBuilder {
+      <this>.#b = b
+      return <this>
+    }
+
+    open fun build(): Mixed {
+      val tmp_0: Int = <this>.#a
+      val tmp_1: String = <this>.#b
+      val tmp_2: Long = <this>.#c
+      return Mixed(a = tmp_0, b = tmp_1, c = tmp_2)
+    }
+
+    open fun c(c: Long): MixedBuilder {
+      <this>.#c = c
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): MixedBuilder {
+      return MixedBuilder()
+    }
+
+  }
+
+  constructor(a: Int, b: String, c: Long) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val b: String
+    get(): String {
+      return dropLast(/* <this> = <this>.<get-fromParameter>(), */ n = 1)
+    }
+
+}
+
+@Builder(toBuilder = true)
+class RoundTrip {
+  val kept: Int
+    field = kept
+    get
+
+  val mirrored: Int
+    field = mirrored
+    get
+
+  open class RoundTripBuilder {
+    private var kept: Int
+      private get
+      private set
+
+    private var mirrored: Int
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): RoundTrip {
+      val tmp_3: Int = <this>.#kept
+      val tmp_4: Int = <this>.#mirrored
+      return RoundTrip(kept = tmp_3, mirrored = tmp_4)
+    }
+
+    open fun kept(kept: Int): RoundTripBuilder {
+      <this>.#kept = kept
+      return <this>
+    }
+
+    open fun mirrored(mirrored: Int): RoundTripBuilder {
+      <this>.#mirrored = mirrored
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): RoundTripBuilder {
+      return RoundTripBuilder()
+    }
+
+  }
+
+  constructor(kept: Int, mirrored: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open fun toBuilder(): RoundTripBuilder {
+    val tmp_5: RoundTripBuilder = RoundTripBuilder()
+    tmp_5.#kept = <this>.<get-kept>()
+    tmp_5.#mirrored = <this>.<get-mirrored>()
+    return tmp_5
+  }
+
+}
+
+@Builder
+class SingularWithoutVal {
+  val description: String
+    field = id + ": " + joinToString<String>(/* <this> = tags */)
+    get
+
+  open class SingularWithoutValBuilder {
+    private var id: Int
+      private get
+      private set
+
+    private var tags: MutableList<String>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): SingularWithoutVal {
+      val tmp_6: Int = <this>.#id
+      val tmp_7: MutableList<String>? = <this>.#tags
+      val tmp_8: Int = when {
+        EQEQ(arg0 = tmp_7, arg1 = null) -> 0
+        else -> tmp_7 /*as MutableList<String> */.<get-size>()
+      }
+      val tmp_9: List<String> = when {
+        EQEQ(arg0 = tmp_8, arg1 = 0) -> emptyList<String>()
+        EQEQ(arg0 = tmp_8, arg1 = 1) -> listOf<String>(element = tmp_7 /*as MutableList<String> */.iterator().next())
+        else -> unmodifiableList<String>(p0 = { // BLOCK
+          val tmp_10: ArrayList<String> = ArrayList<String>()
+          tmp_10.addAll(elements = tmp_7 /*as MutableList<String> */)
+          tmp_10
+        })
+      }
+      return SingularWithoutVal(id = tmp_6, tags = tmp_9)
+    }
+
+    open fun clearTags(): SingularWithoutValBuilder {
+      val tmp_11: MutableList<String>? = <this>.#tags
+      when {
+        EQEQ(arg0 = tmp_11, arg1 = null).not() -> tmp_11 /*as MutableList<String> */.clear()
+      }
+      return <this>
+    }
+
+    open fun id(id: Int): SingularWithoutValBuilder {
+      <this>.#id = id
+      return <this>
+    }
+
+    open fun tag(tag: String): SingularWithoutValBuilder {
+      when {
+        EQEQ(arg0 = <this>.#tags, arg1 = null) -> <this>.#tags = ArrayList<String>()
+      }
+      <this>.#tags /*as MutableList<String> */.add(element = tag)
+      return <this>
+    }
+
+    open fun tags(tags: Collection<String>): SingularWithoutValBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#tags, arg1 = null) -> <this>.#tags = ArrayList<String>()
+      }
+      <this>.#tags /*as MutableList<String> */.addAll(elements = tags)
+      // }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): SingularWithoutValBuilder {
+      return SingularWithoutValBuilder()
+    }
+
+  }
+
+  constructor(id: Int, @Singular(value = "tag") tags: List<String>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val mixed: Mixed = Companion.builder().a(a = 2).b(b = "x").c(c = 7L).build()
+  assertEquals<Int>(expected = 2, actual = mixed.<get-a>())
+  assertEquals<Long>(expected = 7L, actual = mixed.<get-c>())
+  assertEquals<String>(expected = "x!", actual = mixed.<get-fromParameter>())
+  assertEquals<Int>(expected = 4, actual = mixed.<get-computed>())
+  assertEquals<String>(expected = "x", actual = mixed.<get-b>())
+  assertEquals<Int>(expected = 0, actual = Companion.builder().b(b = "y").build().<get-a>())
+  val singular: SingularWithoutVal = Companion.builder().id(id = 3).tag(tag = "a").tag(tag = "b").build()
+  assertEquals<String>(expected = "3: a, b", actual = singular.<get-description>())
+  val original: RoundTrip = RoundTrip(kept = 1, mirrored = 5)
+  val rebuilt: RoundTrip = original.toBuilder().build()
+  assertEquals<Int>(expected = 1, actual = rebuilt.<get-kept>())
+  assertEquals<Int>(expected = 5, actual = rebuilt.<get-mirrored>())
+  return "OK"
+}

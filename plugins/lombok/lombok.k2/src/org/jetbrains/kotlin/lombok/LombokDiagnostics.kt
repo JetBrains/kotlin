@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.error1
+import org.jetbrains.kotlin.diagnostics.error2
 import org.jetbrains.kotlin.diagnostics.errorWithoutSource
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_ARGUMENT_IS_N
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.UNSUPPORTED_ACCESS_LEVEL
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS
@@ -53,8 +55,11 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_NOARG_CONSTRUCTOR_IN_
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_BUILDER_CANNOT_OBTAIN
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_EXPLICIT_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CANNOT_SINGULARIZE_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE
@@ -62,6 +67,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import kotlin.getValue
 
 object LombokCliDiagnostics : KtDiagnosticsContainer() {
@@ -79,6 +85,15 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val LOG_PROPERTY_ALREADY_EXISTS by strongWarning1<KtAnnotationEntry, Name>()
 
     val UNSUPPORTED_ACCESS_LEVEL by error1<KtExpression, Name>()
+
+    /**
+     * An error, where [ANNOTATION_HAS_NO_EFFECT] next to it is a strong warning. Lombok reports its own
+     * counterparts as errors too - "NoArgsConstructor is only supported on a class or an enum." for a record,
+     * "@Builder is not supported on non-static nested classes." for an inner class - and nothing is generated
+     * for such a class here either, so the code could never have worked: what an error refuses is a build that
+     * was going to fail at run time, or not link at all.
+     */
+    val ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS by error2<KtAnnotationEntry, Name, String>()
     val FLAG_USAGE_WARNING by warning1<KtAnnotationEntry, Name>()
     val FLAG_USAGE_ERROR by error1<KtAnnotationEntry, Name>()
     val EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE by error1<KtAnnotationEntry, Name>()
@@ -102,8 +117,11 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION by warning0<KtExpression>()
     val BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION by warning0<KtAnnotationEntry>()
     val BUILDER_DEFAULT_AND_SINGULAR_MIXED by error0<KtAnnotationEntry>()
+    val BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY by strongWarning1<KtAnnotationEntry, String>()
     val BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE by error0<KtAnnotationEntry>()
+    val BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR by error1<KtAnnotationEntry, Name>()
     val BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS by error0<KtAnnotationEntry>()
+    val TO_BUILDER_CANNOT_OBTAIN by error1<KtParameter, Name>()
     val SINGULAR_REQUIRES_EXPLICIT_NAME by error0<KtAnnotationEntry>()
     val CANNOT_SINGULARIZE_NAME by error0<KtAnnotationEntry>()
     val UNSUPPORTED_SINGULAR_TYPE by error1<KtAnnotationEntry, ConeKotlinType>()
@@ -138,6 +156,12 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             "This annotation has no effect on target ''{0}''. Relevant targets: {1}.",
             TO_STRING,
             KOTLIN_TARGETS,
+        )
+        map.put(
+            ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS,
+            "''{0}'' is not supported on {1} classes.",
+            CommonRenderers.NAME,
+            TO_STRING,
         )
         map.put(FLAG_USAGE_WARNING, FLAG_USAGE_MESSAGE, CommonRenderers.NAME)
         map.put(FLAG_USAGE_ERROR, FLAG_USAGE_MESSAGE, CommonRenderers.NAME)
@@ -226,6 +250,13 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             "'@Builder.Default' and '@Singular' cannot be mixed."
         )
         map.put(
+            BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY,
+            "''@{0}'' has no effect on a property declared in the class body: a Kotlin class builds out of the " +
+                    "value parameters of the constructor or function ''build()'' calls, so only those are builder fields. " +
+                    "Declare the property in the primary constructor to make it one.",
+            CommonRenderers.STRING,
+        )
+        map.put(
             BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE,
             "'@Builder' infers the builder class name from the function's return type. " +
                     "Specify the return type explicitly, or name the builder class with '@Builder(builderClassName = \"...\")'."
@@ -233,6 +264,18 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS,
             "'@Builder' is not supported on a declaration with an extension receiver or context parameters."
+        )
+        map.put(
+            BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR,
+            "''{0}'' on a Kotlin class builds out of its primary constructor, and this class has none. " +
+                    "Declare a primary constructor, or annotate one of its secondary constructors with ''@Builder'' instead.",
+            CommonRenderers.NAME,
+        )
+        map.put(
+            TO_BUILDER_CANNOT_OBTAIN,
+            "''toBuilder()'' has no way to obtain a value for ''{0}'': the class declares no property of that name. " +
+                    "Declare the parameter as a property, or drop ''toBuilder = true''.",
+            CommonRenderers.NAME,
         )
         map.put(
             SINGULAR_REQUIRES_EXPLICIT_NAME,

@@ -60,19 +60,27 @@ FILE: builder_kotlin.kt
         public final val x: R|kotlin/Int| = R|<local>/x|
             public get(): R|kotlin/Int|
 
-        public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() private final fun builder(): R|AccessLevelPrivate.AccessLevelPrivateBuilder|
+        public final fun rebuild(newX: R|kotlin/Int|): R|AccessLevelPrivate| {
+            ^rebuild this@R|/AccessLevelPrivate.Companion|.R|/AccessLevelPrivate.Companion.builder|().R|/AccessLevelPrivate.AccessLevelPrivateBuilder.x|(R|<local>/newX|).R|/AccessLevelPrivate.AccessLevelPrivateBuilder.build|()
+        }
 
+        public final companion object Companion : R|kotlin/Any| {
             private constructor(): R|AccessLevelPrivate.Companion| {
                 super<R|kotlin/Any|>()
             }
 
+            public final fun makeInternally(x: R|kotlin/Int|): R|AccessLevelPrivate| {
+                ^makeInternally this@R|/AccessLevelPrivate.Companion|.R|/AccessLevelPrivate.Companion.builder|().R|/AccessLevelPrivate.AccessLevelPrivateBuilder.x|(R|<local>/x|).R|/AccessLevelPrivate.AccessLevelPrivateBuilder.build|()
+            }
+
+            @R|kotlin/jvm/JvmStatic|() private final fun builder(): R|AccessLevelPrivate.AccessLevelPrivateBuilder|
+
         }
 
         private open class AccessLevelPrivateBuilder : R|kotlin/Any| {
-            private open fun build(): R|AccessLevelPrivate|
+            public open fun build(): R|AccessLevelPrivate|
 
-            private open fun x(x: R|kotlin/Int|): R|AccessLevelPrivate.AccessLevelPrivateBuilder|
+            public open fun x(x: R|kotlin/Int|): R|AccessLevelPrivate.AccessLevelPrivateBuilder|
 
             private final var x: R|kotlin/Int|
                 private get(): R|kotlin/Int|
@@ -95,5 +103,7 @@ FILE: builder_kotlin.kt
         R|kotlin/test/assertEquals|<R|kotlin/String|>(R|<local>/user2|.R|/User.name|, R|<local>/user3|.R|/User.name|)
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(R|<local>/user2|.R|/User.age|, R|<local>/user3|.R|/User.age|)
         R|kotlin/test/assertEquals|<R|kotlin/String?|>(R|<local>/user2|.R|/User.info|, R|<local>/user3|.R|/User.info|)
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(7), Q|AccessLevelPrivate|.R|/AccessLevelPrivate.Companion.makeInternally|(Int(7)).R|/AccessLevelPrivate.x|)
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(8), Q|AccessLevelPrivate|.R|/AccessLevelPrivate.Companion.makeInternally|(Int(7)).R|/AccessLevelPrivate.rebuild|(Int(8)).R|/AccessLevelPrivate.x|)
         ^box String(OK)
     }

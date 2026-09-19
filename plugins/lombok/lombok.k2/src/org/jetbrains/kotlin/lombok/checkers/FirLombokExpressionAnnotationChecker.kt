@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.resolve.AnnotationTargetList
 
 /**
  * Validates the Lombok annotations written on an expression (`val x = @ToString 1`).
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
  * so the declaration checker already covers that case.
  */
 object FirLombokExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind.Platform) {
-    private val expressionTargets = listOf(KotlinTarget.EXPRESSION)
+    private val expressionTargets = AnnotationTargetList(listOf(KotlinTarget.EXPRESSION))
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirStatement) {

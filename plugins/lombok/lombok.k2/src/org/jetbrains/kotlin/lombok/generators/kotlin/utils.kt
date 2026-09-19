@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.lombok.generators.kotlin
 
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -25,6 +29,7 @@ import org.jetbrains.kotlin.lombok.generators.hasJavaOrigin
 import org.jetbrains.kotlin.lombok.generators.isSupportedLombokTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
 /**
@@ -33,6 +38,26 @@ import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
  */
 fun FirPropertySymbol.findAnnotationOnPropertyOrField(classId: ClassId, session: FirSession): FirAnnotation? =
     getAnnotationByClassId(classId, session) ?: backingFieldSymbol?.getAnnotationByClassId(classId, session)
+
+/**
+ * The properties [this] Kotlin class promotes from its primary constructor's value parameters, keyed by name.
+ *
+ * A builder field of a Kotlin class is a primary constructor value parameter, but not every annotation that
+ * shapes it lives there: `@Builder.Default` is `@Target(FIELD)`, so on a `val`/`var` parameter it lands on the
+ * promoted property's backing field (see [findAnnotationOnPropertyOrField]), and `@Singular` may be written
+ * with a `@field:` use-site target just the same. A parameter declared without `val`/`var` promotes nothing
+ * and is simply absent here, which is what makes it a builder field that carries no such annotation at all.
+ *
+ * Matched by name rather than through `correspondingValueParameterFromPrimaryConstructor`, which reads the
+ * property's initializer and so would force body resolution from inside a generation callback. A promoted
+ * property always carries its parameter's name, and no two declarations of a class can share one.
+ */
+@OptIn(DirectDeclarationsAccess::class)
+fun FirRegularClass.promotedPropertiesByName(): Map<Name, FirPropertySymbol> =
+    declarations.asSequence()
+        .filterIsInstance<FirProperty>()
+        .filter { it.fromPrimaryConstructor == true }
+        .associateBy({ it.name }, { it.symbol })
 
 /**
  * Builds `@JvmStatic` annotation call. If `JvmStatic` symbol can't be found (stdlib is missing), then an error reference is generated.
