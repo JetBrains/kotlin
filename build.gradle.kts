@@ -303,6 +303,56 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion")
     }
 
+    testLifecycleTask("kgpAllParallelTests", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAllParallelTests")
+    }
+
+    testLifecycleTask("kgpNativeTests", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTests")
+    }
+
+    testLifecycleTask("kgpSwiftExportTests", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftExportTests")
+    }
+
+    testLifecycleTask("kgpSwiftPMImportTests", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftPMImportTests")
+    }
+
+    if (isTeamcityBuild.get()) {
+        testLifecycleTask("kgpJvmTestsGroupedByGradleVersion", QualityGate.Master) {
+            dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJvmTestsGroupedByGradleVersion")
+        }
+
+        testLifecycleTask("kgpDaemonsTestsGroupedByGradleVersion", QualityGate.Master) {
+            dependsOn(":kotlin-gradle-plugin-integration-tests:kgpDaemonsTestsGroupedByGradleVersion")
+        }
+
+        testLifecycleTask("kgpJsTestsGroupedByGradleVersion", QualityGate.Master) {
+            dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsTestsGroupedByGradleVersion")
+        }
+
+        testLifecycleTask("kgpJsBrowserTestsGroupedByGradleVersion", QualityGate.Nightly) {
+            dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion")
+        }
+
+        testLifecycleTask("kgpNativeTestsGroupedByGradleVersion", QualityGate.Master) {
+            dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTestsGroupedByGradleVersion")
+        }
+
+        testLifecycleTask("kgpMppTestsGroupedByGradleVersion", QualityGate.Master) {
+            dependsOn(":kotlin-gradle-plugin-integration-tests:kgpMppTestsGroupedByGradleVersion")
+        }
+
+        testLifecycleTask("kgpAndroidTestsGroupedByGradleVersion", QualityGate.Master) {
+            dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAndroidTestsGroupedByGradleVersion")
+        }
+
+        testLifecycleTask("kgpOtherTestsGroupedByGradleVersion", QualityGate.Master) {
+            dependsOn(":kotlin-gradle-plugin-integration-tests:kgpOtherTestsGroupedByGradleVersion")
+        }
+    }
+
     testLifecycleTask("jvmCompilerTest", QualityGate.Master) {
         dependsOn(":compiler:tests-common-new:test")
         dependsOn(":compiler:container:test")
@@ -343,6 +393,30 @@ tasks {
 
     testLifecycleTask("jsKlibCompatibilityTest", QualityGate.Master) {
         dependsOn(":js:js.tests:klib-compatibility:testMinimalInAggregate")
+    }
+
+    testLifecycleTask("jsKlibCompatibilityTestCustomFirstStage_1_9_20", QualityGate.Nightly) {
+        dependsOn(":js:js.tests:klib-compatibility:testCustomFirstStage_1_9_20")
+    }
+
+    testLifecycleTask("jsKlibCompatibilityTestCustomFirstStage_2_0_0", QualityGate.Nightly) {
+        dependsOn(":js:js.tests:klib-compatibility:testCustomFirstStage_2_0_0")
+    }
+
+    testLifecycleTask("jsKlibCompatibilityTestCustomFirstStage_2_1_0", QualityGate.Nightly) {
+        dependsOn(":js:js.tests:klib-compatibility:testCustomFirstStage_2_1_0")
+    }
+
+    testLifecycleTask("jsKlibCompatibilityTestCustomFirstStage_2_2_0", QualityGate.Nightly) {
+        dependsOn(":js:js.tests:klib-compatibility:testCustomFirstStage_2_2_0")
+    }
+
+    testLifecycleTask("jsKlibCompatibilityTestCustomFirstStage_2_3_0", QualityGate.Nightly) {
+        dependsOn(":js:js.tests:klib-compatibility:testCustomFirstStage_2_3_0")
+    }
+
+    testLifecycleTask("jsKlibCompatibilityTestCustomFirstStage_2_4_0", QualityGate.Nightly) {
+        dependsOn(":js:js.tests:klib-compatibility:testCustomFirstStage_2_4_0")
     }
 
     testLifecycleTask("wasmFirCompilerTest", QualityGate.Master) {
@@ -478,6 +552,38 @@ tasks {
 
     testLifecycleTask("nativeKlibCompatibilityTest_secondStage", QualityGate.Master) {
         dependsOn(":native:native.tests:klib-compatibility:testMinimalInAggregate_secondStage")
+    }
+
+    testLifecycleTask("nativeKlibCompatibilityTestCustomFirstStage_1_9_20", QualityGate.Nightly) {
+        dependsOn(":native:native.tests:klib-compatibility:testCustomFirstStage_1_9_20")
+    }
+
+    testLifecycleTask("nativeKlibCompatibilityTestCustomFirstStage_2_0_0", QualityGate.Nightly) {
+        dependsOn(":native:native.tests:klib-compatibility:testCustomFirstStage_2_0_0")
+    }
+
+    testLifecycleTask("nativeKlibCompatibilityTestCustomFirstStage_2_1_0", QualityGate.Nightly) {
+        dependsOn(":native:native.tests:klib-compatibility:testCustomFirstStage_2_1_0")
+    }
+
+    testLifecycleTask("nativeKlibCompatibilityTestCustomFirstStage_2_2_0", QualityGate.Nightly) {
+        dependsOn(":native:native.tests:klib-compatibility:testCustomFirstStage_2_2_0")
+    }
+
+    testLifecycleTask("nativeKlibCompatibilityTestCustomFirstStage_2_3_0", QualityGate.Nightly) {
+        dependsOn(":native:native.tests:klib-compatibility:testCustomFirstStage_2_3_0")
+    }
+
+    testLifecycleTask("nativeKlibCompatibilityTestCustomFirstStage_2_4_0", QualityGate.Nightly) {
+        dependsOn(":native:native.tests:klib-compatibility:testCustomFirstStage_2_4_0")
+    }
+
+    testLifecycleTask("nativeKlibCompatibilityTestCustomSecondStage_2_4_0", QualityGate.Nightly) {
+        dependsOn(":native:native.tests:klib-compatibility:testCustomSecondStage_2_4_0")
+    }
+
+    testLifecycleTask("nativeGCFuzzingTest", QualityGate.Undefined) {
+        dependsOn(":native:native.tests:gc-fuzzing-tests:test")
     }
 
     testLifecycleTask("klibIrTest", QualityGate.Master) {

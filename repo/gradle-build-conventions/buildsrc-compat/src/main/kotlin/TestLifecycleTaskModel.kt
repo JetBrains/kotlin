@@ -149,9 +149,7 @@ class TestLifecycleTasksModelBuilder : ToolingModelBuilder {
 
 
     private fun Task.isRelevant(): Boolean {
-        if (this is AbstractTestTask) return isRelevantTest()
-        if (this is TestLifecycleTask) return true
-        return false
+        return this is AbstractTestTask && isRelevantTest()
     }
 
     private fun Task.identityPathOrNull(): String? {
