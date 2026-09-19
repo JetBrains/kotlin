@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.utils
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.InlineSourcesCommonizationTestDsl
+import org.jetbrains.kotlin.commonizer.CompiledDependency
 import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiersByModules
@@ -20,7 +21,9 @@ interface InlineSourceBuilder {
     data class SourceFile(val name: String, @param:Language("kotlin") val content: String)
 
     data class Module(
-        val name: String, val sourceFiles: List<SourceFile>, val dependencies: List<Module>
+        val name: String, val sourceFiles: List<SourceFile>, val dependencies: List<Module>,
+        val refinesDependencies: List<Module>,
+        val precompiledArtifact: CompiledDependency? = null,
     )
 
     @InlineSourcesCommonizationTestDsl
@@ -29,6 +32,8 @@ interface InlineSourceBuilder {
         var name: String = "test-module"
         private var sourceFiles: List<SourceFile> = emptyList()
         private var dependencies: List<Module> = emptyList()
+        private var refinesDependencies: List<Module> = emptyList()
+        var precompiledArtifact: CompiledDependency? = null
 
 
         @ModuleBuilderDsl
@@ -46,7 +51,12 @@ interface InlineSourceBuilder {
             this.dependencies += module.copy(name = "${this.name}-dependency-${module.name}-${dependencies.size}")
         }
 
-        fun build(): Module = Module(name, sourceFiles.toList(), dependencies.toList())
+        @ModuleBuilderDsl
+        fun refinesDependency(module: Module) {
+            this.refinesDependencies += module.copy(name = "${this.name}-refinesDependency-${module.name}-${refinesDependencies.size}")
+        }
+
+        fun build(): Module = Module(name, sourceFiles.toList(), dependencies.toList(), refinesDependencies.toList(), precompiledArtifact)
     }
 
     fun createModule(builder: ModuleBuilder.() -> Unit): Module {
