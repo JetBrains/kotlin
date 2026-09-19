@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import com.intellij.openapi.util.JDOMUtil
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.testFederation.MustRunAlways
@@ -129,6 +130,91 @@ class MppTestReportIT : KGPBaseTest() {
 
             val htmlReport = testClassHtmlReport(":jvmTest", "$testPackage.$testClass", gradleVersion, targetName = "jvm")
             assertFileExists(htmlReport)
+        }
+    }
+
+    @DisplayName("TestReporter.publishEntry metadata is included in JVM XML and HTML reports")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_4)
+    fun testTestReporterMetadataIsIncludedInXmlReport(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            buildScriptInjection {
+                val jvmTarget = kotlinMultiplatform.jvm()
+                jvmTarget.testRuns.configureEach {
+                    it.executionTask.configure {
+                        it.useJUnitPlatform()
+                        it.ignoreFailures = true
+                    }
+                }
+                kotlinMultiplatform.sourceSets.getByName("jvmTest").dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test-junit5")
+                }
+            }
+
+            kotlinSourcesDir("jvmTest").source("TestReporterTest.kt") {
+                """
+                import org.junit.jupiter.api.Test
+                import org.junit.jupiter.api.TestReporter
+
+                class TestReporterTest {
+                    @Test
+                    fun publishEntry(reporter: TestReporter) {
+                        reporter.publishEntry("metadata-key", "metadata-value")
+                    }
+
+                    @Test
+                    fun publishEntryAndFail(reporter: TestReporter) {
+                        reporter.publishEntry("failed-metadata-key", "failed-metadata-value")
+                        error("Expected failure")
+                    }
+                }
+                """.trimIndent()
+            }
+
+            build(":jvmTest")
+
+            val testResultXml = projectPath.resolve("build/test-results/jvmTest")
+                .allFilesWithExtension("xml")
+                .single()
+            val testSuite = JDOMUtil.load(testResultXml.toFile())
+            val testCases = testSuite.getChildren("testcase").ifEmpty {
+                testSuite.getChildren("testsuite").flatMap { it.getChildren("testcase") }
+            }
+            assertEquals(2, testCases.size)
+
+            val expectedMetadata = mapOf(
+                "publishEntry(TestReporter)" to ("metadata-key" to "metadata-value"),
+                "publishEntryAndFail(TestReporter)" to ("failed-metadata-key" to "failed-metadata-value"),
+            )
+            testCases.forEach { testCase ->
+                val testName = testCase.getAttributeValue("name")
+                val properties = assertNotNull(testCase.getChild("properties"), "Expected test properties")
+                val property = assertNotNull(properties.getChild("property"), "Expected published test metadata")
+                val expectedMetadataValues = expectedMetadata.entries
+                    .single { testName.startsWith(it.key) }
+                    .value
+
+                assertEquals(expectedMetadataValues.first, property.getAttributeValue("name"))
+                assertEquals(expectedMetadataValues.second, property.getAttributeValue("value"))
+                assertTrue(testName.contains("[jvm]"))
+            }
+
+            val failedTestCase = testCases.single { it.getAttributeValue("name").startsWith("publishEntryAndFail") }
+            assertNotNull(failedTestCase.getChild("failure"), "Expected failure information")
+
+            val htmlReport = testClassHtmlReport(
+                ":jvmTest",
+                "TestReporterTest",
+                gradleVersion,
+                targetName = "jvm",
+            )
+            assertFilesCombinedContains(
+                htmlReport.parent.allFilesWithExtension("html"),
+                "metadata-key",
+                "metadata-value",
+                "failed-metadata-key",
+                "failed-metadata-value",
+            )
         }
     }
 }
