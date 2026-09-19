@@ -42,7 +42,7 @@ private fun File.expand(diagnostics: MutableList<ArgumentParseDiagnostic>): List
         bufferedReader(Charsets.UTF_8).use {
             generateSequence { it.parseNextArgument() }.toList()
         }
-    } catch (e: FileNotFoundException) {
+    } catch (_: FileNotFoundException) {
         // Process FNFE separately to render absolutePath in error message
         diagnostics += ArgumentParseDiagnostic.ArgfileError("Argfile not found: '$absolutePath'.")
         emptyList()
