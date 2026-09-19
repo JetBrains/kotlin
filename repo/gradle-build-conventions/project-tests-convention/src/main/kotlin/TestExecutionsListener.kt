@@ -103,7 +103,9 @@ import java.io.File
  *       narrower than the class - the parameterized invocation above, whose own suite is the
  *       container rather than the class;
  *     - **explicitly `null`** means the test has no class at all, which only needs saying inside a
- *       suite, where absence would otherwise mean "the suite's class".
+ *       suite, where absence would otherwise mean "the suite's class". An empty string means this
+ *       too, being the other way Gradle spells a missing class, and is written through as reported
+ *       rather than normalized, see [qualifying].
  * - test `status` - `OK`, `Failure` or `Ignored`, the names TeamCity's own integration uses, see
  *   [statusName]. A `Failure` can appear in a file recorded by a *successful* task: tests are
  *   retried, and passing after a retry is not a failure by default, see [configureTestRetries].

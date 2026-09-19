@@ -55,8 +55,14 @@ internal fun TestDescriptor.toTeamCityRegisteredTestName(): String =
  *
  * [TestExecutionsListener] records the two halves apart, so that the class is not repeated in every
  * test name now that it is a suite of its own, and a replay puts them back together with this.
+ *
+ * A test with no class keeps the method name alone. Gradle spells "no class" two ways and both are
+ * taken to mean it: null, and the empty string its JUnit Platform integration gives a test reported
+ * outside any container - that one having no name to borrow, where a test inside a container is
+ * given the container's. Joining an empty class would leave the name with a leading `.`.
  */
-internal fun String?.qualifying(methodName: String): String = this?.let { "$it.$methodName" } ?: methodName
+internal fun String?.qualifying(methodName: String): String =
+    if (isNullOrEmpty()) methodName else "$this.$methodName"
 
 /**
  * Whether Gradle inserted this suite itself - the test run, the executor, and the partitions the test
