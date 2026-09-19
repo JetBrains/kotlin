@@ -102,7 +102,7 @@ private val commonSourceSetConventions = listOf(
 private val nonNativeSourceSetConventions = listOf(
     PlatformSourceSetConvention("jvm"),
     PlatformSourceSetConvention("js"),
-    PlatformSourceSetConvention("wasmJs", experimentalAnnotation = "@ExperimentalWasmDsl"),
+    PlatformSourceSetConvention("wasmJs"),
     PlatformSourceSetConvention("wasmWasi", experimentalAnnotation = "@ExperimentalWasmDsl"),
 )
 

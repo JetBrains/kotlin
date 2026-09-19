@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.gradle.utils.property
     ),
     level = DeprecationLevel.WARNING
 )
-@OptIn(ExperimentalWasmDsl::class)
 open class BinaryenExtension(
     @Transient val project: Project,
     private val binaryenSpec: BinaryenEnvSpec,

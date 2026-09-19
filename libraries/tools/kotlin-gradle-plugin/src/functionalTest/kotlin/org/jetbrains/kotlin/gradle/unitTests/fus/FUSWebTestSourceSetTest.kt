@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.fus
 
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -13,7 +12,6 @@ import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalWasmDsl::class)
 class FUSWebTestSourceSetTest {
     @Test
     fun emptyWebTestSourcesAreNotReported() {

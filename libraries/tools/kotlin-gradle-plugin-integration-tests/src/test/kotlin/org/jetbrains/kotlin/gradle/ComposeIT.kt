@@ -713,7 +713,6 @@ class ComposeIT : KGPBaseTest() {
                     }
                     jvm()
 
-                    @OptIn(ExperimentalWasmDsl::class)
                     wasmJs {
                         browser()
                         binaries.library()

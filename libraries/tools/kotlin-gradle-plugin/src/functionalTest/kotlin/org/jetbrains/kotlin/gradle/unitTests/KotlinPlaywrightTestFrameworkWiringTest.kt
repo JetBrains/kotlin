@@ -11,7 +11,6 @@ import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -36,7 +35,6 @@ import java.time.Duration
 import kotlin.test.*
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
-import kotlin.to
 
 class KotlinPlaywrightTestFrameworkWiringTest {
 
@@ -111,7 +109,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
 
         val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
         assertEquals(
-            setOf<RequiredKotlinJsDependency>(NpmVersions().playwrightCore,).prettyPrinted,
+            setOf<RequiredKotlinJsDependency>(NpmVersions().playwrightCore).prettyPrinted,
             framework.requiredNpmDependencies.prettyPrinted
         )
     }
@@ -129,7 +127,10 @@ class KotlinPlaywrightTestFrameworkWiringTest {
                 setup.project.tasks.getByName(it.getPwInstallBrowserTaskName())
             )
 
-            assertNotNull(installTask, "Expected ${it.getPwInstallBrowserTaskName()} task to be registered to install ${it.browserName} browsers")
+            assertNotNull(
+                installTask,
+                "Expected ${it.getPwInstallBrowserTaskName()} task to be registered to install ${it.browserName} browsers"
+            )
         }
     }
 
@@ -139,7 +140,10 @@ class KotlinPlaywrightTestFrameworkWiringTest {
 
         val defaultBrowserKind = PwBrowserKind.CHROMIUM
         val defaultInstallTask = setup.project.tasks.findByName(defaultBrowserKind.getPwInstallBrowserTaskName())
-        assertNotNull(defaultInstallTask, "Expected ${defaultBrowserKind.getPwInstallBrowserTaskName()} task is created for a default browser")
+        assertNotNull(
+            defaultInstallTask,
+            "Expected ${defaultBrowserKind.getPwInstallBrowserTaskName()} task is created for a default browser"
+        )
 
         PwBrowserKind.entries.filter { it != defaultBrowserKind }.forEach {
             val installTask = setup.project.tasks.findByName(it.getPwInstallBrowserTaskName())
@@ -222,7 +226,6 @@ class KotlinPlaywrightTestFrameworkWiringTest {
                     }
                 }
 
-                @OptIn(ExperimentalWasmDsl::class)
                 wasmJs {
                     browser {
                         test {
@@ -259,7 +262,6 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     fun `playwright install should use wasmJs npm tooling dir when only wasmJs is declared`() {
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
-                @OptIn(ExperimentalWasmDsl::class)
                 wasmJs {
                     browser {
                         test {

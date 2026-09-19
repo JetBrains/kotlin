@@ -9,7 +9,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -192,7 +191,6 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
                     js {
                         nodejs()
                     }
-                    @OptIn(ExperimentalWasmDsl::class)
                     wasmJs {
                         nodejs()
                     }

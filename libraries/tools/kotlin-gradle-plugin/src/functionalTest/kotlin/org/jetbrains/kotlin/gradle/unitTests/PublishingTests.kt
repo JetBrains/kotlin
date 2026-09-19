@@ -8,24 +8,12 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.internal.extensions.core.extra
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
-import org.jetbrains.kotlin.gradle.util.assertContainsNoTaskWithName
-import org.jetbrains.kotlin.gradle.util.assertContainsTaskWithName
-import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
-import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.kotlin
-import org.jetbrains.kotlin.gradle.util.withModifiedSystemProperties
-import kotlin.test.Test
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.parallel.Isolated
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 @Isolated("Modifies system properties")
 class PublishingTests {
@@ -65,7 +53,6 @@ class PublishingTests {
     }
 
     @Test
-    @OptIn(ExperimentalWasmDsl::class)
     fun `test publishing ALLOWED on unsupported host with NO Native targets`() {
         // Case: kmp (jvm, js, wasm) - shouldn't be affected: compile/publishing works
         withModifiedSystemProperties("os.name" to "FreeBSD", "os.arch" to "amd64") {

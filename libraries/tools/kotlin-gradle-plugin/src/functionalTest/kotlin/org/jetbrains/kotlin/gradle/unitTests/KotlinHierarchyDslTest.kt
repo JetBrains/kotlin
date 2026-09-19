@@ -4,7 +4,6 @@
  */
 
 @file:Suppress("JUnitTestCaseWithNoTests")
-@file:OptIn(ExperimentalWasmDsl::class)
 
 package org.jetbrains.kotlin.gradle.unitTests
 
@@ -534,6 +533,7 @@ class KotlinHierarchyDslTest {
         )
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     @Test
     fun `verify all default hierarchy SourceSets have static accessors`() {
         kotlin.apply {

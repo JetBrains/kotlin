@@ -851,7 +851,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             project.applyMultiplatform {
                 jvm()
                 js().browser()
-                @OptIn(ExperimentalWasmDsl::class) wasmJs()
+                wasmJs()
                 linuxX64()
                 linuxArm64()
             }

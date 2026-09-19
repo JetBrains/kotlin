@@ -3110,6 +3110,7 @@ public class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsBinaryContainer :
 	public final fun contains (Ljava/lang/Object;)Z
 	public fun contains (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Z
 	public fun containsAll (Ljava/util/Collection;)Z
+	public fun disallowChanges ()V
 	public final fun executable ()Ljava/util/List;
 	public final fun executable (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinJsCompilation;)Ljava/util/List;
 	public final fun executable (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)Ljava/util/List;

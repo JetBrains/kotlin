@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.Test
 
-@OptIn(ExperimentalWasmDsl::class)
 class WasmCompilationModeDiagnosticTest {
 
     @Test

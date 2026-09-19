@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalWasmDsl::class)
 class UklibFromKGPFragmentsGMTTests {
 
     @Test
@@ -106,6 +105,7 @@ class UklibFromKGPFragmentsGMTTests {
         }
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     @Test
     fun `uklib and GMT fragments - all supported targets - except external target`() {
         buildProjectWithMPP {
