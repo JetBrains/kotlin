@@ -488,6 +488,7 @@ tasks.withType<Test>().configureEach {
     )
     doFirst {
         systemProperty("buildScriptInjectionsClasspath", buildScriptInjectionsClasspath.joinToString(":"))
+        systemProperty("org.gradle.kotlin.dsl.skipMetadataVersionCheck", "true")
     }
 
     val testKitBuildCacheDirectory = layout.buildDirectory.dir("testKitCache/caches/build-cache-1")
