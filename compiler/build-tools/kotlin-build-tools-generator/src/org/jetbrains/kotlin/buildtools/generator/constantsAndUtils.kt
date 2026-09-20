@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.arguments.dsl.types.JdkRelease
 import org.jetbrains.kotlin.arguments.dsl.types.JspecifyAnnotationsMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmDefaultMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
+import org.jetbrains.kotlin.arguments.dsl.types.JvmValueClassCodegenMode
 import org.jetbrains.kotlin.arguments.dsl.types.LambdasMode
 import org.jetbrains.kotlin.arguments.dsl.types.NameBasedDestructuringMode
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
 import org.jetbrains.kotlin.arguments.dsl.types.SamConversionsMode
 import org.jetbrains.kotlin.arguments.dsl.types.StringConcatMode
-import org.jetbrains.kotlin.arguments.dsl.types.ValhallaSupportMode
 import org.jetbrains.kotlin.arguments.dsl.types.VerifyIrMode
 import org.jetbrains.kotlin.arguments.dsl.types.WhenExpressionsMode
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
@@ -133,13 +133,13 @@ internal val btaEnumVersionMap: Map<ClassName, KotlinReleaseVersion> =
         JspecifyAnnotationsMode::class to KotlinReleaseVersion.v2_4_0,
         JvmDefaultMode::class to KotlinReleaseVersion.v2_4_0,
         JvmTarget::class to KotlinReleaseVersion.v2_3_0,
+        JvmValueClassCodegenMode::class to KotlinReleaseVersion.v2_5_0,
         KotlinVersion::class to KotlinReleaseVersion.v2_3_0,
         LambdasMode::class to KotlinReleaseVersion.v2_4_0,
         NameBasedDestructuringMode::class to KotlinReleaseVersion.v2_4_0,
         ReturnValueCheckerMode::class to KotlinReleaseVersion.v2_3_0,
         SamConversionsMode::class to KotlinReleaseVersion.v2_4_0,
         StringConcatMode::class to KotlinReleaseVersion.v2_4_0,
-        ValhallaSupportMode::class to KotlinReleaseVersion.v2_5_0,
         VerifyIrMode::class to KotlinReleaseVersion.v2_4_0,
         WhenExpressionsMode::class to KotlinReleaseVersion.v2_4_0
     ).mapKeys { [clazz, _] -> clazz.toBtaEnumClassName() }

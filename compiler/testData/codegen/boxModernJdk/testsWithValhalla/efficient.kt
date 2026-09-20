@@ -1,4 +1,4 @@
-// VALHALLA_SUPPORT: PRIMITIVES
+// JVM_VALUE_CLASS_CODEGEN: EFFICIENT
 // LANGUAGE: +FullValueClasses
 // CHECK_BYTECODE_LISTING
 // CHECK_JVM_FLAGS
@@ -46,53 +46,53 @@ fun box(): String {
     return "OK"
 }
 
-// No value class is a Valhalla value class in this mode: every class keeps its identity (the ACC_SUPER access flag is present),
-// and no instance field is strict (no ACC_STRICT).
+// Every value class is a Valhalla value class here: they lose their identity (the ACC_SUPER access flag is cleared, so it is absent
+// below) and their instance fields are strict (ACC_STRICT). Note the inline value class Id is a value class too.
 
 // TESTED_OBJECT_KIND: class
 // TESTED_OBJECTS: Point
-// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_SUPER
+// FLAGS: ACC_PUBLIC, ACC_FINAL
 
 // TESTED_OBJECT_KIND: class
 // TESTED_OBJECTS: Id
-// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_SUPER
+// FLAGS: ACC_PUBLIC, ACC_FINAL
 
 // TESTED_OBJECT_KIND: class
 // TESTED_OBJECTS: Record
-// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_SUPER, ACC_RECORD
+// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_RECORD
 
 // TESTED_OBJECT_KIND: class
 // TESTED_OBJECTS: AbstractValue
-// FLAGS: ACC_PUBLIC, ACC_SUPER, ACC_ABSTRACT
+// FLAGS: ACC_PUBLIC, ACC_ABSTRACT
 
 // TESTED_OBJECT_KIND: class
 // TESTED_OBJECTS: SealedValue
-// FLAGS: ACC_PUBLIC, ACC_SUPER, ACC_ABSTRACT
+// FLAGS: ACC_PUBLIC, ACC_ABSTRACT
 
 // TESTED_OBJECT_KIND: class
 // TESTED_OBJECTS: SealedChild
-// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_SUPER
+// FLAGS: ACC_PUBLIC, ACC_FINAL
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Point, x
-// FLAGS: ACC_PRIVATE, ACC_FINAL
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Point, y
-// FLAGS: ACC_PRIVATE, ACC_FINAL
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Id, value
-// FLAGS: ACC_PRIVATE, ACC_FINAL
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Record, a
-// FLAGS: ACC_PRIVATE, ACC_FINAL
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Record, b
-// FLAGS: ACC_PRIVATE, ACC_FINAL
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: SealedChild, s
-// FLAGS: ACC_PRIVATE, ACC_FINAL
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT

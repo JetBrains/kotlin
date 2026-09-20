@@ -27,8 +27,8 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
                 putAnalysisFlag(JvmAnalysisFlags.jvmDefaultMode, it)
             }
 
-            configureValhallaSupport(reporter)?.let {
-                putAnalysisFlag(JvmAnalysisFlags.valhallaSupport, it)
+            configureJvmValueClassCodegen(reporter)?.let {
+                putAnalysisFlag(JvmAnalysisFlags.jvmValueClassCodegen, it)
             }
 
             putAnalysisFlag(JvmAnalysisFlags.inheritMultifileParts, inheritMultifileParts)
@@ -42,13 +42,13 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
         }
     }
 
-    private fun K2JVMCompilerArguments.configureValhallaSupport(reporter: Reporter): ValhallaSupportMode? {
-        val valhallaSupport = valhallaSupport ?: return null
-        return when (val mode = ValhallaSupportMode.fromStringOrNull(valhallaSupport)) {
+    private fun K2JVMCompilerArguments.configureJvmValueClassCodegen(reporter: Reporter): JvmValueClassCodegenMode? {
+        val jvmValueClassCodegen = jvmValueClassCodegen ?: return null
+        return when (val mode = JvmValueClassCodegenMode.fromStringOrNull(jvmValueClassCodegen)) {
             null -> {
                 reporter.reportError(
-                    "Unknown -Xvalhalla-support mode: $valhallaSupport, supported modes: " +
-                            "${ValhallaSupportMode.entries.map(ValhallaSupportMode::description)}"
+                    "Unknown -Xjvm-value-class-codegen mode: $jvmValueClassCodegen, supported modes: " +
+                            "${JvmValueClassCodegenMode.entries.map(JvmValueClassCodegenMode::description)}"
                 )
                 null
             }

@@ -47,6 +47,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.jvmDefaultStable = from.jvmDefaultStable
     to.jvmExposeBoxed = from.jvmExposeBoxed
     to.jvmTarget = from.jvmTarget
+    to.jvmValueClassCodegen = from.jvmValueClassCodegen
     to.lambdas = from.lambdas
     to.moduleName = from.moduleName
     to.noCallAssertions = from.noCallAssertions
@@ -77,7 +78,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme
     to.useTypeTable = from.useTypeTable
-    to.valhallaSupport = from.valhallaSupport
     to.validateBytecode = from.validateBytecode
     to.whenExpressionsGeneration = from.whenExpressionsGeneration
 

@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JdkRelease
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmValueClassCodegenMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.ValhallaSupportMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
 
 /**
@@ -418,6 +418,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_JVM_EXPOSE_BOXED", KotlinReleaseVersion(2, 2, 0))
 
     /**
+     * Select how value classes are compiled. Use 'regular' for a JDK that is not Valhalla-compatible (the default); 'efficient' compiles value classes to behave as experimental Project Valhalla value classes and requires a Valhalla-compatible JDK.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_JVM_VALUE_CLASS_CODEGEN: JvmCompilerArgument<JvmValueClassCodegenMode?> =
+        JvmCompilerArgument("X_JVM_VALUE_CLASS_CODEGEN", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Paths to cross-platform libraries in the .klib format.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -749,16 +759,6 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_USE_TYPE_TABLE: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_TYPE_TABLE", KotlinReleaseVersion(1, 2, 40))
-
-    /**
-     * Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_VALHALLA_SUPPORT: JvmCompilerArgument<ValhallaSupportMode?> =
-        JvmCompilerArgument("X_VALHALLA_SUPPORT", KotlinReleaseVersion(2, 5, 0))
 
     /**
      * Validate generated JVM bytecode before and after optimizations.

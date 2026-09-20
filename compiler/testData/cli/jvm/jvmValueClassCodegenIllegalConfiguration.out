@@ -1,0 +1,2 @@
+error: [COMPILER_ARGUMENTS_ERROR] Efficient value class codegen ('-Xjvm-value-class-codegen=efficient') requires JVM target 27 or later and the '-Xjvm-enable-preview' flag.
+COMPILATION_ERROR

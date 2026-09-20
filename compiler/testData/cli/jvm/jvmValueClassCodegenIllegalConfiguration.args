@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/jvmValueClassCodegenIllegalConfiguration.kt
+-d
+$TEMP_DIR$
+-Xjvm-value-class-codegen=efficient
+-Xrender-internal-diagnostic-names

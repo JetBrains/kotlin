@@ -92,13 +92,13 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
 
-    when (ValhallaSupportMode.fromStringOrNull(arguments.valhallaSupport)) {
-        ValhallaSupportMode.NONE, null -> {}
+    when (JvmValueClassCodegenMode.fromStringOrNull(arguments.jvmValueClassCodegen)) {
+        JvmValueClassCodegenMode.REGULAR, null -> {}
         else ->
             if (jvmTarget.majorVersion < JvmTarget.JVM_27.majorVersion || !arguments.enableJvmPreview) {
                 this.report(
                     COMPILER_ARGUMENTS_ERROR,
-                    "Project Valhalla support ('-Xvalhalla-support') requires JVM target 27 or later and the '-Xjvm-enable-preview' flag."
+                    "Efficient value class codegen ('-Xjvm-value-class-codegen=efficient') requires JVM target 27 or later and the '-Xjvm-enable-preview' flag."
                 )
             }
     }

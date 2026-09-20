@@ -1,1 +1,1 @@
-// VALHALLA_SUPPORT: allValues
+// JVM_VALUE_CLASS_CODEGEN: efficient

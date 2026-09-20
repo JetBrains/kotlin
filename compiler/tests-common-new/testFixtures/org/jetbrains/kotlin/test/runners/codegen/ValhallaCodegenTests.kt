@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
-import org.jetbrains.kotlin.config.ValhallaSupportMode
+import org.jetbrains.kotlin.config.JvmValueClassCodegenMode
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.WrappedException
@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEASE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JVM_VALUE_CLASS_CODEGEN
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.VALHALLA_SUPPORT
 import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -30,17 +30,17 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.KtTestUtil
 
 /**
- * Sets up the fixed Project Valhalla environment shared by the Valhalla smoke test runners: the same default directives as any
- * Valhalla codegen test (see [configureValhallaDefaultDirectives]), plus the runner-specific handling — tests that do not fit this
- * fixed environment (including the absence of a Valhalla JDK) are ignored by [ValhallaIncompatibleTestSkipper], and the dump
- * checks, which have no Valhalla-specific golden data, are suppressed by [ValhallaDumpChecksSuppressor].
+ * Sets up the fixed Project Valhalla environment of the Valhalla smoke test runner: the same default directives as any Valhalla
+ * codegen test (see [configureValhallaDefaultDirectives]), plus the runner-specific handling — tests that do not fit this fixed
+ * environment (including the absence of a Valhalla JDK) are ignored by [ValhallaIncompatibleTestSkipper], and the dump checks,
+ * which have no Valhalla-specific golden data, are suppressed by [ValhallaDumpChecksSuppressor].
  */
-private fun TestConfigurationBuilder.configureValhallaSmokeTests(valhallaSupportMode: ValhallaSupportMode) {
+private fun TestConfigurationBuilder.configureValhallaSmokeTests() {
     defaultDirectives {
         configureValhallaDefaultDirectives()
-        // Unlike the dedicated Valhalla tests (which declare the mode per file), a smoke test runs the whole box corpus under a
+        // Unlike the dedicated Valhalla tests (which declare the mode per file), the smoke test runs the whole box corpus under a
         // single fixed mode, so it is pinned for the entire suite here.
-        VALHALLA_SUPPORT with valhallaSupportMode
+        JVM_VALUE_CLASS_CODEGEN with JvmValueClassCodegenMode.EFFICIENT
     }
     useMetaTestConfigurators(::ValhallaIncompatibleTestSkipper)
     useFailureSuppressors(::ValhallaDumpChecksSuppressor)
@@ -54,7 +54,7 @@ private fun TestConfigurationBuilder.configureValhallaSmokeTests(valhallaSupport
  * Tests that conflict with the pinned configuration:
  * - tests explicitly opted out via the `IGNORE_VALHALLA` directive (e.g. tests relying on behaviour that legitimately differs on a
  *   real Valhalla JDK, such as boxed-primitive identity);
- * - tests that specify their own JDK (via the `FULL_JDK` or `JDK_KIND` directive), because the Valhalla runners force the
+ * - tests that specify their own JDK (via the `FULL_JDK` or `JDK_KIND` directive), because the Valhalla runner forces the
  *   [TestJdkKind.FULL_JDK_VALHALLA] JDK globally, which would otherwise conflict with the JDK requested by the test itself;
  * - tests that specify their own JVM target / JDK release (via a `JVM_TARGET` other than [VALHALLA_JVM_TARGET], or a `JDK_RELEASE`
  *   directive).
@@ -97,23 +97,12 @@ private class ValhallaDumpChecksSuppressor(testServices: TestServices) : TestFai
 }
 
 /**
- * Verifies that Black Box tests are run successfully against the Valhalla JDK with the given [valhallaSupportMode] (one of the
- * non-[ValhallaSupportMode.NONE] modes) without further additional checks. There is a concrete smoke test per such mode below.
+ * Verifies that Black Box tests are run successfully against the Valhalla JDK with [JvmValueClassCodegenMode.EFFICIENT] codegen,
+ * without further additional checks.
  */
-abstract class AbstractValhallaBlackBoxSmokeTestBase(
-    private val valhallaSupportMode: ValhallaSupportMode,
-) : AbstractJvmBlackBoxCodegenTestBase(FirParser.LightTree) {
+abstract class AbstractValhallaBlackBoxSmokeTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureValhallaSmokeTests(valhallaSupportMode)
+        builder.configureValhallaSmokeTests()
     }
 }
-
-open class AbstractValhallaPrimitivesBlackBoxSmokeTest :
-    AbstractValhallaBlackBoxSmokeTestBase(ValhallaSupportMode.PRIMITIVES)
-
-open class AbstractValhallaPrimitivesAndFullValueClassesBlackBoxSmokeTest :
-    AbstractValhallaBlackBoxSmokeTestBase(ValhallaSupportMode.PRIMITIVES_AND_FULL_VALUE_CLASSES)
-
-open class AbstractValhallaAllValuesBlackBoxSmokeTest :
-    AbstractValhallaBlackBoxSmokeTestBase(ValhallaSupportMode.ALL_VALUES)

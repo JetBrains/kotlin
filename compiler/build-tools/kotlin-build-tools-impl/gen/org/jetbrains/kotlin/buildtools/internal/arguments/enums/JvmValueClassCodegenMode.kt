@@ -8,12 +8,10 @@ import kotlin.String
 /**
  * @since 2.3.0
  */
-public enum class ValhallaSupportMode(
+public enum class JvmValueClassCodegenMode(
   public val stringValue: String,
 ) {
-  NONE("none"),
-  PRIMITIVES("primitives"),
-  PRIMITIVES_AND_FULL_VALUE_CLASSES("primitivesAndFullValueClasses"),
-  ALL_VALUES("allValues"),
+  REGULAR("regular"),
+  EFFICIENT("efficient"),
   ;
 }

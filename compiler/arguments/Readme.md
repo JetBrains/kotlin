@@ -24,4 +24,4 @@ Another one representation is JSON-based that is bundled into a published jar as
     - Add optional `restrictedToCompilerPhase` that may specify that an argument is only valid for a given compiler phase.
     - Add optional `deprecatedMessage` that may specify a deprecation message for the argument (`null` if it isn't deprecated).
 - `6`:
-    - Add a new enum type: `ValhallaSupportModeType` 
+    - Add a new enum type: `JvmValueClassCodegenModeType`

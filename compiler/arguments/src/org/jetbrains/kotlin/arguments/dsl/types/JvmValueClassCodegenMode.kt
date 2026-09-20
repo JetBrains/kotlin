@@ -12,34 +12,20 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
 
 @Serializable
-enum class ValhallaSupportMode(
+enum class JvmValueClassCodegenMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
-    @SerialName("none")
-    NONE(
-        modeName = "none",
+    @SerialName("regular")
+    REGULAR(
+        modeName = "regular",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
     ),
-    @SerialName("primitives")
-    PRIMITIVES(
-        modeName = "primitives",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_5_0,
-        )
-    ),
-    @SerialName("primitivesAndFullValueClasses")
-    PRIMITIVES_AND_FULL_VALUE_CLASSES(
-        modeName = "primitivesAndFullValueClasses",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_5_0,
-        )
-    ),
-    @SerialName("allValues")
-    ALL_VALUES(
-        modeName = "allValues",
+    @SerialName("efficient")
+    EFFICIENT(
+        modeName = "efficient",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
