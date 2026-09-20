@@ -31,3 +31,26 @@ tasks.withType<Test>().configureEach {
     systemProperty("testInventoryFixture.failing", fixtureFails.get())
     ignoreFailures = fixtureFails.get()
 }
+
+/*
+ * The fixture's second test task, and the class that only it runs.
+ *
+ * One build service replays the tests of every test task of a build, each under its own flow, which
+ * takes a build with two of them to exercise. The two tasks run disjoint classes, so that what
+ * 'test' records - asserted in full by the functional tests - does not change by this one existing.
+ */
+val secondTestClass = "org.jetbrains.kotlin.testInventory.SecondTestInventoryFixtureTest"
+
+tasks.test {
+    filter { excludeTestsMatching(secondTestClass) }
+}
+
+tasks.register<Test>("secondTest") {
+    group = "verification"
+    description = "Runs $secondTestClass, so that a build can have two recordings to replay"
+
+    val testSourceSet = sourceSets.test.get()
+    testClassesDirs = testSourceSet.output.classesDirs
+    classpath = testSourceSet.runtimeClasspath
+    filter { includeTestsMatching(secondTestClass) }
+}

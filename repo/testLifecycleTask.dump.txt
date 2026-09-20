@@ -884,6 +884,7 @@ Not connected to any 'lifecycleTestTask':
   - :plugins:parcelize:parcelize-runtime:jsNodeTest [CompilerPlugins]
   - :plugins:parcelize:parcelize-runtime:wasmJsNodeTest [CompilerPlugins]
   - :plugins:parcelize:parcelize-runtime:wasmWasiWasmtimeTest [CompilerPlugins]
+  - :repo:test-inventory-fixture:secondTest [BuildInfrastructure]
   - :repo:test-inventory-fixture:test [BuildInfrastructure]
   - :test-instrumenter:test [Unknown]
   - :wasm:wasm.tests:klib-compatibility:test [Wasm]
