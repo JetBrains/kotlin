@@ -47,6 +47,8 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     open fun testRebuildAfterError(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-rebuild-after-error", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             fun readCacheFiles(): Map<String, Int> {
                 val cacheFiles = mutableMapOf<String, Int>()
                 projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile().walk().forEach { cachedFile ->
@@ -95,6 +97,8 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun testCacheInvalidationAfterCompilerArgModifying(gradleVersion: GradleVersion) {
         project("kotlin2JsIrICProject", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             val buildConfig = buildGradleKts.readText()
 
             fun setLazyInitializationArg(value: Boolean) {
@@ -140,6 +144,8 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun testMultipleArtifacts(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("compileDevelopmentExecutableKotlinJs") {
                 val cacheDir = projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile()
                 val cacheRootDirName = cacheDir.list()?.singleOrNull()
@@ -195,6 +201,8 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun testRemoveUnusedDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-remove-unused-dep", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             val enableDependencyProperty = "enableDependency"
             subProject("app").buildScriptInjection {
                 if (project.hasProperty(enableDependencyProperty)) {
@@ -228,6 +236,8 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun testCacheGuardInvalidation(gradleVersion: GradleVersion) {
         project("kotlin2JsIrICProject", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsNodeDevelopmentRun", "--debug") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertOutputContains("module [main] was built clean")
@@ -256,6 +266,8 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun testSeparateCachesForDifferentBinaries(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             val filesToModified = mutableMapOf<File, Long>()
 
             build("compileDevelopmentExecutableKotlinJs") {

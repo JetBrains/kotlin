@@ -42,6 +42,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
+            applyKotlinSharedNpmProjectPlugin()
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
@@ -59,6 +60,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
+            applyKotlinSharedNpmProjectPlugin()
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()

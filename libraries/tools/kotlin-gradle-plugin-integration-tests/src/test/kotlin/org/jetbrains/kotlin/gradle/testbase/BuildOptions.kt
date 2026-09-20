@@ -136,11 +136,21 @@ data class BuildOptions(
         DISABLED,
 
         /** Always enable Isolated Projects */
-        ENABLED;
+        ENABLED,
+
+        /**
+         * Enable Isolated Projects only for the [TestVersions.Gradle.MAX_SUPPORTED] Gradle version.
+         *
+         * Useful when the Gradle version is not known at the moment the [BuildOptions] are configured,
+         * for example in a `defaultBuildOptions` override: the decision is postponed until [BuildOptions.toArguments],
+         * which does know the Gradle version.
+         */
+        ENABLED_FOR_MAX_GRADLE;
 
         fun toBooleanFlag(gradleVersion: GradleVersion) = when (this) {
             DISABLED -> false
             ENABLED -> true
+            ENABLED_FOR_MAX_GRADLE -> gradleVersion == GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)
         }
     }
 
@@ -494,7 +504,10 @@ fun BuildOptions.suppressingGradlePluginErrors(vararg diagnosticIds: String) =
     copy(suppressedGradlePluginErrors = suppressedGradlePluginErrors + diagnosticIds)
 
 // KT-75899: Support Gradle Project Isolation in KGP JS & Wasm
-fun BuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899() = this // disableIsolatedProjects()
+// Isolated Projects support for JS & Wasm is implemented only for the latest supported Gradle version,
+// which is not known at the moment the build options are configured, hence the dedicated mode.
+fun BuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899() =
+    copy(isolatedProjects = IsolatedProjectsMode.ENABLED_FOR_MAX_GRADLE)
 
 fun BuildOptions.suppressWarningForOldKotlinVersion(
     currentGradleVersion: GradleVersion,

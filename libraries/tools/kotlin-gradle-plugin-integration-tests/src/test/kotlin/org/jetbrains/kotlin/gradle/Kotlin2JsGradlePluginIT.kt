@@ -42,6 +42,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun generateDts(gradleVersion: GradleVersion) {
         project("kotlin2JsIrDtsGeneration", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("build") {
                 assertFileInProjectExists("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.js")
                 val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
@@ -60,6 +62,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun generateDtsWithEsModules(gradleVersion: GradleVersion) {
         project("kotlin2JsIrDtsGeneration", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildScriptInjection {
                 kotlinMultiplatform.js {
                     useEsModules()
@@ -83,6 +87,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testEs2020TargetProducesEsModulesWithBigIntLongs(gradleVersion: GradleVersion) {
         project("simple-js-executable", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             projectPath.resolve("src/jsMain/kotlin/Main.kt").writeText(
                 """
                 |package com.example
@@ -121,6 +127,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testNodeJsMainArguments(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradle.appendText(
                 """
                 |
@@ -147,6 +155,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testAppProjectWorkWithTheDelegatedTranspilation(gradleVersion: GradleVersion) {
         project("kotlin-js-multiplatform-app-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             gradleProperties.appendText(
                 """
                 |
@@ -199,6 +209,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testLibraryProjectWorkWithTheDelegatedTranspilation(gradleVersion: GradleVersion) {
         project("kotlin-js-multiplatform-library-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             gradleProperties.appendText(
                 """
                 |
@@ -239,6 +251,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testLibraryProjectWorkWithTheDelegatedTranspilationAndDifferentCompilerConfiguration(gradleVersion: GradleVersion) {
         project("kotlin-js-multiplatform-library-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             gradleProperties.appendText(
                 """
                 |
@@ -285,6 +299,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testAppProjectWorkWithTheDelegatedTranspilationAndDifferentCompilerConfiguration(gradleVersion: GradleVersion) {
         project("kotlin-js-multiplatform-app-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             gradleProperties.appendText(
                 """
                 |
@@ -340,6 +356,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testLibraryProjectWorkWithoutTheDelegatedTranspilation(gradleVersion: GradleVersion) {
         project("kotlin-js-multiplatform-library-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsBrowserDevelopmentDistribution") {
                 assertTasksAreNotInTaskGraph(
                     ":kotlinSwcSetup",
@@ -362,6 +380,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testAppProjectWorkWithoutTheDelegatedTranspilation(gradleVersion: GradleVersion) {
         project("kotlin-js-multiplatform-app-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsNodeTest") {
                 assertTasksAreNotInTaskGraph(
                     ":kotlinSwcSetup",
@@ -394,6 +414,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testPassingNodeJsProcessArgvToTheMainFunction(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradle.appendText(
                 """
                 |
@@ -420,6 +442,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testCleanOutputWithEmptySources(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("assemble") {
                 assertTasksExecuted(":compileProductionExecutableKotlinJs")
 
@@ -450,6 +474,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             "js-composite-build",
             gradleVersion,
         ) {
+            applyKotlinSharedNpmProjectPlugin()
+
             fun BuildResult.moduleVersion(rootModulePath: String, moduleName: String): String =
                 projectPath.resolve(rootModulePath).toFile()
                     .resolve(NpmProject.PACKAGE_JSON)
@@ -518,6 +544,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testJsIrIncrementalInParallel(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             gradleProperties.appendText(
                 """
                 |
@@ -535,6 +563,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testJsIrOnlyChangedFilesSynced(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
 
             val filesModified: MutableMap<String, Long> = mutableMapOf()
 
@@ -622,6 +652,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testFalsifyKotlinJsCompilerArgs(gradleVersion: GradleVersion) {
         project("simple-js-executable", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.appendText(
                 """
                 |
@@ -654,6 +686,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testNotGeneratedTypeScriptDeclarations(gradleVersion: GradleVersion) {
         project("js-ir-validate-ts", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsBrowserDevelopmentLibraryDistribution") {
                 assertFileInProjectExists("build/dist/js/developmentLibrary/js-ir-validate-ts.js")
                 assertFileInProjectNotExists("build/dist/js/developmentLibrary/js-ir-validate-ts.d.ts")
@@ -704,6 +738,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testGeneratedTypeScriptDeclarations(gradleVersion: GradleVersion) {
         project("js-ir-validate-ts", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildScriptInjection {
                 kotlinMultiplatform.js {
                     generateTypeScriptDefinitions()
@@ -760,6 +796,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testGeneratedTypeScriptDeclarationsValidation(gradleVersion: GradleVersion) {
         project("js-ir-validate-ts", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildScriptInjection {
                 kotlinMultiplatform.js {
                     generateTypeScriptDefinitions()
@@ -800,6 +838,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-invalid-project-with-exported-clash")
     fun testProjectWithExportedNamesClash(gradleVersion: GradleVersion) {
         project("kotlin-js-invalid-project-with-exported-clash", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("compileKotlinJs") {
                 assertOutputContains("Exporting name 'best' in ES modules may clash")
             }
@@ -810,6 +850,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsSourceMapGenerateFqNames(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.appendText(
                 """
                 |allprojects {
@@ -836,6 +878,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsSourceMapGenerateSimpleNames(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.appendText(
                 """
                 |allprojects {
@@ -861,6 +905,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsSourceMapGenerateNoNames(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.appendText(
                 """
                 |allprojects {
@@ -886,6 +932,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsPackageModuleName(gradleVersion: GradleVersion) {
         project("kotlin-js-package-module-name", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("assemble") {
                 assertFileInProjectExists("build/${Distribution.DIST}/js/productionExecutable/kotlin-js-package-module-name.js")
                 assertFileInProjectExists("build/js/packages/@foo/bar/kotlin/@foo/bar.js")
@@ -898,6 +946,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testWebpackConsiderChangesInDependencies(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
 
             projectPath.resolve("app/src/jsMain/kotlin/App.kt").modify {
                 it.replace("require(\"css/main.css\")", "")
@@ -922,6 +972,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testK1JsIrImplementationDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
 
             build("assemble")
 
@@ -938,6 +990,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testK2JsIrImplementationDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.append(
                 """
                     rootProject.subprojects.forEach {
@@ -962,6 +1016,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testJsIrCompiledAgainstAutomaticallyAddedDomApiCompat(gradleVersion: GradleVersion) {
         project("kotlin-js-coroutines", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("assemble")
             build("compileDevelopmentExecutableKotlinJs")
         }
@@ -971,6 +1027,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testFriendDependenciesDoesNotExist(gradleVersion: GradleVersion) {
         project("kotlin-js-with-friend-paths", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("assemble")
 
             val oldFriendPaths = "friendPaths.from(project(\":lib\").buildDir.resolve(\"classes/kotlin/js/main\"))"
@@ -991,6 +1049,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKlibFingerprints(gradleVersion: GradleVersion) {
         project("kotlin2JsIrICProject", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             val fingerprints = Array(2) {
                 build("compileDevelopmentExecutableKotlinJs")
 
@@ -1021,6 +1081,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKlibRuntimeDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-runtime-dependency", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("assemble") {
                 assertTasksExecuted(":lib:otherKlib")
                 assertTasksExecuted(":lib:compileOtherKotlinJs")
@@ -1034,6 +1096,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testWebpackWorksWithEsModules(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             subProject("app").buildGradleKts.modify { originalScript ->
                 buildString {
                     append(originalScript)
@@ -1070,6 +1134,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testPackageJsonWithEsModules(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             subProject("app").buildGradleKts.modify {
                 it + """
                     |
@@ -1097,6 +1163,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testPublicPackageJsonWithEsModules(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             subProject("app").buildGradleKts.modify {
                 it + """
                     |
@@ -1123,6 +1191,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testMultipleJsTargets(gradleVersion: GradleVersion) {
         project("kotlin-js-multiple-targets", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("assemble") {
                 assertTasksExecuted(":compileProductionExecutableKotlinServerSide")
                 assertTasksExecuted(":compileProductionExecutableKotlinClientSide")
@@ -1134,6 +1204,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testWebpackConfigWorksAfterTaskConfigured(gradleVersion: GradleVersion) {
         project("js-library-with-executable", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
 
             buildGradleKts.modify { originalScript ->
                 buildString {
@@ -1178,6 +1250,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun customPluginApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
         project("js-custom-build-src-plugin", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("checkConfigurationsResolve") {
                 assertTasksExecuted(":checkConfigurationsResolve")
             }
@@ -1188,6 +1262,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testCompileTestCouldAccessProduction(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithTests", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("build") {
                 assertTasksExecuted(
                     ":compileKotlinJs",
@@ -1204,6 +1280,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testCompilerTestAccessInternalProduction(gradleVersion: GradleVersion) {
         project("kotlin2JsInternalTest", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("compileTestDevelopmentExecutableKotlinJs")
         }
     }
@@ -1212,6 +1290,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsSourceMap(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsDevelopmentExecutableCompileSync") {
                 val appSourceMap = subProject("app").projectPath
                     .resolve("build/compileSync/js/main/developmentExecutable/kotlin/$projectName-app.js.map")
@@ -1266,6 +1346,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("js-per-file")
     fun testCorrectSourcesPathInPerFile(gradleVersion: GradleVersion) {
         project("js-per-file", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsDevelopmentExecutableCompileSync") {
                 // In the sub-project build
                 var mainSourceMap = projectPath
@@ -1314,6 +1396,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsSourceMapCustomOutputFileInExecutable(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             val taskSelector = "named<KotlinJsIrLink>(\"compileDevelopmentExecutableKotlinJs\")"
             buildGradleKts.appendText(
                 """
@@ -1342,6 +1426,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     fun testKotlinJsSourceMapCustomOutputFileInLibrary(gradleVersion: GradleVersion) {
         // With .js extension
         project("kotlin-multiplatform-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build(":lib:jsBrowserDevelopmentDistribution") {
                 assertFileInProjectExists("lib/build/${Distribution.DIST}/js/developmentLibrary/kotlin-js-browser-lib.js")
                 assertFileInProjectExists("lib/build/${Distribution.DIST}/js/developmentLibrary/kotlin-js-browser-lib.js.map")
@@ -1369,6 +1455,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsSourceMapCustomOutputFileInLibraryWithESM(gradleVersion: GradleVersion) {
         project("kotlin-multiplatform-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             subProject("lib").buildScriptInjection {
                 kotlinMultiplatform.js {
                     useEsModules()
@@ -1401,6 +1489,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsSourceMapDisabled(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.appendText(
                 """
                 |allprojects {
@@ -1423,6 +1513,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsSourceMapEmbedSourcesAlways(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.appendText(
                 """
                 |project("lib") {
@@ -1458,6 +1550,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsSourceMapEmbedSourcesInlining(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.appendText(
                 """
                 |project("lib") {
@@ -1499,6 +1593,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-plugin-project")
     fun testNewKotlinJsPlugin(gradleVersion: GradleVersion) {
         project("kotlin-js-plugin-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("publish", "assemble", "jsTest", "compileBenchmarkKotlinJs") {
                 assertTasksExecuted(
                     ":compileKotlinJs", ":compileTestKotlinJs", ":compileBenchmarkKotlinJs"
@@ -1535,6 +1631,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("yarn-setup")
     fun testYarnSetup(gradleVersion: GradleVersion) {
         project("yarn-setup", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("yarnFolderRemove")
 
             build("kotlinYarnSetup", "yarnFolderCheck") {
@@ -1564,6 +1662,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testYarnSetupFromLocalArchive(gradleVersion: GradleVersion) {
         project("yarn-setup", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("yarnFolderRemove")
 
             buildGradleKts.appendText(
@@ -1586,6 +1686,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("npm-dependencies")
     fun testNpmDependencies(gradleVersion: GradleVersion) {
         project("npm-dependencies", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("build") {
                 assertDirectoryInProjectExists("build/js/node_modules/file-dependency")
                 assertDirectoryInProjectExists("build/js/node_modules/file-dependency-2")
@@ -1608,6 +1710,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 )
             )
         ) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsJar") {
                 val archive = projectPath
                     .resolve("build/libs")
@@ -1703,6 +1807,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testBrowserDistribution(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
 
             build("compileProductionExecutableKotlinJs") {
                 assertTasksExecuted(":app:compileProductionExecutableKotlinJs")
@@ -1738,6 +1844,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-multiplatform-browser-project")
     fun testMultiplatformBrowserDistribution(gradleVersion: GradleVersion) {
         project("kotlin-multiplatform-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
 
             build("compileProductionExecutableKotlinJs") {
                 assertTasksExecuted(":app:compileProductionExecutableKotlinJs")
@@ -1758,6 +1866,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testPackageJsonCustomField(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
 
             build("rootPackageJson") {
                 assertTasksExecuted(":app:jsPackageJson")
@@ -1782,6 +1892,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testNodeJsForkOptions(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-custom-node-module", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("build") {
                 // It makes sense only since Tests will be run on Gradle 7.2
                 assertOutputDoesNotContain("Execution optimizations have been disabled for task ':jsNodeTest'")
@@ -1796,6 +1908,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testNoUnintendedDevDependencies(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
 
             build("jsBrowserProductionWebpack") {
                 val appPackageJson = getSubprojectPackageJson(projectName = "kotlin-js-browser", subProject = "app")
@@ -1823,6 +1937,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 )
             )
         ) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsPackageJson", "rootPackageJson", "kotlinNpmInstall") {
                 fun getPackageJson() =
                     projectPath.resolve("build/js")
@@ -1852,6 +1968,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testDirectoryDependencyNotFailProjectResolution(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildScriptInjection {
                 project.applyMultiplatform {
                     sourceSets.jsMain.dependencies {
@@ -1869,6 +1987,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testDynamicWebpackConfigD(gradleVersion: GradleVersion) {
         project("js-dynamic-webpack-config-d", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("build") {
                 assertDirectoryInProjectExists("build/js/packages/js-dynamic-webpack-config-d")
                 assertFileInProjectContains("build/js/packages/js-dynamic-webpack-config-d/webpack.config.js", "// hello from patch.js")
@@ -1881,6 +2001,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testBrowserNoTasksConfigurationOnHelp(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.appendText(
                 """
                 |
@@ -1902,6 +2024,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-nodejs-project")
     fun testNodeJsNoTasksConfigurationOnHelp(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradle.appendText(
                 """
                 |
@@ -1922,6 +2046,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testMochaFailedModuleNotFound(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsNodeTest") {
                 assertOutputDoesNotContain("##teamcity[")
             }
@@ -1977,6 +2103,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testMochaHasNoDryRunOutput(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsNodeTest") {
                 assertOutputDoesNotContain("0 passing")
             }
@@ -1987,6 +2115,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testWebpackConfig(gradleVersion: GradleVersion) {
         project("kotlin-js-test-webpack-config", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsBrowserDevelopmentWebpack")
 
             build("jsCheckConfigDevelopmentWebpack")
@@ -2011,6 +2141,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testFailNpmInstall(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.modify { originalScript ->
                 buildString {
                     append("import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager")
@@ -2052,6 +2184,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 )
             )
         ) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.modify {
                 it + "\n" +
                         """
@@ -2073,6 +2207,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsDependencyWithJsFiles(gradleVersion: GradleVersion) {
         project("kotlin-js-dependency-with-js-files", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsPackageJson") {
                 val dependency = "2p-parser-core"
                 val version = "0.11.1"
@@ -2097,6 +2233,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testJsIrWholeProgram(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             gradleProperties.appendText(
                 """
                 |
@@ -2112,6 +2250,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun crossModulesWorkCorrectlyWithComposeDependencyKT60852(gradleVersion: GradleVersion) {
         project("kotlin-js-compose-dependency", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("compileDevelopmentExecutableKotlinJs") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
             }
@@ -2122,6 +2262,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testPackageJsonSkippedWithUpToDatePackageJsons(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-library-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             subProject("app").buildGradleKts.modify {
                 it + """
                     
@@ -2162,6 +2304,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             // we can remove this line, when the min version of Gradle be at least 8.1
             dependencyManagement = DependencyManagement.DisabledDependencyManagement
         ) {
+            applyKotlinSharedNpmProjectPlugin()
+
             settingsGradleKts.modify {
                 it + """
                     
@@ -2214,6 +2358,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             // we can remove this line, when the min version of Gradle be at least 8.1
             dependencyManagement = DependencyManagement.DisabledDependencyManagement
         ) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradleKts.modify {
                 it + """
                     
@@ -2238,6 +2384,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testFailedJsTestWithCommonJs(gradleVersion: GradleVersion) {
         project("kotlin-js-project-failed-test", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradle.appendText(
                 """
                 |
@@ -2269,6 +2417,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testFailedJsTestWithESM(gradleVersion: GradleVersion) {
         project("kotlin-js-project-failed-test", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             buildGradle.appendText(
                 """
                 |
@@ -2299,6 +2449,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testWebpackSourceMapConfig(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("assemble") {
                 assertTasksExecuted(":app:jsBrowserProductionWebpack")
 
@@ -2339,6 +2491,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("js-per-file")
     fun testWebpackUpdatePerFile(gradleVersion: GradleVersion) {
         project("js-per-file", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("assemble") {
                 assertTasksExecuted(":jsBrowserProductionWebpack")
             }
@@ -2356,6 +2510,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testChangedOutputModuleName(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             val moduleName = "hello"
             subProject("app").buildGradleKts.modify {
                 it.replace(
@@ -2381,6 +2537,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED) // Gradle version is irrelevant
     fun testKt37105(gradleVersion: GradleVersion) {
         project("empty", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             plugins {
                 kotlin("multiplatform")
             }

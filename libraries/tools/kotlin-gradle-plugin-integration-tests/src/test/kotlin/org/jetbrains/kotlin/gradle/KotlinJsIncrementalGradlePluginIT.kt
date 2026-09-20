@@ -34,6 +34,8 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
     fun testIncrementalCompilation(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         project("kotlin2JsICProject", gradleVersion, buildOptions = buildOptions) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("compileKotlinJs", "compileTestKotlinJs") {
                 assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
                 assertCompiledKotlinSources(projectPath.allKotlinFiles.relativizeTo(projectPath), output)
@@ -64,6 +66,8 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
         val jsOptions = defaultJsOptions.copy(incrementalJsKlib = false, incrementalJs = false)
         val options = defaultBuildOptions.copy(jsOptions = jsOptions)
         project("kotlin2JsICProject", gradleVersion, buildOptions = options) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("compileKotlinJs", "compileTestKotlinJs") {
                 assertOutputDoesNotContain(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
             }
@@ -75,6 +79,8 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
     fun testIncrementalCompilationWithMultipleModulesAfterCompilationError(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.copy(jsOptions = defaultJsOptions.copy(incrementalJsKlib = true))
         project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion, buildOptions = buildOptions) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("compileKotlinJs")
 
             val libKt = subProject("lib").kotlinSourcesDir("jsMain").resolve("Lib.kt") ?: error("No Lib.kt file in test project")

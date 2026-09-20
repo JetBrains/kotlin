@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
 import org.jetbrains.kotlin.gradle.targets.web.npm.isolated.KotlinIsolatedNpmInstallTask
@@ -51,15 +55,29 @@ internal fun setupSharedNpmProject(
     // The npm dependencies of the whole build are installed into a single shared npm root project,
     // so they are installed only once, for the JS platform.
     if (project.isIsolatedNpmResolutionEnabled && platform == JsPlatformDisambiguator) {
-        val nodeJsRequest = project.requestDefaultNodeJs()
-        val nodeExecutable = NodeJsToolchainService.registerIfAbsent(project)
-            .flatMap { toolchain -> nodeJsRequest.flatMap { request -> toolchain.request(request) } }
-            .flatMap { it.executable }
+        val toolchainDisabled = project.kotlinPropertiesProvider.nodeJsToolchainMode == NodeJsToolchainMode.DISABLE
+
+        // The Node.js toolchain is not necessarily enabled, in which case Node.js is provisioned
+        // by this project itself, exactly like for the test and run tasks of a JS target.
+        val nodeEnvSpec = if (toolchainDisabled) NodeJsPlugin.apply(project) else null
+        val nodeExecutable: Provider<String> = if (nodeEnvSpec != null) {
+            nodeEnvSpec.executable
+        } else {
+            val nodeJsRequest = project.requestDefaultNodeJs()
+            NodeJsToolchainService.registerIfAbsent(project)
+                .flatMap { toolchain -> nodeJsRequest.flatMap { request -> toolchain.request(request) } }
+                .flatMap { it.executable }
+        }
 
         project.registerTask<KotlinIsolatedNpmInstallTask>(KotlinIsolatedNpmInstallTask.NAME) { task ->
             task.description = "Installs the npm dependencies of the '$rootDirectoryName' shared npm project"
             task.sharedNpmProjectDirectory.set(setupSharedNpmProjectTask.flatMap { it.outputDirectory })
             task.nodeExecutable.set(nodeExecutable)
+            if (nodeEnvSpec != null) {
+                with(nodeEnvSpec) {
+                    task.dependsOn(project.nodeJsSetupTaskProvider)
+                }
+            }
             // Matches the default of `org.jetbrains.kotlin.gradle.targets.js.npm.BaseNpmExtension.ignoreScripts`.
             task.ignoreScripts.set(true)
         }

@@ -282,6 +282,7 @@ class TryNextIT : KGPBaseTest() {
                 logLevel = LogLevel.DEBUG,
             ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
+            applyKotlinSharedNpmProjectPlugin()
             enableTryNext()
 
             build(":compileKotlinJs") {
@@ -301,6 +302,7 @@ class TryNextIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
+            applyKotlinSharedNpmProjectPlugin()
             enableTryNext()
 
             build("build") {

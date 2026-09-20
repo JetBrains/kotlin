@@ -23,6 +23,8 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testKotlin2JsCompilation(gradleVersion: GradleVersion) {
         project("instantExecutionToJs", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             assertSimpleConfigurationCacheScenarioWorks(
                 "assemble",
                 buildOptions = defaultBuildOptions,
@@ -36,6 +38,8 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testBrowserDistribution(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             assertSimpleConfigurationCacheScenarioWorks(
                 ":app:build",
                 buildOptions = defaultBuildOptions,
@@ -54,6 +58,8 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testBrowserDistributionOnIdeaPropertyChange(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build(":app:build") {
                 assertConfigurationCacheStored()
             }
@@ -74,6 +80,8 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testNodeJs(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             assertSimpleConfigurationCacheScenarioWorks(
                 ":build",
                 buildOptions = defaultBuildOptions,
@@ -92,6 +100,8 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testNodeJsOnIdeaPropertyChange(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build(":build") {
                 assertConfigurationCacheStored()
             }
@@ -114,6 +124,8 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testTestDependencies(gradleVersion: GradleVersion) {
         project("kotlin-js-project-with-test-dependencies", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             assertSimpleConfigurationCacheScenarioWorks(
                 "assemble", "kotlinStorePackageLock",
                 buildOptions = defaultBuildOptions.copy(
@@ -130,6 +142,8 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testTestDependenciesYarnLock(gradleVersion: GradleVersion) {
         project("kotlin-js-project-with-test-dependencies", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             assertSimpleConfigurationCacheScenarioWorks(
                 "assemble", "kotlinStoreYarnLock",
                 buildOptions = defaultBuildOptions.copy(
@@ -146,6 +160,8 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testNodeJsRun(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
+
             build("jsNodeDevelopmentRun", buildOptions = buildOptions) {
                 assertTasksExecuted(":jsNodeDevelopmentRun")
                 assertOutputContains(
@@ -169,6 +185,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testWithCustomBuildLogic(gradleVersion: GradleVersion) {
         project("kotlin-js-build-logic", gradleVersion) {
+            applyKotlinSharedNpmProjectPlugin()
 
             settingsGradleKts
                 .replaceText(
