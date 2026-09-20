@@ -7,9 +7,9 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.UnexpectedBuildFailure
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -38,13 +38,25 @@ import kotlin.time.Duration.Companion.seconds
 class TestBuildCacheTeamCityCompatibilityFunctionalTest {
 
     /**
+     * Empties the build cache the tests share, so that each of them starts from nothing in it.
+     *
+     * One directory for the whole class, rather than one per test: its path is a Gradle property, and
+     * a new one per test invalidates the nested builds' configuration cache, making every test pay
+     * for configuring the whole repository again.
+     */
+    @BeforeEach
+    fun emptyTheBuildCache() {
+        cache.listFiles()?.forEach { it.deleteRecursively() }
+    }
+
+    /**
      * The recording a run produces, and the shape the other tests replay from.
      *
      * A task that actually ran reports nothing itself: TeamCity's own Gradle runner already reports
      * those tests, and replaying them as well would report every test twice.
      */
     @Test
-    fun `a task that runs records its tests and reports nothing`(@TempDir cache: Path) {
+    fun `a task that runs records its tests and reports nothing`() {
         cleanFixtureTask()
         val result = runFixtureTask(cache)
 
@@ -60,7 +72,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
      * checked here too - without it there would be nothing to replay.
      */
     @Test
-    fun `a task served from the build cache replays its recorded tests`(@TempDir cache: Path) {
+    fun `a task served from the build cache replays its recorded tests`() {
         cleanFixtureTask()
         runFixtureTask(cache)
         val recorded = recordedExecutions()
@@ -84,22 +96,20 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
      * than from a freshly configured build.
      */
     @Test
-    fun `an up-to-date task replays its recorded tests`(@TempDir cache: Path) {
+    fun `an up-to-date task replays its recorded tests`() {
         cleanFixtureTask()
         runFixtureTask(cache)
 
         val result = runFixtureTask(cache)
 
         assertEquals(TaskOutcome.UP_TO_DATE, result.fixtureTaskOutcome)
-        assertContains(result.output, "Configuration cache entry reused.")
+        assertContains(result.quotableOutput, "Configuration cache entry reused.")
         assertEquals(expectedReplay, result.replayedTestMessages)
     }
 
     /** The same, with the configuration cache out of the picture. */
     @Test
-    fun `a task served from the build cache replays its recorded tests without the configuration cache`(
-        @TempDir cache: Path,
-    ) {
+    fun `a task served from the build cache replays its recorded tests without the configuration cache`() {
         cleanFixtureTask()
         runFixtureTask(cache, configurationCache = false)
 
@@ -115,7 +125,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
      * noise in a local build's console.
      */
     @Test
-    fun `a task served from the build cache replays nothing outside a TeamCity build`(@TempDir cache: Path) {
+    fun `a task served from the build cache replays nothing outside a TeamCity build`() {
         cleanFixtureTask()
         runFixtureTask(cache, teamCity = false)
 
@@ -134,7 +144,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
      * message says where the verdict came from instead of pretending to explain it.
      */
     @Test
-    fun `a failed test is replayed as a failure`(@TempDir cache: Path) {
+    fun `a failed test is replayed as a failure`() {
         cleanFixtureTask()
         runFixtureTask(cache, failing = true)
 
@@ -155,7 +165,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
      * happen.
      */
     @Test
-    fun `a retried test is replayed once per attempt`(@TempDir cache: Path) {
+    fun `a retried test is replayed once per attempt`() {
         cleanFixtureTask()
         runFixtureTask(cache, failing = true, maxRetries = 3)
 
@@ -169,6 +179,13 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
             "The first attempt and its three retries should each be replayed",
         )
     }
+
+    companion object {
+        /** The only build cache the nested builds can reach, see [emptyTheBuildCache]. */
+        @JvmStatic
+        @TempDir
+        lateinit var cache: File
+    }
 }
 
 private const val FIXTURE_TASK_PATH = ":repo:test-inventory-fixture:test"
@@ -178,6 +195,15 @@ private const val FIXTURE_IGNORED_TEST = "$FIXTURE_CLASS.ignored()"
 private const val FIXTURE_FAILING_TEST = "$FIXTURE_CLASS.failing()"
 
 private const val REPLAY_FLOW_ID = "TestReplay$FIXTURE_TASK_PATH"
+
+/**
+ * What makes a line a service message, and what these tests take back off every line they keep.
+ *
+ * Not cosmetic: whatever a failing assertion prints lands in the console of the build that runs these
+ * tests, and a line still carrying the marker would be read by the TeamCity running *them* as one of
+ * its own tests starting, or failing. The filter that looks for the marker is what asserts it is there.
+ */
+private const val SERVICE_MESSAGE_MARKER = "##teamcity"
 
 /** The text a replayed failure carries in place of the failure details the recording does not keep. */
 private const val FAILURE_DETAILS_UNAVAILABLE =
@@ -233,27 +259,27 @@ private val expectedRecording = """
 
 /** The replay of the fixture's one ignored test, which TeamCity is told about before it is finished. */
 private val replayedIgnoredTest = listOf(
-    "##teamcity[testStarted name='$FIXTURE_IGNORED_TEST' flowId='$REPLAY_FLOW_ID']",
-    "##teamcity[testIgnored name='$FIXTURE_IGNORED_TEST' flowId='$REPLAY_FLOW_ID']",
-    "##teamcity[testFinished name='$FIXTURE_IGNORED_TEST' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
+    "[testStarted name='$FIXTURE_IGNORED_TEST' flowId='$REPLAY_FLOW_ID']",
+    "[testIgnored name='$FIXTURE_IGNORED_TEST' flowId='$REPLAY_FLOW_ID']",
+    "[testFinished name='$FIXTURE_IGNORED_TEST' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
 )
 
 /** The replay of one attempt at the fixture's one failing test. */
 private val replayedFailedTest = listOf(
-    "##teamcity[testStarted name='$FIXTURE_FAILING_TEST' flowId='$REPLAY_FLOW_ID']",
-    "##teamcity[testFailed name='$FIXTURE_FAILING_TEST' message='$FAILURE_DETAILS_UNAVAILABLE' flowId='$REPLAY_FLOW_ID']",
-    "##teamcity[testFinished name='$FIXTURE_FAILING_TEST' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
+    "[testStarted name='$FIXTURE_FAILING_TEST' flowId='$REPLAY_FLOW_ID']",
+    "[testFailed name='$FIXTURE_FAILING_TEST' message='$FAILURE_DETAILS_UNAVAILABLE' flowId='$REPLAY_FLOW_ID']",
+    "[testFinished name='$FIXTURE_FAILING_TEST' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
 )
 
 private fun replayedTest(name: String) = listOf(
-    "##teamcity[testStarted name='$name' flowId='$REPLAY_FLOW_ID']",
-    "##teamcity[testFinished name='$name' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
+    "[testStarted name='$name' flowId='$REPLAY_FLOW_ID']",
+    "[testFinished name='$name' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
 )
 
 private fun replayedSuite(name: String, vararg contents: List<String>): List<String> = buildList {
-    add("##teamcity[testSuiteStarted name='$name' flowId='$REPLAY_FLOW_ID']")
+    add("[testSuiteStarted name='$name' flowId='$REPLAY_FLOW_ID']")
     contents.forEach(::addAll)
-    add("##teamcity[testSuiteFinished name='$name' flowId='$REPLAY_FLOW_ID']")
+    add("[testSuiteFinished name='$name' flowId='$REPLAY_FLOW_ID']")
 }
 
 /** The messages of [groups], one after another, so that a nesting can be written as one. */
@@ -301,17 +327,22 @@ private val BuildResult.fixtureTaskOutcome: TaskOutcome
     get() = (task(FIXTURE_TASK_PATH) ?: fail("No '$FIXTURE_TASK_PATH' in the build result")).outcome
 
 /**
- * The test related service messages of a build, durations replaced as in [withoutDurations].
+ * The test related service messages of a build, without their [SERVICE_MESSAGE_MARKER] and with the
+ * durations replaced as in [withoutDurations].
  *
- * Every `##teamcity[test...]` message is taken, not only the ones carrying the replay's flow id, so
- * that a message sent under the wrong flow id shows up as a difference rather than as silence.
+ * Every `test...` message is taken, not only the ones carrying the replay's flow id, so that a message
+ * sent under the wrong flow id shows up as a difference rather than as silence.
  */
 private val BuildResult.replayedTestMessages: List<String>
     get() = output.lineSequence()
         .map { it.trim() }
-        .filter { it.startsWith("##teamcity[test") }
+        .filter { it.startsWith("$SERVICE_MESSAGE_MARKER[test") }
+        .map { it.removePrefix(SERVICE_MESSAGE_MARKER) }
         .map { it.replace(Regex("duration='\\d+'"), "duration='<ms>'") }
         .toList()
+
+/** A build's console output, with every service message marker taken off, see [SERVICE_MESSAGE_MARKER]. */
+private val BuildResult.quotableOutput: String get() = output.replace(SERVICE_MESSAGE_MARKER, "")
 
 /** The messages naming one test, for a test interested in that one rather than in the whole replay. */
 private fun List<String>.about(testName: String): List<String> = filter { testName in it }
@@ -322,7 +353,7 @@ private fun List<String>.about(testName: String): List<String> = filter { testNa
  * either executes the task or takes it from what an earlier run of the same test stored.
  */
 private fun runFixtureTask(
-    cache: Path,
+    cache: File,
     teamCity: Boolean = true,
     configurationCache: Boolean = true,
     failing: Boolean = false,
@@ -337,7 +368,7 @@ private fun runFixtureTask(
         add("-Pkotlin.build.testRetry.maxRetries=$maxRetries")
         add("--build-cache")
         add("-Pkotlin.build.cache.local.enabled=true")
-        add("-Pkotlin.build.cache.local.directory=$cache")
+        add("-Pkotlin.build.cache.local.directory=${cache.absolutePath}")
         // An empty url is how this repository's settings spell "no remote build cache".
         add("-Pkotlin.build.cache.url=")
         add(if (configurationCache) "--configuration-cache" else "--no-configuration-cache")
@@ -363,7 +394,7 @@ private fun runBuild(arguments: List<String>): BuildResult {
             buildString {
                 appendLine("Build failed: ${arguments.joinToString(" ")}")
                 appendLine("Output:")
-                failure.buildResult.output.lineSequence().forEach { appendLine(it) }
+                failure.buildResult.quotableOutput.lineSequence().forEach { appendLine(it) }
             }
         )
     }
