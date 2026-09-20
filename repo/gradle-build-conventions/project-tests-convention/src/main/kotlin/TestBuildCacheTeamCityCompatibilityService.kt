@@ -5,7 +5,7 @@
 
 import groovy.json.JsonSlurper
 import org.gradle.api.logging.Logging
-import org.gradle.api.provider.Property
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.tooling.events.FinishEvent
@@ -15,15 +15,18 @@ import org.gradle.tooling.events.task.TaskSuccessResult
 import java.io.File
 
 /**
- * Reports the tests of a test task served from the Gradle Build Cache to TeamCity
+ * Reports the tests of the test tasks served from the Gradle Build Cache to TeamCity.
+ *
+ * One service serves the whole build, holding the `test-executions.json` of every test task in the
+ * task graph. When to subscribe it to task completions is load bearing, see [configureTestInventory].
  */
 abstract class TestBuildCacheTeamCityCompatibilityService :
     BuildService<TestBuildCacheTeamCityCompatibilityService.Parameters>,
     OperationCompletionListener {
 
     interface Parameters : BuildServiceParameters {
-        val taskPath: Property<String>
-        val executionsFile: Property<File>
+        /** Path of a test task to the `test-executions.json` recorded for it. */
+        val executionsFiles: MapProperty<String, File>
     }
 
     private companion object {
@@ -35,21 +38,22 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
     }
 
     private val log = Logging.getLogger(javaClass)
-    private val taskPath: String by lazy { parameters.taskPath.get() }
-    private val executionsFile: File by lazy { parameters.executionsFile.get() }
-    private val flowId: String by lazy { "TestReplay$taskPath" }
+
+    /** Held rather than read per event: the map is the same for all of them, and reading it finalizes it. */
+    private val executionsFiles: Map<String, File> by lazy { parameters.executionsFiles.get() }
 
     override fun onFinish(event: FinishEvent) {
         if (event !is TaskFinishEvent) return
-        if (event.descriptor.taskPath != taskPath) return
+        val taskPath = event.descriptor.taskPath
+        val executionsFile = executionsFiles[taskPath] ?: return
         val result = event.result as? TaskSuccessResult ?: return
         if (!result.isFromCache && !result.isUpToDate) return
 
-        val recorded = readExecutions() ?: return
-        replay(recorded.toReplayTree())
+        val recorded = readExecutions(taskPath, executionsFile) ?: return
+        TaskReplay(taskPath, executionsFile).replay(recorded.toReplayTree())
     }
 
-    private fun readExecutions(): RecordedSuite? {
+    private fun readExecutions(taskPath: String, executionsFile: File): RecordedSuite? {
         if (!executionsFile.isFile) {
             log.warn("No test executions recorded for $taskPath: $executionsFile does not exist")
             return null
@@ -91,50 +95,58 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
         return replayRoot
     }
 
-    private fun replay(suite: ReplayNode) {
-        for (test in suite.tests) {
-            // The recorded halves joined back into the name TeamCity expects.
-            val name = test.className.qualifying(test.name)
-            serviceMessage("testStarted", "name" to name)
-            when (test.status) {
-                STATUS_OK -> {}
-                STATUS_IGNORED -> serviceMessage("testIgnored", "name" to name)
-                STATUS_FAILURE -> serviceMessage(
-                    "testFailed",
-                    "name" to name,
-                    "message" to FAILURE_DETAILS_UNAVAILABLE,
-                )
-                else -> log.warn("Unknown status '${test.status}' of test $name in $executionsFile")
-            }
-            serviceMessage("testFinished", "name" to name, "duration" to test.durationMillis.toString())
-        }
-
-        for (nested in suite.suites.values) {
-            serviceMessage("testSuiteStarted", "name" to nested.name)
-            replay(nested)
-            serviceMessage("testSuiteFinished", "name" to nested.name)
-        }
-    }
-
-    private fun serviceMessage(messageName: String, vararg attributes: Pair<String, String>) {
-        val rendered = (attributes.toList() + ("flowId" to flowId))
-            .joinToString(separator = " ") { (name, value) -> "$name='${escape(value)}'" }
-        println("##teamcity[$messageName $rendered]")
-    }
-
     /**
-     * Escapes [value] for a service message attribute.
-     *
-     * `|` is escaped first, so that the escape character this very function introduces is not escaped
-     * again. See https://www.jetbrains.com/help/teamcity/service-messages.html
+     * Prints the tests of one task, in a flow of its own so that TeamCity keeps them apart from the
+     * tests of whatever else the build is running at the same time.
      */
-    private fun escape(value: String): String = value
-        .replace("|", "||")
-        .replace("'", "|'")
-        .replace("\n", "|n")
-        .replace("\r", "|r")
-        .replace("[", "|[")
-        .replace("]", "|]")
+    private inner class TaskReplay(taskPath: String, private val executionsFile: File) {
+        private val flowId = "TestReplay$taskPath"
+
+        fun replay(suite: ReplayNode) {
+            for (test in suite.tests) {
+                // The recorded halves joined back into the name TeamCity expects.
+                val name = test.className.qualifying(test.name)
+                serviceMessage("testStarted", "name" to name)
+                when (test.status) {
+                    STATUS_OK -> {}
+                    STATUS_IGNORED -> serviceMessage("testIgnored", "name" to name)
+                    STATUS_FAILURE -> serviceMessage(
+                        "testFailed",
+                        "name" to name,
+                        "message" to FAILURE_DETAILS_UNAVAILABLE,
+                    )
+                    else -> log.warn("Unknown status '${test.status}' of test $name in $executionsFile")
+                }
+                serviceMessage("testFinished", "name" to name, "duration" to test.durationMillis.toString())
+            }
+
+            for (nested in suite.suites.values) {
+                serviceMessage("testSuiteStarted", "name" to nested.name)
+                replay(nested)
+                serviceMessage("testSuiteFinished", "name" to nested.name)
+            }
+        }
+
+        private fun serviceMessage(messageName: String, vararg attributes: Pair<String, String>) {
+            val rendered = (attributes.toList() + ("flowId" to flowId))
+                .joinToString(separator = " ") { (name, value) -> "$name='${escape(value)}'" }
+            println("##teamcity[$messageName $rendered]")
+        }
+
+        /**
+         * Escapes [value] for a service message attribute.
+         *
+         * `|` is escaped first, so that the escape character this very function introduces is not escaped
+         * again. See https://www.jetbrains.com/help/teamcity/service-messages.html
+         */
+        private fun escape(value: String): String = value
+            .replace("|", "||")
+            .replace("'", "|'")
+            .replace("\n", "|n")
+            .replace("\r", "|r")
+            .replace("[", "|[")
+            .replace("]", "|]")
+    }
 
     private class RecordedSuite(val name: String, val suites: List<RecordedSuite>, val tests: List<RecordedTest>)
 
