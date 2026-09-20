@@ -172,6 +172,7 @@ where advanced options include:
   -Xfragment-sources=<fragment name>:<path>
                              Add sources to a specific fragment of a multiplatform compilation.
   -Xfragments=<fragment name> Declare all known fragments of a multiplatform compilation.
+  -Xfull-value-classes       Enable experimental language support for full value classes.
   -Xheader-mode              Enable header compilation mode.
                              In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
                              compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation

@@ -1373,6 +1373,20 @@ Warning: this flag is not intended for production use. If you want to configure 
     }
 
     compilerArgument {
+        name = "Xfull-value-classes"
+        description = "Enable experimental language support for full value classes.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.FullValueClasses),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
+        )
+    }
+
+    compilerArgument {
         name = "Xintrinsic-const-evaluation"
         description = """
             Enables `IntrinsicConstEvaluation` language feature.`

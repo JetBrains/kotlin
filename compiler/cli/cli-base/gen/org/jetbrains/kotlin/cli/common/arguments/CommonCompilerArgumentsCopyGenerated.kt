@@ -58,6 +58,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.fragmentRefines = from.fragmentRefines.copyOf()
     to.fragmentSources = from.fragmentSources.copyOf()
     to.fragments = from.fragments.copyOf()
+    to.fullValueClasses = from.fullValueClasses
     to.headerMode = from.headerMode
     to.headerModeType = from.headerModeType
     to.incrementalCompilation = from.incrementalCompilation

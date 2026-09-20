@@ -477,6 +477,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_FIR_AGGRESSIVE_PRUNING", KotlinReleaseVersion(2, 4, 20))
 
     /**
+     * Enable experimental language support for full value classes.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_FULL_VALUE_CLASSES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_FULL_VALUE_CLASSES", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Enable header compilation mode.
      * In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
      * compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation

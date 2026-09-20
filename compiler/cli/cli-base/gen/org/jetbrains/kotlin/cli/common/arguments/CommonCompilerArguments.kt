@@ -613,6 +613,17 @@ The argument should be used only if the new compilation scheme is enabled with -
         }
 
     @Argument(
+        value = "-Xfull-value-classes",
+        description = "Enable experimental language support for full value classes.",
+    )
+    @Enables(LanguageFeature.FullValueClasses)
+    var fullValueClasses: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xheader-mode",
         description = """Enable header compilation mode.
 In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
