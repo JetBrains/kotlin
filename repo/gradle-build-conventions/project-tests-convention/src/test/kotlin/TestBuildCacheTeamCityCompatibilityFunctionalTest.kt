@@ -84,6 +84,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
 
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(recorded, recordedExecutions(), "The build cache should restore the recording unchanged")
+        assertContains(result.quotableOutput, CONFIGURATION_CACHE_REUSED)
         assertEquals(expectedReplay, result.replayedTestMessages)
     }
 
@@ -103,7 +104,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
         val result = runFixtureTask(cache)
 
         assertEquals(TaskOutcome.UP_TO_DATE, result.fixtureTaskOutcome)
-        assertContains(result.quotableOutput, "Configuration cache entry reused.")
+        assertContains(result.quotableOutput, CONFIGURATION_CACHE_REUSED)
         assertEquals(expectedReplay, result.replayedTestMessages)
     }
 
@@ -117,6 +118,10 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
         val result = runFixtureTask(cache, configurationCache = false)
 
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
+        assertFalse(
+            "Configuration cache entry" in result.quotableOutput,
+            "This test is only worth anything while the configuration cache stays out of the build",
+        )
         assertEquals(expectedReplay, result.replayedTestMessages)
     }
 
@@ -204,6 +209,15 @@ private const val REPLAY_FLOW_ID = "TestReplay$FIXTURE_TASK_PATH"
  * its own tests starting, or failing. The filter that looks for the marker is what asserts it is there.
  */
 private const val SERVICE_MESSAGE_MARKER = "##teamcity"
+
+/**
+ * What a build says when it did not configure itself but read the whole task graph back.
+ *
+ * Asserted wherever a replay is: it is the shape CI runs in, and the one where the service doing the
+ * replaying, and its registration as a build listener, come back from a serialized graph rather than
+ * from `configureTestInventory` having just run.
+ */
+private const val CONFIGURATION_CACHE_REUSED = "Configuration cache entry reused."
 
 /** The text a replayed failure carries in place of the failure details the recording does not keep. */
 private const val FAILURE_DETAILS_UNAVAILABLE =
