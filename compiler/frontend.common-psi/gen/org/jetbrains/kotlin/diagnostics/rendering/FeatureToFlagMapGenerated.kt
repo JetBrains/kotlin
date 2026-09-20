@@ -36,6 +36,7 @@ val featureToEnablingFlagMap: Map<LanguageFeature, String> = mapOf(
     LanguageFeature.EnableNameBasedDestructuringShortForm to "-Xname-based-destructuring=complete",
     LanguageFeature.ExplicitBackingFields to "-Xexplicit-backing-fields",
     LanguageFeature.ExplicitContextArguments to "-Xexplicit-context-arguments",
+    LanguageFeature.FullValueClasses to "-Xfull-value-classes",
     LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType to "-Xnew-inference",
     LanguageFeature.HoldsInContracts to "-Xallow-holdsin-contract",
     LanguageFeature.InferThrowableTypeParameterToUpperBound to "-Xeager-lambda-analysis",

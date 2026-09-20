@@ -85,6 +85,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_FRIEND_DEPENDENCY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_REFINES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_SOURCES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FULL_VALUE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HEADER_MODE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HEADER_MODE_TYPE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_IGNORE_CONST_OPTIMIZATION_ERRORS
@@ -261,6 +262,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_FRAGMENT_REFINES in this) { arguments.fragmentRefines = get(X_FRAGMENT_REFINES) ?: emptyArray()}
     if (X_FRAGMENT_SOURCES in this) { arguments.fragmentSources = get(X_FRAGMENT_SOURCES) ?: emptyArray()}
     if (X_FRAGMENTS in this) { arguments.fragments = get(X_FRAGMENTS) ?: emptyArray()}
+    if (X_FULL_VALUE_CLASSES in this) { arguments.fullValueClasses = get(X_FULL_VALUE_CLASSES)}
     if (X_HEADER_MODE in this) { arguments.headerMode = get(X_HEADER_MODE)}
     if (X_HEADER_MODE_TYPE in this) { arguments.headerModeType = get(X_HEADER_MODE_TYPE).stringValue}
     try { if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.setUsingReflection("ignoreConstOptimizationErrors", get(X_IGNORE_CONST_OPTIMIZATION_ERRORS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IGNORE_CONST_OPTIMIZATION_ERRORS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
@@ -378,6 +380,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_FRAGMENT_REFINES] = arguments.fragmentRefines } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_SOURCES] = arguments.fragmentSources } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENTS] = arguments.fragments } catch (_: NoSuchMethodError) {  }
+    try { this[X_FULL_VALUE_CLASSES] = arguments.fullValueClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_HEADER_MODE] = arguments.headerMode } catch (_: NoSuchMethodError) {  }
     try { this[X_HEADER_MODE_TYPE] = arguments.headerModeType.let { HeaderMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::headerModeType, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xheader-mode-type value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.getUsingReflection<Boolean>("ignoreConstOptimizationErrors") } catch (_: NoSuchMethodError) {  }
@@ -490,6 +493,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_FRAGMENT_REFINES in this) { arguments.fragmentRefines = get(X_FRAGMENT_REFINES) ?: emptyArray()}
     if (X_FRAGMENT_SOURCES in this) { arguments.fragmentSources = get(X_FRAGMENT_SOURCES) ?: emptyArray()}
     if (X_FRAGMENTS in this) { arguments.fragments = get(X_FRAGMENTS) ?: emptyArray()}
+    if (X_FULL_VALUE_CLASSES in this) { arguments.fullValueClasses = get(X_FULL_VALUE_CLASSES)}
     if (X_HEADER_MODE in this) { arguments.headerMode = get(X_HEADER_MODE)}
     if (X_HEADER_MODE_TYPE in this) { arguments.headerModeType = get(X_HEADER_MODE_TYPE).stringValue}
     try { if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.setUsingReflection("ignoreConstOptimizationErrors", get(X_IGNORE_CONST_OPTIMIZATION_ERRORS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IGNORE_CONST_OPTIMIZATION_ERRORS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
@@ -717,6 +721,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_FRAGMENTS: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_FRAGMENTS")
+
+    public val X_FULL_VALUE_CLASSES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_FULL_VALUE_CLASSES")
 
     public val X_HEADER_MODE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_HEADER_MODE")
