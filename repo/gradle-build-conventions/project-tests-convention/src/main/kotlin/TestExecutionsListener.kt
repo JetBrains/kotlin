@@ -10,24 +10,18 @@ import org.gradle.api.tasks.testing.TestResult
 import java.io.File
 
 /**
- * Writes the executed tests to `test-executions.json`, keeping the suite nesting intact, so that the
- * tests of a task served from the build cache can be replayed to TeamCity as `testSuiteStarted` /
- * `testSuiteFinished` and `testStarted` / `testFinished` service messages.
+ * Writes the executed tests to `test-executions.json`, suite nesting intact, so that the tests of a
+ * task served from the build cache can be replayed to TeamCity as service messages.
  *
- * This is the structured counterpart of [TestInventoryListener]: the flat `test-inventory.tsv` joins
- * the suite names and the test name with `": "`, which cannot be undone, because a test name may
- * itself contain `": "`.
- *
- * The suite names are the same as the inventory's, but the test names are **not**: they are recorded in
- * the form TeamCity's own Gradle runner reports, which the server then normalizes (see
- * [teamCityRunnerMethodName]). The inventory records the normalized form, because it is compared
- * against the names TeamCity registers; this file records the form that has to be *sent* to arrive at
- * them. For all but a handful of tests the two are identical.
+ * The structured counterpart of [TestInventoryListener]: the flat `test-inventory.tsv` joins the
+ * suite names and the test name with `": "`, which cannot be undone. Test names differ from the
+ * inventory's too - recorded in the form TeamCity's own runner sends, which the server then
+ * normalizes, see [teamCityRunnerMethodName].
  *
  * ### Format
  *
- * The file is a declared output of the test task, so the build cache restores it along with the
- * task's other outputs - which is what lets a task that never ran still report its tests.
+ * The file is a declared output of the test task, so the build cache restores it - which is what
+ * lets a task that never ran still report its tests.
  *
  * A recording of `:kotlin-util-klib-abi:test`, abridged to one test per suite and two of its nine
  * top level suites - a plain test class, and one whose tests sit a suite deeper:
@@ -71,68 +65,47 @@ import java.io.File
  * }
  * ```
  *
- * The second suite is the shape worth reading twice: a class whose tests are not directly in it.
- * JUnit 5 reports a parameterized method as a container of its own, so the class suite holds no
- * test and the invocations sit one level further in, each naming the class it belongs to.
+ * The second suite is a class whose tests are not directly in it: JUnit 5 reports a parameterized
+ * method as a container of its own, and each invocation names the class it belongs to.
  *
  * - `formatVersion` - currently `1`.
  * - `taskPath` - the task this file was recorded for, so that a file lifted out of its build
- *   directory still says where it came from; the directory name alone only carries the task name.
- * - `duration` - milliseconds. At the top level the whole test run, on a suite Gradle's own timing
- *   for that suite. Both are **optional**, written only where Gradle reported one; on a test it is
- *   always present. TeamCity has nowhere to put a suite's duration - `testSuiteFinished` carries
- *   none - so these exist for other consumers, such as distributing tests by how long they take.
- * - `suites` and `tests` - always written, even when empty, so that a reader never has to tell an
- *   absent member from an empty one.
- * - suite `name` - as Gradle reports it, minus the suites Gradle inserts itself (the test run, the
- *   executor, the partitions a task is split into, the task's own name), see
- *   [isGradleInsertedSuiteName]. A task that prefixes a class suite with its own name, as Kotlin/JS
- *   and Kotlin/Wasm do, is recorded under the bare class instead, so that every task family records
- *   the same shape, see [recordedSuiteName].
- *   The suite standing for a test's own class is **kept**: that is where per-class timings hang.
- *   Collapsing it into the test name is TeamCity's convention and is applied when replaying, not
- *   when recording.
- * - test `name` - the **method part only**, in the form TeamCity's own Gradle runner sends, which is
- *   why an ordinary method keeps its `()` here and loses it once the server has registered it (see
- *   [teamCityRunnerMethodName]). The name TeamCity is told is `className` and `name` joined with a
- *   `.`, see [qualifying].
- * - test `className` - three states, and they differ:
- *     - **absent** means the enclosing suite is the test's class, which is the usual case and why
- *       `skipWhitespace()` above writes no class at all;
- *     - **present** names a class the enclosing suite does not stand for, because that suite is
- *       narrower than the class - the parameterized invocation above, whose own suite is the
- *       container rather than the class;
- *     - **explicitly `null`** means the test has no class at all, which only needs saying inside a
- *       suite, where absence would otherwise mean "the suite's class". An empty string means this
- *       too, being the other way Gradle spells a missing class, and is written through as reported
- *       rather than normalized, see [qualifying].
- * - test `status` - `OK`, `Failure` or `Ignored`, the names TeamCity's own integration uses, see
- *   [statusName]. A `Failure` can appear in a file recorded by a *successful* task: tests are
- *   retried, and passing after a retry is not a failure by default, see [configureTestRetries].
- * - Tests appear in **execution order**, which is significant for exactly that reason: a retried
- *   test is recorded once per attempt, its `Failure` before its `OK`, and replaying them in that
- *   order is what lets TeamCity see it as flaky rather than as simply failed.
+ *   directory still says where it came from.
+ * - `duration` - milliseconds; the whole run at the top level, Gradle's own timing on a suite.
+ *   **Optional** on both, always present on a test. TeamCity has nowhere to put a suite's duration,
+ *   so these are for other consumers, such as distributing tests by how long they take.
+ * - `suites` and `tests` - always written, even when empty.
+ * - suite `name` - as Gradle reports it, minus the suites Gradle inserts itself (see
+ *   [isGradleInsertedSuiteName]), and under the bare class where a task prefixes a class suite with
+ *   its own name (see [recordedSuiteName]). The suite standing for a test's own class is **kept**:
+ *   that is where per-class timings hang, and collapsing it is the replay's job.
+ * - test `name` - the **method part only**, in the form TeamCity's runner sends, see
+ *   [teamCityRunnerMethodName]. What TeamCity is told is `className` and `name` joined with a `.`,
+ *   see [qualifying].
+ * - test `className` - three states that differ: **absent** means the enclosing suite is the test's
+ *   class; **present** names a class that suite does not stand for, being narrower, as for a
+ *   parameterized invocation; **explicitly `null`** means the test has no class at all. An empty
+ *   string means that too, Gradle's other spelling of it, and is written through as reported.
+ * - test `status` - `OK`, `Failure` or `Ignored`, see [statusName]. A `Failure` can appear in a file
+ *   recorded by a *successful* task: passing after a retry is not a failure, see
+ *   [configureTestRetries].
+ * - Tests appear in **execution order**, which is significant: a retried test is recorded once per
+ *   attempt, its `Failure` before its `OK`, and replaying that order is what lets TeamCity see it as
+ *   flaky rather than as failed.
  *
  * ### Why JSON rather than YAML
  *
- * The document has to round-trip test names containing `:`, `#`, quotes, apostrophes, leading and
- * trailing spaces, and newlines - the very characters that make a hand-written YAML emitter risky,
- * as whether such a scalar needs quoting, and which quoting style is legal, depends on the character
- * and on its position. JSON escaping is fully specified and unconditional: every string is double
- * quoted, so no test name can change the shape of the document.
- *
- * Tooling settles it: no YAML parser ships with Gradle (`groovy-json` does, `groovy-yaml` does not),
- * so reading YAML back would mean putting a third-party parser on the build logic classpath, while
- * this file can be read with `groovy.json.JsonSlurper` from the Gradle API alone. JSON is also a
- * strict subset of YAML 1.2, so a YAML parser reads it unchanged if it is ever consumed as YAML.
+ * Test names carry `:`, `#`, quotes, apostrophes and newlines, and JSON escaping is unconditional
+ * where YAML quoting depends on the character and on its position. No YAML parser ships with Gradle
+ * either, while `groovy.json.JsonSlurper` does - and JSON is a strict subset of YAML 1.2, so a YAML
+ * parser reads it unchanged if it is ever wanted.
  */
 class TestExecutionsListener(
     private val taskName: String,
     private val taskPath: String,
     buildDir: Provider<File>,
 ) : TestListener {
-    // Sits in the same directory as 'test-inventory.tsv': the two describe the same test run, and
-    // whatever collects one as a TeamCity artifact then finds the other next to it.
+    // Next to 'test-inventory.tsv': the two describe the same run, so collecting one finds the other.
     val executionsFile: Provider<File> =
         buildDir.map { it.resolve("test-inventory").resolve(taskName).resolve("test-executions.json") }
 
@@ -154,20 +127,16 @@ class TestExecutionsListener(
     /** Holds the top level suites and any test reported without an enclosing suite. */
     private val root = SuiteNode(name = "")
 
-    // Gradle dispatches the test events of one task, but not necessarily from a single thread once the
-    // tests run in parallel forks, so the tree is guarded rather than assumed to be touched serially.
+    // One task's events are not necessarily dispatched from one thread once tests run in parallel forks.
     private val lock = Any()
 
     override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
-        // The name is the runner's form, not the inventory's: this file is replayed as service messages,
-        // and TeamCity normalizes those the same way it normalizes the runner's own. See
-        // [teamCityRunnerMethodName].
+        // The runner's form, not the inventory's: TeamCity normalizes a replayed message the same
+        // way it normalizes the runner's own, see [teamCityRunnerMethodName].
         val record = TestRecord(
-            // Only the method part: the class is recorded next to it rather than repeated here, now
-            // that it is a suite in its own right. A replay joins the two back, see [qualifying].
+            // The method part only; a replay joins it back to the class, see [qualifying].
             name = testDescriptor.teamCityRunnerMethodName(),
-            // Kept so that a replay can collapse the suite that merely repeats it, the way TeamCity
-            // names tests, without the recorded structure having to anticipate that convention.
+            // Kept so that a replay can collapse the suite repeating it, as TeamCity names tests.
             className = testDescriptor.className,
             status = result.statusName(),
             durationMillis = result.durationMillis,
@@ -195,14 +164,11 @@ class TestExecutionsListener(
 
     /** Walks to the node at [suiteNames], creating the nodes along the way. */
     private fun nodeFor(suiteNames: List<String>): SuiteNode =
-        // Suites of equal name under the same parent are merged, a suite being identified by its name
-        // within its parent.
+        // A suite is identified by its name within its parent, so equal names are merged.
         suiteNames.fold(root) { parent, name -> parent.suites.getOrPut(name) { SuiteNode(name) } }
 
     override fun afterSuite(suite: TestDescriptor, result: TestResult) {
-        // Gradle times every suite it reports, down to individual (and nested) test classes. TeamCity
-        // has nowhere to put those - 'testSuiteFinished' carries no duration - but they are the input a
-        // test distribution mechanism needs, so they are recorded rather than dropped.
+        // TeamCity has nowhere to put a suite's timing, but a test distribution mechanism needs it.
         synchronized(lock) { nodeOf(suite)?.durationMillis = result.durationMillis }
 
         // Only the root suite finishing means the whole task is done.
@@ -218,8 +184,7 @@ class TestExecutionsListener(
     private fun render(): String = buildString {
         append("{\n")
         append("  \"formatVersion\": 1,\n")
-        // The full task path, so that a file lifted out of its build directory still says which task
-        // it came from - the directory name alone only carries the task name.
+        // The full path, so that a file lifted out of its build directory still says which task.
         append("  \"taskPath\": ").appendJsonString(taskPath).append(",\n")
         // The root suite's own timing: how long the task's whole test run took.
         root.durationMillis?.let { append("  \"duration\": ").append(it).append(",\n") }
@@ -261,10 +226,8 @@ class TestExecutionsListener(
             append("[\n")
             node.tests.forEachIndexed { index, test ->
                 append(indent).append("  { \"name\": ").appendJsonString(test.name)
-                // The class is written only when it is not the enclosing suite's - which, for a suite
-                // standing for a class, it almost always is. An absent 'className' therefore means "the
-                // suite I am in", and an explicit null means "no class at all", a distinction that
-                // matters because the two are replayed differently.
+                // Written only where it is not the enclosing suite's, so an absent 'className' means
+                // "the suite I am in" and an explicit null means "no class at all" - replayed differently.
                 if (!node.enclosesClassOf(test)) {
                     append(", \"className\": ")
                     if (test.className == null) append("null") else appendJsonString(test.className)
@@ -280,10 +243,7 @@ class TestExecutionsListener(
         append('\n')
     }
 
-    /**
-     * Appends [value] as a JSON string literal, escaping everything JSON does not allow raw inside a
-     * string, so that an arbitrary test name cannot break out of the literal.
-     */
+    /** Appends [value] as a JSON string literal, so that no test name can break out of it. */
     private fun StringBuilder.appendJsonString(value: String): StringBuilder {
         append('"')
         for (char in value) {

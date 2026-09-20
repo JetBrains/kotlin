@@ -16,8 +16,7 @@ import java.io.File
 internal fun Project.configureTestInventory() {
     val isTeamCityBuild = kotlinBuildProperties.isTeamcityBuild.get()
 
-    // Lazily, because reaching for it registers the build's service, and most projects that apply
-    // this convention have no test task to report.
+    // Lazy: reaching for it registers the build's service, and most projects have no test task.
     val recordedExecutions by lazy { testBuildCacheTeamCityCompatibilityExecutions() }
 
     tasks.withType<AbstractTestTask>().configureEach {
@@ -40,18 +39,16 @@ private const val COMPATIBILITY_SERVICE_NAME = "TestBuildCacheTeamCityCompatibil
 
 /**
  * The map the build's single [TestBuildCacheTeamCityCompatibilityService] replays from, registering
- * the service and subscribing it to task completions the first time a project asks for it.
+ * and subscribing the service on first use.
  *
- * The registration doubles as the build scoped holder of the map: a shared service exists once per
- * build under its name, so every project fills the same parameters, and those parameters are what
- * the configuration cache stores for the service and hands back to it on a build that skipped
- * configuring.
+ * The registration holds the map: one service per build under its name, so every project fills the
+ * same parameters, which are what the configuration cache stores.
  */
 private fun Project.testBuildCacheTeamCityCompatibilityExecutions(): MapProperty<String, File> {
     val sharedServices = gradle.sharedServices
 
-    // Gradle runs the configuration action for the call that creates the registration and for no
-    // other, so the build subscribes once however many projects ask for the service.
+    // Gradle runs this action for the call that creates the registration and for no other, so the
+    // build subscribes once however many projects ask for the service.
     sharedServices.registerIfAbsent(
         COMPATIBILITY_SERVICE_NAME,
         TestBuildCacheTeamCityCompatibilityService::class.java,
@@ -63,19 +60,12 @@ private fun Project.testBuildCacheTeamCityCompatibilityExecutions(): MapProperty
         val action = object : Action<TaskExecutionGraph> {
             override fun execute(graph: TaskExecutionGraph) {
                 // Subscribing isolates the parameters, freezing the map, so it has to wait until
-                // every project has added its test tasks - which is what makes one service for the
-                // whole build possible at all. Subscribing while the plugin is applied would freeze
-                // a map that 'configureEach' has not filled yet, and that is why the service used to
-                // be registered once per test task.
-                //
-                // On a build restored from the configuration cache this never runs. It does not have
-                // to: the subscription made when the entry was stored, isolated map and all, is part
-                // of what was stored.
+                // every project has added its test tasks. On a configuration cache hit this never
+                // runs: the subscription stored with the entry, isolated map and all, replays there.
                 val compatibility = sharedServices.testBuildCacheTeamCityCompatibilityRegistration
 
-                // Test tasks that were configured without being scheduled are dropped, so that the
-                // map the build carries - into its configuration cache entry among other places - is
-                // this run's own.
+                // Test tasks configured without being scheduled are dropped: the map the build
+                // carries, into its configuration cache entry among other places, is this run's own.
                 val scheduled = graph.allTasks.mapTo(HashSet()) { it.path }
                 val executionsFiles = compatibility.parameters.executionsFiles
                 executionsFiles.set(executionsFiles.get().filterKeys { it in scheduled })
@@ -91,10 +81,8 @@ private fun Project.testBuildCacheTeamCityCompatibilityExecutions(): MapProperty
 }
 
 /**
- * The registration of the build's [TestBuildCacheTeamCityCompatibilityService], typed.
- *
- * Both halves of the registration are needed - the parameters to fill and the service itself to
- * subscribe - and this is where the one cast that types them lives.
+ * The registration of the build's [TestBuildCacheTeamCityCompatibilityService], typed: it carries
+ * both halves needed here, the parameters to fill and the service to subscribe.
  */
 private val BuildServiceRegistry.testBuildCacheTeamCityCompatibilityRegistration:
         BuildServiceRegistration<
