@@ -780,6 +780,7 @@ Not connected to any 'lifecycleTestTask':
   - :native:native.tests:stdlibTest [Native]
   - :plugins:js-plain-objects:runtime:jsBrowserTest [CompilerPlugins]
   - :plugins:js-plain-objects:runtime:jsNodeTest [CompilerPlugins]
+  - :repo:test-inventory-fixture:secondTest [BuildInfrastructure]
   - :repo:test-inventory-fixture:test [BuildInfrastructure]
   - :repo:test-runtime:test [BuildInfrastructure]
   - :test-instrumenter:test [Unknown]
