@@ -15,11 +15,10 @@ import org.junit.jupiter.params.provider.ValueSource
 /**
  * Tests that exist to be recorded into `test-executions.json` and replayed to TeamCity from it.
  *
- * Between them they cover every shape a recording can take, each of which the replay has to do
- * something different with: a test whose class is the suite it sits in, a test in a nested class, a
- * parameterized test whose invocations sit in a container narrower than the class, and the three
- * statuses. Their names and their order are asserted verbatim by the functional tests, see this
- * module's ReadMe.
+ * Between them they cover every shape a recording can take, each of which the replay does something
+ * different with: a test whose class is the suite it sits in, a test in a nested class, a
+ * parameterized test, and the three statuses. Their names and order are asserted verbatim by the
+ * functional tests, see this module's ReadMe.
  */
 class TestInventoryFixtureTest {
 

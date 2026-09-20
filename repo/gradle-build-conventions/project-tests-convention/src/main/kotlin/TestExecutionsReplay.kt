@@ -7,16 +7,12 @@ import groovy.json.JsonSlurper
 import java.io.File
 
 /**
- * What TeamCity has to be told about the tests recorded in a `test-executions.json`, so that a task
- * that never ran still reports them.
+ * What TeamCity is told about the tests recorded in a `test-executions.json`, so that a task that
+ * never ran still reports them.
  *
- * A class of its own rather than part of [TestBuildCacheTeamCityCompatibilityService]: *what* to say
- * about a recording is the part worth testing, and a build service is not something a test can
- * instantiate, while the service is left with deciding when to say it and where it goes.
- *
- * The messages come back as the bodies of service messages, without the `##teamcity[` and `]` around
- * them. That is what lets a test hold them: a line carrying the marker would be read by the build
- * running that test as one of its own tests starting - or failing.
+ * Apart from [TestBuildCacheTeamCityCompatibilityService] because a build service is not something
+ * a test can instantiate. The messages are bodies, without the `##teamcity[` and `]`: a whole line
+ * would be read by the build running a test of this as one of its own tests.
  */
 internal class TestExecutionsReplay(
     private val taskPath: String,
@@ -31,12 +27,11 @@ internal class TestExecutionsReplay(
     }
 
     /**
-     * The tests recorded in [executionsFile], in the order they have to be sent, all under a flow of
-     * this task's own so that TeamCity keeps them apart from whatever else the build runs at the
-     * same time.
+     * The tests recorded in [executionsFile], in the order they have to be sent, under a flow of
+     * this task's own so that TeamCity keeps them apart from whatever runs alongside.
      *
-     * A file that is missing or cannot be read is reported through [warn] and replayed as nothing: a
-     * build that can no longer say what a cached task tested should not fail over it.
+     * A file that is missing or unreadable is reported through [warn] and replayed as nothing: not
+     * being able to say what a cached task tested is no reason to fail the build.
      */
     fun messagesFor(executionsFile: File): List<String> {
         val recorded = read(executionsFile) ?: return emptyList()
@@ -63,11 +58,9 @@ internal class TestExecutionsReplay(
     /**
      * Rebuilds the suite nesting TeamCity expects from the structure Gradle reported.
      *
-     * The recorded file keeps every suite Gradle reports, including the one standing for a test's own
-     * class, because that is where the per-class timings hang. TeamCity names a test `<class>.<method>`
-     * and does not repeat the class as an enclosing suite, so those are collapsed again here - per
-     * test, not per suite: a class that also has nested classes stays a suite for *their* tests while
-     * disappearing for its own.
+     * TeamCity spells a test `<class>.<method>` and does not repeat the class as a suite, so the
+     * class suite the recording keeps for its timings is collapsed here - per test, not per suite: a
+     * class with nested classes stays a suite for *their* tests while disappearing for its own.
      */
     private fun RecordedSuite.toReplayTree(): ReplayNode {
         val replayRoot = ReplayNode("")
@@ -121,10 +114,8 @@ internal class TestExecutionsReplay(
     }
 
     /**
-     * Escapes [value] for a service message attribute.
-     *
-     * `|` is escaped first, so that the escape character this very function introduces is not escaped
-     * again. See https://www.jetbrains.com/help/teamcity/service-messages.html
+     * Escapes [value] for a service message attribute, `|` first so that the escape character this
+     * adds is not escaped again. See https://www.jetbrains.com/help/teamcity/service-messages.html
      */
     private fun escape(value: String): String = value
         .replace("|", "||")
@@ -152,8 +143,8 @@ internal class TestExecutionsReplay(
     private fun Map<*, *>.toRecordedSuite(suiteName: String): RecordedSuite = RecordedSuite(
         name = suiteName,
         suites = members("suites").map { it.toRecordedSuite(it.string("name")) },
-        // An absent 'className' means the enclosing suite is the test's class; an explicit null means
-        // the test has none. The root suite's name is empty and stands for no class.
+        // An absent 'className' means the enclosing suite is the test's class, an explicit null
+        // that it has none; the root suite's empty name stands for no class.
         tests = members("tests").map {
             val className = if (it.containsKey("className")) it["className"] as String? else suiteName.ifEmpty { null }
             RecordedTest(it.string("name"), className, it.string("status"), it.long("duration"))

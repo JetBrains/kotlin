@@ -16,9 +16,8 @@ import java.io.File
 /**
  * Reports the tests of the test tasks served from the Gradle Build Cache to TeamCity.
  *
- * One service serves the whole build, holding the `test-executions.json` of every test task in the
- * task graph. When to subscribe it to task completions is load bearing, see [configureTestInventory].
- *
+ * One service for the whole build, holding the `test-executions.json` of every test task in the
+ * graph; when it is subscribed to task completions is load bearing, see [configureTestInventory].
  * What is reported about a recording is [TestExecutionsReplay]'s; this is when, and where to.
  */
 abstract class TestBuildCacheTeamCityCompatibilityService :
@@ -32,7 +31,7 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
 
     private val log = Logging.getLogger(javaClass)
 
-    /** Held rather than read per event: the map is the same for all of them, and reading it finalizes it. */
+    /** Read once: every event wants the same map, and reading it finalizes the parameters. */
     private val executionsFiles: Map<String, File> by lazy { parameters.executionsFiles.get() }
 
     override fun onFinish(event: FinishEvent) {
