@@ -14,30 +14,25 @@ dependencies {
 }
 
 /*
- * Whether the fixture's 'failing()' test fails, off unless a test asks for it, so that an ordinary
- * run of this module stays green.
- *
- * The task tolerates the failure, the way a task with 'ignoreFailures' or a retried flaky test does,
- * so that a *successful* task records a failed test - which is what makes a replayed 'testFailed'
- * something that can happen at all.
+ * Whether the fixture's 'failing()' test fails, off unless a test asks for it. The task tolerates
+ * the failure, the way 'ignoreFailures' or a retried flaky test does, so that a *successful* task
+ * records a failed test - which is what makes a replayed 'testFailed' possible at all.
  */
 val fixtureFails = providers.gradleProperty("testInventoryFixture.failing").map(String::toBoolean).orElse(false)
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 
-    // A system property rather than a plain flag: the fixture reads it, and it is a task input, so
-    // the two outcomes cannot be served to each other from the build cache.
+    // A system property because it is a task input: the two outcomes cannot be served to each
+    // other from the build cache.
     systemProperty("testInventoryFixture.failing", fixtureFails.get())
     ignoreFailures = fixtureFails.get()
 }
 
 /*
- * The fixture's second test task, and the class that only it runs.
- *
- * One build service replays the tests of every test task of a build, each under its own flow, which
- * takes a build with two of them to exercise. The two tasks run disjoint classes, so that what
- * 'test' records - asserted in full by the functional tests - does not change by this one existing.
+ * The fixture's second test task: replaying a build with more than one of them takes two. They run
+ * disjoint classes, so what 'test' records - asserted in full by the functional tests - is unchanged
+ * by this one existing.
  */
 val secondTestClass = "org.jetbrains.kotlin.testInventory.SecondTestInventoryFixtureTest"
 

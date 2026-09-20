@@ -19,30 +19,23 @@ import kotlin.test.fail
 import kotlin.time.Duration.Companion.seconds
 
 /**
- * Runs a real test task of this repository and checks what TeamCity is told about its tests, both
- * when the task runs and when it is served from the build cache or skipped as up to date.
+ * Runs a real test task of this repository and checks what TeamCity is told about its tests, when
+ * the task runs and when it is served from the build cache or skipped as up to date.
  *
- * The subject is `:repo:test-inventory-fixture:test`, a module whose tests exist only to be recorded
- * and replayed, and which is small enough to assert both in full. It is driven as a whole Gradle
- * build rather than through a synthetic project, because everything under test hangs off the
- * repository's own build logic: [TestExecutionsListener] is attached by `project-tests-convention`,
- * the file it writes is a declared task output, and [TestBuildCacheTeamCityCompatibilityService] is
- * registered only for a TeamCity build.
+ * The subject is `:repo:test-inventory-fixture`, a module whose tests exist to be recorded and
+ * replayed and is small enough to assert in full. It is driven as a whole build because everything
+ * under test hangs off the repository's own build logic.
  *
- * Every property that decides what is recorded is passed explicitly rather than left to the
- * environment, so that these tests mean the same thing when they themselves run on TeamCity:
- * `-Pteamcity`, which `TEAMCITY_VERSION` would otherwise decide; the test federation, which would
- * otherwise deselect tests according to the mode the surrounding build runs in; and the retry count,
- * which decides how many times a failing test is recorded.
+ * Every property that decides what is recorded is passed explicitly - `-Pteamcity`, the test
+ * federation, the retry count - so that these tests mean the same when they run on TeamCity.
  */
 class TestBuildCacheTeamCityCompatibilityFunctionalTest {
 
     /**
-     * Empties the build cache the tests share, so that each of them starts from nothing in it.
+     * Empties the build cache the tests share, so that each starts from nothing in it.
      *
-     * One directory for the whole class, rather than one per test: its path is a Gradle property, and
-     * a new one per test invalidates the nested builds' configuration cache, making every test pay
-     * for configuring the whole repository again.
+     * One directory for the whole class: its path is a Gradle property, and a new one per test would
+     * invalidate the nested builds' configuration cache.
      */
     @BeforeEach
     fun emptyTheBuildCache() {
@@ -50,10 +43,8 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
     }
 
     /**
-     * The recording a run produces, and the shape the other tests replay from.
-     *
-     * A task that actually ran reports nothing itself: TeamCity's own Gradle runner already reports
-     * those tests, and replaying them as well would report every test twice.
+     * The recording a run produces, and the shape the other tests replay from. A task that ran
+     * reports nothing itself: TeamCity's own runner already did, and replaying would double it.
      */
     @Test
     fun `a task that runs records its tests and reports nothing`() {
@@ -66,10 +57,8 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
     }
 
     /**
-     * The point of the whole feature: a task nobody ran still reports its tests.
-     *
-     * The recording itself is restored by the cache along with the task's other outputs, which is
-     * checked here too - without it there would be nothing to replay.
+     * The point of the whole feature: a task nobody ran still reports its tests. The recording comes
+     * back from the cache with the task's other outputs, without which there would be nothing to replay.
      */
     @Test
     fun `a task served from the build cache replays its recorded tests`() {
@@ -89,12 +78,10 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
     }
 
     /**
-     * An up-to-date task is as silent as a cached one, and equally in need of replaying: TeamCity is
-     * told about a test by the build that ran it, and a build that skipped it reports nothing at all.
+     * An up-to-date task is as silent as a cached one, and equally in need of replaying.
      *
-     * Both invocations are identical, so the second one also reuses the configuration cache - the
-     * shape CI runs in, and the one where the service has to come back from a serialized graph rather
-     * than from a freshly configured build.
+     * Both invocations are identical, so the second also reuses the configuration cache - the shape
+     * CI runs in, where the service comes back from a serialized graph rather than a configured build.
      */
     @Test
     fun `an up-to-date task replays its recorded tests`() {
@@ -126,12 +113,9 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
     }
 
     /**
-     * One service replays the whole build, so a build with two test tasks in it has to replay both,
-     * each under a flow of its own.
-     *
-     * Nothing else here would notice if it stopped: every other test runs a build whose only test
-     * task is the fixture's, and a map that kept a single task, or a flow id fixed for the build
-     * rather than taken per task, would leave all of them green.
+     * One service replays the whole build, so a build with two test tasks has to replay both, each
+     * under a flow of its own. Every other test here runs a build with one test task in it, so a map
+     * that kept a single task, or a flow id fixed per build, would leave them all green.
      */
     @Test
     fun `the test tasks of one build are each replayed under their own flow`() {
@@ -155,10 +139,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
         )
     }
 
-    /**
-     * Outside a TeamCity build there is nobody to report to, and the service messages would only be
-     * noise in a local build's console.
-     */
+    /** Outside a TeamCity build there is nobody to report to, and the messages would only be noise. */
     @Test
     fun `a task served from the build cache replays nothing outside a TeamCity build`() {
         cleanTasks(FIXTURE_CLEAN_TASK_PATH)
@@ -172,11 +153,9 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
     }
 
     /**
-     * A failed test in a task that nevertheless succeeded, which is what a tolerated failure or a
-     * retried flaky test leaves behind, and what makes a replayed `testFailed` possible at all.
-     *
-     * The failure itself is gone by then - the recording keeps a status, not a stack trace - so the
-     * message says where the verdict came from instead of pretending to explain it.
+     * A failed test in a task that nevertheless succeeded - what a tolerated failure or a retried
+     * flaky test leaves behind, and what makes a replayed `testFailed` possible at all. The failure
+     * itself is gone by then, so the message says where the verdict came from.
      */
     @Test
     fun `a failed test is replayed as a failure`() {
@@ -194,10 +173,8 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
     }
 
     /**
-     * Why the order of the recorded tests is load-bearing: a retried test is recorded once per
-     * attempt, and replaying the attempts as they happened is what lets TeamCity apply its own retry
-     * handling. Merging them by name, or keeping only the last, would report something that did not
-     * happen.
+     * Why the recorded order is load bearing: a retried test is recorded once per attempt, and
+     * replaying them as they happened is what lets TeamCity apply its own retry handling.
      */
     @Test
     fun `a retried test is replayed once per attempt`() {
@@ -240,20 +217,16 @@ private const val SECOND_TASK_TEST =
     "org.jetbrains.kotlin.testInventory.SecondTestInventoryFixtureTest.recordedBySecondTestTask()"
 
 /**
- * What makes a line a service message, and what these tests take back off every line they keep.
- *
- * Not cosmetic: whatever a failing assertion prints lands in the console of the build that runs these
- * tests, and a line still carrying the marker would be read by the TeamCity running *them* as one of
- * its own tests starting, or failing. The filter that looks for the marker is what asserts it is there.
+ * What makes a line a service message, taken back off every line these tests keep: a line still
+ * carrying it would be read by the TeamCity running *them* as one of its own tests, once a failing
+ * assertion prints it. The filter that looks for the marker is what asserts it is there.
  */
 private const val SERVICE_MESSAGE_MARKER = "##teamcity"
 
 /**
- * What a build says when it did not configure itself but read the whole task graph back.
- *
- * Asserted wherever a replay is: it is the shape CI runs in, and the one where the service doing the
- * replaying, and its registration as a build listener, come back from a serialized graph rather than
- * from `configureTestInventory` having just run.
+ * What a build says when it read the task graph back instead of configuring itself. Asserted
+ * wherever a replay is: it is the shape CI runs in, and the one where the service and its
+ * subscription come back from a serialized graph rather than from `configureTestInventory`.
  */
 private const val CONFIGURATION_CACHE_REUSED = "Configuration cache entry reused."
 
@@ -262,12 +235,8 @@ private const val FAILURE_DETAILS_UNAVAILABLE =
     "Test failed when this task last ran; replayed from cached test results, no failure details recorded"
 
 /**
- * The whole of what the fixture's run is recorded as, which is also the format's documentation by
- * example - see the `### Format` section of [TestExecutionsListener].
- *
- * Worth reading for the three states of `className`: absent where the enclosing suite is the test's
- * class, present on the parameterized invocations, whose own suite is the container rather than the
- * class, and absent again on the nested class's test, whose suite is that nested class.
+ * The whole of what the fixture's run is recorded as, the format being documented in the `### Format`
+ * section of [TestExecutionsListener]. Worth reading for the three states of `className`.
  */
 private val expectedRecording = """
     {
@@ -343,11 +312,9 @@ private fun replayedMessages(vararg groups: List<String>): List<String> = groups
 /**
  * What a replay of [expectedRecording] has to say.
  *
- * The suites are not the recorded ones: a class is spelled as part of a test's name and never as a
- * suite of its own, so the class suite is gone for its own three tests, which are reported at the top
- * level, and kept for everything nested inside it. The parameterized container stands for neither a
- * class nor nothing, so it survives, with the class still in the names of its invocations.
- * The `|[` and `|]` are how a service message spells a bracket.
+ * The suites are not the recorded ones: a class is part of a test's name rather than a suite, so the
+ * class suite is gone for its own three tests and kept for what is nested in it. `|[` and `|]` are
+ * how a service message spells a bracket.
  */
 private val expectedReplay = replayedMessages(
     replayedTest("$FIXTURE_CLASS.failing()"),
@@ -372,10 +339,7 @@ private val executionsFile: File
 
 private fun recordedExecutions(): String = executionsFile.readText()
 
-/**
- * Replaces every duration with a placeholder: they are real timings and differ from run to run, while
- * everything around them is what these tests are about.
- */
+/** Replaces every duration with a placeholder: they are real timings and differ from run to run. */
 private fun String.withoutDurations(): String = replace(Regex("\"duration\": \\d+"), "\"duration\": <ms>")
 
 private fun BuildResult.outcomeOf(taskPath: String): TaskOutcome =
@@ -385,10 +349,8 @@ private val BuildResult.fixtureTaskOutcome: TaskOutcome get() = outcomeOf(FIXTUR
 
 /**
  * The test related service messages of a build, without their [SERVICE_MESSAGE_MARKER] and with the
- * durations replaced as in [withoutDurations].
- *
- * Every `test...` message is taken, not only the ones carrying the replay's flow id, so that a message
- * sent under the wrong flow id shows up as a difference rather than as silence.
+ * durations replaced as in [withoutDurations]. Every `test...` message is taken, not only those in a
+ * replay's flow, so that a message sent under the wrong flow shows up as a difference.
  */
 private val BuildResult.replayedTestMessages: List<String>
     get() = output.lineSequence()
@@ -408,9 +370,8 @@ private fun List<String>.about(testName: String): List<String> = filter { testNa
 private fun List<String>.inFlow(flowId: String): List<String> = filter { "flowId='$flowId'" in it }
 
 /**
- * Runs [tasks], with [cache] as the only build cache the build can reach - an empty one at the start
- * of every test, and the repository's remote cache explicitly out of reach, so that a run either
- * executes a task or takes it from what an earlier run of the same test stored.
+ * Runs [tasks] with [cache] as the only build cache the build can reach - empty at the start of every
+ * test, the remote one out of reach - so a run either executes a task or takes it from that cache.
  */
 private fun runTasks(
     cache: File,
@@ -436,10 +397,7 @@ private fun runTasks(
     }
 )
 
-/**
- * Runs the `clean...` [tasks] given, deleting the outputs of the tasks they stand for, so that the
- * next run of those either executes them or takes them from the cache.
- */
+/** Deletes the outputs of what the `clean...` [tasks] stand for, so the next run of those does not skip them. */
 private fun cleanTasks(vararg tasks: String) {
     runBuild(tasks.toList())
 }

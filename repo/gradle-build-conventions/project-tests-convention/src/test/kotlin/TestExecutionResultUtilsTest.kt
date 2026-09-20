@@ -14,11 +14,8 @@ import kotlin.test.assertTrue
 /**
  * The rules for turning what Gradle reports about a test into what TeamCity calls it.
  *
- * They are ports of TeamCity's own - of its Gradle runner's init script, and of the normalization
- * its server applies afterwards - so what they have to be right about is cases, not builds: a
- * display name that repeats the method, one that replaces it, a parameterized invocation, the
- * suites Gradle inserts itself, a class suite a task named after itself. Driving a build to produce
- * each of those would be a day's work and would assert less.
+ * Ports of TeamCity's own - its Gradle runner's init script, and the normalization its server
+ * applies afterwards - so what they have to be right about is cases rather than builds.
  */
 class TestExecutionResultUtilsTest {
 
@@ -26,8 +23,7 @@ class TestExecutionResultUtilsTest {
     fun `a name is the class and the method, and the method alone where there is no class`() {
         assertEquals("com.example.SomeTest.passes", "com.example.SomeTest".qualifying("passes"))
         assertEquals("passes", null.qualifying("passes"))
-        // Gradle's JUnit Platform integration spells "no class" this way for a test reported outside
-        // any container; joining it would leave the name with a leading dot.
+        // How Gradle spells "no class" for a test outside any container; joining leaves a leading dot.
         assertEquals("passes", "".qualifying("passes"))
     }
 
@@ -41,15 +37,13 @@ class TestExecutionResultUtilsTest {
             descriptor(name = "passes()", displayName = "does the thing").teamCityRunnerMethodName(),
         )
 
-        // A parameterized invocation: the descriptor is named after the method, the display name is
-        // the arguments.
+        // A parameterized invocation: the descriptor is the method, the display name the arguments.
         assertEquals(
             "parameterized([1] 1)",
             descriptor(name = "parameterized(int)", displayName = "[1] 1").teamCityRunnerMethodName(),
         )
 
-        // A display name that is the descriptor's name with a parameter list added says nothing the
-        // name does not, and the name is kept as it is.
+        // A display name that only adds a parameter list says nothing the name does not.
         assertEquals("passes", descriptor(name = "passes", displayName = "passes()").teamCityRunnerMethodName())
     }
 
@@ -81,8 +75,7 @@ class TestExecutionResultUtilsTest {
         // Kotlin/JS and Kotlin/Wasm report a class suite prefixed with the task's name.
         assertTrue(isSyntheticSuiteName("jsNodeTest.com.example.SomeTest", "jsNodeTest", "com.example.SomeTest"))
 
-        // A plain class suite is not synthetic: it is dropped where a test's own name already spells
-        // the class, which is a decision per test rather than per suite.
+        // A plain class suite is not synthetic: dropping it is a decision per test, not per suite.
         assertFalse(isSyntheticSuiteName("com.example.SomeTest", "test", "com.example.SomeTest"))
     }
 
@@ -94,8 +87,7 @@ class TestExecutionResultUtilsTest {
                 .recordedSuiteName(taskName = "jsNodeTest"),
         )
 
-        // Only that exact spelling is rewritten: a container has a class as well while standing for
-        // something narrower, and keeps the name of its own.
+        // Only that exact spelling is rewritten: a container has a class too, and keeps its own name.
         assertEquals(
             "parameterized(int)",
             descriptor("parameterized(int)", className = "com.example.SomeTest").recordedSuiteName(taskName = "test"),

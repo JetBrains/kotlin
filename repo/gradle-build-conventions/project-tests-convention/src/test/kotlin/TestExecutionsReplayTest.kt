@@ -11,16 +11,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * What a recording is turned into, asserted on the messages themselves.
+ * What a recording is turned into: the shapes one can have, which a build would have to be bent into
+ * producing. [TestBuildCacheTeamCityCompatibilityFunctionalTest] asserts the same end to end.
  *
- * [TestBuildCacheTeamCityCompatibilityFunctionalTest] asserts the same thing end to end for a real
- * task of a real build; these take the shapes a recording can have - the three states of
- * `className`, a class that is also a container, a status nobody knows, a file that is not there -
- * which a build would have to be bent into producing.
- *
- * The messages are bodies, without the marker and brackets a service message is wrapped in, see
- * [TestExecutionsReplay]. A whole line would be read by the build running these tests as one of its
- * own tests starting, and a failing assertion prints what it compared.
+ * The messages are bodies, without the marker a service message is wrapped in, see
+ * [TestExecutionsReplay]: a failing assertion prints what it compared.
  */
 class TestExecutionsReplayTest {
 
@@ -29,10 +24,7 @@ class TestExecutionsReplayTest {
 
     private val warnings = mutableListOf<String>()
 
-    /**
-     * The common case: a test class is a suite in the recording, because that is where Gradle's
-     * timing for it hangs, and is part of the test's name to TeamCity rather than a suite of its own.
-     */
+    /** The common case: a class is a suite in the recording, and part of the test's name to TeamCity. */
     @Test
     fun `a test of the class its suite stands for is named after it, and the suite is gone`() {
         val messages = replayOf(
@@ -84,10 +76,7 @@ class TestExecutionsReplayTest {
         )
     }
 
-    /**
-     * A recorded failure carries a status and nothing else, so the replayed one says where the
-     * verdict came from rather than pretending to explain it.
-     */
+    /** A recording keeps a status and no stack trace, so the replay says where the verdict came from. */
     @Test
     fun `a failed test is replayed as a failure that says where the verdict came from`() {
         val messages = replayOf(
@@ -114,10 +103,7 @@ class TestExecutionsReplayTest {
         )
     }
 
-    /**
-     * A test whose suite is narrower than its class - a parameterized invocation, whose container is
-     * the method - names its class itself, and that suite is nothing to do with the class, so it stays.
-     */
+    /** A suite narrower than the class - a parameterized invocation's container - is not the class, so it stays. */
     @Test
     fun `a test that names its own class keeps the suite it sits in`() {
         val messages = replayOf(
@@ -153,10 +139,7 @@ class TestExecutionsReplayTest {
         )
     }
 
-    /**
-     * The third state of `className`: written as an explicit `null` for a test that has no class at
-     * all, which is not the same as the absent member meaning "the suite I am in".
-     */
+    /** The third state of `className`: an explicit `null`, unlike the absent member meaning "the suite I am in". */
     @Test
     fun `a test recorded with no class at all keeps the bare name`() {
         val messages = replayOf(
@@ -183,11 +166,7 @@ class TestExecutionsReplayTest {
         )
     }
 
-    /**
-     * The rule that makes collapsing a class per test rather than per suite worth the trouble: a
-     * class that also holds a nested class disappears for its own tests and stays a suite for the
-     * nested one's.
-     */
+    /** Why a class is collapsed per test and not per suite: it stays a suite for a nested class's tests. */
     @Test
     fun `a class stays a suite for the tests of the class nested in it`() {
         val messages = replayOf(
@@ -222,10 +201,7 @@ class TestExecutionsReplayTest {
         )
     }
 
-    /**
-     * Why the recorded order is load bearing: a retried test is recorded once per attempt, and
-     * replaying the attempts as they happened is what lets TeamCity apply its own retry handling.
-     */
+    /** A retried test is recorded once per attempt, and the attempts are replayed as they happened. */
     @Test
     fun `the attempts of a retried test are replayed in the order they were recorded`() {
         val messages = replayOf(
@@ -297,10 +273,7 @@ class TestExecutionsReplayTest {
         )
     }
 
-    /**
-     * A build that can no longer say what a cached task tested says so and carries on: the tests it
-     * cannot report are worth a warning, never a failed build.
-     */
+    /** Not being able to say what a cached task tested is worth a warning, never a failed build. */
     @Test
     fun `a recording that is not there is replayed as nothing`() {
         val missing = File(directory, "not-written.json")
@@ -320,10 +293,7 @@ class TestExecutionsReplayTest {
         assertContains(warnings.single(), "Cannot replay the tests of $TASK_PATH")
     }
 
-    /**
-     * A status this does not know is a recording from a newer format, or a bug. The test still
-     * happened, so it is still reported; what it came to is what cannot be said.
-     */
+    /** A status this does not know still happened: the test is reported, its verdict is not. */
     @Test
     fun `a status nobody knows is replayed as neither passed nor failed`() {
         val messages = replayOf(
