@@ -57,8 +57,8 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
      */
     @Test
     fun `a task that runs records its tests and reports nothing`() {
-        cleanFixtureTask()
-        val result = runFixtureTask(cache)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        val result = runTasks(cache, FIXTURE_TASK_PATH)
 
         assertEquals(TaskOutcome.SUCCESS, result.fixtureTaskOutcome)
         assertEquals(expectedRecording, recordedExecutions().withoutDurations())
@@ -73,14 +73,14 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
      */
     @Test
     fun `a task served from the build cache replays its recorded tests`() {
-        cleanFixtureTask()
-        runFixtureTask(cache)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        runTasks(cache, FIXTURE_TASK_PATH)
         val recorded = recordedExecutions()
 
-        cleanFixtureTask()
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
         assertFalse(executionsFile.exists(), "'cleanTest' should have removed ${executionsFile.name}")
 
-        val result = runFixtureTask(cache)
+        val result = runTasks(cache, FIXTURE_TASK_PATH)
 
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(recorded, recordedExecutions(), "The build cache should restore the recording unchanged")
@@ -98,10 +98,10 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
      */
     @Test
     fun `an up-to-date task replays its recorded tests`() {
-        cleanFixtureTask()
-        runFixtureTask(cache)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        runTasks(cache, FIXTURE_TASK_PATH)
 
-        val result = runFixtureTask(cache)
+        val result = runTasks(cache, FIXTURE_TASK_PATH)
 
         assertEquals(TaskOutcome.UP_TO_DATE, result.fixtureTaskOutcome)
         assertContains(result.quotableOutput, CONFIGURATION_CACHE_REUSED)
@@ -111,11 +111,11 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
     /** The same, with the configuration cache out of the picture. */
     @Test
     fun `a task served from the build cache replays its recorded tests without the configuration cache`() {
-        cleanFixtureTask()
-        runFixtureTask(cache, configurationCache = false)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        runTasks(cache, FIXTURE_TASK_PATH, configurationCache = false)
 
-        cleanFixtureTask()
-        val result = runFixtureTask(cache, configurationCache = false)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        val result = runTasks(cache, FIXTURE_TASK_PATH, configurationCache = false)
 
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertFalse(
@@ -126,16 +126,46 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
     }
 
     /**
+     * One service replays the whole build, so a build with two test tasks in it has to replay both,
+     * each under a flow of its own.
+     *
+     * Nothing else here would notice if it stopped: every other test runs a build whose only test
+     * task is the fixture's, and a map that kept a single task, or a flow id fixed for the build
+     * rather than taken per task, would leave all of them green.
+     */
+    @Test
+    fun `the test tasks of one build are each replayed under their own flow`() {
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH, SECOND_TASK_CLEAN_PATH)
+        runTasks(cache, FIXTURE_TASK_PATH, SECOND_TASK_PATH)
+
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH, SECOND_TASK_CLEAN_PATH)
+        val result = runTasks(cache, FIXTURE_TASK_PATH, SECOND_TASK_PATH)
+
+        assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
+        assertEquals(TaskOutcome.FROM_CACHE, result.outcomeOf(SECOND_TASK_PATH))
+        assertContains(result.quotableOutput, CONFIGURATION_CACHE_REUSED)
+
+        val replayed = result.replayedTestMessages
+        assertEquals(expectedReplay, replayed.inFlow(REPLAY_FLOW_ID))
+        assertEquals(expectedSecondTaskReplay, replayed.inFlow(SECOND_TASK_FLOW_ID))
+        assertEquals(
+            expectedReplay.size + expectedSecondTaskReplay.size,
+            replayed.size,
+            "Every replayed message should carry the flow of the task it was recorded for",
+        )
+    }
+
+    /**
      * Outside a TeamCity build there is nobody to report to, and the service messages would only be
      * noise in a local build's console.
      */
     @Test
     fun `a task served from the build cache replays nothing outside a TeamCity build`() {
-        cleanFixtureTask()
-        runFixtureTask(cache, teamCity = false)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        runTasks(cache, FIXTURE_TASK_PATH, teamCity = false)
 
-        cleanFixtureTask()
-        val result = runFixtureTask(cache, teamCity = false)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        val result = runTasks(cache, FIXTURE_TASK_PATH, teamCity = false)
 
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(emptyList(), result.replayedTestMessages)
@@ -150,11 +180,11 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
      */
     @Test
     fun `a failed test is replayed as a failure`() {
-        cleanFixtureTask()
-        runFixtureTask(cache, failing = true)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        runTasks(cache, FIXTURE_TASK_PATH, failing = true)
 
-        cleanFixtureTask()
-        val result = runFixtureTask(cache, failing = true)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        val result = runTasks(cache, FIXTURE_TASK_PATH, failing = true)
 
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(
@@ -171,11 +201,11 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
      */
     @Test
     fun `a retried test is replayed once per attempt`() {
-        cleanFixtureTask()
-        runFixtureTask(cache, failing = true, maxRetries = 3)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        runTasks(cache, FIXTURE_TASK_PATH, failing = true, maxRetries = 3)
 
-        cleanFixtureTask()
-        val result = runFixtureTask(cache, failing = true, maxRetries = 3)
+        cleanTasks(FIXTURE_CLEAN_TASK_PATH)
+        val result = runTasks(cache, FIXTURE_TASK_PATH, failing = true, maxRetries = 3)
 
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(
@@ -194,12 +224,20 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
 }
 
 private const val FIXTURE_TASK_PATH = ":repo:test-inventory-fixture:test"
+private const val FIXTURE_CLEAN_TASK_PATH = ":repo:test-inventory-fixture:cleanTest"
 private const val FIXTURE_CLASS = "org.jetbrains.kotlin.testInventory.TestInventoryFixtureTest"
 private const val FIXTURE_NESTED_CLASS = $$"$$FIXTURE_CLASS$NestedTests"
 private const val FIXTURE_IGNORED_TEST = "$FIXTURE_CLASS.ignored()"
 private const val FIXTURE_FAILING_TEST = "$FIXTURE_CLASS.failing()"
 
 private const val REPLAY_FLOW_ID = "TestReplay$FIXTURE_TASK_PATH"
+
+/** The fixture's second test task, whose one test is all it runs, and the flow of its replay. */
+private const val SECOND_TASK_PATH = ":repo:test-inventory-fixture:secondTest"
+private const val SECOND_TASK_CLEAN_PATH = ":repo:test-inventory-fixture:cleanSecondTest"
+private const val SECOND_TASK_FLOW_ID = "TestReplay$SECOND_TASK_PATH"
+private const val SECOND_TASK_TEST =
+    "org.jetbrains.kotlin.testInventory.SecondTestInventoryFixtureTest.recordedBySecondTestTask()"
 
 /**
  * What makes a line a service message, and what these tests take back off every line they keep.
@@ -285,10 +323,13 @@ private val replayedFailedTest = listOf(
     "[testFinished name='$FIXTURE_FAILING_TEST' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
 )
 
-private fun replayedTest(name: String) = listOf(
-    "[testStarted name='$name' flowId='$REPLAY_FLOW_ID']",
-    "[testFinished name='$name' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
+private fun replayedTest(name: String, flowId: String = REPLAY_FLOW_ID) = listOf(
+    "[testStarted name='$name' flowId='$flowId']",
+    "[testFinished name='$name' duration='<ms>' flowId='$flowId']",
 )
+
+/** What a replay of the fixture's second test task has to say - its one test, in its own flow. */
+private val expectedSecondTaskReplay = replayedTest(SECOND_TASK_TEST, SECOND_TASK_FLOW_ID)
 
 private fun replayedSuite(name: String, vararg contents: List<String>): List<String> = buildList {
     add("[testSuiteStarted name='$name' flowId='$REPLAY_FLOW_ID']")
@@ -337,8 +378,10 @@ private fun recordedExecutions(): String = executionsFile.readText()
  */
 private fun String.withoutDurations(): String = replace(Regex("\"duration\": \\d+"), "\"duration\": <ms>")
 
-private val BuildResult.fixtureTaskOutcome: TaskOutcome
-    get() = (task(FIXTURE_TASK_PATH) ?: fail("No '$FIXTURE_TASK_PATH' in the build result")).outcome
+private fun BuildResult.outcomeOf(taskPath: String): TaskOutcome =
+    (task(taskPath) ?: fail("No '$taskPath' in the build result")).outcome
+
+private val BuildResult.fixtureTaskOutcome: TaskOutcome get() = outcomeOf(FIXTURE_TASK_PATH)
 
 /**
  * The test related service messages of a build, without their [SERVICE_MESSAGE_MARKER] and with the
@@ -361,20 +404,24 @@ private val BuildResult.quotableOutput: String get() = output.replace(SERVICE_ME
 /** The messages naming one test, for a test interested in that one rather than in the whole replay. */
 private fun List<String>.about(testName: String): List<String> = filter { testName in it }
 
+/** The messages of one task's replay, for a build that replayed more than one test task. */
+private fun List<String>.inFlow(flowId: String): List<String> = filter { "flowId='$flowId'" in it }
+
 /**
- * Runs the fixture's test task, with [cache] as the only build cache it can reach - an empty one at
- * the start of every test, and the repository's remote cache explicitly out of reach, so that a run
- * either executes the task or takes it from what an earlier run of the same test stored.
+ * Runs [tasks], with [cache] as the only build cache the build can reach - an empty one at the start
+ * of every test, and the repository's remote cache explicitly out of reach, so that a run either
+ * executes a task or takes it from what an earlier run of the same test stored.
  */
-private fun runFixtureTask(
+private fun runTasks(
     cache: File,
+    vararg tasks: String,
     teamCity: Boolean = true,
     configurationCache: Boolean = true,
     failing: Boolean = false,
     maxRetries: Int = 0,
 ): BuildResult = runBuild(
     buildList {
-        add(FIXTURE_TASK_PATH)
+        addAll(tasks)
         add("-Pteamcity=$teamCity")
         // Which tests of the fixture run has to depend on nothing but the fixture itself.
         add("-Ptest.federation.enabled=false")
@@ -389,9 +436,12 @@ private fun runFixtureTask(
     }
 )
 
-/** Deletes the task's outputs, so that the next run either executes it or takes it from the cache. */
-private fun cleanFixtureTask() {
-    runBuild(listOf(":repo:test-inventory-fixture:cleanTest"))
+/**
+ * Runs the `clean...` [tasks] given, deleting the outputs of the tasks they stand for, so that the
+ * next run of those either executes them or takes them from the cache.
+ */
+private fun cleanTasks(vararg tasks: String) {
+    runBuild(tasks.toList())
 }
 
 private fun runBuild(arguments: List<String>): BuildResult {
