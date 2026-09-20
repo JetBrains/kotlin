@@ -840,6 +840,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 	public static final field PostAdditionalArtifactResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
 	public static final field PreAdditionalArtifactResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
 	public static final field SourcesAndDocumentationResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
 }
@@ -859,6 +860,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 	public static final field PreDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
 	public static final field SourceDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
 	public static final field SourcesAndDocumentationResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
 }
@@ -868,6 +870,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 	public static final field FreeDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
 	public static final field PostDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
 	public static final field PreDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
 }
