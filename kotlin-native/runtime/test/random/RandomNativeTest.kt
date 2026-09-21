@@ -49,6 +49,7 @@ class MultiThreadedRandomSmokeTest {
             it.execute(TransferMode.SAFE, { subject to canStart }) { [subject, canStart] ->
                 var result1 = 0
                 var result2 = -1
+                @Suppress("ControlFlowWithEmptyBody")
                 while (canStart.value == 0) {}
                 repeat(100) {
                     val r = subject.nextInt()
@@ -70,6 +71,75 @@ class MultiThreadedRandomSmokeTest {
         assertEquals(0, result2, "All zero bits should present")
         workers.forEach {
             it.requestTermination().result
+        }
+    }
+}
+
+class NativeDefaultRandomTest {
+    val subject: Random get() = Random
+
+    @Test
+    fun behavesAsLCG() {
+        for (seed in listOf(0L, 1L, -1L, Long.MIN_VALUE, Long.MAX_VALUE, 0x123456789abcdefL)) {
+            val reference = Reference(seed)
+            overrideNativeRandomSeed(seed)
+            repeat(100) {
+                for (bitCount in 0..32) {
+                    assertEquals(reference.nextBits(bitCount), subject.nextBits(bitCount),
+                            "Seed $seed, bitCount $bitCount")
+                }
+            }
+        }
+    }
+
+    @Test
+    fun stateIsThreadLocal() {
+        val workers = Array(2) { Worker.start() }
+        try {
+            // Seed both workers before drawing, so shared state cannot pass this test.
+            workers.forEachIndexed { index, worker ->
+                worker.execute(TransferMode.SAFE, { index.toLong() }) { seed ->
+                    overrideNativeRandomSeed(seed)
+                }.result
+            }
+
+            val rounds = 2
+            val roundSize = 100
+
+            repeat(rounds) { round ->
+                workers.forEachIndexed { index, worker ->
+                    val actual = worker.execute(TransferMode.SAFE, { Pair(subject, roundSize) }) { [random, size] ->
+                        List(size) { random.nextInt() }
+                    }.result
+                    val seed = index.toLong()
+                    val reference = Reference(seed)
+                    // bring the reference into the same state that subject is supposed to be in after the previous rounds
+                    repeat(round * roundSize) { val _ = reference.nextInt() }
+
+                    assertEquals(List(roundSize) { reference.nextInt() }, actual, "Round: $round, worker: $index")
+                }
+            }
+        } finally {
+            workers.forEach { it.requestTermination().result }
+        }
+    }
+
+    private class Reference(seed: Long) : Random() {
+        private var state = (seed xor MULTIPLIER) and MASK
+
+        override fun nextBits(bitCount: Int): Int {
+            val nextState = (state * MULTIPLIER + INCREMENT) and MASK
+            state = nextState
+            return (nextState ushr (MODULUS - bitCount)).toInt()
+        }
+
+        override fun nextInt(): Int = nextBits(32)
+
+        companion object {
+            const val MULTIPLIER = 0x5deece66dL
+            const val INCREMENT = 0xbL
+            const val MODULUS = 48
+            const val MASK = (1L shl MODULUS) - 1
         }
     }
 }
