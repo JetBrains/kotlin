@@ -9,7 +9,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(testFixtures(project(":generators:test-generator")))
 
     CompilerModules.kotlinJpsPluginEmbeddedDependencies
@@ -25,6 +24,7 @@ dependencies {
     compileOnly(intellijPlatformUtil())
     compileOnly(jpsModel())
     compileOnly(jpsBuild())
+    compileOnly(jpsBuildDependencyGraph())
     compileOnly(jpsBuildJavacRt())
     compileOnly(jpsModelSerialization())
     compileOnly(intellijJDom())
@@ -63,6 +63,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
     testImplementation(jpsBuild())
+    testImplementation(jpsBuildDependencyGraph())
     testImplementation(jpsBuildJavacRt())
 
     testImplementation(platform(libs.junit.bom))
