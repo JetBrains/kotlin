@@ -63,10 +63,11 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         val parsedDirectives: List<JsAstDirective> = JsAstDirectives.allDirectives.flatMap(registeredDirectives::get)
         testServices.assertions.assertAll(
             parsedDirectives.map { directive ->
-                {
-                    if (directive.shouldRunWithBackend(targetBackend)) {
-                        directive.evaluate(ast, sourceFile)
-                    }
+                check@{
+                    if (!directive.shouldRunWithBackend(targetBackend)) return@check
+                    if (registeredDirectives.any { it.name in directive.ignoredModes }) return@check
+                    if (directive.targetModes.isNotEmpty() && registeredDirectives.none { it.name in directive.targetModes }) return@check
+                    directive.evaluate(ast, sourceFile)
                 }
             }
         )

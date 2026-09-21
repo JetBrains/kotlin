@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
 interface JsAstDirective {
+    val targetModes: Set<String>
+    val ignoredModes: Set<String>
     fun shouldRunWithBackend(backend: TargetBackend): Boolean
     fun evaluate(ast: JsNode, sourceFile: File)
 }
