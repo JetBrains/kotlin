@@ -5,7 +5,7 @@
   "compilerType": "K2",
   "hasErrors": true,
   "filesCount": 1,
-  "linesCount": 1,
+  "linesCount": 3,
   "measuredCpuAndUserTime": false,
   "initStats": {
     "nanos": $UINT$
