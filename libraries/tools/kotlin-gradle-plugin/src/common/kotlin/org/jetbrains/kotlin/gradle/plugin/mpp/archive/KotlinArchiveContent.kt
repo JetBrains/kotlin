@@ -33,13 +33,7 @@ private fun Project.klibFileCollection(taskProvider: TaskProvider<*>): FileColle
                 logger.warn("${task.name}, that requested to be stored in Kotlin Archive is expected to produce Klib, falling back to empty")
                 project.provider { project.files() }
             } else {
-                task.produceUnpackagedKlib.flatMap { isUnpackaged ->
-                    if (isUnpackaged) {
-                        task.klibDirectory
-                    } else {
-                        task.klibFile.map { project.zipTree(it) }
-                    }
-                }
+                task.klibDirectory
             }
         }
     }

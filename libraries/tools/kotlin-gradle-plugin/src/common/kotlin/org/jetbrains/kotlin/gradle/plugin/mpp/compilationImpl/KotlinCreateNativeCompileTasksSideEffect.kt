@@ -81,8 +81,6 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         task.kotlinCompilerArgumentsLogLevel
             .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
             .finalizeValueOnRead()
-        // for metadata tasks we should always provide unpackaged klib
-        task.produceUnpackagedKlib.set(true)
         task.separateKmpCompilation.convention(project.kotlinPropertiesProvider.separateKmpCompilation)
     }
 
