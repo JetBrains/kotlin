@@ -93,6 +93,14 @@ internal sealed class CallerImpl<out M : Member>(
             return if (isVoidMethod) Unit else result
         }
 
+        protected fun prependBoundArguments(boundArgs: Array<Any?>, args: Array<*>): Array<*> {
+            if (boundArgs.isEmpty()) return args
+            val result = arrayOfNulls<Any?>(boundArgs.size + args.size)
+            System.arraycopy(boundArgs, 0, result, 0, boundArgs.size)
+            System.arraycopy(args, 0, result, boundArgs.size, args.size)
+            return result
+        }
+
         /**
          * @param isCallByToValueClassMangledMethod true if this is a `callBy` caller whose original caller is an instance method that is
          *  mangled due to value classes in the signature.
@@ -106,49 +114,76 @@ internal sealed class CallerImpl<out M : Member>(
          * ```
          * If `Foo` is value class or `ReturnType` is inline class, [ValueClassAwareCaller] regards it as a normal static function
          * rather than a top level extension function/property (see KT-71378).
+         *
+         * @param hasInstanceParameter true if the first parameter of the method is an instance, the callable is invoked on.
+         * Some of the member functions are compiled to static methods taking the instance (e.g., value class members, $default methods).
+         * They expect the instance as a very first argument, unlike extension receivers that go after context parameters.
          */
         class Static(
             method: ReflectMethod,
             internal val isCallByToValueClassMangledMethod: Boolean,
             private val boundReceiver: Any?,
+            private val boundContextArguments: Array<Any?>,
+            private val hasInstanceParameter: Boolean,
         ) : Method(
             method,
             requiresInstance = false,
-            parameterTypes = if (boundReceiver !== CallableReference.NO_RECEIVER) method.genericParameterTypes.dropFirst()
-            else method.genericParameterTypes
+            parameterTypes = method.genericParameterTypes.let { types ->
+                val boundCount = boundContextArguments.size + (if (boundReceiver !== CallableReference.NO_RECEIVER) 1 else 0)
+                if (hasInstanceParameter && boundReceiver === CallableReference.NO_RECEIVER)
+                    arrayOf(types[0], *types.drop(1 + boundCount).toTypedArray())
+                else
+                    types.drop(boundCount).toTypedArray()
+            }
         ) {
-            internal val isBound: Boolean get() = boundReceiver !== CallableReference.NO_RECEIVER
-
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
-                return callMethod(null, if (isBound) arrayOf(boundReceiver, *args) else args)
+                val isReceiverBound: Boolean = boundReceiver !== CallableReference.NO_RECEIVER
+                val allArgs = when {
+                    !isReceiverBound && boundContextArguments.isEmpty() -> args
+                    !isReceiverBound && !hasInstanceParameter -> prependBoundArguments(boundContextArguments, args)
+                    !isReceiverBound -> arrayOf(args[0], *prependBoundArguments(boundContextArguments, args.dropFirst()))
+                    hasInstanceParameter -> arrayOf(boundReceiver, *prependBoundArguments(boundContextArguments, args))
+                    else -> prependBoundArguments(boundContextArguments, arrayOf(boundReceiver, *args))
+                }
+                return callMethod(null, allArgs)
             }
         }
 
         class Instance(
             method: ReflectMethod,
             private val boundReceiver: Any?,
-        ) : Method(method, requiresInstance = boundReceiver === CallableReference.NO_RECEIVER) {
+            private val boundContextArguments: Array<Any?>,
+        ) : Method(
+            method,
+            requiresInstance = boundReceiver === CallableReference.NO_RECEIVER,
+            parameterTypes = method.genericParameterTypes.drop(boundContextArguments.size).toTypedArray()
+        ) {
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
                 return if (boundReceiver !== CallableReference.NO_RECEIVER)
-                    callMethod(boundReceiver, args)
+                    callMethod(boundReceiver, prependBoundArguments(boundContextArguments, args))
                 else
-                    callMethod(args[0], args.dropFirst())
+                    callMethod(args[0], prependBoundArguments(boundContextArguments, args.dropFirst()))
             }
         }
 
         class JvmStaticInObject(
             method: ReflectMethod,
             private val boundReceiver: Any?,
-        ) : Method(method, requiresInstance = boundReceiver === CallableReference.NO_RECEIVER) {
+            private val boundContextArguments: Array<Any?>,
+        ) : Method(
+            method,
+            requiresInstance = boundReceiver === CallableReference.NO_RECEIVER,
+            parameterTypes = method.genericParameterTypes.drop(boundContextArguments.size).toTypedArray()
+        ) {
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
                 return if (boundReceiver !== CallableReference.NO_RECEIVER) {
-                    callMethod(null, args)
+                    callMethod(null, prependBoundArguments(boundContextArguments, args))
                 } else {
                     checkObjectInstance(args.firstOrNull())
-                    callMethod(null, args.dropFirst())
+                    callMethod(null, prependBoundArguments(boundContextArguments, args.dropFirst()))
                 }
             }
         }

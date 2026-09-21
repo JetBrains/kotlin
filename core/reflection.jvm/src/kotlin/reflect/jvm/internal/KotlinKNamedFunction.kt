@@ -21,9 +21,10 @@ internal class KotlinKNamedFunction(
     container: KDeclarationContainerImpl,
     signature: String,
     rawBoundReceiver: Any?,
+    rawBoundContextArguments: List<Any?>,
     private val kmFunction: KmFunction,
     overriddenStorage: KCallableOverriddenStorage,
-) : KotlinKFunction(container, signature, rawBoundReceiver, overriddenStorage) {
+) : KotlinKFunction(container, signature, rawBoundReceiver, rawBoundContextArguments, overriddenStorage) {
     override val contextParameters: List<KmValueParameter> get() = kmFunction.contextParameters
 
     override val extensionReceiverType: KmType? get() = kmFunction.receiverParameterType
@@ -78,12 +79,11 @@ internal class KotlinKNamedFunction(
         }
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
-        KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, kmFunction, overriddenStorage)
+        KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList(), kmFunction, overriddenStorage)
 
-    override fun bindToLowerArity(boundReceiver: Any?) = KotlinKNamedFunction(container, signature, boundReceiver, kmFunction, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<Any?> =
+        KotlinKNamedFunction(container, signature, boundReceiver, boundContextArguments, kmFunction, overriddenStorage)
 
-    override fun unbindToHigherArity(): ReflectKCallable<Any?> =
-        KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, kmFunction, overriddenStorage)
 
     private fun convertSignatureForBuiltinFunction(signature: String): JvmMethodSignature =
         with(signature) {

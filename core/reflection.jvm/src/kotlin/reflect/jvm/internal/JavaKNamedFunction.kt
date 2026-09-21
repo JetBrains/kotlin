@@ -140,9 +140,12 @@ internal class JavaKNamedFunction(
 
     override val caller: Caller<*> by lazy(PUBLICATION) {
         if (Modifier.isStatic(jMethod.modifiers))
-            CallerImpl.Method.Static(jMethod, isCallByToValueClassMangledMethod = false, boundReceiver)
+            CallerImpl.Method.Static(
+                jMethod, isCallByToValueClassMangledMethod = false, boundReceiver,
+                boundContextArguments = emptyArray(), hasInstanceParameter = false,
+            )
         else
-            CallerImpl.Method.Instance(jMethod, boundReceiver)
+            CallerImpl.Method.Instance(jMethod, boundReceiver, boundContextArguments = emptyArray())
     }
 
     override val callerWithDefaults: Caller<*>? get() = null
@@ -150,8 +153,9 @@ internal class JavaKNamedFunction(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
         JavaKNamedFunction(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun bindToLowerArity(boundReceiver: Any?) = JavaKNamedFunction(container, jMethod, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<Any?> {
+        require(boundContextArguments.isEmpty()) { "Java methods cannot have bound context arguments: $this" }
+        return JavaKNamedFunction(container, jMethod, boundReceiver, overriddenStorage)
+    }
 
-    override fun unbindToHigherArity(): ReflectKCallable<Any?> =
-        JavaKNamedFunction(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
 }

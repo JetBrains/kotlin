@@ -32,7 +32,8 @@ internal open class JavaForKotlinOverrideKProperty0<out V>(
             container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod, overriddenProperty,
         )
 
-    override fun bindToLowerArity(boundReceiver: Any?) = throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>) =
+        throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
 
     override fun unbindToHigherArity(): ReflectKCallable<V> =
         JavaForKotlinOverrideKProperty1<Any?, V>(

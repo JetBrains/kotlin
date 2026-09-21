@@ -35,7 +35,7 @@ internal abstract class JavaAnnotationMethodKProperty<out V>(
 
         override val caller: Caller<*> by lazy(PUBLICATION) {
             val method = property.jMethod
-            CallerImpl.Method.Instance(method, boundReceiver)
+            CallerImpl.Method.Instance(method, boundReceiver, boundContextArguments = emptyArray())
         }
     }
 }
@@ -54,11 +54,11 @@ internal class JavaAnnotationMethodKProperty0<out V>(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaAnnotationMethodKProperty0(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun bindToLowerArity(boundReceiver: Any?) = throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>) =
+        throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
 
-    override fun unbindToHigherArity(): ReflectKCallable<V> {
-        return JavaAnnotationMethodKProperty1<Any?, V>(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
-    }
+    override fun unbindToHigherArity(): ReflectKCallable<V> =
+        JavaAnnotationMethodKProperty1<Any?, V>(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
 
     class Getter<out R>(
         override val property: JavaAnnotationMethodKProperty0<R>,
@@ -81,10 +81,11 @@ internal class JavaAnnotationMethodKProperty1<T, out V>(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaAnnotationMethodKProperty1<T, V>(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun bindToLowerArity(boundReceiver: Any?) =
-        JavaAnnotationMethodKProperty0<V>(container, jMethod, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> {
+        require(boundContextArguments.isEmpty()) { "Property cannot have bound context arguments: $this" }
+        return JavaAnnotationMethodKProperty0<V>(container, jMethod, boundReceiver, overriddenStorage)
+    }
 
-    override fun unbindToHigherArity(): ReflectKCallable<V> = throw KotlinReflectionInternalError("Cannot unbind KProperty1: $this")
 
     class Getter<T, out V>(
         override val property: JavaAnnotationMethodKProperty1<T, V>,

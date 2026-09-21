@@ -6,9 +6,9 @@
 package kotlin.reflect.jvm.internal
 
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
+import kotlin.jvm.internal.CallableReference
 
 internal open class JavaForKotlinOverrideKProperty1<T, out V>(
     container: KDeclarationContainerImpl,
@@ -32,10 +32,11 @@ internal open class JavaForKotlinOverrideKProperty1<T, out V>(
             container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod, overriddenProperty,
         )
 
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<V> =
-        JavaForKotlinOverrideKProperty0(container, boundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> {
+        require(boundContextArguments.isEmpty()) { "Java declaration cannot have bound context arguments: $this" }
+        return JavaForKotlinOverrideKProperty0(container, boundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty)
+    }
 
-    override fun unbindToHigherArity(): ReflectKCallable<V> = throw KotlinReflectionInternalError("Cannot unbind KProperty1: $this")
 
     class Getter<T, out V>(override val property: JavaForKotlinOverrideKProperty1<T, V>) :
         JavaForKotlinOverrideKProperty.Getter<V>(), KProperty1.Getter<T, V> {
@@ -61,10 +62,12 @@ internal open class JavaForKotlinOverrideKMutableProperty1<T, V>(
             container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
         )
 
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<V> =
-        JavaForKotlinOverrideKMutableProperty0(
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> {
+        require(boundContextArguments.isEmpty()) { "Java declaration cannot have bound context arguments: $this" }
+        return JavaForKotlinOverrideKMutableProperty0(
             container, boundReceiver, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
         )
+    }
 
     class Setter<T, V>(override val property: JavaForKotlinOverrideKMutableProperty1<T, V>) :
         JavaForKotlinOverrideKProperty.Setter<V>(), KMutableProperty1.Setter<T, V> {
