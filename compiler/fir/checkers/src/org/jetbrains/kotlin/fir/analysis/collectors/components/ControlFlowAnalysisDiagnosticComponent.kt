@@ -19,15 +19,10 @@ import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClassOrStatic
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForScript
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
 class ControlFlowAnalysisDiagnosticComponent(
@@ -51,38 +46,21 @@ class ControlFlowAnalysisDiagnosticComponent(
         analyze(declaration, declaration.controlFlowGraphReference?.controlFlowGraph, context)
     }
 
-    private fun analyze(declaration: FirElement, graph: ControlFlowGraph?, context: CheckerContext) {
+    private fun analyze(declaration: FirControlFlowGraphOwner, graph: ControlFlowGraph?, context: CheckerContext) {
         if (graph == null) return
         if (graph.isSubGraph) return
-        if (declaration is FirControlFlowGraphOwner && declaration.isAnalyzedWithContainerGraph(context)) return
+        val container = context.containingDeclarations.lastOrNull()
+        if (container != null && declaration.isUsedInControlFlowGraph(container)) return
 
         context(context, reporter) {
             cfaCheckers.forEach { it.analyze(graph) }
 
-            val collector = LocalPropertyCollector().apply { declaration.acceptChildren(this, graph.subGraphs.toSet()) }
+            val collector = LocalPropertyCollector().apply { declaration.acceptChildren(this, graph) }
             val properties = collector.properties
             if (properties.isNotEmpty()) {
                 val data = PropertyInitializationInfoData(properties, collector.conditionallyInitializedProperties, receiver = null, graph)
                 variableAssignmentCheckers.forEach { it.analyze(data) }
             }
-        }
-    }
-
-    /**
-     * Whether the graph of this declaration is analyzed as a part of its container graph, so it must not be analyzed on its own.
-     *
-     * [ControlFlowGraph.isSubGraph] answers the same question, but only once the container graph is built – it is building the container
-     * graph that links a member graph into it. In the Analysis API a member is resolved and checked on its own, which may happen before its
-     * container is resolved, so the flag alone would make the answer depend on the order in which declarations are checked. The
-     * `isUsedInControlFlowGraphBuilderFor*` predicates are the resolution-independent form of it, and are the same ones the container graph
-     * is built from.
-     */
-    private fun FirControlFlowGraphOwner.isAnalyzedWithContainerGraph(context: CheckerContext): Boolean {
-        return when (context.containingDeclarations.lastOrNull()) {
-            is FirFileSymbol -> isUsedInControlFlowGraphBuilderForFile
-            is FirScriptSymbol -> isUsedInControlFlowGraphBuilderForScript
-            is FirClassSymbol<*> -> isUsedInControlFlowGraphBuilderForClassOrStatic
-            else -> false
         }
     }
 
@@ -144,7 +122,7 @@ class ControlFlowAnalysisDiagnosticComponent(
      * LocalPropertyCollector().apply { element.acceptChildren(this, graph.subGraphs.toSet()) }
      * ```
      */
-    private class LocalPropertyCollector : FirDefaultVisitor<Unit, Set<ControlFlowGraph>>() {
+    private class LocalPropertyCollector : FirDefaultVisitor<Unit, ControlFlowGraph>() {
         val properties = mutableSetOf<FirPropertySymbol>()
 
         // Properties which may not be initialized when accessed, even if they have an initializer.
@@ -156,40 +134,23 @@ class ControlFlowAnalysisDiagnosticComponent(
         private val doWhileLoopProperties = ArrayDeque<Pair<FirLoop, MutableSet<FirPropertySymbol>>>()
         private val insideDoWhileConditions = mutableSetOf<FirLoop>()
 
-        override fun visitElement(element: FirElement, data: Set<ControlFlowGraph>) {
+        override fun visitElement(element: FirElement, data: ControlFlowGraph) {
             when (element) {
                 is FirControlFlowGraphOwner -> {
-                    // Only traverse elements that can have a graph when...
-                    // 1. They do not have a graph and never will,
-                    // 2. Or their graph is in the allowed set of sub-graphs.
-                    val elementGraph = element.controlFlowGraphReference?.controlFlowGraph
-                    when {
-                        elementGraph != null -> if (elementGraph in data) {
-                            element.acceptChildren(this, elementGraph.subGraphs.toSet())
-                        }
-                        !element.isContainerWithOwnGraph -> element.acceptChildren(this, data)
+                    // When visiting an element which can have a CFG, check it is used by the containing graph before recursing.
+                    // Recusing to a CFG-independent element is a navigation violation in the Analysis API.
+                    if (element.isUsedInControlFlowGraph(container = data)) {
+                        val container = element.controlFlowGraphReference?.controlFlowGraph ?: data
+                        element.acceptChildren(this, container)
                     }
                 }
+
+                // If an element is not a CFG owner, it is always used by the containing graph and should be visited.
                 else -> element.acceptChildren(this, data)
             }
         }
 
-        /**
-         * Whether this is a container which always gets a graph of its own, so that a missing graph means it is not resolved yet.
-         *
-         * A missing graph is otherwise ambiguous. An owner which never gets one keeps its content in the graph being traversed – a local
-         * property is such an owner, it is a statement of the container graph and gets no graph of its own even with an initializer, so
-         * the traversal has to descend into it. A container keeps its content in its own graph instead, and descending into an unresolved
-         * one would collect properties the traversed graph knows nothing about. In the Analysis API a container is analyzed without its
-         * nested declarations being resolved, so an unresolved nested container is reachable there.
-         */
-        private val FirElement.isContainerWithOwnGraph: Boolean
-            get() = when (this) {
-                is FirFile, is FirScript, is FirClass -> true
-                else -> false
-            }
-
-        override fun visitProperty(property: FirProperty, data: Set<ControlFlowGraph>) {
+        override fun visitProperty(property: FirProperty, data: ControlFlowGraph) {
             if (
                 property.symbol is FirRegularPropertySymbol ||
                 property.origin == FirDeclarationOrigin.ScriptCustomization.Parameter ||
@@ -203,7 +164,7 @@ class ControlFlowAnalysisDiagnosticComponent(
             visitElement(property, data)
         }
 
-        override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Set<ControlFlowGraph>) {
+        override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: ControlFlowGraph) {
             if (insideDoWhileConditions.isNotEmpty()) {
                 val symbol = qualifiedAccessExpression.calleeReference.toResolvedPropertySymbol() ?: return
 
@@ -217,7 +178,7 @@ class ControlFlowAnalysisDiagnosticComponent(
             visitElement(qualifiedAccessExpression, data)
         }
 
-        override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: Set<ControlFlowGraph>) {
+        override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: ControlFlowGraph) {
             doWhileLoopProperties.addLast(doWhileLoop to mutableSetOf())
 
             // Manually navigate children of do-while loop, so it is known when the loop condition is being navigated.
