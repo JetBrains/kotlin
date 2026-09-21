@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.artifacts.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
@@ -139,11 +138,9 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, SetupCInteropApiElementsConfigurationSideEffect)
         register(project, SetupEmbedAndSignAppleFrameworkTaskSideEffect)
         register(project, ConfigureJavaTestFixturesSideEffect)
-        if (useNonPackedKlibs) {
-            register(project, MaybeAddWorkaroundForSecondaryVariantsBug)
-            register(project, CreateNonPackedKlibVariantsSideEffect)
-            register(project, ConfigureNonPackedKlibConsumingSideEffect)
-        }
+        register(project, MaybeAddWorkaroundForSecondaryVariantsBug)
+        register(project, CreateNonPackedKlibVariantsSideEffect)
+        register(project, ConfigureNonPackedKlibConsumingSideEffect)
         register(project, WasmBinaryPreparationSetupAction)
         register(project, ConfigureKotlinPlaywrightTestRunner)
         register(project, PublishSharedPackageJsonSideEffect)
@@ -223,5 +220,3 @@ private val Project.isMultiplatform get() = multiplatformExtensionOrNull != null
 private val Project.isJvm get() = kotlinJvmExtensionOrNull != null
 
 private val Project.isAndroid get() = kotlinExtension is KotlinAndroidProjectExtension
-
-private val Project.useNonPackedKlibs get() = kotlinPropertiesProvider.useNonPackedKlibs

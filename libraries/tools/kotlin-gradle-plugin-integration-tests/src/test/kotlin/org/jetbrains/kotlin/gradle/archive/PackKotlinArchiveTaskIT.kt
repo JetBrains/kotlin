@@ -56,17 +56,6 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun testPackedKlibsAreUnpackedInArchive(gradleVersion: GradleVersion) {
-        val archiveEntries = packKotlinArchive(
-            gradleVersion,
-            projectName = "producer",
-            "-P${PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS}=false",
-        ) { setupKarTestTargetsAndSourceSets() }
-
-        assertEquals(simpleProducerArchiveEntries.prettyPrinted, archiveEntries.prettyPrinted)
-    }
-
-    @GradleTest
     fun testCommonizedCInteropsKeepPerLibraryDirectories(gradleVersion: GradleVersion) {
         val archiveEntries = packKotlinArchive(
             gradleVersion,

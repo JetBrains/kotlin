@@ -7,19 +7,14 @@ package org.jetbrains.kotlin.gradle.internal.attributes
 
 import org.gradle.api.Project
 import org.gradle.api.attributes.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.utils.named
 
 internal fun KlibPackaging.Companion.setAttributeTo(project: Project, attributes: AttributeContainer, packed: Boolean) {
-    if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-        attributes.attribute(
-            ATTRIBUTE,
-            project.objects.named(if (packed) PACKED else NON_PACKED)
-        )
-    } else {
-        error("${ATTRIBUTE.name} should not be set when non-packed klibs usage is disabled")
-    }
+    attributes.attribute(
+        ATTRIBUTE,
+        project.objects.named(if (packed) PACKED else NON_PACKED)
+    )
 }
 
 internal fun KlibPackaging.Companion.setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
