@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.backend.konan.library.InternalKlibDAGApi
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
@@ -51,8 +52,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - target: macos_arm64
      * - number of libraries: 177 (stdlib + platform libs)
      * - resulting DAG size: 1
-     * - median duration:
-     *   - no indices: < 1ms
+     * - median duration: < 1ms (any mode)
      */
     @ParameterizedTest
     @EnumSource
@@ -73,7 +73,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 177 (stdlib + platform libs)
      * - resulting DAG size: 10
      * - median duration:
-     *   - no indices: 670 ms
+     *   - no indices: 686 ms
+     *   - with indices: 4 ms
      */
     @ParameterizedTest
     @EnumSource
@@ -94,7 +95,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
      * - resulting DAG size: 21
      * - median duration:
-     *   - no indices: 47 ms
+     *   - no indices: 11 ms
+     *   - with indices: 5 ms
      */
     @ParameterizedTest
     @EnumSource
@@ -117,7 +119,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
      * - resulting DAG size: 21
      * - median duration:
-     *   - no indices: 188 ms
+     *   - no indices: 78 ms
+     *   - with indices: 5 ms
      */
     @ParameterizedTest
     @EnumSource
@@ -140,7 +143,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
      * - resulting DAG size: 21
      * - median duration:
-     *   - no indices: 511 ms
+     *   - no indices: 159 ms
+     *   - with indices: 9 ms
      */
     @ParameterizedTest
     @EnumSource
@@ -163,7 +167,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
      * - resulting DAG size: 101
      * - median duration:
-     *   - no indices: 233 ms
+     *   - no indices: 53 ms
+     *   - with indices: 24 ms
      */
     @ParameterizedTest
     @EnumSource
@@ -186,7 +191,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
      * - resulting DAG size: 101
      * - median duration:
-     *   - no indices: 3.05 s
+     *   - no indices: 1.16 s
+     *   - with indices: 36 ms
      */
     @ParameterizedTest
     @EnumSource
@@ -209,7 +215,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
      * - resulting DAG size: 101
      * - median duration:
-     *   - no indices: 3.04 s
+     *   - no indices: 1.19 s
+     *   - with indices: 35 ms
      */
     @ParameterizedTest
     @EnumSource
@@ -298,8 +305,6 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         expectedRootsNumber: Int, // Sanity check.
         mode: KlibDAGBuildingMode,
     ) {
-        require(mode == KlibDAGBuildingMode.NO_INDICES)
-
         repeat(2) {
             System.gc()
             Thread.sleep(100)
@@ -339,7 +344,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
                 println("The computed DAG size is: ${latestDag!!.librariesReverseTopoSorted.size}")
             },
         ) {
-            latestDag = KlibDAGBuilder(allLibraries) { it in roots }.build()
+            @OptIn(InternalKlibDAGApi::class)
+            latestDag = KlibDAGBuilder(allLibraries, useSignatureIndices = mode.useSignatureIndices) { it in roots }.build()
         }
     }
 

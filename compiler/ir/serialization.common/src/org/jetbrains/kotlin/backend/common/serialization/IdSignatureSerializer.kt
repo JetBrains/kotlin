@@ -21,23 +21,7 @@ class IdSignatureSerializer(
     private val protoIdSignatureMap: MutableMap<IdSignature, Int>,
     private val protoIdSignatureArray: ArrayList<ProtoIdSignature>,
 ) {
-
-    private fun serializePublicSignature(signature: IdSignature.CommonSignature): ProtoCommonIdSignature {
-        val proto = ProtoCommonIdSignature.newBuilder()
-        proto.addAllPackageFqName(stringSerializer.serializeFqName(signature.packageFqName))
-        proto.addAllDeclarationFqName(stringSerializer.serializeFqName(signature.declarationFqName))
-
-        signature.id?.let {
-            proto.memberUniqId = it
-        }
-        if (signature.mask != 0L) {
-            proto.flags = signature.mask
-        }
-
-        signature.description?.let { proto.debugInfo = debugInfoSerializer.serializeString(it) }
-
-        return proto.build()
-    }
+    private val commonSignatureSerializer = CommonSignatureSerializer(stringSerializer, debugInfoSerializer)
 
     private fun serializeAccessorSignature(signature: IdSignature.AccessorSignature): ProtoAccessorIdSignature {
         val proto = ProtoAccessorIdSignature.newBuilder()
@@ -90,7 +74,7 @@ class IdSignatureSerializer(
     private fun serializeIdSignature(idSignature: IdSignature): ProtoIdSignature {
         val proto = ProtoIdSignature.newBuilder()
         when (idSignature) {
-            is IdSignature.CommonSignature -> proto.publicSig = serializePublicSignature(idSignature)
+            is IdSignature.CommonSignature -> proto.publicSig = commonSignatureSerializer.serializeSignature(idSignature)
             is IdSignature.AccessorSignature -> proto.accessorSig = serializeAccessorSignature(idSignature)
             is IdSignature.FileLocalSignature -> proto.privateSig = serializePrivateSignature(idSignature)
             is IdSignature.ScopeLocalDeclaration -> proto.scopedLocalSig = serializeScopeLocalSignature(idSignature)
@@ -109,5 +93,26 @@ class IdSignatureSerializer(
             protoIdSignatureArray.add(serializeIdSignature(idSig))
             protoIdSignatureArray.size - 1
         }
+    }
+}
+
+class CommonSignatureSerializer(
+    private val stringSerializer: IrStringSerializer,
+    private val debugInfoSerializer: IrStringSerializer?,
+) {
+    fun serializeSignature(signature: IdSignature.CommonSignature): ProtoCommonIdSignature {
+        val proto = ProtoCommonIdSignature.newBuilder()
+
+        proto.addAllPackageFqName(stringSerializer.serializeFqName(signature.packageFqName))
+        proto.addAllDeclarationFqName(stringSerializer.serializeFqName(signature.declarationFqName))
+
+        signature.id?.let { proto.memberUniqId = it }
+        if (signature.mask != 0L) proto.flags = signature.mask
+
+        signature.description?.let { description ->
+            debugInfoSerializer?.serializeString(description)?.let { proto.debugInfo = it }
+        }
+
+        return proto.build()
     }
 }

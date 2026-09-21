@@ -4,6 +4,9 @@
  */
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
+import org.jetbrains.kotlin.backend.common.includeSignatureIndex
+import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.library.writer.includeBitcode
@@ -17,6 +20,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeMetadata
@@ -37,26 +41,41 @@ fun createInteropLibrary(
         staticLibraries: List<Path>,
         klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel,
 ) {
-    KlibWriter {
-        format(if (nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
-        manifest {
-            moduleName(moduleName)
-            versions(
-                    KotlinLibraryVersioning(
-                            abiVersion = klibAbiCompatibilityLevel.toAbiVersionForManifest(),
-                            compilerVersion = KotlinCompilerVersion.VERSION,
-                            metadataVersion = klibAbiCompatibilityLevel.toCInteropKlibMetadataVersion(),
-                    )
-            )
-            platformAndTargets(BuiltInsPlatform.NATIVE, target.visibleName)
-            customProperties {
-                this += (manifest - KLIB_PROPERTY_DEPENDS) // Do not propagate the `depends=` property from *.def files, rely on `dependencies` instead.
+    fun writeKlib(signaturesForIndex: ExtractedSignatures?) {
+        KlibWriter {
+            format(if (nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
+            manifest {
+                moduleName(moduleName)
+                versions(
+                        KotlinLibraryVersioning(
+                                abiVersion = klibAbiCompatibilityLevel.toAbiVersionForManifest(),
+                                compilerVersion = KotlinCompilerVersion.VERSION,
+                                metadataVersion = klibAbiCompatibilityLevel.toCInteropKlibMetadataVersion(),
+                        )
+                )
+                platformAndTargets(BuiltInsPlatform.NATIVE, target.visibleName)
+                customProperties {
+                    this += (manifest - KLIB_PROPERTY_DEPENDS) // Do not propagate the `depends=` property from *.def files, rely on `dependencies` instead.
+                }
+                legacyNativeShortNameInManifest(shortName)
+                legacyNativeDependenciesInManifest(dependencies.map { it.uniqueName })
             }
-            legacyNativeShortNameInManifest(shortName)
-            legacyNativeDependenciesInManifest(dependencies.map { it.uniqueName })
-        }
-        includeMetadata(serializedMetadata)
-        includeBitcode(target, nativeBitcodeFiles)
-        includeNativeIncludedBinaries(target, staticLibraries)
-    }.writeTo(outputPath)
+            includeMetadata(serializedMetadata)
+            includeBitcode(target, nativeBitcodeFiles)
+            includeNativeIncludedBinaries(target, staticLibraries)
+            signaturesForIndex?.let {
+                includeSignatureIndex(
+                        exportedTopLevelSignatures = signaturesForIndex.declaredSignatures,
+                        importedTopLevelSignatures = signaturesForIndex.importedSignatures,
+                )
+            }
+        }.writeTo(outputPath)
+    }
+
+    writeKlib(signaturesForIndex = null)
+
+    val library = KlibLoader { libraryPaths(outputPath) }.load().librariesStdlibFirst.single()
+    val signaturesForIndex = IdSignaturesExtractorFromCInteropKlib(library).extractOnlyTopLevelPublicSignatures()
+
+    writeKlib(signaturesForIndex = signaturesForIndex)
 }

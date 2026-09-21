@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.native
 
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
+import org.jetbrains.kotlin.backend.common.includeSignatureIndex
 import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToManifest
 import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loadSizeInfo
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToManifest
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.writer.KlibWriter
@@ -99,21 +103,36 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
 
     val klibPath = Path(klibOutputFileName)
 
-    KlibWriter {
-        format(if (dontCompressKlib) KlibFormat.Directory else KlibFormat.ZipArchive)
-        manifest {
-            moduleName(libraryName)
-            versions(versions)
-            platformAndTargets(BuiltInsPlatform.NATIVE, nativeTargetsForManifest)
-            customProperties { this += manifestProperties }
-            legacyNativeShortNameInManifest(shortLibraryName)
-            legacyNativeDependenciesInManifest(linkDependencies.map { it.uniqueName })
-        }
-        includeMetadata(input.serializerOutput.serializedMetadata!!)
-        includeIr(input.serializerOutput.serializedIr)
-        includeBitcode(target, config.nativeLibraries.map(::Path))
-        includeNativeIncludedBinaries(target, config.includeBinaries.map(::Path))
-    }.writeTo(klibPath)
+    fun writeKlib(signaturesForIndex: ExtractedSignatures?) {
+        KlibWriter {
+            format(if (dontCompressKlib) KlibFormat.Directory else KlibFormat.ZipArchive)
+            manifest {
+                moduleName(libraryName)
+                versions(versions)
+                platformAndTargets(BuiltInsPlatform.NATIVE, nativeTargetsForManifest)
+                customProperties { this += manifestProperties }
+                legacyNativeShortNameInManifest(shortLibraryName)
+                legacyNativeDependenciesInManifest(linkDependencies.map { it.uniqueName })
+            }
+            includeMetadata(input.serializerOutput.serializedMetadata!!)
+            includeIr(input.serializerOutput.serializedIr)
+            includeBitcode(target, config.nativeLibraries.map(::Path))
+            includeNativeIncludedBinaries(target, config.includeBinaries.map(::Path))
+            signaturesForIndex?.let {
+                includeSignatureIndex(
+                    exportedTopLevelSignatures = signaturesForIndex.declaredSignatures,
+                    importedTopLevelSignatures = signaturesForIndex.importedSignatures,
+                )
+            }
+        }.writeTo(klibPath)
+    }
+
+    writeKlib(signaturesForIndex = null)
+
+    val library = KlibLoader { libraryPaths(outputPath) }.load().librariesStdlibFirst.single()
+    val signaturesForIndex = IdSignaturesExtractorFromRegularKlib(library).extractOnlyTopLevelPublicSignatures()
+
+    writeKlib(signaturesForIndex = signaturesForIndex)
 
     loadSizeInfo(klibPath)?.flatten()?.let { stats ->
         performanceManager?.registerKlibElementStats(stats)

@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.library
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -22,6 +27,7 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.pathString
 
 /**
@@ -122,6 +128,9 @@ interface KlibDAGNode {
 
 class KlibDAGCyclicDependencyException : Exception("Cyclic dependency detected while computing DAG of KLIB dependencies")
 
+@RequiresOptIn("Direct access to the internal Klib DAG API is discouraged.")
+annotation class InternalKlibDAGApi
+
 /**
  * The component constructs [KlibDAG] by reading [KotlinLibrary] raw data. It works without involvement of IR linker.
  *
@@ -130,8 +139,18 @@ class KlibDAGCyclicDependencyException : Exception("Cyclic dependency detected w
  * of IR linker. This class may not be needed in the future if we decide to move the caches orchestration
  * from the compiler to the BTA.
  */
-class KlibDAGBuilder(libraries: Collection<KotlinLibrary>, isRoot: (KotlinLibrary) -> Boolean) {
-    private val worker = KlibDAGBuilderImpl(libraries, isRoot)
+class KlibDAGBuilder @InternalKlibDAGApi constructor(
+    libraries: Collection<KotlinLibrary>,
+    useSignatureIndices: Boolean,
+    isRoot: (KotlinLibrary) -> Boolean,
+) {
+    @OptIn(InternalKlibDAGApi::class)
+    constructor(
+        libraries: Collection<KotlinLibrary>,
+        isRoot: (KotlinLibrary) -> Boolean,
+    ) : this(libraries, useSignatureIndices = true, isRoot)
+
+    private val worker = KlibDAGBuilderImpl(libraries, useSignatureIndices, isRoot)
 
     /** Cache the result of the DAG computation to now compute it on each [build] invocation. */
     private val result by lazy { worker.build() }
@@ -139,7 +158,11 @@ class KlibDAGBuilder(libraries: Collection<KotlinLibrary>, isRoot: (KotlinLibrar
     fun build(): KlibDAG = result
 }
 
-private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (KotlinLibrary) -> Boolean) {
+private class KlibDAGBuilderImpl(
+    libraries: Collection<KotlinLibrary>,
+    private val useSignatureIndices: Boolean,
+    isRoot: (KotlinLibrary) -> Boolean,
+) {
     private var stdlib: KotlinLibrary? = null
     private val rootsButStdlib: MutableList<KotlinLibrary> = mutableListOf()
     private val others: MutableList<KotlinLibrary> = mutableListOf()
@@ -160,12 +183,13 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
 
     private val signatureExtractors: Map<KotlinLibrary, IdSignaturesExtractor> = buildMap {
         for (library in libraries) {
-            this[library] = when {
+            val extractor = when {
                 library.isNativeStdlib -> continue
                 library.isCInteropLibrary() -> IdSignaturesExtractorFromCInteropKlib(library)
                 library.ir != null -> IdSignaturesExtractorFromRegularKlib(library)
                 else -> error("This library does not have IR and is not a C-interop library: ${library.path}")
             }
+            this[library] = if (useSignatureIndices) IdSignaturesExtractorFromKlibWithIndices(library, extractor) else extractor
         }
     }
 
@@ -185,26 +209,35 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
     private val contributedPackageToNode: MutableMap<FqName, MutableSet<KlibDAGNodeImpl>> = hashMapOf()
 
     // Index: declared signature -> KLIB.
-    private val declaredSignatureToNode: MutableMap<IdSignature, KlibDAGNodeImpl> = hashMapOf()
+    private val declaredSignatureToNode: ConcurrentHashMap<IdSignature, KlibDAGNodeImpl> = ConcurrentHashMap()
 
     // Index: KLIB -> imported signatures.
-    private val nodeToImportedSignatures: MutableMap<KlibDAGNodeImpl, Set<IdSignature>> = hashMapOf()
+    private val nodeToImportedSignatures: ConcurrentHashMap<KlibDAGNodeImpl, Set<IdSignature>> = ConcurrentHashMap()
 
     fun build(): KlibDAG {
         // Optimization: Stdlib is a dependency for each library. We don't need to extract signatures from it.
         stampStdlibNodeAsDependencyForEveryone()
 
-        for (library in rootsButStdlib) {
-            populateSignatureIndicesForLibrary(library) // Populate indices.
+        // Collect all libraries that need eager signature indices population.
+        val librariesToPopulateSignatureIndices: List<KotlinLibrary> = buildList {
+            addAll(rootsButStdlib)
+
+            for (library in others) {
+                // Note: populateContributedPackageIndexForLibrary is inexpensive, so keep it sequential.
+                if (!populateContributedPackageIndexForLibrary(library)) {
+                    // Fallback to expensive population of signature indices.
+                    add(library)
+                }
+            }
         }
 
-        for (library in others) {
-            // Don't populate indices with the expensive data that not necessarily will be used.
-            // Instead, memoize the packages represented by a library.
-            if (!populateContributedPackageIndexForLibrary(library)) {
-                // Fallback to expensive population of signature indices.
-                populateSignatureIndicesForLibrary(library)
-            }
+        // Populate signature indices for all these libraries in parallel: signature extraction is expensive,
+        // and populateSignatureIndicesForLibrary only writes to the  ConcurrentHashMap indices for distinct nodes,
+        // so the calls are safe to run concurrently.
+        runBlocking {
+            librariesToPopulateSignatureIndices
+                .map { library -> async(Dispatchers.Default) { populateSignatureIndicesForLibrary(library) } }
+                .awaitAll()
         }
 
         // Maintain the set of really used DAG nodes and their statuses.
@@ -317,7 +350,7 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
      */
     private fun populateSignatureIndicesForLibrary(library: KotlinLibrary): Boolean {
         val node = dagUnderConstruction.getValue(library)
-        if (node in nodeToImportedSignatures) return false // The indices were populated earlier.
+        if (nodeToImportedSignatures.containsKey(node)) return false // The indices were populated earlier.
 
         // Note: We are intentionally extracting only signatures of top-level declarations. It's an optimization.
         // We can always deduce the signature of a top-level class from a signature of any member or an inner/nested class.
