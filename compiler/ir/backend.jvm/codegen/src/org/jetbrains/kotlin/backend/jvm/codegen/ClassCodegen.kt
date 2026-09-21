@@ -138,7 +138,7 @@ class ClassCodegen private constructor(
 
     private var generated = false
 
-    // Descriptors of this class's fields whose type is a JVM value class, collected during field generation and emitted as
+    // Descriptors of this class's fields whose type is a Valhalla value class, collected during field generation and emitted as
     // the `LoadableDescriptors` attribute (JEP 401).
     private val loadableFieldDescriptors = mutableSetOf<String>()
 
@@ -228,16 +228,16 @@ class ClassCodegen private constructor(
         visitor.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableFieldDescriptors.toList()))
     }
 
-    private fun IrField.isLoadableFieldType(descriptor: String): Boolean {
+    private fun IrField.isValhallaLoadableFieldType(descriptor: String): Boolean {
         val languageVersionSettings = config.languageVersionSettings
-        if (!languageVersionSettings.areJvmValueClassesEnabled()) return false
+        if (!languageVersionSettings.isValhallaSupportEnabled()) return false
         val fieldClass = type.classOrNull?.owner
         return when {
             // A field of the class's own type is never listed: the class is already being loaded, so there is nothing to preload
             // (matches javac, which excludes only the exact self-type — mutually-referential value classes still list each other).
             fieldClass == irClass -> false
-            // A Kotlin value class compiled as a JVM value class
-            fieldClass?.isCompiledAsJvmValueClass(languageVersionSettings) == true -> true
+            // A Kotlin value class compiled as a Valhalla value class
+            fieldClass?.isKotlinValhallaValueClass(languageVersionSettings) == true -> true
             // A value class defined in Java (`value class`, resolved from source or a binary/jar dependency).
             fieldClass?.isJavaValueClass == true -> true
             // A field of a JDK value-based class (JEP 401 migrates all of them to value classes) is loadable, exactly like javac.
@@ -403,7 +403,7 @@ class ClassCodegen private constructor(
 
     private fun generateField(field: IrField) {
         val fieldType = typeMapper.mapType(field)
-        if (field.isLoadableFieldType(fieldType.descriptor)) {
+        if (field.isValhallaLoadableFieldType(fieldType.descriptor)) {
             loadableFieldDescriptors.add(fieldType.descriptor)
         }
         val fieldSignature =
@@ -665,7 +665,7 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
                 isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
                 hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
                 else -> Opcodes.ACC_SUPER or modality.flags
-            }.let { if (isCompiledAsJvmValueClass(languageVersionSettings)) it and ACC_IDENTITY.inv() else it }
+            }.let { if (isKotlinValhallaValueClass(languageVersionSettings)) it and ACC_IDENTITY.inv() else it }
 
 private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionSettings): Int {
     if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))
@@ -685,7 +685,7 @@ private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersio
                 correspondingPropertySymbol?.owner?.isDeprecatedCallable(context) == true
             ) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
-            (if (isStatic) Opcodes.ACC_STATIC else if (parentAsClass.isCompiledAsJvmValueClass(languageVersionSettings)) Opcodes.ACC_STRICT else 0) or
+            (if (isStatic) Opcodes.ACC_STATIC else if (parentAsClass.isKotlinValhallaValueClass(languageVersionSettings)) Opcodes.ACC_STRICT else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
             (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0) or
             (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||

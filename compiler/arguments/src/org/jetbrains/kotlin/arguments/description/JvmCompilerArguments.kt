@@ -230,10 +230,10 @@ to force diagnostics to be reported.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xjvm-value-classes"
-        description = ("Compile Kotlin value classes to JVM value classes, so that they behave as such at runtime. " +
-                "JVM value classes are an experimental JVM feature, so this requires JVM target 27 or later and " +
-                "the '-Xjvm-enable-preview' flag, as well as a JDK that supports them.").asReleaseDependent()
+        name = "Xvalhalla-support"
+        description = ("Compile every value class to a JVM value class (an experimental Project Valhalla feature), so that it " +
+                "behaves as such at runtime. Requires a Valhalla-compatible JDK, JVM target 27 or later, and the " +
+                "'-Xjvm-enable-preview' flag. Without this flag, value classes are compiled to regular JVM bytecode.").asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(

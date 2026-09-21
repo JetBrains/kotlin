@@ -77,7 +77,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_JVM_DEFAULT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_JVM_ENABLE_PREVIEW
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_JVM_EXPOSE_BOXED
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_JVM_VALUE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_KLIB
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_LAMBDAS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_LINK_VIA_SIGNATURES
@@ -111,6 +110,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_METADATA_ON_INCREMENTAL_CLASSPATH
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_OLD_CLASS_FILES_READING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_TYPE_TABLE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_VALHALLA_SUPPORT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_VALIDATE_BYTECODE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_VALUE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_WHEN_EXPRESSIONS
@@ -233,7 +233,6 @@ internal class JvmCompilerArgumentsImpl(
     if (X_JVM_DEFAULT in this) { arguments.jvmDefault = get(X_JVM_DEFAULT)}
     if (X_JVM_ENABLE_PREVIEW in this) { arguments.enableJvmPreview = get(X_JVM_ENABLE_PREVIEW)}
     if (X_JVM_EXPOSE_BOXED in this) { arguments.jvmExposeBoxed = get(X_JVM_EXPOSE_BOXED)}
-    if (X_JVM_VALUE_CLASSES in this) { arguments.jvmValueClasses = get(X_JVM_VALUE_CLASSES)}
     try { if (X_KLIB in this) { arguments.setUsingReflection("klibLibraries", get(X_KLIB)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_KLIB. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_LAMBDAS in this) { arguments.lambdas = get(X_LAMBDAS)?.stringValue}
     try { if (X_LINK_VIA_SIGNATURES in this) { arguments.setUsingReflection("linkViaSignatures", get(X_LINK_VIA_SIGNATURES))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_LINK_VIA_SIGNATURES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
@@ -265,6 +264,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_USE_METADATA_ON_INCREMENTAL_CLASSPATH in this) { arguments.useMetadataOnIncrementalClasspath = get(X_USE_METADATA_ON_INCREMENTAL_CLASSPATH)}
     if (X_USE_OLD_CLASS_FILES_READING in this) { arguments.useOldClassFilesReading = get(X_USE_OLD_CLASS_FILES_READING)}
     if (X_USE_TYPE_TABLE in this) { arguments.useTypeTable = get(X_USE_TYPE_TABLE)}
+    if (X_VALHALLA_SUPPORT in this) { arguments.valhallaSupport = get(X_VALHALLA_SUPPORT)}
     if (X_VALIDATE_BYTECODE in this) { arguments.validateBytecode = get(X_VALIDATE_BYTECODE)}
     try { if (X_VALUE_CLASSES in this) { arguments.setUsingReflection("valueClasses", get(X_VALUE_CLASSES))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VALUE_CLASSES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.20""").initCause(e) }
     if (X_WHEN_EXPRESSIONS in this) { arguments.whenExpressionsGeneration = get(X_WHEN_EXPRESSIONS)?.stringValue}
@@ -324,7 +324,6 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_JVM_DEFAULT] = arguments.jvmDefault } catch (_: NoSuchMethodError) {  }
     try { this[X_JVM_ENABLE_PREVIEW] = arguments.enableJvmPreview } catch (_: NoSuchMethodError) {  }
     try { this[X_JVM_EXPOSE_BOXED] = arguments.jvmExposeBoxed } catch (_: NoSuchMethodError) {  }
-    try { this[X_JVM_VALUE_CLASSES] = arguments.jvmValueClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB] = arguments.getUsingReflection<String?>("klibLibraries")?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_LAMBDAS] = arguments.lambdas?.let { LambdasMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::lambdas, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xlambdas value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_LINK_VIA_SIGNATURES] = arguments.getUsingReflection<Boolean>("linkViaSignatures") } catch (_: NoSuchMethodError) {  }
@@ -356,6 +355,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_USE_METADATA_ON_INCREMENTAL_CLASSPATH] = arguments.useMetadataOnIncrementalClasspath } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_OLD_CLASS_FILES_READING] = arguments.useOldClassFilesReading } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_TYPE_TABLE] = arguments.useTypeTable } catch (_: NoSuchMethodError) {  }
+    try { this[X_VALHALLA_SUPPORT] = arguments.valhallaSupport } catch (_: NoSuchMethodError) {  }
     try { this[X_VALIDATE_BYTECODE] = arguments.validateBytecode } catch (_: NoSuchMethodError) {  }
     try { this[X_VALUE_CLASSES] = arguments.getUsingReflection<Boolean>("valueClasses") } catch (_: NoSuchMethodError) {  }
     try { this[X_WHEN_EXPRESSIONS] = arguments.whenExpressionsGeneration?.let { WhenExpressionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::whenExpressionsGeneration, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
@@ -412,7 +412,6 @@ internal class JvmCompilerArgumentsImpl(
     if (X_JVM_DEFAULT in this) { arguments.jvmDefault = get(X_JVM_DEFAULT)}
     if (X_JVM_ENABLE_PREVIEW in this) { arguments.enableJvmPreview = get(X_JVM_ENABLE_PREVIEW)}
     if (X_JVM_EXPOSE_BOXED in this) { arguments.jvmExposeBoxed = get(X_JVM_EXPOSE_BOXED)}
-    if (X_JVM_VALUE_CLASSES in this) { arguments.jvmValueClasses = get(X_JVM_VALUE_CLASSES)}
     try { if (X_KLIB in this) { arguments.setUsingReflection("klibLibraries", get(X_KLIB)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_KLIB. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_LAMBDAS in this) { arguments.lambdas = get(X_LAMBDAS)?.stringValue}
     try { if (X_LINK_VIA_SIGNATURES in this) { arguments.setUsingReflection("linkViaSignatures", get(X_LINK_VIA_SIGNATURES))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_LINK_VIA_SIGNATURES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
@@ -444,6 +443,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_USE_METADATA_ON_INCREMENTAL_CLASSPATH in this) { arguments.useMetadataOnIncrementalClasspath = get(X_USE_METADATA_ON_INCREMENTAL_CLASSPATH)}
     if (X_USE_OLD_CLASS_FILES_READING in this) { arguments.useOldClassFilesReading = get(X_USE_OLD_CLASS_FILES_READING)}
     if (X_USE_TYPE_TABLE in this) { arguments.useTypeTable = get(X_USE_TYPE_TABLE)}
+    if (X_VALHALLA_SUPPORT in this) { arguments.valhallaSupport = get(X_VALHALLA_SUPPORT)}
     if (X_VALIDATE_BYTECODE in this) { arguments.validateBytecode = get(X_VALIDATE_BYTECODE)}
     try { if (X_VALUE_CLASSES in this) { arguments.setUsingReflection("valueClasses", get(X_VALUE_CLASSES))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VALUE_CLASSES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.20""").initCause(e) }
     if (X_WHEN_EXPRESSIONS in this) { arguments.whenExpressionsGeneration = get(X_WHEN_EXPRESSIONS)?.stringValue}
@@ -613,9 +613,6 @@ internal class JvmCompilerArgumentsImpl(
     public val X_JVM_EXPOSE_BOXED: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_JVM_EXPOSE_BOXED")
 
-    public val X_JVM_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_JVM_VALUE_CLASSES")
-
     public val X_KLIB: JvmCompilerArgument<List<java.nio.`file`.Path>?> =
         JvmCompilerArgument("X_KLIB")
 
@@ -704,6 +701,9 @@ internal class JvmCompilerArgumentsImpl(
 
     public val X_USE_TYPE_TABLE: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_TYPE_TABLE")
+
+    public val X_VALHALLA_SUPPORT: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_VALHALLA_SUPPORT")
 
     public val X_VALIDATE_BYTECODE: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_VALIDATE_BYTECODE")

@@ -64,7 +64,6 @@ where advanced options include:
   -Xjvm-enable-preview       Allow using Java features that are in the preview phase.
                              This works like '--enable-preview' in Java. All class files are marked as compiled with preview features, meaning it won't be possible to use them in release environments.
   -Xjvm-expose-boxed         Expose inline classes and functions, accepting and returning them, to Java.
-  -Xjvm-value-classes        Compile Kotlin value classes to JVM value classes, so that they behave as such at runtime. JVM value classes are an experimental JVM feature, so this requires JVM target 27 or later and the '-Xjvm-enable-preview' flag, as well as a JDK that supports them.
   -Xlambdas={class|indy}     Select the code generation scheme for lambdas.
                              -Xlambdas=indy                  Generate lambdas using 'invokedynamic' with 'LambdaMetafactory.metafactory'.
                                                              A lambda object created using 'LambdaMetafactory.metafactory' will have a different 'toString()'.
@@ -125,6 +124,7 @@ where advanced options include:
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
   -Xuse-type-table           Use a type table in metadata serialization.
+  -Xvalhalla-support         Compile every value class to a JVM value class (an experimental Project Valhalla feature), so that it behaves as such at runtime. Requires a Valhalla-compatible JDK, JVM target 27 or later, and the '-Xjvm-enable-preview' flag. Without this flag, value classes are compiled to regular JVM bytecode.
   -Xvalidate-bytecode        Validate generated JVM bytecode before and after optimizations.
   -Xwhen-expressions={indy|inline}
                              Select the code generation scheme for type-checking 'when' expressions:

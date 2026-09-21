@@ -11,7 +11,7 @@ import com.intellij.pom.java.LanguageLevel
 
 fun Project.setupHighestLanguageLevel() {
     // `JDK_X` is the highest language level the platform knows: every Java feature is enabled, including experimental ones like
-    // JVM value classes (`-Xjvm-value-classes`) or the newest released syntax like module import declarations
+    // Valhalla value classes (`-Xvalhalla-support`) or the newest released syntax like module import declarations
     // (JEP 511, needs at least `JDK_25`). The Kotlin compiler only reads Java sources, so it is safe to recognize the latest
     // syntax instead of failing on it.
     LanguageLevelProjectExtension.getInstance(this).languageLevel = LanguageLevel.JDK_X

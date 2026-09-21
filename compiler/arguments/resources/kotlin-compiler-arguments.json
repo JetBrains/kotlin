@@ -8672,51 +8672,6 @@
                                 "deprecatedMessage": null
                             },
                             {
-                                "name": "Xjvm-value-classes",
-                                "shortName": null,
-                                "deprecatedName": null,
-                                "description": {
-                                    "current": "Compile Kotlin value classes to JVM value classes, so that they behave as such at runtime. JVM value classes are an experimental JVM feature, so this requires JVM target 27 or later and the '-Xjvm-enable-preview' flag, as well as a JDK that supports them.",
-                                    "valueInVersions": []
-                                },
-                                "delimiter": null,
-                                "affectsCompilationOutcome": true,
-                                "restrictedToCompilerPhase": null,
-                                "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                    "isNullable": {
-                                        "current": false,
-                                        "valueInVersions": []
-                                    },
-                                    "defaultValue": {
-                                        "current": false,
-                                        "valueInVersions": []
-                                    }
-                                },
-                                "valueDescription": {
-                                    "current": null,
-                                    "valueInVersions": []
-                                },
-                                "releaseVersionsMetadata": {
-                                    "introducedVersion": "2.5.0",
-                                    "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
-                                    "removedVersion": null
-                                },
-                                "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                    "isNullable": {
-                                        "current": false,
-                                        "valueInVersions": []
-                                    },
-                                    "defaultValue": {
-                                        "current": false,
-                                        "valueInVersions": []
-                                    }
-                                },
-                                "deprecatedMessage": null
-                            },
-                            {
                                 "name": "Xklib",
                                 "shortName": null,
                                 "deprecatedName": null,
@@ -10201,6 +10156,51 @@
                                 },
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "1.2.40",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "deprecatedMessage": null
+                            },
+                            {
+                                "name": "Xvalhalla-support",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Compile every value class to a JVM value class (an experimental Project Valhalla feature), so that it behaves as such at runtime. Requires a Valhalla-compatible JDK, JVM target 27 or later, and the '-Xjvm-enable-preview' flag. Without this flag, value classes are compiled to regular JVM bytecode.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.5.0",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
                                     "removedVersion": null

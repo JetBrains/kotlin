@@ -1,4 +1,4 @@
-// JVM_VALUE_CLASSES
+// VALHALLA_SUPPORT
 // LANGUAGE: +FullValueClasses
 // CHECK_BYTECODE_LISTING
 // CHECK_JVM_FLAGS
@@ -46,7 +46,7 @@ fun box(): String {
     return "OK"
 }
 
-// Every value class is compiled to a JVM value class here: they lose their identity (the ACC_SUPER access flag is cleared, so it is
+// Every value class is a Valhalla value class here: they lose their identity (the ACC_SUPER access flag is cleared, so it is
 // absent below) and their instance fields are strict (ACC_STRICT). Note the inline value class Id is a value class too.
 
 // TESTED_OBJECT_KIND: class

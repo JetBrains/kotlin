@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
-import org.jetbrains.kotlin.config.areJvmValueClassesEnabled
+import org.jetbrains.kotlin.config.isValhallaSupportEnabled
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -81,10 +81,10 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
         visibility === DescriptorVisibilities.LOCAL -> Opcodes.ACC_PUBLIC
         else -> getVisibilityAccessFlag()
     }
-    val isIdentity = context.config.languageVersionSettings.areJvmValueClassesEnabled() &&
+    val isIdentity = context.config.languageVersionSettings.isValhallaSupportEnabled() &&
             !isInterface &&
             !isAnnotationClass &&
-            !isCompiledAsJvmValueClass(context.config.languageVersionSettings) &&
+            !isKotlinValhallaValueClass(context.config.languageVersionSettings) &&
             !isJavaValueClass
     return visibility or
             (if (origin.isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or

@@ -1,4 +1,4 @@
-// JVM_VALUE_CLASSES
+// VALHALLA_SUPPORT
 // LANGUAGE: +FullValueClasses
 
 // FILE: User.java

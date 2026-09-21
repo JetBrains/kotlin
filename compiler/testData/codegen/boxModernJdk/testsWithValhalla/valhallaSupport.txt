@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public abstract class AbstractValue {
-    // source: 'jvmValueClasses.kt'
+    // source: 'valhallaSupport.kt'
     public method <init>(): void
 }
 
@@ -14,7 +14,7 @@ public final class Generated_Box_MainKt {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Id {
-    // source: 'jvmValueClasses.kt'
+    // source: 'valhallaSupport.kt'
     private final field value: int
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): Id
@@ -31,14 +31,8 @@ public final class Id {
 }
 
 @kotlin.Metadata
-public final class JvmValueClassesKt {
-    // source: 'jvmValueClasses.kt'
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}
-
-@kotlin.Metadata
 public final class Point {
-    // source: 'jvmValueClasses.kt'
+    // source: 'valhallaSupport.kt'
     private final field x: int
     private final field y: int
     public method <init>(p0: int, p1: int): void
@@ -51,7 +45,7 @@ public final class Point {
 
 @kotlin.Metadata
 public final class Record {
-    // source: 'jvmValueClasses.kt'
+    // source: 'valhallaSupport.kt'
     private final field a: int
     private final field b: int
     public method <init>(p0: int, p1: int): void
@@ -64,7 +58,7 @@ public final class Record {
 
 @kotlin.Metadata
 public final class SealedChild {
-    // source: 'jvmValueClasses.kt'
+    // source: 'valhallaSupport.kt'
     private final field s: int
     public method <init>(p0: int): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
@@ -75,8 +69,14 @@ public final class SealedChild {
 
 @kotlin.Metadata
 public abstract class SealedValue {
-    // source: 'jvmValueClasses.kt'
+    // source: 'valhallaSupport.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     permittedSubclass: SealedChild
+}
+
+@kotlin.Metadata
+public final class ValhallaSupportKt {
+    // source: 'valhallaSupport.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -27,7 +27,7 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
                 putAnalysisFlag(JvmAnalysisFlags.jvmDefaultMode, it)
             }
 
-            putAnalysisFlag(JvmAnalysisFlags.jvmValueClasses, jvmValueClasses)
+            putAnalysisFlag(JvmAnalysisFlags.valhallaSupport, valhallaSupport)
             putAnalysisFlag(JvmAnalysisFlags.inheritMultifileParts, inheritMultifileParts)
             putAnalysisFlag(JvmAnalysisFlags.sanitizeParentheses, sanitizeParentheses)
             putAnalysisFlag(JvmAnalysisFlags.suppressMissingBuiltinsError, suppressMissingBuiltinsError)

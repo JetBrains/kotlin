@@ -19,7 +19,7 @@ object JvmAnalysisFlags {
     val jvmDefaultMode by Delegates.JvmDefaultModeNullByDefault
 
     @JvmStatic
-    val jvmValueClasses by AnalysisFlag.Delegates.Boolean
+    val valhallaSupport by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
     val inheritMultifileParts by AnalysisFlag.Delegates.Boolean

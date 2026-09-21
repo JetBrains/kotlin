@@ -329,16 +329,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
         }
 
     @Argument(
-        value = "-Xjvm-value-classes",
-        description = "Compile Kotlin value classes to JVM value classes, so that they behave as such at runtime. JVM value classes are an experimental JVM feature, so this requires JVM target 27 or later and the '-Xjvm-enable-preview' flag, as well as a JDK that supports them.",
-    )
-    var jvmValueClasses: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xlambdas",
         valueDescription = "{class|indy}",
         description = """Select the code generation scheme for lambdas.
@@ -628,6 +618,16 @@ This can be used in the event of problems with the new implementation.""",
         description = "Use a type table in metadata serialization.",
     )
     var useTypeTable: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xvalhalla-support",
+        description = "Compile every value class to a JVM value class (an experimental Project Valhalla feature), so that it behaves as such at runtime. Requires a Valhalla-compatible JDK, JVM target 27 or later, and the '-Xjvm-enable-preview' flag. Without this flag, value classes are compiled to regular JVM bytecode.",
+    )
+    var valhallaSupport: Boolean = false
         set(value) {
             checkFrozen()
             field = value

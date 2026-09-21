@@ -417,16 +417,6 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_JVM_EXPOSE_BOXED", KotlinReleaseVersion(2, 2, 0))
 
     /**
-     * Compile Kotlin value classes to JVM value classes, so that they behave as such at runtime. JVM value classes are an experimental JVM feature, so this requires JVM target 27 or later and the '-Xjvm-enable-preview' flag, as well as a JDK that supports them.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_JVM_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_JVM_VALUE_CLASSES", KotlinReleaseVersion(2, 5, 0))
-
-    /**
      * Paths to cross-platform libraries in the .klib format.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -758,6 +748,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_USE_TYPE_TABLE: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_TYPE_TABLE", KotlinReleaseVersion(1, 2, 40))
+
+    /**
+     * Compile every value class to a JVM value class (an experimental Project Valhalla feature), so that it behaves as such at runtime. Requires a Valhalla-compatible JDK, JVM target 27 or later, and the '-Xjvm-enable-preview' flag. Without this flag, value classes are compiled to regular JVM bytecode.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_VALHALLA_SUPPORT: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_VALHALLA_SUPPORT", KotlinReleaseVersion(2, 5, 0))
 
     /**
      * Validate generated JVM bytecode before and after optimizations.
