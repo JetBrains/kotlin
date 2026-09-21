@@ -3499,7 +3499,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
     @Test
     public void testAllFilesPresentInScopeExpansionAbstractIncrementalJvmJpsTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion"), Pattern.compile("^([^.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion"), Pattern.compile("^([^.]+)$"), Pattern.compile("^protectedBecomesPublicAccessedTroughChild"), true);
     }
 
     @Test
@@ -3514,12 +3514,6 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
       runTest("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesInternal/");
     }
 
-    @Test
-    @TestMetadata("protectedBecomesPublicAccessedTroughChild")
-    public void testProtectedBecomesPublicAccessedTroughChild() {
-      runTest("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild/");
-    }
-
     @Nested
     @TestMetadata("jps/jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage")
     @TestDataPath("$PROJECT_ROOT")
@@ -3530,7 +3524,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
       @Test
       public void testAllFilesPresentInChangeTypeAliasAndUsage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage"), Pattern.compile("^([^.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage"), Pattern.compile("^([^.]+)$"), Pattern.compile("^protectedBecomesPublicAccessedTroughChild"), true);
       }
     }
 
@@ -3544,7 +3538,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
       @Test
       public void testAllFilesPresentInProtectedBecomesInternal() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesInternal"), Pattern.compile("^([^.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesInternal"), Pattern.compile("^([^.]+)$"), Pattern.compile("^protectedBecomesPublicAccessedTroughChild"), true);
       }
     }
 
@@ -3558,7 +3552,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
       @Test
       public void testAllFilesPresentInProtectedBecomesPublicAccessedTroughChild() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild"), Pattern.compile("^([^.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild"), Pattern.compile("^([^.]+)$"), Pattern.compile("^protectedBecomesPublicAccessedTroughChild"), true);
       }
     }
   }
