@@ -70,7 +70,7 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CommonBackendErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR,
-            "Tailrec is prohibited on open members.",
+            "Tailrec is prohibited on open and abstract members.",
         )
     }
 }
