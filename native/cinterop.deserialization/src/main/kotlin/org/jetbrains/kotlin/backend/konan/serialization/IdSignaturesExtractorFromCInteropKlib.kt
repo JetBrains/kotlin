@@ -125,10 +125,17 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
             pkg.properties.forEach(transformer::transformTopLevelProperty)
         }
 
+        // Get all signatures of declarations contained in the library.
+        val allDeclaredSignatures: Map<IdSignature, IrDeclaration> = transformer.declarationTracker.deserializedDeclarations
+
         val importedSignatures = (onlyTopLevelReferencedClasses - declaredTopLevelClasses).mapToSetOrEmpty { it.computeSignature() }
 
+        // Exclude any non-top-level signatures that might happen for accessors of top-level properties, for example.
+        val onlyPublicTopLevelDeclaredSignatures = allDeclaredSignatures.keys
+            .mapNotNullTo(hashSetOf()) { it as? IdSignature.CommonSignature }
+
         return ExtractedSignatures(
-            declaredSignatures = transformer.declarationTracker.deserializedDeclarations.keys + declaredTopLevelClasses.mapToSetOrEmpty { it.computeSignature() },
+            declaredSignatures = onlyPublicTopLevelDeclaredSignatures + declaredTopLevelClasses.mapToSetOrEmpty { it.computeSignature() },
             importedSignatures = importedSignatures,
         )
     }
@@ -166,10 +173,11 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
         )
     }
 
-    private fun ClassId.computeSignature(): IdSignature {
-        // Guess, whether it comes from a standard library or another C-interop library,
-        // and create the appropriate signature.
-        return toCInteropSignature(isCInterop = !definitelyNotFromCInterop())
+        private fun ClassId.computeSignature(): IdSignature {
+            // Guess, whether it comes from a standard library or another C-interop library,
+            // and create the appropriate signature.
+            return toCInteropSignature(isCInterop = !definitelyNotFromCInterop())
+        }
     }
 
     private class MetadataLibraryProviderImpl(library: KotlinLibrary) : KlibModuleMetadata.MetadataLibraryProvider {
