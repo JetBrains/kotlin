@@ -176,7 +176,9 @@ object FirExpressionEvaluator {
 
         // Convert literal expression to the variable's type
         val expectedType = variable?.returnTypeRef?.coneType ?: return evaluated
-        val resultWithAdjustedType = expression.value.adjustTypeAndConvertToResult(expression, expectedType)
+        val resultWithAdjustedType = withSession(session) {
+            expression.value.adjustTypeAndConvertToResult(expression, expectedType)
+        }
         return resultWithAdjustedType as? Evaluated ?: evaluated
     }
 
@@ -197,10 +199,10 @@ object FirExpressionEvaluator {
     private fun FirCallableSymbol<*>.wasVisited(): Boolean = this in visitedCallables.get()
 
     private class EvaluationVisitor(
-        val session: FirSession,
+        override val session: FirSession,
         private val firFile: FirFile? = null,
         private val calledOnCheckerStage: Boolean = false,
-    ) : FirVisitor<FirEvaluatorResult, Nothing?>() {
+    ) : FirVisitor<FirEvaluatorResult, Nothing?>(), SessionHolder {
         private inline fun <reified T : FirElement> evaluateOr(element: FirElement?, action: (NotEvaluated) -> Nothing): T {
             val result = element?.accept(this, null) ?: NotConst(element?.source)
             when {
@@ -268,7 +270,7 @@ object FirExpressionEvaluator {
         override fun visitQualifiedAccessExpression(
             qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?,
         ): FirEvaluatorResult {
-            val expressionType = qualifiedAccessExpression.getExpandedType(session)
+            val expressionType = qualifiedAccessExpression.getExpandedType()
             if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
                 // Ignore the result of evaluation, it will not be used. We just want to check that the receiver is a constant expression.
                 qualifiedAccessExpression.dispatchReceiver?.let { receiver -> evaluateOr<FirElement>(receiver) { return it } }
@@ -298,7 +300,7 @@ object FirExpressionEvaluator {
         }
 
         override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?): FirEvaluatorResult {
-            var coneType = getClassCall.argument.getExpandedType(session)
+            var coneType = getClassCall.argument.getExpandedType()
 
             if (coneType is ConeErrorType)
                 return NotConst(getClassCall.source)
@@ -397,13 +399,13 @@ object FirExpressionEvaluator {
                     val validation = validate(propertySymbol, propertyAccessExpression)
                     if (validation != null) return validation
 
-                    val isConstWithoutInitializer = propertySymbol.isCompileTimeBuiltinProperty(session)
+                    val isConstWithoutInitializer = propertySymbol.isCompileTimeBuiltinProperty()
 
                     when {
                         isConstWithoutInitializer -> when {
                             propertySymbol.callableId?.isStringLength == true || propertySymbol.callableId?.isCharCode == true -> {
                                 val unaryArg = evaluateOr<FirExpression>(propertyAccessExpression.explicitReceiver) { return it }
-                                val argType = propertySymbol.receiverType(session) ?: return NotConst(propertyAccessExpression.source)
+                                val argType = propertySymbol.receiverType() ?: return NotConst(propertyAccessExpression.source)
                                 evaluateUnary(unaryArg, argType, propertySymbol.callableId!!, propertyAccessExpression.source)
                                     .adjustTypeAndConvertToResult(propertyAccessExpression)
                             }
@@ -460,11 +462,11 @@ object FirExpressionEvaluator {
             val classKindOfParent = (propertySymbol.getReferencedClassSymbol(session) as? FirRegularClassSymbol)?.classKind
             if (classKindOfParent == ClassKind.ENUM_CLASS) return EnumNotConst(propertyAccessExpression.source)
 
-            val isConstWithoutInitializer = propertySymbol.isCompileTimeBuiltinProperty(session)
+            val isConstWithoutInitializer = propertySymbol.isCompileTimeBuiltinProperty()
 
             return when {
                 propertySymbol is FirLocalPropertySymbol -> NotConstValInConstExpression(propertyAccessExpression.source)
-                propertyAccessExpression.getExpandedType(session).classId == StandardClassIds.KClass -> NotKClassLiteral(propertyAccessExpression.source)
+                propertyAccessExpression.getExpandedType().classId == StandardClassIds.KClass -> NotKClassLiteral(propertyAccessExpression.source)
                 isConstWithoutInitializer -> when {
                     propertySymbol.callableId?.isStringLength == true || propertySymbol.callableId?.isCharCode == true -> null
                     propertySymbol.callableId?.callableName == StandardNames.NAME -> null
@@ -498,7 +500,7 @@ object FirExpressionEvaluator {
         override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): FirEvaluatorResult {
             val calleeReference = functionCall.calleeReference
             if (calleeReference !is FirResolvedNamedReference) return NotConst(functionCall.source)
-            if (functionCall.getExpandedType(session).classId == StandardClassIds.KClass) return NotKClassLiteral(functionCall.source)
+            if (functionCall.getExpandedType().classId == StandardClassIds.KClass) return NotKClassLiteral(functionCall.source)
 
             return when (val symbol = calleeReference.resolvedSymbol) {
                 is FirNamedFunctionSymbol -> visitNamedFunction(functionCall, symbol)
@@ -512,9 +514,7 @@ object FirExpressionEvaluator {
          * it is a task of constant evaluator to transform `arrayOf` family to collection literals.
          */
         private fun visitArrayOfCall(functionCall: FirFunctionCall): FirEvaluatorResult {
-            withSession(session) {
-                if (useArrayLiteralResolution()) return NotConst(functionCall.source)
-            }
+            if (useArrayLiteralResolution()) return NotConst(functionCall.source)
 
             // vararg argument needs to be flattened
             val flatArguments = functionCall.arguments.flatMap { (it as? FirVarargArgumentsExpression)?.arguments ?: [] }
@@ -530,25 +530,25 @@ object FirExpressionEvaluator {
 
         private fun visitNamedFunction(functionCall: FirFunctionCall, symbol: FirNamedFunctionSymbol): FirEvaluatorResult {
             if (symbol.isArrayOfOrArrayDotOfFunction()) return visitArrayOfCall(functionCall)
-            if (!functionCall.isCompileTimeBuiltinCall(session)) return NotConst(functionCall.source)
+            if (!functionCall.isCompileTimeBuiltinCall()) return NotConst(functionCall.source)
 
             val receivers = listOfNotNull(functionCall.dispatchReceiver, functionCall.extensionReceiver)
             val evaluatedArgs = receivers.plus(functionCall.arguments).map {
-                if (!it.hasAllowedCompileTimeType(session)) return NotConst(it.source)
+                if (!it.hasAllowedCompileTimeType()) return NotConst(it.source)
                 evaluateOr<FirLiteralExpression>(it) { return it }
             }
 
             return when (evaluatedArgs.size) {
                 1 -> {
-                    val argType = symbol.receiverType(session)
-                        ?: symbol.firstValueParameterType(session)
+                    val argType = symbol.receiverType()
+                        ?: symbol.firstValueParameterType()
                         ?: return NotConst(functionCall.source)
                     evaluateUnary(evaluatedArgs[0], argType, symbol.callableId, functionCall.source)
                         .adjustTypeAndConvertToResult(functionCall)
                 }
                 2 -> {
-                    val leftType = symbol.receiverType(session) ?: return NotConst(functionCall.source)
-                    val rightType = symbol.firstValueParameterType(session) ?: return NotConst(functionCall.source)
+                    val leftType = symbol.receiverType() ?: return NotConst(functionCall.source)
+                    val rightType = symbol.firstValueParameterType() ?: return NotConst(functionCall.source)
                     evaluateBinary(evaluatedArgs[0], leftType, symbol.callableId, evaluatedArgs[1], rightType, functionCall.source)
                         .adjustTypeAndConvertToResult(functionCall)
                 }
@@ -558,9 +558,9 @@ object FirExpressionEvaluator {
 
         @OptIn(UnresolvedExpressionTypeAccess::class)
         private fun visitConstructorCall(constructorCall: FirFunctionCall): FirEvaluatorResult {
-            val type = constructorCall.resolvedType.fullyExpandedType(session).lowerBoundIfFlexible()
+            val type = constructorCall.resolvedType.fullyExpandedType().lowerBoundIfFlexible()
             when {
-                type.toRegularClassSymbol(session)?.classKind == ClassKind.ANNOTATION_CLASS -> {
+                type.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS -> {
                     val evaluatedArgs = evaluateOr<FirResolvedArgumentList>(constructorCall.argumentList) { return it }
                     return buildFunctionCall {
                         coneTypeOrNull = constructorCall.coneTypeOrNull
@@ -607,7 +607,7 @@ object FirExpressionEvaluator {
             }
 
             val evaluatedArgs = equalityOperatorCall.arguments.map {
-                if (!it.hasAllowedCompileTimeType(session) || (!session.intrinsicConstEvaluationEnabled && it.getExpandedType(session).isUnsignedType)) {
+                if (!it.hasAllowedCompileTimeType() || (!intrinsicConstEvaluationEnabled && it.getExpandedType().isUnsignedType)) {
                     return NotConst(it.source)
                 }
                 evaluateOr<FirLiteralExpression>(it) { return it }
@@ -650,7 +650,7 @@ object FirExpressionEvaluator {
         override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Nothing?): FirEvaluatorResult {
             val strings = stringConcatenationCall.arguments.map {
                 // `null` is allowed
-                if (!it.isNullLiteral && !it.hasAllowedCompileTimeType(session)) return NotConst(it.source)
+                if (!it.isNullLiteral && !it.hasAllowedCompileTimeType()) return NotConst(it.source)
                 evaluateOr<FirLiteralExpression>(it) { return it }
             }
             val result = strings.joinToString(separator = "") { it.value.toString() }
@@ -711,32 +711,38 @@ private val compileTimeFunctions = setOf(
 
 private val compileTimeExtensionFunctions = listOf("floorDiv", "mod", "code").mapTo(hashSetOf()) { Name.identifier(it) }
 
-private val FirSession.intrinsicConstEvaluationEnabled: Boolean
-    get() = languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
+context(sessionHolder: SessionHolder)
+private val intrinsicConstEvaluationEnabled: Boolean
+    get() = sessionHolder.session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
 
 private fun ConeKotlinType.toCompileTimeType(): CompileTimeType? {
     if (this.classId == StandardClassIds.Any) return CompileTimeType.ANY
     return this.classId?.toConstantValueKind()?.toCompileTimeType()
 }
 
-private fun FirCallableSymbol<*>.receiverType(session: FirSession): ConeKotlinType? =
-    (dispatchReceiverType ?: resolvedReceiverType)?.fullyExpandedType(session)
+context(sessionHolder: SessionHolder)
+private fun FirCallableSymbol<*>.receiverType(): ConeKotlinType? =
+    (dispatchReceiverType ?: resolvedReceiverType)?.fullyExpandedType()
 
-private fun FirFunctionSymbol<*>.firstValueParameterType(session: FirSession): ConeKotlinType? =
-    valueParameterSymbols.firstOrNull()?.resolvedReturnType?.fullyExpandedType(session)
+context(sessionHolder: SessionHolder)
+private fun FirFunctionSymbol<*>.firstValueParameterType(): ConeKotlinType? =
+    valueParameterSymbols.firstOrNull()?.resolvedReturnType?.fullyExpandedType()
 
-private fun FirExpression.hasAllowedCompileTimeType(session: FirSession): Boolean {
+context(sessionHolder: SessionHolder)
+private fun FirExpression.hasAllowedCompileTimeType(): Boolean {
     // See visitErrorExpression for details. Here we count the type as valid and take a decision later.
     if (this is FirErrorExpression) return true
 
-    val expType = resolvedType.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(session)
+    val expType = resolvedType.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType()
     // TODO, KT-59823: add annotation for allowed constant types
     return expType.classId in StandardClassIds.constantAllowedTypes && !expType.isMarkedNullable
 }
 
-private fun FirExpression.getExpandedType(session: FirSession): ConeKotlinType = resolvedType.fullyExpandedType(session)
+context(sessionHolder: SessionHolder)
+private fun FirExpression.getExpandedType(): ConeKotlinType = resolvedType.fullyExpandedType()
 
-private fun FirFunctionCall.isCompileTimeBuiltinCall(session: FirSession): Boolean {
+context(sessionHolder: SessionHolder)
+private fun FirFunctionCall.isCompileTimeBuiltinCall(): Boolean {
     val calleeReference = this.calleeReference
     if (calleeReference !is FirResolvedNamedReference) return false
 
@@ -744,11 +750,11 @@ private fun FirFunctionCall.isCompileTimeBuiltinCall(session: FirSession): Boole
     val symbol = calleeReference.resolvedSymbol as? FirCallableSymbol
     if (!symbol.fromStdlib()) return false
 
-    val receiverClassId = this.dispatchReceiver?.getExpandedType(session)?.classId
+    val receiverClassId = this.dispatchReceiver?.getExpandedType()?.classId
 
-    if (symbol is FirFunctionSymbol<*> && session.intrinsicConstEvaluationEnabled) {
-        val receiverType = symbol.receiverType(session)
-        val firstArgType = symbol.firstValueParameterType(session)
+    if (symbol is FirFunctionSymbol<*> && intrinsicConstEvaluationEnabled) {
+        val receiverType = symbol.receiverType()
+        val firstArgType = symbol.firstValueParameterType()
 
         return canEvalOp(
             callableId = symbol.callableId,
@@ -772,11 +778,12 @@ private fun FirFunctionCall.isCompileTimeBuiltinCall(session: FirSession): Boole
     return false
 }
 
-private fun FirPropertySymbol.isCompileTimeBuiltinProperty(session: FirSession): Boolean {
+context(sessionHolder: SessionHolder)
+private fun FirPropertySymbol.isCompileTimeBuiltinProperty(): Boolean {
     val receiverType = dispatchReceiverType ?: resolvedReceiverTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return false
-    val receiverClassId = receiverType.fullyExpandedType(session).classId ?: return false
+    val receiverClassId = receiverType.fullyExpandedType().classId ?: return false
 
-    if (session.intrinsicConstEvaluationEnabled) {
+    if (intrinsicConstEvaluationEnabled) {
         val callableId = this.unwrapFakeOverrides().callableId ?: return false
         if (callableId.isEnumName || callableId.isKCallableName) return true // Evaluated manually
         val receiverConstType = receiverType.toCompileTimeType() ?: return false
@@ -896,6 +903,7 @@ private fun evaluateBinary(
     }
 }
 
+context(sessionHolder: SessionHolder)
 private fun Any?.adjustTypeAndConvertToResult(original: FirExpression, expectedType: ConeKotlinType = original.resolvedType): FirEvaluatorResult {
     if (this == null) return NotConst(original.source)
     if (this is FirEvaluatorResult) return this
