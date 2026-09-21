@@ -6,11 +6,13 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.ClassKind
+import kotlin.metadata.Modality
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubtypeOf
@@ -109,7 +111,7 @@ private fun createIntersectionOverride(a: ReflectKCallable<*>, b: ReflectKCallab
     return result.shallowCopy(
         result.container,
         result.overriddenStorage.copy(
-            modality = minOf(a, b, modalityIntersectionOverrideComparator).modality,
+            modality = computeIntersectionOverrideModality(a, b),
             overridden = result.overriddenStorage.overridden + other.overriddenStorage.overridden,
             forceIsExternal = a.isExternal || b.isExternal,
             forceIsOperator = a.isOperator || b.isOperator,
@@ -117,6 +119,53 @@ private fun createIntersectionOverride(a: ReflectKCallable<*>, b: ReflectKCallab
             forceIsInline = a.isInline || b.isInline,
         ),
     )
+}
+
+/**
+ * Returns true if this is a builtin function whose JVM name differs from the Kotlin name (e.g. `kotlin.Number.toInt`), or its override
+ * which has the JVM name in the bytecode (a fake override, or a Java method `intValue` in a subclass of `Number`).
+ */
+private val ReflectKCallable<*>.isBuiltinWithDifferentJvmName: Boolean
+    get() = when (this) {
+        is JavaKNamedFunction -> name != jMethod.name
+        is KotlinKNamedFunction -> {
+            val jvmName = signature.substringBeforeLast('(')
+            jvmName != name && getBuiltinSpecialFunctionJvmName(name, signature.substring(jvmName.length), originalContainer) == jvmName
+        }
+        else -> false
+    }
+
+// See `OverridingUtil.determineModalityForFakeOverride`.
+private fun computeIntersectionOverrideModality(a: ReflectKFunction, b: ReflectKFunction): Modality {
+    val aModality = a.modality
+    val bModality = b.modality
+    if (aModality == bModality) return aModality
+    if (aModality == Modality.FINAL || bModality == Modality.FINAL) return Modality.FINAL
+
+    // One of the members is open, and the other is abstract. The result is open if there's an open declaration in the hierarchy which is
+    // not overridden by any abstract declaration. Otherwise, it's abstract.
+    val declarations = LinkedHashSet<ReflectKFunction>()
+    a.collectOverriddenDeclarations(declarations, transitively = false)
+    b.collectOverriddenDeclarations(declarations, transitively = false)
+    val overriddenByOtherDeclarations = HashSet<ReflectKFunction>()
+    for (declaration in declarations) {
+        for (overridden in declaration.overridden) {
+            overridden.collectOverriddenDeclarations(overriddenByOtherDeclarations, transitively = true)
+        }
+    }
+    return if (declarations.any { it.modality == Modality.OPEN && it !in overriddenByOtherDeclarations })
+        Modality.OPEN
+    else
+        Modality.ABSTRACT
+}
+
+private fun ReflectKFunction.collectOverriddenDeclarations(result: MutableSet<ReflectKFunction>, transitively: Boolean) {
+    if (!overriddenStorage.isFakeOverride) {
+        if (!result.add(this) || !transitively) return
+    }
+    for (overridden in overridden) {
+        overridden.collectOverriddenDeclarations(result, transitively)
+    }
 }
 
 internal fun computeOverriddenFunctions(callable: ReflectKFunction): Collection<ReflectKFunction> {
@@ -160,14 +209,6 @@ private fun getSupertypeMembersByName(supertype: KType, supertypeKClass: KClassI
     return supertypeKClass.getFakeOverrideMembersByName(name).values
 }
 
-private val modalityIntersectionOverrideComparator: Comparator<ReflectKCallable<*>> = compareBy(
-    // Deprioritize interfaces, prioritize classes
-    { (it.originalContainer as? KClass<*>)?.java?.isInterface == true },
-    // If there are multiple superclasses (not interfaces), deprioritize kotlin.Any.
-    // For instance, equals/hashCode/toString which come from interfaces have kotlin.Any container.
-    { it.originalContainer == Any::class },
-)
-
 internal val ReflectKCallable<*>.originalContainer: KDeclarationContainerImpl
     get() = overriddenStorage.originalContainerIfFakeOverride ?: container
 
@@ -201,7 +242,7 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
     return EquatableCallableSignature(
         kind,
         name,
-        jvmNameIfFunction,
+        javaNameIfFunction = jvmNameIfFunction?.let { if (isBuiltinWithDifferentJvmName) name else it },
         typeParameters,
         kotlinParameterTypes,
         javaParameterTypes,
@@ -264,7 +305,9 @@ internal sealed class EqualityMode {
      * There is also the third kind of signatures: JVM signatures
      * JVM signature is a plain triple: (jvmName: String, parameters: List<Class<*>>, returnType: Class<*>)
      * Contrary to JVM signature, Java signature doesn't include `returnType`,
-     * and Java signatures respect class generics (but not method generics)
+     * and Java signatures respect class generics (but not method generics).
+     * Also, for builtin functions whose JVM name differs from the Kotlin name (and their overrides), Java signature has the Kotlin name,
+     * see `isBuiltinWithDifferentJvmName`.
      */
     data object JavaSignature : EqualityMode()
 }
@@ -273,7 +316,9 @@ internal sealed class EqualityMode {
 internal class EquatableCallableSignature<T : EqualityMode>(
     val kind: SignatureKind,
     val name: String,
-    val jvmNameIfFunction: String?,
+    // The name to compare functions by in [EqualityMode.JavaSignature]: the JVM name, or the Kotlin name for builtins with a different
+    // JVM name and their overrides.
+    val javaNameIfFunction: String?,
     val typeParameters: List<KTypeParameter>,
     val kotlinParameterTypes: List<KType>,
     val javaErasedParameterTypes: List<Class<*>>,
@@ -312,7 +357,7 @@ internal class EquatableCallableSignature<T : EqualityMode>(
         EquatableCallableSignature(
             kind,
             name,
-            jvmNameIfFunction,
+            javaNameIfFunction,
             typeParameters,
             kotlinParameterTypes,
             javaErasedParameterTypes,
@@ -323,7 +368,7 @@ internal class EquatableCallableSignature<T : EqualityMode>(
         )
 
     override fun hashCode(): Int =
-        arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, if (isJavaFunctionSignature) jvmNameIfFunction ?: "" else name)
+        arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, if (isJavaFunctionSignature) javaNameIfFunction ?: "" else name)
             .contentHashCode()
 
     override fun equals(other: Any?): Boolean {
@@ -340,7 +385,7 @@ internal class EquatableCallableSignature<T : EqualityMode>(
     }
 
     private fun equalsByJavaSignature(other: EquatableCallableSignature<*>): Boolean =
-        jvmNameIfFunction == other.jvmNameIfFunction &&
+        javaNameIfFunction == other.javaNameIfFunction &&
                 javaErasedParameterTypes.indices.all { i -> areEqualJavaParameterTypes(i, other) }
 
     private fun areEqualJavaParameterTypes(i: Int, other: EquatableCallableSignature<*>): Boolean =

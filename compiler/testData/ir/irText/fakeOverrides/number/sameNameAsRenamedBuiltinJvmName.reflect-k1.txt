@@ -1,0 +1,74 @@
+KClass: abstract class A : Any
+  constructors:
+    public final fun `<init>`(): A
+  members:
+    public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    public final fun A.foo(): kotlin.Unit
+    public open fun A.hashCode(): kotlin.Int
+    public final fun A.toByte(): kotlin.Byte
+    public final fun A.toInt(): kotlin.Int
+    public open fun A.toString(): kotlin.String
+  declaredMembers:
+    public final fun A.foo(): kotlin.Unit
+    public final fun A.toByte(): kotlin.Byte
+    public final fun A.toInt(): kotlin.Int
+KClass: abstract class B : A
+  constructors:
+    public final fun `<init>`(): B
+  members:
+    public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    public final fun B.foo(): kotlin.Unit
+    public open fun B.hashCode(): kotlin.Int
+    public final fun B.toByte(): kotlin.Byte
+    public final fun B.toInt(): kotlin.Int
+    public open fun B.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract class C : A, Java1
+  constructors:
+    public final fun `<init>`(): C
+  members:
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public final fun C.foo(): kotlin.Unit
+    public open fun C.hashCode(): kotlin.Int
+    public final fun C.toByte(): kotlin.Byte
+    public final fun C.toInt(): kotlin.Int
+    public open fun C.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract class D : Java2
+  constructors:
+    public final fun `<init>`(): D
+  members:
+    public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
+    public open fun D.foo(): kotlin.Unit
+    public open fun D.hashCode(): kotlin.Int
+    public open fun D.toByte(): kotlin.Byte
+    public final fun D.toInt(): kotlin.Int
+    public open fun D.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface Java1 : Any
+  members:
+    public open operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun Java1.foo(): kotlin.Unit
+    public open fun Java1.hashCode(): kotlin.Int
+    public abstract fun Java1.toByte(): kotlin.Byte
+    public abstract fun Java1.toInt(): kotlin.Int
+    public open fun Java1.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun Java1.foo(): kotlin.Unit
+    public abstract fun Java1.toByte(): kotlin.Byte
+    public abstract fun Java1.toInt(): kotlin.Int
+KClass: abstract class Java2 : A
+  constructors:
+    public final fun `<init>`(): Java2
+  members:
+    public open operator fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java2.foo(): kotlin.Unit
+    public open fun Java2.hashCode(): kotlin.Int
+    public open fun Java2.toByte(): kotlin.Byte
+    public final fun Java2.toInt(): kotlin.Int
+    public open fun Java2.toString(): kotlin.String
+  declaredMembers:
+    public open fun Java2.foo(): kotlin.Unit
+    public open fun Java2.toByte(): kotlin.Byte
+KPackage: _1Kt
+  public final fun test(B, C, D): kotlin.Unit

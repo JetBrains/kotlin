@@ -449,9 +449,7 @@ internal class KClassImpl<T : Any>(
         val isComplicatedBuiltinSubclass: Boolean by lazy(PUBLICATION) {
             Iterable::class.java.isAssignableFrom(jClass) ||
                     Iterator::class.java.isAssignableFrom(jClass) ||
-                    Map::class.java.isAssignableFrom(jClass) ||
-                    CharSequence::class.java.isAssignableFrom(jClass) ||
-                    Number::class.java.isAssignableFrom(jClass)
+                    Map::class.java.isAssignableFrom(jClass)
         }
 
         val declaredMemberNames: Set<String> by lazy(PUBLICATION, ::computeDeclaredMemberNames)
