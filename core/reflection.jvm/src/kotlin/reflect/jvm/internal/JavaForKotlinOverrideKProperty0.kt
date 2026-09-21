@@ -28,7 +28,9 @@ internal open class JavaForKotlinOverrideKProperty0<out V>(
     override fun invoke(): V = get()
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaForKotlinOverrideKProperty0(container, rawBoundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty)
+        JavaForKotlinOverrideKProperty0(
+            container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod, overriddenProperty,
+        )
 
     override fun bindToLowerArity(boundReceiver: Any?) = throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
 
@@ -58,7 +60,7 @@ internal open class JavaForKotlinOverrideKMutableProperty0<V>(
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaForKotlinOverrideKMutableProperty0(
-            container, rawBoundReceiver, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
+            container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
         )
 
     override fun unbindToHigherArity(): ReflectKCallable<V> =

@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal
 
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
@@ -28,7 +29,7 @@ internal open class JavaForKotlinOverrideKProperty1<T, out V>(
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaForKotlinOverrideKProperty1<T, V>(
-            container, rawBoundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty,
+            container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod, overriddenProperty,
         )
 
     override fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<V> =
@@ -57,7 +58,7 @@ internal open class JavaForKotlinOverrideKMutableProperty1<T, V>(
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaForKotlinOverrideKMutableProperty1<T, V>(
-            container, rawBoundReceiver, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
+            container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
         )
 
     override fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<V> =

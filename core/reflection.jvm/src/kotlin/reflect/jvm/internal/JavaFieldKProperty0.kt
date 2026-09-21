@@ -7,6 +7,7 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.Field
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 
@@ -23,7 +24,7 @@ internal open class JavaFieldKProperty0<out V>(
     override fun invoke(): V = get()
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaFieldKProperty0(container, jField, rawBoundReceiver, overriddenStorage)
+        JavaFieldKProperty0(container, jField, CallableReference.NO_RECEIVER, overriddenStorage)
 
     override fun bindToLowerArity(boundReceiver: Any?) = throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
 
@@ -43,7 +44,7 @@ internal open class JavaFieldKMutableProperty0<V>(
     override fun set(value: V): Unit = setter.call(value)
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaFieldKMutableProperty0(container, jField, rawBoundReceiver, overriddenStorage)
+        JavaFieldKMutableProperty0(container, jField, CallableReference.NO_RECEIVER, overriddenStorage)
 
     class Setter<R>(override val property: JavaFieldKMutableProperty0<R>) : JavaFieldKProperty.Setter<R>(), KMutableProperty0.Setter<R> {
         override fun invoke(value: R): Unit = property.set(value)
