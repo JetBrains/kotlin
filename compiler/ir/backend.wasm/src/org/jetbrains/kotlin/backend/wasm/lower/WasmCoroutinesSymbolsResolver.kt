@@ -49,6 +49,12 @@ private class WasmCoroutinesStackSwitchingIntrinsicsTransformer(
         val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
 
         return when (realOwner.symbol) {
+            wasmSymbols.startCoroutineUninterceptedOrReturnImpl0 ->
+                irCall(expression, stackSwitchingIntrinsics.startCoroutineUninterceptedOrReturnStackSwitchingImpl0)
+            wasmSymbols.startCoroutineUninterceptedOrReturnImpl1 ->
+                irCall(expression, stackSwitchingIntrinsics.startCoroutineUninterceptedOrReturnStackSwitchingImpl1)
+            wasmSymbols.startCoroutineUninterceptedOrReturnImpl2 ->
+                irCall(expression, stackSwitchingIntrinsics.startCoroutineUninterceptedOrReturnStackSwitchingImpl2)
             wasmSymbols.suspendCoroutineUninterceptedOrReturnIntrinsic ->
                 irCall(expression, stackSwitchingIntrinsics.suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching)
             wasmSymbols.createCoroutineUninterceptedIntrinsic0 ->
