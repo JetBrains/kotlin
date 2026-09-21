@@ -5949,7 +5949,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeComp
 	public final fun getCompilerPluginOptions ()Lorg/jetbrains/kotlin/gradle/tasks/CompilerPluginOptions;
 	public abstract fun getDebuggable ()Z
 	public fun getKlibDirectory ()Lorg/gradle/api/provider/Provider;
-	public fun getKlibFile ()Lorg/gradle/api/provider/Provider;
 	public final fun getKotlinNativeVersion ()Ljava/lang/String;
 	public abstract fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonToolOptions;
 	public final fun getKotlinPluginData ()Lorg/gradle/api/provider/Provider;
@@ -5957,7 +5956,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeComp
 	public abstract fun getOptimized ()Z
 	public fun getOutputFile ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getOutputKind ()Lorg/jetbrains/kotlin/konan/target/CompilerOutputKind;
-	public fun getProduceUnpackagedKlib ()Lorg/gradle/api/provider/Property;
 	public final fun getTarget ()Ljava/lang/String;
 	public fun setCompilerPluginClasspath (Lorg/gradle/api/file/FileCollection;)V
 	public final fun setKotlinPluginData (Lorg/gradle/api/provider/Provider;)V
@@ -5974,7 +5972,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public final fun getHeaders ()Lorg/gradle/api/file/FileCollection;
 	public final fun getInteropName ()Ljava/lang/String;
 	public fun getKlibDirectory ()Lorg/gradle/api/provider/Provider;
-	public fun getKlibFile ()Lorg/gradle/api/provider/Provider;
 	public fun getKlibOutput ()Lorg/gradle/api/provider/Provider;
 	public final fun getKonanTarget ()Lorg/jetbrains/kotlin/konan/target/KonanTarget;
 	public final fun getLibraries ()Lorg/gradle/api/file/FileCollection;
@@ -5985,7 +5982,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public final fun getOutputFileName ()Ljava/lang/String;
 	public final fun getOutputFileProvider ()Lorg/gradle/api/provider/Provider;
 	public final fun getPackageName ()Ljava/lang/String;
-	public fun getProduceUnpackagedKlib ()Lorg/gradle/api/provider/Property;
 	public abstract fun getProviderFactory ()Lorg/gradle/api/provider/ProviderFactory;
 	public final fun getSettings ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultCInteropSettings;
 	public final fun processInterop ()V
@@ -6112,7 +6108,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/Kotlin2JsCompile : org/j
 	public final fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsCompilerOptions;
 	protected fun getIncrementalProps ()Ljava/util/List;
 	public fun getKlibDirectory ()Lorg/gradle/api/provider/Provider;
-	public fun getKlibFile ()Lorg/gradle/api/provider/Provider;
 	public fun getKlibOutput ()Lorg/gradle/api/provider/Provider;
 	public synthetic fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;
 	public fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;
@@ -6120,7 +6115,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/Kotlin2JsCompile : org/j
 	protected final fun getLibraryFilter ()Lkotlin/jvm/functions/Function1;
 	public fun getMultiplatformStructure ()Lorg/jetbrains/kotlin/gradle/tasks/K2MultiplatformStructure;
 	public final synthetic fun getOutputFileProperty ()Lorg/gradle/api/provider/Property;
-	public fun getProduceUnpackagedKlib ()Lorg/gradle/api/provider/Property;
 	public fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun kotlinOptions (Lorg/gradle/api/Action;)V
 	protected fun processArgsBeforeCompile (Lorg/jetbrains/kotlin/cli/common/arguments/K2JSCompilerArguments;)V
