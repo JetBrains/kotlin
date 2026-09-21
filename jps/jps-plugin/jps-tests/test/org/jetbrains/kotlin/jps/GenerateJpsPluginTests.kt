@@ -57,7 +57,13 @@ fun main(args: Array<String>) {
                     extension = null,
                     excludeParentDirs = true,
                 )
-                modelForDirectoryBasedTest("incremental", "scopeExpansion", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest(
+                    "incremental",
+                    "scopeExpansion",
+                    extension = null,
+                    excludeParentDirs = true,
+                    excludedPattern = "^protectedBecomesPublicAccessedTroughChild" // fixed in IJ 262.4852
+                )
                 modelForDirectoryBasedTest("incremental", "sealed", extension = null, excludeParentDirs = true)
                 modelForDirectoryBasedTest("incremental", "resolution", extension = null, excludeParentDirs = true)
             }
