@@ -204,6 +204,13 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         }
 
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: UsageState) {
+            if (typeOperatorCall.source != null) {
+                val op = typeOperatorCall.operation
+                // Unlike AS, these operations don't have a side effect unless they are used.
+                if (op == FirOperation.IS || op == FirOperation.NOT_IS || op == FirOperation.SAFE_AS) {
+                    checkExpression(typeOperatorCall, data)
+                }
+            }
             typeOperatorCall.arguments.forEach { it.accept(this, data) }
         }
 
