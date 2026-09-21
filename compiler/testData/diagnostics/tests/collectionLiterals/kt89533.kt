@@ -1,0 +1,21 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_STDLIB
+
+annotation class Anno(val x: Int)
+
+@Anno(<!NON_VARARG_SPREAD!>*<!><!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+fun foo() {
+    Anno(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+}
+
+@Anno(x = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+fun bar() {
+    Anno(x = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+}
+
+@Anno(x = <!NON_VARARG_SPREAD!>*<!><!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+fun baz() {
+    Anno(x = <!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration */
