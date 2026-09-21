@@ -163,7 +163,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         })
         parameters.compilationViaBuildToolsApi.set(runKotlinCompilerViaBuildToolsApi)
         parameters.kgpVersion.set(kgpVersion)
-        parameters.parseInlinedLocalClasses.set(project.kotlinPropertiesProvider.parseInlinedLocalClasses)
 
         val isMultiplatform = project.multiplatformExtensionOrNull != null
         parameters.expandTypeAliases.set(
