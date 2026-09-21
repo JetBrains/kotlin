@@ -96,30 +96,36 @@ class NonLinkingIrInlineFunctionDeserializer(
         unitType: IrType,
         nothingType: IrType,
     ) {
-        private val fileEntryDeserializer = FileEntryDeserializer(irInterner)
-
-        private val fileDeserializer = run {
-            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(inlinableFunctionsIr, 0))
-            FileDeserializer(
-                fileReader = fileReader,
-                fileEntryDeserializer = fileEntryDeserializer,
-                irInterner = irInterner,
-                detachedSymbolTable = detachedSymbolTable,
-                irFactory = irFactory,
-                anyNType = anyNType,
-                unitType = unitType,
-                nothingType = nothingType
-            )
-        }
+        data class DeserializationInfo(val index: Int, val deserializer: FileDeserializer)
 
         /**
          * Deserialize declarations only on demand. Cache top-level declarations to avoid repetitive deserialization
          * if the declaration happens to have multiple inline functions.
          */
-        val reversedSignatureIndex: Map<IdSignature, Int> = run {
-            val fileStream = inlinableFunctionsIr.irFile(0).codedInputStream
-            val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
-            fileProto.declarationIdList.associateBy { fileDeserializer.symbolDeserializer.deserializeIdSignature(it) }
+        val reversedSignatureIndex: Map<IdSignature, DeserializationInfo> = buildMap {
+            val fileEntryDeserializer = FileEntryDeserializer(irInterner)
+            val fileDeserializers = List(inlinableFunctionsIr.irFileCount) {
+                val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(inlinableFunctionsIr, it))
+                FileDeserializer(
+                    fileReader = fileReader,
+                    fileEntryDeserializer = fileEntryDeserializer,
+                    irInterner = irInterner,
+                    detachedSymbolTable = detachedSymbolTable,
+                    irFactory = irFactory,
+                    anyNType = anyNType,
+                    unitType = unitType,
+                    nothingType = nothingType
+                )
+            }
+
+            for ((index, deserializer = value) in fileDeserializers.withIndex()) {
+                val fileStream = inlinableFunctionsIr.irFile(index).codedInputStream
+                val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
+                for (idSigIndex in fileProto.declarationIdList) {
+                    val idSig = deserializer.symbolDeserializer.deserializeIdSignature(idSigIndex)
+                    put(idSig, DeserializationInfo(idSigIndex, deserializer))
+                }
+            }
         }
 
         private val deserializedFunctionCache = mutableMapOf<IdSignature, IrSimpleFunction?>()
@@ -130,8 +136,8 @@ class NonLinkingIrInlineFunctionDeserializer(
             originalFunctionModule: IrModuleFragment,
         ): IrSimpleFunction? =
             deserializedFunctionCache.getOrPut(signature) {
-                val idSigIndex = reversedSignatureIndex[signature] ?: return@getOrPut null
-                fileDeserializer.deserializeInlineFunction(idSigIndex, originalFunctionPackage, originalFunctionModule)
+                val (index, deserializer) = reversedSignatureIndex[signature] ?: return@getOrPut null
+                deserializer.deserializeInlineFunction(index, originalFunctionPackage, originalFunctionModule)
             }
     }
 

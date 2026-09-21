@@ -31,5 +31,5 @@ class SerializedIrFile(
 
 class SerializedIrModule(
     val files: Collection<SerializedIrFile>,
-    val fileWithPreparedInlinableFunctions: SerializedIrFile?,
+    val filesWithPreparedInlinableFunctions: Collection<SerializedIrFile>,
 )
