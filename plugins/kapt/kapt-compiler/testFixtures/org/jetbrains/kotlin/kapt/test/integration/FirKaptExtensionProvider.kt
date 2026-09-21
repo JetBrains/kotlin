@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.base.KaptOptions
 import org.jetbrains.kotlin.kapt.base.LoadedProcessors
 import org.jetbrains.kotlin.kapt.base.ProcessorLoader
-import org.jetbrains.kotlin.kapt.base.StubGenerationScheme
 import org.jetbrains.kotlin.kapt.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt.test.handlers.KaptStubConverterHandler.Companion.FILE_SEPARATOR
 import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
-import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
@@ -125,12 +123,7 @@ class FirKaptExtensionForTests(
         }
 
         this.savedStubs = stubs
-            .map {
-                if (kaptContext.options.stubGenerationScheme == StubGenerationScheme.DIRECT)
-                    it.directFileContent
-                else
-                    it.jtreeFile.prettyPrint(kaptContext.context)
-            }
+            .map { it.getText(kaptContext.context) }
             .sorted()
             .joinToString(FILE_SEPARATOR)
 

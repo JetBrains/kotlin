@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.kapt
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -25,12 +24,10 @@ import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
-import org.jetbrains.kotlin.kapt.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt.base.util.info
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
-import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
@@ -189,7 +186,7 @@ open class FirKaptAnalysisHandlerExtension(
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {
-        val converter = KaptStubConverter(kaptContext, generateNonExistentClass = true)
+        val converter = KaptStubConverter.create(kaptContext, generateNonExistentClass = true)
 
         val [stubGenerationTime, kaptStubs] = measureTimeMillis {
             converter.convert()
@@ -197,12 +194,7 @@ open class FirKaptAnalysisHandlerExtension(
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }
         logger.info {
-            "Stubs for Kotlin classes: " + kaptStubs.joinToString {
-                if (options.stubGenerationScheme == StubGenerationScheme.DIRECT)
-                    it.directClassFilePathWithoutExtension + ".java"
-                else
-                    it.jtreeFile.sourcefile.name
-            }
+            "Stubs for Kotlin classes: " + kaptStubs.joinToString { it.sourceFileName() }
         }
 
         val [saveStubsTime] = measureTimeMillis { saveStubs(kaptContext, kaptStubs) }
@@ -227,16 +219,8 @@ open class FirKaptAnalysisHandlerExtension(
         val packageDirs = HashMap<String, File>()
 
         for (kaptStub in stubs) {
-            val stubFile = kaptStub.jtreeFile
-            val className: String
-            val packageName: String
-            if (options.stubGenerationScheme == StubGenerationScheme.DIRECT) {
-                className = kaptStub.directSimpleClassName
-                packageName = kaptStub.directPackageName
-            } else {
-                className = (stubFile.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
-                packageName = stubFile.getPackageNameJava9Aware()?.toString() ?: ""
-            }
+            val className = kaptStub.simpleClassName()
+            val packageName = kaptStub.packageName()
 
             val packagePath = packagePaths.getOrPut(packageName) { packageName.replace('.', '/') }
             val classFilePathWithoutExtension = if (packageName.isEmpty()) className else "$packagePath/$className"
@@ -261,12 +245,7 @@ open class FirKaptAnalysisHandlerExtension(
             }
 
             reportStubsOutputForIC(sourceFile)
-            sourceFile.writeText(
-                if (options.stubGenerationScheme == StubGenerationScheme.DIRECT)
-                    kaptStub.directFileContent
-                else
-                    kaptStub.jtreeFile.prettyPrint(kaptContext.context)
-            )
+            sourceFile.writeText(kaptStub.getText(kaptContext.context))
 
             kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
         }
