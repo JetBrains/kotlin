@@ -283,6 +283,7 @@ include(
     ":dependencies:bootstrap:kotlin-build-tools-impl-bootstrap",
     ":dependencies:bootstrap:kotlin-build-tools-compat-bootstrap",
     ":dependencies:bootstrap:kotlin-build-tools-cri-impl-bootstrap",
+    ":dependencies:bootstrap:typescript-export-standalone-embeddable-bootstrap",
     ":dependencies:bootstrap:kotlin-script-runtime-bootstrap",
     ":dependencies:bootstrap:kotlin-scripting-common-bootstrap",
     ":dependencies:bootstrap:kotlin-scripting-jvm-bootstrap",
@@ -700,7 +701,8 @@ include(":native:swift:swift-export-embeddable")
 include(
     ":js:typescript-export-model",
     ":js:typescript-printer",
-    ":js:typescript-export-standalone"
+    ":js:typescript-export-standalone",
+    ":js:typescript-export-standalone-embeddable"
 )
 
 include(

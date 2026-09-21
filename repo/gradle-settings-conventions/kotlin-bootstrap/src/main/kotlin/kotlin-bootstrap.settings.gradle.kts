@@ -314,6 +314,12 @@ private fun Settings.applyBootstrapConfiguration(
                             .using(project(":dependencies:bootstrap:kotlin-build-tools-cri-impl-bootstrap"))
                             .because(buildToolsAPIClasspathSubstituteReason)
                     }
+                } else if (path == ":js:typescript-export-standalone-embeddable") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:typescript-export-standalone-embeddable"))
+                            .using(project(":dependencies:bootstrap:typescript-export-standalone-embeddable-bootstrap"))
+                            .because(buildToolsAPIClasspathSubstituteReason)
+                    }
                 } else if (path == ":kotlin-compiler-runner") {
                     resolutionStrategy.dependencySubstitution {
                         substitute(module("org.jetbrains.kotlin:kotlin-compiler-runner"))
