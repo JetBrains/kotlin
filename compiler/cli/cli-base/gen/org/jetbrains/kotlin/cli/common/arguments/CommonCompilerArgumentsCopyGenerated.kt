@@ -38,6 +38,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
     to.disableIrCheckers = from.disableIrCheckers.copyOf()
     to.disablePhases = from.disablePhases.copyOf()
+    to.doNotNormalizeNanValuesInConstContext = from.doNotNormalizeNanValuesInConstContext
     to.dontSortSourceFiles = from.dontSortSourceFiles
     to.dontWarnOnErrorSuppression = from.dontWarnOnErrorSuppression
     to.dumpArgumentsDir = from.dumpArgumentsDir
