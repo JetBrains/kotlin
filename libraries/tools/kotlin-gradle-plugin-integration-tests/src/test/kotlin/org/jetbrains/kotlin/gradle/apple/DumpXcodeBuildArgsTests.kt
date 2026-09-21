@@ -6,6 +6,7 @@
 
 package org.jetbrains.kotlin.gradle.apple
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
@@ -22,13 +23,16 @@ import org.jetbrains.kotlin.gradle.testbase.assertOutputContainsExactlyTimes
 import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.findTasksByPattern
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteRecursively
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -514,6 +518,88 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                 projectPath.resolve("build").deleteRecursively()
 
                 build(dumpTask)
+            }
+        }
+    }
+
+    @DisplayName("KT-89285 - a successful xcodebuild run is quiet by default and verbose with --info")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
+    fun `KT-89285 - successful xcodebuild output is hidden by default and shown with --info`(version: GradleVersion) {
+        project("empty", version) {
+            withLockFileFixture {
+                val packageOne = projectPath.resolve("packageOne").also { it.createDirectories() }.toFile()
+                runProcess(listOf("swift", "package", "init", "--type", "library"), packageOne)
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir("packageOne"),
+                            products = listOf("packageOne"),
+                        )
+                    }
+                }
+
+                // The default log level is INFO (see DEFAULT_LOG_LEVEL in BuildOptions.kt), so disable it.
+                build(
+                    "dumpXcodebuildArgsIphoneos",
+                    buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.LIFECYCLE),
+                ) {
+                    // This is successful xcodebuild print, not Gradle
+                    assertOutputDoesNotContain("BUILD SUCCEEDED")
+                }
+
+                projectPath.resolve("build").deleteRecursively()
+
+                // The default log level is INFO (see DEFAULT_LOG_LEVEL in BuildOptions.kt), so keep it.
+                build(
+                    "dumpXcodebuildArgsIphoneos",
+                ) {
+                    // This is successful xcodebuild print, not Gradle
+                    assertOutputContains("BUILD SUCCEEDED")
+                }
+            }
+        }
+    }
+
+    @DisplayName("KT-89285 - a failing xcodebuild run stays diagnosable even at the default log level")
+    @GradleTest
+    fun `KT-89285 - failing xcodebuild output surfaces without --info`(version: GradleVersion) {
+        project("empty", version) {
+            val cacheDirFile = projectPath.resolve("customXcodePackageCache").toFile()
+            val localPackageDir = projectPath.resolve("localBrokenPackage")
+            val packageName = "BrokenPackage"
+
+            createLocalSwiftPackage(localPackageDir, packageName)
+            localPackageDir.resolve("Sources/$packageName/$packageName.swift").writeText(
+                """
+                    import Foundation
+
+                    @objc public class BrokenClass: NSObject {
+                        @objc public func broken() -> String {
+                            return thisDoesNotExist()
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            initSwiftPmProject(
+                cacheDirFile,
+                nativeTargets = { listOf(iosArm64()) },
+            ) {
+                swiftPMDependencies {
+                    localSwiftPackage(
+                        directory = project.layout.projectDirectory.dir("localBrokenPackage"),
+                        products = listOf(packageName),
+                    )
+                }
+            }
+
+            // The default log level is INFO (see DEFAULT_LOG_LEVEL in BuildOptions.kt), so disable it.
+            buildAndFail(
+                "dumpXcodebuildArgsIphoneos",
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.LIFECYCLE),
+            ) {
+                assertOutputContains("thisDoesNotExist")
             }
         }
     }
