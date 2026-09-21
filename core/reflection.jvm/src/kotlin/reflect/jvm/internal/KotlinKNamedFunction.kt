@@ -11,7 +11,6 @@ import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.*
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.hasAnnotationsInBytecode
-import kotlin.metadata.jvm.signature
 import kotlin.reflect.ExperimentalCompanionExtensions
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -32,9 +31,7 @@ internal class KotlinKNamedFunction(
     override val typeParameterTable: TypeParameterTable get() = _typeParameterTable.value
 
     override val jvmSignature: JvmMethodSignature
-        // In JVM metadata, functions always have `signature`. In builtins metadata, they don't, so we compute it manually from the
-        // `signature` parameter that comes from the function reference.
-        get() = kmFunction.signature ?: convertSignatureForBuiltinFunction(signature)
+        get() = parseSignature(signature)
     override val metadataAnnotations: List<KmAnnotation> get() = kmFunction.annotations
     override val hasAnnotationsInBytecode: Boolean get() = kmFunction.hasAnnotationsInBytecode
 
@@ -84,7 +81,7 @@ internal class KotlinKNamedFunction(
         if (this.rawBoundReceiver === boundReceiver) this
         else KotlinKNamedFunction(container, signature, boundReceiver, kmFunction, overriddenStorage)
 
-    private fun convertSignatureForBuiltinFunction(signature: String): JvmMethodSignature =
+    private fun parseSignature(signature: String): JvmMethodSignature =
         with(signature) {
             val paren = indexOfLast { it == '(' }
             JvmMethodSignature(substring(0, paren), substring(paren))

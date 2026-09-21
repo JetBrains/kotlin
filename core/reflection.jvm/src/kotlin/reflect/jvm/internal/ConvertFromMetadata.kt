@@ -354,12 +354,20 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
     )
 }
 
+internal fun KmFunction.computeJvmSignature(container: KDeclarationContainerImpl): JvmMethodSignature {
+    val mapped = mapSignature((container as? KClassImpl<*>)?.kmClass)
+    val specialName = getBuiltinSpecialFunctionJvmName(name, mapped.descriptor, container) ?: return mapped
+    return JvmMethodSignature(specialName, mapped.descriptor)
+}
+
 internal fun createUnboundFunction(function: KmFunction, container: KDeclarationContainerImpl): KotlinKFunction {
     // In JVM metadata, functions always have `signature`. In builtins metadata, they don't (*), so we compute it manually. In JVM metadata,
     // this might also help in cases when metadata was corrupted or generated incorrectly for some reason and lacks the signature.
     // (*) Actually, when builtins metadata is read by kotlin-metadata-jvm, JVM signatures are computed and stored by
     // `JvmMetadataExtensions.readFunctionExtensions` in case they can be easily computed (see `JvmProtoBufUtil.getJvmMethodSignature`).
-    val signature = function.mapSignature((container as? KClassImpl<*>)?.kmClass)
+    // However, such pre-computed signatures always use the Kotlin name of the function, which is wrong for builtin functions with a
+    // different JVM name (e.g. `kotlin.CharSequence.get` <-> `java.lang.CharSequence.charAt`), so the name is fixed here in any case.
+    val signature = function.computeJvmSignature(container)
     return KotlinKNamedFunction(container, signature.toString(), CallableReference.NO_RECEIVER, function, KCallableOverriddenStorage.EMPTY)
 }
 
