@@ -11,7 +11,8 @@ val isTeamcityBuild = project.hasProperty("teamcity.version") || System.getenv("
 
 // kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
 val kotlin_root = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
-val kotlin_libs by extra(layout.buildDirectory.dir("libs").get().asFile.path)
+val kotlin_libs = layout.buildDirectory.dir("libs").get().asFile.path
+extra["kotlin_libs"] = kotlin_libs
 
 val rootProperties = java.util.Properties().apply {
     file(kotlin_root).resolve("gradle.properties").inputStream().use { stream -> load(stream) }
@@ -20,8 +21,10 @@ val defaultSnapshotVersion: String by rootProperties
 val kotlinLanguageVersion: String by rootProperties
 
 val githubRevision = if (isTeamcityBuild) project.property("githubRevision") else "master"
-val artifactsVersion by extra(if (isTeamcityBuild) project.property("deployVersion") as String else defaultSnapshotVersion)
-val artifactsRepo by extra(if (isTeamcityBuild) project.property("kotlinLibsRepo") as String else "$kotlin_root/build/repo")
+val artifactsVersion = if (isTeamcityBuild) project.property("deployVersion") as String else defaultSnapshotVersion
+extra["artifactsVersion"] = artifactsVersion
+val artifactsRepo = if (isTeamcityBuild) project.property("kotlinLibsRepo") as String else "$kotlin_root/build/repo"
+extra["artifactsRepo"] = artifactsRepo
 val dokka_version: String by project
 
 println("# Parameters summary:")
@@ -39,7 +42,7 @@ val outputDirPartial = outputDir.resolve("partial")
 val kotlin_native_root = file("$kotlin_root/kotlin-native").absolutePath
 val templatesDir = file(findProperty("templatesDir") as String? ?: "$projectDir/templates").invariantSeparatorsPath
 
-val cleanDocs by tasks.registering(Delete::class) {
+val cleanDocs = tasks.register("cleanDocs", Delete::class) {
     delete(outputDir)
 }
 
@@ -47,7 +50,7 @@ tasks.clean {
     dependsOn(cleanDocs)
 }
 
-val prepare by tasks.registering {
+val prepare = tasks.register("prepare") {
     dependsOn(":kotlin_big:extractLibs")
 }
 
