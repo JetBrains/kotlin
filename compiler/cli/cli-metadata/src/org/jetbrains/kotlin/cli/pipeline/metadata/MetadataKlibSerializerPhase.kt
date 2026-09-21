@@ -52,6 +52,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
                     ),
                     languageVersionSettings,
                 )
+                if (packageFragment.getExtension(KlibMetadataProtoBuf.isEmpty)) continue
                 fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }
                     .add(packageFragment.toByteArray())
             }

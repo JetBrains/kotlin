@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToHeader
+import org.jetbrains.kotlin.library.metadata.parsePackageFragment
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.File
 import java.util.Properties
@@ -34,7 +36,9 @@ class KotlinFileSerializedData private constructor(
     val irData: SerializedIrFile?,
     val path: String?,
     val fqName: String,
+    isEmptyMetadata: Lazy<Boolean>,
 ) {
+    val isEmptyMetadata: Boolean by isEmptyMetadata
 
     /**
      * Used for creating file serialization data for IR-containing KLIBs.
@@ -42,7 +46,11 @@ class KotlinFileSerializedData private constructor(
      * @param metadata Serialized metadata of the corresponding source file.
      * @param irData Serialized IR for this file.
      */
-    constructor(metadata: ByteArray, irData: SerializedIrFile) : this(metadata, irData, irData.path, irData.fqName)
+    constructor(metadata: ByteArray, irData: SerializedIrFile) :
+            this(metadata, irData, irData.path, irData.fqName, lazy { parsePackageFragment(metadata).isEmpty })
+
+    constructor(metadata: ProtoBuf.PackageFragment, irData: SerializedIrFile) :
+            this(metadata.toByteArray(), irData, irData.path, irData.fqName, lazyOf(metadata.isEmpty))
 
     /**
      * Used for creating file serialization data in metadata-only KLIBs.
@@ -51,7 +59,13 @@ class KotlinFileSerializedData private constructor(
      * @param path The path of the serialized file.
      * @param fqName The fully qualified name of the package containing the serialized file.
      */
-    constructor(metadata: ByteArray, path: String?, fqName: String) : this(metadata, irData = null, path, fqName)
+    constructor(metadata: ProtoBuf.PackageFragment, path: String?, fqName: String) :
+            this(metadata.toByteArray(), irData = null, path, fqName, lazyOf(metadata.isEmpty))
+
+    companion object {
+        private val ProtoBuf.PackageFragment.isEmpty: Boolean
+            get() = getExtension(KlibMetadataProtoBuf.isEmpty)
+    }
 }
 
 class SerializerOutput(
@@ -117,11 +131,10 @@ fun <SourceFile> serializeModuleIntoKlib(
                 }
             }
             val protoBuf = metadataSerializer.serializeSingleFileMetadata(sourceFile)
-            val metadata = protoBuf.toByteArray()
             val compiledKotlinFile = if (binaryFile == null)
-                KotlinFileSerializedData(metadata, ktSourceFile?.path, packageFqName.asString())
+                KotlinFileSerializedData(protoBuf, ktSourceFile?.path, packageFqName.asString())
             else
-                KotlinFileSerializedData(metadata, binaryFile)
+                KotlinFileSerializedData(protoBuf, binaryFile)
 
             if (processCompiledFileData != null) {
                 processCompiledFileData(ioFile, compiledKotlinFile)
@@ -131,20 +144,21 @@ fun <SourceFile> serializeModuleIntoKlib(
         }
     }
 
-    val header = serializeKlibHeader(
-        languageVersionSettings = configuration.languageVersionSettings,
-        moduleName = moduleName,
-        fragmentNames = compiledKotlinFiles.map { it.fqName }.distinct().sorted(),
-        emptyPackages = emptyList(),
-    ).toByteArray()
+    val compiledKotlinFilesWithMetadata = compiledKotlinFiles.filter { !it.isEmptyMetadata }
 
-    val [fragmentNames, fragmentParts] = compiledKotlinFiles
+    val [fragmentNames, fragmentParts] = compiledKotlinFilesWithMetadata
         .groupBy { it.fqName }
         .map { [fqn, serializedData] ->
             fqn to serializedData.sortedBy { it.path }.map { it.metadata }
         }
         .sortedBy { it.first }
         .unzip()
+
+    val header = serializeKlibHeader(
+        languageVersionSettings = configuration.languageVersionSettings,
+        moduleName = moduleName,
+        fragmentNames = fragmentNames,
+    ).toByteArray()
 
     val metadataVersion = configuration.languageVersionSettings.languageVersion.toMetadataVersion().toArray()
 
@@ -170,7 +184,6 @@ private fun serializeKlibHeader(
     languageVersionSettings: LanguageVersionSettings,
     moduleName: String,
     fragmentNames: List<String>,
-    emptyPackages: List<String>
 ): KlibMetadataProtoBuf.Header {
     val header = KlibMetadataProtoBuf.Header.newBuilder()
 
@@ -180,9 +193,6 @@ private fun serializeKlibHeader(
 
     fragmentNames.forEach {
         header.addPackageFragmentName(it)
-    }
-    emptyPackages.forEach {
-        header.addEmptyPackage(it)
     }
 
     return header.build()
