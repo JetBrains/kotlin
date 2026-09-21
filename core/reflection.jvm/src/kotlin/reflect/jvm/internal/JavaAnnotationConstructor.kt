@@ -8,6 +8,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.runtime.structure.desc
 import java.lang.reflect.Method
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
 import kotlin.metadata.Modality
 import kotlin.reflect.ExperimentalCompanionExtensions
@@ -32,6 +33,7 @@ internal class JavaAnnotationConstructor(
 
     override val container: KDeclarationContainerImpl get() = klass
     override val rawBoundReceiver: Any? get() = null
+    override val rawBoundContextArguments: List<Any?> get() = emptyList()
     override val signature: String by lazy(PUBLICATION) {
         parameters.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.type.jvmErasure.java.desc }
     }
@@ -80,10 +82,9 @@ internal class JavaAnnotationConstructor(
         return JavaAnnotationConstructor(klass)
     }
 
-    override fun bindToLowerArity(boundReceiver: Any?) =
-        throw KotlinReflectionInternalError("Annotation constructors cannot have bound receivers: $this")
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<Any?> =
+        throw KotlinReflectionInternalError("Annotation constructors cannot have bound receivers or context arguments: $this")
 
-    override fun unbindToHigherArity() = JavaAnnotationConstructor(klass)
 
     override fun equals(other: Any?): Boolean {
         val that = other.asReflectFunction() ?: return false

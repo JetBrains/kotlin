@@ -25,7 +25,7 @@ internal abstract class JavaKProperty<out V>(
     }
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
-        if (isBound) computeParameters(this, includeReceivers = false)
+        if (isReceiverBound) computeParameters(this, includeReceivers = false)
         else allParameters
     }
 
@@ -51,6 +51,8 @@ internal abstract class JavaKProperty<out V>(
 
         override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
 
+        override val rawBoundContextArguments: List<Any?> get() = property.rawBoundContextArguments
+
         override val typeParameters: List<KTypeParameter> get() = emptyList()
 
         override val modality: Modality get() = property.modality
@@ -68,9 +70,9 @@ internal abstract class JavaKProperty<out V>(
         ): ReflectKCallable<ReturnType> =
             error("Property accessors can only be copied by copying the corresponding property")
 
-        override fun bindToLowerArity(boundReceiver: Any?) = error("Property accessors can only be bound by copying the corresponding property")
+        override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>) =
+            error("Property accessors can only be bound by copying the corresponding property")
 
-        override fun unbindToHigherArity() = error("Property accessors can only be unbound by copying the corresponding property")
 
         override val annotations: List<Annotation>
             get() = emptyList()
@@ -92,7 +94,7 @@ internal abstract class JavaKProperty<out V>(
         }
 
         override val parameters: List<KParameter> by lazy(PUBLICATION) {
-            if (isBound) property.computeParameters(this, includeReceivers = false)
+            if (isReceiverBound) property.computeParameters(this, includeReceivers = false)
             else allParameters
         }
 
@@ -112,7 +114,7 @@ internal abstract class JavaKProperty<out V>(
         }
 
         override val parameters: List<KParameter> by lazy(PUBLICATION) {
-            if (isBound) {
+            if (isReceiverBound) {
                 val propertyParameters = property.computeParameters(this, includeReceivers = false)
                 propertyParameters + DefaultSetterValueParameter(property, propertyParameters.size)
             } else allParameters

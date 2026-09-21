@@ -23,8 +23,8 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
 internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, DescriptorKProperty<V> {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
-        container, name, signature, boundReceiver
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?, boundContextArguments: List<Any?>) : super(
+        container, name, signature, boundReceiver, boundContextArguments
     )
 
     constructor(
@@ -32,7 +32,8 @@ internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, Descripto
         descriptor: PropertyDescriptor,
         boundReceiver: Any?,
         overriddenStorage: KCallableOverriddenStorage,
-    ) : super(container, descriptor, boundReceiver, overriddenStorage)
+        boundContextArguments: List<Any?> = emptyList(),
+    ) : super(container, descriptor, boundReceiver, overriddenStorage, boundContextArguments)
 
     override val getter: Getter<T, V> by lazy(PUBLICATION) { Getter(this) }
 
@@ -51,9 +52,11 @@ internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, Descripto
         DescriptorKProperty1(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
     override fun unbindToHigherArity(): ReflectKCallable<V> =
-        DescriptorKProperty2<Any?, Any?, V>(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
+        if (hasContextParameters) DescriptorKPropertyN(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
+        else DescriptorKProperty2<Any?, Any?, V>(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<V> {
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> {
+        require(boundContextArguments.isEmpty()) { "Unbound contextual property must be a DescriptorKPropertyN: $this" }
         return DescriptorKProperty0(container, descriptor, boundReceiver, overriddenStorage)
     }
 
@@ -63,8 +66,8 @@ internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, Descripto
 }
 
 internal class DescriptorKMutableProperty1<T, V> : DescriptorKProperty1<T, V>, KMutableProperty1<T, V> {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
-        container, name, signature, boundReceiver
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?, boundContextArguments: List<Any?>) : super(
+        container, name, signature, boundReceiver, boundContextArguments
     )
 
     constructor(
@@ -72,7 +75,8 @@ internal class DescriptorKMutableProperty1<T, V> : DescriptorKProperty1<T, V>, K
         descriptor: PropertyDescriptor,
         boundReceiver: Any?,
         overriddenStorage: KCallableOverriddenStorage,
-    ) : super(container, descriptor, boundReceiver, overriddenStorage)
+        boundContextArguments: List<Any?> = emptyList(),
+    ) : super(container, descriptor, boundReceiver, overriddenStorage, boundContextArguments)
 
     override val setter: Setter<T, V> by lazy(PUBLICATION) { Setter(this) }
 
@@ -84,12 +88,14 @@ internal class DescriptorKMutableProperty1<T, V> : DescriptorKProperty1<T, V>, K
     ): DescriptorKMutableProperty1<T, V> =
         DescriptorKMutableProperty1(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKCallable<V> {
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> {
+        require(boundContextArguments.isEmpty()) { "Unbound contextual property must be a DescriptorKPropertyN: $this" }
         return DescriptorKMutableProperty0(container, descriptor, boundReceiver, overriddenStorage)
     }
 
     override fun unbindToHigherArity(): ReflectKCallable<V> =
-        DescriptorKMutableProperty2<Any?, Any?, V>(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
+        if (hasContextParameters) DescriptorKMutablePropertyN(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
+        else DescriptorKMutableProperty2<Any?, Any?, V>(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
     class Setter<T, V>(override val property: DescriptorKMutableProperty1<T, V>) : DescriptorKProperty.Setter<V>(), KMutableProperty1.Setter<T, V> {
         override fun invoke(receiver: T, value: V): Unit = property.set(receiver, value)

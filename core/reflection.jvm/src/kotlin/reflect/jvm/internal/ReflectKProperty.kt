@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.*
+import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.KotlinGenericDeclaration
 import kotlin.jvm.internal.findMethodBySignature
 import kotlin.reflect.KParameter
@@ -22,6 +23,10 @@ internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V>, 
     override fun findJavaDeclaration(): GenericDeclaration? = originalContainer.findMethodBySignature(signature)
 }
 
+internal fun ReflectKProperty<*>.countUnboundReceivers(boundReceiver: Any?): Int =
+    allParameters.count { it.kind == KParameter.Kind.INSTANCE || it.kind == KParameter.Kind.EXTENSION_RECEIVER } -
+            (if (boundReceiver !== CallableReference.NO_RECEIVER) 1 else 0)
+
 internal val ReflectKProperty<*>.isLocalDelegated: Boolean
     get() = KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matches(signature)
 
@@ -36,8 +41,8 @@ internal fun ReflectKProperty<*>.getDelegateImpl(fieldOrMethod: Member?, receive
             }
         }
 
-        val realReceiver1 = (if (isBound) boundReceiver else receiver1).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
-        val realReceiver2 = (if (isBound) receiver1 else receiver2).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
+        val realReceiver1 = (if (isReceiverBound) boundReceiver else receiver1).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
+        val realReceiver2 = (if (isReceiverBound) receiver1 else receiver2).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
         (fieldOrMethod as? AccessibleObject)?.isAccessible = isAccessible
         when (fieldOrMethod) {
             null -> null

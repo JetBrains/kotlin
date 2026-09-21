@@ -7,9 +7,9 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.Field
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
+import kotlin.jvm.internal.CallableReference
 
 internal open class JavaFieldKProperty1<T, out V>(
     container: KDeclarationContainerImpl, field: Field, rawBoundReceiver: Any?,
@@ -26,9 +26,11 @@ internal open class JavaFieldKProperty1<T, out V>(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaFieldKProperty1<T, V>(container, jField, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun unbindToHigherArity() = throw KotlinReflectionInternalError("Cannot unbind KProperty1: $this")
 
-    override fun bindToLowerArity(boundReceiver: Any?) = JavaFieldKProperty0<V>(container, jField, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> {
+        require(boundContextArguments.isEmpty()) { "Property cannot have bound context arguments: $this" }
+        return JavaFieldKProperty0<V>(container, jField, boundReceiver, overriddenStorage)
+    }
 
     class Getter<T, out V>(override val property: JavaFieldKProperty1<T, V>) : JavaFieldKProperty.Getter<V>(), KProperty1.Getter<T, V> {
         override fun invoke(receiver: T): V = property.get(receiver)
@@ -46,7 +48,10 @@ internal open class JavaFieldKMutableProperty1<T, V>(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaFieldKMutableProperty1<T, V>(container, jField, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun bindToLowerArity(boundReceiver: Any?) = JavaFieldKMutableProperty0<V>(container, jField, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> {
+        require(boundContextArguments.isEmpty()) { "Property cannot have bound context arguments: $this" }
+        return JavaFieldKMutableProperty0<V>(container, jField, boundReceiver, overriddenStorage)
+    }
 
     class Setter<T, V>(override val property: JavaFieldKMutableProperty1<T, V>) : JavaFieldKProperty.Setter<V>(), KMutableProperty1.Setter<T, V> {
         override fun invoke(receiver: T, value: V): Unit = property.set(receiver, value)

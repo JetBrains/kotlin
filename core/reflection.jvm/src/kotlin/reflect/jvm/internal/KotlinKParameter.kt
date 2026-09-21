@@ -31,10 +31,9 @@ internal class KotlinKParameter(
     override val isOptional: Boolean by lazy(PUBLICATION) {
         if (kmParameter.declaresDefaultValue) return@lazy true
         val overridden = (callable as? KotlinKFunction)?.overridden ?: return@lazy false
-        // If this parameter's callable has bound receiver(s), its index needs to be adjusted because functions returned by
-        // `ReflectKFunction.overridden` are always unbound.
-        // TODO(KT-86452): make sure to update this code once bound references with context receivers are supported.
-        val unboundIndex = if (callable.isBound) index + 1 else index
+        // If this parameter's callable has a bound receiver and/or bound context arguments, its index needs to be adjusted because
+        // functions returned by `ReflectKFunction.overridden` are always unbound.
+        val unboundIndex = index + callable.rawBoundContextArguments.size + (if (callable.isReceiverBound) 1 else 0)
         overridden.any { it.parameters[unboundIndex].isOptional }
     }
 

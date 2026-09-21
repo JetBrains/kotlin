@@ -73,9 +73,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
 
         return if (kmProperty.isVar)
-            KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty, KCallableOverriddenStorage.EMPTY)
+            KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, rawBoundContextArguments = emptyList(), kmProperty, KCallableOverriddenStorage.EMPTY)
         else
-            KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty, KCallableOverriddenStorage.EMPTY)
+            KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, rawBoundContextArguments = emptyList(), kmProperty, KCallableOverriddenStorage.EMPTY)
     }
 
     fun findPropertyMetadata(name: String, signature: String): KmProperty {

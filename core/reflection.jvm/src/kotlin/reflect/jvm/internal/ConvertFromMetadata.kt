@@ -337,15 +337,15 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
     return when {
         !property.isVar -> when (receiverCount) {
             -1 -> KotlinKPropertyN(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            0 -> KotlinKProperty0(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            1 -> KotlinKProperty1<Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
+            0 -> KotlinKProperty0(container, signature, boundReceiver, rawBoundContextArguments = emptyList(), property, KCallableOverriddenStorage.EMPTY)
+            1 -> KotlinKProperty1<Any?, Any?>(container, signature, boundReceiver, rawBoundContextArguments = emptyList(), property, KCallableOverriddenStorage.EMPTY)
             2 -> KotlinKProperty2<Any?, Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
             else -> null
         }
         else -> when (receiverCount) {
             -1 -> KotlinKMutablePropertyN(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            0 -> KotlinKMutableProperty0(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            1 -> KotlinKMutableProperty1<Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
+            0 -> KotlinKMutableProperty0(container, signature, boundReceiver, rawBoundContextArguments = emptyList(), property, KCallableOverriddenStorage.EMPTY)
+            1 -> KotlinKMutableProperty1<Any?, Any?>(container, signature, boundReceiver, rawBoundContextArguments = emptyList(), property, KCallableOverriddenStorage.EMPTY)
             2 -> KotlinKMutableProperty2<Any?, Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
             else -> null
         }
@@ -360,7 +360,7 @@ internal fun createUnboundFunction(function: KmFunction, container: KDeclaration
     // (*) Actually, when builtins metadata is read by kotlin-metadata-jvm, JVM signatures are computed and stored by
     // `JvmMetadataExtensions.readFunctionExtensions` in case they can be easily computed (see `JvmProtoBufUtil.getJvmMethodSignature`).
     val signature = function.mapSignature((container as? KClassImpl<*>)?.kmClass)
-    return KotlinKNamedFunction(container, signature.toString(), CallableReference.NO_RECEIVER, function, KCallableOverriddenStorage.EMPTY)
+    return KotlinKNamedFunction(container, signature.toString(), CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList(), function, KCallableOverriddenStorage.EMPTY)
 }
 
 internal fun createUnboundConstructor(constructor: KmConstructor, container: KDeclarationContainerImpl): KotlinKFunction {

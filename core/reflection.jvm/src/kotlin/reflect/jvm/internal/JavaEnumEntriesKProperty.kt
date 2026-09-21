@@ -23,6 +23,7 @@ internal class JavaEnumEntriesKProperty(
 
     override val container: KDeclarationContainerImpl get() = enumClass
     override val rawBoundReceiver: Any? get() = CallableReference.NO_RECEIVER
+    override val rawBoundContextArguments: List<Any?> get() = emptyList()
     override val signature: String get() = ENUM_ENTRIES_SIGNATURE
 
     override val name: String get() = "entries"
@@ -53,9 +54,9 @@ internal class JavaEnumEntriesKProperty(
         container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
     ): ReflectKCallable<EnumEntries<*>> = JavaEnumEntriesKProperty(enumClass)
 
-    override fun bindToLowerArity(boundReceiver: Any?) = throw KotlinReflectionInternalError("Cannot bind JavaEnumEntriesKProperty: $this")
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>) =
+        throw KotlinReflectionInternalError("Cannot bind JavaEnumEntriesKProperty: $this")
 
-    override fun unbindToHigherArity() = throw KotlinReflectionInternalError("Cannot unbind JavaEnumEntriesKProperty: $this")
 
     override val caller: Caller<*> = JavaEnumEntriesCaller()
     override val callerWithDefaults: Caller<*>? get() = null
@@ -77,6 +78,7 @@ internal class JavaEnumEntriesKProperty(
         override val property: ReflectKProperty<EnumEntries<*>> get() = this@JavaEnumEntriesKProperty
         override val container: KDeclarationContainerImpl get() = property.container
         override val rawBoundReceiver: Any? get() = CallableReference.NO_RECEIVER
+        override val rawBoundContextArguments: List<Any?> get() = emptyList()
 
         override val name: String get() = "<get-${property.name}>"
 
@@ -109,10 +111,9 @@ internal class JavaEnumEntriesKProperty(
         ): ReflectKCallable<EnumEntries<*>> =
             error("Property accessors can only be copied by copying the corresponding property")
 
-        override fun bindToLowerArity(boundReceiver: Any?) = error("Property accessors can only be bound by copying the corresponding property")
+        override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>) =
+            error("Property accessors can only be bound by copying the corresponding property")
 
-        override fun unbindToHigherArity(): ReflectKCallable<EnumEntries<*>> =
-            error("Property accessors can only be unbound by copying the corresponding property")
 
         override fun equals(other: Any?): Boolean = other is Getter && property == other.property
         override fun hashCode(): Int = property.hashCode()

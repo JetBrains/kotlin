@@ -28,10 +28,11 @@ internal open class DescriptorKProperty0<out V> : KProperty0<V>, DescriptorKProp
         descriptor: PropertyDescriptor,
         boundReceiver: Any?,
         overriddenStorage: KCallableOverriddenStorage,
-    ) : super(container, descriptor, boundReceiver, overriddenStorage)
+        boundContextArguments: List<Any?> = emptyList(),
+    ) : super(container, descriptor, boundReceiver, overriddenStorage, boundContextArguments)
 
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
-        container, name, signature, boundReceiver
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?, boundContextArguments: List<Any?>) : super(
+        container, name, signature, boundReceiver, boundContextArguments
     )
 
     override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
@@ -47,10 +48,12 @@ internal open class DescriptorKProperty0<out V> : KProperty0<V>, DescriptorKProp
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): DescriptorKProperty0<V> =
         DescriptorKProperty0(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun bindToLowerArity(boundReceiver: Any?) = throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>) =
+        throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
 
     override fun unbindToHigherArity(): ReflectKCallable<V> =
-        DescriptorKProperty1<Any?, V>(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
+        if (hasContextParameters) DescriptorKPropertyN(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
+        else DescriptorKProperty1<Any?, V>(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
     class Getter<out R>(override val property: DescriptorKProperty0<R>) : DescriptorKProperty.Getter<R>(), KProperty0.Getter<R> {
         override fun invoke(): R = property.get()
@@ -63,10 +66,11 @@ internal class DescriptorKMutableProperty0<V> : DescriptorKProperty0<V>, KMutabl
         descriptor: PropertyDescriptor,
         boundReceiver: Any?,
         overriddenStorage: KCallableOverriddenStorage,
-    ) : super(container, descriptor, boundReceiver, overriddenStorage)
+        boundContextArguments: List<Any?> = emptyList(),
+    ) : super(container, descriptor, boundReceiver, overriddenStorage, boundContextArguments)
 
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
-        container, name, signature, boundReceiver
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?, boundContextArguments: List<Any?>) : super(
+        container, name, signature, boundReceiver, boundContextArguments
     )
 
     override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
@@ -80,7 +84,8 @@ internal class DescriptorKMutableProperty0<V> : DescriptorKProperty0<V>, KMutabl
         DescriptorKMutableProperty0(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
     override fun unbindToHigherArity(): ReflectKCallable<V> =
-        DescriptorKMutableProperty1<Any?, V>(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
+        if (hasContextParameters) DescriptorKMutablePropertyN(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
+        else DescriptorKMutableProperty1<Any?, V>(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
     class Setter<R>(override val property: DescriptorKMutableProperty0<R>) : DescriptorKProperty.Setter<R>(), KMutableProperty0.Setter<R> {
         override fun invoke(value: R): Unit = property.set(value)
