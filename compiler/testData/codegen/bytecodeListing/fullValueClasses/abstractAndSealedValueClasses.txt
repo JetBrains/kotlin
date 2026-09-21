@@ -1,0 +1,49 @@
+@kotlin.Metadata
+public abstract class AbstractRegular {
+    // source: 'abstractAndSealedValueClasses.kt'
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public abstract class AbstractValue {
+    // source: 'abstractAndSealedValueClasses.kt'
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class FinalValue {
+    // source: 'abstractAndSealedValueClasses.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public final method getY(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public abstract class SealedRegular {
+    // source: 'abstractAndSealedValueClasses.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@kotlin.Metadata
+public abstract class SealedValue {
+    // source: 'abstractAndSealedValueClasses.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@kotlin.Metadata
+public final class ValueObject {
+    // source: 'abstractAndSealedValueClasses.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: ValueObject
+    static method <clinit>(): void
+    private method <init>(): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
