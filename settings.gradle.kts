@@ -711,7 +711,6 @@ include(
     ":jps:jps-common",
     ":jps:jps-plugin",
     ":prepare:kotlin-jps-plugin",
-    ":jps:jps-platform-api-signatures"
 )
 
 include(
