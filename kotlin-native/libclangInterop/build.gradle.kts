@@ -72,6 +72,10 @@ nativeInteropPlugin {
             ).mapTo(this) { "-Wl,-U,$it" }
             addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
         } else if (PlatformInfo.isLinux()) {
+            // When LLVM is built with LTO, its static libraries contain LLVM bitcode
+            // instead of native object code. Use lld to link them without requiring
+            // an additional LLVMgold plugin for GNU ld.
+            add("-fuse-ld=lld")
             // Linux linkers (ld/lld) allow unresolved symbols by default when producing shared libraries, so '-Wl,-U' flags are not
             // needed here.
             add("-Wl,-z,noexecstack")
