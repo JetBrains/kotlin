@@ -354,13 +354,22 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
     )
 }
 
+internal fun KmFunction.computeJvmSignature(container: KDeclarationContainerImpl): JvmMethodSignature {
+    val mapped = mapSignature((container as? KClassImpl<*>)?.kmClass)
+    // When builtins metadata is read by kotlin-metadata-jvm, JVM signatures are computed and stored by
+    // `JvmMetadataExtensions.readFunctionExtensions`, but this happens only in the case when they can be easily computed
+    // (see `JvmProtoBufUtil.getJvmMethodSignature`). This lightweight computation doesn't support special builtin names, so it uses,
+    // for example, `get` instead of `charAt` for `kotlin.CharSequence.get`. So, we need to manually fix the name here.
+    val specialName = getBuiltinSpecialFunctionJvmName(name, mapped.descriptor, container) ?: return mapped
+    return JvmMethodSignature(specialName, mapped.descriptor)
+}
+
 internal fun createUnboundFunction(function: KmFunction, container: KDeclarationContainerImpl): KotlinKFunction {
-    // In JVM metadata, functions always have `signature`. In builtins metadata, they don't (*), so we compute it manually. In JVM metadata,
-    // this might also help in cases when metadata was corrupted or generated incorrectly for some reason and lacks the signature.
-    // (*) Actually, when builtins metadata is read by kotlin-metadata-jvm, JVM signatures are computed and stored by
-    // `JvmMetadataExtensions.readFunctionExtensions` in case they can be easily computed (see `JvmProtoBufUtil.getJvmMethodSignature`).
-    val signature = function.mapSignature((container as? KClassImpl<*>)?.kmClass)
-    return KotlinKNamedFunction(container, signature.toString(), CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList(), function, KCallableOverriddenStorage.EMPTY)
+    val signature = function.computeJvmSignature(container)
+    return KotlinKNamedFunction(
+        container, signature.toString(), CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList(), function,
+        KCallableOverriddenStorage.EMPTY,
+    )
 }
 
 internal fun createUnboundConstructor(constructor: KmConstructor, container: KDeclarationContainerImpl): KotlinKFunction {

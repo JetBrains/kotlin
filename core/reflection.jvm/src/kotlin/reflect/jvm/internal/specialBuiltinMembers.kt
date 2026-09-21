@@ -5,7 +5,12 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.runtime.structure.classId
+import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
+import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -29,6 +34,31 @@ private fun KDeclarationContainerImpl.findBuiltinSpecialPropertyFqName(propertyN
     if (fqName in BuiltinSpecialProperties.SPECIAL_FQ_NAMES) return fqName
     for (supertype in klass.supertypes) {
         (supertype.classifier as? KClassImpl<*>)?.findBuiltinSpecialPropertyFqName(propertyName)?.let { return it }
+    }
+    return null
+}
+
+/**
+ * If the function [functionName] with the JVM [descriptor] in [container] is a builtin function whose JVM name differs from its Kotlin
+ * name (e.g. `charAt` for `kotlin.CharSequence.get`, `intValue` for `kotlin.Number.toInt`, `remove` for `kotlin.collections.MutableList.removeAt`),
+ * returns that JVM name. Returns `null` for ordinary functions.
+ */
+internal fun getBuiltinSpecialFunctionJvmName(functionName: String, descriptor: String, container: KDeclarationContainerImpl): String? {
+    if (Name.identifier(functionName) !in SpecialGenericSignatures.ORIGINAL_SHORT_NAMES) return null
+    val klass = container as? KClassImpl<*> ?: return null
+    if (!klass.isMappedBuiltin) return null
+    return klass.findBuiltinSpecialFunctionJvmName(functionName + descriptor)?.asString()
+}
+
+private fun KClassImpl<*>.findBuiltinSpecialFunctionJvmName(nameAndDescriptor: String): Name? {
+    if (jClass.isArray) return null
+    val javaAnalogue = jClass.wrapperByPrimitive ?: jClass
+    val signature = SignatureBuildingComponents.signature(javaAnalogue.classId.internalName, nameAndDescriptor)
+    SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME[signature]?.let { return it }
+    for (supertype in supertypes) {
+        val superclass = supertype.classifier as? KClassImpl<*> ?: continue
+        if (!superclass.isMappedBuiltin) continue
+        superclass.findBuiltinSpecialFunctionJvmName(nameAndDescriptor)?.let { return it }
     }
     return null
 }
