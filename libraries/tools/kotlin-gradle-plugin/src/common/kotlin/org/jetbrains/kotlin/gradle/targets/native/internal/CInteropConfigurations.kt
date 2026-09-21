@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -31,13 +30,9 @@ internal fun createCInteropApiElementsKlibArtifact(
     val project = compilation.project
     val configurationName = cInteropApiElementsConfigurationName(compilation.target)
     val configuration = project.configurations.getByName(configurationName)
-    val packedArtifactFile = if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-        // the default artifact should be compressed
-        val packTask = compilation.maybeCreateKlibPackingTask(settings.classifier, interopTask)
-        packTask.map { it.archiveFile.get().asFile }
-    } else {
-        interopTask.map { it.klibFile }
-    }
+    val packTask = compilation.maybeCreateKlibPackingTask(settings.classifier, interopTask)
+    // the default artifact should be compressed
+    val packedArtifactFile = packTask.map { it.archiveFile.get().asFile }
     configuration.outgoing.registerKlibArtifact(packedArtifactFile, settings.classifier)
 }
 

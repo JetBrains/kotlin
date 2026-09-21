@@ -712,9 +712,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val archivesTaskOutputAsFriendModule: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED) ?: true
 
-    val useNonPackedKlibs: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS) ?: true
-
     /**
      * When set [org.jetbrains.kotlin.gradle.cache.KotlinGradleTaskExecutionCacheWithMetrics]
      * will write there after build finish detailed report on cache entries.
@@ -948,7 +945,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             property("$KOTLIN_INTERNAL_NAMESPACE.jvm.enableKmpClasspathMetadataForIncrementalCompilation")
         val KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION = property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableMonotonousCompileSetExpansion")
         val KOTLIN_COLLECT_FUS_METRICS_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.collectFUSMetrics")
-        val KOTLIN_USE_NON_PACKED_KLIBS = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.non-packed")
         val KOTLIN_CLASSLOADER_CACHE_TIMEOUT = property("$KOTLIN_INTERNAL_NAMESPACE.classloaderCache.timeoutSeconds")
         val ABI_VALIDATION_BANNED_TARGETS = property(ABI_VALIDATION_BANNED_TARGETS_NAME)
         val KOTLIN_PARSE_INLINED_LOCAL_CLASSES = property("$KOTLIN_INTERNAL_NAMESPACE.classpathSnapshot.parseInlinedLocalClasses")

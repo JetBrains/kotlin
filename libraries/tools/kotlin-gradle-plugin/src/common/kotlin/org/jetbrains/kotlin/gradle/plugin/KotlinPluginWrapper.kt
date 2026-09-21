@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck
 import org.jetbrains.kotlin.gradle.internal.diagnostics.KotlinCompilerEmbeddableCheck.checkCompilerEmbeddableInClasspath
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DefaultCompilerDiagnosticsProblemsReporter
@@ -223,9 +222,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.whenJsOrMppEnabled {
             KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
             KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-            if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-                KlibPackaging.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-            }
+            KlibPackaging.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
         }
 
         project.whenMppEnabled {

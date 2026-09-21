@@ -202,10 +202,6 @@ fun Project.enableBtaJvm(enabled: Boolean = true) {
     project.propertiesExtension.set(KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API, enabled)
 }
 
-fun Project.enableNonPackedKlibsUsage(enabled: Boolean = true) {
-    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS, enabled.toString())
-}
-
 fun Project.enableEagerUnresolvedDependenciesDiagnostic(enabled: Boolean = true) {
     project.propertiesExtension.set(
         PropertiesProvider.PropertyNames.KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC,

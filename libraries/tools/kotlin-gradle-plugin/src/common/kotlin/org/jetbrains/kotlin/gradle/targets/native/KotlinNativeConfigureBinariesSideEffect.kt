@@ -98,9 +98,7 @@ internal fun KotlinNativeCompilation.resolvableApiConfiguration(): Configuration
             extendsFrom(apiConfiguration)
             val compileConfiguration = compilation.internal.configurations.compileDependencyConfiguration
             compileConfiguration.copyAttributesTo(project.providers, this)
-            if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-                KlibPackaging.setAttributeTo(project, attributes, false)
-            }
+            KlibPackaging.setAttributeTo(project, attributes, false)
         }
 }
 
