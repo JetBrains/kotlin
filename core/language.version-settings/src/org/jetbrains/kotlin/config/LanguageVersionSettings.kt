@@ -567,6 +567,7 @@ enum class LanguageFeature(
     ForbidNonLiteralStringArgumentsForCompilerRequiredAnnotationParameters(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, issue = "KT-87072"),
     JsAllowExportTypealiases(sinceVersion = KOTLIN_2_5, "KT-49795"),
     IntrinsicConstEvaluation(sinceVersion = KOTLIN_2_5, issue = "KT-49303"),
+    NormalizeNaNValuesInConstContext(sinceVersion = KOTLIN_2_5, issue = "KT-88081"),
 
     // 2.6
 
