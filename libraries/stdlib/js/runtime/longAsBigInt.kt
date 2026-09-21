@@ -224,8 +224,17 @@ internal fun ulongToString(value: Long, base: Int): String =
 
 @LongAsBigIntApi
 @UsedFromCompilerGeneratedCode
-internal fun ulongFromUnsignedSafeDouble(value: Double): ULong =
-    ULong(BigInt.asIntN(Long.SIZE_BITS, BigInt(floor(value))).unsafeCast<Long>())
+internal fun ulongFromUnsignedSafeDouble(value: Double): ULong {
+    val longValue = when {
+        js("Number.isFinite(value)") ->
+            BigInt.asIntN(Long.SIZE_BITS, BigInt(floor(value))).unsafeCast<Long>()
+        value == Double.POSITIVE_INFINITY -> Long.MIN_VALUE
+        else -> 0L
+    }
+
+    return ULong(longValue)
+}
+
 
 @LongAsBigIntApi
 @UsedFromCompilerGeneratedCode

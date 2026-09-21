@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,8 +35,9 @@ internal external class BigInt {
  */
 internal external fun BigInt(value: Number): BigInt
 
-internal inline fun BigInt.toNumber(): Number =
-    numberToDouble(this).unsafeCast<Number>()
+internal external fun Number(value: dynamic): Number
+
+internal inline fun BigInt.toNumber(): Number = Number(this)
 
 internal inline operator fun BigInt.unaryMinus(): BigInt = jsUnaryMinus(this).unsafeCast<BigInt>()
 
