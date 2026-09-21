@@ -63,7 +63,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
     @Test
     public void testAllFilesPresentInPureKotlinAbstractIncrementalJvmJpsTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^.*Expect.*)|(^companionConstantChanged)|(.*NoJps.*)"), false);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^.*Expect.*)"), false);
     }
 
     @Test
@@ -148,6 +148,12 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
     @TestMetadata("classSignatureUnchanged")
     public void testClassSignatureUnchanged() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/classSignatureUnchanged/");
+    }
+
+    @Test
+    @TestMetadata("companionConstantChanged")
+    public void testCompanionConstantChanged() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/companionConstantChanged/");
     }
 
     @Test
@@ -935,7 +941,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
     @Test
     public void testAllFilesPresentInClassHierarchyAffectedAbstractIncrementalJvmJpsTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^.*Expect.*)|(^companionConstantChanged)|(.*NoJps.*)"), false);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^.*Expect.*)"), false);
     }
 
     @Test
