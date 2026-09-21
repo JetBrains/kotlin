@@ -185,26 +185,10 @@ private fun Project.registerSwiftExportRun(
     val outputs = layout.buildDirectory.dir("SwiftExport/${target.name}/$configuration")
     val files = outputs.map { it.dir("files") }
     val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
-    val exportConfigurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
-    val metadataConfigurationProvider = provider {
-        LazyResolvedConfigurationWithArtifacts(
-            exportConfiguration,
-            configureArtifactView = configureSwiftExportMetadataArtifactView(),
-        )
-    }
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         task.description = "Run $taskNamePrefix Swift Export process"
         task.group = taskGroup
-
-        task.inputs.files(exportConfiguration)
-        if (apiConfiguration != null) {
-            task.inputs.files(apiConfiguration)
-        }
-        if (shouldResolvePublishedMetadata) {
-            task.inputs.files(exportConfiguration.incoming.artifactView(configureSwiftExportMetadataArtifactView()).files)
-        }
-        task.inputs.files(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
         // Input
         task.swiftExportClasspath.from(SwiftExportClasspathResolvableConfiguration)
@@ -215,18 +199,29 @@ private fun Project.registerSwiftExportRun(
         // The exported modules are resolved from these Configuration-Cache-safe holders at execution time (see
         // SwiftExportTask.run), not here. Up-to-date checking is provided by the raw configurations wired as task
         // inputs above.
-        task.exportConfiguration.set(exportConfigurationProvider)
+        task.exportConfiguration.set(provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) })
+        task.exportConfigurationFiles.from(exportConfiguration)
         if (apiConfiguration != null) {
             task.apiConfiguration.set(provider { LazyResolvedConfigurationWithArtifacts(apiConfiguration) })
+            task.apiConfigurationFiles.from(apiConfiguration)
         }
         if (shouldResolvePublishedMetadata) {
-            task.metadataConfiguration.set(metadataConfigurationProvider)
+            task.metadataConfiguration.set(provider {
+                LazyResolvedConfigurationWithArtifacts(
+                    exportConfiguration,
+                    configureArtifactView = configureSwiftExportMetadataArtifactView(),
+                )
+            })
+            task.metadataConfigurationFiles.from(
+                exportConfiguration.incoming.artifactView(configureSwiftExportMetadataArtifactView()).files
+            )
             task.sharedMetadata.set(
                 provider { kotlinSecondaryVariantsDataSharing.consumeSwiftExportMetadata(exportConfiguration) }
             )
         }
         task.exportedModules.set(exportedModules)
         task.dependencyOptionsOverrides.set(dependencyOptionsOverrides)
+        task.mainCompilationOutputFiles.from(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
         task.ignoreExperimentalDiagnostic.set(kotlinPropertiesProvider.swiftExportIgnoreExperimental)
         task.mainModuleInput.moduleName.set(swiftApiModuleName)

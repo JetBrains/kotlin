@@ -71,8 +71,7 @@ internal abstract class SwiftExportTask @Inject constructor(
     @get:Nested
     abstract val kotlinNativeProvider: Property<KotlinNativeProvider>
 
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Classpath
     abstract val swiftExportClasspath: ConfigurableFileCollection
 
     @get:Nested
@@ -89,6 +88,12 @@ internal abstract class SwiftExportTask @Inject constructor(
     abstract val exportConfiguration: Property<LazyResolvedConfigurationWithArtifacts>
 
     /**
+     * Up-to-date tracking of [exportConfiguration]'s backing configuration.
+     */
+    @get:Classpath
+    abstract val exportConfigurationFiles: ConfigurableFileCollection
+
+    /**
      * A version of the compilation dependency graph (represented by [exportConfiguration]) that only includes api
      * dependencies. Used for identifying direct api dependencies of an exported module.
      *
@@ -100,6 +105,12 @@ internal abstract class SwiftExportTask @Inject constructor(
     abstract val apiConfiguration: Property<LazyResolvedConfigurationWithArtifacts>
 
     /**
+     * Up-to-date tracking of [apiConfiguration]'s backing configuration.
+     */
+    @get:Classpath
+    abstract val apiConfigurationFiles: ConfigurableFileCollection
+
+    /**
      * Mirrors [exportConfiguration] but contains Swift Export metadata of dependencies inside [exportConfiguration].
      *
      * Held as Configuration-Cache-safe [LazyResolvedConfigurationWithArtifacts] rather than a precomputed module list
@@ -108,6 +119,13 @@ internal abstract class SwiftExportTask @Inject constructor(
      */
     @get:Internal
     abstract val metadataConfiguration: Property<LazyResolvedConfigurationWithArtifacts>
+
+    /**
+     * Up-to-date tracking of [metadataConfiguration]'s backing configuration.
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val metadataConfigurationFiles: ConfigurableFileCollection
 
     /**
      * Swift Export metadata shared by same-build subproject dependencies as a secondary variant.
@@ -176,6 +194,13 @@ internal abstract class SwiftExportTask @Inject constructor(
                 "$selectorKey|${options.moduleName}|${options.rootPackage}"
             }
             .sorted()
+
+    /**
+     * Tracks the output files of the main compilation as task inputs.
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val mainCompilationOutputFiles: ConfigurableFileCollection
 
     @get:Internal
     abstract val ignoreExperimentalDiagnostic: Property<Boolean>
