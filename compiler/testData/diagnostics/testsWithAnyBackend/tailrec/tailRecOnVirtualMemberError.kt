@@ -155,6 +155,24 @@ enum class G {
     }
 }
 
+abstract class H {
+    abstract <!NO_TAIL_CALLS_FOUND, TAILREC_ON_VIRTUAL_MEMBER_ERROR!>tailrec<!> fun foo(x: Int)
+
+    protected abstract <!NO_TAIL_CALLS_FOUND, TAILREC_ON_VIRTUAL_MEMBER_ERROR!>tailrec<!> fun baz(y: Int)
+}
+
+class H1 : H() {
+    tailrec override fun foo(x: Int) {
+        foo(x)
+    }
+
+    override fun baz(y: Int) {}
+}
+
+interface I {
+    <!NO_TAIL_CALLS_FOUND, TAILREC_ON_VIRTUAL_MEMBER_ERROR!>tailrec<!> fun foo(x: Int)
+}
+
 val z = object : A() {
     tailrec override fun foo(x: Int) {
         foo(x)
@@ -170,4 +188,5 @@ val z = object : A() {
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, enumDeclaration, enumEntry,
-functionDeclaration, integerLiteral, nestedClass, objectDeclaration, override, propertyDeclaration, sealed, tailrec */
+functionDeclaration, integerLiteral, interfaceDeclaration, nestedClass, objectDeclaration, override, propertyDeclaration,
+sealed, tailrec */
