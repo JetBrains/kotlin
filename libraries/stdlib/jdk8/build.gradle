@@ -42,7 +42,7 @@ sourceSets {
 dependencies {
     moduleTestApi project(':kotlin-stdlib')
     moduleTestApi project(':kotlin-stdlib-jdk7')
-    moduleTestCompileOnly project
+    moduleTestCompileOnly(project(project.path))
     moduleTestApi RepoDependencies.kotlinTest(project, "junit5")
     moduleTestApi "org.ow2.asm:asm:9.0"
 }
