@@ -7,6 +7,7 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.Field
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
@@ -23,7 +24,7 @@ internal open class JavaFieldKProperty1<T, out V>(
     override fun invoke(receiver: T): V = get(receiver)
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaFieldKProperty1<T, V>(container, jField, rawBoundReceiver, overriddenStorage)
+        JavaFieldKProperty1<T, V>(container, jField, CallableReference.NO_RECEIVER, overriddenStorage)
 
     override fun unbindToHigherArity() = throw KotlinReflectionInternalError("Cannot unbind KProperty1: $this")
 
@@ -43,7 +44,7 @@ internal open class JavaFieldKMutableProperty1<T, V>(
     override fun set(receiver: T, value: V): Unit = setter.call(receiver, value)
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaFieldKMutableProperty1<T, V>(container, jField, rawBoundReceiver, overriddenStorage)
+        JavaFieldKMutableProperty1<T, V>(container, jField, CallableReference.NO_RECEIVER, overriddenStorage)
 
     override fun bindToLowerArity(boundReceiver: Any?) = JavaFieldKMutableProperty0<V>(container, jField, boundReceiver, overriddenStorage)
 

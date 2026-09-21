@@ -52,7 +52,7 @@ internal class JavaAnnotationMethodKProperty0<out V>(
     override fun invoke(): V = get()
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaAnnotationMethodKProperty0(container, jMethod, rawBoundReceiver, overriddenStorage)
+        JavaAnnotationMethodKProperty0(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
 
     override fun bindToLowerArity(boundReceiver: Any?) = throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
 
@@ -79,7 +79,7 @@ internal class JavaAnnotationMethodKProperty1<T, out V>(
     override fun invoke(receiver: T): V = get(receiver)
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaAnnotationMethodKProperty1<T, V>(container, jMethod, rawBoundReceiver, overriddenStorage)
+        JavaAnnotationMethodKProperty1<T, V>(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
 
     override fun bindToLowerArity(boundReceiver: Any?) =
         JavaAnnotationMethodKProperty0<V>(container, jMethod, boundReceiver, overriddenStorage)
