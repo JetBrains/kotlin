@@ -14,18 +14,6 @@ public abstract value class AbstractValue : kotlin/Any {
   // signature: <init>()V
   public constructor()
 
-  // signature: equals(Ljava/lang/Object;)Z
-  // must-use return value
-  public open operator fun equals(other: kotlin/Any?): kotlin/Boolean
-
-  // signature: hashCode()I
-  // must-use return value
-  public open fun hashCode(): kotlin/Int
-
-  // signature: toString()Ljava/lang/String;
-  // must-use return value
-  public open fun toString(): kotlin/String
-
   // module name: test-module
 }
 // FinalValue.class
@@ -74,18 +62,6 @@ public sealed value class SealedValue : kotlin/Any {
 
   // signature: <init>()V
   protected constructor()
-
-  // signature: equals(Ljava/lang/Object;)Z
-  // must-use return value
-  public open operator fun equals(other: kotlin/Any?): kotlin/Boolean
-
-  // signature: hashCode()I
-  // must-use return value
-  public open fun hashCode(): kotlin/Int
-
-  // signature: toString()Ljava/lang/String;
-  // must-use return value
-  public open fun toString(): kotlin/String
 
   // module name: test-module
 }
