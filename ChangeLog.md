@@ -414,7 +414,6 @@
 - [`b/539644912`](https://issuetracker.google.com/issues/539644912) [Compose] Support rich callable references for `@Composable` functions
 - [`b/546101628`](https://issuetracker.google.com/issues/546101628) Fixed a bug that caused miscompilation whenever a `when` expression had a result that was computed by another `when` expression, and the inner `when` expression had a `@Composable` call in one of its conditions.
 - [`b/549552317`](https://issuetracker.google.com/issues/549552317) Fixed a bug that, in certain cases, prevented execution of non-local return `statements` inside lambdas called from `when` expressions.
-- [`b/549552317`](https://issuetracker.google.com/issues/549552317) Fixed a bug that, in certain cases, prevented execution of non-local return `statements` inside lambdas called from `when` expressions.
 - [`b/481422057`](https://issuetracker.google.com/issues/481422057) Made the applier inferencer support repeated `ComposableTarget` annotations per the semantics described in the documentation of `ComposableTarget`
 - [`b/530458587`](https://issuetracker.google.com/issues/530458587) Start initializing the fields of `ComposableSingletons` objects lazily
 
