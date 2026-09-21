@@ -147,6 +147,7 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
         STRING -> when (name) {
             "length" -> return (value as String).length
             "toString" -> return (value as String).toString()
+            "isEmpty" -> return (value as String).isEmpty()
             "lowercase" -> return (value as String).lowercase()
             "uppercase" -> return (value as String).uppercase()
             "trim" -> return (value as String).trim()
@@ -1123,6 +1124,7 @@ private val knownOps = setOf(
     "kotlin/Short.unaryPlus(SHORT)",
     "kotlin/String.length(STRING)",
     "kotlin/String.toString(STRING)",
+    "kotlin/String.isEmpty(STRING)",
     "kotlin/Char(INT)",
     "kotlin/code(CHAR)",
     "kotlin/experimental/inv(SHORT)",
