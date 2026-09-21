@@ -49,8 +49,8 @@ internal fun nullContrefIntrinsic(): typedcontref<(Any?) -> Unit>? {
     implementedAsIntrinsic
 }
 
-@UsedFromCompilerGeneratedCode
 @Suppress("UNCHECKED_CAST", "RedundantSuspendModifier")
+@UsedFromCompilerGeneratedCode
 internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching(block: (Continuation<T>) -> Any?): T {
     val coroutineImpl = getContinuation<T>() as CoroutineImplStackSwitching<T, T>
 

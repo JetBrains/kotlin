@@ -25,11 +25,6 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnImpl(completion)
 
-@PublishedApi
-internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnImpl(
-    completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(this, completion)
-
 /**
  * Starts an unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
  * Returns the result of the coroutine or throws its exception if it does not suspend or [COROUTINE_SUSPENDED] if it suspends.
@@ -48,22 +43,12 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnImpl(receiver, completion)
 
-@PublishedApi
-internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnImpl(
-    receiver: R,
-    completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic1(
-    this, receiver, completion
-)
-
 @kotlin.internal.InlineOnly
 internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic2(
-    this, receiver, param, completion
-)
+): Any? = startCoroutineUninterceptedOrReturnImpl(receiver, param, completion)
 
 /**
  * Creates unintercepted coroutine without receiver and with result type [T].
