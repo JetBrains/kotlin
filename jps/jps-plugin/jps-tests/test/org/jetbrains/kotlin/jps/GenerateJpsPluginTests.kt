@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
 
         testGroup("jps/jps-plugin/jps-tests/tests-gen", "jps/jps-plugin/testData") {
             fun incrementalJvmTestData(): TestGroup.TestClass.() -> Unit = {
-                val excludePattern = "(^.*Expect.*)|(^companionConstantChanged)|(.*NoJps.*)"
+                val excludePattern = "(^.*Expect.*)"
                 modelForDirectoryBasedTest(
                     "incremental", "pureKotlin",
                     extension = null,
