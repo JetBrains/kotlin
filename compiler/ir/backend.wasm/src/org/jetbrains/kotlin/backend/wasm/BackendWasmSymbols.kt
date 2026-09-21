@@ -246,7 +246,6 @@ class BackendWasmSymbols(
         val suspendIntrinsic by CallableIds.suspendIntrinsic.functionSymbol()
         val resumeThrowIntrinsic by CallableIds.resumeThrowIntrinsic.functionSymbol()
         val resumeWithIntrinsic by CallableIds.resumeWithIntrinsic.functionSymbol()
-        val resumeWithImpl by CallableIds.resumeWithImpl.functionSymbol()
 
         val createCoroutineUninterceptedIntrinsic0StackSwitching by CallableIds.createCoroutineUninterceptedIntrinsic0StackSwitching.functionSymbol()
         val createCoroutineUninterceptedIntrinsic1StackSwitching by CallableIds.createCoroutineUninterceptedIntrinsic1StackSwitching.functionSymbol()
@@ -272,8 +271,6 @@ class BackendWasmSymbols(
         val intercepted by
         CallableIds.coroutineImplIntercepted.functionSymbol()
 
-        val createSimpleCoroutineFromSuspendFunction by
-        CallableIds.createSimpleCoroutineFromSuspendFunction.functionSymbol()
     }
 
     val createCoroutineUninterceptedIntrinsic0 by CallableIds.createCoroutineUninterceptedIntrinsic0.functionSymbol()
@@ -644,18 +641,10 @@ private object CallableIds {
     val suspendFunction1ToContref = "suspendFunction1ToContref".wasmCallableId
     val suspendFunction2ToContref = "suspendFunction2ToContref".wasmCallableId
 
-    val suspendFunction0ToContrefImpl = "suspendFunction0ToContrefImpl".wasmCallableId
-    val suspendFunction1ToContrefImpl = "suspendFunction1ToContrefImpl".wasmCallableId
-    val suspendFunction2ToContrefImpl = "suspendFunction2ToContrefImpl".wasmCallableId
-
     val nullContrefIntrinsic = "nullContrefIntrinsic".wasmCallableId
     val suspendIntrinsic = "suspendIntrinsic".wasmCallableId
     val resumeThrowIntrinsic = "resumeThrowIntrinsic".wasmCallableId
     val resumeWithIntrinsic = "resumeWithIntrinsic".wasmCallableId
-    val resumeWithImpl = "resumeWithImpl".wasmCallableId
-
-    val createSimpleCoroutineFromSuspendFunction =
-        "createSimpleCoroutineFromSuspendFunction".coroutinesIntrinsicsCallableId
 
     val createCoroutineUninterceptedIntrinsic0 = "createCoroutineUninterceptedIntrinsic0".coroutinesIntrinsicsCallableId
     val createCoroutineUninterceptedIntrinsic1 = "createCoroutineUninterceptedIntrinsic1".coroutinesIntrinsicsCallableId

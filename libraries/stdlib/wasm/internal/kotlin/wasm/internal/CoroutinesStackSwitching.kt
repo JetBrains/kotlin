@@ -76,30 +76,6 @@ internal fun suspendIntrinsic(contBox: WasmContinuationBox) {
     implementedAsIntrinsic
 }
 
-@UsedFromCompilerGeneratedCode
-internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T), completion: Continuation<T>): typedcontref<(Any?) -> Unit> {
-    return suspendFunction0ToContref(f, completion)
-}
-
-@UsedFromCompilerGeneratedCode
-internal fun <R, T> suspendFunction1ToContrefImpl(
-    f: (suspend R.() -> T),
-    receiver: R,
-    completion: Continuation<T>
-): typedcontref<(Any?) -> Unit> {
-    return suspendFunction1ToContref(f, receiver, completion)
-}
-
-@UsedFromCompilerGeneratedCode
-internal fun <R, P, T> suspendFunction2ToContrefImpl(
-    f: (suspend R.(P) -> T),
-    receiver: R,
-    param: P,
-    completion: Continuation<T>
-): typedcontref<(Any?) -> Unit> {
-    return suspendFunction2ToContref(f, receiver, param, completion)
-}
-
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 internal fun <T> suspendFunction0ToContref(f: (suspend () -> T), completion: Continuation<T>): typedcontref<(Any?) -> Unit> {
