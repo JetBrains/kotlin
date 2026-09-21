@@ -1383,4 +1383,19 @@ Warning: this flag is not intended for production use. If you want to configure 
             introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
+
+    compilerArgument {
+        name = "Xdo-not-normalize-nan-values-in-const-context"
+        description = """
+            Disables `NormalizeNaNValuesInConstContext` language feature.`
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Disables(LanguageFeature.NormalizeNaNValuesInConstContext),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
+        )
+    }
 }

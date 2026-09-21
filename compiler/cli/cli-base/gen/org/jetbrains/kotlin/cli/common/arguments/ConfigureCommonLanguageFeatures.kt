@@ -78,6 +78,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.DataFlowBasedExhaustiveness, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.doNotNormalizeNanValuesInConstContext) {
+        put(LanguageFeature.NormalizeNaNValuesInConstContext, LanguageFeature.State.DISABLED)
+    }
+
     if (arguments.eagerLambdaAnalysis) {
         put(LanguageFeature.EagerLambdaAnalysis, LanguageFeature.State.ENABLED)
         put(LanguageFeature.InferThrowableTypeParameterToUpperBound, LanguageFeature.State.ENABLED)
