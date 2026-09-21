@@ -56,11 +56,16 @@ class KlibNativeDistributionLibraryProvider(
         }
 
         withPlatformLibsForTarget?.let { target ->
-            canonicalNativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+            val librariesHome = canonicalNativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
                 .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
                 .resolve(target.visibleName)
+            val directList = librariesHome
                 .listDirectoryEntriesIfDirectoryExists()
+            val contents = directList
                 .mapNotNullTo(this) { if (it.isDirectory() && it.name.startsWith(KONAN_PLATFORM_LIBS_NAME_PREFIX)) it.pathString else null }
+            println("LOADING LIBS FOR $target from $librariesHome")
+            println("DIRECT LIST: ${directList.joinToString("\n") { "- $it" }}")
+            println("CONTENTS: ${contents.joinToString("\n") { "- $it" }}")
         }
     }
 
