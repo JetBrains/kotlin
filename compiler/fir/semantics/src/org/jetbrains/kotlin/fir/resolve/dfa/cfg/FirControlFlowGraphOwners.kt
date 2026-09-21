@@ -5,10 +5,17 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 
 /**
  * Whether this declaration, as a member of a container, contributes its own graph to the container graph.
@@ -86,3 +93,33 @@ val FirControlFlowGraphOwner.isUsedInControlFlowGraphBuilderForScript: Boolean
         is FirProperty, is FirField, is FirAnonymousInitializer -> memberShouldHaveGraph
         else -> false
     }
+
+/**
+ * Returns `true` for a [FirControlFlowGraphOwner] which is used by the [container] [FirBasedSymbol].
+ *
+ * This questions can also be answered by [ControlFlowGraph.isSubGraph], but that requires the CFG to be built.
+ * In the context of Analysis API, it is not guaranteed that all children elements will be fully resolved.
+ * So for a [FirControlFlowGraphOwner], properties of the owned graph cannot be used to determine if it is used,
+ * as the graph may be `null` because the element is unresolved.
+ */
+fun FirControlFlowGraphOwner.isUsedInControlFlowGraph(container: FirBasedSymbol<*>): Boolean {
+    return when (container) {
+        is FirFileSymbol -> isUsedInControlFlowGraphBuilderForFile
+        is FirScriptSymbol -> isUsedInControlFlowGraphBuilderForScript
+        is FirClassSymbol<*> -> container.isLocal || isUsedInControlFlowGraphBuilderForClassOrStatic
+        is FirPropertySymbol -> container is FirLocalPropertySymbol || this !is FirPropertyAccessor
+        else -> true
+    }
+}
+
+/**
+ * Returns `true` for a [FirControlFlowGraphOwner] which is used by the [container] [ControlFlowGraph].
+ *
+ * This questions can also be answered by [ControlFlowGraph.isSubGraph], but that requires the CFG to be built.
+ * In the context of Analysis API, it is not guaranteed that all children elements will be fully resolved.
+ * So for a [FirControlFlowGraphOwner], properties of the owned graph cannot be used to determine if it is used,
+ * as the graph may be `null` because the element is unresolved.
+ */
+fun FirControlFlowGraphOwner.isUsedInControlFlowGraph(container: ControlFlowGraph): Boolean {
+    return isUsedInControlFlowGraph(container.declaration?.symbol ?: return true)
+}

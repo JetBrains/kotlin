@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.dispatchReceiver
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -31,7 +32,8 @@ class PropertyInitializationInfoData(
 ) : VariableInitializationInfoData() {
     private val data by lazy(LazyThreadSafetyMode.NONE) {
         val declaredVariablesInLoop = setMultimapOf<FirStatement, FirVariableSymbol<*>>().apply {
-            graph.declaration?.accept(PropertyDeclarationCollector(this), null)
+            val collectorData = PropertyDeclarationCollector.Data(repeatable = null, container = graph)
+            graph.declaration?.accept(PropertyDeclarationCollector(this), collectorData)
         }
         graph.traverseToFixedPoint(PropertyInitializationInfoCollector(properties, receiver, declaredVariablesInLoop))
     }
@@ -146,28 +148,42 @@ class PropertyInitializationInfoCollector(
 }
 
 private class PropertyDeclarationCollector(
-    val declaredVariablesInLoop: SetMultimap<FirStatement, FirVariableSymbol<*>>
-) : FirVisitor<Unit, FirStatement?>() {
-    override fun visitElement(element: FirElement, data: FirStatement?) {
-        element.acceptChildren(this, data)
+    val declaredVariablesInLoop: SetMultimap<FirStatement, FirVariableSymbol<*>>,
+) : FirVisitor<Unit, PropertyDeclarationCollector.Data>() {
+    data class Data(val repeatable: FirStatement? = null, val container: ControlFlowGraph)
+
+    override fun visitElement(element: FirElement, data: Data) {
+        when (element) {
+            is FirControlFlowGraphOwner -> {
+                // When visiting an element which can have a CFG, check it is used by the containing graph before recursing.
+                // Recusing to a CFG-independent element is a navigation violation in the Analysis API.
+                if (element.isUsedInControlFlowGraph(container = data.container)) {
+                    val container = element.controlFlowGraphReference?.controlFlowGraph ?: data.container
+                    element.acceptChildren(this, data.copy(container = container))
+                }
+            }
+
+            // If an element is not a CFG owner, it is always used by the containing graph and should be visited.
+            else -> element.acceptChildren(this, data)
+        }
     }
 
-    override fun visitProperty(property: FirProperty, data: FirStatement?) {
-        if (property.symbol is FirLocalPropertySymbol && data != null) {
-            declaredVariablesInLoop.put(data, property.symbol)
+    override fun visitProperty(property: FirProperty, data: Data) {
+        if (property.symbol is FirLocalPropertySymbol && data.repeatable != null) {
+            declaredVariablesInLoop.put(data.repeatable, property.symbol)
         }
         visitElement(property, data)
     }
 
-    override fun visitWhileLoop(whileLoop: FirWhileLoop, data: FirStatement?) {
+    override fun visitWhileLoop(whileLoop: FirWhileLoop, data: Data) {
         visitRepeatable(whileLoop, data)
     }
 
-    override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: FirStatement?) {
+    override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: Data) {
         visitRepeatable(doWhileLoop, data)
     }
 
-    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: FirStatement?) {
+    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Data) {
         if (anonymousFunction.invocationKind?.canBeRevisited() == true) {
             visitRepeatable(anonymousFunction, data)
         } else {
@@ -175,10 +191,10 @@ private class PropertyDeclarationCollector(
         }
     }
 
-    private fun visitRepeatable(loop: FirStatement, data: FirStatement?) {
-        visitElement(loop, loop)
-        if (data != null) {
-            declaredVariablesInLoop.putAll(data, declaredVariablesInLoop[loop])
+    private fun visitRepeatable(repeatable: FirStatement, data: Data) {
+        visitElement(repeatable, data.copy(repeatable = repeatable))
+        if (data.repeatable != null) {
+            declaredVariablesInLoop.putAll(data.repeatable, declaredVariablesInLoop[repeatable])
         }
     }
 }
