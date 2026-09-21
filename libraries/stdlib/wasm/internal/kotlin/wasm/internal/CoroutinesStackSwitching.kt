@@ -49,39 +49,24 @@ internal fun nullContrefIntrinsic(): typedcontref<(Any?) -> Unit>? {
     implementedAsIntrinsic
 }
 
-internal suspend fun <T> getBlockKotlinContinuation(): CoroutineImplStackSwitching<T, T> {
-    val completion = getContinuation<T>()
-    val wasmContBox = WasmContinuationBox(nullContrefIntrinsic())
-    val blockKotlinContinuation = CoroutineImplStackSwitching<T, T>(completion, wasmContBox)
-    blockKotlinContinuation.pendingSuspend = true
-    return blockKotlinContinuation
-}
-
-@Suppress("UNCHECKED_CAST")
-internal fun <T> getBlockKotlinContinuationResult(blockKotlinContinuation: CoroutineImplStackSwitching<T, T>): T {
-    val e = blockKotlinContinuation.exception
-    if (e != null) throw e
-    return blockKotlinContinuation.result as T
-}
-
-internal fun <T> checkNotPendingSuspend(blockKotlinContinuation: CoroutineImplStackSwitching<T, T>) {
-    if (blockKotlinContinuation.pendingSuspend) {
-        blockKotlinContinuation.pendingSuspend = false
-        suspendIntrinsic(blockKotlinContinuation.wasmContBox)
-    }
-}
-
 @UsedFromCompilerGeneratedCode
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "RedundantSuspendModifier")
 internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching(block: (Continuation<T>) -> Any?): T {
-    val blockKotlinContinuation = getBlockKotlinContinuation<T>()
+    val coroutineImpl = getContinuation<T>() as CoroutineImplStackSwitching<T, T>
 
-    val blockResult = block(blockKotlinContinuation)
+    val blockResult = block(coroutineImpl)
     if (blockResult !== COROUTINE_SUSPENDED) return blockResult as T
 
-    checkNotPendingSuspend(blockKotlinContinuation)
+    if (coroutineImpl.resumedWhileRunning) {
+        // `block` resumed the continuation itself, the result is already here -- do not park.
+        coroutineImpl.resumedWhileRunning = false
+    } else {
+        coroutineImpl.isRunning = false
+        suspendIntrinsic(coroutineImpl.wasmContBox)
+    }
 
-    return getBlockKotlinContinuationResult(blockKotlinContinuation)
+    coroutineImpl.exception?.let { throw it }
+    return coroutineImpl.result as T
 }
 
 @Suppress("UNUSED_PARAMETER")
