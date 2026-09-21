@@ -13,6 +13,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.konan.allParameters
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.SyntheticModulesOrigin
+import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.backend.konan.descriptors.isDeserializedAndHasCompanionExtensionReceiver
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.util.referenceFunction
@@ -481,8 +486,11 @@ internal class CAdapterGenerator(
 
     override fun visitPackageViewDescriptor(descriptor: PackageViewDescriptor, ignored: Void?): Boolean {
         if (descriptor.module !in moduleDescriptors) return true
-        val fragments = descriptor.module.getPackage(FqName.ROOT).fragments.filter {
-            it.module in moduleDescriptors }
+        // Sort fragments by their owning library's reverse-topological rank so declarations are emitted in a stable
+        // dependency-first order regardless of the order the libraries happened to be passed on the command line.
+        val fragments = descriptor.module.getPackage(FqName.ROOT).fragments
+                .filter { it.module in moduleDescriptors }
+                .sortedBy { it.module.reverseTopoRank() }
         visitChildren(fragments)
 
         // K2 does not serialize empty package fragments, thus breaking the scope chain.
@@ -490,9 +498,9 @@ internal class CAdapterGenerator(
         scopes.push(getPackageScope(FqName.ROOT))
         val subfragments = descriptor.module.getSubPackagesOf(FqName.ROOT) { true }
                 .flatMap {
-                    descriptor.module.getPackage(it).fragments.filter {
-                        it.module in moduleDescriptors
-                    }
+                    descriptor.module.getPackage(it).fragments
+                            .filter { it.module in moduleDescriptors }
+                            .sortedBy { it.module.reverseTopoRank() }
                 }
         visitChildren(subfragments)
         scopes.pop()
@@ -548,6 +556,17 @@ internal class CAdapterGenerator(
 
 
     private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
+
+    private val libraryReverseTopoRank: Map<String, Int> =
+            context.config.cacheSupport.klibDag.librariesReverseTopoSorted
+                    .mapIndexed { index, library -> library.uniqueName to index }
+                    .toMap()
+
+    private fun ModuleDescriptor.reverseTopoRank(): Int =
+            when (val origin = klibModuleOrigin) {
+                is DeserializedKlibModuleOrigin -> libraryReverseTopoRank[origin.library.uniqueName] ?: Int.MAX_VALUE
+                CurrentKlibModuleOrigin, SyntheticModulesOrigin -> Int.MAX_VALUE
+            }
 
     fun buildExports(moduleDescriptor: ModuleDescriptor): CAdapterExportedElements {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))

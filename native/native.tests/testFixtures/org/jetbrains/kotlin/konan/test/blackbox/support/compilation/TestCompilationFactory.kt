@@ -119,6 +119,47 @@ class TestCompilationFactory {
         }
     }
 
+    /**
+     * Builds a binary library that has no sources of its own and `-Xinclude`s each of [orderedIncludedModules] as a
+     * separate KLIB, preserving the given order. Unlike [testCaseToBinaryLibrary] (which, in two-stage mode, collapses
+     * all root modules into a single included KLIB), this keeps the included libraries separate and lets a test control
+     * their `-Xinclude` order — e.g. list a dependency *after* its dependent, to check that exported declarations are
+     * still emitted in a stable (topological) order regardless of the CLI include order.
+     *
+     * Each module is compiled to its own KLIB; a module's regular dependencies on the other modules are resolved as
+     * ordinary `-library` dependencies (the very same cached KLIB artifacts), so cross-module references link against
+     * the libraries that are also `-Xinclude`d here.
+     */
+    fun includedModulesToBinaryLibrary(
+        orderedIncludedModules: List<TestModule.Exclusive>,
+        freeCompilerArgs: TestCompilerArgs,
+        settings: Settings,
+        kind: BinaryLibraryKind,
+    ): BinaryLibraryCompilation {
+        val sourceModules = orderedIncludedModules.toSet()
+        val cacheKey = BinaryLibraryCacheKey(sourceModules, kind)
+        cachedBinaryLibraryCompilations[cacheKey]?.let { return it }
+
+        val includedDependencies = orderedIncludedModules.map { module ->
+            modulesToKlib(setOf(module), freeCompilerArgs, ProduceStaticCache.No, settings)
+                .klib.asKlibDependency(IncludedLibrary)
+        }
+        // Name the output after the shared nominal package (all modules share one test case), yielding a clean
+        // `<package>.<suffix>` — not the multi-module `<fileCount>-<package>-<hash>` scheme, whose leading digit would
+        // become an invalid C identifier in the exported header's name prefix.
+        val expectedArtifact = BinaryLibrary(settings.artifactFileForBinaryLibrary(orderedIncludedModules.first(), kind))
+        return cachedBinaryLibraryCompilations.computeIfAbsent(cacheKey) {
+            BinaryLibraryCompilation(
+                settings = settings,
+                freeCompilerArgs = freeCompilerArgs,
+                sourceModules = emptySet(),
+                dependencies = includedDependencies,
+                expectedArtifact = expectedArtifact,
+                kind = kind,
+            )
+        }
+    }
+
     fun testCaseToObjCFrameworkCompilation(
         testCase: TestCase,
         settings: Settings,
