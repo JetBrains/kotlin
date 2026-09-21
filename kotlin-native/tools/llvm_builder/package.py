@@ -252,6 +252,12 @@ def llvm_build_commands(
     if lto is not None:
         cmake_flags.append(f"-DLLVM_ENABLE_LTO={lto.title()}")
         if host_is_linux():
+            # When LLVM is built with LTO, its object files contain LLVM bitcode
+            # instead of native object code. Use lld to link them without requiring
+            # an additional LLVMgold plugin for GNU ld.
+            #
+            # CMAKE_LINKER specifies the executable for CMake's direct linker invocations.
+            # LLVM_USE_LINKER adds -fuse-ld=lld for links driven by Clang.
             cmake_flags.append("-DLLVM_USE_LINKER=lld")
 
     debug_cmake_flag = ["--debug-trycompile"] if debug_cmake else []

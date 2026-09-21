@@ -51,6 +51,9 @@ nativeInteropPlugin {
             // To enforce linking with proper libc++, pass the default path explicitly:
             add("-L${nativeDependencies.hostPlatform.absoluteTargetSysRoot}/usr/lib")
         } else if (PlatformInfo.isLinux()) {
+            // When LLVM is built with LTO, its static libraries contain LLVM bitcode
+            // instead of native object code. Use lld to link them without requiring
+            // an additional LLVMgold plugin for GNU ld.
             add("-fuse-ld=lld")
             add("-Wl,-z,noexecstack")
             addAll(listOf("-lrt", "-ldl", "-lpthread", "-lz", "-lm"))
