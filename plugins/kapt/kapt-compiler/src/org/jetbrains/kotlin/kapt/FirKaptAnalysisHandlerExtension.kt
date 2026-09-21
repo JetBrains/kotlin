@@ -310,6 +310,17 @@ open class FirKaptAnalysisHandlerExtension(
             return true
         }
 
+        if (KaptFlag.INCREMENTAL_APT in flags && incrementalCache == null) {
+            logger.warn("Incremental annotation processing is enabled, but no incremental cache was provided, this will lead to a full rebuild.")
+        }
+
+        if (usedDefaultDetectMemoryLeaks) {
+            logger.warn(
+                "The 'default' value for 'detectMemoryLeaks' is deprecated. " +
+                        "Use 'standard' instead."
+            )
+        }
+
         if (sourcesOutputDir == null || classesOutputDir == null || stubsOutputDir == null) {
             val nonExistentOptionName = when {
                 sourcesOutputDir == null -> "Sources output directory"

@@ -46,7 +46,7 @@ open class KaptExtension @Inject constructor(objectFactory: ObjectFactory) : Kap
 
     override var showProcessorStats: Boolean = false
 
-    override var detectMemoryLeaks: String = "default"
+    override var detectMemoryLeaks: String = "standard"
 
     override var includeCompileClasspath: Boolean? = null
 

@@ -67,38 +67,48 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-stubs", VALUE)
     ),
 
-    INCREMENTAL_DATA_OUTPUT_DIR_OPTION("incrementalData", "<path>", "Output path for incremental data"),
+    INCREMENTAL_DATA_OUTPUT_DIR_OPTION(
+        "incrementalData",
+        "<path>",
+        "Output path for incremental data",
+        cliToolOption = CliToolOption("-Kapt-incremental-data", VALUE)
+    ),
 
     CHANGED_FILES(
         "changedFile",
         "<path>",
         "Use only in apt mode. Changed java source file that should be processed when using incremental annotation processing.",
-        true
+        true,
+        cliToolOption = CliToolOption("-Kapt-changed-file", VALUE)
     ),
 
     COMPILED_SOURCES_DIR(
         "compiledSourcesDir",
         "<path>",
         "Use only in apt mode. Compiled sources (.class files) from previous compilation. This is typically a kotlinc or javac output.",
-        true
+        true,
+        cliToolOption = CliToolOption("-Kapt-compiled-sources-dir", VALUE)
     ),
 
     INCREMENTAL_CACHE(
         "incrementalCache",
         "<path>",
-        "Use only in apt mode. Output directory for cache necessary to support incremental annotation processing."
+        "Use only in apt mode. Output directory for cache necessary to support incremental annotation processing.",
+        cliToolOption = CliToolOption("-Kapt-incremental-cache", VALUE)
     ),
 
     CLASSPATH_CHANGES(
         "classpathChange",
         "<jvmInternalName,[jvmInternalName,...]>",
-        "Use only in apt mode. Classpath jvm internal names that changed."
+        "Use only in apt mode. Classpath jvm internal names that changed.",
+        cliToolOption = CliToolOption("-Kapt-classpath-changes", VALUE)
     ),
 
     PROCESS_INCREMENTALLY(
         "processIncrementally",
-        "boolean",
-        "Use only in apt mode. Enables incremental apt processing"
+        "true | false",
+        "Use only in apt mode. Enables incremental apt processing",
+        cliToolOption = CliToolOption("-Kapt-process-incrementally", FLAG)
     ),
 
     ANNOTATION_PROCESSOR_CLASSPATH_OPTION(
@@ -209,14 +219,25 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-stub-generation-scheme", VALUE)
     ),
 
-    DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),
+    DETECT_MEMORY_LEAKS_OPTION(
+        "detectMemoryLeaks",
+        "<standard|paranoid|none>",
+        "Detect memory leaks in annotation processors",
+        cliToolOption = CliToolOption("-Kapt-detect-memory-leaks", VALUE)
+    ),
     INCLUDE_COMPILE_CLASSPATH(
         "includeCompileClasspath",
         "true | false",
-        "Discover annotation processors in compile classpath"
+        "Discover annotation processors in compile classpath",
+        cliToolOption = CliToolOption("-Kapt-include-compile-classpath", FLAG)
     ),
 
-    INFO_AS_WARNINGS_OPTION("infoAsWarnings", "true | false", "Show information messages as warnings"),
+    INFO_AS_WARNINGS_OPTION(
+        "infoAsWarnings",
+        "true | false",
+        "Show information messages as warnings",
+        cliToolOption = CliToolOption("-Kapt-info-as-warnings", FLAG)
+    ),
 
     @Deprecated("No-op in K2")
     USE_LIGHT_ANALYSIS_OPTION(
