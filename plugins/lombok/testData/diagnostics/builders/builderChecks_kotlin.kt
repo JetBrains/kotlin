@@ -74,6 +74,26 @@ class BodyPropertiesAreNotBuilderFields(val id: Int, extra: String) {
     val things: Array<String> = emptyArray()
 }
 
+// A parameter declared without `val` may be shadowed by a body property of the same name, which is the one
+// shape where "builder field" and "class property" share a name. It changes nothing: both the generator and
+// checker reach the annotation through the declaration, never through the name.
+@Builder
+class ShadowedByBodyProperty(names: List<String>) {
+    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular<!>
+    val names: List<String> = names
+}
+
+@Builder
+class ShadowedByBodyPropertyWithDefault(id: Int) {
+    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Builder.Default<!>
+    val id: Int = id
+}
+
+@Builder
+class AnnotatedParameterShadowedByProperty(@Singular names: List<String>) {
+    val names: List<String> = names
+}
+
 // `toBuilder()` fills each builder field from the entity's property of that name, so a parameter the class
 // declares no property for leaves it nothing to read. Lombok rejects the same shape - "cannot find symbol:
 // variable <name>" on the annotation - for a method and a constructor builder alike, and offers
@@ -238,6 +258,13 @@ class BuilderAccessLevelModule(val id: Int)
 
 fun test() {
     BuilderAccessLevelProtected.<!INVISIBLE_REFERENCE!>builder<!>()
+
+    // What the annotation on the shadowing body property did not do: no singular adder was generated, only the
+    // plain setter. Annotating the parameter instead is what produces one.
+    ShadowedByBodyProperty.builder().<!UNRESOLVED_REFERENCE!>name<!>("a")
+    ShadowedByBodyProperty.builder().names(listOf("a"))
+    AnnotatedParameterShadowedByProperty.builder().name("a")
+
     BuilderInterface.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-87871
     BuilderAnnotationClass.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-87871
     BuilderEnum.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated
