@@ -13,6 +13,7 @@ import org.junit.platform.engine.discovery.PackageNameFilter
 import org.junit.platform.launcher.LauncherDiscoveryRequest
 import org.junit.platform.launcher.TestIdentifier
 import org.junit.platform.launcher.TestPlan
+import org.junit.platform.launcher.core.LauncherConfig
 import org.junit.platform.launcher.core.LauncherFactory
 
 /**
@@ -41,7 +42,15 @@ internal abstract class AbstractFakeTestIntegrationTest {
         vararg additionalFilters: Filter<*>,
     ): TestPlan {
         val request = buildFakeDiscoveryRequest(testClassPattern, testDataPath, goldenOnly, *additionalFilters)
-        return LauncherFactory.create().discover(request)
+        return discoverFakeTestPlan(request)
+    }
+
+    protected fun discoverFakeTestPlan(request: LauncherDiscoveryRequest): TestPlan {
+        // Fake discovery must not inherit global filters such as test sharding; request filters still apply.
+        val config = LauncherConfig.builder()
+            .enablePostDiscoveryFilterAutoRegistration(false)
+            .build()
+        return LauncherFactory.create(config).discover(request)
     }
 
     protected fun discoverFakeTests(
