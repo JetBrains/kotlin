@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("FunctionName")
+@file:OptIn(ExperimentalPathApi::class)
 
 package org.jetbrains.kotlin.testFederation
 
@@ -12,23 +13,22 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.jetbrains.kotlin.testFederation.TestBuildResult.TestResult
+import org.junit.jupiter.api.extension.AfterEachCallback
+import org.junit.jupiter.api.extension.BeforeEachCallback
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
-import kotlin.collections.filterNot
-import kotlin.io.path.Path
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.name
-import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.fail
+import kotlin.io.path.*
+import kotlin.test.*
 import kotlin.time.Duration.Companion.seconds
 
 /**
  * Runs `:repo:test-runtime:test` with different modes and domain selections, then checks which tests ran.
  * Covers full test runs, selection by annotations and automatic sampling, and nightly filters.
  */
+
 class TestFederationFunctionalTest {
 
     @Test
@@ -616,6 +616,34 @@ class TestFederationFunctionalTest {
             "Neither 'BeforeAll' nor 'AfterAll' should execute when no tests are selected"
         )
     }
+
+    @Test
+    @CleanConfigurationCache
+    fun `test - running contract tests - after smoke tests - reuses configuration cache`() {
+        val smokeTests = runTestBuild(subsetsOverride = "SmokeTests")
+        assertTrue(smokeTests.buildResult.output.contains("Configuration cache entry stored."))
+
+        run {
+            val contractTests = runTestBuild(subsetsOverride = "ContractTestsForJs,ContractTestsForWasm")
+            assertTrue(contractTests.buildResult.output.contains("Configuration cache entry reused."))
+            assertEquals(
+                setOf(
+                    TestResult("PseudoTest", "js contract test"),
+                    TestResult("PseudoTest", "wasm contract test")
+                ), contractTests.executedTests
+            )
+        }
+
+        run {
+            val contractTests = runTestBuild(subsetsOverride = "ContractTestsForJs")
+            assertTrue(contractTests.buildResult.output.contains("Configuration cache entry reused."))
+            assertEquals(
+                setOf(
+                    TestResult("PseudoTest", "js contract test"),
+                ), contractTests.executedTests
+            )
+        }
+    }
 }
 
 private val allTests = setOf(
@@ -792,3 +820,22 @@ private fun buildCacheArgs(cache: Path) = listOf(
 
 private fun BuildResult.requireTask(path: String) =
     task(path) ?: fail("Task '$path' could not be found\nTasks: ${tasks.joinToString("\n")}")
+
+
+@ExtendWith(CleanConfigurationCacheExtension::class)
+private annotation class CleanConfigurationCache
+
+private class CleanConfigurationCacheExtension : BeforeEachCallback, AfterEachCallback {
+    private val configurationCacheDir = Path(".gradle/configuration-cache")
+    private val configurationCacheBackupDir = Path(".gradle/configuration-cache.backup")
+
+    override fun beforeEach(context: ExtensionContext?) {
+        if (configurationCacheBackupDir.exists()) configurationCacheBackupDir.deleteRecursively()
+        configurationCacheDir.moveTo(configurationCacheBackupDir, overwrite = true)
+    }
+
+    override fun afterEach(context: ExtensionContext?) {
+        if (configurationCacheDir.exists() && configurationCacheBackupDir.exists()) configurationCacheDir.deleteRecursively()
+        configurationCacheBackupDir.moveTo(configurationCacheDir, overwrite = true)
+    }
+}

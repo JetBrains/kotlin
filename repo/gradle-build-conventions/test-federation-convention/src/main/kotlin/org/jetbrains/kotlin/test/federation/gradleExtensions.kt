@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.testFederation
 import org.gradle.api.Project
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import java.io.File
@@ -92,20 +93,20 @@ val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensi
 val AbstractTestTask.testFederationClusters: Provider<Set<TestSubset>> by extensionProperty property@{
     val testTask = this
     project.provider {
-        if ((testTask as? Test)?.testFederationExtension?.runAllTestsAlways?.get() == true) {
-            return@provider setOf(TestSubset.AllTests)
-        }
-
-        project.providers.gradleProperty(TEST_FEDERATION_SUBSETS_KEY)
-            .orElse(project.providers.environmentVariable(TEST_FEDERATION_SUBSETS_ENV_KEY))
-            .orNull?.let { return@provider it.toTestSubsets() }
 
         if (!project.testFederationEnabled) {
             return@provider setOf(TestSubset.AllTests)
         }
 
+        if ((testTask as? Test)?.testFederationExtension?.runAllTestsAlways?.get() == true) {
+            return@provider setOf(TestSubset.AllTests)
+        }
         null
     }.orElse(
+        project.providers.gradleProperty(TEST_FEDERATION_SUBSETS_KEY)
+            .orElse(project.providers.environmentVariable(TEST_FEDERATION_SUBSETS_ENV_KEY))
+            .map { it.toTestSubsets() }
+    ).orElse(
         testFederationMode.zip(project.testFederationChangedDomains) { mode, changedDomains ->
             when (mode) {
                 TestFederationMode.Full -> setOf(TestSubset.AllTests)
