@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 /**
  * Inserts calls to a static initializers function (static_init) into relevant function bodies.
  *
- * @param initializeContainerOfInnerObject When true, access to a nested object inside a class with static initializers will cause
- *  the static_init function of that class to execute. When false, only companion object access would trigger static_init execution.
- *
  * Before:
  * ```kotlin
  * class Foo {
@@ -89,6 +86,10 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  *     val third: ThirdType
  *   }
  * }
+ * ```
+ *
+ * @param initializeContainerOfInnerObject When true, access to a nested object inside a class with static initializers will cause
+ *  the static_init function of that class to execute. When false, only companion object access would trigger static_init execution.
  */
 abstract class WebStaticInitializersUsageLowering(
     private val context: JsCommonBackendContext,
