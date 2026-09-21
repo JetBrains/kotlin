@@ -202,15 +202,6 @@ class JvmDefaultModeType : EnumType<JvmDefaultMode>(ReleaseDependent(true)) {
 }
 
 /**
- * A value which accepts [JvmValueClassCodegenMode] type.
- */
-@ExperimentalArgumentApi
-@Serializable
-class JvmValueClassCodegenModeType : EnumType<JvmValueClassCodegenMode>(ReleaseDependent(true)) {
-    override val defaultValue: ReleaseDependent<JvmValueClassCodegenMode?> = ReleaseDependent(null)
-}
-
-/**
  * A value which accepts [AbiStabilityMode] type.
  */
 @ExperimentalArgumentApi

@@ -27,10 +27,7 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
                 putAnalysisFlag(JvmAnalysisFlags.jvmDefaultMode, it)
             }
 
-            configureJvmValueClassCodegen(reporter)?.let {
-                putAnalysisFlag(JvmAnalysisFlags.jvmValueClassCodegen, it)
-            }
-
+            putAnalysisFlag(JvmAnalysisFlags.jvmValueClasses, jvmValueClasses)
             putAnalysisFlag(JvmAnalysisFlags.inheritMultifileParts, inheritMultifileParts)
             putAnalysisFlag(JvmAnalysisFlags.sanitizeParentheses, sanitizeParentheses)
             putAnalysisFlag(JvmAnalysisFlags.suppressMissingBuiltinsError, suppressMissingBuiltinsError)
@@ -39,20 +36,6 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
             putAnalysisFlag(AnalysisFlags.allowUnstableDependencies, allowUnstableDependencies)
             putAnalysisFlag(JvmAnalysisFlags.outputBuiltinsMetadata, outputBuiltinsMetadata)
             putAnalysisFlag(AnalysisFlags.kmpJvmIncrementalCompilationEnabled, useMetadataOnIncrementalClasspath && multiPlatform)
-        }
-    }
-
-    private fun K2JVMCompilerArguments.configureJvmValueClassCodegen(reporter: Reporter): JvmValueClassCodegenMode? {
-        val jvmValueClassCodegen = jvmValueClassCodegen ?: return null
-        return when (val mode = JvmValueClassCodegenMode.fromStringOrNull(jvmValueClassCodegen)) {
-            null -> {
-                reporter.reportError(
-                    "Unknown -Xjvm-value-class-codegen mode: $jvmValueClassCodegen, supported modes: " +
-                            "${JvmValueClassCodegenMode.entries.map(JvmValueClassCodegenMode::description)}"
-                )
-                null
-            }
-            else -> mode
         }
     }
 

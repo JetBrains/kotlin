@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
-import org.jetbrains.kotlin.config.JvmValueClassCodegenMode
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.WrappedException
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEASE
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JVM_VALUE_CLASS_CODEGEN
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JVM_VALUE_CLASSES
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
@@ -38,9 +37,9 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 private fun TestConfigurationBuilder.configureValhallaSmokeTests() {
     defaultDirectives {
         configureValhallaDefaultDirectives()
-        // Unlike the dedicated Valhalla tests (which declare the mode per file), the smoke test runs the whole box corpus under a
-        // single fixed mode, so it is pinned for the entire suite here.
-        JVM_VALUE_CLASS_CODEGEN with JvmValueClassCodegenMode.EFFICIENT
+        // Unlike the dedicated Valhalla tests (which enable JVM value classes per file), the smoke test compiles the whole box
+        // corpus to JVM value classes, so the flag is enabled for the entire suite here.
+        +JVM_VALUE_CLASSES
     }
     useMetaTestConfigurators(::ValhallaIncompatibleTestSkipper)
     useFailureSuppressors(::ValhallaDumpChecksSuppressor)
@@ -97,7 +96,7 @@ private class ValhallaDumpChecksSuppressor(testServices: TestServices) : TestFai
 }
 
 /**
- * Verifies that Black Box tests are run successfully against the Valhalla JDK with [JvmValueClassCodegenMode.EFFICIENT] codegen,
+ * Verifies that Black Box tests are run successfully against the Valhalla JDK with value classes compiled to JVM value classes,
  * without further additional checks.
  */
 abstract class AbstractValhallaBlackBoxSmokeTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.LightTree) {

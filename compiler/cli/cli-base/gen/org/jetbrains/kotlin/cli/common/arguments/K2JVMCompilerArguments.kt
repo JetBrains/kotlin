@@ -329,14 +329,13 @@ This works like '--enable-preview' in Java. All class files are marked as compil
         }
 
     @Argument(
-        value = "-Xjvm-value-class-codegen",
-        valueDescription = "{regular|efficient}",
-        description = "Select how value classes are compiled. Use 'regular' for a JDK that is not Valhalla-compatible (the default); 'efficient' compiles value classes to behave as experimental Project Valhalla value classes and requires a Valhalla-compatible JDK.",
+        value = "-Xjvm-value-classes",
+        description = "Compile Kotlin value classes to JVM value classes, so that they behave as such at runtime. JVM value classes are an experimental JVM feature, so this requires JVM target 27 or later and the '-Xjvm-enable-preview' flag, as well as a JDK that supports them.",
     )
-    var jvmValueClassCodegen: String? = null
+    var jvmValueClasses: Boolean = false
         set(value) {
             checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
+            field = value
         }
 
     @Argument(

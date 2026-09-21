@@ -1887,9 +1887,9 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("jvmValueClassCodegenIllegalConfiguration.args")
-    public void testJvmValueClassCodegenIllegalConfiguration() {
-      run("jvmValueClassCodegenIllegalConfiguration.args");
+    @TestMetadata("jvmValueClassesIllegalConfiguration.args")
+    public void testJvmValueClassesIllegalConfiguration() {
+      run("jvmValueClassesIllegalConfiguration.args");
     }
 
     @Test

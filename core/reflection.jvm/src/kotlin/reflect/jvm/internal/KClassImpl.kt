@@ -614,7 +614,7 @@ internal class KClassImpl<T : Any>(
 
     override val isValue: Boolean
         get() = kmClass?.isValue
-            ?: (!jClass.isInterface && !jClass.isAnnotation && !jClass.isEnum && ValhallaValueClassLoader.loadIsValue(jClass))
+            ?: (!jClass.isInterface && !jClass.isAnnotation && !jClass.isEnum && JavaValueClassLoader.loadIsValue(jClass))
 
     internal val isJvmInlineValue: Boolean
         get() = isValue && inlineClassUnderlyingPropertyName != null

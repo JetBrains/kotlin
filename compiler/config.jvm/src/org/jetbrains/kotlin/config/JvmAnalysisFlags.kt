@@ -19,7 +19,7 @@ object JvmAnalysisFlags {
     val jvmDefaultMode by Delegates.JvmDefaultModeNullByDefault
 
     @JvmStatic
-    val jvmValueClassCodegen by Delegates.JvmValueClassCodegenModeNullByDefault
+    val jvmValueClasses by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
     val inheritMultifileParts by AnalysisFlag.Delegates.Boolean
@@ -47,11 +47,6 @@ object JvmAnalysisFlags {
 
         object JvmDefaultModeNullByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<JvmDefaultMode?> =
-                AnalysisFlag.Delegate(property.name, null)
-        }
-
-        object JvmValueClassCodegenModeNullByDefault {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<JvmValueClassCodegenMode?> =
                 AnalysisFlag.Delegate(property.name, null)
         }
     }

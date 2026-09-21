@@ -1,0 +1,2 @@
+error: [COMPILER_ARGUMENTS_ERROR] Compiling value classes to JVM value classes ('-Xjvm-value-classes') requires JVM target 27 or later and the '-Xjvm-enable-preview' flag.
+COMPILATION_ERROR

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JdkRelease as 
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JspecifyAnnotationsMode as InternalArgumentsEnumsJspecifyAnnotationsMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JvmDefaultMode as InternalArgumentsEnumsJvmDefaultMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JvmTarget as InternalArgumentsEnumsJvmTarget
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JvmValueClassCodegenMode as InternalArgumentsEnumsJvmValueClassCodegenMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.LambdasMode as InternalArgumentsEnumsLambdasMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SamConversionsMode as InternalArgumentsEnumsSamConversionsMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.StringConcatMode as InternalArgumentsEnumsStringConcatMode
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JdkRelease as ApiArgu
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode as ApiArgumentsEnumsJspecifyAnnotationsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode as ApiArgumentsEnumsJvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget as ApiArgumentsEnumsJvmTarget
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmValueClassCodegenMode as ApiArgumentsEnumsJvmValueClassCodegenMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode as ApiArgumentsEnumsLambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode as ApiArgumentsEnumsSamConversionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode as ApiArgumentsEnumsStringConcatMode
@@ -47,7 +45,6 @@ internal object JvmCompilerArgumentValueAdapter {
     is InternalArgumentsEnumsAssertionsMode -> value.toApiEnum<ApiArgumentsEnumsAssertionsMode>()
     is InternalArgumentsEnumsJdkRelease -> value.toApiEnum<ApiArgumentsEnumsJdkRelease>()
     is InternalArgumentsEnumsJspecifyAnnotationsMode -> value.toApiEnum<ApiArgumentsEnumsJspecifyAnnotationsMode>()
-    is InternalArgumentsEnumsJvmValueClassCodegenMode -> value.toApiEnum<ApiArgumentsEnumsJvmValueClassCodegenMode>()
     is InternalArgumentsEnumsLambdasMode -> value.toApiEnum<ApiArgumentsEnumsLambdasMode>()
     is InternalArgumentsEnumsSamConversionsMode -> value.toApiEnum<ApiArgumentsEnumsSamConversionsMode>()
     is InternalArgumentsEnumsStringConcatMode -> value.toApiEnum<ApiArgumentsEnumsStringConcatMode>()
@@ -64,7 +61,6 @@ internal object JvmCompilerArgumentValueAdapter {
     is ApiArgumentsEnumsAssertionsMode -> value.toImplEnum<InternalArgumentsEnumsAssertionsMode>()
     is ApiArgumentsEnumsJdkRelease -> value.toImplEnum<InternalArgumentsEnumsJdkRelease>()
     is ApiArgumentsEnumsJspecifyAnnotationsMode -> value.toImplEnum<InternalArgumentsEnumsJspecifyAnnotationsMode>()
-    is ApiArgumentsEnumsJvmValueClassCodegenMode -> value.toImplEnum<InternalArgumentsEnumsJvmValueClassCodegenMode>()
     is ApiArgumentsEnumsLambdasMode -> value.toImplEnum<InternalArgumentsEnumsLambdasMode>()
     is ApiArgumentsEnumsSamConversionsMode -> value.toImplEnum<InternalArgumentsEnumsSamConversionsMode>()
     is ApiArgumentsEnumsStringConcatMode -> value.toImplEnum<InternalArgumentsEnumsStringConcatMode>()

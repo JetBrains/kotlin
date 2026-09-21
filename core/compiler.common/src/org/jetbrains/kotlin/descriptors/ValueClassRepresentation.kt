@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
  *     * Full value class can have one field and a (non-`Any`) super class. In this case it is always boxed and thus is considered **INCOMPATIBLE** with an inline class.
  *     * Full value class can have multiple underlying fields. In this case it is always boxed and thus is considered **INCOMPATIBLE** with an inline class.
  *     * Full value class can be abstract/sealed. It is considered **INCOMPATIBLE** with an inline class.
- *       * It is a regular abstract class without any fields (if declared in Kotlin) and without mutable fields (if declared in Java with Valhalla support).
+ *       * It is a regular abstract class without any fields (if declared in Kotlin) and without mutable fields (if declared in Java with JVM value class support).
  *       * It can be inherited by other value classes (both abstract/sealed and final).
  *       * Its [underlyingPropertyNamesToTypes] is always `null`.
  */

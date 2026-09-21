@@ -101,8 +101,8 @@ abstract class BaseJvmAbiTest {
             destination = compilation.destinationDir.canonicalPath
             noSourceDebugExtension = InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
 
-            InTextDirectivesUtils.findStringWithPrefixes(directives, "// JVM_VALUE_CLASS_CODEGEN: ")?.let {
-                jvmValueClassCodegen = it
+            if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// JVM_VALUE_CLASSES") != null) {
+                jvmValueClasses = true
                 jvmTarget = "27"
                 enableJvmPreview = true
             }

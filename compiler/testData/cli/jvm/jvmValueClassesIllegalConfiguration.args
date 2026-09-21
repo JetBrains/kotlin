@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/jvmValueClassesIllegalConfiguration.kt
+-d
+$TEMP_DIR$
+-Xjvm-value-classes
+-Xrender-internal-diagnostic-names

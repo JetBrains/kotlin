@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.arguments.dsl.types.JdkRelease
 import org.jetbrains.kotlin.arguments.dsl.types.JspecifyAnnotationsMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmDefaultMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
-import org.jetbrains.kotlin.arguments.dsl.types.JvmValueClassCodegenMode
 import org.jetbrains.kotlin.arguments.dsl.types.LambdasMode
 import org.jetbrains.kotlin.arguments.dsl.types.NameBasedDestructuringMode
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
@@ -133,7 +132,6 @@ internal val btaEnumVersionMap: Map<ClassName, KotlinReleaseVersion> =
         JspecifyAnnotationsMode::class to KotlinReleaseVersion.v2_4_0,
         JvmDefaultMode::class to KotlinReleaseVersion.v2_4_0,
         JvmTarget::class to KotlinReleaseVersion.v2_3_0,
-        JvmValueClassCodegenMode::class to KotlinReleaseVersion.v2_5_0,
         KotlinVersion::class to KotlinReleaseVersion.v2_3_0,
         LambdasMode::class to KotlinReleaseVersion.v2_4_0,
         NameBasedDestructuringMode::class to KotlinReleaseVersion.v2_4_0,

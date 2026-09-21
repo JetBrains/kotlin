@@ -92,15 +92,11 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
 
-    when (JvmValueClassCodegenMode.fromStringOrNull(arguments.jvmValueClassCodegen)) {
-        JvmValueClassCodegenMode.REGULAR, null -> {}
-        else ->
-            if (jvmTarget.majorVersion < JvmTarget.JVM_27.majorVersion || !arguments.enableJvmPreview) {
-                this.report(
-                    COMPILER_ARGUMENTS_ERROR,
-                    "Efficient value class codegen ('-Xjvm-value-class-codegen=efficient') requires JVM target 27 or later and the '-Xjvm-enable-preview' flag."
-                )
-            }
+    if (arguments.jvmValueClasses && (jvmTarget.majorVersion < JvmTarget.JVM_27.majorVersion || !arguments.enableJvmPreview)) {
+        this.report(
+            COMPILER_ARGUMENTS_ERROR,
+            "Compiling value classes to JVM value classes ('-Xjvm-value-classes') requires JVM target 27 or later and the '-Xjvm-enable-preview' flag."
+        )
     }
 
     val stringConcat = arguments.stringConcat
