@@ -16,6 +16,7 @@ val featureToEnablingFlagMap: Map<LanguageFeature, String> = mapOf(
     LanguageFeature.AllowContractsOnSomeOperators to "-Xallow-contracts-on-more-functions",
     LanguageFeature.AllowReifiedTypeInCatchClause to "-Xallow-reified-type-in-catch",
     LanguageFeature.AllowReturnsResultOfContract to "-Xallow-returns-result-of",
+    LanguageFeature.AllowSmartCastsOnValueClassUnderlyingProperties to "-Xfull-value-classes",
     LanguageFeature.AnnotationAllUseSiteTarget to "-Xannotation-target-all",
     LanguageFeature.AnnotationDefaultTargetMigrationWarning to "-Xannotation-default-target=first-only-warn",
     LanguageFeature.BreakContinueInInlineLambdas to "-Xnon-local-break-continue",

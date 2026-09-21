@@ -617,6 +617,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         description = "Enable experimental language support for full value classes.",
     )
     @Enables(LanguageFeature.FullValueClasses)
+    @Enables(LanguageFeature.AllowSmartCastsOnValueClassUnderlyingProperties)
     var fullValueClasses: Boolean = false
         set(value) {
             checkFrozen()
