@@ -29,10 +29,10 @@ fun <T: Comparable<T>> comparison(a: T, b: T) {
 }
 
 fun typeOperators(a: Any) {
-    a as? Int
+    a <!RETURN_VALUE_NOT_USED!>as?<!> Int
     a as Number // result in smartcast, thus always "used"
-    a is Int
-    a !is Long
+    a <!RETURN_VALUE_NOT_USED!>is<!> Int
+    a <!RETURN_VALUE_NOT_USED!>!is<!> Long
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, andExpression, annotationUseSiteTargetFile, comparisonExpression,
