@@ -1,0 +1,97 @@
+@kotlin.Metadata
+public final class BridgeForInterfaceKt {
+    // source: 'bridgeForInterface.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class C1 {
+    // source: 'bridgeForInterface.kt'
+    public method <init>(): void
+    public synthetic bridge method getFoo(): java.lang.CharSequence
+    public synthetic bridge method getFoo(): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class C2 {
+    // source: 'bridgeForInterface.kt'
+    public method <init>(): void
+    public synthetic bridge method getFoo(): java.lang.CharSequence
+    public synthetic bridge method getFoo(): java.lang.Object
+    public synthetic bridge method getFoo(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class C3 {
+    // source: 'bridgeForInterface.kt'
+    public method <init>(): void
+    public synthetic bridge method getFoo(): java.lang.String
+    public synthetic bridge method setFoo(p0: java.lang.String): void
+}
+
+@kotlin.Metadata
+public final class C4 {
+    // source: 'bridgeForInterface.kt'
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public interface I1 {
+    // source: 'bridgeForInterface.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getFoo(): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface I2 {
+    // source: 'bridgeForInterface.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getFoo(): java.lang.CharSequence
+}
+
+@kotlin.Metadata
+public interface I2Generic {
+    // source: 'bridgeForInterface.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getFoo(): java.lang.CharSequence
+    public synthetic bridge method getFoo(): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface I3Val {
+    // source: 'bridgeForInterface.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
+}
+
+@kotlin.Metadata
+public interface I3Var {
+    // source: 'bridgeForInterface.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
+    public abstract method setFoo(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}
+
+@kotlin.Metadata
+public class Mid {
+    // source: 'bridgeForInterface.kt'
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.CharSequence): void
+    public synthetic bridge method getFoo(): java.lang.CharSequence
+    public synthetic bridge method getFoo(): java.lang.Object
+}
+
+@kotlin.Metadata
+public class ValBase {
+    // source: 'bridgeForInterface.kt'
+    public final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field foo: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}
+
+@kotlin.Metadata
+public class ValBaseGeneric {
+    // source: 'bridgeForInterface.kt'
+    public final @kotlin.jvm.JvmField field foo: java.lang.Object
+    public method <init>(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public class VarBase {
+    // source: 'bridgeForInterface.kt'
+    public @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field foo: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}

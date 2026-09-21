@@ -140,7 +140,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         // Note that we cannot compute the signature at this point, since we still need to mangle the names of
         // private properties in multifile-part classes.
         val reference = IrRawFunctionReferenceImpl(startOffset, endOffset, expression.type, getter.symbol)
-        reference.needsDummySignature = getter.correspondingPropertySymbol?.owner?.needsAccessor(getter) == false ||
+        reference.needsDummySignature = getter.correspondingPropertySymbol?.owner?.accessorShouldBeUsed(getter) == false ||
                 // Internal underlying vals of inline classes have no getter method
                 getter.isInlineClassFieldGetter && getter.visibility == DescriptorVisibilities.INTERNAL
         return irCall(signatureStringIntrinsic).apply { arguments[0] = reference }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.*
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -56,7 +54,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.org.objectweb.asm.Type
@@ -222,14 +219,24 @@ fun IrSimpleFunction.copyCorrespondingPropertyFrom(source: IrSimpleFunction) {
     }.symbol
 }
 
-fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
+fun IrProperty.hasJvmFieldAnnotation(): Boolean = backingField?.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) == true
+
+private fun IrProperty.resolvesToPropertyWithJvmField(): Boolean = resolveFakeOverride()?.hasJvmFieldAnnotation() == true
+
+fun IrProperty.accessorShouldBeUsed(accessor: IrSimpleFunction): Boolean = when {
     // Properties in annotation classes become abstract methods named after the property.
     (parent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS -> true
     // @JvmField properties have no getters/setters
-    resolveFakeOverride()?.backingField?.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) == true -> false
+    resolvesToPropertyWithJvmField() -> false
     // We do not produce default accessors for private fields
     else -> accessor.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR || !DescriptorVisibilities.isPrivate(accessor.visibility)
 }
+
+fun IrProperty.shouldKeepAccessor(accessor: IrSimpleFunction): Boolean =
+    // @JvmField properties have no getters/setters.
+    // But if this is a fake override of a @JvmField property and some other property
+    // from interface(s), a bridge-accessor will need to be generated.
+    accessorShouldBeUsed(accessor) || (resolvesToPropertyWithJvmField() && overriddenSymbols.size >= 2)
 
 val IrDeclaration.isStaticInlineClassReplacement: Boolean
     get() = origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
