@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// KT-89290
+// KT-89290, KT-89375
 
 class TopLevelInitializerOwner {
     companion {
