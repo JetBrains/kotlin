@@ -256,13 +256,13 @@ class JvmCachedDeclarations(
             }
         }
 
-    private fun getInterfacePrivateFieldsClass(interfaceClass: IrClass, prop: KMutableProperty0<IrClass?>, suffix: String): IrClass =
+    private fun getInterfacePrivateFieldsClass(interfaceClass: IrClass, prop: KMutableProperty0<IrClass?>, privateClassName: String): IrClass =
         prop.getOrSetIfNull {
             context.irFactory.buildClass {
                 startOffset = interfaceClass.startOffset
                 endOffset = interfaceClass.endOffset
                 origin = JvmLoweredDeclarationOrigin.INTERFACE_PRIVATE_FIELDS_CLASS
-                name = Name.identifier(JvmAbi.INTERFACE_PRIVATE_FIELDS_CLASS_NAME + suffix)
+                this.name = Name.identifier(privateClassName)
                 visibility = DescriptorVisibilities.PRIVATE
             }.apply {
                 parent = interfaceClass
@@ -272,10 +272,10 @@ class JvmCachedDeclarations(
         }
 
     fun getInterfacePrivateFields1Class(interfaceClass: IrClass) =
-        getInterfacePrivateFieldsClass(interfaceClass, interfaceClass::interfacePrivateFields1Class, "1")
+        getInterfacePrivateFieldsClass(interfaceClass, interfaceClass::interfacePrivateFields1Class, JvmAbi.INTERFACE_PRIVATE_FIELDS1_CLASS_NAME)
 
     fun getInterfacePrivateFields2Class(interfaceClass: IrClass) =
-        getInterfacePrivateFieldsClass(interfaceClass, interfaceClass::interfacePrivateFields2Class, "2")
+        getInterfacePrivateFieldsClass(interfaceClass, interfaceClass::interfacePrivateFields2Class, JvmAbi.INTERFACE_PRIVATE_FIELDS2_CLASS_NAME)
 
     fun getSyntheticClassInitTrigger(irClass: IrClass): IrSimpleFunction =
         irClass::syntheticClassInitTrigger.getOrSetIfNull {

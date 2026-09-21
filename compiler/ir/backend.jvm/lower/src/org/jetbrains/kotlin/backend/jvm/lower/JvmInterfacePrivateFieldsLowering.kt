@@ -28,13 +28,14 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 /**
  * Moves non-public static fields of interfaces into a private nested class.
  * Non-public static fields may be generated for companion block members.
  *
- * ```java
+ * ```
  * interface I {
  *     private static final int x = 10;
  *     public int getX() { return x; }
@@ -46,21 +47,21 @@ import org.jetbrains.org.objectweb.asm.Opcodes
  *
  * becomes
  *
- * ```java
+ * ```
  * interface I {
- *     private static class PrivateFields1 {
+ *     private static class $PrivateFields1 {
  *         static void syntheticInitTrigger() {}
  *         static int x = 10;
  *     }
- *     static { PrivateFields1.syntheticInitTrigger(); }
- *     public int getX() { return PrivateFields.x; }
+ *     static { $PrivateFields1.syntheticInitTrigger(); }
+ *     public int getX() { return $PrivateFields1.x; }
  *     // <companion object>
- *     private static class PrivateFields2 {
+ *     private static class $PrivateFields2 {
  *         static void syntheticInitTrigger() {}
  *         static String y = "test";
  *     }
- *     static { PrivateFields2.syntheticInitTrigger(); }
- *     public String getY() { return PrivateFields2.y; }
+ *     static { $PrivateFields2.syntheticInitTrigger(); }
+ *     public String getY() { return $PrivateFields2.y; }
  * }
  * ```
  */
@@ -74,16 +75,13 @@ internal class JvmInterfacePrivateFieldsLowering(val context: JvmBackendContext)
         var companionObjectSeen = false
 
         irClass.declarations.transformFlat { declaration ->
-            if (declaration is IrField && declaration.isStatic && !declaration.isJvmPublic &&
-                declaration.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE &&
-                declaration.origin != JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
-            ) {
+            if (declaration is IrField && declaration.isStatic && !declaration.isJvmPublic && !declaration.belongsToDefaultImpls(context)) {
                 val newDeclarations = mutableListOf<IrDeclaration>()
                 val privateFieldsClass = when (companionObjectSeen) {
                     false -> {
                         context.cachedDeclarations.getInterfacePrivateFields1Class(irClass).also {
                             if (!privateFields1Added) {
-                                privateFields1Added = true;
+                                privateFields1Added = true
                                 newDeclarations.add(it)
                                 newDeclarations.add(buildSyntheticInitTriggerInitializer(context, irClass, it))
                             }
@@ -92,7 +90,7 @@ internal class JvmInterfacePrivateFieldsLowering(val context: JvmBackendContext)
                     true -> {
                         context.cachedDeclarations.getInterfacePrivateFields2Class(irClass).also {
                             if (!privateFields2Added) {
-                                privateFields2Added = true;
+                                privateFields2Added = true
                                 newDeclarations.add(it)
                                 newDeclarations.add(buildSyntheticInitTriggerInitializer(context, irClass, it))
                             }
@@ -100,7 +98,7 @@ internal class JvmInterfacePrivateFieldsLowering(val context: JvmBackendContext)
                     }
                 }
                 privateFieldsClass.declarations.add(declaration)
-                declaration.visibility = DescriptorVisibilities.LOCAL
+                declaration.visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 declaration.parent = privateFieldsClass
                 buildDelegateMethodIfNeeded(declaration, context, irClass)?.let { newDeclarations.add(it) }
                 newDeclarations
@@ -151,7 +149,8 @@ private fun buildSyntheticInitTriggerInitializer(
         isStatic = true,
     ).apply {
         parent = interfaceClass
-        val callToPrivateFieldsInitTrigger = context.createJvmIrBuilder(symbol).irCall(context.cachedDeclarations.getSyntheticClassInitTrigger(privateFields))
+        val callToPrivateFieldsInitTrigger =
+            context.createJvmIrBuilder(symbol).irCall(context.cachedDeclarations.getSyntheticClassInitTrigger(privateFields))
         body = interfaceClass.factory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(callToPrivateFieldsInitTrigger))
     }
 }

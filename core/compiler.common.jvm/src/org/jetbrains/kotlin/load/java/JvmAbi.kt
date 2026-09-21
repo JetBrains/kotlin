@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 object JvmAbi {
     const val DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls"
-    const val INTERFACE_PRIVATE_FIELDS_CLASS_NAME = "\$PrivateFields"
+    const val INTERFACE_PRIVATE_FIELDS1_CLASS_NAME = "\$PrivateFields1"
+    const val INTERFACE_PRIVATE_FIELDS2_CLASS_NAME = "\$PrivateFields2"
     const val ERASED_INLINE_CONSTRUCTOR_NAME = "constructor"
 
     @JvmField
