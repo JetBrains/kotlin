@@ -189,14 +189,11 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
 
         // Move $$delegatedProperties array and $assertionsDisabled field
         for (field in irClass.declarations.filterIsInstance<IrField>()) {
-            if ((jvmDefaultMode.isEnabled || field.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE) &&
-                field.origin != JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
-            )
-                continue
-
-            irClass.declarations.remove(field)
-            defaultImplsIrClass.declarations.add(0, field)
-            field.parent = defaultImplsIrClass
+            if (field.belongsToDefaultImpls(context)) {
+                irClass.declarations.remove(field)
+                defaultImplsIrClass.declarations.add(0, field)
+                field.parent = defaultImplsIrClass
+            }
         }
     }
 
@@ -287,3 +284,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         return super.visitRichFunctionReference(expression)
     }
 }
+
+fun IrField.belongsToDefaultImpls(context: JvmBackendContext): Boolean =
+    (!context.config.jvmDefaultMode.isEnabled && origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE) || origin == JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
+

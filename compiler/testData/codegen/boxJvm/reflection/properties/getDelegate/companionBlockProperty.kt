@@ -19,14 +19,32 @@ class A {
     }
 }
 
-fun box(): String {
-    assertEquals("p", A::p.call())
-    assertEquals(Unit, A::p.setter.call("a"))
-    assertEquals("a", A::p.call())
-    assertTrue(A::p is KMutableProperty0<*>)
+interface I {
+    companion {
+        var p: String by Delegate("p")
+    }
+}
 
-    val pd = (A::p).apply { isAccessible = true }.getDelegate() as Delegate
-    assertEquals("a", pd.storage)
+fun box(): String {
+    run {
+        assertEquals("p", A::p.call())
+        assertEquals(Unit, A::p.setter.call("a"))
+        assertEquals("a", A::p.call())
+        assertTrue(A::p is KMutableProperty0<*>)
+
+        val pd = (A::p).apply { isAccessible = true }.getDelegate() as Delegate
+        assertEquals("a", pd.storage)
+    }
+
+    run {
+        assertEquals("p", I::p.call())
+        assertEquals(Unit, I::p.setter.call("a"))
+        assertEquals("a", I::p.call())
+        assertTrue(I::p is KMutableProperty0<*>)
+
+        val pd = (I::p).apply { isAccessible = true }.getDelegate() as Delegate
+        assertEquals("a", pd.storage)
+    }
 
     return "OK"
 }
