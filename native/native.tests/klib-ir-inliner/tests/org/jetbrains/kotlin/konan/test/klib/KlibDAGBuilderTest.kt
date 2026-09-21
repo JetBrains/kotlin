@@ -36,6 +36,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import java.io.File
 import java.nio.file.Path
 import kotlin.collections.set
@@ -46,8 +48,11 @@ import kotlin.io.path.pathString
 
 @Tag("klib")
 class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
-    @Test
-    fun `stdlib does not depend on anything`() {
+    @ParameterizedTest
+    @EnumSource
+    fun `stdlib does not depend on anything`(mode: KlibDAGBuildingMode) {
+        check(mode == NO_INDICES)
+
         val libraries = loadLibraries()
         assertEquals(1, libraries.size)
 
@@ -67,8 +72,11 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         assertLosslessDeserialization(dag)
     }
 
-    @Test
-    fun `dependencies of platform libs correlate to what is written in their manifest (unique_name, depends)`() {
+    @ParameterizedTest
+    @EnumSource
+    fun `dependencies of platform libs correlate to what is written in their manifest (unique_name, depends)`(mode: KlibDAGBuildingMode) {
+        check(mode == NO_INDICES)
+
         val libraries = loadLibraries(platformLibs = true)
         assertTrue(libraries.size > 1)
 
@@ -121,19 +129,28 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         assertLosslessDeserialization(dag)
     }
 
-    @Test
-    fun `dependencies of user libraries are computed correctly (full DAG)`() =
-        doTestDependenciesOfUserLibrariesComputedCorrectly(contractedDag = false) { fail("Should not be called") }
+    @ParameterizedTest
+    @EnumSource
+    fun `dependencies of user libraries are computed correctly (full DAG)`(mode: KlibDAGBuildingMode) =
+        doTestDependenciesOfUserLibrariesComputedCorrectly(contractedDag = false, mode) { fail("Should not be called") }
 
-    @Test
-    fun `dependencies of user libraries are computed correctly (contracted DAG, roots = passed via CLI args)`() =
-        doTestDependenciesOfUserLibrariesComputedCorrectly(contractedDag = true) { isExplicitlySpecifiedByUserInCLIArgument }
+    @ParameterizedTest
+    @EnumSource
+    fun `dependencies of user libraries are computed correctly (contracted DAG, roots = passed via CLI args)`(mode: KlibDAGBuildingMode) =
+        doTestDependenciesOfUserLibrariesComputedCorrectly(contractedDag = true, mode) { isExplicitlySpecifiedByUserInCLIArgument }
 
-    @Test
-    fun `dependencies of user libraries are computed correctly (contracted DAG, root = test module)`() =
-        doTestDependenciesOfUserLibrariesComputedCorrectly(contractedDag = true) { path.last().toString() == "Test" }
+    @ParameterizedTest
+    @EnumSource
+    fun `dependencies of user libraries are computed correctly (contracted DAG, root = test module)`(mode: KlibDAGBuildingMode) =
+        doTestDependenciesOfUserLibrariesComputedCorrectly(contractedDag = true, mode) { path.last().toString() == "Test" }
 
-    private fun doTestDependenciesOfUserLibrariesComputedCorrectly(contractedDag: Boolean, isRoot: KotlinLibrary.() -> Boolean) {
+    private fun doTestDependenciesOfUserLibrariesComputedCorrectly(
+        contractedDag: Boolean,
+        mode: KlibDAGBuildingMode,
+        isRoot: KotlinLibrary.() -> Boolean,
+    ) {
+        check(mode == NO_INDICES)
+
         // Define the user's project structure.
         // Note: stdlib & platform libraries are not reflected in this structure.
         val userProjectModules = newSourceModules {
@@ -278,8 +295,9 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         )
     }
 
-    @Test
-    fun `cycling dependency is an error`() {
+    @ParameterizedTest
+    @EnumSource
+    fun `cycling dependency is an error`(mode: KlibDAGBuildingMode) {
         val moduleNameToLibraryPath: MutableMap</* name of test module */ String, /* path of KLIB */ Path> = mutableMapOf()
 
         /*
@@ -364,8 +382,9 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         }
     }
 
-    @Test
-    fun `DAG deserialization fails if there are libraries in current compilation that are missing in SerializedKlibDAG`() {
+    @ParameterizedTest
+    @EnumSource
+    fun `DAG deserialization fails if there are libraries in current compilation that are missing in SerializedKlibDAG`(mode: KlibDAGBuildingMode) {
         val libraries: List<KotlinLibrary> = loadLibraries(platformLibs = true)
 
         val dag: KlibDAG = KlibDAGBuilder(libraries) { true }.build()
@@ -508,4 +527,10 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
         assertEquals(serializedOnce, serializedTwice)
     }
+}
+
+enum class KlibDAGBuildingMode(private val alias: String) {
+    NO_INDICES("no indices");
+
+    override fun toString() = alias
 }
