@@ -17,6 +17,7 @@ package kotlin.concurrent
  * @param name the name of the thread.
  * @param priority the priority of the thread.
  */
+@IgnorableReturnValue
 public fun thread(
     start: Boolean = true,
     isDaemon: Boolean = false,
