@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.fqNameWithoutFileClassesWhenAvailable
 
 interface IrDiagnosticReporter {
-    fun at(irElement: IrElement, containingIrFile: IrFile): IrDiagnosticContext
-    fun at(sourceElement: AbstractKtSourceElement?, irElement: IrElement, containingIrFile: IrFile): IrDiagnosticContext
+    fun at(irElement: IrElement, containingIrFile: IrFile, sourceElement: AbstractKtSourceElement? = null): IrDiagnosticContext
     fun atPotentiallyNonSource(irElement: IrElement, containingIrFile: IrFile?): IrDiagnosticContext
 
     fun report(factory: KtSourcelessDiagnosticFactory, message: String, location: CompilerMessageSourceLocation? = null)
