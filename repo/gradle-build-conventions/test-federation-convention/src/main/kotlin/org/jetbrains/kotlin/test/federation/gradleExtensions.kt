@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.testFederation
 
 import org.gradle.api.Project
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.api.tasks.testing.Test
 import java.io.File
-
-internal const val SMOKE_TEST_CONFIG_KEY = "org.jetbrains.kotlin.testFederation.smokeTestConfig"
 
 /**
  * Whether test federation is enabled for this project.
@@ -61,8 +59,8 @@ val AbstractTestTask.testFederationDomains: ListProperty<Domain> by extensionPro
  * A task uses [TestFederationMode.Full] when all tests in at least one of its domains are required for merging to master.
  * Otherwise, the task selects a subset of tests. An explicitly configured mode takes precedence over this domain selection.
  *
- * If Test Federation is disabled or [SmokeTestConfig.RunAllTests] is configured, this provider always returns [TestFederationMode.Full],
- * even when a different mode is explicitly configured. Test Federation is disabled by default for local development.
+ * If Test Federation is disabled or [TestFederationTaskExtension.runAllTestsAlways] is configured, this provider always returns
+ * [TestFederationMode.Full], even when a different mode is explicitly configured. Test Federation is disabled by default for local development.
  * Other test filters, including nightly filters, still apply.
  *
  * The mode that selects a subset of tests is [TestFederationMode.Smoke].
@@ -72,11 +70,6 @@ val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensi
     project.provider {
         /* Disabled Test Federation -> Always run in 'Full' Mode */
         if (!project.testFederationEnabled) {
-            return@provider TestFederationMode.Full
-        }
-
-        /* Always run in 'Full' mode by configuration */
-        if (smokeTestConfig.get() == SmokeTestConfig.RunAllTests) {
             return@provider TestFederationMode.Full
         }
 
@@ -91,6 +84,36 @@ val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensi
         testFederationDomains.zip(project.testFederationAffectedDomains) { testFederationDomains, testFederationAffectedDomains ->
             if (testFederationDomains.intersect(testFederationAffectedDomains).isNotEmpty()) TestFederationMode.Full
             else TestFederationMode.Smoke
+        }
+    )
+}
+
+@DelicateTestFederationApi
+val AbstractTestTask.testFederationClusters: Provider<Set<TestSubset>> by extensionProperty property@{
+    val testTask = this
+    project.provider {
+        if ((testTask as? Test)?.testFederationExtension?.runAllTestsAlways?.get() == true) {
+            return@provider setOf(TestSubset.AllTests)
+        }
+
+        project.providers.gradleProperty(TEST_FEDERATION_SUBSETS_KEY)
+            .orElse(project.providers.environmentVariable(TEST_FEDERATION_SUBSETS_ENV_KEY))
+            .orNull?.let { return@provider it.toTestSubsets() }
+
+        if (!project.testFederationEnabled) {
+            return@provider setOf(TestSubset.AllTests)
+        }
+
+        null
+    }.orElse(
+        testFederationMode.zip(project.testFederationChangedDomains) { mode, changedDomains ->
+            when (mode) {
+                TestFederationMode.Full -> setOf(TestSubset.AllTests)
+                TestFederationMode.Smoke -> buildSet {
+                    add(TestSubset.SmokeTests)
+                    changedDomains.forEach { domain -> add(contractTestsSubsetOf(domain)) }
+                }
+            }
         }
     )
 }
@@ -147,42 +170,14 @@ val Project.testFederationChangedDomains: Provider<Set<Domain>> by extensionProp
         .orElse(project.affectedDomainsService.map { it.changedDomains })
 }
 
-/**
- * Configures which tests to select when this task is not selected for a full test run.
- *
- * The default is [SmokeTestConfig.Default], which selects tests annotated with `@MustRunAlways` or `@MustRunOnChangesInXYZ` for a changed domain.
- * Other test filters, including nightly filters, still apply.
- *
- * ### Extra: Smoke selection
- * **Disable this test task in [TestFederationMode.Smoke]:**
- * ```kotlin
- * smokeTestConfig = SmokeTestConfig.Disabled
- * ```
- *
- * **Automatically select approximately 3% of tests in addition to the annotated tests:**
- * ```kotlin
- * smokeTestConfig = SmokeTestConfig.Enabled(
- *     autoSmokeTestPercentage = 3
- * )
- * ```
- *
- * **Always select all tests by using [TestFederationMode.Full]:**
- * ```kotlin
- * smokeTestConfig = SmokeTestConfig.RunAllTests
- * ```
- */
-val AbstractTestTask.smokeTestConfig: Property<SmokeTestConfig> by extensionProperty {
-    project.objects.property(SmokeTestConfig::class.java).convention(SmokeTestConfig.Default)
+internal val Test.testFederationExtension: TestFederationTaskExtension
+    get() = extensions.findByType(TestFederationTaskExtension::class.java)
+        ?: extensions.create("testFederation", TestFederationTaskExtension::class.java)
+            .also { ext -> jvmArgumentProviders.add(ext) }
+
+fun Test.testFederation(configure: TestFederationTaskExtension.() -> Unit) {
+    testFederationExtension.configure()
 }
-
-/**
- * Provides whether this test task selects a subset of tests rather than all tests.
- *
- * ### Extra: Smoke selection
- * This returns `true` when the task uses [TestFederationMode.Smoke]. See `repo/TEST-FEDERATION.md` for details.
- */
-val AbstractTestTask.isSmokeTestMode: Provider<Boolean> get() = testFederationMode.map { it == TestFederationMode.Smoke }
-
 
 /**
  * Provides whether nightly tests are enabled for the current build.

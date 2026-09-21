@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.testFederation
 
-import org.gradle.api.Project
-import org.gradle.api.provider.Property
-import javax.inject.Inject
+fun Iterable<TestSubset>.toArgumentString(): String =
+    joinToString(",") { it.name }
 
-open class TestFederationExtension @Inject constructor(project: Project) {
-
-}
+fun String.toTestSubsets(): Set<TestSubset> =
+    if (isBlank()) emptySet() else split(",").map { TestSubset.valueOf(it.trim()) }.toSet()
