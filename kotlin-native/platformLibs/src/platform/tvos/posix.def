@@ -16,12 +16,12 @@ headers = alloca.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcn
 compilerOpts = -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D__CCT_ENABLE_USER_SPACE
 linkerOpts = -ldl -lresolv
 
-excludedFunctions = acl_valid_link_np pfctlinput profil unwhiteout zopen getdirentries \
+excludedFunctions = getumask fchflagsat dup3 pipe2 acl_valid_link_np pfctlinput profil unwhiteout zopen getdirentries \
                     uuid_generate_early_random setgrfile
 excludedFunctions.tvos_arm64 = longjmperror
 excludedFunctions.tvos_simulator_arm64 = longjmperror \
-    openat_dprotected_np mkfifoat mknodat openat_authenticated_np getumask
-excludedFunctions.tvos_x64 = openat_dprotected_np mkfifoat mknodat openat_authenticated_np getumask
+    openat_dprotected_np mkfifoat mknodat openat_authenticated_np
+excludedFunctions.tvos_x64 = openat_dprotected_np mkfifoat mknodat openat_authenticated_np
 
 #excludedFunctions.tvos_x64 = pthread_jit_write_protect_np pthread_jit_write_protect_supported_np
 
