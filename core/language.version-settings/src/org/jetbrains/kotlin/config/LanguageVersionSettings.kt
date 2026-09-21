@@ -687,6 +687,7 @@ enum class LanguageFeature(
             checkEnabledNotEarlierThan(NameBasedDestructuring)
         }
     },
+    AllowSmartCastsOnValueClassUnderlyingProperties(sinceVersion = null, "KT-88589", enabledInLatestLVTests = true),
     JsExportingSuspendLambdas(sinceVersion = null, "KT-80188", enabledInLatestLVTests = false),
     LateinitVals(sinceVersion = null, "KT-28413", forcesPreReleaseBinaries = true, enabledInLatestLVTests = false),
 

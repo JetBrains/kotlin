@@ -94,6 +94,7 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
 
     if (arguments.fullValueClasses) {
         put(LanguageFeature.FullValueClasses, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.AllowSmartCastsOnValueClassUnderlyingProperties, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.intrinsicConstEvaluation) {

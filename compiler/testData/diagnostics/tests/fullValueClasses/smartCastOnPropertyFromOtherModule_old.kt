@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-88589
-// LANGUAGE: +FullValueClasses, +AllowSmartCastsOnValueClassUnderlyingProperties
+// LANGUAGE: +FullValueClasses, -AllowSmartCastsOnValueClassUnderlyingProperties
 // WITH_STDLIB
 
 // MODULE: lib
@@ -24,9 +24,9 @@ import lib.Identity
 import lib.MultiField
 import lib.SingleField
 
-fun multiField(v: MultiField): Int = if (v.first != null) v.first.inc() else 0
+fun multiField(v: MultiField): Int = if (v.first != null) <!SMARTCAST_IMPOSSIBLE!>v.first<!>.inc() else 0
 
-fun singleField(v: SingleField): Int = if (v.only != null) v.only.inc() else 0
+fun singleField(v: SingleField): Int = if (v.only != null) <!SMARTCAST_IMPOSSIBLE!>v.only<!>.inc() else 0
 
 fun bodyPropertyWithGetter(v: MultiField): Int = if (v.computed != null) <!SMARTCAST_IMPOSSIBLE!>v.computed<!>.inc() else 0
 
