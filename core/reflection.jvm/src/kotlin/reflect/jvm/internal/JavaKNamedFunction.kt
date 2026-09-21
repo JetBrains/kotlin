@@ -28,6 +28,7 @@ internal class JavaKNamedFunction(
     method: Method,
     rawBoundReceiver: Any?,
     overriddenStorage: KCallableOverriddenStorage,
+    private val kotlinName: String? = null,
 ) : JavaKFunction(container, method, rawBoundReceiver, overriddenStorage) {
     val originalParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters()
@@ -35,16 +36,13 @@ internal class JavaKNamedFunction(
 
     val originalReturnType: AbstractKType by lazy(PUBLICATION) {
         val unsubstitutedReturnType =
-            if (overriddenStorage.isFakeOverride && overriddenStorage.overridden.size == 1) {
-                overriddenStorage.overridden.single().returnType
-            } else {
-                jMethod.genericReturnType.toKType(
+            overriddenCallableToInheritSignature?.returnType
+                ?: jMethod.genericReturnType.toKType(
                     javaTypeParameters.zip(typeParameters).toMap(),
                     // Return type of enum values/valueOf methods is not flexible in the compiler even for Java enums, so we use the annotation
                     // parameter mapping mode, which removes all flexibility.
                     isForAnnotationParameter = member.isEnumValuesValueOfMethod(),
                 )
-            }
         substituteType(unsubstitutedReturnType) as AbstractKType
     }
 
@@ -106,7 +104,7 @@ internal class JavaKNamedFunction(
     val jMethod: Method get() = member as Method
 
     override val name: String
-        get() = member.name
+        get() = kotlinName ?: member.name
 
     override val signature: String
         get() = jMethod.jvmSignature
@@ -120,7 +118,7 @@ internal class JavaKNamedFunction(
     override val isVararg: Boolean
         get() = jMethod.isVarArgs
 
-    override val isOperator: Boolean by lazy(PUBLICATION, jMethod::isJavaMethodAnOperator)
+    override val isOperator: Boolean by lazy(PUBLICATION) { jMethod.isJavaMethodAnOperator(name) }
 
     override val javaTypeParameters: Array<out TypeVariable<*>> by lazy(PUBLICATION) {
         jMethod.typeParameters
@@ -155,9 +153,9 @@ internal class JavaKNamedFunction(
     override val callerWithDefaults: Caller<*>? get() = null
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
-        JavaKNamedFunction(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
+        JavaKNamedFunction(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage, kotlinName)
 
     override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
         if (this.rawBoundReceiver === boundReceiver) this
-        else JavaKNamedFunction(container, jMethod, boundReceiver, overriddenStorage)
+        else JavaKNamedFunction(container, jMethod, boundReceiver, overriddenStorage, kotlinName)
 }

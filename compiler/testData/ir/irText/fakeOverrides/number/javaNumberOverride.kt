@@ -2,6 +2,9 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
+// KT-89566 Reflection: original methods from explicit java.lang/java.util supertypes (instead of Kotlin mapped builtin classes) are absent in the new implementation
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Java1.java
 public abstract class Java1 extends Number { }
 

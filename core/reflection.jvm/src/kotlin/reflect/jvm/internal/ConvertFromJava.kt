@@ -341,9 +341,9 @@ internal fun getPurelyImplementedSupertype(kClass: KClassImpl<*>): KType? {
 }
 
 // Based on `OperatorFunctionChecks` from the compiler.
-internal fun Method.isJavaMethodAnOperator(): Boolean {
+internal fun Method.isJavaMethodAnOperator(kotlinName: String): Boolean {
     if (Modifier.isStatic(modifiers)) return false
-    val name = Name.identifier(name)
+    val name = Name.identifier(kotlinName)
     val paramCount = parameterTypes.size
     val notVararg = !isVarArgs
     return when (name) {

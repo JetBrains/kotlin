@@ -68,10 +68,8 @@ internal fun JavaKFunction.computeParameters(): List<KParameter> = buildList {
 
     val isEnumValuesValueOfMethod = member.isEnumValuesValueOfMethod()
     val unsubstitutedParameterKTypes =
-        if (overriddenStorage.isFakeOverride && overriddenStorage.overridden.size == 1)
-            overriddenStorage.overridden.single().parameters.filter { it.kind == KParameter.Kind.VALUE }.map { it.type }
-        else
-            genericParameterTypes.map { type ->
+        overriddenCallableToInheritSignature?.parameters?.filter { it.kind == KParameter.Kind.VALUE }?.map { it.type }
+            ?: genericParameterTypes.map { type ->
                 val nullability = if (isEnumValuesValueOfMethod) TypeNullability.NOT_NULL else TypeNullability.FLEXIBLE
                 type.toKType(knownTypeParameters, nullability)
             }
@@ -110,6 +108,20 @@ internal fun JavaKFunction.computeParameters(): List<KParameter> = buildList {
         add(JavaKParameter(function, name, type, size, KParameter.Kind.VALUE, isVararg = isVararg))
     }
 }
+
+/**
+ * For a fake override, the callable from a supertype whose signature (parameter and return types) this function inherits, or null if the
+ * signature should be computed from the Java method.
+ *
+ * For an intersection override, it's the most specific overridden callable, which is first in `overridden`, unless it's in a Java class,
+ * in which case its signature is computed from the Java method and then enhanced using the signatures of all overridden callables.
+ */
+internal val JavaKFunction.overriddenCallableToInheritSignature: ReflectKCallable<*>?
+    get() {
+        if (!overriddenStorage.isFakeOverride) return null
+        val overridden = overriddenStorage.overridden
+        return if (overridden.size == 1 || (container as KClassImpl<*>).isKotlin) overridden.firstOrNull() else null
+    }
 
 private val Class<*>.isInner: Boolean
     get() = declaringClass != null && !Modifier.isStatic(modifiers)

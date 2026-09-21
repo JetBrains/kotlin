@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.internalName
@@ -90,6 +92,7 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
         data.value.additionalFunctions.filterTo(this) { it.name == name }
     } else {
         getDeclaredNonStaticMethodsFromJavaClass(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
+        addOverriddenSpecialMethods(name, this)
         if (useK1ImplementationForMembers) {
             addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
         }
@@ -249,7 +252,7 @@ internal fun KClassImpl<*>.isVisibleAsFunctionInCurrentClass(function: JavaKName
             }
         }) return false
 
-    return true
+    return !doesOverrideRenamedBuiltins(function)
 }
 
 private fun KClassImpl<*>.getDeclaredNonStaticMethodsFromJavaClass(name: String? = null): List<JavaKNamedFunction> {
@@ -263,6 +266,38 @@ private fun KClassImpl<*>.getDeclaredNonStaticMethodsFromJavaClass(name: String?
 
 private fun KClassImpl<*>.getPropertiesFromSupertypes(name: String): List<KProperty1<*, *>> =
     supertypes.flatMap { supertype -> (supertype.classifier as? KClass<*>)?.memberProperties?.filter { it.name == name }.orEmpty() }
+
+private val ReflectKFunction.jvmName: String
+    get() = signature.substringBeforeLast('(')
+
+private fun ReflectKFunction.doesOverrideBuiltinWithDifferentJvmName(jvmName: String): Boolean =
+    this.jvmName == jvmName || overridden.any { it.doesOverrideBuiltinWithDifferentJvmName(jvmName) }
+
+private fun KClassImpl<*>.doesOverrideRenamedBuiltins(function: JavaKNamedFunction): Boolean {
+    val method = function.jMethod
+    val builtinName = SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(Name.identifier(method.name)) ?: return false
+    return obtainOverrideForBuiltinWithDifferentJvmName(method, builtinName.asString()) != null
+}
+
+private fun KClassImpl<*>.obtainOverrideForBuiltinWithDifferentJvmName(method: Method, kotlinName: String): JavaKNamedFunction? {
+    val renamed = JavaKNamedFunction(this, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY, kotlinName)
+    return renamed.takeIf { it.overridden.any { overridden -> overridden.doesOverrideBuiltinWithDifferentJvmName(method.name) } }
+}
+
+private fun KClassImpl<*>.addOverriddenSpecialMethods(name: String, result: MutableCollection<ReflectKCallable<*>>) {
+    if (Name.identifier(name) !in SpecialGenericSignatures.ORIGINAL_SHORT_NAMES) return
+    val jvmNamesFromSupertypes = getFunctionsFromSupertypes(name).mapTo(HashSet()) { it.jvmName }.apply { remove(name) }
+    if (jvmNamesFromSupertypes.isEmpty()) return
+    for (method in jClass.declaredMethods) {
+        if (method.name !in jvmNamesFromSupertypes || Modifier.isStatic(method.modifiers) || method.isSynthetic) continue
+        obtainOverrideForBuiltinWithDifferentJvmName(method, name)?.let(result::add)
+    }
+}
+
+private fun KClassImpl<*>.getFunctionsFromSupertypes(name: String): List<ReflectKFunction> =
+    supertypes.flatMap { supertype ->
+        (supertype.classifier as? KClassImpl<*>)?.getFakeOverrideMembersByName(name)?.values?.filterIsInstance<ReflectKFunction>().orEmpty()
+    }
 
 private fun doesClassOverrideProperty(
     property: KProperty1<*, *>,
@@ -281,7 +316,13 @@ private fun doesClassOverrideProperty(
 }
 
 private fun KProperty1<*, *>.findGetterOverride(functions: (String) -> Collection<ReflectKFunction>): ReflectKFunction? =
-    findGetterByName(JvmAbi.getterName(name), functions)
+    findGetterByName(getBuiltinSpecialPropertyGetterName() ?: JvmAbi.getterName(name), functions)
+
+private fun KProperty1<*, *>.getBuiltinSpecialPropertyGetterName(): String? {
+    if (this !is KotlinKProperty<*>) return null
+    if (Name.identifier(name) !in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES) return null
+    return signature.substringBeforeLast('(').takeIf { it != JvmAbi.getterName(name) }
+}
 
 private fun KProperty1<*, *>.findGetterByName(
     getterName: String,
@@ -322,7 +363,7 @@ internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
     // JVM signatures of functions declared in this class's metadata, used to avoid replacing a Kotlin function (which has proper
     // Kotlin types) with a Java method (which has flexible types), e.g. `Enum.clone`.
     val declaredJvmSignatures = kmClass.functions.mapTo(HashSet()) {
-        it.mapSignature(kmClass).toString()
+        it.computeJvmSignature(this).toString()
     }
 
     return javaAnalogue.declaredMethods.mapNotNull { method ->
@@ -348,7 +389,9 @@ internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
         }
 
         val function = JavaKNamedFunction(this, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY)
-        if (function.overridden.isNotEmpty()) return@mapNotNull null
+        // Keep only those additional Java methods which override only other additional Java methods. This is necessary e.g. for
+        // `String.chars` which overrides `CharSequence.chars`.
+        if (function.overridden.any { it !is JavaKNamedFunction }) return@mapNotNull null
 
         function
     }
