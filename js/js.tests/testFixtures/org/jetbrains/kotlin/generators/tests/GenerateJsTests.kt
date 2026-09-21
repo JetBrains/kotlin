@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.JsEs6Test
+import org.jetbrains.kotlin.js.test.JsInlineAnonymousFunctionsTest
 import org.jetbrains.kotlin.js.test.runners.*
 import org.jetbrains.kotlin.js.test.runners.tsexport.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
@@ -100,6 +101,14 @@ fun main(args: Array<String>) {
             testClass<AbstractJsES6BoxTest>(annotations = listOf(es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
+
+            testClass<AbstractJsBoxWithInlineAnonymousFunctionsTest>(annotations = listOf(inlineAnonymousFunctions())) {
+                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
+            }
+
+            testClass<AbstractJsES6BoxWithInlineAnonymousFunctionsTest>(annotations = listOf(es6(), inlineAnonymousFunctions())) {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
         }
 
         testGroup(testsRoot, "js/js.translator/testData/typescript-export/js", testRunnerMethodName = "runTest0") {
@@ -151,7 +160,15 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
+            testClass<AbstractJsCodegenBoxWithInlineAnonymousFunctionsTest>(annotations = listOf(inlineAnonymousFunctions())) {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
             testClass<AbstractJsCodegenBoxInlineTest> {
+                model("boxInline")
+            }
+
+            testClass<AbstractJsCodegenBoxInlineWithInlineAnonymousFunctionsTest>(annotations = listOf(inlineAnonymousFunctions())) {
                 model("boxInline")
             }
 
@@ -163,12 +180,25 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
             }
 
+            testClass<AbstractJsES6CodegenBoxWithInlineAnonymousFunctionsTest>(annotations = listOf(es6(), inlineAnonymousFunctions())) {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
             testClass<AbstractJsCodegenSplittingTest> {
                 model("box")
                 model("boxInline")
             }
 
             testClass<AbstractJsES6CodegenInlineTest>(annotations = listOf(es6())) {
+                model("boxInline")
+            }
+
+            testClass<AbstractJsES6CodegenBoxInlineWithInlineAnonymousFunctionsTest>(
+                annotations = listOf(
+                    es6(),
+                    inlineAnonymousFunctions(),
+                )
+            ) {
                 model("boxInline")
             }
 
@@ -263,3 +293,5 @@ fun main(args: Array<String>) {
 }
 
 private fun es6() = annotation<JsEs6Test>()
+
+private fun inlineAnonymousFunctions() = annotation<JsInlineAnonymousFunctionsTest>()
