@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.lombok.generators.isExcludedByDollarPrefix
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import java.util.EnumSet
 
 /**
  * A modifier that narrows what a class is beyond its [KotlinTarget], which knows every one of these as a plain
@@ -71,7 +72,7 @@ enum class ClassModifier(val presentation: String) {
 private class ImplementedAnnotationsInfo(
     val allowedTargetsMap: Set<KotlinTarget>,
     val unsupportedArguments: Set<Name> = emptySet(),
-    val unsupportedClassModifiers: Set<ClassModifier> = emptySet(),
+    val unsupportedClassModifiers: EnumSet<ClassModifier> = EnumSet.noneOf(ClassModifier::class.java),
 )
 
 private fun FirRegularClass.classModifiers(): Set<ClassModifier> = buildSet {
@@ -169,7 +170,7 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
         // - and that call is what makes fir2ir inline the class's property initializers into it. An initializer
         // referencing a primary constructor parameter then crashed the JVM backend with "No mapping for symbol"
         // (KT-88659). The noarg plugin doesn't support an inner class either, for the same reason.
-        unsupportedClassModifiers = setOf(ClassModifier.VALUE, ClassModifier.INNER),
+        unsupportedClassModifiers = EnumSet.of(ClassModifier.VALUE, ClassModifier.INNER),
     )
     this[LombokNames.EQUALS_AND_HASH_CODE_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
@@ -216,7 +217,7 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
         // failed with `InstantiationError` at run time (KT-88814). Lombok is an error here too: "BuilderExample
         // is abstract; cannot be instantiated". `@SuperBuilder` is what builds such a hierarchy, and it is not
         // supported on a Kotlin class at all - `ANNOTATION_IS_NOT_SUPPORTED` covers that.
-        unsupportedClassModifiers = setOf(ClassModifier.INNER, ClassModifier.ABSTRACT, ClassModifier.SEALED),
+        unsupportedClassModifiers = EnumSet.of(ClassModifier.INNER, ClassModifier.ABSTRACT, ClassModifier.SEALED),
     )
     this[LombokNames.BUILDER_DEFAULT_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
