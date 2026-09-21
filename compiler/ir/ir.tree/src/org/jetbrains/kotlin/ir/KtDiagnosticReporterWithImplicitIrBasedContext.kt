@@ -43,20 +43,16 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         return sourceElement()
     }
 
-    override fun at(irElement: IrElement, containingIrFile: IrFile): IrDiagnosticReporter.IrDiagnosticContext {
+    override fun at(
+        irElement: IrElement,
+        containingIrFile: IrFile,
+        sourceElement: AbstractKtSourceElement?,
+    ): IrDiagnosticReporter.IrDiagnosticContext {
         return DiagnosticContextWithSuppressionImpl(
-            irElement.toSourceElement(),
+            sourceElement ?: irElement.toSourceElement(),
             irElement,
             containingIrFile
         )
-    }
-
-    override fun at(
-        sourceElement: AbstractKtSourceElement?,
-        irElement: IrElement,
-        containingIrFile: IrFile,
-    ): IrDiagnosticReporter.IrDiagnosticContext {
-        return DiagnosticContextWithSuppressionImpl(sourceElement, irElement, containingIrFile)
     }
 
     override fun atPotentiallyNonSource(irElement: IrElement, containingIrFile: IrFile?): IrDiagnosticReporter.IrDiagnosticContext {

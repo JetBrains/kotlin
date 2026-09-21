@@ -48,13 +48,13 @@ open class TailrecCheckerLowering<Context : LoweringContext>(val context: Contex
 
                 for (call in tailCalls.nonTailCalls) {
                     context.diagnosticReporter
-                        .at(call.referencedNameSourceElement(), call, declaration.file)
+                        .at(call, declaration.file, call.referencedNameSourceElement())
                         .report(CommonBackendErrors.NON_TAIL_RECURSIVE_CALL)
                 }
 
                 for (call in tailCalls.callsInTry) {
                     context.diagnosticReporter
-                        .at(call.referencedNameSourceElement(), call, declaration.file)
+                        .at(call, declaration.file, call.referencedNameSourceElement())
                         .report(CommonBackendErrors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED)
                 }
 
