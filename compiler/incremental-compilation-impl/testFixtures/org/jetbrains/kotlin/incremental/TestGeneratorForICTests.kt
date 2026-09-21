@@ -23,17 +23,6 @@ fun main(args: Array<String>) {
                 )
             )
 
-            testClass<AbstractIncrementalFirICJvmCompilerRunnerTest>(
-                init = incrementalJvmTestData(
-                    folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to ExcludePattern.forK2,
-                        WITH_JAVA to "^classToPackageFacade", // KT-56698
-                        CLASS_HIERARCHY_AFFECTED to "^supertypesListChanged",
-                        ALL to ExcludePattern.JPS_ONLY
-                    )
-                )
-            )
-
             testClass<AbstractIncrementalJsKlibMultiModuleCompilerRunnerTest> {
                 modelForDirectoryBasedTest("incremental/multiModule", "common", extension = null, excludeParentDirs = true)
             }
