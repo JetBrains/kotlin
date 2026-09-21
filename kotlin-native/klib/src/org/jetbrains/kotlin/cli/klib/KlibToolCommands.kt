@@ -92,8 +92,7 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
         val metadataHeader = parseModuleHeader(metadata.moduleHeaderData)
 
         val nonEmptyPackageFQNs = buildSet {
-            addAll(metadataHeader.packageFragmentNameList)
-            removeAll(metadataHeader.emptyPackageList)
+            addAll(metadata.getPackageNames())
 
             // Sometimes `emptyPackageList` is empty, so it's necessary to explicitly filter out empty packages:
             val stillRemainingEmptyPackageFQNs = filterTo(hashSetOf()) { packageName ->

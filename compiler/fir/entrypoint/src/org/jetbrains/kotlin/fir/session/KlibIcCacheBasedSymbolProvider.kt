@@ -37,7 +37,7 @@ class KlibIcCacheBasedSymbolProvider(
 
     override val fragmentNamesInLibraries: Map<String, List<KlibIcData>> by lazy {
         buildMap<String, SmartList<KlibIcData>> {
-            for (fragmentName in icData.packageFragmentNameList) {
+            for (fragmentName in icData.getPackageNames()) {
                 getOrPut(fragmentName) { SmartList() }
                     .add(icData)
             }
@@ -46,7 +46,7 @@ class KlibIcCacheBasedSymbolProvider(
 
     override val knownPackagesInLibraries: Set<FqName> by lazy {
         buildSet<FqName> {
-            for (fragmentName in icData.packageFragmentNameList) {
+            for (fragmentName in icData.getPackageNames()) {
                 var curPackage = FqName(fragmentName)
                 while (!curPackage.isRoot) {
                     add(curPackage)
