@@ -214,15 +214,11 @@ private class IrExpressionEvaluator(
             val constType = this.type.makeNotNull()
             return when (kind) {
                 IrConstKind.Null -> null
-                IrConstKind.Boolean -> this.value as Boolean
-                IrConstKind.Char -> this.value as Char
-                IrConstKind.Byte -> if (constType.isUByte()) (this.value as Byte).toUByte() else (this.value as Byte)
-                IrConstKind.Short -> if (constType.isUShort()) (this.value as Short).toUShort() else (this.value as Short)
-                IrConstKind.Int -> if (constType.isUInt()) (this.value as Int).toUInt() else (this.value as Int)
-                IrConstKind.Long -> if (constType.isULong()) (this.value as Long).toULong() else (this.value as Long)
-                IrConstKind.Double -> this.value as Double
-                IrConstKind.Float -> this.value as Float
-                IrConstKind.String -> this.value as String
+                IrConstKind.Boolean, IrConstKind.Char, IrConstKind.Double, IrConstKind.Float, IrConstKind.String -> this.value
+                IrConstKind.Byte -> if (constType.isUByte()) (this.value as Byte).toUByte() else this.value
+                IrConstKind.Short -> if (constType.isUShort()) (this.value as Short).toUShort() else this.value
+                IrConstKind.Int -> if (constType.isUInt()) (this.value as Int).toUInt() else this.value
+                IrConstKind.Long -> if (constType.isULong()) (this.value as Long).toULong() else this.value
             }
         }
 
