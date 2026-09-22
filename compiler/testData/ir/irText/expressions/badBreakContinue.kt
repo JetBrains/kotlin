@@ -5,7 +5,7 @@
 // DISABLE_NEXT_PHASE_SUGGESTION: different pipelines fail differently:
 // - K2/JS does not fail
 // - NATIVE fails during IR deserialization
-// - JVM_IR fails during code generation
+// - JVM fails during code generation
 
 fun test1() {
     break

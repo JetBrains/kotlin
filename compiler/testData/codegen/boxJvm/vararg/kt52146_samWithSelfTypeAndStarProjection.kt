@@ -2,7 +2,7 @@
 // FULL_JDK
 // JVM_TARGET: 1.8
 
-// TODO: OSIP-190: when K1 mode is dropped -> drop the following test directive `DISABLE_IR_VARARG_TYPE_CHECKS: JVM_IR`
+// TODO: OSIP-190: when K1 mode is dropped -> drop the following test directive `DISABLE_IR_VARARG_TYPE_CHECKS: JVM`
 // DISABLE_IR_VARARG_TYPE_CHECKS: JVM
 // REASON: K1 Java interop bug: @[FlexibleNullability] annotation is missing on IrVarargImpl.varargElementType
 

@@ -34,8 +34,7 @@ fun box(): String {
     assertEquals(anno.u, 43u)
     assertEquals(anno.e, E.E0)
     assert(anno.a is A)
-//  TODO: problems with KClass/Class conversion in JVM_IR, unrelated to annotation codegen
-//    assert(anno.k == A::class.java)
+    assertEquals(A::class, anno.k)
     assert(anno.arr.isEmpty())
     assert(anno.intArr.contentEquals(intArrayOf(1, 2)))
     assert(anno.arrOfE.contentEquals(arrayOf(E.E0)))
