@@ -87,9 +87,9 @@ import java.io.File
  *   class; **present** names a class that suite does not stand for, being narrower, as for a
  *   parameterized invocation; **explicitly `null`** means the test has no class at all. An empty
  *   string means that too, Gradle's other spelling of it, and is written through as reported.
- * - test `status` - `OK`, `Failure` or `Ignored`, see [statusName]. A `Failure` can appear in a file
- *   recorded by a *successful* task: passing after a retry is not a failure, see
- *   [configureTestRetries].
+ * - test `status` - `OK`, `Failure` or `Ignored`, or a result type Gradle added since, see
+ *   [statusName]. A `Failure` can appear in a file recorded by a *successful* task: passing after a
+ *   retry is not a failure, see [configureTestRetries].
  * - Tests appear in **execution order**, which is significant: a retried test is recorded once per
  *   attempt, its `Failure` before its `OK`, and replaying that order is what lets TeamCity see it as
  *   flaky rather than as failed.
