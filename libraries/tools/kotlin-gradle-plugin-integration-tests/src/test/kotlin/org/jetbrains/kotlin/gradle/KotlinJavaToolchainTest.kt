@@ -524,7 +524,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             "android".fullProjectName,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = providedJdk.location
         ) {
             useToolchainExtension(11)

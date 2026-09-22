@@ -205,7 +205,15 @@ fun getWarningModeChangeAdvice(warningMode: WarningMode) =
  * Expected to be executed only for the case when [BuildOptions.warningMode] is not set to [WarningMode.Fail]
  */
 fun BuildResult.assertDeprecationWarningsArePresent(@Suppress("unused") warningMode: WarningMode) {
-    assertOutputContains("[GradleWarningsDetectorPlugin] The plugin is being applied", NO_GRADLE_WARNINGS_DETECTOR_PLUGIN_ERROR_MESSAGE)
+    val debugLogPrefix = Regex("""^\d{4}-\d{2}-\d{2}T\S+ \[[A-Z]+] \[[^]]+] """)
+    val outputLines = output.lineSequence().map { it.replaceFirst(debugLogPrefix, "") }
+    // Settings plugins are not applied again when Gradle reuses the configuration cache.
+    if (outputLines.none { it == "Reusing configuration cache." }) {
+        val pluginMessage = "[GradleWarningsDetectorPlugin] The plugin is being applied"
+        val pluginApplicationLine = outputLines.firstOrNull { it == pluginMessage }
+        if (pluginApplicationLine == null) printBuildOutput()
+        assertEquals(pluginMessage, pluginApplicationLine, NO_GRADLE_WARNINGS_DETECTOR_PLUGIN_ERROR_MESSAGE)
+    }
 
     /*
     This assertion is flaky:

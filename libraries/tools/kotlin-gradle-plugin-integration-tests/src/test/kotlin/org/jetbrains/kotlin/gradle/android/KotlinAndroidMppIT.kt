@@ -43,7 +43,8 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             }
 
             build(
-                "clean", "assembleRelease", "-x", "lintVitalRelease"
+                "clean", "assembleRelease", "-x", "lintVitalRelease",
+                buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion),
             ) {
                 assertTasksExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
                 val releaseApk = projectPath.resolve("build/outputs/apk/release/project-release-unsigned.apk")
