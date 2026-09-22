@@ -7,11 +7,11 @@
 
 package kotlin.wasm.internal
 
-import kotlin.coroutines.Continuation
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
 // Is replaced by Stack Switching intrinsic when -Xwasm-use-stack-switching-proposal passed
+@Suppress("UNCHECKED_CAST", "RedundantSuspendModifier")
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsic(block: (Continuation<T>) -> Any?): T =
-    returnIfSuspended<T>(block(getContinuation<T>()))
+internal suspend fun <T> suspendOrReturn(result: Any?): T =
+    result as T
