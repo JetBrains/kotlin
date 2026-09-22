@@ -51,8 +51,11 @@ fun FirRegularClassSymbol.willBecomeValueInapplicableTarget(): String? = when {
  *
  * Inapplicable annotations are reported by [FirWillBecomeValueDeclarationChecker], and the value class declaration
  * checks are skipped for them: the class is not going to become a value class anyway.
+ *
+ * Only the Kotlin annotation is taken into account; use [willBecomeKotlinOrJdkValueClass] to also accept the JDK
+ * '@jdk.internal.ValueBased'.
  */
-fun FirRegularClassSymbol.willBecomeValueClass(session: FirSession): Boolean =
+fun FirRegularClassSymbol.willBecomeKotlinValueClass(session: FirSession): Boolean =
     hasWillBecomeValueAnnotation(session) && willBecomeValueInapplicableTarget() == null
 
 /**
@@ -62,8 +65,8 @@ fun FirRegularClassSymbol.willBecomeValueClass(session: FirSession): Boolean =
  * Such a class still has identity at run time, so only another class which is going to lose its identity along with it
  * may extend it.
  */
-fun FirRegularClassSymbol.promisedToBecomeValueClass(session: FirSession): Boolean =
-    willBecomeValueClass(session) || hasAnnotation(JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID, session)
+fun FirRegularClassSymbol.willBecomeKotlinOrJdkValueClass(session: FirSession): Boolean =
+    willBecomeKotlinValueClass(session) || hasAnnotation(JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID, session)
 
 /**
  * Reports an identity-sensitive operation performed on [type] if that type is annotated with '@WillBecomeValue'.

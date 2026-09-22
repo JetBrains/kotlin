@@ -156,7 +156,7 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     val primaryConstructor = asRegularClass.primaryConstructorIfAny(session) ?: return null
     val valueClassRepresentation = asRegularClass.valueClassRepresentation
     val isFullValueClass = valueClassRepresentation is FullValueClassRepresentation ||
-            valueClassRepresentation == null && asRegularClass.willBecomeValueClass(session)
+            valueClassRepresentation == null && asRegularClass.willBecomeKotlinValueClass(session)
     // Recursion in Value Classes with nullable types (e.g. `value class VC(val x: VC?, ...)`) is supported only for Multi-Field Full Value Classes
     // Generally, there is no need to disallow it for single-field value classes as well, so there is KT-86498 for that.
     // Below we forbid recursion for all other cases
