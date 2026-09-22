@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.optimizations.UnwrapCallableReferences
+import org.jetbrains.kotlin.ir.backend.js.optimizations.WholeProgramOptimizationPhase
 import org.jetbrains.kotlin.ir.backend.js.optimizations.dataflow.JsDataFlowIR
 import org.jetbrains.kotlin.ir.backend.js.optimizations.dataflow.JsModuleDFG
 import org.jetbrains.kotlin.ir.backend.js.optimizations.dataflow.buildJsModuleDFG
@@ -24,29 +24,12 @@ import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.inline.clean.ClassPostProcessor
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 
-/**
- * An optimization step over the whole linked program, wrapped as a [NamedCompilerPhase] so
- * [PhaseConfig] can disable and profile it; [notEnabledOutput] substitutes the result when
- * the phase is disabled.
- */
-private class WholeProgramOptimizationPhase<Input, Output>(
-    name: String,
-    private val notEnabledOutput: (JsIrBackendContext, Input) -> Output,
-    private val body: (JsIrBackendContext, Input) -> Output,
-) : NamedCompilerPhase<JsIrBackendContext, Input, Output>(name) {
-    override fun phaseBody(context: JsIrBackendContext, input: Input): Output =
-        body(context, input)
-
-    override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: JsIrBackendContext, input: Input): Output =
-        notEnabledOutput(context, input)
-}
-
 private val buildJsModuleDFGPhase = WholeProgramOptimizationPhase<Iterable<IrModuleFragment>, JsModuleDFG>(
     name = "BuildJsModuleDFG",
     // An empty DFG turns every consumer into a no-op, so disabling this phase disables all
     // DFG-based optimizations at once.
     notEnabledOutput = { context, modules ->
-        JsModuleDFG(modules, functions = mutableListOf(), symbolTable = JsDataFlowIR.SymbolTable(context))
+        JsModuleDFG(modules, executionUnits = mutableListOf(), symbolTable = JsDataFlowIR.SymbolTable(context))
     },
     body = { context, modules -> buildJsModuleDFG(context, modules) },
 )
