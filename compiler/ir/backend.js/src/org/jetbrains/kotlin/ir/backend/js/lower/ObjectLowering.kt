@@ -80,10 +80,17 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
         val functionContainer = container.takeIf { it is IrConstructor && it.isPrimary }
         val irClass = functionContainer?.parentAsClass
 
-        irClass?.objectInstanceField?.let {
-            if (context.es6mode && irClass.superClass == null) return@let
+        val instanceField = irClass?.objectInstanceField
+        if (instanceField != null && (!context.es6mode || irClass.superClass != null)) {
+            val thisReceiver = irClass.thisReceiver!!
+            val objectThisValue = if (context.es6mode && context is JsIrBackendContext) {
+                JsIrBuilder.buildNull(thisReceiver.type)
+            } else {
+                JsIrBuilder.buildGetValue(thisReceiver.symbol)
+            }
+            val initInstanceField = generateInitInstanceField(instanceField, objectThisValue)
+
             // Initialize instance field in the beginning of the constructor because it can be used inside the constructor later
-            val initInstanceField = generateInitInstanceField(it, irClass.getValueForInstanceFieldForTheFirstTime())
             (irBody as IrBlockBody).statements.add(0, initInstanceField)
         }
 
@@ -95,7 +102,6 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
             }
 
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                val instanceField = irClass?.objectInstanceField
                 return if (!context.es6mode || instanceField == null) {
                     super.visitDelegatingConstructorCall(expression)
                 } else {
@@ -109,14 +115,6 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
                 }
             }
         })
-    }
-
-    private fun IrClass.getValueForInstanceFieldForTheFirstTime(): IrExpression {
-        return if (context.es6mode && context is JsIrBackendContext) {
-            JsIrBuilder.buildNull(thisReceiver!!.type)
-        } else {
-            JsIrBuilder.buildGetValue(thisReceiver!!.symbol)
-        }
     }
 
     private fun generateInitInstanceField(instanceField: IrField, value: IrExpression): IrStatement {
