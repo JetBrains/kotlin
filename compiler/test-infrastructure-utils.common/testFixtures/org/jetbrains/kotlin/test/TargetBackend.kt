@@ -10,7 +10,6 @@ enum class TargetBackend(
 ) {
     ANY,
     JVM,
-    JVM_IR(JVM),
     JS_IR,
     JS_IR_ES6(JS_IR),
     WASM,
@@ -18,7 +17,7 @@ enum class TargetBackend(
     WASM_WASI(WASM),
     ANDROID(JVM),
     NATIVE,
-    JKLIB(JVM_IR)
+    JKLIB(JVM)
     ;
 
     val compatibleWith get() = compatibleWithTargetBackend ?: ANY
@@ -26,5 +25,11 @@ enum class TargetBackend(
     fun isTransitivelyCompatibleWith(backend: TargetBackend): Boolean {
         if (this == backend) return true
         return compatibleWithTargetBackend?.isTransitivelyCompatibleWith(backend) ?: false
+    }
+
+    companion object {
+        @JvmField
+        @Deprecated("Use JVM instead.", ReplaceWith("JVM"))
+        val JVM_IR: TargetBackend = JVM
     }
 }

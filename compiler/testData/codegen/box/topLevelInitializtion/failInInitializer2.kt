@@ -34,7 +34,7 @@ fun box() : String {
     } catch(t: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "JVM_IR" -> "Could not initialize class lib.LibKt"
+                "JVM" -> "Could not initialize class lib.LibKt"
                 else -> "Could not initialize file"
             }
             if (t.message != expectedMessage) return "FAIL 2.2: message must be '$expectedMessage', was '${t.message}'"
