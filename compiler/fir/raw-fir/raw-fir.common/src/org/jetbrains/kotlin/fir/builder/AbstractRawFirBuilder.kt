@@ -91,10 +91,10 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
 
     protected abstract fun Node.getLabelName(): String?
 
-    abstract val Node?.receiverExpression: Node?
-    abstract val Node?.selectorExpression: Node?
-    abstract val Node?.indexExpressions: List<Node>?
-    protected abstract val Node?.arrayExpression: Node?
+    abstract val Node.receiverExpression: Node?
+    abstract val Node.selectorExpression: Node?
+    abstract val Node.indexExpressions: List<Node>?
+    protected abstract val Node.arrayExpression: Node?
     protected abstract val Node.isVararg: Boolean
 
     protected abstract fun Node.getExpressionInParentheses(): Node?
@@ -103,7 +103,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
 
     protected abstract fun Type.toConstantValueKind(): ConstantValueKind?
 
-    protected abstract fun Node?.unwrap(): Node?
+    protected abstract fun Node.unwrap(): Node?
     protected abstract fun Node.isArrayAccessExpression(): Boolean
     protected abstract fun Node.isSafeAccessExpression(): Boolean
 
@@ -711,7 +711,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         prefix: Boolean,
         convert: Node.() -> FirExpression,
     ): FirExpression {
-        val unwrappedReceiver = receiver.unwrap() ?: return buildErrorExpression {
+        val unwrappedReceiver = receiver?.unwrap() ?: return buildErrorExpression {
             source = wholeExpression.toFirSourceElement()
             diagnostic = ConeSyntaxDiagnostic("Inc/dec without operand")
         }
@@ -975,7 +975,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         isLhsParenthesized: Boolean,
         convert: Node.() -> FirExpression,
     ): FirStatement {
-        val unwrappedLhs = this.unwrap() ?: return buildErrorExpression {
+        val unwrappedLhs = this?.unwrap() ?: return buildErrorExpression {
             source = baseSource
             diagnostic = ConeSyntaxDiagnostic("Inc/dec without operand")
         }
@@ -1012,33 +1012,25 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
 
         if (operation in FirOperation.ASSIGNMENTS && operation != FirOperation.ASSIGN) {
-            val lhsReceiver = this@generateAssignment?.convert()
+            val lhsReceiver = this@generateAssignment.convert()
             if (lhsReceiver is FirQualifiedAccessExpression) {
                 @OptIn(FirImplementationDetail::class)
                 lhsReceiver.replaceSource(lhsReceiver.source?.fakeElement(operation.toAugmentedAssignSourceKind()))
             }
-
-            val receiverToUse =
-                lhsReceiver ?: buildErrorExpression {
-                    source = baseSource
-                    diagnostic = ConeSimpleDiagnostic(
-                        "Unsupported left value of assignment: ${baseSource.psi?.text}", DiagnosticKind.ExpressionExpected
-                    )
-                }
 
             val prohibitSetCallsForParenthesizedLhs = this@AbstractRawFirBuilder.baseSession.languageVersionSettings.supportsFeature(
                 LanguageFeature.ForbidParenthesizedLhsInAssignments
             )
 
             return buildPossiblyUnderSafeCall(
-                receiverToUse,
+                lhsReceiver,
                 // For (a?.b) += 1 we don't want to pull `+=` under a safe call
                 isReceiverIsWrappedWithParentheses = isLhsParenthesized,
                 sourceElementForErrorIfSafeCallSelectorIsNotExpression = null
             ) { actualReceiver ->
                 // Disable `set` resolution for `(c?.p) += ...` where `p` has an extension operator `plus()`.
                 if (isLhsParenthesized && prohibitSetCallsForParenthesizedLhs) {
-                    generateAssignmentOperatorCall(operation, baseSource, receiverToUse, rhsExpression, annotations)
+                    generateAssignmentOperatorCall(operation, baseSource, lhsReceiver, rhsExpression, annotations)
                 } else {
                     buildAugmentedAssignment {
                         source = baseSource
@@ -1052,7 +1044,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
         require(operation == FirOperation.ASSIGN)
 
-        if (this?.isSafeAccessExpression() == true) {
+        if (isSafeAccessExpression()) {
             val safeCallNonAssignment = convert() as? FirSafeCallExpression
             if (safeCallNonAssignment != null) {
                 return putAssignmentToSafeCall(safeCallNonAssignment, baseSource, rhsExpression, annotations)

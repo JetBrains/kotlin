@@ -46,10 +46,10 @@ abstract class AbstractLightTreeRawFirBuilder(
         return getChildren(tree)
     }
 
-    override val LighterASTNode?.receiverExpression: LighterASTNode?
+    override val LighterASTNode.receiverExpression: LighterASTNode?
         get() {
             var candidate: LighterASTNode? = null
-            this?.forEachChildren {
+            forEachChildren {
                 when (it.tokenType) {
                     DOT, SAFE_ACCESS -> return if (candidate?.elementType != TokenType.ERROR_ELEMENT) candidate else null
                     else -> candidate = it
@@ -58,10 +58,10 @@ abstract class AbstractLightTreeRawFirBuilder(
             return null
         }
 
-    override val LighterASTNode?.selectorExpression: LighterASTNode?
+    override val LighterASTNode.selectorExpression: LighterASTNode?
         get() {
             var isSelector = false
-            this?.forEachChildren {
+            forEachChildren {
                 when (it.tokenType) {
                     DOT, SAFE_ACCESS -> isSelector = true
                     else -> if (isSelector) {
@@ -72,16 +72,14 @@ abstract class AbstractLightTreeRawFirBuilder(
             return null
         }
 
-    override val LighterASTNode?.indexExpressions: List<LighterASTNode>?
-        get() = this?.getLastChildExpression()?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
+    override val LighterASTNode.indexExpressions: List<LighterASTNode>?
+        get() = getLastChildExpression()?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
 
     override fun LighterASTNode.getParent(): LighterASTNode? {
         return tree.getParent(this)
     }
 
-    override fun LighterASTNode?.getChildrenAsArray(): Array<out LighterASTNode?> {
-        if (this == null) return arrayOf()
-
+    override fun LighterASTNode.getChildrenAsArray(): Array<out LighterASTNode?> {
         val kidsRef = Ref<Array<LighterASTNode?>>()
         tree.getChildren(this, kidsRef)
         return kidsRef.get()
