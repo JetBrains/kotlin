@@ -89,7 +89,7 @@ internal object MPPNativeTargets {
         else -> error("Unknown host")
     }
 
-    val supported = listOf("linux64", "macos64", "mingw64").filter { !unsupported.contains(it) }
+    val supported = listOf("linux64", "macosArm64", "mingw64").filter { !unsupported.contains(it) }
 }
 
 fun computeCacheDirName(
