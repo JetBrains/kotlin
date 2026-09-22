@@ -14,7 +14,7 @@ import java.io.File
  *
  * Each line is one test with three columns:
  *  1. full name  - colon-separated suite path ending in `<class>.<test>` (tabs/newlines collapsed to spaces);
- *  2. status     - one of `OK`, `Failure`, `Ignored`;
+ *  2. status     - one of `OK`, `Failure`, `Ignored`, or a result type Gradle added since;
  *  3. duration   - wall-clock execution time in milliseconds.
  *
  * The full name is derived to match TeamCity's test naming so the inventory aligns with the names TeamCity

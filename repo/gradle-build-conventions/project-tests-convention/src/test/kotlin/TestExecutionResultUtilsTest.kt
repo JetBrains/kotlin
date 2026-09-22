@@ -4,6 +4,7 @@
  */
 
 import org.gradle.api.tasks.testing.TestDescriptor
+import org.gradle.api.tasks.testing.TestResult.ResultType
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -128,6 +129,14 @@ class TestExecutionResultUtilsTest {
             "com.example.SomeTest: parameterized(int): com.example.SomeTest.parameterized([1] 1)",
             path.joinToTeamCityName(),
         )
+    }
+
+    /** The spelling both files record and the replay reads back, so it is a contract of its own. */
+    @Test
+    fun `a status is spelled the way TeamCity's own Gradle integration spells it`() {
+        assertEquals("OK", result(ResultType.SUCCESS, durationMillis = 0).statusName())
+        assertEquals("Failure", result(ResultType.FAILURE, durationMillis = 0).statusName())
+        assertEquals("Ignored", result(ResultType.SKIPPED, durationMillis = 0).statusName())
     }
 
     /** TeamCity reads the apostrophe as the end of the attribute, so such a name is refused outright. */
