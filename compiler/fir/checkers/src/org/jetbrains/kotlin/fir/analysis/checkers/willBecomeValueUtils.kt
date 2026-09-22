@@ -73,7 +73,7 @@ fun FirRegularClassSymbol.promisedToBecomeValueClass(session: FirSession): Boole
  * so that every identity-sensitive operation they already know about is covered for '@WillBecomeValue' classes as well.
  */
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun reportIfWillBecomeValueClass(source: KtSourceElement?, type: ConeKotlinType) {
+fun reportIdentitySensitiveOperationOnWillBecomeValueClass(source: KtSourceElement?, type: ConeKotlinType) {
     val classSymbol = type.toRegularClassSymbol(context.session)?.takeIf { it.hasWillBecomeValueAnnotation(context.session) } ?: return
     val factory = when (classSymbol) {
         in context.containingDeclarations -> FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS_ERROR
