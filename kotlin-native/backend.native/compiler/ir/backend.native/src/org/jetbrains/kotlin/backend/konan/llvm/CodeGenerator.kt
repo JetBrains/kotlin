@@ -12,15 +12,19 @@ import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.common.lower.enumEntriesMap
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.ClassGlobalHierarchyInfo
+import org.jetbrains.kotlin.backend.konan.ir.OverriddenFunctionInfo
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
+import org.jetbrains.kotlin.backend.konan.isCache
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -308,6 +312,9 @@ internal object VirtualTablesLookup {
 internal val IrSimpleFunction.needsVirtualTrampoline: Boolean
     get() = isOverridable && bridgeTarget == null
 
+internal fun IrSimpleFunction.needsCacheEntryPointForFinalFakeOverride(config: NativeSecondStageCompilationConfig): Boolean =
+        config.produce.isCache && isFakeOverride && modality == Modality.FINAL && isExported()
+
 /*
  * Special trampoline function that performs the vtable/itable lookup and dispatches to the actual virtual
  * implementation (which lives at `<name>-impl`). The trampoline occupies the public symbol name,
@@ -367,7 +374,10 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
                         with(VirtualTablesLookup) { getVirtualImpl(receiver, irFunction) }
                     } else {
                         // KT-87777: reference the inherited implementation directly, without relying on virtual lookups.
-                        codegen.getLlvmFunctionFrom(irFunction.target)
+                        val implementation = OverriddenFunctionInfo(irFunction, irFunction, context.config.bridgesPolicy)
+                                .getImplementation(context)
+                                ?: error("No implementation for the final fake override ${irFunction.render()}")
+                        codegen.getLlvmFunctionFrom(implementation)
                     }
                     val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                     ret(result)

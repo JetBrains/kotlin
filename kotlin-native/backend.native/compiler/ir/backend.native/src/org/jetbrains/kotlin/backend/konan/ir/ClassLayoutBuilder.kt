@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenLlvmHelpers
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.backend.konan.llvm.needsCacheEntryPointForFinalFakeOverride
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsDeserializer
@@ -71,6 +72,9 @@ internal class OverriddenFunctionInfo(
         }
         return if (implementation.modality == Modality.ABSTRACT) null else implementation
     }
+
+    fun needsBridgeForCacheEntryPoint(config: NativeSecondStageCompilationConfig): Boolean =
+            overriddenFunction == function && function.needsCacheEntryPointForFinalFakeOverride(config)
 
     override fun toString(): String {
         return "(descriptor=$function, overriddenDescriptor=$overriddenFunction)"
