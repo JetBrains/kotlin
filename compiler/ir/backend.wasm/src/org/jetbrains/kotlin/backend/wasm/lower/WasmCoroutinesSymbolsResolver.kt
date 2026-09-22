@@ -55,8 +55,8 @@ private class WasmCoroutinesStackSwitchingIntrinsicsTransformer(
                 irCall(expression, stackSwitchingIntrinsics.startCoroutineUninterceptedOrReturnStackSwitchingImpl1)
             wasmSymbols.startCoroutineUninterceptedOrReturnImpl2 ->
                 irCall(expression, stackSwitchingIntrinsics.startCoroutineUninterceptedOrReturnStackSwitchingImpl2)
-            wasmSymbols.suspendCoroutineUninterceptedOrReturnIntrinsic ->
-                irCall(expression, stackSwitchingIntrinsics.suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching)
+            wasmSymbols.suspendOrReturn ->
+                irCall(expression, stackSwitchingIntrinsics.suspendOrReturnStackSwitching)
             wasmSymbols.createCoroutineUninterceptedIntrinsic0 ->
                 irCall(expression, stackSwitchingIntrinsics.createCoroutineUninterceptedIntrinsic0StackSwitching)
             wasmSymbols.createCoroutineUninterceptedIntrinsic1 ->
