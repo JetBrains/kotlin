@@ -1,6 +1,6 @@
 // TODO: string deduplication across several components seems to require
 // linking them as bitcode modules before translating to machine code.
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 // DISABLE_NATIVE
 // WITH_STDLIB
 

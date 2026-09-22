@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // Note: works accidentally via backing field access
 // Field VS property: case 4.2
 // More or less duplicates the case in KT-34943/KT-54393

@@ -25,7 +25,7 @@ fun box() {
     e.copy()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:14 box
 // test.kt:4 <init>
 // test.kt:14 box

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 fun test() {
     val map = mutableMapOf(1 to 1, 2 to 2, 3 to 3)

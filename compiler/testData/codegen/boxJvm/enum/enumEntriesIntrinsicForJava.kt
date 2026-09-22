@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // OPT_IN: kotlin.ExperimentalStdlibApi
 // WITH_STDLIB
 // FILE: Z.java

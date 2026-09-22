@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 // ^^^ CIRCULAR REFERENCE: java.lang.AssertionError: D8 dexing warning: Ignoring an implementation of the method `int foo.Counter.getCount()` because it has multiple definitions
 // FILE: lib.kt
 package foo

@@ -1,5 +1,5 @@
 
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 annotation class Ann1(val value: UByte = 41u)
 annotation class Ann2(val value: UShort = 42u)

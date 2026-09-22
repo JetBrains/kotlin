@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // MODULE: binLib1
 // MODULE_KIND: LibraryBinary

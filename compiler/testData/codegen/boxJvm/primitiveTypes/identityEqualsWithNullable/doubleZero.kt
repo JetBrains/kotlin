@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // IGNORE_VALHALLA
 // ^ Boxes of primitives always have no observable identity with Valhalla
 

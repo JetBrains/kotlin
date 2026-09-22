@@ -11,7 +11,7 @@ fun box() {
 inline fun foo() = {
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:6 box
 // test1.kt:11 box
 // test1.kt:12 box

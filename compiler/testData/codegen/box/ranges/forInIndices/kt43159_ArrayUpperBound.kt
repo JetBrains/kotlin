@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 // FIR status: not supported in JVM
 
 fun <T : IntArray> test(array: T): Int {

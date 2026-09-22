@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // FILE: Nls.java
 
 import java.lang.annotation.Documented;

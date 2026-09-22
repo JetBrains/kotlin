@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: CODEGEN
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // FILE: priv/members/check/MyJClass.java
 package priv.members.check;

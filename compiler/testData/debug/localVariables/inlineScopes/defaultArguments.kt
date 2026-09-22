@@ -19,7 +19,7 @@ fun box() {
     g()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:19 box:
 // test.kt:15 box: $i$f$g\1\19:int=0:int
 // test.kt:8 box: $i$f$g\1\19:int=0:int

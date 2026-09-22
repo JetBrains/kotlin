@@ -1,7 +1,7 @@
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.3.0
 // KT-85411: Supported in 2.4.0-Beta2
 // WITH_STDLIB
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
+// IGNORE_BACKEND_MULTI_MODULE: JVM
 // FILE: lib.kt
 
 inline fun inlineF(a:Int, vararg b: String, c: Int = 0) = 0

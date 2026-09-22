@@ -1,7 +1,7 @@
 // ISSUE: KT-83572
 // LANGUAGE: +MultiPlatformProjects
 // DIAGNOSTICS: -OPT_IN_USAGE
-// DONT_TARGET_EXACT_BACKEND: JVM_IR, NATIVE, WASM_WASI
+// DONT_TARGET_EXACT_BACKEND: JVM, NATIVE, WASM_WASI
 // ES_MODULES
 // IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Wasm-Js:2.0
 // ^^^ 1st stage of K/W v2.0.0 creates invalid klib, which causes PL error on 2nd compilation stage:

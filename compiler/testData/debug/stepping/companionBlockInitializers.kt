@@ -51,7 +51,7 @@ fun box() {
     Child.c
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:47 box
 // test.kt:7 <clinit>
 // test.kt:9 <clinit>

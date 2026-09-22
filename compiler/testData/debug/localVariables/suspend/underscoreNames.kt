@@ -13,7 +13,7 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
     x_param + y_param
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:12 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:4 <init>:
 // test.kt:12 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1

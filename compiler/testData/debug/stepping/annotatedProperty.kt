@@ -32,7 +32,7 @@ fun box() {
     c.z
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:23 box
 // test.kt:9 <init>
 // test.kt:11 <init>

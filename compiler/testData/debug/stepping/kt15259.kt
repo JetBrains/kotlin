@@ -12,7 +12,7 @@ fun box() {
     makeFace()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:12 box
 // test.kt:6 makeFace
 // test.kt:6 <init>

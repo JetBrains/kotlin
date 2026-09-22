@@ -2,7 +2,7 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
 // JVM_EXPOSE_BOXED
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // checking that TestClass has correctly generated mangled and exposed overrides
 

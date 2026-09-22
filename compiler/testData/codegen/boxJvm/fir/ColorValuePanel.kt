@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // AWT is not available on android
 // IGNORE_BACKEND: ANDROID
 // WITH_STDLIB

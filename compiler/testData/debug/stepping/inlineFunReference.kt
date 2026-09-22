@@ -10,7 +10,7 @@ fun box(): String {
     return bar().invoke()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:10 box
 // test.kt:7 bar
 // test.kt:10 box

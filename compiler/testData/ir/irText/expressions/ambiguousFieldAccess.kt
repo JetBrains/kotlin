@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JKLIB
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // FILE: A.java
 public class A {

@@ -59,7 +59,7 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:52 box:
 // test.kt:53 box: mainVar:int=1:int
 // library.kt:38 box: mainVar:int=1:int, $i$f$flaf\1\53:int=0:int

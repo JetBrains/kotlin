@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 // FILE: test.kt
 fun test() {

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 typealias ABoolean = Boolean
 typealias AChar = Char
