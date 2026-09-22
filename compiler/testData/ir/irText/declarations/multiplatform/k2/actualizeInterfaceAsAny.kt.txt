@@ -45,15 +45,6 @@ fun <T : NoSuperTypeMarker> test2() {
 fun <T : NoSuperTypeMarker> test3() {
 }
 
-fun <T : Test> test4() {
-}
-
-fun <T : Test?> test5() {
-}
-
-fun <A : Test, B : A> test6() {
-}
-
 // FILE: main.kt
 
 actual typealias Marker = Any

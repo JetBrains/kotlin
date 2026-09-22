@@ -146,15 +146,9 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         val seenClasses = mutableSetOf<FirRegularClassSymbol>()
         val allNonErrorBounds = declaration.symbol.resolvedBounds.filter { it !is FirErrorTypeRef }
         val uniqueBounds = allNonErrorBounds.distinctBy { it.coneType.fullyExpandedClassId(context.session) ?: it.coneType }
-        val allowUsingClassTypeAsInterface =
-            context.session.languageVersionSettings.supportsFeature(LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface)
 
         uniqueBounds.forEach { bound ->
-            val boundConeType = bound.coneType.takeIf { coneType ->
-                !allowUsingClassTypeAsInterface || coneType.fullyExpandedType().let { it.abbreviatedType == null || !it.isAnyOrNullableAny }
-            }
-
-            boundConeType?.toRegularClassSymbol()?.let { symbol ->
+            bound.coneType.toRegularClassSymbol()?.let { symbol ->
                 if (classKinds.contains(symbol.classKind) && seenClasses.add(symbol) && seenClasses.size > 1) {
                     reporter.reportOn(bound.source, FirErrors.ONLY_ONE_CLASS_BOUND_ALLOWED)
                 }
