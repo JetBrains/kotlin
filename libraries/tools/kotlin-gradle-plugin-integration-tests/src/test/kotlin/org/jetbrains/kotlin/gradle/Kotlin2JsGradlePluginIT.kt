@@ -11,6 +11,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
@@ -42,7 +43,9 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun generateDts(gradleVersion: GradleVersion) {
         project("kotlin2JsIrDtsGeneration", gradleVersion) {
+            gradleProperties.appendText("\nkotlin.js.rich-typescript-generator=false\n")
             build("build") {
+                assertOutputDoesNotContain("GenerateTypeScriptDefinitions")
                 assertFileInProjectExists("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.js")
                 val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
                 val packageJson = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/")
@@ -52,6 +55,24 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileExists(dts)
                 assertEquals("kotlin/kotlin2JsIrDtsGeneration.d.ts", packageJson.types)
                 assertFileContains(dts, "function bar(): string")
+                assertFileDoesNotContain(dts, "A declaration generated from KLIB metadata.")
+            }
+        }
+    }
+
+    @DisplayName("TS type declarations are generated using the rich TypeScript schema")
+    @GradleTest
+    fun generateDtsWithRichTypeScriptSchema(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrDtsGeneration", gradleVersion) {
+            gradleProperties.appendText("\nkotlin.js.rich-typescript-generator=true\n")
+            build("assemble") {
+                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
+
+                assertOutputContains("GenerateTypeScriptDefinitions")
+
+                assertFileExists(dts)
+                assertFileContains(dts, "function bar(): string")
+                assertFileContains(dts, "A declaration generated from KLIB metadata.")
             }
         }
     }
@@ -763,34 +784,37 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             buildScriptInjection {
                 kotlinMultiplatform.js {
                     generateTypeScriptDefinitions()
-                }
 
-                project.tasks.withType(KotlinJsIrLink::class.java).configureEach { task ->
-                    val projectDir = project.projectDir
-                    task.doLast {
-                        val mode = task.modeProperty.get().name.lowercase()
-                        val dts = projectDir.resolve("build/compileSync/js/main/${mode}Library/kotlin/js-ir-validate-ts.d.ts")
-                        dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
+                    compilations.all {
+                        it.binaries.withType(JsIrBinary::class.java).all { binary ->
+                            @Suppress("INVISIBLE_REFERENCE")
+                            binary.dtsGenerationTask?.configure { task ->
+                                task.doLast {
+                                    val dts = task.outputDirectory.asFile.get().resolve("js-ir-validate-ts.d.ts")
+                                    dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
+                                }
+                            }
+                        }
                     }
                 }
             }
 
             buildAndFail("jsBrowserDevelopmentLibraryDistribution") {
                 assertTasksFailed(":jsDevelopmentLibraryValidateGeneratedByCompilerTypeScript")
-                assertFileInProjectExists("build/compileSync/js/main/developmentLibrary/kotlin/js-ir-validate-ts.js")
-                assertFileInProjectExists("build/compileSync/js/main/developmentLibrary/kotlin/js-ir-validate-ts.d.ts")
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
             }
 
             build("jsBrowserProductionLibraryDistribution") {
                 assertTasksExecuted(":jsProductionLibraryValidateGeneratedByCompilerTypeScript")
-                assertFileInProjectExists("build/compileSync/js/main/productionLibrary/kotlin/js-ir-validate-ts.js")
-                assertFileInProjectExists("build/compileSync/js/main/productionLibrary/kotlin/js-ir-validate-ts.d.ts")
+                assertFileInProjectExists("build/dist/js/productionLibrary/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/dist/js/productionLibrary/js-ir-validate-ts.d.ts")
             }
 
             build("assemble") {
                 assertTasksExecuted(":jsProductionLibraryValidateGeneratedByCompilerTypeScript")
-                assertFileInProjectExists("build/compileSync/js/main/productionLibrary/kotlin/js-ir-validate-ts.js")
-                assertFileInProjectExists("build/compileSync/js/main/productionLibrary/kotlin/js-ir-validate-ts.d.ts")
+                assertFileInProjectExists("build/dist/js/productionLibrary/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/dist/js/productionLibrary/js-ir-validate-ts.d.ts")
             }
         }
     }

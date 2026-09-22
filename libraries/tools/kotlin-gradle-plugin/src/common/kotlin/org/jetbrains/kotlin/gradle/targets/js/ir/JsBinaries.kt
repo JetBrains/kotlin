@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
+import org.jetbrains.kotlin.gradle.targets.js.typescript.KotlinJsDtsGenerationTask
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
@@ -69,6 +70,8 @@ sealed class JsIrBinary(
 
     val linkTask: TaskProvider<KotlinJsIrLink> =
         project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project, target.platformType))
+
+    internal var dtsGenerationTask: TaskProvider<KotlinJsDtsGenerationTask>? = null
 
     @Suppress("PropertyName")
     protected val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
