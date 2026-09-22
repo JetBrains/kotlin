@@ -5,6 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.containingModule
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.swiftName
+import org.jetbrains.sir.lightclasses.utils.superClassDeclaration
 import kotlin.collections.emptyList
 
 context(_: KaSession, sirSession: SirSession)
@@ -52,7 +54,10 @@ internal fun createSirTypedListDeclarations(
     val ktSymbol = declaration.ktSymbol
     val [isMutable, elementType] = ktSymbol.calculateListType() ?: return null
     val typedListProtocols = when (declaration) {
-        // TODO: Support classes KT-88831
+        is SirAbstractClassFromKtSymbol -> buildList {
+            addIfNotNull((declaration.superClassDeclaration as? SirAbstractClassFromKtSymbol)?.typedListDeclarations)
+            addAll(declaration.translatedProtocols.map { it.typedListDeclarations })
+        }
         is SirProtocolFromKtSymbol -> declaration.translatedProtocols.map { it.typedListDeclarations }
         else -> emptyList()
     }.filterIsInstance<SirTypedListDeclarations.Generic>().let { declarations ->
