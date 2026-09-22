@@ -11,7 +11,6 @@ enum class TargetBackend(
     ANY,
     JVM,
     JVM_IR(JVM),
-    JVM_IR_SERIALIZE(JVM_IR),
     JS_IR,
     JS_IR_ES6(JS_IR),
     WASM,

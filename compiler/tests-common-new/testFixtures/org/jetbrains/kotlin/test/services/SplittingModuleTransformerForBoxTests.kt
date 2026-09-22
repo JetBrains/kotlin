@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.WITH_COROUTINES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -88,23 +84,10 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
         if (!testServices.splitStateProvider.hasBeenSplit) return true
         val modules = testServices.moduleStructure.modules
         assert(modules.size == 2) // It's expected that SplittingModuleTransformerForBoxTests splits testData to exactly two modules
-        val [moduleLib, moduleMain] = modules
-
+        val moduleLib = modules.first()
         if (moduleLib.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
             // Multiplatform tests must not be tested with SplittingModuleTransformerForBoxTests
             return true
-        }
-        if (moduleLib.targetPlatform(testServices).isJvm()) {
-            // `TestConfigurationBuilder.configureForSerialization()` sets IrInlineBodiesHandler, which requires inlines functions to be present
-            // Tests without `inline fun` in lib module must be skipped in such test runners
-            if (testServices.defaultsProvider.targetBackend == TargetBackend.JVM_IR_SERIALIZE) {
-                if (moduleLib.files.none {
-                        it.originalContent.replace("suspend", "")
-                            .replace("\\s+".toRegex(), " ")
-                            .contains("inline fun")
-                    }
-                ) return true
-            }
         }
         return false // Don't skip its execution, since the test has been split, and no counter-patterns found
     }
