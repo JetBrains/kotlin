@@ -537,7 +537,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 jvm { attributes { attribute(distinguishingAttribute, "jvm") } }
                 jvm("jvm2") { attributes { attribute(distinguishingAttribute, "jvm2") } }
 
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                 iosX64 {
                     binaries.framework("foo", listOf(NativeBuildType.DEBUG)) { baseName = "foo" }
                     binaries.framework("bar", listOf(NativeBuildType.DEBUG)) { baseName = "bar" }
@@ -585,7 +585,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             plugins.apply("maven-publish")
             kotlin {
                 jvm()
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                 iosX64 {
                     attributes { attribute(attribute, "foo") }
                 }

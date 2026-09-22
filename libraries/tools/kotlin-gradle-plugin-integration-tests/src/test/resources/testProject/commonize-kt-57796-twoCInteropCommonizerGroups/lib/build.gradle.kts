@@ -6,14 +6,14 @@ kotlin {
     linuxX64()
     linuxArm64()
 
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
     iosX64()
     iosArm64()
 
     applyDefaultHierarchyTemplate()
 
     /* first cinterop commonizer group */
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
     listOf(iosX64(), iosArm64()).forEach { target ->
         target.compilations.getByName("main").cinterops.create("libmacos") {
             headers(file("libmacos.h"))

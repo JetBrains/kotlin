@@ -508,7 +508,7 @@ class KotlinHierarchyDslTest {
             }
         }
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+        // fixme: KT-89587 Clean up tests after iosX64 target deprecation
         kotlin.iosX64()
         kotlin.iosArm64()
         kotlin.macosArm64()
