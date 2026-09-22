@@ -14,7 +14,7 @@ fun box() {
     Derived(4, 5)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:13 box:
 // test.kt:5 <init>: p:int=3:int
 // test.kt:4 <init>:

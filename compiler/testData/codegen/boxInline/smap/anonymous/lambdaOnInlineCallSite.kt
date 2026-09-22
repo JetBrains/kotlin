@@ -1,6 +1,6 @@
 // NO_CHECK_LAMBDA_INLINING
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
+// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND_MULTI_MODULE: JVM
 // FILE: 1.kt
 package builders
 inline fun call(crossinline init: () -> Unit) {

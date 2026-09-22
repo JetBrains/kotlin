@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 @JvmInline
 value class MyInlineClass<E>(val all: List<E>) : List<E> by all

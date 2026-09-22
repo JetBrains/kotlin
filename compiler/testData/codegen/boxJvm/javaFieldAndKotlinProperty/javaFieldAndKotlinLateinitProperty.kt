@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // Field VS property: case "lateinit"
 
 // FILE: BaseJava.java

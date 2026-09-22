@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 
 fun t12(x: Int) : Int {

@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: JVM
 // ^EagerInitialization is not supported
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)

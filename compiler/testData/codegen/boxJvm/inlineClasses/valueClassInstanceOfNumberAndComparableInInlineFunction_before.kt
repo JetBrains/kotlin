@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // ISSUE: KT-67520
 // LANGUAGE: -AvoidWrongOptimizationOfTypeOperatorsOnValueClasses
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 inline class X(val x: String)
 

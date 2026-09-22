@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // ^Old backend reports CONFLICTING_JVM_DECLARATIONS on C1, K1 with IR is fine.
 // FULL_JDK
 // FILE: Remove.java

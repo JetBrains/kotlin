@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 
 fun equals3(a: Short?, b: Short?) = a != null && b != null && a == b
 

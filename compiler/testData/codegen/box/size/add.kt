@@ -4,7 +4,7 @@
 // Since we use ES modules in those tests, there is no re-exports from the dependencies,
 // so it's failing with a runtime error, that there is no expected exported function
 
-// DONT_TARGET_EXACT_BACKEND: JVM, JVM_IR, NATIVE, WASM_WASI
+// DONT_TARGET_EXACT_BACKEND: JVM, NATIVE, WASM_WASI
 
 // RUN_THIRD_PARTY_OPTIMIZER
 // WASM_DCE_EXPECTED_OUTPUT_SIZE: wasm  33_556

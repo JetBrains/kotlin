@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // LANGUAGE: +CustomEqualsInValueClasses
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 class A(x: Int)
 

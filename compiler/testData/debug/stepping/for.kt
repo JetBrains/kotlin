@@ -8,7 +8,7 @@ fun box() {
 
 inline fun foo(n: Int) {}
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:9 box

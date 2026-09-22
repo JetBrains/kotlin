@@ -52,7 +52,7 @@ fun box() {
     Zoo()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:49 box
 // test.kt:4 <init>
 // test.kt:7 <init>

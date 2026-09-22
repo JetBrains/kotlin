@@ -13,7 +13,7 @@ inline fun lookAtMe(f: (String) -> Unit) {
     f(a)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:6 box
 // test.kt:12 box
 // test.kt:13 box

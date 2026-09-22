@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 // JVM_IR KT-85853
 
 interface InterfaceWithBackingField {

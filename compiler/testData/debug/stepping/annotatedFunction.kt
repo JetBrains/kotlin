@@ -20,7 +20,7 @@ fun box() {
     local()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:12 box
 // test.kt:5 <init>
 // test.kt:12 box

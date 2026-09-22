@@ -22,13 +22,13 @@ fun box() {
     foo.start()
 }
 
-// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
 // test.kt:21 box:
 // test.kt:3 <init>:
 // test.kt:4 <init>:
-// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
 // test.kt:3 <init>:
-// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
 // test.kt:21 box:
 // test.kt:22 box: foo:Foo=Foo
 // test.kt:13 start:
@@ -48,7 +48,7 @@ fun box() {
 // test.kt:23 box: foo:Foo=Foo
 
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:21 box:
 // test.kt:3 <init>:
 // test.kt:4 <init>:

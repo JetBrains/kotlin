@@ -16,7 +16,7 @@ fun box() {
   } while (x < z)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:6 box:
 // test.kt:8 box: x:int=0:int
 // test.kt:9 box: x:int=0:int, z:int=2:int

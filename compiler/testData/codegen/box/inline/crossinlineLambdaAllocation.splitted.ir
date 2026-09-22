@@ -1,51 +1,51 @@
 Module: lib
-FILE fqName:<root> fileName:/lib.kt lineStartOffsets: [0, 19, 45, 102, 118, 137, 164, 188, 232, 233, 249, 292, 293, 315, 316, 369, 370, 421, 448, 471, 501, 526, 552, 584, 617, 649, 663, 694, 704, 722, 762, 772, 778, 814, 856, 858, 859]
-  PROPERTY[293, 314] name:globalCounter visibility:public modality:FINAL [var]
-    FIELD[293, 314] PROPERTY_BACKING_FIELD name:globalCounter type:kotlin.Int visibility:private [static]
-      EXPRESSION_BODY[313, 314]
-        CONST[313, 314] Int type=kotlin.Int value=0
-    FUN[293, 310] DEFAULT_PROPERTY_ACCESSOR name:<get-globalCounter> visibility:public modality:FINAL returnType:kotlin.Int
-      correspondingProperty: PROPERTY[293, 314] name:globalCounter visibility:public modality:FINAL [var]
-      BLOCK_BODY[293, 310]
-        RETURN[293, 310] type=kotlin.Nothing from='public final fun <get-globalCounter> (): kotlin.Int declared in <root>'
-          GET_FIELD[293, 310] 'FIELD PROPERTY_BACKING_FIELD name:globalCounter type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
-    FUN[293, 310] DEFAULT_PROPERTY_ACCESSOR name:<set-globalCounter> visibility:public modality:FINAL returnType:kotlin.Unit
-      VALUE_PARAMETER[293, 310] kind:Regular name:<set-?> index:0 type:kotlin.Int
-      correspondingProperty: PROPERTY[293, 314] name:globalCounter visibility:public modality:FINAL [var]
-      BLOCK_BODY[293, 310]
-        SET_FIELD[293, 310] 'FIELD PROPERTY_BACKING_FIELD name:globalCounter type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
-          value: GET_VAR[293, 310] '<set-?>: kotlin.Int declared in <root>.<set-globalCounter>' type=kotlin.Int origin=null
-  CLASS[249, 291] CLASS name:Pair modality:FINAL visibility:public superTypes:[kotlin.Any]
-    thisReceiver: VALUE_PARAMETER[249, 291] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Pair<T of <root>.Pair>
-    TYPE_PARAMETER[260, 261] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    PROPERTY[263, 275] name:first visibility:public modality:FINAL [val]
-      FIELD[263, 275] PROPERTY_BACKING_FIELD name:first type:T of <root>.Pair visibility:private [final]
-        EXPRESSION_BODY[263, 275]
-          GET_VAR[263, 275] 'first: T of <root>.Pair declared in <root>.Pair.<init>' type=T of <root>.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN[263, 275] DEFAULT_PROPERTY_ACCESSOR name:<get-first> visibility:public modality:FINAL returnType:T of <root>.Pair
-        VALUE_PARAMETER[263, 275] kind:DispatchReceiver name:<this> index:0 type:<root>.Pair<T of <root>.Pair>
-        correspondingProperty: PROPERTY[263, 275] name:first visibility:public modality:FINAL [val]
-        BLOCK_BODY[263, 275]
-          RETURN[263, 275] type=kotlin.Nothing from='public final fun <get-first> (): T of <root>.Pair declared in <root>.Pair'
-            GET_FIELD[263, 275] 'FIELD PROPERTY_BACKING_FIELD name:first type:T of <root>.Pair visibility:private [final]' type=T of <root>.Pair origin=null
-              receiver: GET_VAR[263, 275] '<this>: <root>.Pair<T of <root>.Pair> declared in <root>.Pair.<get-first>' type=<root>.Pair<T of <root>.Pair> origin=null
-    PROPERTY[277, 290] name:second visibility:public modality:FINAL [val]
-      FIELD[277, 290] PROPERTY_BACKING_FIELD name:second type:T of <root>.Pair visibility:private [final]
-        EXPRESSION_BODY[277, 290]
-          GET_VAR[277, 290] 'second: T of <root>.Pair declared in <root>.Pair.<init>' type=T of <root>.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN[277, 290] DEFAULT_PROPERTY_ACCESSOR name:<get-second> visibility:public modality:FINAL returnType:T of <root>.Pair
-        VALUE_PARAMETER[277, 290] kind:DispatchReceiver name:<this> index:0 type:<root>.Pair<T of <root>.Pair>
-        correspondingProperty: PROPERTY[277, 290] name:second visibility:public modality:FINAL [val]
-        BLOCK_BODY[277, 290]
-          RETURN[277, 290] type=kotlin.Nothing from='public final fun <get-second> (): T of <root>.Pair declared in <root>.Pair'
-            GET_FIELD[277, 290] 'FIELD PROPERTY_BACKING_FIELD name:second type:T of <root>.Pair visibility:private [final]' type=T of <root>.Pair origin=null
-              receiver: GET_VAR[277, 290] '<this>: <root>.Pair<T of <root>.Pair> declared in <root>.Pair.<get-second>' type=<root>.Pair<T of <root>.Pair> origin=null
-    CONSTRUCTOR[262, 291] visibility:public returnType:<root>.Pair<T of <root>.Pair> [primary]
-      VALUE_PARAMETER[263, 275] kind:Regular name:first index:0 type:T of <root>.Pair
-      VALUE_PARAMETER[277, 290] kind:Regular name:second index:1 type:T of <root>.Pair
-      BLOCK_BODY[262, 291]
-        DELEGATING_CONSTRUCTOR_CALL[249, 291] 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL[249, 291] classDescriptor='CLASS CLASS name:Pair modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+FILE fqName:<root> fileName:/lib.kt lineStartOffsets: [0, 19, 42, 78, 94, 113, 140, 164, 208, 209, 225, 268, 269, 291, 292, 345, 346, 397, 424, 447, 477, 502, 528, 560, 593, 625, 639, 670, 680, 698, 738, 748, 754, 790, 832, 834, 835]
+  PROPERTY[269, 290] name:globalCounter visibility:public modality:FINAL [var]
+    FIELD[269, 290] PROPERTY_BACKING_FIELD name:globalCounter type:kotlin.Int visibility:private [static]
+      EXPRESSION_BODY[289, 290]
+        CONST[289, 290] Int type=kotlin.Int value=0
+    FUN[269, 286] DEFAULT_PROPERTY_ACCESSOR name:<get-globalCounter> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[269, 290] name:globalCounter visibility:public modality:FINAL [var]
+      BLOCK_BODY[269, 286]
+        RETURN[269, 286] type=kotlin.Nothing from='public final fun <get-globalCounter> (): kotlin.Int declared in <root>'
+          GET_FIELD[269, 286] 'FIELD PROPERTY_BACKING_FIELD name:globalCounter type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
+    FUN[269, 286] DEFAULT_PROPERTY_ACCESSOR name:<set-globalCounter> visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER[269, 286] kind:Regular name:<set-?> index:0 type:kotlin.Int
+      correspondingProperty: PROPERTY[269, 290] name:globalCounter visibility:public modality:FINAL [var]
+      BLOCK_BODY[269, 286]
+        SET_FIELD[269, 286] 'FIELD PROPERTY_BACKING_FIELD name:globalCounter type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR[269, 286] '<set-?>: kotlin.Int declared in <root>.<set-globalCounter>' type=kotlin.Int origin=null
+  CLASS[225, 267] CLASS name:Pair modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[225, 267] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Pair<T of <root>.Pair>
+    TYPE_PARAMETER[236, 237] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY[239, 251] name:first visibility:public modality:FINAL [val]
+      FIELD[239, 251] PROPERTY_BACKING_FIELD name:first type:T of <root>.Pair visibility:private [final]
+        EXPRESSION_BODY[239, 251]
+          GET_VAR[239, 251] 'first: T of <root>.Pair declared in <root>.Pair.<init>' type=T of <root>.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[239, 251] DEFAULT_PROPERTY_ACCESSOR name:<get-first> visibility:public modality:FINAL returnType:T of <root>.Pair
+        VALUE_PARAMETER[239, 251] kind:DispatchReceiver name:<this> index:0 type:<root>.Pair<T of <root>.Pair>
+        correspondingProperty: PROPERTY[239, 251] name:first visibility:public modality:FINAL [val]
+        BLOCK_BODY[239, 251]
+          RETURN[239, 251] type=kotlin.Nothing from='public final fun <get-first> (): T of <root>.Pair declared in <root>.Pair'
+            GET_FIELD[239, 251] 'FIELD PROPERTY_BACKING_FIELD name:first type:T of <root>.Pair visibility:private [final]' type=T of <root>.Pair origin=null
+              receiver: GET_VAR[239, 251] '<this>: <root>.Pair<T of <root>.Pair> declared in <root>.Pair.<get-first>' type=<root>.Pair<T of <root>.Pair> origin=null
+    PROPERTY[253, 266] name:second visibility:public modality:FINAL [val]
+      FIELD[253, 266] PROPERTY_BACKING_FIELD name:second type:T of <root>.Pair visibility:private [final]
+        EXPRESSION_BODY[253, 266]
+          GET_VAR[253, 266] 'second: T of <root>.Pair declared in <root>.Pair.<init>' type=T of <root>.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[253, 266] DEFAULT_PROPERTY_ACCESSOR name:<get-second> visibility:public modality:FINAL returnType:T of <root>.Pair
+        VALUE_PARAMETER[253, 266] kind:DispatchReceiver name:<this> index:0 type:<root>.Pair<T of <root>.Pair>
+        correspondingProperty: PROPERTY[253, 266] name:second visibility:public modality:FINAL [val]
+        BLOCK_BODY[253, 266]
+          RETURN[253, 266] type=kotlin.Nothing from='public final fun <get-second> (): T of <root>.Pair declared in <root>.Pair'
+            GET_FIELD[253, 266] 'FIELD PROPERTY_BACKING_FIELD name:second type:T of <root>.Pair visibility:private [final]' type=T of <root>.Pair origin=null
+              receiver: GET_VAR[253, 266] '<this>: <root>.Pair<T of <root>.Pair> declared in <root>.Pair.<get-second>' type=<root>.Pair<T of <root>.Pair> origin=null
+    CONSTRUCTOR[238, 267] visibility:public returnType:<root>.Pair<T of <root>.Pair> [primary]
+      VALUE_PARAMETER[239, 251] kind:Regular name:first index:0 type:T of <root>.Pair
+      VALUE_PARAMETER[253, 266] kind:Regular name:second index:1 type:T of <root>.Pair
+      BLOCK_BODY[238, 267]
+        DELEGATING_CONSTRUCTOR_CALL[225, 267] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[225, 267] classDescriptor='CLASS CLASS name:Pair modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
@@ -59,27 +59,27 @@ FILE fqName:<root> fileName:/lib.kt lineStartOffsets: [0, 19, 45, 102, 118, 137,
       VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-  FUN[377, 857] name:bar visibility:public modality:FINAL returnType:kotlin.Int [inline]
-    VALUE_PARAMETER[385, 412] kind:Regular name:test index:0 type:kotlin.Function0<kotlin.Int> [crossinline]
-    BLOCK_BODY[419, 857]
-      VAR[425, 447] name:outsideCounter type:kotlin.Int [var]
-        CONST[446, 447] Int type=kotlin.Int value=0
-      VAR[452, 777] name:x type:<root>.Pair<<root>.bar.<anonymous>.<no name provided>> [val]
-        CALL[460, 777] 'public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>' type=<root>.Pair<<root>.bar.<anonymous>.<no name provided>> origin=null
+  FUN[353, 833] name:bar visibility:public modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER[361, 388] kind:Regular name:test index:0 type:kotlin.Function0<kotlin.Int> [crossinline]
+    BLOCK_BODY[395, 833]
+      VAR[401, 423] name:outsideCounter type:kotlin.Int [var]
+        CONST[422, 423] Int type=kotlin.Int value=0
+      VAR[428, 753] name:x type:<root>.Pair<<root>.bar.<anonymous>.<no name provided>> [val]
+        CALL[436, 753] 'public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>' type=<root>.Pair<<root>.bar.<anonymous>.<no name provided>> origin=null
           TYPE_ARG T: <root>.bar.<anonymous>.<no name provided>
-          ARG f: FUN_EXPR[469, 777] type=kotlin.Function0<<root>.bar.<anonymous>.<no name provided>> origin=LAMBDA
-            FUN[469, 777] LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.bar.<anonymous>.<no name provided>
-              BLOCK_BODY[479, 771]
-                VAR[479, 500] name:insideCounter type:kotlin.Int [var]
-                  CONST[499, 500] Int type=kotlin.Int value=0
-                VAR[509, 703] name:r type:<root>.bar.<anonymous>.<no name provided> [val]
-                  BLOCK[517, 703] type=<root>.bar.<anonymous>.<no name provided> origin=OBJECT_LITERAL
-                    CLASS[517, 703] CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
-                      thisReceiver: VALUE_PARAMETER[517, 703] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.bar.<anonymous>.<no name provided>
-                      CONSTRUCTOR[517, 703] visibility:public returnType:<root>.bar.<anonymous>.<no name provided> [primary]
-                        BLOCK_BODY[517, 703]
-                          DELEGATING_CONSTRUCTOR_CALL[517, 703] 'public constructor <init> () declared in kotlin.Any'
-                          INSTANCE_INITIALIZER_CALL[517, 703] classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
+          ARG f: FUN_EXPR[445, 753] type=kotlin.Function0<<root>.bar.<anonymous>.<no name provided>> origin=LAMBDA
+            FUN[445, 753] LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.bar.<anonymous>.<no name provided>
+              BLOCK_BODY[455, 747]
+                VAR[455, 476] name:insideCounter type:kotlin.Int [var]
+                  CONST[475, 476] Int type=kotlin.Int value=0
+                VAR[485, 679] name:r type:<root>.bar.<anonymous>.<no name provided> [val]
+                  BLOCK[493, 679] type=<root>.bar.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                    CLASS[493, 679] CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
+                      thisReceiver: VALUE_PARAMETER[493, 679] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.bar.<anonymous>.<no name provided>
+                      CONSTRUCTOR[493, 679] visibility:public returnType:<root>.bar.<anonymous>.<no name provided> [primary]
+                        BLOCK_BODY[493, 679]
+                          DELEGATING_CONSTRUCTOR_CALL[493, 679] 'public constructor <init> () declared in kotlin.Any'
+                          INSTANCE_INITIALIZER_CALL[493, 679] classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
                       FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
                         VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
                         VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
@@ -93,71 +93,71 @@ FILE fqName:<root> fileName:/lib.kt lineStartOffsets: [0, 19, 45, 102, 118, 137,
                         VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
                         overridden:
                           public open fun toString (): kotlin.String declared in kotlin.Any
-                      FUN[538, 662] name:count visibility:public modality:FINAL returnType:kotlin.Unit
-                        VALUE_PARAMETER[538, 662] kind:DispatchReceiver name:<this> index:0 type:<root>.bar.<anonymous>.<no name provided>
-                        BLOCK_BODY[550, 662]
-                          TYPE_OP[568, 583] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                            BLOCK[568, 583] type=kotlin.Int origin=POSTFIX_INCR
-                              VAR[568, 583] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-                                CALL[568, 581] 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
-                              CALL[568, 583] 'public final fun <set-globalCounter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
-                                ARG <set-?>: CALL[581, 583] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                                  ARG <this>: GET_VAR[568, 583] 'val tmp_0: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
-                              GET_VAR[568, 583] 'val tmp_0: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
-                          TYPE_OP[600, 616] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                            BLOCK[600, 616] type=kotlin.Int origin=POSTFIX_INCR
-                              VAR[600, 616] IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
-                                GET_VAR[600, 614] 'var outsideCounter: kotlin.Int declared in <root>.bar' type=kotlin.Int origin=POSTFIX_INCR
-                              SET_VAR[600, 616] 'var outsideCounter: kotlin.Int declared in <root>.bar' type=kotlin.Unit origin=POSTFIX_INCR
-                                CALL[614, 616] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                                  ARG <this>: GET_VAR[600, 616] 'val tmp_1: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
-                              GET_VAR[600, 616] 'val tmp_1: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
-                          TYPE_OP[633, 648] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                            BLOCK[633, 648] type=kotlin.Int origin=POSTFIX_INCR
-                              VAR[633, 648] IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
-                                GET_VAR[633, 646] 'var insideCounter: kotlin.Int declared in <root>.bar.<anonymous>' type=kotlin.Int origin=POSTFIX_INCR
-                              SET_VAR[633, 648] 'var insideCounter: kotlin.Int declared in <root>.bar.<anonymous>' type=kotlin.Unit origin=POSTFIX_INCR
-                                CALL[646, 648] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                                  ARG <this>: GET_VAR[633, 648] 'val tmp_2: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
-                              GET_VAR[633, 648] 'val tmp_2: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
-                      FUN[675, 693] name:foo visibility:public modality:FINAL returnType:kotlin.Int
-                        VALUE_PARAMETER[675, 693] kind:DispatchReceiver name:<this> index:0 type:<root>.bar.<anonymous>.<no name provided>
-                        BLOCK_BODY[687, 693]
-                          RETURN[693, 693] type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>'
-                            CALL[687, 693] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Int origin=INVOKE
-                              ARG <this>: GET_VAR[687, 691] 'test: kotlin.Function0<kotlin.Int> declared in <root>.bar' type=kotlin.Function0<kotlin.Int> origin=VARIABLE_AS_FUNCTION
-                    CONSTRUCTOR_CALL[517, 703] 'public constructor <init> () declared in <root>.bar.<anonymous>.<no name provided>' type=<root>.bar.<anonymous>.<no name provided> origin=OBJECT_LITERAL
-                CALL[714, 721] 'public final fun count (): kotlin.Unit declared in <root>.bar.<anonymous>.<no name provided>' type=kotlin.Unit origin=null
-                  ARG <this>: GET_VAR[712, 713] 'val r: <root>.bar.<anonymous>.<no name provided> declared in <root>.bar.<anonymous>' type=<root>.bar.<anonymous>.<no name provided> origin=null
-                SET_VAR[730, 761] 'var outsideCounter: kotlin.Int declared in <root>.bar' type=kotlin.Unit origin=PLUSEQ
-                  CALL[730, 761] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-                    ARG <this>: GET_VAR[730, 744] 'var outsideCounter: kotlin.Int declared in <root>.bar' type=kotlin.Int origin=PLUSEQ
-                    ARG other: GET_VAR[748, 761] 'var insideCounter: kotlin.Int declared in <root>.bar.<anonymous>' type=kotlin.Int origin=null
-                RETURN[771, 771] type=kotlin.Nothing from='local final fun <anonymous> (): <root>.bar.<anonymous>.<no name provided> declared in <root>.bar'
-                  GET_VAR[770, 771] 'val r: <root>.bar.<anonymous>.<no name provided> declared in <root>.bar.<anonymous>' type=<root>.bar.<anonymous>.<no name provided> origin=null
-      CALL[782, 813] 'public final fun <set-globalCounter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
-        ARG <set-?>: CALL[782, 813] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-          ARG <this>: CALL[782, 795] 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
-          ARG other: GET_VAR[799, 813] 'var outsideCounter: kotlin.Int declared in <root>.bar' type=kotlin.Int origin=null
-      RETURN[818, 855] type=kotlin.Nothing from='public final fun bar (test: kotlin.Function0<kotlin.Int>): kotlin.Int declared in <root>'
-        CALL[825, 855] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-          ARG <this>: CALL[833, 838] 'public final fun foo (): kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>' type=kotlin.Int origin=null
-            ARG <this>: CALL[827, 832] 'public final fun <get-first> (): T of <root>.Pair declared in <root>.Pair' type=<root>.bar.<anonymous>.<no name provided> origin=GET_PROPERTY
-              ARG <this>: GET_VAR[825, 826] 'val x: <root>.Pair<<root>.bar.<anonymous>.<no name provided>> declared in <root>.bar' type=<root>.Pair<<root>.bar.<anonymous>.<no name provided>> origin=null
-          ARG other: CALL[850, 855] 'public final fun foo (): kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>' type=kotlin.Int origin=null
-            ARG <this>: CALL[843, 849] 'public final fun <get-second> (): T of <root>.Pair declared in <root>.Pair' type=<root>.bar.<anonymous>.<no name provided> origin=GET_PROPERTY
-              ARG <this>: GET_VAR[841, 842] 'val x: <root>.Pair<<root>.bar.<anonymous>.<no name provided>> declared in <root>.bar' type=<root>.Pair<<root>.bar.<anonymous>.<no name provided>> origin=null
-  FUN[323, 368] name:runTwice visibility:public modality:FINAL returnType:<root>.Pair<T of <root>.runTwice> [inline]
-    TYPE_PARAMETER[328, 329] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER[340, 350] kind:Regular name:f index:0 type:kotlin.Function0<T of <root>.runTwice>
-    BLOCK_BODY[354, 368]
-      RETURN[368, 368] type=kotlin.Nothing from='public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>'
-        CONSTRUCTOR_CALL[354, 368] 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<T of <root>.runTwice> origin=null
+                      FUN[514, 638] name:count visibility:public modality:FINAL returnType:kotlin.Unit
+                        VALUE_PARAMETER[514, 638] kind:DispatchReceiver name:<this> index:0 type:<root>.bar.<anonymous>.<no name provided>
+                        BLOCK_BODY[526, 638]
+                          TYPE_OP[544, 559] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                            BLOCK[544, 559] type=kotlin.Int origin=POSTFIX_INCR
+                              VAR[544, 559] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+                                CALL[544, 557] 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
+                              CALL[544, 559] 'public final fun <set-globalCounter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
+                                ARG <set-?>: CALL[557, 559] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                                  ARG <this>: GET_VAR[544, 559] 'val tmp_0: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
+                              GET_VAR[544, 559] 'val tmp_0: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
+                          TYPE_OP[576, 592] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                            BLOCK[576, 592] type=kotlin.Int origin=POSTFIX_INCR
+                              VAR[576, 592] IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+                                GET_VAR[576, 590] 'var outsideCounter: kotlin.Int declared in <root>.bar' type=kotlin.Int origin=POSTFIX_INCR
+                              SET_VAR[576, 592] 'var outsideCounter: kotlin.Int declared in <root>.bar' type=kotlin.Unit origin=POSTFIX_INCR
+                                CALL[590, 592] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                                  ARG <this>: GET_VAR[576, 592] 'val tmp_1: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
+                              GET_VAR[576, 592] 'val tmp_1: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
+                          TYPE_OP[609, 624] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                            BLOCK[609, 624] type=kotlin.Int origin=POSTFIX_INCR
+                              VAR[609, 624] IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
+                                GET_VAR[609, 622] 'var insideCounter: kotlin.Int declared in <root>.bar.<anonymous>' type=kotlin.Int origin=POSTFIX_INCR
+                              SET_VAR[609, 624] 'var insideCounter: kotlin.Int declared in <root>.bar.<anonymous>' type=kotlin.Unit origin=POSTFIX_INCR
+                                CALL[622, 624] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                                  ARG <this>: GET_VAR[609, 624] 'val tmp_2: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
+                              GET_VAR[609, 624] 'val tmp_2: kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>.count' type=kotlin.Int origin=null
+                      FUN[651, 669] name:foo visibility:public modality:FINAL returnType:kotlin.Int
+                        VALUE_PARAMETER[651, 669] kind:DispatchReceiver name:<this> index:0 type:<root>.bar.<anonymous>.<no name provided>
+                        BLOCK_BODY[663, 669]
+                          RETURN[669, 669] type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>'
+                            CALL[663, 669] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Int origin=INVOKE
+                              ARG <this>: GET_VAR[663, 667] 'test: kotlin.Function0<kotlin.Int> declared in <root>.bar' type=kotlin.Function0<kotlin.Int> origin=VARIABLE_AS_FUNCTION
+                    CONSTRUCTOR_CALL[493, 679] 'public constructor <init> () declared in <root>.bar.<anonymous>.<no name provided>' type=<root>.bar.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                CALL[690, 697] 'public final fun count (): kotlin.Unit declared in <root>.bar.<anonymous>.<no name provided>' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR[688, 689] 'val r: <root>.bar.<anonymous>.<no name provided> declared in <root>.bar.<anonymous>' type=<root>.bar.<anonymous>.<no name provided> origin=null
+                SET_VAR[706, 737] 'var outsideCounter: kotlin.Int declared in <root>.bar' type=kotlin.Unit origin=PLUSEQ
+                  CALL[706, 737] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                    ARG <this>: GET_VAR[706, 720] 'var outsideCounter: kotlin.Int declared in <root>.bar' type=kotlin.Int origin=PLUSEQ
+                    ARG other: GET_VAR[724, 737] 'var insideCounter: kotlin.Int declared in <root>.bar.<anonymous>' type=kotlin.Int origin=null
+                RETURN[747, 747] type=kotlin.Nothing from='local final fun <anonymous> (): <root>.bar.<anonymous>.<no name provided> declared in <root>.bar'
+                  GET_VAR[746, 747] 'val r: <root>.bar.<anonymous>.<no name provided> declared in <root>.bar.<anonymous>' type=<root>.bar.<anonymous>.<no name provided> origin=null
+      CALL[758, 789] 'public final fun <set-globalCounter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
+        ARG <set-?>: CALL[758, 789] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+          ARG <this>: CALL[758, 771] 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
+          ARG other: GET_VAR[775, 789] 'var outsideCounter: kotlin.Int declared in <root>.bar' type=kotlin.Int origin=null
+      RETURN[794, 831] type=kotlin.Nothing from='public final fun bar (test: kotlin.Function0<kotlin.Int>): kotlin.Int declared in <root>'
+        CALL[801, 831] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          ARG <this>: CALL[809, 814] 'public final fun foo (): kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>' type=kotlin.Int origin=null
+            ARG <this>: CALL[803, 808] 'public final fun <get-first> (): T of <root>.Pair declared in <root>.Pair' type=<root>.bar.<anonymous>.<no name provided> origin=GET_PROPERTY
+              ARG <this>: GET_VAR[801, 802] 'val x: <root>.Pair<<root>.bar.<anonymous>.<no name provided>> declared in <root>.bar' type=<root>.Pair<<root>.bar.<anonymous>.<no name provided>> origin=null
+          ARG other: CALL[826, 831] 'public final fun foo (): kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>' type=kotlin.Int origin=null
+            ARG <this>: CALL[819, 825] 'public final fun <get-second> (): T of <root>.Pair declared in <root>.Pair' type=<root>.bar.<anonymous>.<no name provided> origin=GET_PROPERTY
+              ARG <this>: GET_VAR[817, 818] 'val x: <root>.Pair<<root>.bar.<anonymous>.<no name provided>> declared in <root>.bar' type=<root>.Pair<<root>.bar.<anonymous>.<no name provided>> origin=null
+  FUN[299, 344] name:runTwice visibility:public modality:FINAL returnType:<root>.Pair<T of <root>.runTwice> [inline]
+    TYPE_PARAMETER[304, 305] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[316, 326] kind:Regular name:f index:0 type:kotlin.Function0<T of <root>.runTwice>
+    BLOCK_BODY[330, 344]
+      RETURN[344, 344] type=kotlin.Nothing from='public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>'
+        CONSTRUCTOR_CALL[330, 344] 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<T of <root>.runTwice> origin=null
           TYPE_ARG (of class) T: T of <root>.runTwice
-          ARG first: CALL[359, 362] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.runTwice origin=INVOKE
-            ARG <this>: GET_VAR[359, 360] 'f: kotlin.Function0<T of <root>.runTwice> declared in <root>.runTwice' type=kotlin.Function0<T of <root>.runTwice> origin=VARIABLE_AS_FUNCTION
-          ARG second: CALL[364, 367] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.runTwice origin=INVOKE
-            ARG <this>: GET_VAR[364, 365] 'f: kotlin.Function0<T of <root>.runTwice> declared in <root>.runTwice' type=kotlin.Function0<T of <root>.runTwice> origin=VARIABLE_AS_FUNCTION
+          ARG first: CALL[335, 338] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.runTwice origin=INVOKE
+            ARG <this>: GET_VAR[335, 336] 'f: kotlin.Function0<T of <root>.runTwice> declared in <root>.runTwice' type=kotlin.Function0<T of <root>.runTwice> origin=VARIABLE_AS_FUNCTION
+          ARG second: CALL[340, 343] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.runTwice origin=INVOKE
+            ARG <this>: GET_VAR[340, 341] 'f: kotlin.Function0<T of <root>.runTwice> declared in <root>.runTwice' type=kotlin.Function0<T of <root>.runTwice> origin=VARIABLE_AS_FUNCTION
 Module: main
 FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 53, 73, 100, 151, 219, 235, 237]
   FUN[53, 236] name:box visibility:public modality:FINAL returnType:kotlin.String

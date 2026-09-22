@@ -1,5 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_HMPP: JVM_IR, JS_IR
+// IGNORE_HMPP: JVM, JS_IR
 
 // MODULE: lib-common
 // MODULE: lib-inter()()(lib-common)

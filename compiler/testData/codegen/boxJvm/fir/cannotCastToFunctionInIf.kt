@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // See KT-53019
 // See also cannotCastToFunction.kt with select instead of if
 

@@ -10,7 +10,7 @@ fun box() {
     main(arrayOf("OK"))
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:10 box
 // test.kt:6 main
 // test.kt:7 main

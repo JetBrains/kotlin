@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 fun test() {
     val array = floatArrayOf(1f, 2f, 3f)

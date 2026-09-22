@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
 // JVM_EXPOSE_BOXED
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 @JvmInline
 value class IC(val c: String)

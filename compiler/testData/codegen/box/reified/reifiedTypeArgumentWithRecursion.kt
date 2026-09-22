@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
+// IGNORE_BACKEND_MULTI_MODULE: JVM
 // ^^^KT-79201: This function has a reified type parameter and thus can only be inlined at compilation time, not called directly.
 
 // WITH_STDLIB

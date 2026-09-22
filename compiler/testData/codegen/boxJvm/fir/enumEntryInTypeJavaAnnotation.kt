@@ -1,6 +1,6 @@
 // ISSUE: KT-58002
 
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // FILE: NLS.java
 import java.lang.annotation.*;
