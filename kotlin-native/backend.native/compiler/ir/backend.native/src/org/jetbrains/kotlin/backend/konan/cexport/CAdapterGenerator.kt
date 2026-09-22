@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.konan.allParameters
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.SyntheticModulesOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.backend.konan.descriptors.isDeserializedAndHasCompanionExtensionReceiver
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.util.referenceFunction
@@ -557,14 +557,14 @@ internal class CAdapterGenerator(
 
     private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
 
-    private val libraryReverseTopoRank: Map<String, Int> =
+    private val libraryReverseTopoRank: Map<KotlinLibrary, Int> =
             context.config.cacheSupport.klibDag.librariesReverseTopoSorted
-                    .mapIndexed { index, library -> library.uniqueName to index }
+                    .mapIndexed { index, library -> library to index }
                     .toMap()
 
     private fun ModuleDescriptor.reverseTopoRank(): Int =
             when (val origin = klibModuleOrigin) {
-                is DeserializedKlibModuleOrigin -> libraryReverseTopoRank[origin.library.uniqueName] ?: Int.MAX_VALUE
+                is DeserializedKlibModuleOrigin -> libraryReverseTopoRank[origin.library] ?: Int.MAX_VALUE
                 CurrentKlibModuleOrigin, SyntheticModulesOrigin -> Int.MAX_VALUE
             }
 
