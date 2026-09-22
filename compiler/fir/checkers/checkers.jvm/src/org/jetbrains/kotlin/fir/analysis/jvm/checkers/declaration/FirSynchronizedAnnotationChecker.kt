@@ -56,7 +56,7 @@ object FirSynchronizedAnnotationChecker : FirFunctionChecker(MppCheckerKind.Comm
             containingClass.isInlineOrValue ->
                 reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS)
             (containingClass as? FirRegularClassSymbol)?.willBecomeKotlinValueClass(session) == true ->
-                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS.errorFactory)
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS)
             declaration.isAbstract ->
                 reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT)
         }
