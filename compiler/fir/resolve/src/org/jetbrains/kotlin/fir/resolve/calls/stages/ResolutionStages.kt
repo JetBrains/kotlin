@@ -91,12 +91,7 @@ object CheckExtensionReceiver : ResolutionStage() {
 
         val preparedReceiver = prepareImplicitArgument(candidate.givenExtensionReceiver, expectedType, context.session)
 
-        resolveExtensionReceiver(
-            preparedReceiver,
-            candidate,
-            expectedType
-                .let { candidate.getExpectedTypeWithNumericClassConversion(context.session, preparedReceiver.atom.expression, preparedReceiver.type, it) ?: it }
-        )
+        resolveExtensionReceiver(preparedReceiver, candidate, expectedType)
     }
 
     context(sink: CheckerSink, context: ResolutionContext)
