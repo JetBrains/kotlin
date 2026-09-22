@@ -68,10 +68,6 @@ internal object CheckArguments : ResolutionStage() {
                     sink.markCandidateForCompatibilityResolve()
                 }
             }
-
-            candidate.shouldHaveLowPriorityDueToNumericClassConversion() -> {
-                sink.reportDiagnostic(LowerPriorityForNumericClassConversion)
-            }
         }
     }
 
@@ -129,7 +125,6 @@ private fun Candidate.prepareExpectedType(
             }
         }
             ?: getExpectedTypeWithImplicitIntegerCoercion(context.session, argument, parameter, basicExpectedType)
-            ?: getExpectedTypeNumericClassConversion(context.session, argument, basicExpectedType)
             ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
 }
@@ -234,25 +229,6 @@ private fun getExpectedTypeWithImplicitIntegerCoercion(
         }
 
     return argumentType?.withNullabilityOf(candidateExpectedType, session.typeContext)
-}
-
-@OptIn(UnresolvedExpressionTypeAccess::class)
-private fun Candidate.getExpectedTypeNumericClassConversion(
-    session: FirSession,
-    argument: FirExpression,
-    candidateExpectedType: ConeKotlinType,
-): ConeKotlinType? = argument.coneTypeOrNull
-    ?.let { getExpectedTypeWithNumericClassConversion(session, argument, it, candidateExpectedType) }
-
-fun Candidate.getExpectedTypeWithNumericClassConversion(
-    session: FirSession,
-    expression: FirExpression,
-    argumentType: ConeKotlinType,
-    candidateExpectedType: ConeKotlinType,
-): ConeKotlinType? {
-    if (!isNumericConversionPossibleBetween(from = argumentType, to = candidateExpectedType, session)) return null
-    return argumentType.withNullabilityOf(candidateExpectedType, session.typeContext)
-        .also { markUseOfNumericClassConversion(expression, candidateExpectedType) }
 }
 
 private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCandidate? =

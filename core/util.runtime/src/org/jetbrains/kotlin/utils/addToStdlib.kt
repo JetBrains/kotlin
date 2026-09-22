@@ -393,14 +393,6 @@ inline fun <T, K> List<T>.flatAssociateBy(selector: (T) -> Collection<K>): Map<K
     }
 }
 
-inline fun <reified R> Iterable<*>.eachIsInstanceOrNull(): Iterable<R>? {
-    @Suppress("UNCHECKED_CAST")
-    return when {
-        all { it is R } -> this as Iterable<R>
-        else -> null
-    }
-}
-
 fun <E> MutableList<E>.popLast(): E = removeAt(lastIndex)
 
 fun <K : Enum<K>, V> enumMapOf(vararg pairs: Pair<K, V>): EnumMap<K, V> = EnumMap(mapOf(*pairs))
