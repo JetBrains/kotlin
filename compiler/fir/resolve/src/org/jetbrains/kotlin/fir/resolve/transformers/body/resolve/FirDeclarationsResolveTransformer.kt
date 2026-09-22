@@ -210,11 +210,6 @@ open class FirDeclarationsResolveTransformer(
                     if (!initializerIsAlreadyResolved) {
                         val resolutionMode = withExpectedType(property.returnTypeRef)
                         property.transformInitializer(transformer, resolutionMode)
-                        val initializer = property.initializer
-                        val expectedType = property.returnTypeRef.coneTypeOrNull
-                        if (initializer != null && expectedType != null) {
-                            property.replaceInitializer(initializer.wrapIntoNumericClassConversionIfNeeded(expectedType, session))
-                        }
                         property.replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
                     }
 
@@ -701,11 +696,6 @@ open class FirDeclarationsResolveTransformer(
                 val resolutionMode = withExpectedType(variable.returnTypeRef)
                 if (variable.initializer != null && variable.bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) {
                     variable.transformInitializer(transformer, resolutionMode)
-                    val initializer = variable.initializer
-                    val expectedType = variable.returnTypeRef.coneTypeOrNull
-                    if (initializer != null && expectedType != null) {
-                        variable.replaceInitializer(initializer.wrapIntoNumericClassConversionIfNeeded(expectedType, session))
-                    }
                     storeVariableReturnType(variable)
                 }
                 variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
