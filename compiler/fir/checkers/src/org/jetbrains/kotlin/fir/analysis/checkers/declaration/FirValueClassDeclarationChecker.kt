@@ -66,7 +66,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        val isWillBecomeValueClass = !declaration.symbol.isInlineOrValue && declaration.symbol.willBecomeValueClass(context.session)
+        val isWillBecomeValueClass = !declaration.symbol.isInlineOrValue && declaration.symbol.willBecomeKotlinValueClass(context.session)
         if (!declaration.symbol.isInlineOrValue && !isWillBecomeValueClass) {
             return
         }
@@ -106,7 +106,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     valueModifierPrefix,
                 )
             } else if (!supertypeSymbol.isFullValueClass && !supertypeSymbol.classId.isRecordId() &&
-                !(isWillBecomeValueClass && supertypeSymbol.promisedToBecomeValueClass(context.session))
+                !(isWillBecomeValueClass && supertypeSymbol.willBecomeKotlinOrJdkValueClass(context.session))
             ) {
                 reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES)
             }
