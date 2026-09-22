@@ -230,7 +230,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(getClassCall) {
             parents += callBuilder
-            withCopy()
         }
 
         val variableBuilder by builder {
