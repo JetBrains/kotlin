@@ -225,10 +225,8 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
 
             fun recordDependency(dependencyNode: KlibDAGNodeImpl) {
                 // Make sure that the found node is in the set of used nodes.
-                usedNodes.getOrPut(dependencyNode) {
-                    // If the found node is new, schedule it for processing on next iterations of the loop.
-                    State.SCHEDULED_FOR_PROCESSING
-                }
+                // If the found node is new, schedule it for processing on next iterations of the loop.
+                usedNodes.putIfAbsent(dependencyNode, State.SCHEDULED_FOR_PROCESSING)
 
                 // Record it as a dependency.
                 node.targets += dependencyNode
