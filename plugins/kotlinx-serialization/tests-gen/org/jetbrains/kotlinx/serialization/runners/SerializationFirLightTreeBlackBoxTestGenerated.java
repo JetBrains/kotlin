@@ -175,6 +175,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("genericWithClassUpperBoundMultiModule.kt")
+    public void testGenericWithClassUpperBoundMultiModule() {
+      run("genericWithClassUpperBoundMultiModule.kt");
+    }
+
+    @Test
     @TestMetadata("generics.kt")
     public void testGenerics() {
       run("generics.kt");
