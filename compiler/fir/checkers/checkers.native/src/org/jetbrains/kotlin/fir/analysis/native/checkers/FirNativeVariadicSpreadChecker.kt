@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChec
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.backend.native.interop.isCFunctionOrGlobalAccessor
 import org.jetbrains.kotlin.fir.backend.native.interop.isObjCMethod
-import org.jetbrains.kotlin.fir.declarations.isArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
@@ -58,7 +57,7 @@ internal object FirNativeVariadicSpreadChecker : FirFunctionCallChecker(MppCheck
         isObjC: Boolean,
     ) {
         val spreadExpression = argument.expression
-        if (spreadExpression is FirFunctionCall && spreadExpression.isArrayOfCall()) {
+        if (spreadExpression is FirFunctionCall && spreadExpression.isArrayOfCall(context.session)) {
             checkVarargArguments(spreadExpression, isObjC)
         } else {
             val factory = if (isObjC) {
