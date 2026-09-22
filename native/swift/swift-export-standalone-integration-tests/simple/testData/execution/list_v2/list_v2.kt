@@ -136,3 +136,15 @@ fun getFooList(provider: FooArrayProviderProtocol): List<FooProtocol> = provider
 fun setFooList(provider: FooArrayProviderProtocol, list: List<FooProtocol>) {
     provider.setFooArray(list)
 }
+
+// FILE: listImpl.kt
+
+open class MyListImpl<T>(impl: List<T>): List<T> by impl
+
+class MyMutableListImpl<T>(impl: MutableList<T>): MyListImpl<T>(impl), MutableList<T> by impl
+
+fun myListImplOf(vararg elements: Int): MyListImpl<Int> = MyListImpl(elements.asList())
+
+fun myMutableListImplOf(vararg elements: Int): MyMutableListImpl<Int> = MyMutableListImpl(elements.toMutableList())
+
+fun reverseMyListImpl(l: MyListImpl<Int>): MyListImpl<Int> = MyListImpl(l.reversed())
