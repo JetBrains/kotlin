@@ -96,6 +96,15 @@ fun resolveProjectDependencyComponentsWithArtifacts(
 fun KotlinTarget.compilationResolution(compilationName: String = "main"): Map<ComponentPath, ResolvedComponentWithArtifacts> {
     return compilationConfiguration(compilationName).resolveProjectDependencyComponentsWithArtifacts()
 }
+
+fun Configuration.resolveSelectedVariantNames(): Map<ComponentPath, String> {
+    val root = incoming.resolutionResult.root
+    val selfProjectPath = root.variants.single().owner.projectPathOrNull
+    return resolveProjectDependencyComponents(incoming.resolutionResult.allComponents)
+        .filterNot { it.path == selfProjectPath }
+        .associate { it.path to it.configuration }
+}
+
 fun KotlinTarget.runtimeResolution(compilationName: String = "main"): Map<ComponentPath, ResolvedComponentWithArtifacts> {
     return runtimeConfiguration(compilationName).resolveProjectDependencyComponentsWithArtifacts()
 }
