@@ -179,6 +179,28 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-89558: link task re-runs when the static library passed in linkerOpts is rebuilt")
+    @GradleTest
+    fun cinteropStaticLibraryUTDChecks(gradleVersion: GradleVersion) {
+        nativeProject("KT-89558-cinterop-static-library-UTD-checks", gradleVersion = gradleVersion) {
+            buildStaticLibrary(projectPath)
+
+            build(":runDebugExecutableNative") {
+                assertOutputContains("5")
+            }
+            // The first incremental build may rerun the link task for unrelated setup changes.
+            build(":runDebugExecutableNative")
+
+            projectPath.resolve("lib.c").replaceText("return globalCounter;", "return globalCounter + 1;")
+            buildStaticLibrary(projectPath)
+
+            build(":runDebugExecutableNative") {
+                assertTasksExecuted(":linkDebugExecutableNative")
+                assertOutputContains("6")
+            }
+        }
+    }
+
     @DisplayName("KT-62800: validation fails if neither definitionFile nor packageName was specified")
     @GradleTest
     fun cinteropWithoutDefinitionFileAndPackageName(gradleVersion: GradleVersion) {
