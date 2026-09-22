@@ -139,6 +139,7 @@ internal fun TestResult.statusName(): String = when (resultType) {
     TestResult.ResultType.FAILURE -> "Failure"
     TestResult.ResultType.SUCCESS -> "OK"
     TestResult.ResultType.SKIPPED -> "Ignored"
+    else -> error("Unexpected test result type: $resultType")
 }
 
 internal val TestResult.durationMillis: Long get() = endTime - startTime
