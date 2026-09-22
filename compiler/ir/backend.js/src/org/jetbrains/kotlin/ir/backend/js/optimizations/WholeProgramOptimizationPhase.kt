@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 
 /**
- * An optimization step over the whole linked program, wrapped as a [NamedCompilerPhase] so
- * [PhaseConfig] can disable and profile it; [notEnabledOutput] substitutes the result when
- * the phase is disabled.
+ * Adapts an optimization over a linked-program input to the compiler phase infrastructure.
+ *
+ * [NamedCompilerPhase] supplies configuration, validation, and profiling around [body]. When the
+ * phase is disabled through [PhaseConfig], [notEnabledOutput] produces the value passed to later
+ * phases without executing the optimization.
  */
 internal class WholeProgramOptimizationPhase<Input, Output>(
     name: String,

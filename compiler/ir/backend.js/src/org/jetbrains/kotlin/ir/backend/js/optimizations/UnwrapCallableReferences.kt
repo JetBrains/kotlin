@@ -25,22 +25,25 @@ import java.util.HashSet
 import java.util.IdentityHashMap
 
 /**
- * Rewrites `constructCallableReference(fn, ...)` to plain `fn` when whole-program analysis over
- * the [JsModuleDFG] proves the K-callable metadata attached by the wrapper (`.name`, arity,
- * reference equality, `is KFunction`, …) is never observed.
+ * Removes a K-callable wrapper when its observable behavior is equivalent to the raw function.
  *
- * [KFunctionWrapperDemandAnalyzer] follows each wrapper through the graph: a wrapper that is
- * only ever *called* behaves identically to the raw function and is unwrapped; any use that
- * could observe its identity or metadata — or any flow the graph cannot follow — keeps it.
+ * The pass follows each `constructCallableReference(fn, ...)` result through the program-wide
+ * [JsModuleDFG]. A wrapper used only as an invocation receiver can be replaced with `fn`. A use
+ * that can observe K-callable metadata, wrapper identity, or an unmodeled escape keeps the
+ * wrapper.
  *
  * Runs after [org.jetbrains.kotlin.ir.backend.js.lower.DeduplicateCallableReferenceFactoriesLowering],
  * so each canonical factory is decided once, and after dead code elimination, so unreachable
- * metadata observers (e.g. a SAM adapter's generated `equals`) do not force keeps.
+ * metadata observers do not affect the decision.
  */
 class UnwrapCallableReferences(private val context: JsIrBackendContext) {
     /**
-     * Returns `true` when every wrapper in the program was unwrapped — the reflection runtime
-     * (`constructCallableReference` and what only it uses) may then be dead.
+     * Replaces every wrapper proven unnecessary and reports whether all existing wrappers were
+     * removed.
+     *
+     * A true result means the callable-reference reflection support may have become unreachable,
+     * so the optimization pipeline should rerun dead code elimination. The result is false when
+     * there were no wrappers or when any wrapper must remain.
      */
     fun lower(dfg: JsModuleDFG): Boolean {
         val analyzer = KFunctionWrapperDemandAnalyzer(context, dfg)
@@ -64,13 +67,13 @@ class UnwrapCallableReferences(private val context: JsIrBackendContext) {
 }
 
 /**
- * Worklist analysis: every [Node.CallableReferenceWrapper] flows forward through phis, callee
- * parameters (constructor arguments included), field writes to same-field reads, passthrough
- * casts, and function returns to call sites. A wrapper is kept when it reaches
- * `equals`/`hashCode`, `jsTypeOf` (what `is KFunction` lowers to), a K-metadata field read,
- * non-INVOKE dynamic access, an exported/external/bodiless callee, an overridable virtual call,
- * a throw, an escape ([Node.OpaqueValue]), or the return of a function whose call sites cannot
- * be enumerated. Invocation with the wrapper as receiver never keeps.
+ * Determines which [Node.CallableReferenceWrapper] values can have wrapper-specific behavior.
+ *
+ * The worklist propagates wrappers forward through merges, callee parameters, constructor
+ * arguments, field writes and reads, identity-preserving type operations, and function returns.
+ * Invocation with the wrapper as receiver is transparent. Any use that can inspect identity or
+ * K-callable metadata keeps the wrapper, as does a throw, an opaque escape, virtual dispatch, or
+ * flow into code or call sites that the graph cannot enumerate.
  */
 private class KFunctionWrapperDemandAnalyzer(
     private val context: JsIrBackendContext,
@@ -157,7 +160,7 @@ private class KFunctionWrapperDemandAnalyzer(
 
     private fun handleCallUse(call: Node.Call, argIndex: Int?, live: List<Node.CallableReferenceWrapper>) {
         if (argIndex == 0 && call.isInvoke()) {
-            // The wrapper is the "invoke" receiver: invocation does not observe its metadata.
+            // Calling the wrapper observes the underlying function, not wrapper metadata.
             return
         }
         if (call.isEqualsOrHashCode() || call.isTypeOf() || call is Node.VirtualCall) {
@@ -176,9 +179,7 @@ private class KFunctionWrapperDemandAnalyzer(
             keep += live
             return
         }
-        // The parameter node exists only when the callee's body was analyzed. Without it the
-        // wrapper crosses into code the graph cannot see — it could read `.name`, compare the
-        // reference — so it must keep its metadata.
+        // No parameter node means the value crosses into a body the graph cannot inspect.
         val paramNode = index.parameters[callee]?.getOrNull(argIndex)
         if (paramNode != null) {
             propagate(paramNode, live)
@@ -214,7 +215,7 @@ private class KFunctionWrapperDemandAnalyzer(
                 keep += live
                 return
             }
-            // An unmapped overridden method has nobody and no call in the program.
+            // An unmapped override has neither a body nor a call site in the linked program.
             val overriddenSymbol = dfg.symbolTable.functionMap[overridden] ?: continue
             if (overriddenSymbol.isExported) {
                 keep += live
@@ -265,9 +266,12 @@ private class UseSite(
 )
 
 /**
- * Reverse-flow index over the whole-program DFG: for each node, the consumers that read it,
- * plus call sites per callee, parameter nodes per function, return/throw phis, field reads per
- * field, functions whose address is taken, and every wrapper call.
+ * Indexes the relationships needed to propagate a value forward through the whole-program DFG.
+ *
+ * In addition to mapping each value node to its consumers, the index connects callees to call
+ * sites, function symbols to parameter nodes, function return merges to their execution units,
+ * fields to reads, and raw function references to their symbols. It also records the throw
+ * merges of every execution unit and all callable-reference wrapper nodes.
  */
 private class UseIndex {
     val uses = IdentityHashMap<Node, MutableList<UseSite>>()

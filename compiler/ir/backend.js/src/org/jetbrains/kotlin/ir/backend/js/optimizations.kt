@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 
 private val buildJsModuleDFGPhase = WholeProgramOptimizationPhase<Iterable<IrModuleFragment>, JsModuleDFG>(
     name = "BuildJsModuleDFG",
-    // An empty DFG turns every consumer into a no-op, so disabling this phase disables all
-    // DFG-based optimizations at once.
+    // An empty snapshot makes every DFG consumer a no-op when graph construction is disabled.
     notEnabledOutput = { context, modules ->
         JsModuleDFG(modules, executionUnits = mutableListOf(), symbolTable = JsDataFlowIR.SymbolTable(context))
     },
@@ -35,17 +34,19 @@ private val buildJsModuleDFGPhase = WholeProgramOptimizationPhase<Iterable<IrMod
 )
 
 /**
- * An optimization consuming the shared [JsModuleDFG]. [body] returns `true` when the pass may
- * have left orphaned declarations behind, so the pipeline knows to rerun dead code elimination.
- * A pass that mutates a function's IR must also refresh that function in the DFG before
- * returning (see [buildJsModuleDFG]) — later phases in [dfgOptimizationPhases] read the same graph.
+ * Wraps an optimization over the shared [JsModuleDFG] snapshot as a compiler phase.
+ *
+ * [body] returns true when its changes may have made declarations unreachable and therefore
+ * require another dead code elimination pass. DFG phases run in [dfgOptimizationPhases] order
+ * over the same snapshot. A phase that mutates relationships represented by the graph must
+ * update them before a later phase relies on them, or be ordered after all such consumers.
  */
 private fun dfgOptimizationPhase(
     name: String,
     body: (JsIrBackendContext, JsModuleDFG) -> Boolean,
 ) = WholeProgramOptimizationPhase(name, notEnabledOutput = { _, _ -> false }, body = body)
 
-/** DFG-based optimizations, in execution order. To add one, add an entry here. */
+/** DFG consumers in execution order; every entry receives the same program-wide snapshot. */
 private val dfgOptimizationPhases = listOf(
     dfgOptimizationPhase("UnwrapCallableReferences") { context, dfg ->
         UnwrapCallableReferences(context).lower(dfg)
@@ -53,8 +54,12 @@ private val dfgOptimizationPhases = listOf(
 )
 
 /**
- * Whole-program IR optimizations for production builds.
- * Runs once over the fully lowered, linked program.
+ * Runs whole-program IR optimizations once over the fully lowered, linked program.
+ *
+ * Initial dead code elimination and callable-reference canonicalization prepare the IR before
+ * the DFG snapshot is built. DFG consumers then run in sequence, followed by another dead code
+ * elimination pass only when a consumer reports newly unreachable declarations. The remaining
+ * per-module optimization lowerings run after the whole-program analysis.
  */
 fun optimizeProgramByIr(
     modules: Iterable<IrModuleFragment>,

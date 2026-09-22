@@ -12,9 +12,15 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 
 /**
- * Reaching-definition sets for locals, used by [JsBodyDFGBuilder].
+ * Collects the expressions that may provide the runtime value of each local variable.
+ *
+ * Assignments initially contribute their right-hand expressions. [computeClosure] then follows
+ * reads of other locals transitively, so graph construction sees the terminal expressions that
+ * may reach a local as well as its direct inputs. The recorded loop identifies the scope in which
+ * the local's merge node must be placed.
  */
 internal class VariableValues {
+    /** The owning loop and possible value-producing expressions of one local declaration. */
     class Variable(val loop: IrLoop?, val values: MutableSet<IrExpression>)
 
     val elementData = mutableMapOf<IrValueDeclaration, Variable>()
@@ -29,6 +35,7 @@ internal class VariableValues {
     private fun add(variable: IrValueDeclaration, elements: Set<IrExpression>) =
         elementData[variable]?.values?.addAll(elements)
 
+    /** Expands every local's values through transitive reads of other tracked locals. */
     fun computeClosure() {
         elementData.keys.forEach { key ->
             add(key, computeValueClosure(key))
