@@ -553,56 +553,6 @@
             }
         },
         {
-            "name": "macosX64ApiElements-published",
-            "attributes": {
-                "org.gradle.category": "library",
-                "org.gradle.usage": "kotlin-api",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "macos_x64"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-macosx64/ArtifactsTest.version/kotlin-power-assert-runtime-macosx64-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-macosx64",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
-            "name": "macosX64MetadataElements-published",
-            "attributes": {
-                "org.gradle.category": "library",
-                "org.gradle.usage": "kotlin-metadata",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "macos_x64"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-macosx64/ArtifactsTest.version/kotlin-power-assert-runtime-macosx64-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-macosx64",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
-            "name": "macosX64SourcesElements-published",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "sources",
-                "org.gradle.usage": "kotlin-runtime",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "macos_x64"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-macosx64/ArtifactsTest.version/kotlin-power-assert-runtime-macosx64-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-macosx64",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
             "name": "metadataApiElements",
             "attributes": {
                 "org.gradle.category": "library",
@@ -784,56 +734,6 @@
                 "url": "../../kotlin-power-assert-runtime-tvossimulatorarm64/ArtifactsTest.version/kotlin-power-assert-runtime-tvossimulatorarm64-ArtifactsTest.version.module",
                 "group": "org.jetbrains.kotlin",
                 "module": "kotlin-power-assert-runtime-tvossimulatorarm64",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
-            "name": "tvosX64ApiElements-published",
-            "attributes": {
-                "org.gradle.category": "library",
-                "org.gradle.usage": "kotlin-api",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "tvos_x64"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-tvosx64/ArtifactsTest.version/kotlin-power-assert-runtime-tvosx64-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-tvosx64",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
-            "name": "tvosX64MetadataElements-published",
-            "attributes": {
-                "org.gradle.category": "library",
-                "org.gradle.usage": "kotlin-metadata",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "tvos_x64"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-tvosx64/ArtifactsTest.version/kotlin-power-assert-runtime-tvosx64-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-tvosx64",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
-            "name": "tvosX64SourcesElements-published",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "sources",
-                "org.gradle.usage": "kotlin-runtime",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "tvos_x64"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-tvosx64/ArtifactsTest.version/kotlin-power-assert-runtime-tvosx64-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-tvosx64",
                 "version": "ArtifactsTest.version"
             }
         },
@@ -1084,56 +984,6 @@
                 "url": "../../kotlin-power-assert-runtime-watchossimulatorarm64/ArtifactsTest.version/kotlin-power-assert-runtime-watchossimulatorarm64-ArtifactsTest.version.module",
                 "group": "org.jetbrains.kotlin",
                 "module": "kotlin-power-assert-runtime-watchossimulatorarm64",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
-            "name": "watchosX64ApiElements-published",
-            "attributes": {
-                "org.gradle.category": "library",
-                "org.gradle.usage": "kotlin-api",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "watchos_x64"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-watchosx64/ArtifactsTest.version/kotlin-power-assert-runtime-watchosx64-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-watchosx64",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
-            "name": "watchosX64MetadataElements-published",
-            "attributes": {
-                "org.gradle.category": "library",
-                "org.gradle.usage": "kotlin-metadata",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "watchos_x64"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-watchosx64/ArtifactsTest.version/kotlin-power-assert-runtime-watchosx64-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-watchosx64",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
-            "name": "watchosX64SourcesElements-published",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "sources",
-                "org.gradle.usage": "kotlin-runtime",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "watchos_x64"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-watchosx64/ArtifactsTest.version/kotlin-power-assert-runtime-watchosx64-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-watchosx64",
                 "version": "ArtifactsTest.version"
             }
         }
