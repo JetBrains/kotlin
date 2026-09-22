@@ -1,5 +1,5 @@
 --- a/packageLevelProperties.ir.txt
-+++ b/packageLevelProperties.ir.jvm_ir.txt
++++ b/packageLevelProperties.ir.jvm.txt
 @@ -86,9 +86,9 @@
                    RETURN type=kotlin.Nothing from='local final fun test7 (): kotlin.Int declared in <root>.<get-test7>'
                      CALL 'public final fun <get-test7> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null

@@ -84,7 +84,7 @@ abstract class AbstractCompilerBoxTest(
     }
 
     companion object {
-        private val BACKEND = TargetBackend.JVM_IR
+        private val BACKEND = TargetBackend.JVM
 
         private val sharedRuntimeLoaders = ConcurrentHashMap<List<File>, URLClassLoader>()
 

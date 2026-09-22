@@ -1,5 +1,5 @@
 --- a/typeAliasWithUnsafeVariance.ir.txt
-+++ b/typeAliasWithUnsafeVariance.ir.jvm_ir.txt
++++ b/typeAliasWithUnsafeVariance.ir.jvm.txt
 @@ -98,7 +98,7 @@
    FUN name:getTag visibility:public modality:FINAL returnType:<root>.Tag<*>
      BLOCK_BODY
