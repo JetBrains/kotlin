@@ -774,8 +774,8 @@ class FloatMathTest {
     }
 
     @Test fun roundingConversionAtIntegerLimits() {
-        // Int.MAX_VALUE.toFloat() is 2^31, which is already outside the Int range.
-        val intLimit = Int.MAX_VALUE.toFloat()
+        // Construct exact Float32 boundaries; JS uses Number for Float values.
+        val intLimit = Float.fromBits(0x4f000000) // 2^31
         val intCases = listOf(
             Float.fromBits(intLimit.toBits() - 1) to 2147483520,
             intLimit to Int.MAX_VALUE,
@@ -788,8 +788,7 @@ class FloatMathTest {
             assertEquals(expected, value.roundToInt(), "$value.roundToInt()")
         }
 
-        // Long.MAX_VALUE.toFloat() is 2^63, just as for Double.
-        val longLimit = Long.MAX_VALUE.toFloat()
+        val longLimit = Float.fromBits(0x5f000000) // 2^63
         val longCases = listOf(
             Float.fromBits(longLimit.toBits() - 1) to 9223371487098961920L,
             longLimit to Long.MAX_VALUE,
