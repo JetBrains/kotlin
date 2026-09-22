@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
-import org.jetbrains.kotlin.util.ArrayLiteralResolution
 
 class DataFlowAnalyzerContext private constructor(
     private val session: FirSession,

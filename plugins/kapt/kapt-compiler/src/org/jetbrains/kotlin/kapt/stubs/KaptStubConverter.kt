@@ -86,7 +86,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -783,10 +782,9 @@ abstract class ParameterizedKaptStubConverter<
     private fun evaluateFirExpression(initialExpression: FirExpression): Any? {
         val session = kaptContext.firSession!!
         val expression =
-            if (initialExpression is FirFunctionCall && withSession(session) { useArrayLiteralResolution() }) {
-                @OptIn(ArrayLiteralResolution::class)
+            if (initialExpression is FirFunctionCall)
                 FirArrayOfCallTransformer().transformFunctionCall(initialExpression, session)
-            } else initialExpression
+            else initialExpression
 
         val result = try {
             expression.evaluateAs<FirElement>(session)

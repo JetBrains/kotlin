@@ -1285,15 +1285,10 @@ open class FirDeclarationsResolveTransformer(
         val result = context.withValueParameter(valueParameter, session) {
             transformDeclarationContent(
                 valueParameter,
-                if (useArrayLiteralResolution()) {
-                    @OptIn(ArrayLiteralResolution::class)
-                    withExpectedType(
-                        valueParameter.returnTypeRef,
-                        arrayLiteralPosition = runIf(insideAnnotationConstructorDeclaration) { ArrayLiteralPosition.AnnotationParameter },
-                    )
-                } else {
-                    withExpectedType(valueParameter.returnTypeRef)
-                }
+                withExpectedType(
+                    valueParameter.returnTypeRef,
+                    arrayLiteralPosition = if (insideAnnotationConstructorDeclaration) ArrayLiteralPosition.AnnotationParameter else null
+                )
             ) as FirValueParameter
         }
 

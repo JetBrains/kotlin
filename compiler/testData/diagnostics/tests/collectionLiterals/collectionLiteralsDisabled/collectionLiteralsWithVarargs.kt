@@ -41,7 +41,7 @@ annotation class AnnArray(val a: Array<String>)
 @AnnArray(<!NON_VARARG_SPREAD!>*<!>["/"])
 fun testArray() {}
 
-@Ann1(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[""]<!>)
+@Ann1(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL, UNSUPPORTED_FEATURE!>[""]<!>)
 fun testVararg() {}
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral,
