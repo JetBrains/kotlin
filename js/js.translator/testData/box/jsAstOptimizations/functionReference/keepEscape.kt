@@ -24,6 +24,10 @@ fun fromLambda() {}
 
 fun viaRef() {}
 
+fun storedInStaticField() {}
+
+val staticFieldReference = ::storedInStaticField
+
 // Shares the `invoke` name but is not FunctionN.invoke: its argument's metadata is observed.
 fun invoke(k: KFunction0<Unit>): String = k.name
 
@@ -77,6 +81,8 @@ fun box(): String {
 
     val g = ::makeRef
     if (g().name != "viaRef") return "fail via ref"
+
+    if (staticFieldReference.name != "storedInStaticField") return "fail static field"
 
     if (callThrough(CallerSub()) != "openInvokeArg") return "fail open invoke"
 
