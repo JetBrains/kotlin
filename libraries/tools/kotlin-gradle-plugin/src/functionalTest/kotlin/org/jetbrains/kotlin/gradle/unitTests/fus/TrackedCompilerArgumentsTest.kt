@@ -163,4 +163,183 @@ class TrackedCompilerArgumentsTest {
         val metrics = metricsFor(K2JVMCompilerArguments::class, listOf("-api-version", "2.2"), rules = rules)
         assertTrue(metrics.stringMetrics.isEmpty())
     }
+
+    // Arguments declared on CommonCompilerArguments, so they must be reported for every kind of compilation.
+
+    @Test
+    fun languageVersionIsReportedForEveryCompilation() {
+        for (argumentsClass in concreteArgumentsClasses) {
+            val metrics = metricsFor(argumentsClass, listOf("-language-version", "2.3"))
+            assertEquals(
+                "2.3", metrics.stringMetrics[StringMetrics.KOTLIN_LANGUAGE_VERSION],
+                "-language-version was not reported for ${argumentsClass.simpleName}",
+            )
+        }
+    }
+
+    @Test
+    fun apiVersionIsReportedForEveryCompilation() {
+        for (argumentsClass in concreteArgumentsClasses) {
+            val metrics = metricsFor(argumentsClass, listOf("-api-version", "2.2"))
+            assertEquals(
+                "2.2", metrics.stringMetrics[StringMetrics.KOTLIN_API_VERSION],
+                "-api-version was not reported for ${argumentsClass.simpleName}",
+            )
+        }
+    }
+
+    @Test
+    fun languageAndApiVersionAreNotReportedWhenNotSpecified() {
+        val metrics = metricsFor(K2JVMCompilerArguments::class, emptyList())
+        assertNull(metrics.stringMetrics[StringMetrics.KOTLIN_LANGUAGE_VERSION])
+        assertNull(metrics.stringMetrics[StringMetrics.KOTLIN_API_VERSION])
+    }
+
+    @Test
+    fun progressiveModeIsReportedForEveryCompilation() {
+        for (argumentsClass in concreteArgumentsClasses) {
+            val enabled = metricsFor(argumentsClass, listOf("-progressive"))
+            assertEquals(
+                true, enabled.booleanMetrics[BooleanMetrics.KOTLIN_PROGRESSIVE_MODE],
+                "-progressive was not reported for ${argumentsClass.simpleName}",
+            )
+        }
+        // The property is a non-nullable Boolean, so its default is reported too - as it was before the migration.
+        val disabled = metricsFor(K2JVMCompilerArguments::class, emptyList())
+        assertEquals(false, disabled.booleanMetrics[BooleanMetrics.KOTLIN_PROGRESSIVE_MODE])
+    }
+
+    // 'irProduceJs' marks the JS link step; the JS options are only meaningful there.
+
+    @Test
+    fun jsMetricsAreReportedForTheLinkStep() {
+        val metrics = metricsFor(
+            K2JSCompilerArguments::class,
+            listOf("-Xir-produce-js", "-source-map", "-module-kind", "es"),
+        )
+        assertEquals(true, metrics.booleanMetrics[BooleanMetrics.JS_SOURCE_MAP])
+        assertEquals("es", metrics.stringMetrics[StringMetrics.JS_MODULE_SYSTEM])
+    }
+
+    @Test
+    fun jsMetricsAreNotReportedWithoutIrProduceJs() {
+        // Guards the 'withCondition' wiring: without it these fire for the klib-producing compilations too.
+        val metrics = metricsFor(K2JSCompilerArguments::class, listOf("-source-map", "-module-kind", "es"))
+        assertTrue(metrics.booleanMetrics.keys.none { it == BooleanMetrics.JS_SOURCE_MAP })
+        assertNull(metrics.stringMetrics[StringMetrics.JS_MODULE_SYSTEM])
+        assertNull(metrics.stringMetrics[StringMetrics.JS_ES_TARGET])
+    }
+
+    @Test
+    fun jsEsTargetAndModuleSystemFallBackToDefault() {
+        val metrics = metricsFor(K2JSCompilerArguments::class, listOf("-Xir-produce-js"))
+        assertEquals("default", metrics.stringMetrics[StringMetrics.JS_ES_TARGET])
+        assertEquals("default", metrics.stringMetrics[StringMetrics.JS_MODULE_SYSTEM])
+    }
+
+    @Test
+    fun jsOutputGranularityIsReportedForTheLinkStep() {
+        val perModule = metricsFor(K2JSCompilerArguments::class, listOf("-Xir-produce-js", "-Xir-per-module"))
+        assertEquals("per_module", perModule.stringMetrics[StringMetrics.JS_OUTPUT_GRANULARITY])
+
+        val wholeProgram = metricsFor(K2JSCompilerArguments::class, listOf("-Xir-produce-js"))
+        assertEquals("whole_program", wholeProgram.stringMetrics[StringMetrics.JS_OUTPUT_GRANULARITY])
+    }
+
+    @Test
+    fun jsOutputGranularityIsNotReportedWithoutIrProduceJs() {
+        val metrics = metricsFor(K2JSCompilerArguments::class, listOf("-Xir-per-module"))
+        assertNull(metrics.stringMetrics[StringMetrics.JS_OUTPUT_GRANULARITY])
+    }
+
+    @Test
+    fun nestedConditionsMustBothHold() {
+        val rules = trackedCompilerArguments {
+            forArguments<K2JSCompilerArguments> {
+                withCondition(K2JSCompilerArguments::irProduceJs) {
+                    withCondition(K2JSCompilerArguments::sourceMap) {
+                        booleanMetric(BooleanMetrics.JS_GENERATE_DTS, K2JSCompilerArguments::generateDts)
+                    }
+                }
+            }
+        }
+
+        fun dtsFor(vararg arguments: String) =
+            metricsFor(K2JSCompilerArguments::class, arguments.toList() + "-Xgenerate-dts", rules = rules)
+                .booleanMetrics[BooleanMetrics.JS_GENERATE_DTS]
+
+        assertEquals(true, dtsFor("-Xir-produce-js", "-source-map"))
+        assertNull(dtsFor("-Xir-produce-js"), "the inner condition was ignored")
+        assertNull(dtsFor("-source-map"), "the outer condition was ignored")
+        assertNull(dtsFor())
+    }
+
+    // Kotlin/Native binary options.
+
+    @Test
+    fun nativeGcIsReportedFromBinaryOptions() {
+        val metrics = metricsFor(K2NativeCompilerArguments::class, listOf("-Xbinary=gc=noop"))
+        assertEquals(true, metrics.booleanMetrics[BooleanMetrics.ENABLED_NOOP_GC])
+        assertNull(metrics.booleanMetrics[BooleanMetrics.ENABLED_CMS_GC])
+    }
+
+    @Test
+    fun nativeGcAcceptsFullEnumNamesAndAnyCase() {
+        // ':native:binary-options' resolves the shortcut or the enum name, case-insensitively.
+        assertEquals(
+            true,
+            metricsFor(K2NativeCompilerArguments::class, listOf("-Xbinary=gc=NOOP"))
+                .booleanMetrics[BooleanMetrics.ENABLED_NOOP_GC],
+        )
+        assertEquals(
+            true,
+            metricsFor(K2NativeCompilerArguments::class, listOf("-Xbinary=gc=concurrent_mark_and_sweep"))
+                .booleanMetrics[BooleanMetrics.ENABLED_CMS_GC],
+        )
+    }
+
+    @Test
+    fun unknownNativeGcIsNotReported() {
+        val metrics = metricsFor(K2NativeCompilerArguments::class, listOf("-Xbinary=gc=madeup"))
+        assertTrue(metrics.booleanMetrics.keys.none { it.name.endsWith("_GC") })
+    }
+
+    @Test
+    fun nativeSwiftExportIsReportedFromBinaryOptions() {
+        assertEquals(
+            true,
+            metricsFor(K2NativeCompilerArguments::class, listOf("-Xbinary=swiftExport=true"))
+                .booleanMetrics[BooleanMetrics.ENABLED_SWIFT_EXPORT],
+        )
+        assertNull(
+            metricsFor(K2NativeCompilerArguments::class, listOf("-Xbinary=swiftExport=false"))
+                .booleanMetrics[BooleanMetrics.ENABLED_SWIFT_EXPORT],
+        )
+        assertNull(
+            metricsFor(K2NativeCompilerArguments::class, emptyList())
+                .booleanMetrics[BooleanMetrics.ENABLED_SWIFT_EXPORT],
+        )
+    }
+
+    @Test
+    fun registryInitialisesAndEveryRuleNamesItsArguments() {
+        // Forces the object initialiser to run: a property reference whose field carries no @Argument annotation
+        // throws from 'cliArgument', and that happens outside 'runMetricMethodSafely', so it would fail the build.
+        assertTrue(TrackedCompilerArguments.ALL.isNotEmpty())
+        assertTrue(
+            TrackedCompilerArguments.ALL.all { it.cliArguments.isNotEmpty() },
+            "a tracked argument does not name any CLI argument",
+        )
+    }
+
+    private companion object {
+        /** Every concrete compiler arguments class a Kotlin compilation actually builds. */
+        val concreteArgumentsClasses = listOf(
+            K2JVMCompilerArguments::class,
+            K2JSCompilerArguments::class,
+            KotlinWasmCompilerArguments::class,
+            K2MetadataCompilerArguments::class,
+            K2NativeCompilerArguments::class,
+        )
+    }
 }

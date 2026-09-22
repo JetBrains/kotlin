@@ -238,8 +238,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             buildFusService.orNull?.reportFusMetrics {
                 CompileKotlinTaskMetrics.collectMetrics(
                     name,
-                    compilerOptions,
-                    separateKmpCompilation.get(),
                     firRunnerEnabled = (this as? KotlinCompile)?.useFirRunner?.get() == true,
                     executionPolicy = compilerExecutionStrategy.get(),
                     kmpJvmClasspathMetadataEnabled = kmpJvmCompile?.enableJvmClasspathMetadata?.get(),
