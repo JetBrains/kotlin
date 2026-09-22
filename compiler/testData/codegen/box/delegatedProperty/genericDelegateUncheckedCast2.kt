@@ -2,7 +2,7 @@
 // Test fail reason: ClassCastException is not thrown when using delegating properties with unchecked casts inside
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR, JVM_IR_SERIALIZE
+// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // FIR status: not supported in JVM
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
