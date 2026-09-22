@@ -210,7 +210,7 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
             ext.extra[IsCompanion].assertNotNull("CompanionBlockMember on companion extension 'unit'")
             // sanity-check it is in fact an extension: receiver is non-null and resolves to Vector
             assertTrue(ext.receiver != null, "companion extension must keep its receiver in the documentable")
-            assertEquals(GenericTypeConstructor(DRI("companions", "Vector"), emptyList()), ext.receiver?.type)
+            assertEquals(GenericTypeConstructor(DRI("companions", "Vector"), emptyList()), ext.receiver.type)
         }
     }
 
@@ -228,7 +228,7 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
                 .assertNotNull("top-level companion extension property 'UnitX'")
             ext.extra[IsCompanion].assertNotNull("CompanionBlockMember on companion extension 'UnitX'")
             assertTrue(ext.receiver != null, "companion extension property must keep its receiver")
-            assertEquals(GenericTypeConstructor(DRI("companions", "Vector"), emptyList()), ext.receiver?.type)
+            assertEquals(GenericTypeConstructor(DRI("companions", "Vector"), emptyList()), ext.receiver.type)
         }
     }
 

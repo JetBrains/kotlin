@@ -28,7 +28,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
             with((this / "types" / "HttpExceptionCallback").cast<DTypeAlias>()) {
                 name equals "HttpExceptionCallback"
                 assertTrue(type is GenericTypeConstructor)
-                (type as GenericTypeConstructor).projections counts 1
+                type.projections counts 1
                 underlyingType.values.first().driOrNull equals DRI("kotlin", "Function2")
             }
             with((this / "types" / "exception").cast<DFunction>()) {
@@ -37,10 +37,10 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 assertTrue(parameterType is TypeAliased)
                 with(parameterType) {
                     assertTrue(typeAlias is GenericTypeConstructor)
-                    (typeAlias as GenericTypeConstructor).projections counts 1
+                    typeAlias.projections counts 1
                     assertTrue(inner is FunctionalTypeConstructor)
-                    (inner as FunctionalTypeConstructor).dri equals DRI("kotlin", "Function2")
-                    (inner as FunctionalTypeConstructor).projections counts 3
+                    inner.dri equals DRI("kotlin", "Function2")
+                    inner.projections counts 3
                 }
             }
         }
@@ -55,7 +55,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
         ) {
             with((this / "types" / "CompletionHandler").cast<DTypeAlias>()) {
                 assertTrue(type is GenericTypeConstructor)
-                (type as GenericTypeConstructor).projections counts 0
+                type.projections counts 0
                 name equals "CompletionHandler"
                 underlyingType.values.first().driOrNull equals DRI("kotlin", "Function1")
             }
@@ -66,8 +66,8 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 with(parameterType) {
                     assertTrue(typeAlias is GenericTypeConstructor)
                     assertTrue(inner is FunctionalTypeConstructor)
-                    (inner as FunctionalTypeConstructor).dri equals DRI("kotlin", "Function1")
-                    (inner as FunctionalTypeConstructor).projections counts 2
+                    inner.dri equals DRI("kotlin", "Function1")
+                    inner.projections counts 2
                 }
             }
         }
@@ -82,7 +82,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
         ) {
             with((this / "types" / "CompletionHandler").cast<DTypeAlias>()) {
                 assertTrue(type is GenericTypeConstructor)
-                (type as GenericTypeConstructor).projections counts 0
+                type.projections counts 0
                 name equals "CompletionHandler"
                 underlyingType.values.first().driOrNull equals DRI("kotlin", "Function3")
             }
@@ -93,7 +93,6 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 with(parameterType) {
                     assertTrue(typeAlias is GenericTypeConstructor)
                     assertTrue(inner is FunctionalTypeConstructor)
-                    val inner = (inner as FunctionalTypeConstructor)
                     inner.dri equals DRI("kotlin", "Function3")
                     inner.projections counts 4
                     inner.contextParametersCount equals 2
@@ -114,7 +113,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
             with((this / "types" / "nF").cast<DProperty>()) {
                 assertTrue(type is FunctionalTypeConstructor)
                 val parameterType =
-                    ((type as FunctionalTypeConstructor).projections[0] as Invariance<*>).inner as GenericTypeConstructor
+                    (type.projections[0] as Invariance<*>).inner as GenericTypeConstructor
                 val annotation = parameterType.extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 assertEquals(
                     Annotations.Annotation(
@@ -137,7 +136,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
             with((this / "types" / "nF").cast<DProperty>()) {
                 assertTrue(type is FunctionalTypeConstructor)
                 val parameterType =
-                    ((type as FunctionalTypeConstructor).projections[0] as Invariance<*>).inner as GenericTypeConstructor
+                    (type.projections[0] as Invariance<*>).inner as GenericTypeConstructor
                 val annotation = parameterType.extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 assertEquals(
                     Annotations.Annotation(
@@ -160,7 +159,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
         ) {
             with((this / "types" / "nF").cast<DProperty>()) {
                 assertTrue(type is FunctionalTypeConstructor)
-                with(type as FunctionalTypeConstructor) {
+                with(type) {
                     projections counts 5
                     isExtensionFunction equals true
                     contextParametersCount equals 2

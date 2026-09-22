@@ -215,8 +215,9 @@ class JavaTest : BaseAbstractTest() {
                 with((module / "java" / "Foo").cast<DClass>()) {
                     val sups = listOf("Exception", "Cloneable")
                     assertTrue(
-                        sups.all { s -> supertypes.values.flatten().any { it.typeConstructor.dri.classNames == s } })
-                    "Foo must extend ${sups.joinToString(", ")}"
+                        sups.all { s -> supertypes.values.flatten().any { it.typeConstructor.dri.classNames == s } },
+                        "Foo must extend ${sups.joinToString(", ")}"
+                    )
                 }
             }
         }
@@ -334,7 +335,7 @@ class JavaTest : BaseAbstractTest() {
                 with((module / "java" / "DocumentClassFactoryRegistry").cast<DClass>()) {
                     functions.forEach {
                         (it.type as GenericTypeConstructor).dri.classNames equals "DocumentClassFactory"
-                        (((it.type as GenericTypeConstructor).projections[0] as Invariance<*>).inner as TypeParameter).dri.classNames equals "DocumentClassFactoryRegistry"
+                        ((it.type.projections[0] as Invariance<*>).inner as TypeParameter).dri.classNames equals "DocumentClassFactoryRegistry"
                     }
                 }
             }
