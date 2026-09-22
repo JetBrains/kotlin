@@ -108,12 +108,7 @@ sourceSets {
 }
 
 projectTests {
-    testData(project(":compiler").isolated, "testData/diagnostics")
-    testData(project(":compiler").isolated, "testData/codegen")
-    testData(project(":compiler").isolated, "testData/compileJavaAgainstKotlin")
-    testData(project(":compiler").isolated, "testData/debug")
-    testData(project(":compiler").isolated, "testData/ir")
-    testData(project(":compiler").isolated, "testData/klib")
+    testData(project(":compiler").isolated, "testData/diagnostics/metadataDiagnosticTests")
 
     withJvmStdlibAndReflect()
     withStdlibCommon()
@@ -123,14 +118,6 @@ projectTests {
     withScriptingPlugin()
     withJsRuntime()
     withStdlibWeb()
-
-    withMockJdkRuntime()
-    withMockJDKModifiedRuntime()
-    withMockJdkAnnotationsJar()
-    withThirdPartyAnnotations()
-    withThirdPartyJava8Annotations()
-    withThirdPartyJava9Annotations()
-    withThirdPartyJsr305()
 
     testTask(
         defineJDKEnvVariables = listOf(

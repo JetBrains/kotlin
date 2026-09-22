@@ -37,10 +37,11 @@ class LoweringCliJvmFacade(testServices: TestServices) : IrPreSerializationLower
         checkTestInfrastructure(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
             "LoweringCliJvmFacade expects Fir2IrCliBasedJvmOutputArtifact as input, but ${inputArtifact::class} was found"
         }
-        checkTestInfrastructure(inputArtifact.cliArtifact is JvmFir2IrPipelineArtifact) {
-            "LoweringCliJvmFacade expects JvmFir2IrPipelineArtifact as input, but ${inputArtifact.cliArtifact::class} was found"
+        val cliArtifact = inputArtifact.cliArtifact
+        checkTestInfrastructure(cliArtifact is JvmFir2IrPipelineArtifact) {
+            "LoweringCliJvmFacade expects JvmFir2IrPipelineArtifact as input, but ${cliArtifact::class} was found"
         }
-        val input = inputArtifact.cliArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
+        val input = cliArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
         val output = JvmLoweringsPipelinePhase.executePhase(input)
         return LoweredJvmCliBasedOutputArtifact(output)
     }

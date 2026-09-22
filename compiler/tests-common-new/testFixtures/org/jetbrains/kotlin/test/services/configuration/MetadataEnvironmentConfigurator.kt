@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.DependencyRelation.*
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
-import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 
 class MetadataEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val additionalServices: List<ServiceRegistrationData>

@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.clientserver.TestProxy
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ATTACH_DEBUGGER
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RESULT_OUTPUT_EXTENSION
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.ATTACH_DEBUGGER
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LOAD_METADATA_DIRECTLY_IN_REFLECTION
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.nameWithoutExtension
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
-import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
+import org.jetbrains.kotlin.test.services.jvm.compileKotlinToDiskAndGetOutputDir
 import org.jetbrains.kotlin.test.services.jvm.jvmBoxMainClassProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.fileContainsBoxMethod
@@ -57,7 +58,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(TestDumpDirectives, CodegenTestDirectives)
+        get() = listOf(TestDumpDirectives, CodegenTestDirectives, JvmCodegenDirectives)
 
     private var boxMethodFound = false
 

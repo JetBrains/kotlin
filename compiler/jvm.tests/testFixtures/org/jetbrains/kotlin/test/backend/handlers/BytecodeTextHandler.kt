@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_TEXT
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.TREAT_AS_ONE_FILE
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.CHECK_BYTECODE_TEXT
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.TREAT_AS_ONE_FILE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -27,7 +27,7 @@ class BytecodeTextHandler(testServices: TestServices, private val shouldEnableEx
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = listOf(JvmCodegenDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         checkArtifact(info)

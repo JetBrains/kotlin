@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.compileJavaFiles
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
+import org.jetbrains.kotlin.test.services.jvm.compileKotlinToDiskAndGetOutputDir
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -51,7 +51,7 @@ class JavaCompilerFacade(private val testServices: TestServices) {
     companion object {
         fun extractJavacOptions(module: TestModule, kotlinTarget: JvmTarget?, isJvmPreviewEnabled: Boolean): List<String> {
             return buildList {
-                addAll(module.directives[CodegenTestDirectives.JAVAC_OPTIONS])
+                addAll(module.directives[JvmCodegenDirectives.JAVAC_OPTIONS])
                 if (kotlinTarget != null) {
                     if (isJvmPreviewEnabled) {
                         add("--release")

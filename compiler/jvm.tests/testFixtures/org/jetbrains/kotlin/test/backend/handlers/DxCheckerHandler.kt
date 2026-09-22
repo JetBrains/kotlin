@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.D8Checker
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.IGNORE_DEXING
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.RUN_DEX_CHECKER
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = listOf(JvmCodegenDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         checkArtifact(info)

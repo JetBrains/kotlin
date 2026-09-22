@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.InlineTestUtil
 import org.jetbrains.kotlin.codegen.getClassFiles
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.NO_CHECK_LAMBDA_INLINING
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_INLINE_CHECK_IN
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.NO_CHECK_LAMBDA_INLINING
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.SKIP_INLINE_CHECK_IN
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 
 class BytecodeInliningHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = listOf(JvmCodegenDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {}
 

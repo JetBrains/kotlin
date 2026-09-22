@@ -71,6 +71,7 @@ dependencies {
     testFixturesApi(project(":plugins:parcelize:parcelize-compiler:parcelize.cli"))
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))

@@ -3,7 +3,6 @@ import TestCompilePaths.KOTLIN_NATIVE_IMAGE_DIST_PATH
 import TestCompilePaths.KOTLIN_NATIVE_IMAGE_PLUGINS_CLASSPATH
 import TestCompilePaths.KOTLIN_NATIVE_IMAGE_PLUGINS_RUNTIME
 import TestCompilePaths.KOTLIN_NATIVE_IMAGE_RESOURCES_PATH
-import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.internal.os.OperatingSystem
 import java.util.regex.Pattern.quote
@@ -63,6 +62,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(libs.junit.jupiter.engine)

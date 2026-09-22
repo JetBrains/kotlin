@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.configureDumpHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_JVM_FLAGS
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.CHECK_JVM_FLAGS
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
 
 abstract class AbstractWriteFlagsTest : AbstractKotlinCompilerJvmTest() {

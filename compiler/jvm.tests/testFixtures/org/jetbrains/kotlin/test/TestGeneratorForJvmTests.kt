@@ -10,22 +10,9 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
-import org.jetbrains.kotlin.test.runners.AbstractFirBlackBoxCodegenTestSpec
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticTestSpec
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest
-import org.jetbrains.kotlin.test.runners.AbstractFirLoadCompiledJvmWithAnnotationsInMetadataKotlinTest
-import org.jetbrains.kotlin.test.runners.AbstractFirLoadK2CompiledJvmKotlinTest
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTestSpec
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiForeignAnnotationsCompiledJavaTest
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiForeignAnnotationsCompiledJavaWithPsiClassReadingTest
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiForeignAnnotationsSourceJavaTest
-import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
-import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiTest
-import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiWithContextSensitiveEnabledTest
+import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
+import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrSourceRangesTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsiJvmIrSourceRangesTest
@@ -310,6 +297,52 @@ fun main(args: Array<String>) {
                     relativeRootPath = "codegen/box",
                     excludeDirs = listOf("helpers", "templates") + detectDirsWithTestsMapFileOnly("codegen/box"),
                 )
+            }
+        }
+
+        testGroup(testRoot, testDataRoot = "compiler/testData/codegen") {
+            testClass<AbstractDirectivesValidatorTest> {
+                model("box")
+                model("boxJvm")
+            }
+
+            testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes> {
+                val excludedScriptDirs = listOf("script")
+                model("box", excludeDirs = excludedScriptDirs)
+                model("boxJvm", excludeDirs = excludedScriptDirs)
+            }
+        }
+
+        testGroup(testRoot, testDataRoot = "compiler/testData") {
+            testClass<AbstractCompileJavaAgainstKotlinTest> {
+                model("compileJavaAgainstKotlin")
+            }
+
+            // ------------- Inline scopes tests duplication -------------
+
+            testClass<AbstractFirBytecodeTextTestWithInlineScopes> {
+                model("codegen/bytecodeText")
+            }
+
+            testClass<AbstractFirSteppingTestWithInlineScopes> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractFirLocalVariableTestWithInlineScopes> {
+                // We exclude the 'inlineScopes/newFormatToOld' directory from tests that have inline scopes enabled
+                // by default, since we only want to test the scenario where code with inline scopes is inlined by the
+                // old inliner with $iv suffixes.
+                val inlineScopesNewFormatToOld = listOf("inlineScopes/newFormatToOld")
+
+                model("debug/localVariables", excludeDirs = inlineScopesNewFormatToOld)
+            }
+
+            testClass<AbstractFirBlackBoxInlineCodegenTestWithInlineScopes> {
+                model("codegen/boxInline", excludeDirs = listOf("multiplatform/k2"))
+            }
+
+            this.testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes>("FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes") {
+                model("codegen/boxModernJdk")
             }
         }
     }

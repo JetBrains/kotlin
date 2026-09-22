@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
 import org.jetbrains.kotlin.test.services.jvm.JdkKindBoxTestChecker
 import org.jetbrains.kotlin.test.services.jvm.PureJvmCodegenBoxTestChecker
-import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.JvmMainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJvm
 
 @MustRunOnChangesInJvm
@@ -52,7 +52,7 @@ abstract class AbstractJvmBlackBoxCodegenTestBase(val parser: FirParser) : Abstr
         configureDumpHandlersForCodegenTest()
         configureBlackBoxTestSettings()
 
-        useAdditionalSourceProviders(::MainFunctionForBlackBoxTestsSourceProvider)
+        useAdditionalSourceProviders(::JvmMainFunctionForBlackBoxTestsSourceProvider)
         useFailureSuppressors(::BlackBoxCodegenSuppressor)
 
         configureJvmBoxCodegenSettings(includeAllDumpHandlers = true)

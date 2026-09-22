@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.test.backend.handlers
 import com.intellij.openapi.util.text.Strings
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_JVM_FLAGS
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.CHECK_JVM_FLAGS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.JvmClassFileArtifact
@@ -44,7 +44,7 @@ import java.util.*
  */
 class JvmWriteFlagsHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = listOf(JvmCodegenDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         require(info is JvmClassFileArtifact)

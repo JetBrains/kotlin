@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.codegen.CommonSMAPTestUtil
 import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.codegen.inline.GENERATE_SMAP
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.NO_SMAP_DUMP
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_SMAP_DUMPS
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.DUMP_SMAP
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.NO_SMAP_DUMP
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.SEPARATE_SMAP_DUMPS
 import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -30,7 +30,7 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = listOf(JvmCodegenDirectives)
 
     private val dumper = MultiModuleInfoDumper(moduleHeaderTemplate = null)
 

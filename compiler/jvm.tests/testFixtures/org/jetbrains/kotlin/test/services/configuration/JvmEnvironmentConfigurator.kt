@@ -64,8 +64,7 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
-import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
+import org.jetbrains.kotlin.test.services.jvm.compileKotlinToDiskAndGetOutputDir
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -443,3 +442,11 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 class AdditionalClassPathForJavaCompilationOrAnalysis(val classPath: List<String>) : TestService
 
 val TestServices.additionalClassPathForJavaCompilationOrAnalysis by TestServices.nullableTestServiceAccessor<AdditionalClassPathForJavaCompilationOrAnalysis>()
+
+class JvmEnvironmentConfiguratorForSeparateKmpCompilation(
+    testServices: TestServices
+) : DelegatingEnvironmentConfiguratorForSeparateKmpCompilation(testServices, ::JvmEnvironmentConfigurator) {
+    override fun shouldApply(module: TestModule): Boolean {
+        return module.isLeafModuleInMppGraph(testServices)
+    }
+}

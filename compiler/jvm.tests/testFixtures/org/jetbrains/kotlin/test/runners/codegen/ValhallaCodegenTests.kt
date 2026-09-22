@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.VALHALLA_JVM_TARGET
 import org.jetbrains.kotlin.test.configuration.configureValhallaDefaultDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_VALHALLA
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.IGNORE_VALHALLA
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.FULL_JDK
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET

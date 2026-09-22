@@ -17,6 +17,7 @@ dependencies {
     testFixturesImplementation(project(":compiler:psi:psi-api"))
     testFixturesApi(testFixtures(project(":compiler:psi:psi-api")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesImplementation(project(":analysis:analysis-api-platform-interface"))
     testFixturesImplementation(project(":analysis:analysis-api"))

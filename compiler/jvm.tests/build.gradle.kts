@@ -6,6 +6,7 @@ plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
+    id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
     id("test-inputs-check")
     id("test-coverage-convention")
@@ -18,6 +19,9 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
+    testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
+    testFixturesImplementation(project(":compiler:backend.jvm.lower"))
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -29,8 +33,12 @@ dependencies {
 
     testRuntimeOnly(intellijCore())
 
+    testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(libs.intellij.fastutil)
+
+    thirdPartyAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("io.vertx", "vertx-codegen"))
 }
 
 kotlin {
@@ -69,9 +77,11 @@ projectTests {
     testData(project(":compiler").isolated, "testData/checkLocalVariablesTable")
     testData(project(":compiler").isolated, "testData/writeSignature")
     testData(project(":compiler").isolated, "testData/writeFlags")
-    testData(project(":compiler:tests-spec").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/compileJavaAgainstKotlin")
+    testData(project(":compiler:tests-spec").isolated, "testData")
 
-    val environment = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
+    val environment = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0, JdkMajorVersion.JDK_25_0)
     testTask(
         defineJDKEnvVariables = environment,
         maxHeapSize = testMaxHeapSizeLarge,
@@ -115,6 +125,8 @@ projectTests {
     withThirdPartyAnnotations()
     withThirdPartyJsr305()
     withThirdPartyJava8Annotations()
+    withMockJDKModifiedRuntime()
+    withThirdPartyJava9Annotations()
 }
 
 testsJarToBeUsedAlongWithFixtures()

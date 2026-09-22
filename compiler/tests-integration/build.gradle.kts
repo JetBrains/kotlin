@@ -31,6 +31,7 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:mp-parsing2fir")))

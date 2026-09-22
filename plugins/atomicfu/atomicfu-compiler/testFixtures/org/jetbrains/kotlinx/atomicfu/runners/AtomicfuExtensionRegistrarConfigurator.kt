@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.setupDefaultDirectivesForIrDumps
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
@@ -37,7 +37,7 @@ internal fun TestConfigurationBuilder.configureForKotlinxAtomicfu() {
     )
 
     defaultDirectives {
-        +CodegenTestDirectives.CHECK_BYTECODE_LISTING
+        +JvmCodegenDirectives.CHECK_BYTECODE_LISTING
     }
     setupDefaultDirectivesForIrDumps()
 }
