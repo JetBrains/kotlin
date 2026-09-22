@@ -167,7 +167,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
-    testFixturesImplementation(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(platform(libs.junit.bom))

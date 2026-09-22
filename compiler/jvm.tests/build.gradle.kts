@@ -16,7 +16,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
 
@@ -48,6 +47,7 @@ optInToObsoleteDescriptorBasedAPI()
 sourceSets {
     "main" { none() }
     "testFixtures" { projectDefault() }
+    "test" { projectDefault() }
 }
 
 fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {

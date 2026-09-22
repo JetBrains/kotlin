@@ -122,6 +122,7 @@ projectTests {
     withAnnotations()
     withScriptingPlugin()
     withJsRuntime()
+    withStdlibWeb()
 
     withMockJdkRuntime()
     withMockJDKModifiedRuntime()

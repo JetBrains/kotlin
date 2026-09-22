@@ -21,7 +21,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(project(":compiler:fir:plugin-utils"))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))

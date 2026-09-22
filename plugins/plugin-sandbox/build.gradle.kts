@@ -49,7 +49,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(project(":compiler:fir:plugin-utils"))
     testFixturesImplementation(testFixtures(project(":tools:kotlinp-jvm")))

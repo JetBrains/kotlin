@@ -57,7 +57,6 @@ projectTests {
         )
     ) {}
     testGenerator("org.jetbrains.kotlin.java.direct.TestGeneratorKt", generateTestsInBuildDirectory = true)
-    testData(project(":compiler:fir:analysis-tests").isolated, "testData")
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/loadJava")

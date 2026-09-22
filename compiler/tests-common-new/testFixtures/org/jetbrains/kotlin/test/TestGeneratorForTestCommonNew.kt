@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.test
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.runners.AbstractDirectivesValidatorTest
+import org.jetbrains.kotlin.test.runners.AbstractMetadataDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun main(args: Array<String>) {
     val testsRoot = args[0]
@@ -61,6 +63,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes>("FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes") {
                 model("codegen/boxModernJdk")
+            }
+        }
+
+        testGroup(testsRoot, testDataRoot = "compiler/testData") {
+            testClass<AbstractMetadataDiagnosticTest> {
+                model("diagnostics/metadataDiagnosticTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
         }
     }
