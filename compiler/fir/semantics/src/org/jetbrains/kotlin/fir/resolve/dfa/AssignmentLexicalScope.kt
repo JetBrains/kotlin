@@ -5,66 +5,23 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.assignmentKeyFactory
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.Name
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
-sealed class AssignmentKey {
-    data class Variable(val fir: FirVariableAssignment) : AssignmentKey()
-    data class Augmented(val fir: FirAugmentedAssignment) : AssignmentKey()
+interface AssignmentKey {
+    val isAugmentedAssignment: Boolean
 }
 
-sealed class LexicalScopeKey {
-    data class Declaration(val symbol: FirBasedSymbol<*>) : LexicalScopeKey() {
-        override fun toString(): String {
-            return buildString {
-                append("LexicalScope.Declaration(")
-                append(symbol)
-                val source = symbol.fir.source
-                if (source != null) {
-                    append(' ')
-                    append(source.getElementTextInContextForDebug())
-                }
-                append(")")
-            }
-        }
-    }
-
-    data class Call(val fir: FirStatement) : LexicalScopeKey() {
-        override fun toString(): String {
-            return "LexicalScope.Call(${fir.source?.getElementTextInContextForDebug() ?: fir.render()})"
-        }
-    }
-
-    data class Loop(val fir: FirLoop) : LexicalScopeKey() {
-        override fun toString(): String {
-            return "LexicalScope.Loop(${fir.source?.getElementTextInContextForDebug() ?: fir.condition.render()})"
-        }
-    }
-
-    data class Branch(val fir: FirWhenBranch) : LexicalScopeKey() {
-        override fun toString(): String {
-            return "LexicalScope.Branch(${fir.source?.getElementTextInContextForDebug() ?: fir.condition.render()})"
-        }
-    }
-
-    data class Catch(val fir: FirCatch) : LexicalScopeKey() {
-        override fun toString(): String {
-            return "LexicalScope.Catch(${fir.source?.getElementTextInContextForDebug() ?: fir.parameter.render()})"
-        }
-    }
-}
+interface LexicalScopeKey
 
 class AssignmentLexicalScope(
     val key: LexicalScopeKey,
@@ -184,15 +141,17 @@ fun AssignmentLexicalScope.findScope(key: LexicalScopeKey): AssignmentLexicalSco
     return null
 }
 
+context(holder: SessionHolder)
 fun buildAssignmentLexicalScope(declaration: FirDeclaration): AssignmentLexicalScope {
-    val builder = AssignmentLexicalScope.Builder.start(key = LexicalScopeKey.Declaration(declaration.symbol))
-    BuilderVisitor(builder).visitElement(declaration)
+    val builder = AssignmentLexicalScope.Builder.start(key = assignmentKeyFactory.createLexicalScopeKey(declaration))
+    BuilderVisitor(holder.session, builder).visitElement(declaration)
     return builder.build()
 }
 
 private class BuilderVisitor(
+    override val session: FirSession,
     var builder: AssignmentLexicalScope.Builder,
-) : FirDefaultVisitorVoid() {
+) : FirDefaultVisitorVoid(), SessionHolder {
     private inline fun withFork(key: LexicalScopeKey, block: () -> Unit): AssignmentLexicalScope.Builder {
         val parent = builder
         val child = parent.child(key)
@@ -221,7 +180,7 @@ private class BuilderVisitor(
         visitElement(variableAssignment)
         if (variableAssignment.explicitReceiver != null) return
         val name = (variableAssignment.calleeReference as? FirNamedReference)?.name ?: return
-        builder.add(name, AssignmentKey.Variable(variableAssignment))
+        builder.add(name, assignmentKeyFactory.createAssignmentKey(variableAssignment))
     }
 
     override fun visitAugmentedAssignment(augmentedAssignment: FirAugmentedAssignment) {
@@ -229,7 +188,7 @@ private class BuilderVisitor(
         val lhs = augmentedAssignment.leftArgument as? FirQualifiedAccessExpression ?: return
         if (lhs.explicitReceiver != null) return
         val name = (lhs.calleeReference as? FirNamedReference)?.name ?: return
-        builder.add(name, AssignmentKey.Augmented(augmentedAssignment))
+        builder.add(name, assignmentKeyFactory.createAssignmentKey(augmentedAssignment))
     }
 
     // Lexical Declarations
@@ -246,12 +205,21 @@ private class BuilderVisitor(
         visitLexicalDeclaration(namedFunction)
     }
 
+    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+        if (propertyAccessor is FirDefaultPropertyAccessor) return
+        visitLexicalDeclaration(propertyAccessor)
+    }
+
+    override fun visitConstructor(constructor: FirConstructor) {
+        visitLexicalDeclaration(constructor)
+    }
+
     override fun visitClass(klass: FirClass) {
         visitLexicalDeclaration(klass)
     }
 
     private fun visitLexicalDeclaration(declaration: FirDeclaration) {
-        withFork(key = LexicalScopeKey.Declaration(declaration.symbol)) {
+        withFork(key = assignmentKeyFactory.createLexicalScopeKey(declaration)) {
             declaration.acceptChildren(this)
         }
     }
@@ -280,7 +248,7 @@ private class BuilderVisitor(
     override fun visitWhenExpression(whenExpression: FirWhenExpression) {
         whenExpression.subjectVariable?.accept(this)
         for (branch in whenExpression.branches) {
-            withFork(key = LexicalScopeKey.Branch(branch)) {
+            withFork(key = assignmentKeyFactory.createLexicalScopeKey(branch)) {
                 branch.accept(this)
             }
         }
@@ -291,7 +259,7 @@ private class BuilderVisitor(
     override fun visitTryExpression(tryExpression: FirTryExpression) {
         tryExpression.tryBlock.accept(this)
         for (catch in tryExpression.catches) {
-            withFork(key = LexicalScopeKey.Catch(catch)) {
+            withFork(key = assignmentKeyFactory.createLexicalScopeKey(catch)) {
                 catch.accept(this)
             }
         }
@@ -301,7 +269,7 @@ private class BuilderVisitor(
     // Loops
 
     override fun visitLoop(loop: FirLoop) {
-        val builder = withFork(key = LexicalScopeKey.Loop(loop)) {
+        val builder = withFork(key = assignmentKeyFactory.createLexicalScopeKey(loop)) {
             loop.acceptChildren(this)
         }
         // A loop's children must include the inside of the loop.
@@ -343,10 +311,4 @@ private class BuilderVisitor(
     override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference) {
         replExpressionReference.expressionRef.value.accept(this)
     }
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun <K, V> buildPersistentMap(builderAction: PersistentMap.Builder<K, V>.() -> Unit): PersistentMap<K, V> {
-    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return persistentMapOf<K, V>().builder().apply(builderAction).build()
 }

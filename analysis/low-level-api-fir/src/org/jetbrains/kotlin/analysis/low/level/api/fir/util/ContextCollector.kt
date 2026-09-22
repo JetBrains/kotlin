@@ -344,7 +344,7 @@ private class ContextCollectorVisitor(
             for (realVariable in realVariables) {
                 val typeStatement = flow.getTypeStatement(realVariable) ?: continue
 
-                val stability = context(bodyHolder, context.dataFlowAnalyzerContext) {
+                val stability = context(bodyHolder) {
                     realVariable.computeEffectiveStability(flow, typeStatement.upperTypes)
                 }
                 if (stability != SmartcastStability.STABLE_VALUE && stability != SmartcastStability.CAPTURED_VARIABLE) {
@@ -400,7 +400,7 @@ private class ContextCollectorVisitor(
 
     @OptIn(CfgInternals::class)
     private fun computeExpressionStability(fir: FirExpression, flow: Flow): SmartcastStability? {
-        return context(bodyHolder, context.dataFlowAnalyzerContext) {
+        return context(bodyHolder) {
             val realVariable = flow.getVariable(fir) as? RealVariable ?: return null
             val targetTypes = flow.getTypeStatement(realVariable)?.upperTypes
             realVariable.computeEffectiveStability(flow, targetTypes)
