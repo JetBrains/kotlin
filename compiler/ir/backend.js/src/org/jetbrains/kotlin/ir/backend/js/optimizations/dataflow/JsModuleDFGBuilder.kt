@@ -11,14 +11,26 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-/** Linked-program DFG: analyzed [executionUnits], their [modules], and the shared [symbolTable]. */
+/**
+ * A program-wide DFG snapshot over the linked IR [modules].
+ *
+ * Every function body and static field initializer is represented in [executionUnits]. All units
+ * use [symbolTable], so references to the same IR declaration share an identity across modules.
+ */
 class JsModuleDFG(
     val modules: Iterable<IrModuleFragment>,
     val executionUnits: MutableList<JsDataFlowIR.ExecutionUnit>,
     val symbolTable: JsDataFlowIR.SymbolTable,
 )
 
-/** Populates and seals a [JsDataFlowIR.SymbolTable], then builds every executable IR body. */
+/**
+ * Builds a [JsModuleDFG] in linked-program scope.
+ *
+ * The builder first pre-registers bodied callables and classes from every module. It then builds
+ * execution units for function and constructor bodies and for static field initializers, allowing
+ * any additional referenced identities to be interned along the way. The symbol table is sealed
+ * only after all units have been built.
+ */
 internal class JsModuleDFGBuilder(
     val context: JsIrBackendContext,
     val irModules: Iterable<IrModuleFragment>,
@@ -43,7 +55,7 @@ internal class JsModuleDFGBuilder(
                 } else {
                     analyze(declaration)
                 }
-                // Lambdas and local classes nested in the body get their own DFG functions.
+                // Continue traversal because nested declarations are separate execution units.
                 declaration.acceptChildrenVoid(this)
             }
 
@@ -83,9 +95,11 @@ internal class JsModuleDFGBuilder(
 }
 
 /**
- * Walks every function and static field initializer in [modules] and returns one [JsModuleDFG].
+ * Creates the shared data-flow snapshot consumed by whole-program JS optimizations.
  *
- * The result is a snapshot of the IR at build time.
+ * The result reflects [modules] at build time and is not updated automatically when a consumer
+ * mutates the IR. A later graph consumer must therefore receive an updated graph or only inspect
+ * portions that remain valid.
  */
 fun buildJsModuleDFG(
     context: JsIrBackendContext,

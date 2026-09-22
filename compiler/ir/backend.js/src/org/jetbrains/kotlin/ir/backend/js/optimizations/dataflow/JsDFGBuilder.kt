@@ -23,6 +23,13 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 private fun IrTypeOperator.isCast() =
     this == IrTypeOperator.CAST || this == IrTypeOperator.IMPLICIT_CAST || this == IrTypeOperator.SAFE_CAST
 
+/**
+ * Enumerates the possible value-producing expressions of a compound IR expression.
+ *
+ * [ElementFinderVisitor] records the non-structural results of returnable blocks and suspendable
+ * expressions before graph construction. This extractor then recursively removes those
+ * containers, transparent casts, and statement-only expressions from value flow.
+ */
 private class ExpressionValuesExtractor(context: JsIrBackendContext) {
     val returnableBlockValues = mutableMapOf<IrReturnableBlock, MutableList<IrExpression>>()
     val suspendableExpressionValues = mutableMapOf<IrSuspendableExpression, MutableList<IrSuspensionPoint>>()
@@ -57,7 +64,7 @@ private class ExpressionValuesExtractor(context: JsIrBackendContext) {
 
             is IrTypeOperatorCall -> {
                 if (expression.operator.isCast()) {
-                    // A pure cast is transparent: its value is the argument's value.
+                    // A pure cast changes only the static type.
                     forEachValue(expression.argument, block)
                 } else {
                     block(expression)
@@ -78,18 +85,17 @@ private class ExpressionValuesExtractor(context: JsIrBackendContext) {
 
             else -> {
                 if (expression.type.isUnit() || expression.type.isNothing()) {
-                    // Side-effecting statements with unit/nothing result — ignore as values.
+                    // The side effect is visited separately; Unit and Nothing add no value flow.
                     return
                 }
-                // Unrecognized JS IR shapes become values too; toNode() records their operands
-                // as escapes.
+                // Preserve an unrecognized value so graph construction can escape its operands.
                 block(expression)
             }
         }
     }
 }
 
-/** Resolves the concrete callee for a static (non-virtual) call site. */
+/** Resolves a direct call, including a super-qualified call, to the declaration that executes. */
 private val IrCall.actualCallee: IrSimpleFunction
     get() {
         val callee = symbol.owner
@@ -99,7 +105,17 @@ private val IrCall.actualCallee: IrSimpleFunction
         return (overridden ?: callee).resolveDfgTarget()
     }
 
-/** Builds a sea-of-nodes body for one IR function or static field initializer. */
+/**
+ * Builds one [JsDataFlowIR.ExecutionUnit] from an IR function or static field initializer.
+ *
+ * Construction has two stages. [ElementFinderVisitor] first records possible expression values,
+ * reaching definitions, loop nesting, exits, and escapes. Graph construction then creates nodes,
+ * places each node in the shallowest scope containing its inputs, and materializes the collected
+ * return, throw, field-write, and escape flows.
+ *
+ * The builder retains all intermediate state and is therefore single-use: create a new instance
+ * for every function or field initializer.
+ */
 internal class JsBodyDFGBuilder(
     private val context: JsIrBackendContext,
     private val symbolTable: JsDataFlowIR.SymbolTable,
@@ -116,6 +132,7 @@ internal class JsBodyDFGBuilder(
     private val expressionsScopes = mutableMapOf<IrExpression, JsDataFlowIR.Node.Scope>()
     private val scopes = mutableMapOf<IrLoop, JsDataFlowIR.Node.Scope>()
 
+    /** Builds the execution unit for [irFunction], including its return-value merge. */
     fun buildFunction(irFunction: IrFunction): JsDataFlowIR.Function {
         val body = requireNotNull(irFunction.body) {
             "No body for ${irFunction.render()}"
@@ -138,6 +155,10 @@ internal class JsBodyDFGBuilder(
         )
     }
 
+    /**
+     * Builds the execution unit for a static [irField] initializer and records its result as a
+     * write to the field, rather than as a function return.
+     */
     fun buildInitializer(irField: IrField): JsDataFlowIR.FieldInitializer {
         val expression = requireNotNull(irField.initializer) {
             "No initializer for ${irField.render()}"
@@ -173,6 +194,7 @@ internal class JsBodyDFGBuilder(
         return scope
     }
 
+    /** Creates parameter, scope, expression, and local-variable nodes discovered by the prepass. */
     private fun prepareBody(parameters: List<IrValueParameter>) {
         parameters.forEachIndexed { index, parameter ->
             templateParameters[parameter] = Scoped(JsDataFlowIR.Node.Parameter(index), rootScope)
@@ -199,6 +221,10 @@ internal class JsBodyDFGBuilder(
         visitor.expressions.forEach { getNode(it.key) }
     }
 
+    /**
+     * Completes deferred value merges and adds the execution unit's throws and conservative
+     * escapes before exposing the finished body.
+     */
     private fun finishBody(): JsDataFlowIR.Body {
         val throwableIrClass = context.irBuiltIns.throwableClass.owner
         val throws = JsDataFlowIR.Node.Variable(
@@ -233,8 +259,11 @@ internal class JsBodyDFGBuilder(
     private fun IrExpression.toValueNode(): JsDataFlowIR.Node = getNode(this).value
 
     /**
-     * The observed type of call/read result: the declared [returnType] unless inline-class
-     * boxing makes the value's actual representation ([actualType]) the one that matters.
+     * Maps a call or read result to the type of the value visible at that use site.
+     *
+     * Usually this is [actualType]. When inline-class boxing or unboxing separates the declared
+     * [returnType] from that representation, the mapped class must describe the representation
+     * that can actually flow through the graph.
      */
     private fun mapReturnType(actualType: IrType, returnType: IrType): JsDataFlowIR.Type {
         val wrapperInlinedClass = context.inlineClassesUtils.getInlinedClass(returnType)
@@ -401,7 +430,7 @@ internal class JsBodyDFGBuilder(
             )
 
         is IrFunctionExpression ->
-            // Captures are routed into the escape OpaqueValue by [ElementFinderVisitor].
+            // The prepass routes captured inputs to an OpaqueValue escape.
             JsDataFlowIR.Node.Const(symbolTable.mapType(expression.type))
 
         is IrConstantArray ->
@@ -411,7 +440,7 @@ internal class JsBodyDFGBuilder(
             JsDataFlowIR.Node.OpaqueValue(expression.valueArguments.map { it.toValueNode() })
 
         else -> {
-            // Unrecognized IR: whatever feeds it escapes the analysis.
+            // Preserve soundness for unrecognized IR by escaping every expression operand.
             val operands = mutableListOf<IrExpression>()
             expression.acceptChildrenVoid(object : IrVisitorVoid() {
                 override fun visitElement(element: IrElement) {
@@ -427,12 +456,12 @@ internal class JsBodyDFGBuilder(
     }
 
     /**
-     * Arguments index-aligned with the callee's [JsDataFlowIR.FunctionSymbol.parameters] —
-     * the invariant argument-index propagation relies on, so an unfilled slot (a receiver
-     * hole on a constructor call, an omitted default) must not shift later indices. A hole
-     * becomes an inert [JsDataFlowIR.Node.Const] of dynamic type: no tracked value can flow
-     * through it, and it claims nothing about the runtime value (JS passes `undefined`; a
-     * default materializes inside the callee's own body, where it is analyzed).
+     * Returns arguments index-aligned with [JsDataFlowIR.FunctionSymbol.parameters].
+     *
+     * An absent argument, including a constructor receiver hole or an omitted default, becomes
+     * an inert dynamic [JsDataFlowIR.Node.Const]. The placeholder prevents later arguments from
+     * shifting slots without claiming that a tracked value reaches the callee; a default value is
+     * modeled where it materializes in the callee body.
      */
     private fun IrFunctionAccessExpression.alignedArgumentValues(): List<JsDataFlowIR.Node> =
         arguments.map { arg ->
@@ -440,6 +469,13 @@ internal class JsBodyDFGBuilder(
         }
 }
 
+/**
+ * Collects the structural and value-flow facts needed before graph nodes can be placed.
+ *
+ * The visitor records loops, relevant expressions, reaching definitions, return and throw
+ * values, and flows that cross the current execution-unit boundary. It does not analyze nested
+ * declarations as part of the enclosing unit; it only records captured inputs as escapes.
+ */
 private class ElementFinderVisitor(
     private val expressionValuesExtractor: ExpressionValuesExtractor,
 ) : IrVisitorVoid() {
@@ -449,10 +485,10 @@ private class ElementFinderVisitor(
     val returnValues = mutableListOf<IrExpression>()
     val thrownValues = mutableListOf<IrExpression>()
 
-    /** Values of this function read by nested functions or local classes. */
+    /** Values owned by the current execution unit and read by a nested declaration. */
     val escapedValues = mutableSetOf<IrValueDeclaration>()
 
-    /** Values assigned to declarations this function does not own (captured outer variables). */
+    /** Values assigned to declarations owned outside the current execution unit. */
     val escapedExpressions = mutableListOf<IrExpression>()
 
     private val suspendableExpressionStack = mutableListOf<IrSuspendableExpression>()
@@ -461,8 +497,8 @@ private class ElementFinderVisitor(
         get() = loopStack.peek()
 
     /**
-     * Collects every value the skipped declaration reads; the ones owned by the enclosing
-     * function become escapes (its own locals are filtered out by [JsBodyDFGBuilder]).
+     * Finds inputs captured by a nested declaration without treating that declaration's own
+     * expressions as part of the enclosing execution unit.
      */
     private val nestedDeclarationVisitor = object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
@@ -479,13 +515,12 @@ private class ElementFinderVisitor(
     }
 
     override fun visitFunction(declaration: IrFunction) {
-        // Nested functions are built as their own DFG functions, but what they capture
-        // from here escapes this function's graph.
+        // The module builder analyzes this function separately; only its captures affect this unit.
         declaration.acceptChildrenVoid(nestedDeclarationVisitor)
     }
 
     override fun visitClass(declaration: IrClass) {
-        // Local classes are built independently; same capture rule as nested functions.
+        // Local classes also have independent bodies whose captures escape this unit.
         declaration.acceptChildrenVoid(nestedDeclarationVisitor)
     }
 
@@ -562,8 +597,7 @@ private class ElementFinderVisitor(
         if (target in variableValues.elementData) {
             assignValue(target, expression.value)
         } else {
-            // Assignment to a value this function does not own (a captured outer variable
-            // or a parameter): the assigned value escapes this function's graph.
+            // The graph cannot follow a value written into storage owned by another unit.
             escapedExpressions += expression.value
         }
     }

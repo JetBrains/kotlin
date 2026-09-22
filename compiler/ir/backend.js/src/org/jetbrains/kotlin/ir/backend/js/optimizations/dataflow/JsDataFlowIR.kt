@@ -23,29 +23,44 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 /**
- * Sea-of-nodes data-flow IR for one linked JS program.
+ * An identity-based data-flow graph for a fully linked JS program.
  *
- * A [Function] is a [FunctionSymbol] plus a [Body]: a tree of [Node.Scope] regions
- * mirroring loop nesting, in which each value is a [Node] referenced directly by its consumers.
- * The [Node] subtypes document what the graph represents.
+ * A [Node] represents either a runtime value or an operation that consumes runtime values.
+ * References from a consumer to its inputs are the graph's edges; there is no separate edge
+ * type. Nodes are grouped into [Node.Scope]s to preserve loop nesting, but the graph does not
+ * otherwise model control flow.
  *
- * The contract every builder and consumer relies on: each flow of a value into a consumer is
- * recorded as a use, and a flow the graph cannot model precisely is recorded as an escape via
- * [Node.OpaqueValue] — never silently dropped. Analyses that prove "nothing observes X" are
- * sound only under this rule: a lost edge means optimizing based on a use that was never seen.
+ * Each executable body is represented by an [ExecutionUnit]. A [Function] combines the
+ * identity and signature in [FunctionSymbol] with its analyzed [Body], while a
+ * [FieldInitializer] represents evaluation of a static field initializer without pretending
+ * that the initializer is callable.
+ *
+ * Builders must account for every flow of a tracked value. When an operation cannot be modeled
+ * precisely, its inputs flow to [Node.OpaqueValue] and therefore escape the graph. Consumers may
+ * only conclude that a value is unobserved when it reaches neither a modeled use nor such an
+ * escape.
  */
 object JsDataFlowIR {
 
-    /** A DFG value type: either JS [Dynamic] or a Kotlin [ClassType]. */
+    /** Coarse runtime type information used to distinguish values during analysis. */
     sealed interface Type {
-        /** JS `dynamic`, or a type with no [IrClass] (unknown / erased). */
+        /** A JS `dynamic` value or a value whose Kotlin class is unknown or erased. */
         object Dynamic : Type
 
-        /** Kotlin class type. Identity is [irClass]. */
+        /** A value tracked under the Kotlin class identified by [irClass]. */
         class ClassType(val irClass: IrClass) : Type
     }
 
-    /** A function or constructor in the DFG, with parameter and return types. */
+    /**
+     * The interned identity and signature of an [IrSimpleFunction] or [IrConstructor].
+     *
+     * A symbol exists independently of whether the callable has an analyzed body, allowing call
+     * nodes to refer to external and bodiless declarations. For a callable with a body, [Function]
+     * contains the corresponding execution unit. Constructor symbols describe constructor
+     * invocation; the object produced by a constructor call is represented by [Node.NewInstance].
+     *
+     * [parameters] follows the IR parameter order used by call-node argument lists.
+     */
     class FunctionSymbol(
         val irFunction: IrFunction,
         val isExported: Boolean,
@@ -63,35 +78,44 @@ object JsDataFlowIR {
         val isExternal: Boolean get() = irFunction.isEffectivelyExternal()
     }
 
-    /** A backing field, interned in the [SymbolTable] so reads and writes meet by identity. */
+    /**
+     * The interned identity of an IR field.
+     *
+     * Reads, writes, and a static [FieldInitializer] share this instance, allowing consumers to
+     * connect them without relying on the possibly non-unique [name].
+     */
     class Field(val type: Type, val name: String?)
 
+    /** A value, value-producing operation, or value-consuming effect in an execution unit. */
     sealed interface Node {
         object Null : Node
 
-        /** Callee argument slot; [index] matches [FunctionSymbol.parameters]. */
+        /** The value received in the parameter slot at [index]. */
         class Parameter(val index: Int) : Node
 
-        /** A value with no incoming edges the analysis needs: literals, class references, lambdas. */
+        /** A value whose construction has no input flows relevant to the analysis. */
         class Const(val type: Type) : Node
 
+        /**
+         * The result of invoking [callee] with [arguments].
+         *
+         * Arguments are index-aligned with [FunctionSymbol.parameters]. An omitted IR argument is
+         * represented by an inert placeholder instead of shifting subsequent argument indices.
+         */
         sealed class Call(
             val callee: FunctionSymbol,
             val arguments: List<Node>,
             val returnType: Type,
         ) : Node
 
-        /** Direct call. */
+        /** A call whose runtime target is exactly [Call.callee]. */
         open class StaticCall(
             callee: FunctionSymbol,
             arguments: List<Node>,
             returnType: Type,
         ) : Call(callee, arguments, returnType)
 
-        /**
-         * The call that attaches K-callable reflection metadata to a raw function
-         * (`constructCallableReference`).
-         */
+        /** A `constructCallableReference` call that decorates a raw function with K-callable metadata. */
         class CallableReferenceWrapper(
             callee: FunctionSymbol,
             arguments: List<Node>,
@@ -100,8 +124,8 @@ object JsDataFlowIR {
         ) : StaticCall(callee, arguments, returnType)
 
         /**
-         * Overridable / interface dispatch; the [callee] is overridable by construction, and the
-         * runtime callee may be any of its overrides. Receiver is [arguments] index 0.
+         * An overridable or interface call whose runtime target may be an override of [Call.callee].
+         * The dispatch receiver occupies the corresponding parameter slot in [Call.arguments].
          */
         class VirtualCall(
             callee: FunctionSymbol,
@@ -109,10 +133,16 @@ object JsDataFlowIR {
             returnType: Type,
         ) : Call(callee, arguments, returnType)
 
-        /** An object (`IrGetObjectValue`) instance. */
+        /** The existing instance returned by `IrGetObjectValue`; this node does not allocate it. */
         class Singleton(val type: Type) : Node
 
-        /** `new` of [type]; [constructorArguments] are index-aligned with the constructor's parameters. */
+        /**
+         * The object allocated by a constructor call.
+         *
+         * [constructorArguments] are index-aligned with [constructor]'s parameters and flow into
+         * the constructor body. The constructor's own [Function.returns] does not represent this
+         * allocated object.
+         */
         class NewInstance(
             val type: Type,
             val constructor: FunctionSymbol,
@@ -120,10 +150,12 @@ object JsDataFlowIR {
         ) : Node
 
         /**
-         * `is` / SAM / other type operators. [resultIsArgument] means the result is the argument
-         * (same object). Pure casts (`as`, implicit and safe casts) never become nodes: the
-         * builder maps them to their argument, since the graph tracks objects, not static
-         * types.
+         * An explicitly modeled IR type operation, such as a type check or SAM conversion.
+         *
+         * [resultIsArgument] is true when the operation preserves the identity of [argument], so
+         * value flow can continue through this node. Pure casts do not produce a [TypeCheck]: the
+         * builder maps their result directly to their argument because the graph tracks runtime
+         * values rather than changes in static type.
          */
         class TypeCheck(val argument: Node, val operator: IrTypeOperator) : Node {
             val resultIsArgument: Boolean
@@ -137,9 +169,8 @@ object JsDataFlowIR {
         }
 
         /**
-         * JS dynamic member or operator (`obj.foo`, `obj[i]`, `obj(...)`).
-         * [operator] is set for [org.jetbrains.kotlin.ir.expressions.IrDynamicOperatorExpression];
-         * `null` is member access.
+         * The result of a JS dynamic member access or operation, such as `obj.foo`, `obj[i]`, or
+         * `obj(...)`. A null [operator] denotes member access.
          */
         class DynamicAccess(
             val receiver: Node,
@@ -147,43 +178,54 @@ object JsDataFlowIR {
             val operator: IrDynamicOperator? = null,
         ) : Node
 
-        /** `IrRawFunctionReference`: the function's address is taken. */
+        /** A raw function reference, indicating that [symbol] is used as a value. */
         class FunctionReference(val symbol: FunctionSymbol, val type: Type) : Node
 
-        /** `IrGetField`. Null [receiver] is a static field. */
+        /** The value loaded from [field]; a null [receiver] denotes a static field. */
         class FieldRead(val receiver: Node?, val field: Field, val type: Type) : Node
 
-        /** `IrSetField`. Null [receiver] is a static field. */
+        /** A write that consumes [value]; a null [receiver] denotes a static field. */
         class FieldWrite(val receiver: Node?, val field: Field, val value: Node) : Node
 
         /**
-         * A sink the graph cannot see through: vararg elements, values captured or reassigned by
-         * nested functions, children of unrecognized IR. Anything reaching [values] escapes the
-         * analysis, so consumers must assume it is observed in every possible way.
+         * An escape sink for value flows the graph cannot model precisely.
+         *
+         * Typical inputs include values captured or reassigned by nested declarations and
+         * operands of unrecognized IR. Consumers must assume that every node in [values] can be
+         * observed in any way after reaching this sink.
          */
         class OpaqueValue(val values: List<Node>) : Node
 
-        /** Phi of [values]: an IR local or an expression with several possible values. */
+        /** A merge of all [values] that may reach the same IR local or expression result. */
         class Variable(values: List<Node>, val type: Type) : Node {
             val values = mutableListOf<Node>().also { it += values }
         }
 
-        /** Nested region of the sea-of-nodes; scopes form a tree mirroring loop nesting. */
+        /**
+         * A graph region used to preserve loop nesting.
+         *
+         * A scope may contain child scopes in [nodes], forming a tree rooted at [Body.rootScope].
+         * [depth] records its position in that tree but does not encode additional control flow.
+         */
         class Scope(val depth: Int) : Node {
             val nodes = mutableSetOf<Node>()
         }
     }
 
     /**
-     * Sea-of-nodes body shared by functions and static-field initializers.
-     * [rootScope] is the outermost region, [allScopes] is the flattened scope tree, and
-     * [throws] is the phi of every thrown value.
+     * The graph shared by a function or static field initializer execution unit.
+     *
+     * [rootScope] contains nodes outside loops. [allScopes] contains the root and every nested
+     * loop scope, providing a flat traversal view of the same scope tree. [throws] merges every
+     * value explicitly thrown by the body. Function returns are intentionally stored on
+     * [Function], because a [FieldInitializer] is not callable and has no return flow.
      */
     class Body(
         val rootScope: Node.Scope,
         val allScopes: List<Node.Scope>,
         val throws: Node.Variable,
     ) {
+        /** Visits every operation and value node, excluding the scopes that contain them. */
         inline fun forEachNonScopeNode(block: (Node) -> Unit) {
             for (scope in allScopes) {
                 for (node in scope.nodes) {
@@ -195,25 +237,39 @@ object JsDataFlowIR {
         }
     }
 
+    /** An independently executed function body or static field initializer. */
     sealed interface ExecutionUnit {
         val body: Body
     }
 
-    /** One analyzed function: identity [symbol] plus sea-of-nodes [body]. */
+    /**
+     * The analyzed body of [symbol].
+     *
+     * [returns] merges values returned to callers. For constructors, the allocated instance is
+     * represented at each call site by [Node.NewInstance], not by this merge.
+     */
     class Function(
         val symbol: FunctionSymbol,
         val returns: Node.Variable,
         override val body: Body,
     ) : ExecutionUnit
 
-    /** Evaluation of a static field's initializer and the value assigned to [field]. */
+    /**
+     * One evaluation of a static field initializer.
+     *
+     * [value] is the initializer expression's result.
+     * The same node is consumed by a [Node.FieldWrite] in [body], making the initialization flow visible to field
+     * readers.
+     */
     class FieldInitializer(
         val field: Field,
         val value: Node,
         override val body: Body,
     ) : ExecutionUnit
 
-    /** Maps IR declarations to DFG types and function symbols for one linked program. */
+    /**
+     * Interns the classes, functions, constructors, and fields referenced by one linked program.
+     */
     class SymbolTable(val context: JsIrBackendContext) {
         val classMap = mutableMapOf<IrClass, Type.ClassType>()
         val functionMap = mutableMapOf<IrFunction, FunctionSymbol>()
@@ -221,6 +277,7 @@ object JsDataFlowIR {
 
         private var sealed = false
 
+        /** Pre-registers bodied callables and declared classes from [irModule]. */
         fun populateWith(irModule: IrModuleFragment) {
             check(!sealed) { "The symbol table is already sealed" }
 
@@ -245,9 +302,10 @@ object JsDataFlowIR {
         }
 
         /**
-         * Forbids interning new symbols. Called once the whole program is mapped: a later
-         * per-function rebuild (after an IR-mutating pass) must resolve within the existing
-         * table, so an unexpected new symbol fails loudly instead of desynchronizing consumers.
+         * Forbids new mappings after all execution units have been built.
+         *
+         * Subsequent lookups must resolve to existing identities; an unexpected declaration then
+         * fails immediately instead of silently diverging from consumers of the graph.
          */
         fun seal() {
             sealed = true
@@ -304,13 +362,13 @@ object JsDataFlowIR {
 }
 
 /**
- * Like [target], but total.
- * [org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering] emits bodied
- * `$suspendBridge` functions flagged as fake overrides whose only real override is abstract,
- * and [target] fails on those shapes. Here a function with a body is always its own target —
- * that body is what executes — and a bodiless fake override resolves to the member that
- * actually runs for it (possibly such a bodied bridge), falling back to the abstract
- * declaration, which is mapped as an ordinary bodiless callee.
+ * Resolves the callable identity used by the DFG without requiring a concrete override target.
+ *
+ * A declaration with a body is its own target, including the bodied `$suspendBridge` fake
+ * overrides produced by
+ * [org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering].
+ * A bodiless fake override resolves to its effective implementation when possible and otherwise
+ * remains mapped as a bodiless callee.
  */
 internal fun IrSimpleFunction.resolveDfgTarget(): IrSimpleFunction {
     if (body != null) {
