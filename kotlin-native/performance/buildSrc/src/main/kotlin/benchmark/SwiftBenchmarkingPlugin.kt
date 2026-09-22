@@ -27,9 +27,9 @@ open class SwiftBenchmarkExtension @Inject constructor(project: Project) : Bench
      */
     val packageDirectory: DirectoryProperty = project.objects.directoryProperty()
 
-    val generateSwiftPackage by project.tasks.registering(GenerateSwiftPackageTask::class)
-    val buildSwift by project.tasks.registering(SwiftBuildTask::class)
-    val konanRun by project.tasks.registering(RunKotlinNativeTask::class)
+    val generateSwiftPackage = project.tasks.register("generateSwiftPackage", GenerateSwiftPackageTask::class.java)
+    val buildSwift = project.tasks.register("buildSwift", SwiftBuildTask::class.java)
+    val konanRun = project.tasks.register("konanRun", RunKotlinNativeTask::class.java)
 }
 
 /**

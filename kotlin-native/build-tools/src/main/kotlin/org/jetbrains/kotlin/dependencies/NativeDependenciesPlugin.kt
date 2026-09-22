@@ -49,7 +49,7 @@ private fun File.matchesDependency(dependency: String): Boolean {
 abstract class NativeDependenciesExtension @Inject constructor(private val project: Project) {
     private val platformManager = project.extensions.getByType<PlatformManager>()
 
-    val nativeDependencies: Configuration by project.configurations.creating {
+    val nativeDependencies: Configuration = project.configurations.create("nativeDependencies") {
         description = "Native dependencies"
         isCanBeConsumed = false
         isCanBeResolved = true
