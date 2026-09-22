@@ -250,8 +250,8 @@ class BackendWasmSymbols(
         val createCoroutineUninterceptedIntrinsic0StackSwitching by CallableIds.createCoroutineUninterceptedIntrinsic0StackSwitching.functionSymbol()
         val createCoroutineUninterceptedIntrinsic1StackSwitching by CallableIds.createCoroutineUninterceptedIntrinsic1StackSwitching.functionSymbol()
 
-        val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching by
-        CallableIds.suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching.functionSymbol()
+        val suspendOrReturnStackSwitching by
+        CallableIds.suspendOrReturnStackSwitching.functionSymbol()
 
         val startCoroutineUninterceptedOrReturnStackSwitchingImpl0 by
         CallableIds.startCoroutineUninterceptedOrReturnStackSwitchingImpl.forSuspendArity(0)
@@ -276,8 +276,8 @@ class BackendWasmSymbols(
     val createCoroutineUninterceptedIntrinsic0 by CallableIds.createCoroutineUninterceptedIntrinsic0.functionSymbol()
     val createCoroutineUninterceptedIntrinsic1 by CallableIds.createCoroutineUninterceptedIntrinsic1.functionSymbol()
 
-    val suspendCoroutineUninterceptedOrReturnIntrinsic by
-    CallableIds.suspendCoroutineUninterceptedOrReturnIntrinsic.functionSymbol()
+    val suspendOrReturn by
+    CallableIds.suspendOrReturn.functionSymbol()
 
     private fun CallableId.forSuspendArity(n: Int) =
         functionSymbol { it.hasShape(extensionReceiver = true, regularParameters = n + 1) }
@@ -634,8 +634,8 @@ private object CallableIds {
     // Coroutines intrinsics
     val interceptedIntrinsic = "interceptedIntrinsic".wasmCallableId
 
-    val suspendCoroutineUninterceptedOrReturnIntrinsic = "suspendCoroutineUninterceptedOrReturnIntrinsic".wasmCallableId
-    val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching = "suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching".wasmCallableId
+    val suspendOrReturn = "suspendOrReturn".wasmCallableId
+    val suspendOrReturnStackSwitching = "suspendOrReturnStackSwitching".wasmCallableId
 
     val suspendFunction0ToContref = "suspendFunction0ToContref".wasmCallableId
     val suspendFunction1ToContref = "suspendFunction1ToContref".wasmCallableId
