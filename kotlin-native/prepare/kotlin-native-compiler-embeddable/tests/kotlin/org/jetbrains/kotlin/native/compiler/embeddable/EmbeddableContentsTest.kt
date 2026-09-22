@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.native.compiler.embeddable
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.io.File
 import java.util.jar.JarFile
 
@@ -19,9 +18,7 @@ import java.util.jar.JarFile
 class EmbeddableContentsTest {
     @Test
     fun `test current embeddable jars for trove classes`() {
-        CompilerSmokeTest.compilerClasspath.filterNot {
-            it.name.startsWith("trove")
-        }.forEach(::checkJarForTrove)
+        CompilerSmokeTest.compilerClasspath.forEach(::checkJarForTrove)
     }
 
     private val konanHomeJars: List<File> by lazy {
@@ -33,18 +30,7 @@ class EmbeddableContentsTest {
 
     @Test
     fun `test distribution jars for trove`() {
-        konanHomeJars.filterNot {
-            it.name.startsWith("trove")
-        }.forEach(::checkJarForTrove)
-    }
-
-    @Test
-    fun `self check on trove jar`() {
-        assertThrows<AssertionError> {
-            konanHomeJars.single {
-                it.name.startsWith("trove")
-            }.let(::checkJarForTrove)
-        }
+        konanHomeJars.forEach(::checkJarForTrove)
     }
 
     private fun checkJarForTrove(file: File) {
@@ -62,9 +48,7 @@ class EmbeddableContentsTest {
 
     @Test
     fun `test jars contain intellij dependencies`() {
-        konanHomeJars.filterNot {
-            it.name.startsWith("trove")
-        }.forEach {
+        konanHomeJars.forEach {
             it.checkJarContains("it/unimi/dsi/fastutil/objects/ReferenceOpenHashSet")
             it.checkJarContains("com/intellij/openapi/util/")
         }
@@ -72,9 +56,7 @@ class EmbeddableContentsTest {
 
     @Test
     fun `test jars have no jna`() {
-        konanHomeJars.filterNot {
-            it.name.startsWith("trove")
-        }.forEach {
+        konanHomeJars.forEach {
             it.checkJarDoesntContain("com/sun/jna")
         }
     }
