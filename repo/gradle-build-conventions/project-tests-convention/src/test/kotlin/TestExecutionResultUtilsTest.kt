@@ -147,26 +147,3 @@ private fun classSuite(className: String = "com.example.SomeTest"): TestDescript
     val executor = descriptor("Gradle Test Executor 7", parent = run, composite = true)
     return descriptor(className, className = className, parent = executor, composite = true)
 }
-
-private fun descriptor(
-    name: String,
-    className: String? = null,
-    displayName: String = name,
-    parent: TestDescriptor? = null,
-    composite: Boolean = false,
-): TestDescriptor = FakeTestDescriptor(name, className, displayName, parent, composite)
-
-/** What Gradle hands a [org.gradle.api.tasks.testing.TestListener], with nothing behind it. */
-private class FakeTestDescriptor(
-    private val name: String,
-    private val className: String?,
-    private val displayName: String,
-    private val parent: TestDescriptor?,
-    private val composite: Boolean,
-) : TestDescriptor {
-    override fun getName(): String = name
-    override fun getClassName(): String? = className
-    override fun getDisplayName(): String = displayName
-    override fun getParent(): TestDescriptor? = parent
-    override fun isComposite(): Boolean = composite
-}
