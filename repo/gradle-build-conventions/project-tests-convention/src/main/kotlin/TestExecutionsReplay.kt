@@ -84,19 +84,25 @@ internal class TestExecutionsReplay(
         for (test in suite.tests) {
             // The recorded halves joined back into the name TeamCity expects.
             val name = test.className.qualifying(test.name)
-            add(serviceMessage("testStarted", "name" to name))
-            when (test.status) {
-                STATUS_OK -> {}
-                STATUS_IGNORED -> add(serviceMessage("testIgnored", "name" to name))
-                STATUS_FAILURE -> add(
-                    serviceMessage(
-                        "testFailed",
-                        "name" to name,
-                        "message" to FAILURE_DETAILS_UNAVAILABLE,
-                    )
+            val outcome = when (test.status) {
+                STATUS_OK -> null
+                STATUS_IGNORED -> serviceMessage("testIgnored", "name" to name)
+                STATUS_FAILURE -> serviceMessage(
+                    "testFailed",
+                    "name" to name,
+                    "message" to FAILURE_DETAILS_UNAVAILABLE,
                 )
-                else -> warn("Unknown status '${test.status}' of test $name in $executionsFile", null)
+                // Not replayed at all: to TeamCity a test that starts and finishes saying nothing
+                // else has passed, and a status this build cannot read is no reason to claim that.
+                // Recordings do cross versions of this code - the build cache is shared by branches.
+                else -> {
+                    warn("Unknown status '${test.status}' of test $name in $executionsFile", null)
+                    continue
+                }
             }
+
+            add(serviceMessage("testStarted", "name" to name))
+            if (outcome != null) add(outcome)
             add(serviceMessage("testFinished", "name" to name, "duration" to test.durationMillis.toString()))
         }
 
