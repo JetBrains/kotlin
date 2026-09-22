@@ -1,7 +1,7 @@
 // LL_FIR_DIVERGENCE
 // LL FIR diagnostics tests do not run backends, so backend-only diagnostics are not reported.
 // LL_FIR_DIVERGENCE
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // RUN_PIPELINE_TILL: CODEGEN
 // LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
