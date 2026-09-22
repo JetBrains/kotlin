@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 fun main(args: Array<String>) {
     val generatedTestRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup(generatedTestRoot, "compiler/fir/raw-fir/psi2fir/testData") {
+        testGroup(generatedTestRoot, "compiler/fir/raw-fir/testData") {
             testClass<AbstractLLSourceLikeLazyBodiesCalculatorTest> {
                 model("rawBuilder", pattern = KT_OR_KTS)
             }

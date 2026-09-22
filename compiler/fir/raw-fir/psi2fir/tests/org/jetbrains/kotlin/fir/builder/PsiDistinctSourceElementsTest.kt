@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fir.builder.test.COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY
 import org.jetbrains.kotlin.fir.builder.test.toStrippedCompilerDiagnosticsTestDataFiles
 import org.jetbrains.kotlin.psi.KtFile
@@ -28,10 +29,12 @@ class PsiDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
      */
     @Test
     fun testTotalKotlin() {
-        val root = File(testDataPath)
+        // Back from /compiler/fir/raw-fir/<module>
+        val path = "$testDataPath/../../../.."
+        val root = File(path)
 
-        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
-            val ktFile = createKtFile(file.toRelativeString(root))
+        path.walkRepositoryKotlinFilesWithoutTestData { file ->
+            val ktFile = createKtFile(file.absolutePath)
             val firFile = ktFile.toFirFile()
 
             checkDistinctSourceElements(listOf(firFile)) { _, _ -> "Duplicate source elements in '${file.toRelativeString(root)}'" }
@@ -45,8 +48,10 @@ class PsiDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
      * This test covers FIR files in their raw state. See `FirDistinctSourceElementsHandler` for the handler that checks already transformed
      * FIR files during compiler frontend tests.
      */
+    @Test
     fun testDiagnosticsTestData() {
-        COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY.walkRepositoryKotlinFilesWithTestData { file ->
+        val absolutePath = ForTestCompileRuntime.transformTestDataPath(COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY).path
+        absolutePath.walkRepositoryKotlinFilesWithTestData { file ->
             if (file.isCustomTestData) return@walkRepositoryKotlinFilesWithTestData
 
             file.toStrippedCompilerDiagnosticsTestDataFiles()?.forEach { [filePath, fileText] ->

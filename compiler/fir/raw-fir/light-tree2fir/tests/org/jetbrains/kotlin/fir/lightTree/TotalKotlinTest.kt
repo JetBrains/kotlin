@@ -48,7 +48,8 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
     }
 
     private fun totalKotlinLight(onlyLightTree: Boolean) {
-        val path = System.getProperty("user.dir")
+        // Back from /compiler/fir/raw-fir/<module>
+        val path = System.getProperty("user.dir") + "/../../../.."
         var counter = 0
         var time = 0L
 
@@ -60,7 +61,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         )
 
         if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")
-        println("BASE PATH: $path")
+        println("BASE PATH: ${File(path).normalize().absolutePath}")
         path.walkRepositoryKotlinFilesWithoutTestData {
             val sourceFile = KtIoFileSourceFile(it)
             val [code, linesMapping] = it.inputStream().reader(Charsets.UTF_8).use {
@@ -78,13 +79,14 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
     }
 
     private fun totalKotlinPsi(onlyPsi: Boolean) {
-        val path = System.getProperty("user.dir")
+        // Back from /compiler/fir/raw-fir/<module>
+        val path = System.getProperty("user.dir") + "/../../../.."
         val root = File(path)
         var counter = 0
         var time = 0L
 
         if (onlyPsi) println("Psi generation") else println("Fir from Psi converter")
-        println("BASE PATH: $path")
+        println("BASE PATH: ${File(path).normalize().absolutePath}")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
             /* TODO: fix this, please !!! */

@@ -31,10 +31,7 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -49,11 +46,12 @@ kotlin {
 }
 
 projectTests {
-    testTask {
-        workingDir = rootDir
-    }
+    testTask()
 
-    testGenerator("org.jetbrains.kotlin.fir.builder.TestGeneratorForMultiplatformParsing2FirKt")
+    testGenerator("org.jetbrains.kotlin.fir.builder.TestGeneratorForMultiplatformParsing2FirKt", generateTestsInBuildDirectory = true)
+
+    testData(project(":compiler:fir:raw-fir").isolated, "testData")
+    testData(project(":compiler").isolated, "testData")
 }
 
 testsJar()

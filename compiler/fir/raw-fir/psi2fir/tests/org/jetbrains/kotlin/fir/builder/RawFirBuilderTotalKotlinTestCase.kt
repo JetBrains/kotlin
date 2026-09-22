@@ -41,7 +41,9 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
     @Test
     fun testTotalKotlinWithExpressionTrees() {
-        val root = File(testDataPath)
+        // Back from /compiler/fir/raw-fir/<module>
+        val path = "$testDataPath/../../../.."
+        val root = File(path)
         var counter = 0
         var time = 0L
         var totalLength = 0
@@ -57,10 +59,10 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         var ktExpressions = 0
         var ktDeclarations = 0
         var ktReferences = 0
-        println("BASE PATH: $testDataPath")
-        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
+        println("BASE PATH: ${root.normalize().absolutePath}")
+        path.walkRepositoryKotlinFilesWithoutTestData { file ->
             try {
-                val ktFile = createKtFile(file.toRelativeString(root))
+                val ktFile = createKtFile(file.absolutePath)
                 val firFile: FirFile
                 time += measureNanoTime {
                     firFile = ktFile.toFirFile()
@@ -167,9 +169,11 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
     }
 
     private fun testConsistency(checkConsistency: FirFile.() -> Unit) {
-        val root = File(testDataPath)
-        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
-            val ktFile = createKtFile(file.toRelativeString(root))
+        // Back from /compiler/fir/raw-fir/<module>
+        val path = "$testDataPath/../../../.."
+        val root = File(path)
+        path.walkRepositoryKotlinFilesWithoutTestData { file ->
+            val ktFile = createKtFile(file.absolutePath)
             val firFile = ktFile.toFirFile()
             try {
                 firFile.checkConsistency()
@@ -192,10 +196,12 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
     @Test
     fun testPsiConsistency() {
-        val root = File(testDataPath)
+        // Back from /compiler/fir/raw-fir/<module>
+        val path = "$testDataPath/../../../.."
+        val root = File(path)
         var counter = 0
-        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
-            val ktFile = createKtFile(file.toRelativeString(root))
+        path.walkRepositoryKotlinFilesWithoutTestData { file ->
+            val ktFile = createKtFile(file.absolutePath)
             val firFile: FirFile = ktFile.toFirFile(
                 features = mapOf(LanguageFeature.EnableNameBasedDestructuringShortForm to LanguageFeature.State.ENABLED)
             )
