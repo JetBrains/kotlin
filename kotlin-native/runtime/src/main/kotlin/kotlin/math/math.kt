@@ -656,7 +656,11 @@ public actual fun Double.roundToInt(): Int = when {
     isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
     this > Int.MAX_VALUE -> Int.MAX_VALUE
     this < Int.MIN_VALUE -> Int.MIN_VALUE
-    else -> floor(this + 0.5).toInt()
+    else -> {
+        // Adding 0.5 first can cross a rounding boundary or change an integral value.
+        val floored = floor(this)
+        (if (this - floored >= 0.5) floored + 1.0 else floored).toInt()
+    }
 }
 
 /**
@@ -675,7 +679,10 @@ public actual fun Double.roundToLong(): Long = when {
     isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
     this > Long.MAX_VALUE -> Long.MAX_VALUE
     this < Long.MIN_VALUE -> Long.MIN_VALUE
-    else -> floor(this + 0.5).toLong()
+    else -> {
+        val floored = floor(this)
+        (if (this - floored >= 0.5) floored + 1.0 else floored).toLong()
+    }
 }
 
 // endregion
@@ -1334,7 +1341,11 @@ public actual fun Float.roundToInt(): Int = when {
     isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
     this > Int.MAX_VALUE -> Int.MAX_VALUE
     this < Int.MIN_VALUE -> Int.MIN_VALUE
-    else -> floor(this + 0.5f).toInt()
+    else -> {
+        // Adding 0.5 first can cross a rounding boundary or change an integral value.
+        val floored = floor(this)
+        (if (this - floored >= 0.5f) floored + 1.0f else floored).toInt()
+    }
 }
 
 /**
@@ -1353,7 +1364,10 @@ public actual fun Float.roundToLong(): Long = when {
     isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
     this > Long.MAX_VALUE -> Long.MAX_VALUE
     this < Long.MIN_VALUE -> Long.MIN_VALUE
-    else -> floor(this + 0.5f).toLong()
+    else -> {
+        val floored = floor(this)
+        (if (this - floored >= 0.5f) floored + 1.0f else floored).toLong()
+    }
 }
 
 // endregion
