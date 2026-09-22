@@ -121,6 +121,8 @@ open class IncrementalJsCache(
         val oldInlineFunctions: Map<CallableId, ByteArray> = buildMap {
             val oldIds = irInlineIdsResults[srcFile] ?: return@buildMap
             for (i in oldIds.indices) {
+                // TODO potential optimization spot.
+                //  We don't need to copy ByteArray because we just need it for comparison. We can store some sort of view, for example ByteBuffer.
                 put(oldIds[i], oldDeclarations.tableItemBytes(i))
             }
         }
