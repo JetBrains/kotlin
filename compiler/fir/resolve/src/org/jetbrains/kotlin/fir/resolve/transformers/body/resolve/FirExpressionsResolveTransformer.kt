@@ -832,7 +832,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     context.isInsideAnnotationContext
                 }
                 else -> {
-                    data is ResolutionMode.WithExpectedType && data.arrayLiteralPosition == ArrayLiteralPosition.AnnotationParameter
+                    data is ResolutionMode.WithExpectedType && data.arrayLiteralPosition == ResolutionMode.ArrayLiteralPosition.AnnotationParameter
                 }
             }
 
@@ -2487,7 +2487,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         is WithExpectedType -> {
                             components.syntheticCallGenerator.resolveCollectionLiteralExpressionWithSyntheticOuterCall(
                                 collectionLiteral, data, resolutionContext,
-                            ).applyIf(data.arrayLiteralPosition == ArrayLiteralPosition.AnnotationParameter) {
+                            ).applyIf(data.arrayLiteralPosition == ResolutionMode.ArrayLiteralPosition.AnnotationParameter) {
                                 transformSingle<FirExpression, _>(arrayOfCallTransformer, session)
                             }
                         }
