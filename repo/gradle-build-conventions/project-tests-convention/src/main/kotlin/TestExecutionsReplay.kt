@@ -30,12 +30,15 @@ internal class TestExecutionsReplay(
      * The tests recorded in [executionsFile], in the order they have to be sent, under a flow of
      * this task's own so that TeamCity keeps them apart from whatever runs alongside.
      *
+     * Produced as they are asked for, so that a task's tests are never all held at once - the
+     * largest of them run six figures of them. The file is read when the sequence is first iterated.
+     *
      * A file that is missing or unreadable is reported through [warn] and replayed as nothing: not
      * being able to say what a cached task tested is no reason to fail the build.
      */
-    fun messagesFor(executionsFile: File): List<String> {
-        val recorded = read(executionsFile) ?: return emptyList()
-        return buildList { replay(recorded.toReplayTree(), executionsFile) }
+    fun messagesFor(executionsFile: File): Sequence<String> = sequence {
+        val recorded = read(executionsFile) ?: return@sequence
+        replay(recorded.toReplayTree(), executionsFile)
     }
 
     private val flowId = "TestReplay$taskPath"
@@ -80,7 +83,7 @@ internal class TestExecutionsReplay(
         return replayRoot
     }
 
-    private fun MutableList<String>.replay(suite: ReplayNode, executionsFile: File) {
+    private suspend fun SequenceScope<String>.replay(suite: ReplayNode, executionsFile: File) {
         for (test in suite.tests) {
             // The recorded halves joined back into the name TeamCity expects.
             val name = test.className.qualifying(test.name)
@@ -101,15 +104,15 @@ internal class TestExecutionsReplay(
                 }
             }
 
-            add(serviceMessage("testStarted", "name" to name))
-            if (outcome != null) add(outcome)
-            add(serviceMessage("testFinished", "name" to name, "duration" to test.durationMillis.toString()))
+            yield(serviceMessage("testStarted", "name" to name))
+            if (outcome != null) yield(outcome)
+            yield(serviceMessage("testFinished", "name" to name, "duration" to test.durationMillis.toString()))
         }
 
         for (nested in suite.suites.values) {
-            add(serviceMessage("testSuiteStarted", "name" to nested.name))
+            yield(serviceMessage("testSuiteStarted", "name" to nested.name))
             replay(nested, executionsFile)
-            add(serviceMessage("testSuiteFinished", "name" to nested.name))
+            yield(serviceMessage("testSuiteFinished", "name" to nested.name))
         }
     }
 
