@@ -1,0 +1,5 @@
+language = C
+headers = lib.h
+headerFilter = lib.h
+package = lib
+compilerOpts = -Iinclude
