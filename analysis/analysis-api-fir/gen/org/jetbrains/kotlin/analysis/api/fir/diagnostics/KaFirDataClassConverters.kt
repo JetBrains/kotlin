@@ -739,6 +739,13 @@ private fun KaDiagnosticConverterBuilder.addConversions10() {
             token,
         )
     }
+    add(FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS_ERROR) { firDiagnostic ->
+        IdentitySensitiveOperationOnWillBecomeValueClassErrorImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.PROPERTY_TYPE_MISMATCH_ON_INHERITANCE) { firDiagnostic ->
         PropertyTypeMismatchOnInheritanceImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
@@ -3032,6 +3039,13 @@ private fun KaDiagnosticConverterBuilder.addConversions66() {
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
             firDiagnostic.c,
             firDiagnostic.d,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
+        IdentitySensitiveOperationOnWillBecomeValueClassImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6079,6 +6093,13 @@ private fun KaDiagnosticConverterBuilder.addConversions130() {
             token,
         )
     }
+    add(FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE) { firDiagnostic ->
+        WillBecomeValueNotApplicableImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.INCORRECT_TYPE_PARAMETER_OF_PROPERTY) { firDiagnostic ->
         IncorrectTypeParameterOfPropertyImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -7829,6 +7850,13 @@ private fun KaDiagnosticConverterBuilder.addConversions172() {
     }
     add(FirErrors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION) { firDiagnostic ->
         NonSourceAnnotationOnInlinedLambdaExpressionImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
+        IdentityBasedMemberInWillBecomeValueClassImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
