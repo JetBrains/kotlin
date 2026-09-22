@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JS_IR
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
 
 import kotlinx.atomicfu.*

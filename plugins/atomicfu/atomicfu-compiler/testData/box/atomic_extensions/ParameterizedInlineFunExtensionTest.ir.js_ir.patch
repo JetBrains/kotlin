@@ -1,6 +1,6 @@
 --- a/ParameterizedInlineFunExtensionTest.ir.txt
 +++ b/ParameterizedInlineFunExtensionTest.ir.js_ir.txt
-@@ -1,87 +1,23 @@
+@@ -1,130 +1,23 @@
  FILE fqName:<root> fileName:/ParameterizedInlineFunExtensionTest.kt
    CLASS CLASS name:ParameterizedInlineFunExtensionTest modality:FINAL visibility:public superTypes:[kotlin.Any]
      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ParameterizedInlineFunExtensionTest
@@ -30,10 +30,24 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:tail$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.ParameterizedInlineFunExtensionTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.ParameterizedInlineFunExtensionTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:tail$volatile type:kotlin.Any? visibility:private declared in <root>.ParameterizedInlineFunExtensionTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.<set-tail$volatile>' type=<root>.ParameterizedInlineFunExtensionTest origin=null
 -              value: GET_VAR 'value: kotlin.Any? declared in <root>.ParameterizedInlineFunExtensionTest.<set-tail$volatile>' type=kotlin.Any? origin=null
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:tail$volatile$FU visibility:private modality:FINAL [val]
+-      FIELD ATOMICFU_GENERATED_FIELD name:tail$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static]
+-        EXPRESSION_BODY
+-          CALL 'public final fun newUpdater (tclass: java.lang.Class, vclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+-            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+-              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+-            ARG vclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+-              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+-            ARG fieldName: CONST String type=kotlin.String value="tail$volatile"
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-tail$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceFieldUpdater [companion]
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:tail$volatile$FU visibility:private modality:FINAL [val]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-tail$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.ParameterizedInlineFunExtensionTest'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:tail$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static] declared in <root>.ParameterizedInlineFunExtensionTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
 +          RETURN type=kotlin.Nothing from='private final fun <get-tail> (): kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>.ParameterizedInlineFunExtensionTest'
 +            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:tail type:kotlinx.atomicfu.AtomicRef<kotlin.String> visibility:private [final]' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=null
 +              receiver: GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.<get-tail>' type=<root>.ParameterizedInlineFunExtensionTest origin=null
@@ -44,62 +58,91 @@
 -    FUN ATOMICFU_GENERATED_FUNCTION name:bar$atomicfu$ATOMIC_ARRAY$Any visibility:private modality:FINAL returnType:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any [inline]
 -      TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
 -      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ParameterizedInlineFunExtensionTest
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicArray<kotlin.Any?>
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceArray
 -      VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
 -      VALUE_PARAMETER kind:Regular name:res1 index:3 type:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any
 -      VALUE_PARAMETER kind:Regular name:res2 index:4 type:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any
 -      BLOCK_BODY
--        RETURN type=kotlin.Nothing from='private final fun bar$atomicfu$ATOMIC_ARRAY$Any <S> (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, res1: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any): S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any declared in <root>.ParameterizedInlineFunExtensionTest'
+-        RETURN type=kotlin.Nothing from='private final fun bar$atomicfu$ATOMIC_ARRAY$Any <S> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int, res1: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any): S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any declared in <root>.ParameterizedInlineFunExtensionTest'
 -          GET_VAR 'res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any declared in <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any origin=null
--    FUN ATOMICFU_GENERATED_FUNCTION name:bar$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any [inline]
+-    FUN ATOMICFU_GENERATED_FUNCTION name:bar$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any [inline]
 -      TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
 -      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ParameterizedInlineFunExtensionTest
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
--      VALUE_PARAMETER kind:Regular name:res1 index:2 type:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any
--      VALUE_PARAMETER kind:Regular name:res2 index:3 type:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+-      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+-      VALUE_PARAMETER kind:Regular name:res1 index:3 type:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any
+-      VALUE_PARAMETER kind:Regular name:res2 index:4 type:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any
 -      BLOCK_BODY
--        RETURN type=kotlin.Nothing from='private final fun bar$atomicfu$NATIVE_PROPERTY_REF$Any <S> (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, res1: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any): S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any declared in <root>.ParameterizedInlineFunExtensionTest'
--          GET_VAR 'res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any declared in <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any origin=null
+-        RETURN type=kotlin.Nothing from='private final fun bar$atomicfu$ATOMIC_FIELD_UPDATER$Any <S> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, res1: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any): S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any declared in <root>.ParameterizedInlineFunExtensionTest'
+-          GET_VAR 'res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any declared in <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any origin=null
+-    FUN ATOMICFU_GENERATED_FUNCTION name:bar$atomicfu$BOXED_ATOMIC$Any visibility:private modality:FINAL returnType:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any [inline]
+-      TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
+-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ParameterizedInlineFunExtensionTest
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReference
+-      VALUE_PARAMETER kind:Regular name:res1 index:2 type:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any
+-      VALUE_PARAMETER kind:Regular name:res2 index:3 type:S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any
+-      BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun bar$atomicfu$BOXED_ATOMIC$Any <S> (handler$atomicfu: java.util.concurrent.atomic.AtomicReference, res1: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any): S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any declared in <root>.ParameterizedInlineFunExtensionTest'
+-          GET_VAR 'res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any declared in <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any origin=null
 -    FUN ATOMICFU_GENERATED_FUNCTION name:foo$atomicfu$ATOMIC_ARRAY$Any visibility:private modality:FINAL returnType:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any [inline]
 -      TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
 -      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ParameterizedInlineFunExtensionTest
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicArray<kotlin.Any?>
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceArray
 -      VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
 -      VALUE_PARAMETER kind:Regular name:res1 index:3 type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any
 -      VALUE_PARAMETER kind:Regular name:res2 index:4 type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any
 -      VALUE_PARAMETER kind:Regular name:foo index:5 type:kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any>
 -      BLOCK_BODY
 -        VAR name:res type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any [val]
--          CALL 'private final fun bar$atomicfu$ATOMIC_ARRAY$Any <S> (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, res1: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any): S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any declared in <root>.ParameterizedInlineFunExtensionTest' type=S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any origin=null
+-          CALL 'private final fun bar$atomicfu$ATOMIC_ARRAY$Any <S> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int, res1: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any): S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_ARRAY$Any declared in <root>.ParameterizedInlineFunExtensionTest' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any origin=null
 -            TYPE_ARG S: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any
 -            ARG <this>: GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any' type=<root>.ParameterizedInlineFunExtensionTest origin=null
--            ARG handler$atomicfu: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+-            ARG handler$atomicfu: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
 -            ARG index$atomicfu: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
 -            ARG res1: GET_VAR 'res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any origin=null
 -            ARG res2: GET_VAR 'res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any origin=null
--        RETURN type=kotlin.Nothing from='private final fun foo$atomicfu$ATOMIC_ARRAY$Any <S> (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any, foo: kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any>): S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any declared in <root>.ParameterizedInlineFunExtensionTest'
+-        RETURN type=kotlin.Nothing from='private final fun foo$atomicfu$ATOMIC_ARRAY$Any <S> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int, res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any, foo: kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any>): S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any declared in <root>.ParameterizedInlineFunExtensionTest'
 -          GET_VAR 'val res: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_ARRAY$Any origin=null
--    FUN ATOMICFU_GENERATED_FUNCTION name:foo$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any [inline]
+-    FUN ATOMICFU_GENERATED_FUNCTION name:foo$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any [inline]
 -      TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
 -      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ParameterizedInlineFunExtensionTest
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
--      VALUE_PARAMETER kind:Regular name:res1 index:2 type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any
--      VALUE_PARAMETER kind:Regular name:res2 index:3 type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any
--      VALUE_PARAMETER kind:Regular name:foo index:4 type:kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any>
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+-      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+-      VALUE_PARAMETER kind:Regular name:res1 index:3 type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any
+-      VALUE_PARAMETER kind:Regular name:res2 index:4 type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any
+-      VALUE_PARAMETER kind:Regular name:foo index:5 type:kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any>
 -      BLOCK_BODY
--        VAR name:res type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any [val]
--          CALL 'private final fun bar$atomicfu$NATIVE_PROPERTY_REF$Any <S> (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, res1: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any): S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any declared in <root>.ParameterizedInlineFunExtensionTest' type=S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Any origin=null
--            TYPE_ARG S: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any
--            ARG <this>: GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any' type=<root>.ParameterizedInlineFunExtensionTest origin=null
--            ARG handler$atomicfu: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
--            ARG res1: GET_VAR 'res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any origin=null
--            ARG res2: GET_VAR 'res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any origin=null
--        RETURN type=kotlin.Nothing from='private final fun foo$atomicfu$NATIVE_PROPERTY_REF$Any <S> (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any, foo: kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any>): S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any declared in <root>.ParameterizedInlineFunExtensionTest'
--          GET_VAR 'val res: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any origin=null
+-        VAR name:res type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any [val]
+-          CALL 'private final fun bar$atomicfu$ATOMIC_FIELD_UPDATER$Any <S> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, res1: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any): S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$ATOMIC_FIELD_UPDATER$Any declared in <root>.ParameterizedInlineFunExtensionTest' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any origin=null
+-            TYPE_ARG S: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any
+-            ARG <this>: GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=<root>.ParameterizedInlineFunExtensionTest origin=null
+-            ARG handler$atomicfu: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+-            ARG obj$atomicfu: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+-            ARG res1: GET_VAR 'res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any origin=null
+-            ARG res2: GET_VAR 'res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any origin=null
+-        RETURN type=kotlin.Nothing from='private final fun foo$atomicfu$ATOMIC_FIELD_UPDATER$Any <S> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any, foo: kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any>): S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any declared in <root>.ParameterizedInlineFunExtensionTest'
+-          GET_VAR 'val res: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any origin=null
+-    FUN ATOMICFU_GENERATED_FUNCTION name:foo$atomicfu$BOXED_ATOMIC$Any visibility:private modality:FINAL returnType:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any [inline]
+-      TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
+-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ParameterizedInlineFunExtensionTest
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReference
+-      VALUE_PARAMETER kind:Regular name:res1 index:2 type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any
+-      VALUE_PARAMETER kind:Regular name:res2 index:3 type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any
+-      VALUE_PARAMETER kind:Regular name:foo index:4 type:kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any>
+-      BLOCK_BODY
+-        VAR name:res type:S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any [val]
+-          CALL 'private final fun bar$atomicfu$BOXED_ATOMIC$Any <S> (handler$atomicfu: java.util.concurrent.atomic.AtomicReference, res1: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any): S of <root>.ParameterizedInlineFunExtensionTest.bar$atomicfu$BOXED_ATOMIC$Any declared in <root>.ParameterizedInlineFunExtensionTest' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any origin=null
+-            TYPE_ARG S: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any
+-            ARG <this>: GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any' type=<root>.ParameterizedInlineFunExtensionTest origin=null
+-            ARG handler$atomicfu: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReference declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any' type=java.util.concurrent.atomic.AtomicReference origin=null
+-            ARG res1: GET_VAR 'res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any origin=null
+-            ARG res2: GET_VAR 'res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any origin=null
+-        RETURN type=kotlin.Nothing from='private final fun foo$atomicfu$BOXED_ATOMIC$Any <S> (handler$atomicfu: java.util.concurrent.atomic.AtomicReference, res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any, foo: kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any>): S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any declared in <root>.ParameterizedInlineFunExtensionTest'
+-          GET_VAR 'val res: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any declared in <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$BOXED_ATOMIC$Any origin=null
      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-@@ -95,19 +31,41 @@
+@@ -138,15 +31,41 @@
        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
        overridden:
          public open fun toString (): kotlin.String declared in kotlin.Any
@@ -133,23 +176,19 @@
        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ParameterizedInlineFunExtensionTest
        BLOCK_BODY
          VAR name:res type:kotlin.String [val]
--          CALL 'private final fun foo$atomicfu$NATIVE_PROPERTY_REF$Any <S> (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any, foo: kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any>): S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any declared in <root>.ParameterizedInlineFunExtensionTest' type=S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Any origin=null
+-          CALL 'private final fun foo$atomicfu$ATOMIC_FIELD_UPDATER$Any <S> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, res1: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any, res2: S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any, foo: kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any, S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any>): S of <root>.ParameterizedInlineFunExtensionTest.foo$atomicfu$ATOMIC_FIELD_UPDATER$Any declared in <root>.ParameterizedInlineFunExtensionTest' type=kotlin.String origin=null
 +          CALL 'private final fun foo <S> (<this>: kotlinx.atomicfu.AtomicRef<S of <root>.ParameterizedInlineFunExtensionTest.foo>, res1: S of <root>.ParameterizedInlineFunExtensionTest.foo, res2: S of <root>.ParameterizedInlineFunExtensionTest.foo, foo: kotlin.Function1<S of <root>.ParameterizedInlineFunExtensionTest.foo, S of <root>.ParameterizedInlineFunExtensionTest.foo>): S of <root>.ParameterizedInlineFunExtensionTest.foo declared in <root>.ParameterizedInlineFunExtensionTest' type=kotlin.String origin=null
              TYPE_ARG S: kotlin.String
 -            ARG <this>: GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.testClose' type=<root>.ParameterizedInlineFunExtensionTest origin=IMPLICIT_ARGUMENT
--            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=LAMBDA
--              FUN ATOMICFU_GENERATED_FUNCTION name:<tail$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
--                BLOCK_BODY
--                  RETURN type=kotlin.Nothing from='local final fun <tail$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.ParameterizedInlineFunExtensionTest.testClose'
--                    PROPERTY_REFERENCE 'private final tail$volatile: kotlin.Any? declared in <root>.ParameterizedInlineFunExtensionTest' field='FIELD ATOMICFU_GENERATED_FIELD name:tail$volatile type:kotlin.Any? visibility:private declared in <root>.ParameterizedInlineFunExtensionTest' getter='private final fun <get-tail$volatile> (): kotlin.Any? declared in <root>.ParameterizedInlineFunExtensionTest' setter='private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.ParameterizedInlineFunExtensionTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
--                      ARG 1: GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.testClose' type=<root>.ParameterizedInlineFunExtensionTest origin=IMPLICIT_ARGUMENT
+-            ARG handler$atomicfu: CALL 'private final fun <get-tail$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.ParameterizedInlineFunExtensionTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+-            ARG obj$atomicfu: GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.testClose' type=<root>.ParameterizedInlineFunExtensionTest origin=IMPLICIT_ARGUMENT
 +            ARG <this>(index:0): GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.testClose' type=<root>.ParameterizedInlineFunExtensionTest origin=IMPLICIT_ARGUMENT
 +            ARG <this>(index:1): CALL 'private final fun <get-tail> (): kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>.ParameterizedInlineFunExtensionTest' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=GET_PROPERTY
 +              ARG <this>: GET_VAR '<this>: <root>.ParameterizedInlineFunExtensionTest declared in <root>.ParameterizedInlineFunExtensionTest.testClose' type=<root>.ParameterizedInlineFunExtensionTest origin=IMPLICIT_ARGUMENT
              ARG res1: CONST String type=kotlin.String value="bbb"
              ARG res2: CONST String type=kotlin.String value="ccc"
              ARG foo: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
-@@ -116,10 +74,10 @@
+@@ -155,10 +74,10 @@
                  BLOCK_BODY
                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (s: kotlin.String): kotlin.String declared in <root>.ParameterizedInlineFunExtensionTest.testClose'
                      GET_VAR 's: kotlin.String declared in <root>.ParameterizedInlineFunExtensionTest.testClose.<anonymous>' type=kotlin.String origin=null

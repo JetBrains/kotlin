@@ -1,26 +1,18 @@
 FILE fqName:<root> fileName:/UncheckedCastTest.kt
-  PROPERTY ATOMICFU_GENERATED_PROPERTY name:topLevelS$volatile visibility:private modality:FINAL [var]
-    FIELD ATOMICFU_GENERATED_FIELD name:topLevelS$volatile type:kotlin.Any? visibility:private [static]
-      annotations:
-        Volatile
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:topLevelS visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:topLevelS type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
-          TYPE_ARG T: kotlin.String
-          ARG elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-            CONST String type=kotlin.String value="A"
-            CONST String type=kotlin.String value="B"
-    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-topLevelS$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
-      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:topLevelS$volatile visibility:private modality:FINAL [var]
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Any) declared in java.util.concurrent.atomic.AtomicReference' type=java.util.concurrent.atomic.AtomicReference origin=null
+          ARG value: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+            TYPE_ARG T: kotlin.String
+            ARG elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+              CONST String type=kotlin.String value="A"
+              CONST String type=kotlin.String value="B"
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-topLevelS> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReference
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:topLevelS visibility:private modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='private final fun <get-topLevelS$volatile> (): kotlin.Any? declared in <root>'
-          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:topLevelS$volatile type:kotlin.Any? visibility:private [static] declared in <root>' type=kotlin.Any? origin=null
-    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-topLevelS$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
-      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Any?
-      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:topLevelS$volatile visibility:private modality:FINAL [var]
-      BLOCK_BODY
-        RETURN type=kotlin.Unit from='private final fun <set-topLevelS$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>'
-          SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:topLevelS$volatile type:kotlin.Any? visibility:private [static] declared in <root>' type=kotlin.Unit origin=null
-            value: GET_VAR 'value: kotlin.Any? declared in <root>.<set-topLevelS$volatile>' type=kotlin.Any? origin=null
+        RETURN type=kotlin.Nothing from='private final fun <get-topLevelS> (): java.util.concurrent.atomic.AtomicReference declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:topLevelS type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
   CLASS CLASS name:UncheckedCastTest modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.UncheckedCastTest
     PROPERTY ATOMICFU_GENERATED_PROPERTY name:s$volatile visibility:private modality:FINAL [var]
@@ -41,7 +33,7 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:s$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-s$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-s$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.<set-s$volatile>' type=<root>.UncheckedCastTest origin=null
               value: GET_VAR 'value: kotlin.Any? declared in <root>.UncheckedCastTest.<set-s$volatile>' type=kotlin.Any? origin=null
@@ -63,25 +55,51 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:bs$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.<set-bs$volatile>' type=<root>.UncheckedCastTest origin=null
               value: GET_VAR 'value: kotlin.Any? declared in <root>.UncheckedCastTest.<set-bs$volatile>' type=kotlin.Any? origin=null
     PROPERTY ATOMICFU_GENERATED_PROPERTY name:a visibility:private modality:FINAL [val]
-      FIELD ATOMICFU_GENERATED_FIELD name:a type:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> visibility:private [final]
+      FIELD ATOMICFU_GENERATED_FIELD name:a type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final]
         EXPRESSION_BODY
-          CONSTRUCTOR_CALL 'internal constructor <init> (array: kotlin.Array<T of kotlin.concurrent.AtomicArray>) declared in kotlin.concurrent.AtomicArray' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
-            TYPE_ARG (of class) T: kotlin.Any?
-            ARG array: CALL 'public final fun arrayOfNulls <T> (size: kotlin.Int): kotlin.Array<T of kotlin.arrayOfNulls?> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOfNulls?> origin=null
-              TYPE_ARG T: kotlin.Any?
-              ARG size: CONST Int type=kotlin.Int value=10
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray>
+          CONSTRUCTOR_CALL 'public constructor <init> <T> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicReferenceArray' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+            TYPE_ARG T: <none>
+            ARG length: CONST Int type=kotlin.Int value=10
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceArray
         VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.UncheckedCastTest
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a visibility:private modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-a> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.UncheckedCastTest'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a type:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> visibility:private [final] declared in <root>.UncheckedCastTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+          RETURN type=kotlin.Nothing from='private final fun <get-a> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.UncheckedCastTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final] declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
               receiver: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.<get-a>' type=<root>.UncheckedCastTest origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:s$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:s$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, vclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG vclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="s$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-s$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:s$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-s$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:s$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static] declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:bs$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, vclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG vclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="bs$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-bs$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:bs$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static] declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
     CLASS CLASS name:Box modality:FINAL visibility:private [data] superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.UncheckedCastTest.Box
       PROPERTY name:b visibility:public modality:FINAL [val]
@@ -136,7 +154,7 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
               then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.UncheckedCastTest.Box'
                 CONST Boolean type=kotlin.Boolean value=false
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.UncheckedCastTest.Box [val]
-            TYPE_OP type=<root>.UncheckedCastTest.Box origin=CAST typeOperand=<root>.UncheckedCastTest.Box
+            TYPE_OP type=<root>.UncheckedCastTest.Box origin=IMPLICIT_CAST typeOperand=<root>.UncheckedCastTest.Box
               GET_VAR 'other: kotlin.Any? declared in <root>.UncheckedCastTest.Box.equals' type=kotlin.Any? origin=null
           WHEN type=kotlin.Unit origin=null
             BRANCH
@@ -175,109 +193,124 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:UncheckedCastTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline]
+    FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.UncheckedCastTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
       BLOCK_BODY
         WHILE label=null origin=null
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:T of kotlin.concurrent.atomicGetField [val]
-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-                TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
-                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
-                ARG p1: GET_VAR 'val tmp_1: T of kotlin.concurrent.atomicGetField declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> [val]
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+                ARG p1: GET_VAR 'val tmp_1: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
-                  TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
-                    ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_1: T of kotlin.concurrent.atomicGetField declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
-                  ARG newValue: GET_VAR 'val tmp_2: R of kotlin.Function1 declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.UncheckedCastTest'
-                  GET_VAR 'val tmp_1: T of kotlin.concurrent.atomicGetField declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
+                if: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_1: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                  ARG update: GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.UncheckedCastTest'
+                  GET_VAR 'val tmp_1: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> declared in <root>.UncheckedCastTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:getString$atomicfu$ATOMIC_ARRAY$Any visibility:private modality:FINAL returnType:kotlin.String [inline]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.UncheckedCastTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicArray<kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='private final fun getString$atomicfu$ATOMIC_ARRAY$Any <T> (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int): kotlin.String declared in <root>.UncheckedCastTest'
+        RETURN type=kotlin.Nothing from='private final fun getString$atomicfu$ATOMIC_ARRAY$Any <T> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int): kotlin.String declared in <root>.UncheckedCastTest'
           TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
-              ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.UncheckedCastTest.getString$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
-              ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.UncheckedCastTest.getString$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
-    FUN ATOMICFU_GENERATED_FUNCTION name:getString$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:kotlin.String [inline]
+            CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.String origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.UncheckedCastTest.getString$atomicfu$ATOMIC_ARRAY$Any' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+              ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.UncheckedCastTest.getString$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:getString$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.String [inline]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.UncheckedCastTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='private final fun getString$atomicfu$NATIVE_PROPERTY_REF$Any <T> (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>): kotlin.String declared in <root>.UncheckedCastTest'
+        RETURN type=kotlin.Nothing from='private final fun getString$atomicfu$ATOMIC_FIELD_UPDATER$Any <T> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.String declared in <root>.UncheckedCastTest'
           TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-              TYPE_ARG T: kotlin.String
-              ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.UncheckedCastTest.getString$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
-    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+            CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.String origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest.getString$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+              ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.UncheckedCastTest.getString$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:getString$atomicfu$BOXED_ATOMIC$Any visibility:private modality:FINAL returnType:kotlin.String [inline]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.UncheckedCastTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReference
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun getString$atomicfu$BOXED_ATOMIC$Any <T> (handler$atomicfu: java.util.concurrent.atomic.AtomicReference): kotlin.String declared in <root>.UncheckedCastTest'
+          TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+            CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.String origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReference declared in <root>.UncheckedCastTest.getString$atomicfu$BOXED_ATOMIC$Any' type=java.util.concurrent.atomic.AtomicReference origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.UncheckedCastTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
       BLOCK_BODY
         WHILE label=null origin=null
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:T of kotlin.concurrent.atomicGetField [val]
-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-                TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.UncheckedCastTest.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
-                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.UncheckedCastTest.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
-                ARG p1: GET_VAR 'val tmp_3: T of kotlin.concurrent.atomicGetField declared in <root>.UncheckedCastTest.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> [val]
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.UncheckedCastTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.UncheckedCastTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+                ARG p1: GET_VAR 'val tmp_3: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> declared in <root>.UncheckedCastTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
-                  TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
-                    ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.UncheckedCastTest.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_3: T of kotlin.concurrent.atomicGetField declared in <root>.UncheckedCastTest.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
-                  ARG newValue: GET_VAR 'val tmp_4: R of kotlin.Function1 declared in <root>.UncheckedCastTest.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.UncheckedCastTest'
+                if: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.UncheckedCastTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_3: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> declared in <root>.UncheckedCastTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                  ARG update: GET_VAR 'val tmp_4: kotlin.Any? declared in <root>.UncheckedCastTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.UncheckedCastTest'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline]
+    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.UncheckedCastTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
       BLOCK_BODY
         WHILE label=null origin=null
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:T of kotlin.concurrent.atomicGetField [val]
-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-                TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
-                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
-                ARG p1: GET_VAR 'val tmp_5: T of kotlin.concurrent.atomicGetField declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> [val]
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+                ARG p1: GET_VAR 'val tmp_5: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
-                  TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
-                    ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_5: T of kotlin.concurrent.atomicGetField declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
-                  ARG newValue: GET_VAR 'val tmp_6: R of kotlin.Function1 declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.UncheckedCastTest'
-                  GET_VAR 'val tmp_6: R of kotlin.Function1 declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any' type=R of kotlin.Function1 origin=null
+                if: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_5: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                  ARG update: GET_VAR 'val tmp_6: kotlin.Any? declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.UncheckedCastTest'
+                  GET_VAR 'val tmp_6: kotlin.Any? declared in <root>.UncheckedCastTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -294,34 +327,37 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
     FUN name:testArrayValueUncheckedCast visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.UncheckedCastTest
       BLOCK_BODY
-        CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-a> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.UncheckedCastTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+        CALL 'public final fun set <T> (i: kotlin.Int, newValue: T of java.util.concurrent.atomic.AtomicReferenceArray.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testArrayValueUncheckedCast' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=0
+          ARG i: CONST Int type=kotlin.Int value=0
           ARG newValue: CONST String type=kotlin.String value="OK"
         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           TYPE_ARG T: kotlin.String
           ARG expected: CONST String type=kotlin.String value="OK"
           ARG actual: TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
-              ARG <this>: CALL 'private final fun <get-a> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.UncheckedCastTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+            CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.String origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
                 ARG <this>: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testArrayValueUncheckedCast' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
-              ARG index: CONST Int type=kotlin.Int value=0
+              ARG i: CONST Int type=kotlin.Int value=0
     FUN name:testArrayValueUncheckedCastInlineFunc visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.UncheckedCastTest
       BLOCK_BODY
-        CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-a> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.UncheckedCastTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+        CALL 'public final fun set <T> (i: kotlin.Int, newValue: T of java.util.concurrent.atomic.AtomicReferenceArray.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testArrayValueUncheckedCastInlineFunc' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=0
+          ARG i: CONST Int type=kotlin.Int value=0
           ARG newValue: CONST String type=kotlin.String value="OK"
         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           TYPE_ARG T: kotlin.String
           ARG expected: CONST String type=kotlin.String value="OK"
-          ARG actual: CALL 'private final fun getString$atomicfu$ATOMIC_ARRAY$Any <T> (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int): kotlin.String declared in <root>.UncheckedCastTest' type=kotlin.String origin=null
+          ARG actual: CALL 'private final fun getString$atomicfu$ATOMIC_ARRAY$Any <T> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int): kotlin.String declared in <root>.UncheckedCastTest' type=kotlin.String origin=null
             TYPE_ARG T: kotlin.Any?
             ARG <this>: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testArrayValueUncheckedCastInlineFunc' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
-            ARG handler$atomicfu: CALL 'private final fun <get-a> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.UncheckedCastTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
               ARG <this>: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testArrayValueUncheckedCastInlineFunc' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
             ARG index$atomicfu: CONST Int type=kotlin.Int value=0
     FUN name:testAtomicRefUncheckedCastGetAndUpdate visibility:public modality:FINAL returnType:kotlin.Unit
@@ -329,10 +365,10 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
       annotations:
         Suppress(names = ["UNCHECKED_CAST"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
       BLOCK_BODY
-        CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
-          TYPE_ARG T: kotlin.Any?
-          ARG <this>: PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-            ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastGetAndUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastGetAndUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
           ARG newValue: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
             TYPE_ARG T: kotlin.Array<<root>.UncheckedCastTest.Box>
             ARG elements: VARARG type=kotlin.Array<out kotlin.Array<<root>.UncheckedCastTest.Box>> varargElementType=kotlin.Array<<root>.UncheckedCastTest.Box>
@@ -349,14 +385,10 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
                   CONSTRUCTOR_CALL 'public constructor <init> (b: kotlin.Int) declared in <root>.UncheckedCastTest.Box' type=<root>.UncheckedCastTest.Box origin=null
                     ARG b: CONST Int type=kotlin.Int value=3
         VAR name:res type:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> [val]
-          CALL 'private final fun getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.UncheckedCastTest' type=kotlin.Any? origin=null
+          CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.UncheckedCastTest' type=kotlin.Any? origin=null
             ARG <this>: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastGetAndUpdate' type=<root>.UncheckedCastTest origin=null
-            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=LAMBDA
-              FUN ATOMICFU_GENERATED_FUNCTION name:<bs$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
-                BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <bs$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastGetAndUpdate'
-                    PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-                      ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastGetAndUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+            ARG handler$atomicfu: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastGetAndUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>, kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
                 VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
@@ -398,10 +430,10 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
               ARG arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=<root>.UncheckedCastTest.Box origin=GET_ARRAY_ELEMENT
                 ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Array<<root>.UncheckedCastTest.Box> origin=GET_ARRAY_ELEMENT
                   ARG <this>: TYPE_OP type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=CAST typeOperand=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-                      TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                      ARG <this>: PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-                        ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastGetAndUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+                    CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                      TYPE_ARG T: <none>
+                      ARG <this>: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                      ARG obj: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastGetAndUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
                   ARG index: CONST Int type=kotlin.Int value=0
                 ARG index: CONST Int type=kotlin.Int value=1
     FUN name:testAtomicRefUncheckedCastUpdate visibility:public modality:FINAL returnType:kotlin.Unit
@@ -409,10 +441,10 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
       annotations:
         Suppress(names = ["UNCHECKED_CAST"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
       BLOCK_BODY
-        CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
-          TYPE_ARG T: kotlin.Any?
-          ARG <this>: PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-            ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
           ARG newValue: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
             TYPE_ARG T: kotlin.Array<<root>.UncheckedCastTest.Box>
             ARG elements: VARARG type=kotlin.Array<out kotlin.Array<<root>.UncheckedCastTest.Box>> varargElementType=kotlin.Array<<root>.UncheckedCastTest.Box>
@@ -428,14 +460,10 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
                 ARG elements: VARARG type=kotlin.Array<out <root>.UncheckedCastTest.Box> varargElementType=<root>.UncheckedCastTest.Box
                   CONSTRUCTOR_CALL 'public constructor <init> (b: kotlin.Int) declared in <root>.UncheckedCastTest.Box' type=<root>.UncheckedCastTest.Box origin=null
                     ARG b: CONST Int type=kotlin.Int value=3
-        CALL 'private final fun update$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.Unit origin=null
+        CALL 'private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdate' type=<root>.UncheckedCastTest origin=null
-          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=LAMBDA
-            FUN ATOMICFU_GENERATED_FUNCTION name:<bs$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <bs$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdate'
-                  PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-                    ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+          ARG handler$atomicfu: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>, kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
               VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
@@ -465,10 +493,10 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
               ARG arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=<root>.UncheckedCastTest.Box origin=GET_ARRAY_ELEMENT
                 ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Array<<root>.UncheckedCastTest.Box> origin=GET_ARRAY_ELEMENT
                   ARG <this>: TYPE_OP type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=CAST typeOperand=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-                      TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                      ARG <this>: PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-                        ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+                    CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                      TYPE_ARG T: <none>
+                      ARG <this>: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                      ARG obj: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdate' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
                   ARG index: CONST Int type=kotlin.Int value=0
                 ARG index: CONST Int type=kotlin.Int value=1
     FUN name:testAtomicRefUncheckedCastUpdateAndGet visibility:public modality:FINAL returnType:kotlin.Unit
@@ -476,10 +504,10 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
       annotations:
         Suppress(names = ["UNCHECKED_CAST"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
       BLOCK_BODY
-        CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
-          TYPE_ARG T: kotlin.Any?
-          ARG <this>: PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-            ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdateAndGet' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdateAndGet' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
           ARG newValue: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
             TYPE_ARG T: kotlin.Array<<root>.UncheckedCastTest.Box>
             ARG elements: VARARG type=kotlin.Array<out kotlin.Array<<root>.UncheckedCastTest.Box>> varargElementType=kotlin.Array<<root>.UncheckedCastTest.Box>
@@ -504,21 +532,17 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
               ARG arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=<root>.UncheckedCastTest.Box origin=GET_ARRAY_ELEMENT
                 ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Array<<root>.UncheckedCastTest.Box> origin=GET_ARRAY_ELEMENT
                   ARG <this>: TYPE_OP type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=CAST typeOperand=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-                      TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                      ARG <this>: PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-                        ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdateAndGet' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+                    CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                      TYPE_ARG T: <none>
+                      ARG <this>: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                      ARG obj: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdateAndGet' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
                   ARG index: CONST Int type=kotlin.Int value=0
                 ARG index: CONST Int type=kotlin.Int value=1
         VAR name:res type:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> [val]
-          CALL 'private final fun updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.UncheckedCastTest' type=kotlin.Any? origin=null
+          CALL 'private final fun updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.UncheckedCastTest' type=kotlin.Any? origin=null
             ARG <this>: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdateAndGet' type=<root>.UncheckedCastTest origin=null
-            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=LAMBDA
-              FUN ATOMICFU_GENERATED_FUNCTION name:<bs$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
-                BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <bs$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdateAndGet'
-                    PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-                      ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdateAndGet' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+            ARG handler$atomicfu: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdateAndGet' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>, kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
                 VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
@@ -560,10 +584,10 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
               ARG arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=<root>.UncheckedCastTest.Box origin=GET_ARRAY_ELEMENT
                 ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Array<<root>.UncheckedCastTest.Box> origin=GET_ARRAY_ELEMENT
                   ARG <this>: TYPE_OP type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=CAST typeOperand=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-                      TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                      ARG <this>: PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-                        ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdateAndGet' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+                    CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                      TYPE_ARG T: <none>
+                      ARG <this>: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                      ARG obj: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicRefUncheckedCastUpdateAndGet' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
                   ARG index: CONST Int type=kotlin.Int value=1
                 ARG index: CONST Int type=kotlin.Int value=0
     FUN name:testAtomicValUncheckedCast visibility:public modality:FINAL returnType:kotlin.Unit
@@ -574,15 +598,15 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           TYPE_ARG T: kotlin.String
           ARG expected: TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-              TYPE_ARG T: kotlin.String
-              ARG <this>: PROPERTY_REFERENCE 'private final s$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-s$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-s$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-                ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicValUncheckedCast' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+            CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.String origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: CALL 'private final fun <get-s$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicValUncheckedCast' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
           ARG actual: CONST String type=kotlin.String value="AAA"
-        CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
-          TYPE_ARG T: kotlin.Any?
-          ARG <this>: PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-            ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicValUncheckedCast' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicValUncheckedCast' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
           ARG newValue: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
             TYPE_ARG T: kotlin.Array<<root>.UncheckedCastTest.Box>
             ARG elements: VARARG type=kotlin.Array<out kotlin.Array<<root>.UncheckedCastTest.Box>> varargElementType=kotlin.Array<<root>.UncheckedCastTest.Box>
@@ -602,10 +626,10 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
                   TYPE_ARG T0: kotlin.Array<<root>.UncheckedCastTest.Box>
                   ARG arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Array<<root>.UncheckedCastTest.Box> origin=GET_ARRAY_ELEMENT
                     ARG <this>: TYPE_OP type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=CAST typeOperand=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                      CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-                        TYPE_ARG T: kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>>
-                        ARG <this>: PROPERTY_REFERENCE 'private final bs$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-bs$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-                          ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicValUncheckedCast' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+                      CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Array<kotlin.Array<<root>.UncheckedCastTest.Box>> origin=null
+                        TYPE_ARG T: <none>
+                        ARG <this>: CALL 'private final fun <get-bs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                        ARG obj: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testAtomicValUncheckedCast' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
                     ARG index: CONST Int type=kotlin.Int value=0
                 ARG index: CONST Int type=kotlin.Int value=0
             ARG other: CONST Int type=kotlin.Int value=10
@@ -616,15 +640,11 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           TYPE_ARG T: kotlin.String
           ARG expected: CONST String type=kotlin.String value="AAA"
-          ARG actual: CALL 'private final fun getString$atomicfu$NATIVE_PROPERTY_REF$Any <T> (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>): kotlin.String declared in <root>.UncheckedCastTest' type=kotlin.String origin=null
+          ARG actual: CALL 'private final fun getString$atomicfu$ATOMIC_FIELD_UPDATER$Any <T> (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.String declared in <root>.UncheckedCastTest' type=kotlin.String origin=null
             TYPE_ARG T: kotlin.Any
             ARG <this>: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testInlineFunc' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
-            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=LAMBDA
-              FUN ATOMICFU_GENERATED_FUNCTION name:<s$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
-                BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <s$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.UncheckedCastTest.testInlineFunc'
-                    PROPERTY_REFERENCE 'private final s$volatile: kotlin.Any? declared in <root>.UncheckedCastTest' field='FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' getter='private final fun <get-s$volatile> (): kotlin.Any? declared in <root>.UncheckedCastTest' setter='private final fun <set-s$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-                      ARG 1: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testInlineFunc' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
+            ARG handler$atomicfu: CALL 'private final fun <get-s$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.UncheckedCastTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.testInlineFunc' type=<root>.UncheckedCastTest origin=IMPLICIT_ARGUMENT
     FUN name:testTopLevelValUnchekedCast visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.UncheckedCastTest
       annotations:
@@ -635,9 +655,9 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
           ARG expected: CONST String type=kotlin.String value="B"
           ARG actual: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
             ARG <this>: TYPE_OP type=kotlin.Array<kotlin.String> origin=CAST typeOperand=kotlin.Array<kotlin.String>
-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
-                TYPE_ARG T: kotlin.Array<kotlin.String>
-                ARG <this>: PROPERTY_REFERENCE 'private final topLevelS$volatile: kotlin.Any? declared in <root>' field='FIELD ATOMICFU_GENERATED_FIELD name:topLevelS$volatile type:kotlin.Any? visibility:private [static] declared in <root>' getter='private final fun <get-topLevelS$volatile> (): kotlin.Any? declared in <root>' setter='private final fun <set-topLevelS$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+              CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Array<kotlin.String> origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: CALL 'private final fun <get-topLevelS> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
             ARG index: CONST Int type=kotlin.Int value=1
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY

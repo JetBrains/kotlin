@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JS_IR
 // MODULE: lib
 // FILE: lib.kt
 import kotlinx.atomicfu.*

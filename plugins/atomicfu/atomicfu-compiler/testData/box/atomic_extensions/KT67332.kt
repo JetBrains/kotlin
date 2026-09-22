@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JS_IR
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 
