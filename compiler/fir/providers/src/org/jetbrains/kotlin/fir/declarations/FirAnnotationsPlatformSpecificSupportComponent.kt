@@ -143,7 +143,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
             this[StandardClassIds.Annotations.NumericClass] = [
                 FirCompilerRequiredParameterDescription(
                     name = StandardClassIds.Annotations.ParameterNames.actualizations,
-                    kind = FirCraParameterKind.GetClassParameter(isVararg = true),
+                    kind = FirCraParameterKind.EnumParameter(StandardClassIds.NumericVariant, isVararg = true),
                     position = null,
                 )
             ]
