@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.builder.test.COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY
@@ -27,10 +28,6 @@ import java.io.File
 
 @TestDataPath("\$PROJECT_ROOT")
 class TreesCompareTest : AbstractRawFirBuilderTestCase() {
-    companion object {
-        private val DIAGNOSTIC_IN_TESTDATA_PATTERN = Regex("<!>|<!(.*?(\\(\".*?\"\\)|\\(\\))??)+(?<!<)!>")
-    }
-
     private fun compareBase(path: String, withTestData: Boolean, compareFir: (File) -> Boolean) {
         var counter = 0
         var errorCounter = 0
@@ -45,7 +42,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 counter++
             }
         }
-        println("BASE PATH: $path")
+        println("BASE PATH: ${File(path).normalize().absolutePath}")
         if (!withTestData) {
             path.walkRepositoryKotlinFilesWithoutTestData(onEachFile)
         } else {
@@ -68,7 +65,8 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
-        compareBase(System.getProperty("user.dir"), withTestData = false) { file ->
+        // Back from /compiler/fir/raw-fir/<module>
+        compareBase(System.getProperty("user.dir") + "/../../../..", withTestData = false) { file ->
             val [text, linesMapping] = file.inputStream().reader(Charsets.UTF_8).use {
                 it.readSourceFileWithMapping()
             }
@@ -104,7 +102,8 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
-        compareBase(COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY, withTestData = true) { file ->
+        val absolutePath = ForTestCompileRuntime.transformTestDataPath(COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY).path
+        compareBase(absolutePath, withTestData = true) { file ->
             if (file.isCustomTestData) return@compareBase true
 
             file.toStrippedCompilerDiagnosticsTestDataFiles()?.forEach { [filePath, fileText] ->
