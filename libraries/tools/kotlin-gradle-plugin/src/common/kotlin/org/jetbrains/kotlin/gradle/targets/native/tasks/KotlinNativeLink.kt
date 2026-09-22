@@ -221,12 +221,24 @@ constructor(
     @get:Input
     val linkerOpts: List<String> by lazyConvention { binary.linkerOpts }
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputFiles
+    internal val linkerOptsFiles: ConfigurableFileCollection = objectFactory.fileCollection()
+
     /**
      * FIXME: KT-85118 This @Input annotation is incorrect and will not be part of KotlinNativeLink fingerprint because it is now used to
      * pass linker options in doFirst
      */
     @get:Input
     internal val additionalLinkerOpts: MutableList<String> = mutableListOf()
+
+    init {
+        // linkerOpts is still an input itself. Register existing options that point to files
+        // separately so that their contents participate in the up-to-date check.
+        linkerOptsFiles.from(linkerOpts.mapNotNull { linkerOpt ->
+            project.file(linkerOpt).takeIf { it.isFile }
+        })
+    }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles

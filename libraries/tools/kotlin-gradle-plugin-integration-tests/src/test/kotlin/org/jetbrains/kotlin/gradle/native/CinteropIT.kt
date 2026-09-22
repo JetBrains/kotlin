@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
+import kotlin.io.path.deleteIfExists
 
 @NativeGradlePluginTests
 class CinteropIT : KGPBaseTest() {
@@ -124,6 +127,28 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-89558: link task re-runs when the static library passed in linkerOpts is rebuilt")
+    @GradleTest
+    fun cinteropStaticLibraryUTDChecks(gradleVersion: GradleVersion) {
+        nativeProject("KT-89558-cinterop-static-library-UTD-checks", gradleVersion = gradleVersion) {
+            buildStaticLibrary(projectPath)
+
+            build(":runDebugExecutableNative") {
+                assertOutputContains("5")
+            }
+            // The first incremental build may rerun the link task for unrelated setup changes.
+            build(":runDebugExecutableNative")
+
+            projectPath.resolve("lib.c").replaceText("return globalCounter;", "return globalCounter + 1;")
+            buildStaticLibrary(projectPath)
+
+            build(":runDebugExecutableNative") {
+                assertTasksExecuted(":linkDebugExecutableNative")
+                assertOutputContains("6")
+            }
+        }
+    }
+
     @DisplayName("KT-62800: validation fails if neither definitionFile nor packageName was specified")
     @GradleTest
     fun cinteropWithoutDefinitionFileAndPackageName(gradleVersion: GradleVersion) {
@@ -176,5 +201,16 @@ class CinteropIT : KGPBaseTest() {
                 }
             }
         }
+    }
+}
+
+private fun buildStaticLibrary(projectPath: Path) {
+    val workingDir = projectPath.toFile()
+    runProcess(listOf("cc", "-c", "lib.c", "-Iinclude", "-o", "lib.o"), workingDir).also {
+        check(it.isSuccessful) { "Compiling lib.c failed: $it" }
+    }
+    projectPath.resolve("lib.a").deleteIfExists()
+    runProcess(listOf("ar", "rcs", "lib.a", "lib.o"), workingDir).also {
+        check(it.isSuccessful) { "Archiving lib.a failed: $it" }
     }
 }
