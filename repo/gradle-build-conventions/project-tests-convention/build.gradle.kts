@@ -22,22 +22,46 @@ kotlin {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+}
 
-    // 'TestBuildCacheTeamCityCompatibilityFunctionalTest' drives a build of the whole repository, so
-    // the repository is its input - all of it, which cannot be declared.
+/* The one test class that drives builds of the repository; everything else here is a unit test. */
+val functionalTestClass = "TestBuildCacheTeamCityCompatibilityFunctionalTest"
+
+tasks.test {
+    filter { excludeTestsMatching(functionalTestClass) }
+}
+
+val functionalTest = tasks.register<Test>("functionalTest") {
+    group = "verification"
+    description = "Runs $functionalTestClass, which drives builds of the repository itself"
+
+    val testSourceSet = sourceSets.test.get()
+    testClassesDirs = testSourceSet.output.classesDirs
+    classpath = testSourceSet.runtimeClasspath
+    filter { includeTestsMatching(functionalTestClass) }
+
+    // Apart from 'test' because it drives a build of the whole repository: the repository is its
+    // input, all of it, which cannot be declared - so this task can never be up to date, and the
+    // unit tests should not inherit that.
     doNotTrackState("Runs a build of the repository, whose state is not declared as an input")
 
-    // The functional tests run Gradle against the repository itself, so they have to be started from
-    // its build - './gradlew :gradle-build-conventions:project-tests-convention:test' - rather than
-    // from a standalone build of these conventions, which knows no repository to run.
+    // Which also means it has to be started from the repository's build - './gradlew
+    // :gradle-build-conventions:project-tests-convention:functionalTest' - rather than from a
+    // standalone build of these conventions, which knows no repository to run.
     val repositoryBuild = generateSequence(gradle.parent) { it.parent }.lastOrNull()
-        ?: error("Run this task from the repository build: ':gradle-build-conventions:${project.name}:test'")
+        ?: error("Run this task from the repository build: ':gradle-build-conventions:${project.name}:$name'")
     // 'isolated' is incubating, and is still the accessor to use: it is the one that keeps working
     // when project isolation does. 'test-federation-convention' reads the repository root the same way.
     @Suppress("UnstableApiUsage")
     val repositoryRoot = repositoryBuild.rootProject.isolated.projectDirectory.asFile
     workingDir = repositoryRoot
     environment("GRADLE_USER_HOME", gradle.gradleUserHomeDir.absolutePath)
+
+    shouldRunAfter(tasks.test)
+}
+
+tasks.check {
+    dependsOn(functionalTest)
 }
 
 dependencies {
