@@ -71,9 +71,10 @@ import java.io.File
  * - `formatVersion` - currently `1`.
  * - `taskPath` - the task this file was recorded for, so that a file lifted out of its build
  *   directory still says where it came from.
- * - `duration` - milliseconds; the whole run at the top level, Gradle's own timing on a suite.
- *   **Optional** on both, always present on a test. TeamCity has nowhere to put a suite's duration,
- *   so these are for other consumers, such as distributing tests by how long they take.
+ * - `duration` - milliseconds; the whole run at the top level, Gradle's own timing on a suite, summed
+ *   over the rounds a retry ran that suite in. **Optional** on both, always present on a test.
+ *   TeamCity has nowhere to put a suite's duration, so these are for other consumers, such as
+ *   distributing tests by how long they take.
  * - `suites` and `tests` - always written, even when empty.
  * - suite `name` - as Gradle reports it, minus the suites Gradle inserts itself (see
  *   [isGradleInsertedSuiteName]), and under the bare class where a task prefixes a class suite with
@@ -113,7 +114,7 @@ class TestExecutionsListener(
         val suites = LinkedHashMap<String, SuiteNode>()
         val tests = mutableListOf<TestRecord>()
 
-        /** Gradle's own timing for this suite, or null if it never reported one. */
+        /** What Gradle timed this suite at, summed over its rounds, or null if it reported none. */
         var durationMillis: Long? = null
     }
 
@@ -168,8 +169,11 @@ class TestExecutionsListener(
         suiteNames.fold(root) { parent, name -> parent.suites.getOrPut(name) { SuiteNode(name) } }
 
     override fun afterSuite(suite: TestDescriptor, result: TestResult) {
-        // TeamCity has nowhere to put a suite's timing, but a test distribution mechanism needs it.
-        synchronized(lock) { nodeOf(suite)?.durationMillis = result.durationMillis }
+        // Summed rather than assigned: a retry reruns the suite under a fresh executor suite, one of
+        // the suites Gradle inserts, so every round lands on this node - and every round cost time.
+        synchronized(lock) {
+            nodeOf(suite)?.let { it.durationMillis = (it.durationMillis ?: 0) + result.durationMillis }
+        }
 
         // Only the root suite finishing means the whole task is done.
         if (suite.parent != null) return
