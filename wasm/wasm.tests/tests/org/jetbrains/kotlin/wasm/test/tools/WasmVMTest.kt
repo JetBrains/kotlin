@@ -25,4 +25,36 @@ class WasmVMTest {
         assertTrue("original length=" in output, output.takeLast(256))
         assertTrue("SHA-256=" in output, output.takeLast(256))
     }
+
+    @Test
+    fun `given a single chunk larger than the capture limit then both ends of it are retained`() {
+        val capture = BoundedOutputCapture()
+        val head = "head marker line\n"
+        val tail = "\ntail marker line"
+        val chunk = (head + "x".repeat(5 * 1024 * 1024) + tail).toCharArray()
+
+        capture.append(chunk, chunk.size)
+
+        val output = capture.toString()
+        assertTrue(output.startsWith(head), output.take(64))
+        assertTrue(output.endsWith(tail), output.takeLast(64))
+        assertTrue(GroupedTestsResultProtocol.OUTPUT_TRUNCATED in output, output.takeLast(256))
+        assertTrue("original length=${chunk.size} chars" in output, output.takeLast(256))
+    }
+
+    @Test
+    fun `given a short buffered head and an oversized chunk then the head is completed from the chunk`() {
+        val capture = BoundedOutputCapture()
+        val buffered = "buffered line\n".toCharArray()
+        capture.append(buffered, buffered.size)
+        val tail = "\ntail marker line"
+        val chunk = ("y".repeat(3 * 1024 * 1024) + "\n" + "z".repeat(2 * 1024 * 1024) + tail).toCharArray()
+
+        capture.append(chunk, chunk.size)
+
+        val output = capture.toString()
+        assertTrue(output.startsWith("buffered line\n"), output.take(64))
+        assertTrue(output.endsWith(tail), output.takeLast(64))
+        assertTrue("original length=${buffered.size + chunk.size} chars" in output, output.takeLast(256))
+    }
 }

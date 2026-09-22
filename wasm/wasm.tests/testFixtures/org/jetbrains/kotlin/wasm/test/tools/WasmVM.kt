@@ -216,9 +216,15 @@ internal class BoundedOutputCapture {
                 return
             }
 
+            // A single chunk may cross the limit before the buffered output reaches the head length, so the head is
+            // completed from the chunk itself; the remainder of the chunk then goes through the tail ring buffer.
+            val headFromChunk = (CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH - fullOutput.length).coerceIn(0, chunk.length)
+            fullOutput.append(chunk, 0, headFromChunk)
             prefix = fullOutput.substring(0, CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH)
             appendToSuffix(fullOutput.substring(CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH))
             fullOutput = StringBuilder()
+            appendToSuffix(chunk.substring(headFromChunk))
+            return
         }
         appendToSuffix(chunk)
     }
