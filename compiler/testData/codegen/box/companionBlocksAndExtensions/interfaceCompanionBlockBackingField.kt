@@ -1,6 +1,6 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
 // IGNORE_BACKEND: JVM
-// JVM_IR KT-85853
+// JVM KT-85853
 
 interface InterfaceWithBackingField {
     companion {
