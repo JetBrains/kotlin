@@ -16,6 +16,8 @@ public expect abstract class AbstractMutableList<E> : MutableList<E> {
      *
      * A modification is considered to be structural if it changes the list size,
      * or otherwise changes it in a way that iterations in progress may return incorrect results.
+     * A call to a method that can structurally modify the list may be counted even if it changes nothing,
+     * for example, [addAll] with an empty collection.
      *
      * This value can be used by iterators returned by [iterator] and [listIterator]
      * to provide fail-fast behavior when a concurrent modification is detected during iteration.

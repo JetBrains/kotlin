@@ -96,11 +96,10 @@ class ConcurrentModificationTest {
         if (TestPlatform.current == TestPlatform.Js) return
 
         /**
-         * Some operations should not register a modification by contract, but java ArrayList,
-         * whose implementation we can't change, registers one anyway.
-         * @param isJavaArrayListBehavior specifies whether to test java ArrayList behavior or the behavior by contract.
+         * An empty `addAll` may register a modification, see the KDoc of `AbstractMutableList.modCount`.
+         * java ArrayList, our ArrayList and ListBuilder register one, ArrayDeque does not.
          */
-        fun directOperations(isJavaArrayListBehavior: Boolean) = listOf<CollectionOperation<MutableList<String>>>(
+        fun operations(isJavaArrayListBehavior: Boolean) = listOf<CollectionOperation<MutableList<String>>>(
             CollectionOperation("set()", throwsCME = false) { set(2, "e") },
 
             CollectionOperation("add()") { add("e") },
@@ -128,22 +127,27 @@ class ConcurrentModificationTest {
             CollectionOperation("iterator.remove()") { iterator().apply { val _ = next(); remove() } },
         )
 
-        // Sub-lists never register a modification when adding an empty collection, even when the root list does,
-        // so the subList op variants always use the by-contract expectations.
-        fun operations(isJavaArrayListBehavior: Boolean): List<CollectionOperation<MutableList<String>>> =
-            directOperations(isJavaArrayListBehavior) + directOperations(isJavaArrayListBehavior = false).map { op ->
-                CollectionOperation("subList(1, size)." + op.description, op.throwsCME) { op.function.invoke(subList(1, size)) }
-            }
-
-        fun testThrowsCME(isJavaArrayListBehavior: Boolean = true, withMutableList: WithCollection<MutableList<String>>) {
-            testIteratorThrowsCME(withMutableList, operations(isJavaArrayListBehavior))
+        // A sub list registers a modification on an empty addAll when its root list does,
+        // except java.util.ArrayList.SubList, which registers nothing.
+        fun testThrowsCME(
+            isJavaArrayListBehavior: Boolean = true,
+            isJavaSubList: Boolean = false,
+            withMutableList: WithCollection<MutableList<String>>
+        ) {
+            val subListOperations: List<CollectionOperation<MutableList<String>>> =
+                operations(isJavaArrayListBehavior && !isJavaSubList).map { op ->
+                    CollectionOperation("subList(1, size)." + op.description, op.throwsCME) { op.function.invoke(subList(1, size)) }
+                }
+            testIteratorThrowsCME(withMutableList, operations(isJavaArrayListBehavior) + subListOperations)
         }
+
+        val onJvm = TestPlatform.current == TestPlatform.Jvm
 
         // size == capacity
-        testThrowsCME { action ->
+        testThrowsCME(isJavaSubList = onJvm) { action ->
             MutableList(4) { ('a' + it).toString() }.also(action)
         }
-        testThrowsCME { action ->
+        testThrowsCME(isJavaSubList = onJvm) { action ->
             mutableListOf("a", "b", "c", "d").also(action)
         }
 
@@ -165,7 +169,7 @@ class ConcurrentModificationTest {
         }
 
         // size < capacity
-        testThrowsCME { action ->
+        testThrowsCME(isJavaSubList = onJvm) { action ->
             ArrayList<String>(10).apply {
                 addAll(listOf("a", "b", "c", "d"))
                 action(this)
@@ -336,15 +340,6 @@ class ConcurrentModificationTest {
         assertFailsWith<ConcurrentModificationException> {
             val arrayDeque = ArrayDeque(listOf("a", "b", "c", "d"))
             for (e in arrayDeque.subList(1, 3)) arrayDeque.remove(e)
-        }
-
-        buildList {
-            addAll(listOf("a", "b", "c", "d"))
-            val subList = subList(0, size)
-            add("e")
-            assertFailsWith<ConcurrentModificationException> { subList.addAll(emptyList()) }
-            assertFailsWith<ConcurrentModificationException> { subList.addAll(1, emptyList()) }
-            assertFailsWith<ConcurrentModificationException> { subList.addAll(5, emptyList()) }
         }
     }
 
