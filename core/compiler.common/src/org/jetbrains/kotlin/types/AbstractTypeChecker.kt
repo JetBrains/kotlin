@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.TypeCheckerState.LowerCapturedTypePolicy.*
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
 import org.jetbrains.kotlin.types.model.*
@@ -431,7 +432,7 @@ object AbstractTypeChecker {
         if (c.areEqualTypeConstructors(subType.typeConstructor(), superConstructor) && superConstructor.parametersCount() == 0) return true
         if (superConstructor.isAnyConstructor()) return true
 
-        if (superConstructor.isValueConstructor()) {
+        if (superConstructor.isClassWithId(StandardClassIds.Value)) {
             return state.anySupertype(
                 subType,
                 supertypesPolicy = { LowerIfFlexible },
@@ -439,7 +440,7 @@ object AbstractTypeChecker {
                     val typeConstructor = it.typeConstructor()
                     typeConstructor.isClassTypeConstructor() &&
                             !typeConstructor.isAnyConstructor() &&
-                            !typeConstructor.isRichErrorConstructor() &&
+                            !typeConstructor.isClassWithId(StandardClassIds.RichError) &&
                             !typeConstructor.isRichErrorClass()
                 }
             )

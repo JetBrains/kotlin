@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -300,20 +301,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun RigidTypeMarker.asArgumentList() = this as IrSimpleType
 
-    override fun TypeConstructorMarker.isAnyConstructor(): Boolean =
-        this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.any)
-
-    override fun TypeConstructorMarker.isValueConstructor(): Boolean =
-        this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.value)
-
-    override fun TypeConstructorMarker.isRichErrorConstructor(): Boolean =
-        this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.richError)
-
-    override fun TypeConstructorMarker.isNothingConstructor(): Boolean =
-        this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.nothing)
-
-    override fun TypeConstructorMarker.isArrayConstructor(): Boolean =
-        this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.array)
+    override fun TypeConstructorMarker.isClassWithId(classId: ClassId): Boolean {
+        return this is IrClassSymbol && isClassWithFqName(classId.asSingleFqName().toUnsafe())
+    }
 
     override fun RigidTypeMarker.isSingleClassifierType() = true
 

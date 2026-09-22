@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.types.model
 
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
 import org.jetbrains.kotlin.types.TypeCheckerState
@@ -612,11 +614,11 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
         }
     }
 
-    fun TypeConstructorMarker.isAnyConstructor(): Boolean
-    fun TypeConstructorMarker.isValueConstructor(): Boolean
-    fun TypeConstructorMarker.isRichErrorConstructor(): Boolean
-    fun TypeConstructorMarker.isNothingConstructor(): Boolean
-    fun TypeConstructorMarker.isArrayConstructor(): Boolean
+    fun TypeConstructorMarker.isClassWithId(classId: ClassId): Boolean
+
+    fun TypeConstructorMarker.isAnyConstructor(): Boolean = isClassWithId(StandardClassIds.Any)
+    fun TypeConstructorMarker.isNothingConstructor(): Boolean = isClassWithId(StandardClassIds.Nothing)
+    fun TypeConstructorMarker.isArrayConstructor(): Boolean = isClassWithId(StandardClassIds.Array)
 
     fun TypeConstructorMarker.isRichErrorClass(): Boolean = false
 

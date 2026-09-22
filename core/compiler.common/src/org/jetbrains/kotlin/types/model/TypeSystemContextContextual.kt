@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.types.model
 
+import org.jetbrains.kotlin.name.ClassId
+
 context(c: TypeSystemContext)
 fun KotlinTypeMarker.asRigidType(): RigidTypeMarker? = with(c) { asRigidType() }
 
@@ -331,13 +333,10 @@ context(c: TypeSystemContext)
 operator fun TypeArgumentListMarker.iterator() = with(c) { iterator() }
 
 context(c: TypeSystemContext)
+fun TypeConstructorMarker.isClassWithId(classId: ClassId): Boolean = with(c) { isClassWithId(classId) }
+
+context(c: TypeSystemContext)
 fun TypeConstructorMarker.isAnyConstructor(): Boolean = with(c) { isAnyConstructor() }
-
-context(c: TypeSystemContext)
-fun TypeConstructorMarker.isValueConstructor(): Boolean = with(c) { isValueConstructor() }
-
-context(c: TypeSystemContext)
-fun TypeConstructorMarker.isRichErrorConstructor(): Boolean = with(c) { isRichErrorConstructor() }
 
 context(c: TypeSystemContext)
 fun TypeConstructorMarker.isNothingConstructor(): Boolean = with(c) { isNothingConstructor() }

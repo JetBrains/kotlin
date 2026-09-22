@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirLookupTagEntry
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -395,24 +396,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return a.typeArguments === b.typeArguments
     }
 
-    override fun TypeConstructorMarker.isAnyConstructor(): Boolean {
-        return this is ConeClassLikeLookupTag && classId == StandardClassIds.Any
-    }
-
-    override fun TypeConstructorMarker.isValueConstructor(): Boolean {
-        return this is ConeClassLikeLookupTag && classId == StandardClassIds.Value
-    }
-
-    override fun TypeConstructorMarker.isRichErrorConstructor(): Boolean {
-        return this is ConeClassLikeLookupTag && classId == StandardClassIds.RichError
-    }
-
-    override fun TypeConstructorMarker.isNothingConstructor(): Boolean {
-        return this is ConeClassLikeLookupTag && classId == StandardClassIds.Nothing
-    }
-
-    override fun TypeConstructorMarker.isArrayConstructor(): Boolean {
-        return this is ConeClassLikeLookupTag && classId == StandardClassIds.Array
+    override fun TypeConstructorMarker.isClassWithId(classId: ClassId): Boolean {
+        return this is ConeClassLikeLookupTag && this.classId == classId
     }
 
     override fun TypeConstructorMarker.isRichErrorClass(): Boolean {
