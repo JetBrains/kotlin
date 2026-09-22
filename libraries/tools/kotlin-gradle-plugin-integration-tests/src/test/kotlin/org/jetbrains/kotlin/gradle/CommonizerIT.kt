@@ -702,8 +702,6 @@ open class CommonizerIT : KGPBaseTest() {
             val app = project("emptyKts", gradleVersion) {
                 buildScriptInjection {
                     project.applyMultiplatform {
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                        macosX64()
                         macosArm64()
                     }
                 }
@@ -711,8 +709,6 @@ open class CommonizerIT : KGPBaseTest() {
             val lib = project("emptyKts", gradleVersion) {
                 buildScriptInjection {
                     project.applyMultiplatform {
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                        macosX64()
                         macosArm64()
                     }
                 }
@@ -742,8 +738,6 @@ open class CommonizerIT : KGPBaseTest() {
                     linuxArm64()
                     linuxX64()
                     macosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    macosX64()
                 }
             }
 
@@ -786,8 +780,7 @@ open class CommonizerIT : KGPBaseTest() {
                     }
                     linuxX64().addCInterop()
                     linuxArm64().addCInterop()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    macosX64().addCInterop()
+                    iosArm64().addCInterop()
                     macosArm64().addCInterop()
                 }
             }
@@ -1030,11 +1023,15 @@ open class CommonizerIT : KGPBaseTest() {
     private fun TestProject.nonPlatformCinteropsClasspath(sourceSetName: String): Set<java.io.File> {
         return buildScriptReturn {
             project.future {
-                project.commonizedOutputLibraries(
-                    CInteropCommonizerDependent.from(
-                        kotlinMultiplatform.sourceSets.getByName(sourceSetName)
-                    )!!
-                )!!.files
+                checkNotNull(
+                    project.commonizedOutputLibraries(
+                        checkNotNull(
+                            CInteropCommonizerDependent.from(
+                                kotlinMultiplatform.sourceSets.getByName(sourceSetName)
+                            )
+                        ) { "No source set found for '$sourceSetName'" }
+                    )
+                ) { "No commonized output libraries found for source set '$sourceSetName'" }.files
             }.getOrThrow()
         }.buildAndReturn()
     }

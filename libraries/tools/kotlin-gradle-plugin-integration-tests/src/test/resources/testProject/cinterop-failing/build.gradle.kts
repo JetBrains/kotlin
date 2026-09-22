@@ -11,9 +11,8 @@ repositories {
 
 
 kotlin {
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     val nativeTarget = when {
-        HostManager.hostIsMac -> macosX64("native")
+        HostManager.hostIsMac -> macosArm64("native")
         HostManager.hostIsMingw -> mingwX64("native")
         HostManager.hostIsLinux -> linuxX64("native")
         else -> error("Unexpected host: ${HostManager.host}")

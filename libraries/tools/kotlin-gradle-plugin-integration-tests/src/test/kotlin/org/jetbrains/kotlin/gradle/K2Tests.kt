@@ -220,8 +220,7 @@ class CustomK2Tests : KGPBaseTest() {
                 kotlinMultiplatform.apply {
                     applyDefaultHierarchyTemplate()
                     linuxX64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    macosX64()
+                    macosArm64()
 
                     compilerOptions.freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
                 }
