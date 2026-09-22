@@ -293,26 +293,30 @@ class TestExecutionsReplayTest {
         assertContains(warnings.single(), "Cannot replay the tests of $TASK_PATH")
     }
 
-    /** A status this does not know still happened: the test is reported, its verdict is not. */
+    /** Started and finished with nothing in between is how TeamCity is told a test passed. */
     @Test
-    fun `a status nobody knows is replayed as neither passed nor failed`() {
+    fun `a status nobody knows is left out rather than replayed as a pass`() {
         val messages = replayOf(
             """
             {
               "suites": [
                 {
                   "name": "com.example.SomeTest",
-                  "tests": [ { "name": "puzzling()", "status": "Inconclusive", "duration": 0 } ]
+                  "tests": [
+                    { "name": "puzzling()", "status": "Inconclusive", "duration": 0 },
+                    { "name": "passes()", "status": "OK", "duration": 7 }
+                  ]
                 }
               ]
             }
             """
         )
 
+        // The tests around it are replayed just the same: one unreadable record is not the file.
         assertEquals(
             listOf(
-                "testStarted name='com.example.SomeTest.puzzling()' $FLOW",
-                "testFinished name='com.example.SomeTest.puzzling()' duration='0' $FLOW",
+                "testStarted name='com.example.SomeTest.passes()' $FLOW",
+                "testFinished name='com.example.SomeTest.passes()' duration='7' $FLOW",
             ),
             messages,
         )
