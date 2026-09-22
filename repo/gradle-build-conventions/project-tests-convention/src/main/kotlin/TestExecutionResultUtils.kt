@@ -134,12 +134,19 @@ internal fun TestDescriptor.toTestPath(taskName: String): TestPath {
 }
 
 
-/** The status names TeamCity's own Gradle integration uses. */
+/**
+ * The status names TeamCity's own Gradle integration uses, and for a result type Gradle may add,
+ * the name it gives it.
+ *
+ * Recorded rather than refused: failing a test task over a status this build cannot spell would be
+ * punishing the wrong thing, and a status the replay cannot read is left out of it, see
+ * [TestExecutionsReplay].
+ */
 internal fun TestResult.statusName(): String = when (resultType) {
     TestResult.ResultType.FAILURE -> "Failure"
     TestResult.ResultType.SUCCESS -> "OK"
     TestResult.ResultType.SKIPPED -> "Ignored"
-    else -> error("Unexpected test result type: $resultType")
+    else -> resultType.name
 }
 
 internal val TestResult.durationMillis: Long get() = endTime - startTime
