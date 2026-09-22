@@ -206,3 +206,17 @@ func testObjCInteropSwiftImpl() throws {
 func testObjCInteropKotlinImpl() throws {
     try testObjCInterop(provider: kotlinFooArrayProvider())
 }
+
+@Test
+func testMyListImpl() throws {
+    let original = myListImplOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    try assertReversed(reversed: reverseMyListImpl(l: original), original: original)
+}
+
+@Test
+func testMyMutableListImpl() throws {
+    let original = myMutableListImplOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    original[1] = 64
+    let expected = listOf(elements: Int32(4), 64, 5, 16, 23, 42)
+    try assertReversed(reversed: reverseMyListImpl(l: original), original: expected)
+}
