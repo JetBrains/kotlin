@@ -386,7 +386,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-            ),
+            ).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             assertKotlinTestDependency(
@@ -412,7 +412,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-            ),
+            ).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             assertKotlinTestDependency(
