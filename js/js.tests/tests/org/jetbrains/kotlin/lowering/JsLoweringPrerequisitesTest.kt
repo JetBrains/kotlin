@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.ir.backend.js.callableReferenceFactoryPhases
+import org.jetbrains.kotlin.ir.backend.js.JsOptimizationPhase
 import org.jetbrains.kotlin.ir.backend.js.jsLowerings
 import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.ir.backend.js.optimizationLoweringList
@@ -30,7 +30,8 @@ class JsLoweringPrerequisitesTest : LoweringPrerequisitesTest() {
         )
         checkPrerequisites(jsLoweringsOfTheFirstPhase(settings))
         checkPrerequisites(jsLowerings)
-        checkPrerequisites(callableReferenceFactoryPhases)
-        checkPrerequisites(optimizationLoweringList)
+        checkPrerequisites(
+            optimizationLoweringList.mapNotNull { (it as? JsOptimizationPhase.Module)?.phase }
+        )
     }
 }

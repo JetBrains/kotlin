@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLow
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsAllFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsPrivateFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
+import org.jetbrains.kotlin.ir.backend.js.optimizations.UnwrapCallableReferences
+import org.jetbrains.kotlin.ir.backend.js.optimizations.WholeProgramOptimizationPhase
+import org.jetbrains.kotlin.ir.backend.js.optimizations.dataflow.JsModuleDFG
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
@@ -246,25 +249,64 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::IrValidationAfterLoweringsSecondStagePhase,
 )
 
-/**
- * Canonicalizes callable-reference factories: moves them to their declaration files and
- * deduplicates them by reflection target. Runs at the start of `optimizeProgramByIr`, before
- * the DFG-based optimizations, so each canonical factory is analyzed independently.
- */
-val callableReferenceFactoryPhases: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
-    ::MoveCallableFactoriesToDeclarationsLowering,
-    ::DeduplicateCallableReferenceFactoriesLowering,
+/** An entry in the linked-program IR optimization pipeline. */
+sealed interface JsOptimizationPhase {
+    /** A compiler phase invoked independently for every linked module. */
+    class Module(
+        val phase: NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>,
+    ) : JsOptimizationPhase
+
+    /** A compiler phase invoked once over the shared program-wide DFG snapshot. */
+    class DataFlow(
+        val phase: NamedCompilerPhase<JsIrBackendContext, Lazy<JsModuleDFG>, Boolean>,
+    ) : JsOptimizationPhase
+}
+
+private fun List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>.asOptimizationPhases() =
+    map { phase -> JsOptimizationPhase.Module(phase) }
+
+private fun dataFlowOptimizationPhase(
+    name: String,
+    body: (JsIrBackendContext, JsModuleDFG) -> Boolean,
+) = JsOptimizationPhase.DataFlow(
+    WholeProgramOptimizationPhase(
+        name,
+        notEnabledOutput = { _, _ -> false },
+        body = { context, dfg -> body(context, dfg.value) },
+    )
 )
 
-val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
-    ::ES6CollectConstructorsWhichNeedBoxParameters,
-    ::ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
-    ::ES6ConstructorBoxParameterOptimizationLowering,
-    ::ES6PrimaryConstructorOptimizationLowering,
-    ::ES6PrimaryConstructorUsageOptimizationLowering,
-    ::PurifyObjectInstanceGettersLowering,
-    ::InlineObjectsWithPureInitializationLowering,
-    ::JsCleanupPurifiedLeftoverDeclarationsLowering,
-    ::JsCleanupPurifiedLeftoverUsagesLowering,
-    ::WhileConditionFoldingLowering,
-)
+/**
+ * Linked-program IR optimizations in execution order.
+ *
+ * Callable-reference factories are canonicalized before the shared DFG snapshot is requested.
+ * Consecutive [JsOptimizationPhase.DataFlow] entries consume that same snapshot; module phases
+ * following them run only after any requested dead code elimination pass.
+ */
+val optimizationLoweringList: List<JsOptimizationPhase> = buildList {
+    addAll(
+        createModulePhases(
+            ::MoveCallableFactoriesToDeclarationsLowering,
+            ::DeduplicateCallableReferenceFactoriesLowering,
+        ).asOptimizationPhases()
+    )
+    add(
+        dataFlowOptimizationPhase("UnwrapCallableReferences") { context, dfg ->
+            UnwrapCallableReferences(context).lower(dfg)
+        }
+    )
+    addAll(
+        createModulePhases(
+            ::ES6CollectConstructorsWhichNeedBoxParameters,
+            ::ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
+            ::ES6ConstructorBoxParameterOptimizationLowering,
+            ::ES6PrimaryConstructorOptimizationLowering,
+            ::ES6PrimaryConstructorUsageOptimizationLowering,
+            ::PurifyObjectInstanceGettersLowering,
+            ::InlineObjectsWithPureInitializationLowering,
+            ::JsCleanupPurifiedLeftoverDeclarationsLowering,
+            ::JsCleanupPurifiedLeftoverUsagesLowering,
+            ::WhileConditionFoldingLowering,
+        ).asOptimizationPhases()
+    )
+}

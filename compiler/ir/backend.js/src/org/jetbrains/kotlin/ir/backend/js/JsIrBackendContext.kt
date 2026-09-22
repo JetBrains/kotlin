@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
+import org.jetbrains.kotlin.ir.backend.js.optimizations.dataflow.JsModuleDFG
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsPolyfills
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -163,6 +164,14 @@ class JsIrBackendContext(
         configuration.partialLinkageConfig,
         diagnosticReporter
     )
+
+    /**
+     * The shared DFG snapshot available while [optimizationLoweringList] is running.
+     *
+     * The snapshot is built on first use, after all preceding optimization phases have run, and
+     * is cleared when the optimization pipeline finishes.
+     */
+    internal var optimizationDfg: Lazy<JsModuleDFG>? = null
 
     internal var nextAssociatedObjectKey = 0
 }

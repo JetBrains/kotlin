@@ -5,14 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
-import org.jetbrains.kotlin.ir.backend.js.optimizations.UnwrapCallableReferences
-import org.jetbrains.kotlin.ir.backend.js.optimizations.WholeProgramOptimizationPhase
-import org.jetbrains.kotlin.ir.backend.js.optimizations.dataflow.JsDataFlowIR
-import org.jetbrains.kotlin.ir.backend.js.optimizations.dataflow.JsModuleDFG
 import org.jetbrains.kotlin.ir.backend.js.optimizations.dataflow.buildJsModuleDFG
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.JsStaticContext
@@ -24,42 +19,13 @@ import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.inline.clean.ClassPostProcessor
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 
-private val buildJsModuleDFGPhase = WholeProgramOptimizationPhase<Iterable<IrModuleFragment>, JsModuleDFG>(
-    name = "BuildJsModuleDFG",
-    // An empty snapshot makes every DFG consumer a no-op when graph construction is disabled.
-    notEnabledOutput = { context, modules ->
-        JsModuleDFG(modules, executionUnits = mutableListOf(), symbolTable = JsDataFlowIR.SymbolTable(context))
-    },
-    body = { context, modules -> buildJsModuleDFG(context, modules) },
-)
-
-/**
- * Wraps an optimization over the shared [JsModuleDFG] snapshot as a compiler phase.
- *
- * [body] returns true when its changes may have made declarations unreachable and therefore
- * require another dead code elimination pass. DFG phases run in [dfgOptimizationPhases] order
- * over the same snapshot. A phase that mutates relationships represented by the graph must
- * update them before a later phase relies on them, or be ordered after all such consumers.
- */
-private fun dfgOptimizationPhase(
-    name: String,
-    body: (JsIrBackendContext, JsModuleDFG) -> Boolean,
-) = WholeProgramOptimizationPhase(name, notEnabledOutput = { _, _ -> false }, body = body)
-
-/** DFG consumers in execution order; every entry receives the same program-wide snapshot. */
-private val dfgOptimizationPhases = listOf(
-    dfgOptimizationPhase("UnwrapCallableReferences") { context, dfg ->
-        UnwrapCallableReferences(context).lower(dfg)
-    },
-)
-
 /**
  * Runs whole-program IR optimizations once over the fully lowered, linked program.
  *
- * Initial dead code elimination and callable-reference canonicalization prepare the IR before
- * the DFG snapshot is built. DFG consumers then run in sequence, followed by another dead code
- * elimination pass only when a consumer reports newly unreachable declarations. The remaining
- * per-module optimization lowerings run after the whole-program analysis.
+ * Initial dead code elimination prepares the IR before [optimizationLoweringList] runs. Module
+ * phases and program-wide DFG phases then execute in list order. Consecutive DFG phases share one
+ * lazily built snapshot and are followed by dead code elimination when any of them reports newly
+ * unreachable declarations.
  */
 fun optimizeProgramByIr(
     modules: Iterable<IrModuleFragment>,
@@ -69,33 +35,37 @@ fun optimizeProgramByIr(
 ) {
     val phaserState = PhaserState()
 
-    fun runModulePhases(phases: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>) {
-        for (phase in phases) {
-            for (module in modules) {
-                phase.invoke(context.phaseConfig, phaserState, context, module)
-            }
-        }
-    }
-
     fun eliminateDeadDeclarations() {
         val dceDumpNameCache = DceDumpNameCache() // in JS mode only DCE Graph could be dumped
         eliminateDeadDeclarations(modules, context, moduleKind, removeUnusedAssociatedObjects, dceDumpNameCache)
     }
 
     eliminateDeadDeclarations()
-    runModulePhases(callableReferenceFactoryPhases)
-
-    val dfg = buildJsModuleDFGPhase.invoke(context.phaseConfig, phaserState, context, input = modules)
+    check(context.optimizationDfg == null) { "An optimization DFG is already installed" }
+    context.optimizationDfg = lazy(LazyThreadSafetyMode.NONE) { buildJsModuleDFG(context, modules) }
     var hasOrphanedDeclarations = false
-    for (phase in dfgOptimizationPhases) {
-        val orphaned = phase.invoke(context.phaseConfig, phaserState, context, input = dfg)
-        hasOrphanedDeclarations = hasOrphanedDeclarations || orphaned
+    for (optimization in optimizationLoweringList) {
+        when (optimization) {
+            is JsOptimizationPhase.Module -> {
+                if (hasOrphanedDeclarations) {
+                    eliminateDeadDeclarations()
+                    hasOrphanedDeclarations = false
+                }
+                for (module in modules) {
+                    optimization.phase.invoke(context.phaseConfig, phaserState, context, module)
+                }
+            }
+            is JsOptimizationPhase.DataFlow -> {
+                val dfg = checkNotNull(context.optimizationDfg)
+                val orphaned = optimization.phase.invoke(context.phaseConfig, phaserState, context, input = dfg)
+                hasOrphanedDeclarations = hasOrphanedDeclarations || orphaned
+            }
+        }
     }
     if (hasOrphanedDeclarations) {
         eliminateDeadDeclarations()
     }
-
-    runModulePhases(optimizationLoweringList)
+    context.optimizationDfg = null
 }
 
 fun optimizeFragmentByJsAst(fragment: JsIrProgramFragment, context: JsStaticContext) {
