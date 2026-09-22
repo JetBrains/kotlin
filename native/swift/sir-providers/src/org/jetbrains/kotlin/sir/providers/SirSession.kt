@@ -198,8 +198,15 @@ public sealed interface SirTranslationResult {
     public data class RegularClass(
         public override val declaration: SirClass,
         public val sealedType: SirScopeDefiningDeclaration?,
+        public val typedListDeclarations: Triple<SirProtocol, SirExtension, SirStruct>?,
     ) : TypeDeclaration {
-        override val allDeclarations: List<SirDeclaration> = listOfNotNull(declaration, sealedType)
+        override val allDeclarations: List<SirDeclaration> = listOfNotNull(
+            declaration,
+            sealedType,
+            typedListDeclarations?.first,
+            typedListDeclarations?.second,
+            typedListDeclarations?.third,
+        )
     }
 
     public data class TypeAlias(public override val declaration: SirTypealias) : TypeDeclaration {
