@@ -196,7 +196,7 @@ internal open class GradleCompilerRunner(
         val argsArray = compilerArgs.toArgumentStrings(false, addFreeArgsDelimiter = this is GradleBuildToolsApiCompilerRunner).toTypedArray()
 
         fusMetricsConsumer.orNull?.let { metricsConsumer ->
-            CompilerArgumentMetrics.collectMetrics(compilerArgs, argsArray, metricsConsumer)
+            CompilerArgumentMetrics.collectMetrics(compilerArgs, argsArray, loggerProvider, metricsConsumer)
             KotlinCompilerRefIndexMetrics.collectMetrics(compilerExecutionSettings.generateCompilerRefIndex, metricsConsumer)
         }
 
