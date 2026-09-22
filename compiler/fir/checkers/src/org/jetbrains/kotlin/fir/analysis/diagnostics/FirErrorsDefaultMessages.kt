@@ -4070,7 +4070,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER,
-            "'@IntroducedAt' annotation cannot be used in the (single) parameter of a value class constructor.",
+            "'@IntroducedAt' annotation cannot be used in the (single) parameter of an inline value class constructor.",
         )
         map.put(
             NON_ASCENDING_VERSION_ANNOTATION,

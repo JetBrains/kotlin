@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -151,7 +151,8 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
                 param.isVararg ->
                     reporter.reportOn(versionAnnotation.source ?: param.source, FirErrors.INVALID_VERSIONING_ON_VARARG)
 
-                declaration is FirConstructor && param.correspondingProperty != null && containingClassSymbol?.isInlineOrValue == true ->
+                declaration is FirConstructor && param.correspondingProperty != null &&
+                        (containingClassSymbol as? FirRegularClassSymbol)?.isInlineClass == true ->
                     reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER)
 
                 !hasDefaultValue ->
