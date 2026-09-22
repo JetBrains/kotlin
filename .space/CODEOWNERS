@@ -217,6 +217,7 @@
 /compiler/tests/ "Kotlin Compiler"
 /compiler/testResources/ "Kotlin Compiler"
 /compiler/tests-common/ "Kotlin Compiler"
+/compiler/jvm.tests "Kotlin Frontend" "Kotlin JVM"
 /compiler/tests-common-new/ "Kotlin Frontend"
 /compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/klib/ "Kotlin Common Backend"
 /compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/directives/WasmEnvironmentConfigurationDirectives.kt "Kotlin Wasm"
