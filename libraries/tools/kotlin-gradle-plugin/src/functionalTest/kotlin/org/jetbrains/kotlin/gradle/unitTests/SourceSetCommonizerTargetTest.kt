@@ -38,8 +38,7 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `linux macos`() {
         kotlin.linuxX64("linux")
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        kotlin.macosX64("macos")
+        kotlin.macosArm64("macos")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -50,19 +49,18 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosMain))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosTest))
 
         project.evaluate()
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(commonMain))
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(commonTest))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(commonMain))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(commonTest))
     }
 
     @Test
     fun `nativeMain linux macos`() {
         kotlin.linuxX64("linux")
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        kotlin.macosX64("macos")
+        kotlin.macosArm64("macos")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -79,14 +77,14 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosMain))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosTest))
 
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(nativeMain))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(nativeMain))
 
         project.evaluate()
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(commonMain))
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(commonTest))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(commonMain))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(commonTest))
     }
 
     @Test
@@ -121,8 +119,7 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `nativeMain iosMain linux macos iosX64 iosArm64`() {
         kotlin.linuxX64("linux")
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        kotlin.macosX64("macos")
+        kotlin.macosArm64("macos")
         @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.iosX64("iosX64")
         kotlin.iosArm64("iosArm64")
@@ -149,8 +146,8 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosMain))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosTest))
         assertEquals(CommonizerTarget(IOS_X64), inferCommonizerTarget(iosX64Test))
         assertEquals(CommonizerTarget(IOS_X64), inferCommonizerTarget(iosX64Test))
         assertEquals(CommonizerTarget(IOS_ARM64), inferCommonizerTarget(iosArm64Main))
@@ -158,19 +155,19 @@ class SourceSetCommonizerTargetTest {
         assertEquals(CommonizerTarget(IOS_X64, IOS_ARM64), inferCommonizerTarget(iosMain))
 
         assertEquals(
-            CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64, LINUX_X64),
+            CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_ARM64, LINUX_X64),
             inferCommonizerTarget(nativeMain)
         )
 
         project.evaluate()
 
         assertEquals(
-            CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64, LINUX_X64),
+            CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_ARM64, LINUX_X64),
             inferCommonizerTarget(commonMain)
         )
 
         assertEquals(
-            CommonizerTarget(IOS_ARM64, IOS_X64, LINUX_X64, MACOS_X64),
+            CommonizerTarget(IOS_ARM64, IOS_X64, LINUX_X64, MACOS_ARM64),
             inferCommonizerTarget(commonTest)
         )
     }
@@ -178,8 +175,7 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `nativeMain linux macos jvm`() {
         kotlin.linuxX64("linux")
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        kotlin.macosX64("macos")
+        kotlin.macosArm64("macos")
         kotlin.jvm("jvm")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -198,12 +194,12 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosMain))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosTest))
         assertNull(inferCommonizerTarget(jvmMain), "Expected jvmMain to have no commonizer target")
         assertNull(inferCommonizerTarget(jvmTest), "Expected jvmTest to have no commonizer target")
 
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(nativeMain))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(nativeMain))
 
         project.evaluate()
         assertNull(inferCommonizerTarget(commonMain), "Expected commonMain to have no commonizer target")

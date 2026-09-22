@@ -308,11 +308,6 @@ class DisabledNativeCacheTest {
     }
 }
 
-//    cacheableTargets.macos_x64 = \
-//    macos_x64 \
-//    ios_x64 \
-//    ios_arm64
-//
 //    cacheableTargets.linux_x64 = \
 //    linux_x64
 //
@@ -335,7 +330,6 @@ private fun KotlinMultiplatformExtension.createCacheableTargets(): List<KotlinNa
         HostManager.hostIsMac && !isArm64 -> listOf(
             iosArm64(),
             iosX64(),
-            macosX64()
         )
         HostManager.hostIsLinux -> listOf(
             linuxX64()

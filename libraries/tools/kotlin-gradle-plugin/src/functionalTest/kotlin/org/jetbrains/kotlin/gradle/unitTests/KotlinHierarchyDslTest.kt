@@ -348,8 +348,7 @@ class KotlinHierarchyDslTest {
         }
 
         kotlin.linuxX64()
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        kotlin.macosX64()
+        kotlin.macosArm64()
         kotlin.mingwX64()
 
         assertEquals(
@@ -358,12 +357,12 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("linuxX64Main", "macosX64Main", "mingwX64Main"),
+            stringSetOf("linuxX64Main", "macosArm64Main", "mingwX64Main"),
             kotlin.dependingSourceSetNames("nativeMain")
         )
 
         assertEquals(
-            stringSetOf("linuxX64Main", "macosX64Main"),
+            stringSetOf("linuxX64Main", "macosArm64Main"),
             kotlin.dependingSourceSetNames("nixMain")
         )
     }
@@ -512,8 +511,7 @@ class KotlinHierarchyDslTest {
         @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.iosX64()
         kotlin.iosArm64()
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        kotlin.macosX64()
+        kotlin.macosArm64()
         kotlin.jvm()
 
         assertEquals(
@@ -525,7 +523,7 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("macosX64Main", "iosMain"), kotlin.dependingSourceSetNames("appleMain")
+            stringSetOf("macosArm64Main", "iosMain"), kotlin.dependingSourceSetNames("appleMain")
         )
 
         assertEquals(

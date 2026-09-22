@@ -183,8 +183,7 @@ internal class CompilationSpecificPluginPath {
             kotlin {
                 jvm()
                 linuxX64("linux")
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                macosX64("mac")
+                macosArm64("mac")
             }
         }
 
