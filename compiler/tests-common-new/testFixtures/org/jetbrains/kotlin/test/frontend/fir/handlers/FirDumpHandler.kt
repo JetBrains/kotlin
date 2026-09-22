@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR_DUMP_HANDLER
@@ -40,7 +39,6 @@ class FirDumpHandler(
     testServices: TestServices
 ) : FirAnalysisHandler(testServices) {
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper()
-    private var byteCodeListingEnabled = false
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(TestDumpDirectives, FirDiagnosticsDirectives)
@@ -49,7 +47,6 @@ class FirDumpHandler(
         if (module.directives.shouldSkip()) return
         for (part in info.partsForDependsOnModules) {
             val currentModule = part.module
-            byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
             val isFirDumpEnabled = FirDiagnosticsDirectives.FIR_DUMP in currentModule.directives ||
                     testServices.moduleStructure.getClassifiedDumpFile(getDumpExtension()).exists()
 
@@ -86,7 +83,7 @@ class FirDumpHandler(
         assertEqualsToDump(getDumpExtension(), actualText)
     }
 
-    private fun getDumpExtension(): String = if (byteCodeListingEnabled) ".fir2.txt" else ".fir.txt"
+    private fun getDumpExtension(): String = ".fir.txt"
 
     private class FirClassMemberRendererWithGeneratedDeclarations(val session: FirSession) : FirClassMemberRenderer() {
         override fun render(regularClass: FirRegularClass) {
