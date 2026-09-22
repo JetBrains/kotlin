@@ -30,7 +30,11 @@ class AndroidJvmLibDependencyResolutionIT : KGPBaseTest() {
 
     // Uses `com.android.kotlin.multiplatform.library`, requires AGP new DSL.
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(enableLegacyAgpDsl = false)
+        get() = super.defaultBuildOptions.copy(
+            enableLegacyAgpDsl = false,
+            // Snapshot provisioning must not replace a distribution used by another test's Native compilation.
+            konanDataDir = workingDir.resolve(".konan"),
+        )
 
     private val json = Json {
         ignoreUnknownKeys = true

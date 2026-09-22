@@ -19,6 +19,12 @@ import kotlin.test.*
 @AndroidGradlePluginTests
 class KotlinAndroidMppIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            // Snapshot provisioning must not replace a distribution used by another test's Native compilation.
+            konanDataDir = workingDir.resolve(".konan"),
+        )
+
     @DisplayName("KotlinToolingMetadataArtifact is bundled into apk")
     @GradleAndroidTest
     fun testKotlinToolingMetadataBundle(
