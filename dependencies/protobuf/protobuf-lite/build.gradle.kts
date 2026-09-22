@@ -11,10 +11,10 @@ plugins {
     `maven-publish`
 }
 
-val relocatedProtobuf by configurations.creating
-val relocatedProtobufSources by configurations.creating
+val relocatedProtobuf = configurations.create("relocatedProtobuf")
+val relocatedProtobufSources = configurations.create("relocatedProtobufSources")
 
-val protobufVersion: String by rootProject.extra
+val protobufVersion = rootProject.extra["protobufVersion"] as String
 val outputJarPath = "$buildDir/libs/protobuf-lite-$protobufVersion.jar"
 val sourcesJarName = "protobuf-lite-$protobufVersion-sources.jar"
 
@@ -22,7 +22,7 @@ dependencies {
     relocatedProtobuf(project(":protobuf-relocated"))
 }
 
-val prepare by tasks.registering {
+val prepare = tasks.register("prepare") {
     inputs.files(relocatedProtobuf) // this also adds a dependency
     outputs.file(outputJarPath)
     doFirst {
