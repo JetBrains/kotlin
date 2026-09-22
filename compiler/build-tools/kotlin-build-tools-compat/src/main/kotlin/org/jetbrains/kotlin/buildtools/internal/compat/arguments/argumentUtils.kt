@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.buildtools.internal.compat.arguments
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import java.nio.file.Path
-import kotlin.enums.enumEntries
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -37,7 +36,7 @@ internal fun <T> CommonToolArguments.getUsingReflection(propertyName: String): T
 internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
 
 internal inline fun <reified T : Enum<T>> Enum<*>.toApiEnum(): T =
-    enumEntries<T>().firstOrNull { it.name == name }
+    enumValues<T>().firstOrNull { it.name == name }
         ?: throw CompilerArgumentsParseException(
             "Value '$name' of ${T::class.simpleName} is not available in the loaded kotlin-build-tools-api, " +
                     "but exists in kotlin-build-tools-compat. " +
@@ -45,7 +44,7 @@ internal inline fun <reified T : Enum<T>> Enum<*>.toApiEnum(): T =
         )
 
 internal inline fun <reified T : Enum<T>> Enum<*>.toImplEnum(): T =
-    enumEntries<T>().firstOrNull { it.name == name }
+    enumValues<T>().firstOrNull { it.name == name }
         ?: throw CompilerArgumentsParseException(
             "Value '$name' of ${T::class.simpleName} is not supported by kotlin-build-tools-compat. " +
                     "Use matching kotlin-build-tools-api and kotlin-build-tools-compat versions."

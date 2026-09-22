@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.nio.file.Path
-import kotlin.enums.enumEntries
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -86,14 +85,14 @@ internal fun <T> CommonToolArguments.getUsingReflection(propertyName: String): T
 internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
 
 internal inline fun <reified T : Enum<T>> Enum<*>.toApiEnum(): T =
-    enumEntries<T>().firstOrNull { it.name == name }
+    enumValues<T>().firstOrNull { it.name == name }
         ?: throw CompilerArgumentsParseException(
             "Value '$name' of ${T::class.simpleName} is not available in the loaded kotlin-build-tools-api; " +
                     "it exists in kotlin-build-tools-impl ${KotlinCompilerVersion.VERSION}."
         )
 
 internal inline fun <reified T : Enum<T>> Enum<*>.toImplEnum(): T =
-    enumEntries<T>().firstOrNull { it.name == name }
+    enumValues<T>().firstOrNull { it.name == name }
         ?: throw CompilerArgumentsParseException(
             "Value '$name' of ${T::class.simpleName} is not supported by " +
                     "kotlin-build-tools-impl ${KotlinCompilerVersion.VERSION}."
