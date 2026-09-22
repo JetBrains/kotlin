@@ -11,6 +11,7 @@ import kotlin.coroutines.*
 import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
+@PublishedApi
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
 internal fun <T> getContinuation(): Continuation<T> =
@@ -81,5 +82,6 @@ internal fun <T> interceptedIntrinsic(cont: Continuation<T>): Continuation<T> =
 @InlineOnly
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(noinline block: (Continuation<T>) -> Any?): T =
-    suspendCoroutineUninterceptedOrReturnIntrinsic(block)
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T {
+    return suspendOrReturn<T>(block(getContinuation<T>()))
+}
