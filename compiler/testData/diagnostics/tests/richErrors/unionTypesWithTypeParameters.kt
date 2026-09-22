@@ -4,7 +4,7 @@
 
 typealias TA = RichError
 
-fun <T, V : Value, E : RichError, E2 : TA, E3 : E, E4 : V | Foo, E5: E | Foo> test(
+fun <T, V : Value, E : RichError, E2 : TA, E3 : E, E4 : V | Foo, E5 : E | Foo, E6 : Nothing | E5, E7 : String | E6> test(
     a: T | Foo,
     b: V | Foo,
     c: E | Foo,
@@ -36,5 +36,12 @@ class C<T, V : Value, E : RichError, E2 : TA> {
 fun <G : CharSequence, T : List<F | Foo>, F : G | Foo> boundsWithUnionAndDependency() {}
 val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>G : CharSequence<!>, T : List<F | Foo>, <!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>F : G | Foo<!>> T.boundsWithUnionAndDependency get() = 1
 interface I<G : CharSequence, T : List<F | Foo>, F : G | Foo>
+
+fun <G : CharSequence, T : F | Foo, F : G | Foo> boundsWithUnionAndDependency2() {}
+fun <G : CharSequence?, T : F & Any | Foo, F : G? | Foo> boundsWithUnionAndDependency3() {}
+
+fun <<!CYCLIC_GENERIC_UPPER_BOUND!>T : T | Foo<!>> loop1() {}
+fun <<!CYCLIC_GENERIC_UPPER_BOUND!>T : Any | T<!>> loop2() {}
+fun <<!CYCLIC_GENERIC_UPPER_BOUND!>T : R | Foo<!>, <!CYCLIC_GENERIC_UPPER_BOUND!>R : T | RichError<!>> loop1() {}
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeConstraint, typeParameter */

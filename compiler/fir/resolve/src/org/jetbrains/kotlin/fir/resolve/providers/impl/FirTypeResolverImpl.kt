@@ -588,7 +588,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         configuration: TypeResolutionConfiguration,
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
-        skipBoundedByRichErrorCheck: Boolean,
         resolveDeprecations: Boolean,
         supertypeSupplier: SupertypeSupplier,
         expandTypeAliases: Boolean,
@@ -641,7 +640,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val coneTypes = typeRef.types.mapTo(mutableListOf()) { it.coneType }
 
                 val firstType = coneTypes.first()
-                val primaryType = if (!skipBoundedByRichErrorCheck && firstType.isNonRichError()) {
+                val primaryType = if (firstType.isNonRichError()) {
                     coneTypes.removeAt(0)
                     firstType.applyIf(typeRef.isMarkedNullable) {
                         withNullability(true, session.typeContext)
@@ -654,7 +653,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
                 val unionType = ConeTypeUnifier.unify(primaryType, coneTypes, ConeAttributes.Empty, session.typeContext)
                 FirTypeResolutionResult(
-                    if (coneTypes.any { !skipBoundedByRichErrorCheck && it.isNonRichError() }) {
+                    if (coneTypes.any { it.isNonRichError() }) {
                         ConeErrorType(ConeSimpleDiagnostic("Non-rich error component must appear first"), delegatedType = unionType)
                     } else {
                         unionType
@@ -695,20 +694,26 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     }
 
     private fun ConeKotlinType.isNonRichError(): Boolean {
-        return toSymbol(session).let { it != null && !it.isBoundedByRichError() }
+        return unwrapToSimpleTypeUsingLowerBound().toSymbol(session).let { it != null && !it.isBoundedByRichError() }
     }
 
     private fun FirClassifierSymbol<*>.isBoundedByRichError(): Boolean {
         return when (this) {
             is FirRegularClassSymbol -> isRichError || classId == StandardClassIds.RichError
             is FirTypeAliasSymbol -> fullyExpandedClass(sessionForExpansionOrNull(expandNonLibraryTypeAlias = true)!!)?.isBoundedByRichError() == true
-            // It's safe to access fir because own type parameter and containing class type parameter bounds are guaranteed to be resolved
+            // It's safe to access fir because own type parameters and containing class type parameter bounds are guaranteed to be resolved
+            // before resolving the rest of callable signatures.
             is FirTypeParameterSymbol -> fir.bounds.any {
-                val coneType = it.coneType
+                // We can only encounter unresolved bounds during the first round of type parameter bound resolution,
+                // and even in the second round in red code like `T : T | RichError`.
+                // When the bound is unresolved,
+                // we return true so that we don't produce error types (Non-rich error component must appear first).
+                // Otherwise, the topological sort could be incorrect as we'd miss dependencies in error types.
+                val coneType = it.coneTypeOrNull ?: return@any true
                 if (coneType is ConeUnionType) {
                     coneType.primaryType.isNothing
                 } else {
-                    coneType.toSymbol(session)?.isBoundedByRichError() == true
+                    !coneType.isNonRichError()
                 }
             }
             is FirAnonymousObjectSymbol -> false

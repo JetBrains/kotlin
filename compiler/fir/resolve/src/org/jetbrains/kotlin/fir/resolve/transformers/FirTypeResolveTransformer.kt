@@ -350,12 +350,11 @@ open class FirTypeResolveTransformer(
         // Type parameter bounds can contain union types which can depend on other type parameters.
         // When resolving these union types, we have to inspect the dependency's bounds which might not be resolved yet.
         // Example: T : List<F | Foo>, F : Value
-        // As a solution, we resolve the bounds once while skipping the check for the primary type.
-        // Then we sort the type parameters topologically (reversed) and resolve them again while enabling the primary type check.
+        // As a solution, we resolve the bounds once where we can encounter unresolved bounds in the "bounded by error type" check.
+        // Then we sort the type parameters topologically (reversed) and resolve them again. This time, unresolved bounds can only be
+        // encountered in illegal loops like `T : T | RichError`.
 
-        typeResolverTransformer.withFirstRoundOfTypeParameterBounds {
-            declaration.transformTypeParameters(this, null)
-        }
+        declaration.transformTypeParameters(this, null)
 
         val sorted = DFS.topologicalOrder(
             declaration.typeParameters.filterIsInstance<FirTypeParameter>()
@@ -416,16 +415,24 @@ open class FirTypeResolveTransformer(
         if (visited.isNotEmpty() && currentTypeParameter == typeParameter) return true
         if (!visited.add(currentTypeParameter)) return false
 
-        fun ConeKotlinType.toNextTypeParameter(): FirTypeParameter? = when (this) {
-            is ConeTypeParameterType -> lookupTag.typeParameterSymbol.fir
-            is ConeDefinitelyNotNullType -> original.toNextTypeParameter()
-            else -> null
+        fun ConeKotlinType.nextTypeParameters(): List<FirTypeParameter> = when (this) {
+            is ConeTypeParameterType -> [lookupTag.typeParameterSymbol.fir]
+            is ConeDefinitelyNotNullType -> original.nextTypeParameters()
+            is ConeUnionType -> buildList {
+                addAll(primaryType.nextTypeParameters())
+                richErrorTypes.flatMapTo(this) { it.nextTypeParameters() }
+            }
+            is ConeFlexibleType, is ConeCapturedType, is ConeIntersectionType, is ConeClassLikeType,
+            is ConeIntegerLiteralType, is ConeStubType, is ConeTypeVariableType,
+                -> emptyList()
         }
 
-        return currentTypeParameter.bounds.any {
-            val nextTypeParameter = it.coneTypeOrNull?.toNextTypeParameter() ?: return@any false
+        return currentTypeParameter.bounds.any { bound ->
+            val nextTypeParameters = bound.coneTypeOrNull?.nextTypeParameters() ?: return@any false
 
-            hasSupertypePathToParameter(nextTypeParameter, typeParameter, visited)
+            nextTypeParameters.any {
+                hasSupertypePathToParameter(it, typeParameter, visited)
+            }
         }
     }
 

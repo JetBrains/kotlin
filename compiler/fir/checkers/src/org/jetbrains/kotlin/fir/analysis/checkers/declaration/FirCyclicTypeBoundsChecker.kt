@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -49,7 +48,9 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
             for (typeParameter in typeParameterCycle) {
                 //for some reason FE 1.0 report differently for class declarations
                 val targets = if (declaration is FirRegularClass) {
-                    typeParameter.originalBounds().filter { typeParameterCycle.contains(extractTypeParamSymbol(it.coneType)) }.mapNotNull { it.source }
+                    typeParameter.originalBounds()
+                        .filter { extractTypeParamSymbol(it.coneType).any(typeParameterCycle::contains) }
+                        .mapNotNull { it.source }
                 } else {
                     listOf(typeParameter.source)
                 }
@@ -71,8 +72,21 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
 
 
     private fun extractTypeParamSymbols(ref: FirTypeRef): List<FirTypeParameterSymbol> =
-        ref.unwrapBound().mapNotNull { extractTypeParamSymbol(it.coneType) }
+        ref.unwrapBound().flatMap { extractTypeParamSymbol(it.coneType) }
 
-    private fun extractTypeParamSymbol(type: ConeKotlinType): FirTypeParameterSymbol? =
-        (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol
+    private fun extractTypeParamSymbol(type: ConeKotlinType): List<FirTypeParameterSymbol> {
+        return when (val simpleKotlinType = type.unwrapToSimpleTypeUsingLowerBound()) {
+            is ConeTypeParameterType -> [simpleKotlinType.lookupTag.typeParameterSymbol]
+            is ConeUnionType -> buildList {
+                addAll(extractTypeParamSymbol(simpleKotlinType.primaryType))
+                simpleKotlinType.richErrorTypes.flatMapTo(this) { extractTypeParamSymbol(it) }
+            }
+            is ConeCapturedType,
+            is ConeIntegerLiteralType,
+            is ConeIntersectionType,
+            is ConeClassLikeType,
+            is ConeStubType,
+            is ConeTypeVariableType -> emptyList()
+        }
+    }
 }
