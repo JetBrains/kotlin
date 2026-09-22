@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.native.compiler.embeddable
 
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.jar.JarFile
 
 /**
@@ -16,9 +17,21 @@ import java.util.jar.JarFile
  * This test checks JARs for entries of libraries.
  */
 class EmbeddableContentsTest {
+    companion object {
+        val compilerClasspath: List<File> by lazy {
+            filesFromProp("compilerClasspath", "kotlin-native-compiler-embeddable.jar")
+        }
+
+        private fun filesFromProp(propName: String, vararg defaultPaths: String): List<File> =
+                (System.getProperty(propName)?.split(File.pathSeparator) ?: defaultPaths.asList()).map {
+                    File(it).takeIf(File::exists)
+                            ?: throw FileNotFoundException("cannot find ($it)")
+                }
+    }
+
     @Test
     fun `test current embeddable jars for trove classes`() {
-        CompilerSmokeTest.compilerClasspath.forEach(::checkJarForTrove)
+        compilerClasspath.forEach(::checkJarForTrove)
     }
 
     private val konanHomeJars: List<File> by lazy {
