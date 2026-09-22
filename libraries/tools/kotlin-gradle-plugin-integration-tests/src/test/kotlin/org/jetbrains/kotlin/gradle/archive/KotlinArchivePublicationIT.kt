@@ -13,8 +13,10 @@ import kotlinx.serialization.json.decodeFromStream
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.uklibs.Capability
 import org.jetbrains.kotlin.gradle.uklibs.ComponentPointer
 import org.jetbrains.kotlin.gradle.uklibs.GradleMetadata
+import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.PublishedProject
 import org.jetbrains.kotlin.gradle.uklibs.Variant
 import org.jetbrains.kotlin.gradle.uklibs.VariantFile
@@ -33,7 +35,8 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
 
     @GradleTest
     fun publicationContentTest(gradleVersion: GradleVersion) {
-        val publishedProject = kotlinArchiveProducer(gradleVersion).publish()
+        val publishedProject = kotlinArchiveProducer(gradleVersion)
+            .publish(publisherConfiguration = PublisherConfiguration(group = TEST_GROUP))
 
         assertEquals(
             listOf("producer", "producer-jvm").prettyPrinted,
@@ -91,6 +94,8 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
     private val json = Json { ignoreUnknownKeys = true }
 
     companion object {
+        private const val TEST_GROUP = "kotlinArchiveTest"
+
         private val checksumExtensions = setOf("md5", "sha1", "sha256", "sha512")
 
         private val expectedRootVariants = GradleMetadata(
@@ -105,6 +110,18 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         "org.jetbrains.kotlin.platform.type" to "native",
                     ),
                     availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-iosarm64",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
                     files = listOf(
                         VariantFile(
                             name = "producer.kar.xz",
@@ -118,11 +135,23 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         "org.gradle.category" to "library",
                         "org.gradle.jvm.environment" to "non-jvm",
                         "org.gradle.usage" to "kotlin-api",
-                        "org.jetbrains.kotlin.kar.compression.method" to "xz",
                         "org.jetbrains.kotlin.js.compiler" to "ir",
+                        "org.jetbrains.kotlin.kar.compression.method" to "xz",
                         "org.jetbrains.kotlin.platform.type" to "js",
                     ),
                     availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-js",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
                     files = listOf(
                         VariantFile(
                             name = "producer.kar.xz",
@@ -136,11 +165,23 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         "org.gradle.category" to "library",
                         "org.gradle.jvm.environment" to "non-jvm",
                         "org.gradle.usage" to "kotlin-runtime",
-                        "org.jetbrains.kotlin.kar.compression.method" to "xz",
                         "org.jetbrains.kotlin.js.compiler" to "ir",
+                        "org.jetbrains.kotlin.kar.compression.method" to "xz",
                         "org.jetbrains.kotlin.platform.type" to "js",
                     ),
                     availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-js",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
                     files = listOf(
                         VariantFile(
                             name = "producer.kar.xz",
@@ -160,6 +201,8 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                     availableAt = ComponentPointer(
                         url = "../../producer-jvm/1.0/producer-jvm-1.0.module",
                     ),
+                    capabilities = setOf(
+                    ),
                     files = listOf(
                     ),
                     name = "jvmApiElements-published",
@@ -174,6 +217,8 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                     ),
                     availableAt = ComponentPointer(
                         url = "../../producer-jvm/1.0/producer-jvm-1.0.module",
+                    ),
+                    capabilities = setOf(
                     ),
                     files = listOf(
                     ),
@@ -192,27 +237,11 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                     availableAt = ComponentPointer(
                         url = "../../producer-jvm/1.0/producer-jvm-1.0.module",
                     ),
+                    capabilities = setOf(
+                    ),
                     files = listOf(
                     ),
                     name = "jvmSourcesElements-published",
-                ),
-                Variant(
-                    attributes = mapOf(
-                        "org.gradle.category" to "library",
-                        "org.gradle.jvm.environment" to "non-jvm",
-                        "org.gradle.usage" to "kotlin-api",
-                        "org.jetbrains.kotlin.kar.compression.method" to "xz",
-                        "org.jetbrains.kotlin.native.target" to "linux_x64",
-                        "org.jetbrains.kotlin.platform.type" to "native",
-                    ),
-                    availableAt = null,
-                    files = listOf(
-                        VariantFile(
-                            name = "producer.kar.xz",
-                            url = "producer-1.0.kar.xz",
-                        ),
-                    ),
-                    name = "linuxX64ApiElements-published",
                 ),
                 Variant(
                     attributes = mapOf(
@@ -224,6 +253,18 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         "org.jetbrains.kotlin.platform.type" to "native",
                     ),
                     availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-linuxarm64",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
                     files = listOf(
                         VariantFile(
                             name = "producer.kar.xz",
@@ -238,10 +279,52 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         "org.gradle.jvm.environment" to "non-jvm",
                         "org.gradle.usage" to "kotlin-api",
                         "org.jetbrains.kotlin.kar.compression.method" to "xz",
+                        "org.jetbrains.kotlin.native.target" to "linux_x64",
+                        "org.jetbrains.kotlin.platform.type" to "native",
+                    ),
+                    availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-linuxx64",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
+                    files = listOf(
+                        VariantFile(
+                            name = "producer.kar.xz",
+                            url = "producer-1.0.kar.xz",
+                        ),
+                    ),
+                    name = "linuxX64ApiElements-published",
+                ),
+                Variant(
+                    attributes = mapOf(
+                        "org.gradle.category" to "library",
+                        "org.gradle.jvm.environment" to "non-jvm",
+                        "org.gradle.usage" to "kotlin-api",
+                        "org.jetbrains.kotlin.kar.compression.method" to "xz",
                         "org.jetbrains.kotlin.native.target" to "macos_arm64",
                         "org.jetbrains.kotlin.platform.type" to "native",
                     ),
                     availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-macosarm64",
+                            version = "1.0",
+                        ),
+                    ),
                     files = listOf(
                         VariantFile(
                             name = "producer.kar.xz",
@@ -259,6 +342,8 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         "org.jetbrains.kotlin.platform.type" to "common",
                     ),
                     availableAt = null,
+                    capabilities = setOf(
+                    ),
                     files = listOf(
                         VariantFile(
                             name = "producer.kar.xz",
@@ -277,6 +362,8 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         "org.jetbrains.kotlin.platform.type" to "common",
                     ),
                     availableAt = null,
+                    capabilities = setOf(
+                    ),
                     files = listOf(
                         VariantFile(
                             name = "producer-kotlin-1.0-sources.jar",
@@ -295,6 +382,18 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         "org.jetbrains.kotlin.wasm.target" to "js",
                     ),
                     availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-wasmjs",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
                     files = listOf(
                         VariantFile(
                             name = "producer.kar.xz",
@@ -313,6 +412,18 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         "org.jetbrains.kotlin.wasm.target" to "js",
                     ),
                     availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-wasmjs",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
                     files = listOf(
                         VariantFile(
                             name = "producer.kar.xz",
