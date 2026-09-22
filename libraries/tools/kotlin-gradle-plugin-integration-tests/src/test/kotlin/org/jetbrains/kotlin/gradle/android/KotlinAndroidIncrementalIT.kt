@@ -122,7 +122,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
         project(
             "AndroidIncrementalSingleModuleProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             val expectedTasks = listOf(
