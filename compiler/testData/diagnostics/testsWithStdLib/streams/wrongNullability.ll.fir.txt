@@ -33,5 +33,5 @@ FILE: wrongNullability.kt
             }
 
         }
-        )).R|SubstitutionOverride<java/util/stream/Stream.toList: R|ft<kotlin/collections/MutableList<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=IntLongPair?, relevantFeature=DontMakeExplicitNullableJavaTypeArgumentsFlexible) IntLongPair!>, kotlin/collections/List<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=IntLongPair?, relevantFeature=DontMakeExplicitNullableJavaTypeArgumentsFlexible) IntLongPair!>?>|>|()
+        )).R|kotlin/streams/toList|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=IntLongPair?, relevantFeature=DontMakeExplicitNullableJavaTypeArgumentsFlexible) IntLongPair!|>()
     }
