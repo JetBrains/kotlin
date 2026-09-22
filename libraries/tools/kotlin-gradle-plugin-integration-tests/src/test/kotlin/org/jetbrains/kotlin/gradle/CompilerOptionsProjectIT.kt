@@ -49,7 +49,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("compileDebugKotlin") {
+            build("compileDebugKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(":compileDebugKotlin")
 
                 assertOutputDoesNotContain(
@@ -140,7 +140,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 }
             }
 
-            build(":libAndroid:compileDebugKotlin") {
+            build(":libAndroid:compileDebugKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(":libAndroid:compileDebugKotlin")
 
                 assertCompilerArgument(
