@@ -1,3 +1,5 @@
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.dokka.gradle.engine.parameters.DokkaSourceSetSpec
 import org.jetbrains.dokka.gradle.engine.plugins.DokkaPluginParametersBaseSpec
@@ -13,13 +15,13 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-val dokka_version: String by project
+val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 dependencies {
     dokkaPlugin(project(":plugins:dokka-samples-transformer-plugin"))
     dokkaPlugin(project(":plugins:dokka-version-filter-plugin"))
-    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:$dokka_version")
-    dokkaPlugin("org.jetbrains.dokka:kotlin-playground-samples-plugin:$dokka_version")
+    dokkaPlugin(libs.findLibrary("dokka-versioning").get())
+    dokkaPlugin(libs.findLibrary("dokka-playground").get())
 }
 
 val kotlinTemplatesDir = (findProperty("templatesDir") as String?)?.let { file(it) } ?: rootProject.file("templates")
