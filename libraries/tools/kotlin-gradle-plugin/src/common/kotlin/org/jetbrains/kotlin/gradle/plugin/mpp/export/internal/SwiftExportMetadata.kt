@@ -11,7 +11,9 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ArtifactView
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
@@ -106,4 +108,20 @@ internal fun Project.registerSwiftExportMetadataApiElements(
             it.extension = "json"
         }
     }.get()
+}
+
+/**
+ * Configures an [ArtifactView] to select the Swift Export metadata variant of a resolvable configuration (e.g. the
+ * `exportConfiguration` a Swift Export task resolves its dependencies from), reselecting it from each dependency's
+ * default variant when needed. Shared by the execution-time resolution of the metadata artifacts and by the lazy
+ * task input derived from the same view, so up-to-date checking can never drift from what actually gets resolved.
+ */
+internal fun Project.configureSwiftExportMetadataArtifactView(): ArtifactView.ViewConfiguration.() -> Unit = {
+    isLenient = true
+    withVariantReselection()
+    componentFilter { it is ModuleComponentIdentifier }
+    attributes {
+        it.attribute(Usage.USAGE_ATTRIBUTE, usageByName(SWIFT_EXPORT_METADATA_USAGE))
+        it.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
+    }
 }
