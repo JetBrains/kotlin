@@ -19,9 +19,12 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  */
 class JsModuleDFG(
     val modules: Iterable<IrModuleFragment>,
-    val executionUnits: MutableList<JsDataFlowIR.ExecutionUnit>,
+    val executionUnits: List<JsDataFlowIR.ExecutionUnit>,
     val symbolTable: JsDataFlowIR.SymbolTable,
-)
+) {
+    /** Structural relationships within [executionUnits], shared by all DFG consumers. */
+    internal val index = JsDataFlowIndex.from(executionUnits)
+}
 
 /**
  * Builds a [JsModuleDFG] in linked-program scope.
