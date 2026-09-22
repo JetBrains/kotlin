@@ -1276,3 +1276,6 @@ internal fun isInConstContext(): Boolean {
     if (context.callsOrAssignments.any { it is FirAnnotation }) return true
     return false
 }
+
+val ConeKotlinType.isTypealiasToAny: Boolean
+    get() = abbreviatedType != null && isAny
