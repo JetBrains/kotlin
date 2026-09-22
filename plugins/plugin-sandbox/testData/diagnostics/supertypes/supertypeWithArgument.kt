@@ -24,7 +24,7 @@ class Derived : Base() {
     class QualifiedType
 }
 
-@SupertypeWithTypeArgument(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UnresolvedClass<!>::class<!>)
+@SupertypeWithTypeArgument(<!UNRESOLVED_REFERENCE!>UnresolvedClass<!>::class)
 class UnresolvedType
 
 fun takeString(x: String) {}
