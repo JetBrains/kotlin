@@ -40,7 +40,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
     put(actualCommonCompilerArguments.name, buildMap {
         with(actualCommonCompilerArguments) {
             drop("script")
-            restrict("Xrepl", warningSince = KotlinReleaseVersion.v2_4_0, errorSince = KotlinReleaseVersion.v2_5_0)
             drop("Xstdlib-compilation")
             drop("Xallow-kotlin-package")
             drop("P")
@@ -75,6 +74,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xdirect-java-actualization")
             drop("Xintellij-plugin-root")
             drop("Xno-check-actual")
+            drop("Xrepl")
         }
     })
     put(actualCommonToolsArguments.name, buildMap {
