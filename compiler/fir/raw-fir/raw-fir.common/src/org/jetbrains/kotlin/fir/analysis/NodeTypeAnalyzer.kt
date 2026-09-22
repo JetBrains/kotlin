@@ -49,19 +49,23 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     abstract fun Node.isEscapeStringTemplateEntry(): Boolean
     abstract fun Node.isShortOrLongStringTemplateEntry(): Boolean
 
-    fun Node.getAsStringWithoutBacktick(): String {
-        return this.asText.replace("`", "")
+    abstract fun Node.getLabelName(): String?
+    abstract fun FirLoopJumpBuilder.bindLabel(expression: Node): FirLoopJumpBuilder
+
+    fun buildLabel(rawName: String, source: KtSourceElement): FirLabel {
+        val firLabel = org.jetbrains.kotlin.fir.builder.buildLabel {
+            name = KtPsiUtil.unquoteIdentifier(rawName)
+            this.source = source
+        }
+
+        return firLabel
     }
 
-    abstract fun Node.getLabelName(): String?
-
-    abstract fun Node.getReferencedNameAsName(): Name
-
-    open fun Node.getParent(): Node? =
-        throw UnsupportedOperationException("Not supported in PsiRawFirBuilder")
-
     abstract fun callableIdForName(name: Name): CallableId
+    abstract fun callableIdForClassConstructor(): CallableId
+
     abstract fun destructuringKindOf(hasSquareBrackets: Boolean, isFullForm: Boolean): DestructuringKind
+    abstract fun registerSelfType(selfType: FirResolvedTypeRef)
 
     fun Node.toDelegatedSelfType(firClass: FirRegularClassBuilder): FirResolvedTypeRef =
         toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
@@ -120,8 +124,6 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     }
 
     abstract fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration
-
-    abstract fun Node?.getChildrenAsArray(): Array<out Node?>
 
     abstract val Node?.receiverExpression: Node?
     abstract val Node?.selectorExpression: Node?
@@ -311,19 +313,7 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         }
     }
 
-    fun buildLabel(rawName: String, source: KtSourceElement): FirLabel {
-        val firLabel = org.jetbrains.kotlin.fir.builder.buildLabel {
-            name = KtPsiUtil.unquoteIdentifier(rawName)
-            this.source = source
-        }
-
-        return firLabel
-    }
-
-    abstract fun registerSelfType(selfType: FirResolvedTypeRef)
     abstract fun dispatchReceiverForInnerClassConstructor(): ConeClassLikeType?
-    abstract fun callableIdForClassConstructor(): CallableId
-    abstract fun FirLoopJumpBuilder.bindLabel(expression: Node): FirLoopJumpBuilder
     abstract fun FirLoopBuilder.prepareTarget(firLabelUser: Any): FirLoopTarget
     abstract fun FirLoopBuilder.configure(target: FirLoopTarget, generateBlock: () -> FirBlock): FirLoop
 

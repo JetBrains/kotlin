@@ -17,16 +17,17 @@ import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     baseSession: FirSession,
     context: Context<Node>,
 ) : AbstractRawFirBuilder<Node, Type>(baseSession, context) {
-    override fun Node.getReferencedNameAsName(): Name {
-        return asText.nameAsSafeName()
+    protected fun Node.getAsStringWithoutBacktick(): String {
+        return this.asText.replace("`", "")
     }
+
+    abstract fun Node.getParent(): Node?
 
     private fun Node.getModifierList(): Node? = getChildNodeByTokenId(KtNodeTypes.MODIFIER_LIST_ID)
 
@@ -88,6 +89,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     abstract fun KtSourceElement.toNode(): Node
 
     abstract fun Node.getChildren(): List<Node>
+    abstract fun Node?.getChildrenAsArray(): Array<out Node?>
 
     inline fun Node.forEachChildren(f: (Node) -> Unit) {
         val kidsArray = this.getChildrenAsArray()
