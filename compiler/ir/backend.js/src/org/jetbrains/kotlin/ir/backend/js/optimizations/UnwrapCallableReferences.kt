@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import java.util.HashSet
 import java.util.IdentityHashMap
 
 /**
@@ -76,10 +77,13 @@ private class KFunctionWrapperDemandAnalyzer(
     private val dfg: JsModuleDFG,
 ) {
     private val index = UseIndex().apply {
-        for (function in dfg.functions) {
-            functionByReturns[function.body.returns] = function
-            throwsNodes[function.body.throws] = function
-            function.body.forEachNonScopeNode { recordNode(it, function) }
+        for (executionUnit in dfg.executionUnits) {
+            val function = executionUnit as? JsDataFlowIR.Function
+            if (function != null) {
+                functionByReturns[function.returns] = function
+            }
+            throwsNodes += executionUnit.body.throws
+            executionUnit.body.forEachNonScopeNode { recordNode(it, function) }
         }
     }
 
@@ -114,12 +118,12 @@ private class KFunctionWrapperDemandAnalyzer(
 
     private fun process(node: Node) {
         val wrappers = reaching[node] ?: return
-        val live = wrappers.filterNot { it in keep }
+        val live = wrappers.filter { it !in keep }
         if (live.isEmpty()) {
             return
         }
 
-        if (index.throwsNodes[node] != null) {
+        if (index.throwsNodes.contains(node)) {
             keep += live
         }
         index.functionByReturns[node]?.let { propagateReturnToCallSites(it, live) }
@@ -130,9 +134,17 @@ private class KFunctionWrapperDemandAnalyzer(
                 is Node.Call -> handleCallUse(consumer, use.argIndex, live)
                 is Node.FieldWrite -> index.fieldReads[consumer.field]?.forEach { propagate(it, live) }
                 is Node.FieldRead ->
-                    if (consumer.field.isKMetadata()) keep += live else propagate(consumer, live)
+                    if (consumer.field.isKMetadata()) {
+                        keep += live
+                    } else {
+                        propagate(consumer, live)
+                    }
                 is Node.TypeCheck ->
-                    if (consumer.passthrough) propagate(consumer, live) else keep += live
+                    if (consumer.resultIsArgument) {
+                        propagate(consumer, live)
+                    } else {
+                        keep += live
+                    }
                 is Node.DynamicAccess -> {
                     val isInvokeReceiver = use.argIndex == null && consumer.operator == IrDynamicOperator.INVOKE
                     if (!isInvokeReceiver) keep += live
@@ -217,13 +229,13 @@ private class KFunctionWrapperDemandAnalyzer(
     }
 
     private fun Node.Call.isInvoke(): Boolean {
-        val function = callee.irFunction ?: return false
+        val function = callee.irFunction
         return function.name == OperatorNameConventions.INVOKE &&
                 function.parameters.firstOrNull()?.kind == IrParameterKind.DispatchReceiver
     }
 
     private fun Node.Call.isEqualsOrHashCode(): Boolean {
-        val declaration = callee.irDeclaration as? IrSimpleFunction ?: return false
+        val declaration = callee.irFunction as? IrSimpleFunction ?: return false
         val name = declaration.name
         if (name == OperatorNameConventions.EQUALS || name == OperatorNameConventions.HASH_CODE) {
             return true
@@ -233,7 +245,7 @@ private class KFunctionWrapperDemandAnalyzer(
     }
 
     private fun Node.Call.isTypeOf(): Boolean {
-        val declaration = callee.irDeclaration as? IrSimpleFunction ?: return false
+        val declaration = callee.irFunction as? IrSimpleFunction ?: return false
         return declaration.symbol == context.symbols.jsTypeOf
     }
 
@@ -262,7 +274,7 @@ private class UseIndex {
     val callSites = IdentityHashMap<JsDataFlowIR.FunctionSymbol, MutableList<Node.Call>>()
     val parameters = IdentityHashMap<JsDataFlowIR.FunctionSymbol, Array<Node.Parameter?>>()
     val functionByReturns = IdentityHashMap<Node.Variable, JsDataFlowIR.Function>()
-    val throwsNodes = IdentityHashMap<Node.Variable, JsDataFlowIR.Function>()
+    val throwsNodes = HashSet<Node.Variable>()
     val fieldReads = IdentityHashMap<JsDataFlowIR.Field, MutableList<Node.FieldRead>>()
     val referencedFunctions = mutableSetOf<JsDataFlowIR.FunctionSymbol>()
     val wrappers = mutableListOf<Node.CallableReferenceWrapper>()
@@ -271,7 +283,7 @@ private class UseIndex {
         uses.getOrPut(value) { mutableListOf() }.add(UseSite(consumer, argIndex))
     }
 
-    fun recordNode(node: Node, function: JsDataFlowIR.Function) {
+    fun recordNode(node: Node, function: JsDataFlowIR.Function?) {
         when (node) {
             is Node.Variable -> node.values.forEach { addUse(it, node) }
             is Node.Call -> {
@@ -299,6 +311,7 @@ private class UseIndex {
             }
             is Node.FunctionReference -> referencedFunctions += node.symbol
             is Node.Parameter -> {
+                checkNotNull(function) { "Parameter node outside a function" }
                 val params = parameters.getOrPut(function.symbol) {
                     arrayOfNulls(function.symbol.parameters.size)
                 }

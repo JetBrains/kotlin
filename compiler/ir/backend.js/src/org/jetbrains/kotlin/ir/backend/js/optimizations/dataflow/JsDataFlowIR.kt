@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.optimizations.dataflow
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 /**
  * Sea-of-nodes data-flow IR for one linked JS program.
  *
- * A [Function] is a [FunctionSymbol] plus a [FunctionBody]: a tree of [Node.Scope] regions
+ * A [Function] is a [FunctionSymbol] plus a [Body]: a tree of [Node.Scope] regions
  * mirroring loop nesting, in which each value is a [Node] referenced directly by its consumers.
  * The [Node] subtypes document what the graph represents.
  *
@@ -43,40 +42,29 @@ object JsDataFlowIR {
         object Dynamic : Type
 
         /** Kotlin class type. Identity is [irClass]. */
-        class ClassType(val irClass: IrClass, val name: String) : Type {
-            override fun toString(): String = name
-        }
+        class ClassType(val irClass: IrClass) : Type
     }
 
-    /**
-     * A function in the DFG, with parameter and return types. Also, models constructors and
-     * synthetic static-field initializers (an [IrField] with an initializer).
-     */
+    /** A function or constructor in the DFG, with parameter and return types. */
     class FunctionSymbol(
-        val irDeclaration: IrDeclaration,
-        val name: String?,
+        val irFunction: IrFunction,
         val isExported: Boolean,
         val parameters: Array<Type>,
         val returnType: Type,
     ) {
         init {
-            require(irDeclaration is IrSimpleFunction || irDeclaration is IrConstructor || irDeclaration is IrField) {
-                "Unexpected declaration: ${irDeclaration.render()}"
+            require(irFunction is IrSimpleFunction || irFunction is IrConstructor) {
+                "Unexpected declaration: ${irFunction.render()}"
             }
         }
 
-        val irSimpleFunction: IrSimpleFunction? get() = irDeclaration as? IrSimpleFunction
-        val irFunction: IrFunction? get() = irDeclaration as? IrFunction
+        val irSimpleFunction: IrSimpleFunction? get() = irFunction as? IrSimpleFunction
 
-        val isExternal: Boolean get() = irDeclaration.isEffectivelyExternal()
-
-        override fun toString(): String = name ?: irDeclaration.render()
+        val isExternal: Boolean get() = irFunction.isEffectivelyExternal()
     }
 
     /** A backing field, interned in the [SymbolTable] so reads and writes meet by identity. */
-    class Field(val type: Type, val name: String?) {
-        override fun toString() = "Field(type=$type, name=$name)"
-    }
+    class Field(val type: Type, val name: String?)
 
     sealed interface Node {
         object Null : Node
@@ -132,13 +120,13 @@ object JsDataFlowIR {
         ) : Node
 
         /**
-         * `is` / SAM / other type operators. [passthrough] means the result is the argument
+         * `is` / SAM / other type operators. [resultIsArgument] means the result is the argument
          * (same object). Pure casts (`as`, implicit and safe casts) never become nodes: the
          * builder maps them to their argument, since the graph tracks objects, not static
          * types.
          */
         class TypeCheck(val argument: Node, val operator: IrTypeOperator) : Node {
-            val passthrough: Boolean
+            val resultIsArgument: Boolean
                 get() = when (operator) {
                     IrTypeOperator.REINTERPRET_CAST,
                     IrTypeOperator.IMPLICIT_NOTNULL,
@@ -187,13 +175,13 @@ object JsDataFlowIR {
     }
 
     /**
-     * Sea-of-nodes body. [rootScope] is the outermost region; [allScopes] is the scope tree
-     * flattened. [returns] / [throws] are phis of every exit / throw value.
+     * Sea-of-nodes body shared by functions and static-field initializers.
+     * [rootScope] is the outermost region, [allScopes] is the flattened scope tree, and
+     * [throws] is the phi of every thrown value.
      */
-    class FunctionBody(
+    class Body(
         val rootScope: Node.Scope,
         val allScopes: List<Node.Scope>,
-        val returns: Node.Variable,
         val throws: Node.Variable,
     ) {
         inline fun forEachNonScopeNode(block: (Node) -> Unit) {
@@ -207,26 +195,34 @@ object JsDataFlowIR {
         }
     }
 
+    sealed interface ExecutionUnit {
+        val body: Body
+    }
+
     /** One analyzed function: identity [symbol] plus sea-of-nodes [body]. */
-    class Function(val symbol: FunctionSymbol, val body: FunctionBody)
+    class Function(
+        val symbol: FunctionSymbol,
+        val returns: Node.Variable,
+        override val body: Body,
+    ) : ExecutionUnit
+
+    /** Evaluation of a static field's initializer and the value assigned to [field]. */
+    class FieldInitializer(
+        val field: Field,
+        val value: Node,
+        override val body: Body,
+    ) : ExecutionUnit
 
     /** Maps IR declarations to DFG types and function symbols for one linked program. */
     class SymbolTable(val context: JsIrBackendContext) {
         val classMap = mutableMapOf<IrClass, Type.ClassType>()
-        val functionMap = mutableMapOf<IrDeclaration, FunctionSymbol>()
+        val functionMap = mutableMapOf<IrFunction, FunctionSymbol>()
         val fieldMap = mutableMapOf<IrField, Field>()
 
         private var sealed = false
 
         fun populateWith(irModule: IrModuleFragment) {
             check(!sealed) { "The symbol table is already sealed" }
-
-            // Ensure common built-ins are present even if absent from the user module IR.
-            mapClassReferenceType(context.irBuiltIns.anyClass.owner)
-            mapClassReferenceType(context.irBuiltIns.throwableClass.owner)
-            mapClassReferenceType(context.irBuiltIns.unitClass.owner)
-            mapClassReferenceType(context.irBuiltIns.nothingClass.owner)
-            mapClassReferenceType(context.irBuiltIns.stringClass.owner)
 
             irModule.accept(object : IrVisitorVoid() {
                 override fun visitElement(element: IrElement) {
@@ -239,13 +235,6 @@ object JsDataFlowIR {
 
                 override fun visitConstructor(declaration: IrConstructor) {
                     declaration.body?.let { mapFunction(declaration) }
-                }
-
-                override fun visitField(declaration: IrField) {
-                    if (declaration.parent !is IrFile) {
-                        return
-                    }
-                    declaration.initializer?.let { mapFunction(declaration) }
                 }
 
                 override fun visitClass(declaration: IrClass) {
@@ -272,7 +261,7 @@ object JsDataFlowIR {
         fun mapClassReferenceType(irClass: IrClass): Type.ClassType {
             classMap[irClass]?.let { return it }
             check(!sealed) { "Unmapped class in a sealed symbol table: ${irClass.render()}" }
-            val type = Type.ClassType(irClass, name = irClass.fqNameForIrSerialization.asString())
+            val type = Type.ClassType(irClass)
             classMap[irClass] = type
             return type
         }
@@ -293,55 +282,42 @@ object JsDataFlowIR {
             return if (clazz != null) mapClassReferenceType(clazz) else Type.Dynamic
         }
 
-        fun mapFunction(declaration: IrDeclaration): FunctionSymbol = when (declaration) {
-            is IrFunction -> declaration.toSymbol()
-            is IrField -> mapPropertyInitializer(declaration)
-            else -> error("Unknown declaration: $declaration")
-        }
-
-        private fun IrFunction.toSymbol(): FunctionSymbol = target.let {
-            functionMap[it]?.let { fn -> return fn }
-            check(!sealed) { "Unmapped function in a sealed symbol table: ${it.render()}" }
-            val symbol = FunctionSymbol(
-                irDeclaration = it,
-                name = it.computeJsDfgName(),
-                isExported = it.computeIsExported(context),
-                parameters = it.parameters.map { p -> mapType(p.type) }.toTypedArray(),
-                returnType = mapType(it.returnType)
-            )
-            functionMap[it] = symbol
-            return symbol
-        }
-
-        private fun mapPropertyInitializer(irField: IrField): FunctionSymbol {
-            functionMap[irField]?.let { return it }
+        fun mapFunction(irFunction: IrFunction): FunctionSymbol {
+            val actualFunction = when (irFunction) {
+                is IrSimpleFunction -> irFunction.resolveDfgTarget()
+                is IrConstructor -> irFunction
+            }
+            functionMap[actualFunction]?.let { return it }
             check(!sealed) {
-                "Unmapped field initializer in a sealed symbol table: ${irField.render()}"
+                "Unmapped function in a sealed symbol table: ${actualFunction.render()}"
             }
-            assert(irField.isStatic) {
-                "All local properties initializers should've been lowered"
-            }
-
             val symbol = FunctionSymbol(
-                irDeclaration = irField,
-                name = "${irField.fqNameWhenAvailable ?: irField.name}_init",
-                isExported = false,
-                parameters = emptyArray(),
-                returnType = mapType(context.irBuiltIns.unitType)
+                irFunction = actualFunction,
+                isExported = actualFunction.isExported(context),
+                parameters = actualFunction.parameters.map { parameter -> mapType(parameter.type) }.toTypedArray(),
+                returnType = mapType(actualFunction.returnType),
             )
-            functionMap[irField] = symbol
+            functionMap[actualFunction] = symbol
             return symbol
         }
     }
 }
 
-private fun IrFunction.computeIsExported(context: JsIrBackendContext): Boolean =
-    isExported(context) || isEffectivelyExternal() || isJsExport() || parentClassOrNull?.isJsExport() == true
-
-private fun IrFunction.computeJsDfgName(): String {
-    val containingDeclarationPart = parent.fqNameForIrSerialization.let {
-        if (it.isRoot) "" else "$it."
+/**
+ * Like [target], but total.
+ * [org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering] emits bodied
+ * `$suspendBridge` functions flagged as fake overrides whose only real override is abstract,
+ * and [target] fails on those shapes. Here a function with a body is always its own target —
+ * that body is what executes — and a bodiless fake override resolves to the member that
+ * actually runs for it (possibly such a bodied bridge), falling back to the abstract
+ * declaration, which is mapped as an ordinary bodiless callee.
+ */
+internal fun IrSimpleFunction.resolveDfgTarget(): IrSimpleFunction {
+    if (body != null) {
+        return this
     }
-    val signature = nonDispatchParameters.joinToString(prefix = "(", postfix = ")") { it.type.dumpKotlinLike() }
-    return "kfun:$containingDeclarationPart${name.asString()}$signature"
+    val isUnresolvedFakeOverride = { it: IrSimpleFunction -> it.isFakeOverride && it.body == null }
+    return resolveFakeOverride(isUnresolvedFakeOverride)
+        ?: resolveFakeOverrideMaybeAbstract(isUnresolvedFakeOverride)
+        ?: this
 }

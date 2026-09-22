@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 
 /**
- * Reaching-definition sets for locals, shared by [JsFunctionDFGBuilder].
+ * Reaching-definition sets for locals, used by [JsBodyDFGBuilder].
  */
 internal class VariableValues {
     class Variable(val loop: IrLoop?, val values: MutableSet<IrExpression>)
