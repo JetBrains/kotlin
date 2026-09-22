@@ -5,25 +5,7 @@
 
 #pragma once
 
-#include "Utils.hpp"
-
 namespace kotlin::mm {
-
-/**
- * RAII guard ensuring only one dump runs at a time.
- *
- * Uses non-blocking try-lock semantics: if another dump is already in
- * progress, acquisition fails and `operator bool()` returns false.
- */
-class DumpGuard : private Pinned {
-public:
-    DumpGuard() noexcept;
-    ~DumpGuard();
-    explicit operator bool() const noexcept { return acquired_; }
-
-private:
-    bool acquired_;
-};
 
 /**
  * Dumps memory into the given POSIX file in Kotlin/Native Dump file format, and
@@ -33,12 +15,6 @@ private:
  * with corresponding type layouts. The dump can be combined with additional
  * metadata emitted by the compiler and converted to the "hprof" format by an
  * external tool.
- */
-bool DumpMemory(int fd) noexcept;
-
-/**
- * Like [DumpMemory], with optional omitted primitive-array payloads and gzip
- * wrapping. Must be called during STW.
  *
  * When `omitPrimitiveArrayPayloads` is true, primitive array contents are omitted
  * (count is preserved). Object arrays and native-pointer arrays are still written

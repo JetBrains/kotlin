@@ -47,24 +47,14 @@ public object Debugging {
         get() = Debugging_isThreadStateRunnable()
 
     /**
-     * Dump memory in binary format to the given POSIX file descriptor and
-     * returns success flag.
-     *
-     * The dump is written uncompressed, with full object and array payloads.
-     * Mutators stay suspended until the write finishes, then this function returns.
-     */
-    @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemory")
-    @Escapes.Nothing
-    public external fun dumpMemory(fd: Long): Boolean
-
-    /**
      * Dump memory in binary format to the given POSIX file descriptor with [options]
      * and returns success flag.
      *
+     * The default [options] write an uncompressed dump with full object and array payloads.
      * Mutators stay suspended until the write finishes, then this function returns
      * so the caller may close [fd].
      */
-    public fun dumpMemory(fd: Long, options: MemoryDumpOptions): Boolean =
+    public fun dumpMemory(fd: Long, options: MemoryDumpOptions = MemoryDumpOptions()): Boolean =
             dumpMemoryWithOptions(fd, options.omitPrimitiveArrayPayloads, options.gzip)
 
     @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemoryWithOptions")

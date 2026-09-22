@@ -233,11 +233,6 @@ extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
 namespace {
 
 bool dumpMemoryFromRuntime(int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
-    mm::DumpGuard dumpGuard;
-    if (!dumpGuard) {
-        return false;
-    }
-
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
@@ -253,10 +248,6 @@ bool dumpMemoryFromRuntime(int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
 }
 
 } // namespace
-
-extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd) {
-    return dumpMemoryFromRuntime(fd, false, false);
-}
 
 extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryWithOptions(
         ObjHeader*, int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
