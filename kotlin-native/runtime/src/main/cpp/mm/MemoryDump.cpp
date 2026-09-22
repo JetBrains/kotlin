@@ -5,11 +5,11 @@
 
 #include "mm/MemoryDump.hpp"
 
-#include <atomic>
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
 #include <queue>
+#include <type_traits>
 #include <unordered_set>
 
 // Konan tvOS/watchOS sysroots do not ship libz; a global -lz breaks linking there.
@@ -17,27 +17,17 @@
 #define KONAN_HAS_ZLIB 1
 #include <algorithm>
 #include <limits>
+#include <unistd.h>
 #include <zlib.h>
 #else
 #define KONAN_HAS_ZLIB 0
-#endif
-
-#if KONAN_HAS_ZLIB
-#if KONAN_WINDOWS
-#include <io.h>
-#define KN_DUP _dup
-#define KN_CLOSE _close
-#else
-#include <unistd.h>
-#define KN_DUP dup
-#define KN_CLOSE close
-#endif
 #endif
 
 #include "Porting.h"
 #include "TypeInfo.h"
 #include "KString.h"
 #include "ObjectTraversal.hpp"
+#include "Utils.hpp"
 #include "mm/GlobalData.hpp"
 #include "mm/RootSet.hpp"
 #include "mm/ThreadData.hpp"
@@ -49,26 +39,67 @@ namespace kotlin::mm {
 
 namespace {
 
-std::atomic<bool> g_dumpInProgress{false};
-
-// Writes dump bytes uncompressed, or as a gzip member when zlib is available.
 class DumpWriter : private Pinned {
 public:
-    explicit DumpWriter(FILE* file) : file_(file) {}
-#if KONAN_HAS_ZLIB
-    explicit DumpWriter(gzFile gz) : gz_(gz) {}
-#endif
+    virtual ~DumpWriter() = default;
+    virtual void write(std_support::span<uint8_t> data) = 0;
+    virtual void finish() = 0;
+};
 
-    void write(const void* data, size_t size) {
-        auto* bytes = static_cast<const uint8_t*>(data);
-        if (file_ != nullptr) {
-            size_t written = fwrite(bytes, 1, size, file_);
-            if (written != size) {
-                throw std::system_error(errno, std::generic_category());
-            }
-            return;
+class PlainDumpWriter : public DumpWriter {
+public:
+    explicit PlainDumpWriter(int fd) {
+        file_ = fdopen(fd, "w");
+        if (file_ == nullptr) {
+            throw std::system_error(errno, std::generic_category());
         }
+    }
+
+    void write(std_support::span<uint8_t> data) override {
+        size_t written = fwrite(data.data(), 1, data.size(), file_);
+        if (written != data.size()) {
+            throw std::system_error(errno, std::generic_category());
+        }
+    }
+
+    // fflush only: fclose would close the caller's fd.
+    void finish() override {
+        if (fflush(file_) == EOF) {
+            throw std::system_error(errno, std::generic_category());
+        }
+    }
+
+private:
+    FILE* file_ = nullptr;
+};
+
 #if KONAN_HAS_ZLIB
+class GzipDumpWriter : public DumpWriter {
+public:
+    explicit GzipDumpWriter(int fd) {
+        // gzdopen owns the fd it is given; dup so gzclose cannot close the caller's descriptor.
+        int dupFd = dup(fd);
+        if (dupFd < 0) {
+            throw std::system_error(errno, std::generic_category());
+        }
+        // "wb1": gzip container at Z_BEST_SPEED. The dump runs during STW;
+        // finishing quickly keeps that pause shorter.
+        gz_ = gzdopen(dupFd, "wb1");
+        if (gz_ == nullptr) {
+            close(dupFd);
+            throw std::system_error(EIO, std::generic_category());
+        }
+    }
+
+    ~GzipDumpWriter() override {
+        if (gz_ != nullptr) {
+            gzclose(gz_);
+        }
+    }
+
+    void write(std_support::span<uint8_t> data) override {
+        auto* bytes = data.data();
+        size_t size = data.size();
         // gzwrite takes `unsigned`; split large spans so we never truncate the length.
         while (size > 0) {
             unsigned chunk = static_cast<unsigned>(std::min(size, static_cast<size_t>(std::numeric_limits<int>::max())));
@@ -81,51 +112,9 @@ public:
             bytes += n;
             size -= static_cast<size_t>(n);
         }
-#else
-        throw std::system_error(ENOSYS, std::generic_category());
-#endif
     }
 
-    void flush() {
-        if (file_ != nullptr && fflush(file_) == EOF) {
-            throw std::system_error(errno, std::generic_category());
-        }
-    }
-
-private:
-    FILE* file_ = nullptr;
-#if KONAN_HAS_ZLIB
-    gzFile gz_ = nullptr;
-#endif
-};
-
-#if KONAN_HAS_ZLIB
-// Owns a gzip stream opened on a dup of `fd`, so gzclose does not close the caller's descriptor.
-class GzipStream : private Pinned {
-public:
-    explicit GzipStream(int fd) {
-        int dupFd = KN_DUP(fd);
-        if (dupFd < 0) {
-            throw std::system_error(errno, std::generic_category());
-        }
-        // "wb1": gzip container at Z_BEST_SPEED. The dump runs during STW;
-        // finishing quickly keeps that pause shorter.
-        gz_ = gzdopen(dupFd, "wb1");
-        if (gz_ == nullptr) {
-            KN_CLOSE(dupFd);
-            throw std::system_error(EIO, std::generic_category());
-        }
-    }
-
-    ~GzipStream() {
-        if (gz_ != nullptr) {
-            gzclose(gz_);
-        }
-    }
-
-    gzFile get() const { return gz_; }
-
-    void closeOrThrow() {
+    void finish() override {
         int rc = gzclose(gz_);
         gz_ = nullptr;
         if (rc != Z_OK) {
@@ -139,20 +128,6 @@ private:
 #endif
 
 } // namespace
-
-DumpGuard::DumpGuard() noexcept : acquired_(false) {
-    bool expected = false;
-    acquired_ = g_dumpInProgress.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
-    if (!acquired_) {
-        RuntimeLogInfo({kTagMemDump}, "Another memory dump is in progress, skipping");
-    }
-}
-
-DumpGuard::~DumpGuard() {
-    if (acquired_) {
-        g_dumpInProgress.store(false, std::memory_order_release);
-    }
-}
 
 class MemoryDumper {
 public:
@@ -195,7 +170,8 @@ public:
 private:
     template <typename T>
     void DumpSpan(std_support::span<T> span) {
-        writer_.write(span.data(), span.size() * sizeof(T));
+        auto* bytes = reinterpret_cast<uint8_t*>(const_cast<std::remove_cv_t<T>*>(span.data()));
+        writer_.write(std_support::span<uint8_t>(bytes, span.size() * sizeof(T)));
     }
 
     template <typename T>
@@ -491,10 +467,9 @@ void PrepareForMemoryDump() {
 void DumpMemoryOrThrow(int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
 #if KONAN_HAS_ZLIB
     if (gzip) {
-        GzipStream gz(fd);
-        DumpWriter writer(gz.get());
+        GzipDumpWriter writer(fd);
         MemoryDumper(writer, omitPrimitiveArrayPayloads).Dump();
-        gz.closeOrThrow();
+        writer.finish();
         return;
     }
 #else
@@ -504,18 +479,9 @@ void DumpMemoryOrThrow(int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
     }
 #endif
 
-    FILE* file = fdopen(fd, "w");
-    if (file == nullptr) {
-        throw std::system_error(errno, std::generic_category());
-    }
-
-    DumpWriter writer(file);
+    PlainDumpWriter writer(fd);
     MemoryDumper(writer, omitPrimitiveArrayPayloads).Dump();
-    writer.flush();
-}
-
-bool DumpMemory(int fd) noexcept {
-    return DumpMemory(fd, false, false);
+    writer.finish();
 }
 
 bool DumpMemory(int fd, bool omitPrimitiveArrayPayloads, bool gzip) noexcept {
