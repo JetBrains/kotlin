@@ -752,11 +752,11 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
             when (val tokenType = it.toTokenId()) {
                 KtTokens.DOT_ID -> isSelector = true
                 KtTokens.SAFE_ACCESS_ID -> {
-                    kind = NullSafe
+                    kind = FirSafeCallKind.NullSafe
                     isSelector = true
                 }
                 KtTokens.ERROR_SAFE_ACCESS_ID -> {
-                    kind = ErrorSafe
+                    kind = FirSafeCallKind.ErrorSafe
                     isSelector = true
                 }
                 else -> {
@@ -867,7 +867,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         // TODO(KT-22765) drop workaround when suspend modifier for lambdas is implemented
         if (imitateLambdaSuspendModifier &&
             name == StandardClassIds.Callables.suspend.callableName.identifier &&
-            !callSuffix.getParent().let { it.selectorExpression == callSuffix && it.receiverExpression != null } &&
+            !callSuffix.getParent().let { it != null && it.selectorExpression == callSuffix && it.receiverExpression != null } &&
             valueArguments.singleOrNull()?.toTokenId() == KtNodeTypes.LAMBDA_ARGUMENT_ID &&
             firTypeArguments.isEmpty()
         ) {
@@ -1821,9 +1821,9 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     override val Node.asText: String
         get() = with(rootBuilder) { asText }
 
-    override val Node?.receiverExpression: Node?
+    override val Node.receiverExpression: Node?
         get() = with(rootBuilder) { receiverExpression }
-    override val Node?.selectorExpression: Node?
+    override val Node.selectorExpression: Node?
         get() = with(rootBuilder) { selectorExpression }
 
     override fun Type.typeToTokenId(): Int {
@@ -1847,14 +1847,14 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         return with(rootBuilder) { getChildren() }
     }
 
-    override val Node?.indexExpressions: List<Node>?
+    override val Node.indexExpressions: List<Node>?
         get() = with(rootBuilder) { indexExpressions }
 
     override fun KtSourceElement.isChildInParentheses(): Boolean {
         return with(rootBuilder) { isChildInParentheses()}
     }
 
-    override fun Node?.getChildrenAsArray(): Array<out Node?> {
+    override fun Node.getChildrenAsArray(): Array<out Node?> {
         return with(rootBuilder) { getChildrenAsArray() }
     }
 }

@@ -59,10 +59,10 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
     override val LightNode.asText: String
         get() = tree.getText(this).toString()
 
-    override val LightNode?.receiverExpression: LightNode?
+    override val LightNode.receiverExpression: LightNode?
         get() {
             var candidate: LightNode? = null
-            this?.forEachChildren {
+            forEachChildren {
                 when (it.tokenType) {
                     DOT, SAFE_ACCESS -> return if (candidate?.tokenType != ERROR_ELEMENT) candidate else null
                     else -> candidate = it
@@ -71,10 +71,10 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
             return null
         }
 
-    override val LightNode?.selectorExpression: LightNode?
+    override val LightNode.selectorExpression: LightNode?
         get() {
             var isSelector = false
-            this?.forEachChildren {
+            forEachChildren {
                 when (it.tokenType) {
                     DOT, SAFE_ACCESS -> isSelector = true
                     else -> if (isSelector) {
@@ -85,9 +85,9 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
             return null
         }
 
-    override val LightNode?.indexExpressions: List<LightNode>?
-        get() = this?.getLastChildExpression()?.let {
-            tree.getChildren(it).filter { it.toTokenId().isExpression() }
+    override val LightNode.indexExpressions: List<LightNode>?
+        get() = getLastChildExpression()?.let { lastChild ->
+            tree.getChildren(lastChild).filter { it.toTokenId().isExpression() }
         }
 
     override fun LightNode.getParent(): LightNode? {
@@ -98,7 +98,7 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         return tree.getChildren(this)
     }
 
-    override fun LightNode?.getChildrenAsArray(): Array<out LightNode?> {
-        return this?.getChildren().orEmpty().toTypedArray()
+    override fun LightNode.getChildrenAsArray(): Array<out LightNode?> {
+        return getChildren().toTypedArray()
     }
 }

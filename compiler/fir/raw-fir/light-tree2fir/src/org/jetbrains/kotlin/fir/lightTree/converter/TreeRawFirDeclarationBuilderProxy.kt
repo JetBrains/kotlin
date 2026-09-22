@@ -3150,9 +3150,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     override val Node.asText: String
         get() = with(rootBuilder) { asText }
 
-    override val Node?.receiverExpression: Node?
+    override val Node.receiverExpression: Node?
         get() = with(rootBuilder) { receiverExpression }
-    override val Node?.selectorExpression: Node?
+    override val Node.selectorExpression: Node?
         get() = with(rootBuilder) { selectorExpression }
 
     override fun Type.typeToTokenId(): Int {
@@ -3167,14 +3167,14 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         return with(rootBuilder) { getChildren() }
     }
 
-    override val Node?.indexExpressions: List<Node>?
+    override val Node.indexExpressions: List<Node>?
         get() = with(rootBuilder) { indexExpressions }
 
     override fun KtSourceElement.isChildInParentheses(): Boolean {
         return with(rootBuilder) { isChildInParentheses()}
     }
 
-    override fun Node?.getChildrenAsArray(): Array<out Node?> {
+    override fun Node.getChildrenAsArray(): Array<out Node?> {
         return with(rootBuilder) { getChildrenAsArray() }
     }
 
