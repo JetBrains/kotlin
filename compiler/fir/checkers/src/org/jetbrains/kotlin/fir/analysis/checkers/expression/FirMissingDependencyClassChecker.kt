@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy.MissingTypeOrigin.*
-import org.jetbrains.kotlin.fir.analysis.checkers.isInsideAnnotationCall
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.isArrayOfOrArrayDotOfCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -34,13 +32,6 @@ import org.jetbrains.kotlin.name.Name
 object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common), FirMissingDependencyClassProxy {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
-        if (expression is FirFunctionCall && expression.isArrayOfOrArrayDotOfCall() && context.isInsideAnnotationCall) {
-            // With `ArrayLiteralResolution`, such calls were collection literals in the resolved FIR,
-            // and we didn't report anything for them (because they weren't `FirQualifiedAccessExpression`s).
-            // Likely, such a code can't actually cause compile-time / runtime crash, so we continue to
-            // explicitly ignore this case.
-            return
-        }
         val calleeReference = expression.calleeReference
         val missingTypes = mutableSetOf<ConeClassLikeType>()
         val missingTypesFromExpression = mutableSetOf<ConeClassLikeType>()
@@ -148,8 +139,8 @@ internal interface FirMissingDependencyClassProxy {
                     considerType(delegatedType, missingTypes)
                 }
             } else if (type.lookupTag.toSymbol() == null) {
-                if (missingClasses == null) missingClasses = []
-                missingClasses.add(type.lookupTag.constructClassType())
+                (missingClasses ?: mutableSetOf<ConeClassLikeType>().also { missingClasses = it }) +=
+                    type.lookupTag.constructClassType()
             }
         }
 

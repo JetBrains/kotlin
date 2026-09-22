@@ -429,8 +429,6 @@ val CheckerContext.secondToLastContainer: FirElement?
 
 fun CheckerContext.nthLastContainer(n: Int): FirElement? = containingElements.let { it.getOrNull(it.size - n) }
 
-val CheckerContext.isInsideAnnotationCall: Boolean get() = callsOrAssignments.any { it is FirAnnotationCall }
-
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkTypeMismatch(
     lValueOriginalType: ConeKotlinType,
