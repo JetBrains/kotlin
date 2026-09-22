@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.NodeTypeAnalyzer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -32,10 +32,13 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.parsing.*
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.utils.hasIllegallyPositionedUnderscore
 import org.jetbrains.kotlin.psi.utils.parseNumericLiteral
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -54,19 +57,19 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     val baseSession: FirSession,
     val context: Context<Node> = Context(),
-) : NodeTypeAnalyzer<Node, Type>() {
+) {
     companion object {
         fun firScriptName(fileName: String): Name = Name.special("<script-$fileName>")
         fun firSnippetName(fileName: String): Name = Name.special("<snippet-$fileName>")
     }
 
-    val baseModuleData: FirModuleData = baseSession.moduleData
+    protected val baseModuleData: FirModuleData = baseSession.moduleData
 
-    override val implicitType: FirImplicitTypeRef = FirImplicitTypeRefImplWithoutSource
-    override val implicitUnitType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.unitType
-    override val implicitAnyType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.anyType
-    override val implicitEnumType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.enumType
-    override val implicitAnnotationType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.annotationType
+    protected val implicitType: FirImplicitTypeRef = FirImplicitTypeRefImplWithoutSource
+    protected val implicitUnitType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.unitType
+    protected val implicitAnyType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.anyType
+    protected val implicitEnumType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.enumType
+    protected val implicitAnnotationType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.annotationType
 
     protected val imitateLambdaSuspendModifier: Boolean =
         baseSession.languageVersionSettings.supportsFeature(LanguageFeature.ParseLambdaWithSuspendModifier)
@@ -74,7 +77,292 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     private val nameBasedDestructuringShortFormEnabled: Boolean =
         baseSession.languageVersionSettings.supportsFeature(LanguageFeature.EnableNameBasedDestructuringShortForm)
 
-    override fun destructuringKindOf(hasSquareBrackets: Boolean, isFullForm: Boolean): DestructuringKind {
+    protected val isDirectlyInsideCompanionBlock: Boolean
+        get() = context.currentCompanionBlockOwnerOrNull.let { it != null && it == context.containerSymbolIfAny }
+
+    abstract fun Node.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
+    abstract val Node.elementType: Type
+    abstract val Node.asText: String
+
+    protected abstract fun Node.isStringInterpolationPrefixOrQuote(): Boolean
+    protected abstract fun Node.isLiteralStringTemplateEntry(): Boolean
+    protected abstract fun Node.isEscapeStringTemplateEntry(): Boolean
+    protected abstract fun Node.isShortOrLongStringTemplateEntry(): Boolean
+
+    protected abstract fun Node.getLabelName(): String?
+
+    abstract val Node?.receiverExpression: Node?
+    abstract val Node?.selectorExpression: Node?
+    abstract val Node?.indexExpressions: List<Node>?
+    protected abstract val Node?.arrayExpression: Node?
+    protected abstract val Node.isVararg: Boolean
+
+    protected abstract fun Node.getExpressionInParentheses(): Node?
+    protected abstract fun Node.getAnnotatedExpression(): Node?
+    protected abstract fun Node.getLabeledExpression(): Node?
+
+    protected abstract fun Type.toConstantValueKind(): ConstantValueKind?
+
+    protected abstract fun Node?.unwrap(): Node?
+    protected abstract fun Node.isArrayAccessExpression(): Boolean
+    protected abstract fun Node.isSafeAccessExpression(): Boolean
+
+    abstract fun convertScript(
+        script: Node,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirScriptBuilder.() -> Unit,
+    ): FirScript
+
+    protected abstract fun convertReplSnippet(
+        script: Node,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        functionBodySetup: FirBlockBuilder.() -> Unit,
+        statementsSetup: MutableList<FirElement>.() -> Unit,
+    ): FirReplSnippet
+
+    protected fun buildLabel(rawName: String, source: KtSourceElement): FirLabel {
+        val firLabel = buildLabel {
+            name = KtPsiUtil.unquoteIdentifier(rawName)
+            this.source = source
+        }
+
+        return firLabel
+    }
+
+    protected fun Node.toDelegatedSelfType(firClass: FirRegularClassBuilder): FirResolvedTypeRef =
+        toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
+
+    protected fun Node.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef =
+        toDelegatedSelfType(firObject.typeParameters, firObject.symbol)
+
+    protected fun Node.toDelegatedSelfType(typeParameters: List<FirTypeParameterRef>, symbol: FirClassLikeSymbol<*>): FirResolvedTypeRef {
+        return buildResolvedTypeRef {
+            source = this@toDelegatedSelfType.toFirSourceElement(KtFakeSourceElementKind.ClassSelfTypeRef)
+            coneType = ConeClassLikeTypeImpl(
+                symbol.toLookupTag(),
+                typeParameters.map { ConeTypeParameterType(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                false
+            )
+        }
+    }
+
+    protected fun isImplicitlyActual(status: FirDeclarationStatus, classKind: ClassKind): Boolean {
+        return status.isActual && (status.isInline || status.isValue || classKind == ClassKind.ANNOTATION_CLASS)
+    }
+
+    protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
+        (declaration as FirProperty).destructuringDeclarationContainerVariable = container.symbol
+    }
+
+    protected fun createNoTypeForParameterTypeRef(parameterSource: KtSourceElement): FirErrorTypeRef {
+        return buildErrorTypeRef {
+            source = parameterSource
+            diagnostic = ConeSimpleDiagnostic("No type for parameter", DiagnosticKind.ValueParameterWithNoTypeAnnotation)
+        }
+    }
+
+    protected fun convertValueParameterName(
+        safeName: Name,
+        valueParameterDeclaration: ValueParameterDeclaration,
+        rawName: () -> String?,
+    ): Name {
+        return when (valueParameterDeclaration) {
+            ValueParameterDeclaration.LAMBDA if (rawName() == "_")
+                -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            ValueParameterDeclaration.CATCH, ValueParameterDeclaration.CONTEXT_PARAMETER
+                -> if (safeName.asString() == "_") SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else safeName
+            else -> safeName
+        }
+    }
+
+    enum class ValueParameterDeclaration(val shouldExplicitParameterTypeBePresent: Boolean, val isAnnotationOwner: Boolean) {
+        FUNCTION(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = true),
+        CATCH(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = false),
+        PRIMARY_CONSTRUCTOR(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = false),
+        SETTER(shouldExplicitParameterTypeBePresent = false, isAnnotationOwner = false),
+        LAMBDA(shouldExplicitParameterTypeBePresent = false, isAnnotationOwner = false),
+        FOR_LOOP(shouldExplicitParameterTypeBePresent = false, isAnnotationOwner = false),
+        CONTEXT_PARAMETER(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = true),
+    }
+
+    protected fun constructorTypeParametersFromConstructedClass(ownerTypeParameters: List<FirTypeParameterRef>): List<FirTypeParameterRef> {
+        return ownerTypeParameters.mapNotNull {
+            val declaredTypeParameter = (it as? FirTypeParameter) ?: return@mapNotNull null
+            buildConstructedClassTypeParameterRef {
+                source = declaredTypeParameter.symbol.source?.fakeElement(KtFakeSourceElementKind.ConstructorTypeParameter)
+                symbol = declaredTypeParameter.symbol
+            }
+        }
+    }
+
+    protected fun createErrorConstructorBuilder(diagnostic: ConeDiagnostic): FirErrorPrimaryConstructorBuilder =
+        FirErrorPrimaryConstructorBuilder().apply { this.diagnostic = diagnostic }
+
+    protected fun buildErrorNonLocalDestructuringDeclaration(
+        source: KtSourceElement,
+        initializer: FirExpression?,
+        baseModuleData: FirModuleData,
+    ): FirErrorProperty = buildErrorProperty {
+        this.source = source
+        moduleData = baseModuleData
+        origin = FirDeclarationOrigin.Source
+        name = Name.special("<destructuring>")
+        diagnostic = ConeDestructuringDeclarationsOnTopLevel
+        symbol = FirErrorPropertySymbol(diagnostic)
+        this.initializer = initializer ?: buildErrorExpression {
+            this.source = source
+            diagnostic = ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
+        }
+    }
+
+    protected fun buildExpressionHandlingLabelErrors(
+        element: FirElement?,
+        elementSource: KtSourceElement,
+        forbiddenLabelKind: ForbiddenLabelKind?,
+        forbiddenLabelSource: KtSourceElement?,
+    ): FirElement {
+        if (element == null) return buildErrorExpression(
+            elementSource,
+            ConeSyntaxDiagnostic("Empty label")
+        )
+        if (forbiddenLabelKind == null) return element
+
+        require(forbiddenLabelSource != null)
+        return buildErrorExpression {
+            this.source = element.source
+            this.expression = element as? FirExpression
+            this.nonExpressionElement = element.takeUnless { it is FirExpression }
+            diagnostic = when (forbiddenLabelKind) {
+                ForbiddenLabelKind.UNDERSCORE_IS_RESERVED -> ConeUnderscoreIsReserved(forbiddenLabelSource)
+                ForbiddenLabelKind.MULTIPLE_LABEL -> ConeMultipleLabelsAreForbidden(forbiddenLabelSource)
+            }
+        }
+    }
+
+    protected fun convertUnaryPlusMinusCallOnIntegerLiteralIfNecessary(
+        source: Node,
+        receiver: FirExpression,
+        operationName: Name?,
+    ): FirExpression? {
+        if (receiver !is FirLiteralExpression) return null
+        if (receiver.kind != ConstantValueKind.IntegerLiteral) return null
+
+        val convertedValue = when (operationName) {
+            OperatorNameConventions.UNARY_MINUS -> -(receiver.value as Long)
+            OperatorNameConventions.UNARY_PLUS -> receiver.value as Long
+            else -> return null
+        }
+
+        return buildLiteralExpression(
+            source.toFirSourceElement(),
+            ConstantValueKind.IntegerLiteral,
+            convertedValue,
+            setType = false
+        )
+    }
+
+    protected fun convertFirSelector(
+        firSelector: FirQualifiedAccessExpression,
+        source: KtSourceElement?,
+        receiver: FirExpression,
+    ): FirQualifiedAccessExpression {
+        return if (firSelector is FirImplicitInvokeCall) {
+            buildImplicitInvokeCall {
+                this.source = source
+                annotations.addAll(firSelector.annotations)
+                typeArguments.addAll(firSelector.typeArguments)
+                explicitReceiver = firSelector.explicitReceiver
+                argumentList = buildArgumentList {
+                    arguments.add(receiver)
+                    arguments.addAll(firSelector.arguments)
+                }
+                isCallWithExplicitReceiver = true
+                calleeReference = firSelector.calleeReference
+            }
+        } else {
+            firSelector.replaceExplicitReceiver(receiver)
+            @OptIn(FirImplementationDetail::class)
+            firSelector.replaceSource(source)
+            firSelector
+        }
+    }
+
+    protected fun List<Node?>.toInterpolatingCall(
+        base: Node,
+        convertTemplateEntry: Node?.(String) -> Collection<FirExpression>,
+        prefix: () -> String,
+    ): FirExpression {
+        return buildStringConcatenationCall {
+            val sb = StringBuilder()
+            var hasExpressions = false
+            argumentList = buildArgumentList {
+                L@ for (entry in this@toInterpolatingCall) {
+                    if (entry == null) continue
+                    when {
+                        entry.isStringInterpolationPrefixOrQuote() -> continue@L
+                        entry.isLiteralStringTemplateEntry() -> {
+                            sb.append(entry.asText)
+                            arguments += buildLiteralExpression(
+                                entry.toFirSourceElement(), ConstantValueKind.String, entry.asText, setType = false
+                            )
+                        }
+                        entry.isEscapeStringTemplateEntry() -> {
+                            val entryText = entry.asText
+                            val characterWithDiagnostic = escapedStringToCharacter(entryText)
+                            val unescapedCharacter = characterWithDiagnostic.value
+                            if (unescapedCharacter != null) {
+                                sb.append(unescapedCharacter)
+                            }
+
+                            arguments += buildConstOrErrorExpression(
+                                entry.toFirSourceElement(),
+                                ConstantValueKind.String,
+                                unescapedCharacter?.toString(),
+                                "character",
+                                entryText,
+                                characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
+                            )
+                        }
+                        entry.isShortOrLongStringTemplateEntry() -> {
+                            hasExpressions = true
+                            val expressions = entry.convertTemplateEntry("Incorrect template argument")
+                            if (expressions.isNotEmpty()) {
+                                arguments += expressions
+                            } else {
+                                arguments += buildErrorExpression {
+                                    source = entry.toFirSourceElement()
+                                    diagnostic = ConeSyntaxDiagnostic("Incorrect template argument")
+                                }
+                            }
+                        }
+                        else -> {
+                            hasExpressions = true
+                            arguments += buildErrorExpression {
+                                source = entry.toFirSourceElement()
+                                diagnostic = ConeSyntaxDiagnostic("Incorrect template entry: ${entry.asText}")
+                            }
+                        }
+                    }
+                }
+            }
+            source = base.toFirSourceElement()
+            interpolationPrefix = prefix()
+            // Fast-pass if there is no errors and non-const string expressions
+            if (!hasExpressions && !argumentList.arguments.any { it is FirErrorExpression })
+                return buildLiteralExpression(
+                    source,
+                    ConstantValueKind.String,
+                    sb.toString(),
+                    setType = false,
+                    prefix = interpolationPrefix.takeIf { it.isNotEmpty() }
+                )
+        }
+    }
+
+    fun destructuringKindOf(hasSquareBrackets: Boolean, isFullForm: Boolean): DestructuringKind {
         return when {
             hasSquareBrackets -> DestructuringKind.PositionalWithSquareBrackets
             isFullForm || nameBasedDestructuringShortFormEnabled -> DestructuringKind.NameBased
@@ -82,13 +370,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    abstract fun Node.getExpressionInParentheses(): Node?
-    abstract fun Node.getAnnotatedExpression(): Node?
-    abstract fun Node.getLabeledExpression(): Node?
-    abstract val Node?.arrayExpression: Node?
-    abstract val Node.isVararg: Boolean
-
-    override fun registerSelfType(selfType: FirResolvedTypeRef) {
+    protected fun registerSelfType(selfType: FirResolvedTypeRef) {
         context.dispatchReceiverTypesStack.add(selfType.coneType as ConeClassLikeType)
     }
 
@@ -105,10 +387,17 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    val isDirectlyInsideCompanionBlock: Boolean
-        get() = context.currentCompanionBlockOwnerOrNull.let { it != null && it == context.containerSymbolIfAny }
+    protected fun currentDispatchReceiverType(): ConeClassLikeType? = currentDispatchReceiverType(context)
 
-    override fun callableIdForName(name: Name): CallableId =
+    /**
+     * @return second from the end dispatch receiver. For the inner class constructor, it would be the outer class.
+     */
+    protected fun dispatchReceiverForInnerClassConstructor(): ConeClassLikeType? {
+        val dispatchReceivers = context.dispatchReceiverTypesStack
+        return dispatchReceivers.getOrNull(dispatchReceivers.lastIndex - 1)
+    }
+
+    fun callableIdForName(name: Name): CallableId =
         when {
             context.className.shortNameOrSpecial() == SpecialNames.ANONYMOUS -> CallableId(
                 ClassId(context.packageFqName, SpecialNames.ANONYMOUS_FQ_NAME, isLocal = true), name
@@ -133,17 +422,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
             else -> CallableId(context.packageFqName, context.className, name)
         }
 
-    fun currentDispatchReceiverType(): ConeClassLikeType? = currentDispatchReceiverType(context)
-
-    /**
-     * @return second from the end dispatch receiver. For the inner class constructor, it would be the outer class.
-     */
-    override fun dispatchReceiverForInnerClassConstructor(): ConeClassLikeType? {
-        val dispatchReceivers = context.dispatchReceiverTypesStack
-        return dispatchReceivers.getOrNull(dispatchReceivers.lastIndex - 1)
-    }
-
-    override fun callableIdForClassConstructor(): CallableId {
+    protected fun callableIdForClassConstructor(): CallableId {
         val packageName = if (context.inLocalContext) {
             CallableId.PACKAGE_FQ_NAME_FOR_LOCAL
         } else {
@@ -159,11 +438,11 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
 
 
     /**** Function utils ****/
-    fun <T> MutableList<T>.removeLast(): T {
+    protected fun <T> MutableList<T>.removeLast(): T {
         return removeAt(size - 1)
     }
 
-    fun <T> MutableList<T>.pop(): T? {
+    protected fun <T> MutableList<T>.pop(): T? {
         val result = lastOrNull()
         if (result != null) {
             removeAt(size - 1)
@@ -171,10 +450,10 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         return result
     }
 
-    override fun FirExpression.toReturn(
-        baseSource: KtSourceElement?,
-        labelName: String?,
-        fromKtReturnExpression: Boolean,
+    protected fun FirExpression.toReturn(
+        baseSource: KtSourceElement? = source,
+        labelName: String? = null,
+        fromKtReturnExpression: Boolean = false,
     ): FirReturnExpression {
         return buildReturnExpression {
             fun FirFunctionTarget.bindToErrorFunction(message: String, kind: DiagnosticKind) {
@@ -215,16 +494,16 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    override fun FirLoopBuilder.prepareTarget(firLabelUser: Any): FirLoopTarget = prepareTarget(context.getLastLabel(firLabelUser))
+    protected fun FirLoopBuilder.prepareTarget(firLabelUser: Any): FirLoopTarget = prepareTarget(context.getLastLabel(firLabelUser))
 
-    fun FirLoopBuilder.prepareTarget(label: FirLabel?): FirLoopTarget {
+    private fun FirLoopBuilder.prepareTarget(label: FirLabel?): FirLoopTarget {
         this.label = label
         val target = FirLoopTarget(label?.name)
         context.firLoopTargets += target
         return target
     }
 
-    override fun FirLoopBuilder.configure(target: FirLoopTarget, generateBlock: () -> FirBlock): FirLoop {
+    protected fun FirLoopBuilder.configure(target: FirLoopTarget, generateBlock: () -> FirBlock): FirLoop {
         block = generateBlock()
         val loop = build()
         val stackTopTarget = context.firLoopTargets.removeLast()
@@ -235,7 +514,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         return loop
     }
 
-    override fun FirLoopJumpBuilder.bindLabel(expression: Node): FirLoopJumpBuilder {
+    protected fun FirLoopJumpBuilder.bindLabel(expression: Node): FirLoopJumpBuilder {
         val labelName = expression.getLabelName()
         val lastLoopTarget = context.firLoopTargets.lastOrNull()
         val sourceElement = expression.toFirSourceElement()
@@ -270,7 +549,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         return this
     }
 
-    fun generateConstantExpressionByLiteral(expression: Node): FirExpression {
+    protected fun generateConstantExpressionByLiteral(expression: Node): FirExpression {
         val type = expression.elementType
         val text: String = expression.asText
         val sourceElement = expression.toFirSourceElement()
@@ -423,7 +702,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    override fun generateIncrementOrDecrementBlock(
+    protected fun generateIncrementOrDecrementBlock(
         // Used to get source-element or text
         wholeExpression: Node,
         operationReference: Node?,
@@ -461,9 +740,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         )
     }
 
-    protected abstract fun Node.isArrayAccessExpression(): Boolean
-
-    override fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression =
+    protected fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression =
         pullUpSafeCallIfNecessary(
             FirQualifiedAccessExpression::explicitReceiver,
             FirQualifiedAccessExpression::replaceExplicitReceiver
@@ -492,10 +769,8 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         return sourceElement.isChildInParentheses()
     }
 
-    override fun KtSourceElement.isChildInParentheses(): Boolean =
+    open fun KtSourceElement.isChildInParentheses(): Boolean =
         treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED
-
-    protected abstract fun Node?.unwrap(): Node?
 
     /**
      * given:
@@ -687,7 +962,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     }
 
     @OptIn(FirContractViolation::class)
-    override fun Node?.generateAssignment(
+    protected fun Node?.generateAssignment(
         baseSource: KtSourceElement,
         arrayAccessSource: KtSourceElement?,
         rhsExpression: FirExpression,
@@ -802,8 +1077,6 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    protected abstract fun Node.isSafeAccessExpression(): Boolean
-
     // gets a?.{ $subj.x } and turns it to a?.{ $subj.x = v }
     private fun putAssignmentToSafeCall(
         safeCallNonAssignment: FirSafeCallExpression,
@@ -891,26 +1164,6 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    fun generateDataClassMembers(
-        source: Node,
-        classBuilder: FirRegularClassBuilder,
-        firPrimaryConstructor: FirConstructor,
-        zippedParameters: List<Pair<Node, FirProperty>>,
-        packageFqName: FqName,
-        classFqName: FqName,
-        addValueParameterAnnotations: FirValueParameterBuilder.(Node) -> Unit
-    ) {
-        DataClassMembersGenerator(
-            source,
-            classBuilder,
-            firPrimaryConstructor,
-            zippedParameters,
-            packageFqName,
-            classFqName,
-            addValueParameterAnnotations
-        ).generate()
-    }
-
     /**
      * Generates the synthetic members of a data class.
      *
@@ -985,7 +1238,11 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    override fun FirClassLikeDeclaration.initContainingClassForLocalAttr() {
+    protected fun FirRegularClassBuilder.initCompanionObjectSymbolAttr() {
+        companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
+    }
+
+    protected fun FirClassLikeDeclaration.initContainingClassForLocalAttr() {
         if (isLocal) {
             val currentDispatchReceiverType = currentDispatchReceiverType()
             if (currentDispatchReceiverType != null) {
@@ -994,7 +1251,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    override fun FirRegularClass.initContainingScriptOrReplAttr() {
+    protected fun FirRegularClass.initContainingScriptOrReplAttr() {
         context.containingScriptSymbol?.let { script ->
             containingScriptSymbolAttr = script
         }
@@ -1003,7 +1260,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    override fun FirCallableDeclaration.initContainingClassAttr() {
+    protected fun FirCallableDeclaration.initContainingClassAttr() {
         initContainingClassAttr(context)
     }
 
@@ -1029,7 +1286,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
      *
      * If [fileBuilder] is provided, it will be used to configure the file containing the script or snippet.
      */
-    override fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration {
+    protected fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration {
         val scriptSource = declaration.toFirSourceElement()
 
         return if (isReplSnippet(declaration, sourceFile)) {
@@ -1089,34 +1346,18 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
             }
         }
     }
-
-    abstract fun convertScript(
-        script: Node,
-        scriptSource: KtSourceElement,
-        fileName: String,
-        setup: FirScriptBuilder.() -> Unit,
-    ): FirScript
-
-    protected abstract fun convertReplSnippet(
-        script: Node,
-        scriptSource: KtSourceElement,
-        fileName: String,
-        snippetSetup: FirReplSnippetBuilder.() -> Unit,
-        functionBodySetup: FirBlockBuilder.() -> Unit,
-        statementsSetup: MutableList<FirElement>.() -> Unit,
-    ): FirReplSnippet
 }
 
-fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDataClassCopyFunction(
+fun <Node : Any> FirRegularClassBuilder.createDataClassCopyFunction(
     classId: ClassId,
-    sourceElement: TSource,
+    sourceElement: Node,
     dispatchReceiver: ConeClassLikeType?,
-    zippedParameters: List<Pair<TParameter, FirProperty>>,
+    zippedParameters: List<Pair<Node, FirProperty>>,
     isFromLibrary: Boolean,
     firConstructor: FirConstructor,
-    toFirSource: (TBase, KtFakeSourceElementKind) -> KtSourceElement,
-    addValueParameterAnnotations: FirValueParameterBuilder.(TParameter) -> Unit,
-    isVararg: (TParameter) -> Boolean,
+    toFirSource: (Node, KtFakeSourceElementKind) -> KtSourceElement,
+    addValueParameterAnnotations: FirValueParameterBuilder.(Node) -> Unit,
+    isVararg: (Node) -> Boolean,
 ): FirNamedFunction {
     fun generateComponentAccess(
         parameterSource: KtSourceElement?,

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.analysis.NodeTypeAnalyzer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -46,7 +45,7 @@ interface DestructuringContext<T> {
 }
 
 context(c: DestructuringContext<T>)
-fun <T> NodeTypeAnalyzer<*, *>.addDestructuringVariables(
+fun <T> AbstractRawFirBuilder<*, *>.addDestructuringVariables(
     destination: MutableList<in FirVariable>,
     context: Context<*>,
     moduleData: FirModuleData,
@@ -81,7 +80,7 @@ enum class DestructuringKind {
 }
 
 context(c: DestructuringContext<T>)
-fun <T> NodeTypeAnalyzer<*, *>.buildDestructuringVariable(
+fun <T> AbstractRawFirBuilder<*, *>.buildDestructuringVariable(
     context: Context<*>,
     moduleData: FirModuleData,
     container: FirVariable,
