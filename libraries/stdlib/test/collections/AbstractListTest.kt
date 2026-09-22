@@ -15,7 +15,10 @@ class AbstractListTest {
     fun newCapacity() {
         // oldCapacity < minCapacity < newCapacity
         repeat(100) {
-            val oldCapacity = Random.nextInt(1 shl 30)
+            // The first two checks in this method require a newCapacity that's actually greater than the oldCapacity.
+            // 4 is the minimum value to achieve that given the calculation.
+            // Also, when newCapacity == oldCapacity, the minCapacity generation fails because the range passed to nextInt is empty.
+            val oldCapacity = Random.nextInt(4 until (1 shl 30))
             val newCapacity = oldCapacity + (oldCapacity shr 1)
             val minCapacity = Random.nextInt(oldCapacity + 1 until newCapacity)
 
@@ -24,7 +27,7 @@ class AbstractListTest {
 
         // oldCapacity < newCapacity < minCapacity
         repeat(100) {
-            val oldCapacity = Random.nextInt(1 shl 30)
+            val oldCapacity = Random.nextInt(4 until (1 shl 30))
             val newCapacity = oldCapacity + (oldCapacity shr 1)
             val minCapacity = Random.nextInt(newCapacity..Int.MAX_VALUE)
 
