@@ -734,14 +734,10 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
             documentablesMergingStage = { module ->
                 val testClass = module.packages.single().classlikes.single { it.name == "A" }
                 val setterLookalike = testClass.functions.firstOrNull { it.name == "setV" }
-                assertNotNull(setterLookalike) {
-                    "Expected regular function not found, wrongly categorized as setter?"
-                }
+                assertNotNull(setterLookalike, "Expected regular function not found, wrongly categorized as setter?")
 
                 val getterLookalike = testClass.functions.firstOrNull { it.name == "getV" }
-                assertNotNull(getterLookalike) {
-                    "Expected regular function not found, wrongly categorized as getter?"
-                }
+                assertNotNull(getterLookalike, "Expected regular function not found, wrongly categorized as getter?")
             }
         }
     }

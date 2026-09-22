@@ -144,10 +144,10 @@ class PsiSuperFieldsTest : BaseAbstractTest() {
                 val property = inheritorProperties.single { it.name == "isActive" }
 
                 assertNotNull(property.getter)
-                assertEquals("isActive", property.getter?.name)
+                assertEquals("isActive", property.getter.name)
 
                 assertNotNull(property.setter)
-                assertEquals("setActive", property.setter?.name)
+                assertEquals("setActive", property.setter.name)
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
                 assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)

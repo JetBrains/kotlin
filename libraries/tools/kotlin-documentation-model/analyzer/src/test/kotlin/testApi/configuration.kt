@@ -33,9 +33,10 @@ public fun assertDokkaConfigurationEquals(
     assertEquals(expected.finalizeCoroutines, actual.finalizeCoroutines, "DokkaConfiguration.finalizeCoroutines")
 
     assertEquals(expected.sourceSets.size, actual.sourceSets.size, "DokkaConfiguration.sourceSets.size")
-    expected.sourceSets.zip(actual.sourceSets) { expectedSourceSet, actualSourceSet ->
-        assertDokkaSourceSetEquals(expectedSourceSet, actualSourceSet)
-    }
+    expected.sourceSets.zip(actual.sourceSets) { e, a -> e to a }
+        .forEach { [expectedSourceSet, actualSourceSet] ->
+            assertDokkaSourceSetEquals(expectedSourceSet, actualSourceSet)
+        }
 }
 
 public fun assertDokkaSourceSetEquals(

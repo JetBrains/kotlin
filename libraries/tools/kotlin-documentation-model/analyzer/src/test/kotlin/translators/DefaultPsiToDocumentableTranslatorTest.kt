@@ -487,9 +487,7 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                 val testClass = module.packages.single().classlikes.single { it.name == "Test" }
 
                 val field = testClass.properties.singleOrNull { it.name == "foo" }
-                assertNotNull(field) {
-                    "Expected the foo property to exist because the field is private with a public getter"
-                }
+                assertNotNull(field, "Expected the foo property to exist because the field is private with a public getter")
                 assertNull(field.setter)
 
                 val setterMethodsWithSubtypeParams = testClass.functions.filter { it.name == "setFoo" }
@@ -523,9 +521,10 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                 assertNull(property, "Expected the property to stay private because there are no getters")
 
                 val regularSetterFunction = tetClass.functions.firstOrNull { it.name == "setA" }
-                assertNotNull(regularSetterFunction) {
+                assertNotNull(
+                    regularSetterFunction,
                     "The qualifying setter function should stay a regular function because the field is inaccessible"
-                }
+                )
             }
         }
     }

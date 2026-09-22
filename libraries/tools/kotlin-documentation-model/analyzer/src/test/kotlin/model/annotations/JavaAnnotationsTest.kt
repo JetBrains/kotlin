@@ -54,7 +54,7 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 val annotatedFunction = testClass.functions.single { it.name == "simpleAnnotation" }
                 val annotation =
                     annotatedFunction.extra[Annotations]?.directAnnotations?.entries?.single()?.value?.single()
-                assertNotNull(annotation) { "Expected to find an annotation on simpleAnnotation function, found none" }
+                assertNotNull(annotation, "Expected to find an annotation on simpleAnnotation function, found none")
                 assertEquals("annotation", annotation.dri.packageName)
                 assertEquals("SimpleAnnotation", annotation.dri.classNames)
                 assertEquals(1, annotation.params.size)
@@ -116,7 +116,7 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 assertNotNull(contentField)
 
                 val annotation = contentField.extra[Annotations]?.directAnnotations?.entries?.single()?.value?.single()
-                assertNotNull(annotation) { "Expected to find an annotation on content field, found none" }
+                assertNotNull(annotation, "Expected to find an annotation on content field, found none")
                 assertEquals("XmlElementRefs", annotation.dri.classNames)
                 assertEquals(1, annotation.params.size)
 
@@ -182,7 +182,7 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 assertNotNull(testClass)
 
                 val annotation = testClass.extra[Annotations]?.directAnnotations?.entries?.single()?.value?.single()
-                assertNotNull(annotation) { "Expected to find an annotation on TestClass, found none" }
+                assertNotNull(annotation, "Expected to find an annotation on TestClass, found none")
 
                 assertEquals("TestAnnotate", annotation.dri.classNames)
                 assertEquals(1, annotation.params.size)
