@@ -4,11 +4,11 @@
 
 value class Point(
     val x: Int,
-    <!INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER!>@IntroducedAt("2.0")<!> val y: Int = 0,
+    @IntroducedAt("2.0") val y: Int = 0,
 )
 
 value class SingleField(
-    <!INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER!>@IntroducedAt("2.0")<!> val x: Int = 0,
+    @IntroducedAt("2.0") val x: Int = 0,
 )
 
 @JvmInline
