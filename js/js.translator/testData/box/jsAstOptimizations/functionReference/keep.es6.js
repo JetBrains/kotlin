@@ -44,7 +44,7 @@ function mixedNameAndInvoke$ref() {
   return constructCallableReference((p0) => mixedNameAndInvoke(p0), 1, 0, 15, 'mixedNameAndInvoke');
 }
 function castFromAny$ref() {
-  return constructCallableReference((p0) => castFromAny(p0), 1, 0, 17, 'castFromAny');
+  return constructCallableReference((p0) => castFromAny(p0), 1, 0, 19, 'castFromAny');
 }
 function virtualOverride$ref() {
   return constructCallableReference((p0) => virtualOverride(p0), 1, 0, 6, 'virtualOverride');
@@ -53,17 +53,29 @@ function dynamicIndex$ref() {
   return constructCallableReference(() => {
     dynamicIndex();
     return Unit_instance;
-  }, 0, 0, 18, 'dynamicIndex');
+  }, 0, 0, 20, 'dynamicIndex');
 }
 function dynamicPlus$ref() {
   return constructCallableReference(() => {
     dynamicPlus();
     return Unit_instance;
-  }, 0, 0, 19, 'dynamicPlus');
+  }, 0, 0, 21, 'dynamicPlus');
 }
 function boxStoredName$ref() {
   return constructCallableReference(() => {
     boxStoredName();
     return Unit_instance;
   }, 0, 0, 16, 'boxStoredName');
+}
+function anyCastName$ref() {
+  return constructCallableReference(() => {
+    anyCastName();
+    return Unit_instance;
+  }, 0, 0, 17, 'anyCastName');
+}
+function dynamicCastName$ref() {
+  return constructCallableReference(() => {
+    dynamicCastName();
+    return Unit_instance;
+  }, 0, 0, 18, 'dynamicCastName');
 }

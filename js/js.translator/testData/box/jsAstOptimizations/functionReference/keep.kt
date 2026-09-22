@@ -12,8 +12,8 @@ fun interface I {
 
 class Named(val k: KFunction<*>)
 
-// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref expect=keep.js TARGET_BACKENDS=JS_IR
-// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref expect=keep.es6.js TARGET_BACKENDS=JS_IR_ES6
+// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref;anyCastName$ref;dynamicCastName$ref expect=keep.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref;anyCastName$ref;dynamicCastName$ref expect=keep.es6.js TARGET_BACKENDS=JS_IR_ES6
 
 fun readName() {}
 
@@ -50,6 +50,10 @@ fun dynamicPlus() {}
 
 fun boxStoredName() {}
 
+fun anyCastName() {}
+
+fun dynamicCastName() {}
+
 class Ctor(val x: Int)
 
 fun useCtor(): Int {
@@ -68,6 +72,10 @@ class Sub : Base() {
 val k_prop = 42
 
 fun takeName(k: KFunction<*>) = k.name
+
+fun takeNameFromAny(k: Any) = (k as KFunction<*>).name
+
+fun takeNameFromDynamic(k: dynamic) = (k as KFunction<*>).name
 
 fun takeSamEq(a: I, b: I) = a == b
 
@@ -102,6 +110,9 @@ fun box(): String {
     if (mixed.name != "mixedNameAndInvoke") return "fail mixed name"
 
     if (Named(::boxStoredName).k.name != "boxStoredName") return "fail stored name"
+
+    if (takeNameFromAny(::anyCastName) != "anyCastName") return "fail Any cast name"
+    if (takeNameFromDynamic(::dynamicCastName) != "dynamicCastName") return "fail dynamic cast name"
 
     // still keep: cast from Any to FunctionN is not treated as invoke-only
     if (takeAny(::castFromAny) != 13) return "fail any"

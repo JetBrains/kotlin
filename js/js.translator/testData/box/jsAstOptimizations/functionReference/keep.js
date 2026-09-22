@@ -56,7 +56,7 @@ function mixedNameAndInvoke$ref() {
 function castFromAny$ref() {
   return constructCallableReference(function (p0) {
     return castFromAny(p0);
-  }, 1, 0, 17, 'castFromAny');
+  }, 1, 0, 19, 'castFromAny');
 }
 function virtualOverride$ref() {
   return constructCallableReference(function (p0) {
@@ -67,17 +67,29 @@ function dynamicIndex$ref() {
   return constructCallableReference(function () {
     dynamicIndex();
     return Unit_instance;
-  }, 0, 0, 18, 'dynamicIndex');
+  }, 0, 0, 20, 'dynamicIndex');
 }
 function dynamicPlus$ref() {
   return constructCallableReference(function () {
     dynamicPlus();
     return Unit_instance;
-  }, 0, 0, 19, 'dynamicPlus');
+  }, 0, 0, 21, 'dynamicPlus');
 }
 function boxStoredName$ref() {
   return constructCallableReference(function () {
     boxStoredName();
     return Unit_instance;
   }, 0, 0, 16, 'boxStoredName');
+}
+function anyCastName$ref() {
+  return constructCallableReference(function () {
+    anyCastName();
+    return Unit_instance;
+  }, 0, 0, 17, 'anyCastName');
+}
+function dynamicCastName$ref() {
+  return constructCallableReference(function () {
+    dynamicCastName();
+    return Unit_instance;
+  }, 0, 0, 18, 'dynamicCastName');
 }
