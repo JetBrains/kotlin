@@ -17,7 +17,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.junit.jupiter.api.fail
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
-import kotlin.concurrent.atomics.incrementAndFetch
+import kotlin.concurrent.atomics.plusAssign
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
 import kotlin.test.Test
@@ -59,10 +59,10 @@ class TestMetadataTest {
 
         runBlocking(Dispatchers.IO) {
             forEachCompiledClass { file, classNode ->
-                checkedClasses.incrementAndFetch()
+                checkedClasses += 1
                 classNode.visibleAnnotations?.forEach { annotation ->
                     if (annotation.desc == testMetadataAnnotationDesc) {
-                        checkedAnnotations.incrementAndFetch()
+                        checkedAnnotations += 1
                         val now = Clock.System.now()
                         if ((now - lastProgressPrinted).inWholeSeconds >= 5) {
                             lastProgressPrinted = now
