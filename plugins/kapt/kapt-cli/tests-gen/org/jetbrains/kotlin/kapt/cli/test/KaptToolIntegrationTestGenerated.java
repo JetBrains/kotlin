@@ -124,6 +124,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   }
 
   @Test
+  @TestMetadata("parallelStubWrites")
+  public void testParallelStubWrites() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/parallelStubWrites/");
+  }
+
+  @Test
   @TestMetadata("separateStubAptCompilation")
   public void testSeparateStubAptCompilation() {
     runTest("plugins/kapt/kapt-cli/testData/integration/separateStubAptCompilation/");
@@ -133,6 +139,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   @TestMetadata("simple")
   public void testSimple() {
     runTest("plugins/kapt/kapt-cli/testData/integration/simple/");
+  }
+
+  @Test
+  @TestMetadata("stubWriterThreadsJtree")
+  public void testStubWriterThreadsJtree() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/stubWriterThreadsJtree/");
   }
 
   @Test

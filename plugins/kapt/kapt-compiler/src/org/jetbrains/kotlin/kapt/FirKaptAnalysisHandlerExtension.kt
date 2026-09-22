@@ -31,6 +31,9 @@ import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * This extension implements K2 kapt by invoking the compiler in the "skip bodies" / suppress-errors mode, and translating the resulting
@@ -218,6 +221,18 @@ open class FirKaptAnalysisHandlerExtension(
         val packagePaths = HashMap<String, String>()
         val packageDirs = HashMap<String, File>()
 
+        if (options.stubWriterThreads > 1 && options.stubGenerationScheme != StubGenerationScheme.DIRECT) {
+            logger.warn(
+                "Stub writer threads (${options.stubWriterThreads}) have no effect with the " +
+                        "'${options.stubGenerationScheme.stringValue}' stub generation scheme, stubs are written sequentially. " +
+                        "Use the '${StubGenerationScheme.DIRECT.stringValue}' scheme to write stubs in parallel."
+            )
+        }
+        val pendingWrites =
+            if (options.stubWriterThreads > 1 && options.stubGenerationScheme == StubGenerationScheme.DIRECT)
+                ArrayList<PendingStubWrite>(stubs.size)
+            else null
+
         for (kaptStub in stubs) {
             val className = kaptStub.simpleClassName()
             val packageName = kaptStub.packageName()
@@ -245,12 +260,72 @@ open class FirKaptAnalysisHandlerExtension(
             }
 
             reportStubsOutputForIC(sourceFile)
+            if (pendingWrites != null) {
+                val metadata = kaptStub.metadataToWrite(forSource = sourceFile)
+                metadata?.let { reportStubsOutputForIC(it.first) }
+                pendingWrites += PendingStubWrite(sourceFile, kaptStub.getText(kaptContext.context), metadata)
+                continue
+            }
+
             sourceFile.writeText(kaptStub.getText(kaptContext.context))
 
             kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
         }
 
+        if (pendingWrites != null) {
+            val [writeTime] = measureTimeMillis { writeStubsInParallel(pendingWrites, options.stubWriterThreads) }
+            logger.info { "Parallel stub file writing took $writeTime ms" }
+        }
+
         logger.info { "Source files: ${sourceFiles}" }
+    }
+
+    private class PendingStubWrite(val sourceFile: File, val text: String, val metadata: Pair<File, ByteArray>?) {
+        fun write() {
+            sourceFile.writeText(text)
+            metadata?.let { it.first.writeBytes(it.second) }
+        }
+    }
+
+    private fun writeStubsInParallel(writes: List<PendingStubWrite>, requestedThreads: Int) {
+        val threadCount = minOf(requestedThreads, writes.size)
+        if (threadCount <= 1) {
+            for (stub in writes) {
+                stub.write()
+            }
+            return
+        }
+
+        val threadIndex = AtomicInteger()
+        val executor = Executors.newFixedThreadPool(threadCount) { runnable ->
+            Thread(runnable, "kapt-stub-writer-${threadIndex.incrementAndGet()}").apply { isDaemon = true }
+        }
+        try {
+            // One task per thread, each writing every `threadCount`-th stub, to avoid dispatching thousands of tiny tasks.
+            val futures = (0 until threadCount).map { start ->
+                executor.submit {
+                    for (i in start until writes.size step threadCount) {
+                        writes[i].write()
+                    }
+                }
+            }
+            var failure: Throwable? = null
+            for (future in futures) {
+                try {
+                    future.get()
+                } catch (e: ExecutionException) {
+                    val cause = e.cause ?: e
+                    val firstFailure = failure
+                    if (firstFailure == null)
+                        failure = cause
+                    else
+                        firstFailure.addSuppressed(cause)
+                }
+            }
+            failure?.let { throw it }
+        } finally {
+            executor.shutdownNow()
+        }
     }
 
     protected open fun saveIncrementalData(kaptContext: KaptContextForStubGeneration) {

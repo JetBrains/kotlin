@@ -37,6 +37,7 @@ class KaptOptions(
     val mode: AptMode,
     val detectMemoryLeaks: DetectMemoryLeaksMode,
     val stubGenerationScheme: StubGenerationScheme,
+    val stubWriterThreads: Int, // Supported only in DIRECT scheme.
 
     //these two config can be replaced with single function-like interface (ProcessorName -> ClassLoader),
     // but it is hard to pass function between different classloaders
@@ -76,6 +77,7 @@ class KaptOptions(
         var mode: AptMode = AptMode.STUBS_AND_APT
         var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.DEFAULT
         var stubGenerationScheme: StubGenerationScheme = StubGenerationScheme.JTREE
+        var stubWriterThreads: Int = 1
         var processorsStatsReportFile: File? = null
         var fileReadHistoryReportFile: File? = null
 
@@ -89,7 +91,7 @@ class KaptOptions(
                 changedFiles, compiledSources, incrementalCache, classpathChanges,
                 sourcesOutputDir, classesOutputDir, stubsOutputDir, incrementalDataOutputDir,
                 processingClasspath, processors, processingOptions, javacOptions, KaptFlags.fromSet(flags),
-                mode, detectMemoryLeaks, stubGenerationScheme,
+                mode, detectMemoryLeaks, stubGenerationScheme, stubWriterThreads,
                 processingClassLoader = null,
                 separateClassloaderForProcessors = emptySet(),
                 processorsStatsReportFile = processorsStatsReportFile,
@@ -205,6 +207,7 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
 
     appendLine("Annotation processing mode: ${mode.stringValue}")
     appendLine("Memory leak detection mode: ${detectMemoryLeaks.stringValue}")
+    appendLine("Stub writer threads: $stubWriterThreads")
     for (flag in KaptFlag.entries) {
         appendLine(flag.description + ": " + get(flag))
     }

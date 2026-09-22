@@ -453,6 +453,11 @@ internal fun buildKaptSubpluginOptions(
         pluginOptions += SubpluginOption("verbose", "true")
     }
 
+    val stubWriterThreads = KaptProperties.getStubWriterThreads(project).get()
+    if (stubWriterThreads != 1) {
+        pluginOptions += SubpluginOption("stubWriterThreads", "$stubWriterThreads")
+    }
+
     if (KaptProperties.isIsolateProcessorsFromBuildClasspath(project).get()) {
         pluginOptions += SubpluginOption("isolateProcessorsFromBuildClasspath", "true")
     }

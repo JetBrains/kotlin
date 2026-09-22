@@ -79,6 +79,17 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Parameter(property = "kapt.stub.generation.scheme", defaultValue = "jtree")
     private StubGenerationScheme stubGenerationScheme;
 
+    /**
+     * Number of threads writing the generated Java stubs; {@code 1} (the default) writes them sequentially.
+     * Only used with the {@code direct} stub generation scheme; with {@code jtree} kapt warns and writes sequentially.
+     *
+     * Can be configured as:
+     * - Mojo parameter: {@code <stubWriterThreads>4</stubWriterThreads>}
+     * - Maven property: {@code -Dkapt.stub.writer.threads=4}
+     */
+    @Parameter(property = "kapt.stub.writer.threads", defaultValue = "1")
+    private int stubWriterThreads;
+
     @Parameter
     private List<String> annotationProcessorArgs;
 
@@ -132,6 +143,10 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         options.add(new KaptOption("mapDiagnosticLocations", mapDiagnosticLocations));
         options.add(new KaptOption("stubGenerationScheme", stubGenerationScheme.name()));
         options.add(new KaptOption("processors", annotationProcessors));
+
+        if (stubWriterThreads != 1) {
+            options.add(new KaptOption("stubWriterThreads", String.valueOf(stubWriterThreads)));
+        }
 
         if (includeCompileClasspath != null) {
             options.add(new KaptOption("includeCompileClasspath", includeCompileClasspath));
