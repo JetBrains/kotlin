@@ -499,7 +499,6 @@ tasks {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:raw-fir:mp-parsing2fir:test")
-        dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
     }
 
