@@ -270,7 +270,7 @@ class DoubleMathTest {
         assertEquals(Long.MAX_VALUE, Double.POSITIVE_INFINITY.roundToLong())
         assertEquals(Long.MIN_VALUE, Double.NEGATIVE_INFINITY.roundToLong())
 
-        assertFails { Double.NaN.roundToLong() }
+        assertFailsWith<IllegalArgumentException> { Double.NaN.roundToLong() }
 
         assertEquals(1, 1.0.roundToInt())
         assertEquals(1, 1.1.roundToInt())
@@ -284,7 +284,81 @@ class DoubleMathTest {
         assertEquals(Int.MAX_VALUE, Double.POSITIVE_INFINITY.roundToInt())
         assertEquals(Int.MIN_VALUE, Double.NEGATIVE_INFINITY.roundToInt())
 
-        assertFails { Double.NaN.roundToInt() }
+        assertFailsWith<IllegalArgumentException> { Double.NaN.roundToInt() }
+    }
+
+    @Test fun roundingConversionNearHalfIntegers() {
+        val cases = listOf(
+            0.0 to 0L,
+            -0.0 to 0L,
+            Double.MIN_VALUE to 0L,
+            -Double.MIN_VALUE to 0L,
+            0.49999999999999994 to 0L,
+            0.5 to 1L,
+            0.5000000000000001 to 1L,
+            -0.49999999999999994 to 0L,
+            -0.5 to 0L,
+            -0.5000000000000001 to -1L,
+            1.4999999999999998 to 1L,
+            1.5 to 2L,
+            -1.5 to -1L,
+            -1.5000000000000002 to -2L
+        )
+        for ([value, expected] in cases) {
+            assertEquals(expected, value.roundToLong(), "$value.roundToLong()")
+            assertEquals(
+                expected.coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt(),
+                value.roundToInt(), "$value.roundToInt()"
+            )
+        }
+    }
+
+    @Test fun roundingConversionAtIntegralPrecision() {
+        // The spacing reaches one at 2^52. Adding 0.5 can change an odd integer.
+        val cases = listOf(
+            4503599627370495.5 to 4503599627370496L,
+            4503599627370497.0 to 4503599627370497L,
+            9007199254740991.0 to 9007199254740991L,
+            -4503599627370495.5 to -4503599627370495L,
+            -4503599627370497.0 to -4503599627370497L,
+            -9007199254740991.0 to -9007199254740991L
+        )
+        for ([value, expected] in cases) {
+            assertEquals(expected, value.roundToLong(), "$value.roundToLong()")
+            assertEquals(
+                expected.coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt(),
+                value.roundToInt(), "$value.roundToInt()"
+            )
+        }
+    }
+
+    @Test fun roundingConversionAtIntegerLimits() {
+        val intCases = listOf(
+            2147483646.5 to Int.MAX_VALUE,
+            2147483647.0 to Int.MAX_VALUE,
+            2147483647.5 to Int.MAX_VALUE,
+            2147483648.0 to Int.MAX_VALUE,
+            -2147483647.5 to -2147483647,
+            -2147483648.0 to Int.MIN_VALUE,
+            -2147483648.5 to Int.MIN_VALUE
+        )
+        for ([value, expected] in intCases) {
+            assertEquals(expected, value.roundToInt(), "$value.roundToInt()")
+        }
+
+        // Long.MAX_VALUE.toDouble() is 2^63, which is already outside the Long range.
+        val limit = Long.MAX_VALUE.toDouble()
+        val longCases = listOf(
+            limit.nextDown() to 9223372036854774784L,
+            limit to Long.MAX_VALUE,
+            limit.nextUp() to Long.MAX_VALUE,
+            (-limit).nextUp() to -9223372036854774784L,
+            -limit to Long.MIN_VALUE,
+            (-limit).nextDown() to Long.MIN_VALUE
+        )
+        for ([value, expected] in longCases) {
+            assertEquals(expected, value.roundToLong(), "$value.roundToLong()")
+        }
     }
 
     @Test fun absoluteValue() {
@@ -637,7 +711,7 @@ class FloatMathTest {
         assertEquals(Long.MAX_VALUE, Float.POSITIVE_INFINITY.roundToLong())
         assertEquals(Long.MIN_VALUE, Float.NEGATIVE_INFINITY.roundToLong())
 
-        assertFails { Float.NaN.roundToLong() }
+        assertFailsWith<IllegalArgumentException> { Float.NaN.roundToLong() }
 
         assertEquals(1, 1.0F.roundToInt())
         assertEquals(1, 1.1F.roundToInt())
@@ -651,7 +725,82 @@ class FloatMathTest {
         assertEquals(Int.MAX_VALUE, Float.POSITIVE_INFINITY.roundToInt())
         assertEquals(Int.MIN_VALUE, Float.NEGATIVE_INFINITY.roundToInt())
 
-        assertFails { Float.NaN.roundToInt() }
+        assertFailsWith<IllegalArgumentException> { Float.NaN.roundToInt() }
+    }
+
+    @Test fun roundingConversionNearHalfIntegers() {
+        val cases = listOf(
+            0.0f to 0L,
+            -0.0f to 0L,
+            Float.MIN_VALUE to 0L,
+            -Float.MIN_VALUE to 0L,
+            0.49999997f to 0L,
+            0.5f to 1L,
+            0.50000006f to 1L,
+            -0.49999997f to 0L,
+            -0.5f to 0L,
+            -0.50000006f to -1L,
+            1.4999999f to 1L,
+            1.5f to 2L,
+            -1.5f to -1L,
+            -1.5000001f to -2L
+        )
+        for ([value, expected] in cases) {
+            assertEquals(expected, value.roundToLong(), "$value.roundToLong()")
+            assertEquals(
+                expected.coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt(),
+                value.roundToInt(), "$value.roundToInt()"
+            )
+        }
+    }
+
+    @Test fun roundingConversionAtIntegralPrecision() {
+        // The spacing reaches one at 2^23. Adding 0.5 can change an odd integer.
+        val cases = listOf(
+            8388607.5f to 8388608L,
+            8388609f to 8388609L,
+            16777215f to 16777215L,
+            -8388607.5f to -8388607L,
+            -8388609f to -8388609L,
+            -16777215f to -16777215L
+        )
+        for ([value, expected] in cases) {
+            assertEquals(expected, value.roundToLong(), "$value.roundToLong()")
+            assertEquals(
+                expected.coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt(),
+                value.roundToInt(), "$value.roundToInt()"
+            )
+        }
+    }
+
+    @Test fun roundingConversionAtIntegerLimits() {
+        // Int.MAX_VALUE.toFloat() is 2^31, which is already outside the Int range.
+        val intLimit = Int.MAX_VALUE.toFloat()
+        val intCases = listOf(
+            Float.fromBits(intLimit.toBits() - 1) to 2147483520,
+            intLimit to Int.MAX_VALUE,
+            Float.fromBits(intLimit.toBits() + 1) to Int.MAX_VALUE,
+            -Float.fromBits(intLimit.toBits() - 1) to -2147483520,
+            -intLimit to Int.MIN_VALUE,
+            -Float.fromBits(intLimit.toBits() + 1) to Int.MIN_VALUE
+        )
+        for ([value, expected] in intCases) {
+            assertEquals(expected, value.roundToInt(), "$value.roundToInt()")
+        }
+
+        // Long.MAX_VALUE.toFloat() is 2^63, just as for Double.
+        val longLimit = Long.MAX_VALUE.toFloat()
+        val longCases = listOf(
+            Float.fromBits(longLimit.toBits() - 1) to 9223371487098961920L,
+            longLimit to Long.MAX_VALUE,
+            Float.fromBits(longLimit.toBits() + 1) to Long.MAX_VALUE,
+            -Float.fromBits(longLimit.toBits() - 1) to -9223371487098961920L,
+            -longLimit to Long.MIN_VALUE,
+            -Float.fromBits(longLimit.toBits() + 1) to Long.MIN_VALUE
+        )
+        for ([value, expected] in longCases) {
+            assertEquals(expected, value.roundToLong(), "$value.roundToLong()")
+        }
     }
 
     @Test fun absoluteValue() {
