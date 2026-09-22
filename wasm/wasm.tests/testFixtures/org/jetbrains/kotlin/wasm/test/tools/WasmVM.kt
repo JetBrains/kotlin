@@ -213,9 +213,13 @@ internal class BoundedOutputCapture {
                 return
             }
 
+            val headFromChunk = (CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH - fullOutput.length).coerceIn(0, chunk.length)
+            fullOutput.append(chunk, 0, headFromChunk)
             prefix = fullOutput.substring(0, CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH)
             appendToSuffix(fullOutput.substring(CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH))
             fullOutput = StringBuilder()
+            appendToSuffix(chunk.substring(headFromChunk))
+            return
         }
         appendToSuffix(chunk)
     }
