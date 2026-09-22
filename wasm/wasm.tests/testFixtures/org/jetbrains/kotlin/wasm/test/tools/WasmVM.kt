@@ -15,6 +15,12 @@ import kotlin.test.fail
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
+/** The export the standalone WASI VMs invoke for a box run: `wasiBoxTestRun.kt`'s glue, or the grouped driver. */
+internal const val WASI_BOX_ENTRY_EXPORT = "startTest"
+
+/** The export the compiler links into a binary with `@kotlin.test.Test` functions; it runs every registered suite. */
+internal const val WASI_UNIT_TESTS_ENTRY_EXPORT = "startUnitTests"
+
 internal sealed class WasmVM(
     val property: String,
     val entryPointIsJsFile: Boolean
@@ -23,6 +29,10 @@ internal sealed class WasmVM(
     val vmName: String
         get() = javaClass.simpleName
 
+    /**
+     * Runs [entryFile] and returns its output. A VM whose entry point is a JS file ignores [wasiEntryExport]; the
+     * standalone WASI VMs run exactly one export per process, and that is the one they invoke.
+     */
     abstract fun run(
         entryFile: String,
         jsFiles: List<String>,
@@ -30,6 +40,7 @@ internal sealed class WasmVM(
         useNewExceptionHandling: Boolean = false,
         useStackSwitching: Boolean = false,
         toolArgs: List<String> = emptyList(),
+        wasiEntryExport: String = WASI_BOX_ENTRY_EXPORT,
     ): String
 
     object V8 : WasmVM(property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
@@ -40,6 +51,7 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -60,6 +72,7 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -77,7 +90,8 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
-            toolArgs: List<String>
+            toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -95,13 +109,14 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 entryFile,
-                // Either the grouped result-collecting driver or `wasiBoxTestRun.kt`'s box glue, never both — see
-                // `assertDriverOwnsStartTestExport`.
-                "startTest",
+                // The grouped result-collecting driver, `wasiBoxTestRun.kt`'s box glue or the compiler's unit-test
+                // runner: see `wasiStandaloneEntryExport` and `assertDriverOwnsStartTestExport`.
+                wasiEntryExport,
                 workingDirectory = workingDirectory,
             )
     }
@@ -114,13 +129,14 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 "-W",
                 "gc,function-references,exceptions",
                 "--invoke",
-                "startTest",
+                wasiEntryExport,
                 entryFile,
                 workingDirectory = workingDirectory,
             )
@@ -133,7 +149,8 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
-            toolArgs: List<String>
+            toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),

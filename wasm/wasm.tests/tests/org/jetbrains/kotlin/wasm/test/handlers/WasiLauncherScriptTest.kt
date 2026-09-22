@@ -59,6 +59,52 @@ class WasiLauncherScriptTest {
     }
 
     @Test
+    fun `given a driverless unit-test run then the standalone VMs invoke the unit-test runner export`() {
+        // Invoking the bare `startTest` here would run `wasiBoxTestRun.kt`'s `box()` helper alone: the unit tests
+        // would not run at all and the test would still be green.
+        assertEquals("startUnitTests", wasiStandaloneEntryExport(hasGroupedTestsDriver = false, runUnitTests = true))
+    }
+
+    @Test
+    fun `given a driver-linked batch then the standalone VMs invoke the driver even when unit tests are requested`() {
+        // The driver reports through stdout, so the unit-test runner must not be driven on top of it.
+        assertEquals("startTest", wasiStandaloneEntryExport(hasGroupedTestsDriver = true, runUnitTests = true))
+        assertEquals("startTest", wasiStandaloneEntryExport(hasGroupedTestsDriver = true, runUnitTests = false))
+    }
+
+    @Test
+    fun `given a driverless box run then the standalone VMs invoke the box helper`() {
+        assertEquals("startTest", wasiStandaloneEntryExport(hasGroupedTestsDriver = false, runUnitTests = false))
+    }
+
+    @Test
+    fun `given the Node launcher for a driverless unit-test run then it calls the same export the standalone VMs do`() {
+        val export = wasiStandaloneEntryExport(hasGroupedTestsDriver = false, runUnitTests = true)
+
+        assertTrue("jsModule.$export();" in startUnitTestsWasiScript(callGroupedTestsDriver = false))
+    }
+
+    @Test
+    fun `given a unit-test run whose output shows no test starting then the run is rejected`() {
+        // What a VM prints when it invoked the box helper instead of the unit-test runner: `box()` ran, no `@Test` did.
+        val error = checkUnitTestsReported(output = "box output\n", executionName = "Wasmtime (dev)")
+
+        val message = error?.message.orEmpty()
+        assertTrue("reported no test in Wasmtime (dev)" in message, message)
+        assertTrue(UNIT_TEST_STARTED_MARKER in message, message)
+        assertTrue("box output" in message, message)
+    }
+
+    @Test
+    fun `given a unit-test run whose output shows a test starting then the run is accepted`() {
+        val output = "##teamcity[testSuiteStarted name='' flowId='f']\n" +
+                "##teamcity[testStarted name='runTest' flowId='f']\n" +
+                "##teamcity[testFinished name='runTest' flowId='f']\n"
+
+        assertEquals(null, checkUnitTestsReported(output, executionName = "WasmEdge (dev)"))
+    }
+
+    @Test
     fun `given a DCE size mismatch then the size failure is returned`(@TempDir dir: File) {
         dir.resolve("index.wasm").writeBytes(ByteArray(100))
 
