@@ -40,8 +40,9 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
         require(this is K2JSCompilerArguments)
         val result = super.configureLanguageFeatures(arguments, reporter, languageVersion)
         result.configureJsLanguageFeatures(this)
-        // TODO: Should be removed (see KT-80182)
-        result[LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] = LanguageFeature.State.ENABLED
+        if (stdlibCompilation) {
+            result[LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] = LanguageFeature.State.ENABLED
+        }
         @Suppress("DEPRECATION")
         if (wasm) {
             result[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
