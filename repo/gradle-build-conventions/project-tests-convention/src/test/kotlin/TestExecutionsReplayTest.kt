@@ -266,6 +266,7 @@ class TestExecutionsReplayTest {
 
         val messages = TestExecutionsReplay(":another:project:test") { message, _ -> warnings += message }
             .messagesFor(recording)
+            .toList()
 
         assertTrue(
             messages.all { "flowId='TestReplay:another:project:test'" in it },
@@ -278,7 +279,9 @@ class TestExecutionsReplayTest {
     fun `a recording that is not there is replayed as nothing`() {
         val missing = File(directory, "not-written.json")
 
-        val messages = TestExecutionsReplay(TASK_PATH) { message, _ -> warnings += message }.messagesFor(missing)
+        val messages = TestExecutionsReplay(TASK_PATH) { message, _ -> warnings += message }
+            .messagesFor(missing)
+            .toList()
 
         assertEquals(emptyList(), messages)
         assertContains(warnings.single(), "does not exist")
@@ -323,8 +326,11 @@ class TestExecutionsReplayTest {
         assertContains(warnings.single(), "Unknown status 'Inconclusive' of test com.example.SomeTest.puzzling()")
     }
 
+    /** Collected, so that a test sees the warnings a replay produced as it went. */
     private fun replayOf(document: String): List<String> =
-        TestExecutionsReplay(TASK_PATH) { message, _ -> warnings += message }.messagesFor(write(document))
+        TestExecutionsReplay(TASK_PATH) { message, _ -> warnings += message }
+            .messagesFor(write(document))
+            .toList()
 
     private fun write(document: String): File =
         File(directory, "test-executions.json").apply { writeText(document.trimIndent()) }
