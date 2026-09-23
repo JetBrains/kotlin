@@ -137,9 +137,9 @@ object StubRenderer {
     private fun Appendable.appendNativeEnumEntry(entry: ObjCNSClosedEnum.Entry) {
         append("  ")
         append(entry.objCName)
-        append(" NS_SWIFT_NAME(")
+        append(" __attribute__((swift_name(\"")
         append(entry.swiftName)
-        append(") = ")
+        append("\"))) = ")
         append(entry.value.toString())
         append(",\n")
     }

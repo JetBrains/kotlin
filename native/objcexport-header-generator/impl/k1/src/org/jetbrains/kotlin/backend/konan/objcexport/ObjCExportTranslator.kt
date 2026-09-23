@@ -299,13 +299,8 @@ class ObjCExportTranslatorImpl(
                                 swiftName = nsEnumTypeName.swiftName,
                                 origin = ObjCExportStubOrigin(descriptor),
                                 entries = descriptor.enumEntries.mapIndexed { ordinal, entry ->
-                                    val objcEnumEntryName = entry.getObjCEnumEntryName()
-                                    val objCName = objcEnumEntryName.getName(forSwift = false) ?: namer.getEnumEntrySelector(entry)
-                                    // Swift names that are passed to swift_name() don't need to be mangled as they're passed
-                                    // as string literals. However, NS_SWIFT_NAME() is a macro, that does not receive names this
-                                    // way. If they're not mangled, the generated header file could cause compilation warnings.
-                                    val swiftName = (objcEnumEntryName.getName(forSwift = true)
-                                        ?: namer.getEnumEntrySwiftName(entry)).mangleIfStdMacro()
+                                    val objCName = namer.getClosedEnumEntrySelector(entry)
+                                    val swiftName = namer.getClosedEnumEntrySwiftName(entry)
                                     ObjCNSClosedEnum.Entry(
                                         objCName = nsEnumTypeName.objCName + objCName.replaceFirstChar { it.uppercaseChar() },
                                         swiftName = swiftName,
@@ -329,9 +324,7 @@ class ObjCExportTranslatorImpl(
                     }
 
                     descriptor.enumEntries.forEach {
-                        // Ideally, buildProperty() mangles the property name appropriately. Since we're
-                        // directly constructing an ObjCProperty, we need to mangle the name ourselves here.
-                        val entryName = namer.getEnumEntrySelector(it).mangleIfStdMacro()
+                        val entryName = namer.getEnumEntrySelector(it)
                         val swiftName = namer.getEnumEntrySwiftName(it)
                         add {
                             ObjCProperty(

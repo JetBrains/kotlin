@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
-import org.jetbrains.kotlin.backend.konan.mangleIfStdMacro
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNSEnumTypeName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCNSClosedEnum
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
@@ -38,15 +37,8 @@ private fun ObjCExportContext.getNSEnumEntries(symbol: KaClassSymbol, objCTypeNa
     // Map the enum entries in declaration order, preserving the ordinal
     return staticMembers.filterIsInstance<KaEnumEntrySymbol>().mapIndexed { ordinal, entry ->
         ObjCNSClosedEnum.Entry(
-            // Swift names that are passed to swift_name() don't need to be mangled as they're passed
-            // as string literals. However, NS_SWIFT_NAME() is a macro, that does not receive names this
-            // way. If they're not mangled, the generated header file could cause compilation warnings.
-            getNSEnumEntryName(entry, true).mangleIfStdMacro(),
-            // The NSEnumEntryName is obtained through getObjCPropertyName() which mangles the
-            // name by default should it be macro-like name, primarily for translateToObjCProperty.
-            // Since we're appending the name here to objCTypeName, there's no need of that mangling.
-            // Hence, the suffix drop op.
-            objCTypeName + getNSEnumEntryName(entry, false).dropLastWhile { it == '_' }.replaceFirstChar { it.uppercaseChar() },
+            getNSEnumEntryName(entry, true, mangleObjCName = true),
+            objCTypeName + getNSEnumEntryName(entry, false, mangleObjCName = false).replaceFirstChar { it.uppercaseChar() },
             ordinal
         )
     }

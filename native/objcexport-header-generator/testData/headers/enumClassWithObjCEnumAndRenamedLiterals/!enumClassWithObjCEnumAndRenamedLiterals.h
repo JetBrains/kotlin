@@ -39,18 +39,18 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 typedef NS_CLOSED_ENUM(int32_t, FooNSEnum) {
-  FooNSEnumAlphaBeta NS_SWIFT_NAME(alphaBeta) = 0,
-  FooNSEnumAlpha NS_SWIFT_NAME(alpha) = 1,
-  FooNSEnumTheCopy NS_SWIFT_NAME(theCopy) = 2,
-  FooNSEnumObjCName1Renamed NS_SWIFT_NAME(objCName1Renamed) = 3,
-  FooNSEnumObjcName2Renamed NS_SWIFT_NAME(objcName2Swift) = 4,
-  FooNSEnumEntryName1Renamed NS_SWIFT_NAME(entryName1Renamed) = 5,
-  FooNSEnumEntryName2Renamed NS_SWIFT_NAME(entryName2Swift) = 6,
-  FooNSEnumCombination1Renamed NS_SWIFT_NAME(combination1Renamed) = 7,
-  FooNSEnumCombination2Renamed NS_SWIFT_NAME(combination2Renamed) = 8,
-  FooNSEnumCombination3Renamed NS_SWIFT_NAME(combination3Swift) = 9,
-  FooNSEnumNULL NS_SWIFT_NAME(DEBUG_) = 10,
-  FooNSEnumYES NS_SWIFT_NAME(NO_) = 11,
+  FooNSEnumAlphaBeta __attribute__((swift_name("alphaBeta"))) = 0,
+  FooNSEnumAlpha __attribute__((swift_name("alpha"))) = 1,
+  FooNSEnumTheCopy __attribute__((swift_name("theCopy"))) = 2,
+  FooNSEnumObjCName1Renamed __attribute__((swift_name("objCName1Renamed"))) = 3,
+  FooNSEnumObjcName2Renamed __attribute__((swift_name("objcName2Swift"))) = 4,
+  FooNSEnumEntryName1Renamed __attribute__((swift_name("entryName1Renamed"))) = 5,
+  FooNSEnumEntryName2Renamed __attribute__((swift_name("entryName2Swift"))) = 6,
+  FooNSEnumCombination1Renamed __attribute__((swift_name("combination1Renamed"))) = 7,
+  FooNSEnumCombination2Renamed __attribute__((swift_name("combination2Renamed"))) = 8,
+  FooNSEnumCombination3Renamed __attribute__((swift_name("combination3Swift"))) = 9,
+  FooNSEnumNULL __attribute__((swift_name("DEBUG"))) = 10,
+  FooNSEnumYES __attribute__((swift_name("NO"))) = 11,
 } NS_SWIFT_NAME(FooNSEnum);
 
 

@@ -18,10 +18,10 @@ enum class Foo {
     @ObjCEnum.EntryName(name="combination2Renamed") @ObjCName(name="combination2BadObjC", swiftName="combination2BadSwift") COMBINATION_2,
     @ObjCEnum.EntryName(name="combination3Renamed", swiftName = "combination3Swift") @ObjCName(name="combination3BadObjC", swiftName="combination3BadSwift") COMBINATION_3,
 
-    // Entry's name should be type + NULL and its corresponding Swift name should be DEBUG_.
-    // Property's name should be NULL_ and its corresponding Swift name should be DEBUG.
+    // Entry's name in NS_CLOSED_ENUM should be type + NULL and its corresponding Swift name should be DEBUG.
+    // In the corresponding @interface, the property's name should be NULL_ and its corresponding Swift name should be DEBUG.
     @ObjCName(name = "NULL", swiftName = "DEBUG") OBJC_NAME_3_ORIGINAL,
-    // Entry's name should be type + YES and corresponding Swift name should be NO_.
-    // Property's name and its corresponding Swift name should be entryName3Swift.
-    @ObjCEnum.EntryName(name = "YES", swiftName = "NO") ENTRY_NAME_3_SWIFT
+    // Entry's name in NS_CLOSED_ENUM should be type + YES and corresponding Swift name should be NO.
+    // In the corresponding @interface, the property's name and its corresponding Swift name should be entryName3Swift.
+    @ObjCEnum.EntryName(name = "YES", swiftName = "NO") ENTRY_NAME_3_SWIFT,
 }

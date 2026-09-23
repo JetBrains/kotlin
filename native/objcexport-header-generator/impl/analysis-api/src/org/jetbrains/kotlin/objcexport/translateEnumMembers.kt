@@ -26,8 +26,8 @@ private fun ObjCExportContext.getEnumEntries(symbol: KaClassSymbol): List<ObjCPr
     val staticMembers = with(analysisSession) { symbol.staticDeclaredMemberScope }.callables.toList()
     return staticMembers.filterIsInstance<KaEnumEntrySymbol>().map { entry ->
 
-        val entryName = getEnumEntryName(entry, false)
-        val swiftName = getEnumEntryName(entry, true)
+        val entryName = getEnumEntryName(entry, false, mangleObjCName = true)
+        val swiftName = getEnumEntryName(entry, true, mangleObjCName = true)
         ObjCProperty(
             name = entryName,
             comment = null,
@@ -75,17 +75,17 @@ private fun ObjCExportContext.getEnumEntriesProperty(symbol: KaClassSymbol): Obj
     )
 }
 
-internal fun ObjCExportContext.getNSEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean): String {
+internal fun ObjCExportContext.getNSEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean, mangleObjCName: Boolean): String {
     val objCEnumEntryNameAnnotation = symbol.resolveObjCEnumEntryNameAnnotation()
     val name = (if (forSwift) objCEnumEntryNameAnnotation?.swiftName?.ifEmpty { null } else null) ?: objCEnumEntryNameAnnotation?.objCName
-    return name?.ifEmpty { null } ?: getEnumEntryName(symbol, forSwift)
+    return name?.ifEmpty { null } ?: getEnumEntryName(symbol, forSwift, mangleObjCName)
 }
 
 /**
  * See K1 implementation as [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getEnumEntryName]
  */
-internal fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean): String {
-    val name = getObjCPropertyName(symbol) {
+internal fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean, mangleObjCName: Boolean): String {
+    val name = getObjCPropertyName(symbol, mangleObjCName) {
         it.split('_').mapIndexed { index, s ->
             // This is the transformation block that'd run if the @ObjCName annotation was not present.
             // If present, we'd use the user provided name as-is.
