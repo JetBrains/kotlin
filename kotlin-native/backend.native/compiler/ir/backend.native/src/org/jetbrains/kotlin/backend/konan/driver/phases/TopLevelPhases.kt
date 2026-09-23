@@ -72,7 +72,7 @@ internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
     produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
 ): Pair<LinkKlibsOutput, T> {
     val config = this.context.config
-    val psiToIrContext = LinkKlibsContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
+    val psiToIrContext = LinkKlibsContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.disposeCallback)
     val [linkKlibsOutput, additionalOutput] = useContext(psiToIrContext) { psiToIrEngine ->
         val additionalOutput = produceAdditionalOutput(psiToIrEngine)
         val linkKlibsInput = LinkKlibsInput(frontendOutput.moduleDescriptor)
