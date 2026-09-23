@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.REPL_SNIPPET_ARTIFACT_PLUGIN_ID
 import kotlin.script.experimental.jvm.REPL_SNIPPET_EVAL_FUN_NAME_STRING
 
 val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier(REPL_SNIPPET_EVAL_FUN_NAME_STRING)
@@ -153,6 +154,17 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
 
         // TODO: find out what problems could arise from copying annotations applicable to file only (KT-74176)
         irSnippetClass.annotations += (irSnippetClass.parent as IrFile).annotations
+
+        addSnippetArtifactMetadata(irSnippet, irSnippetClass)
+    }
+
+    private fun addSnippetArtifactMetadata(irSnippet: IrReplSnippet, irSnippetClass: IrClass) {
+        val artifactBytes = irSnippet.replSnippetArtifactMetadataAttr ?: return
+        context.metadataDeclarationRegistrar.addCustomMetadataExtension(
+            irSnippetClass,
+            REPL_SNIPPET_ARTIFACT_PLUGIN_ID,
+            artifactBytes,
+        )
     }
 }
 
@@ -324,7 +336,7 @@ private fun makeImplicitReceiversFieldsWithParameters(
  * `ExpressionCodegen.visitCall` does not fail the `require(callee.parent is IrClass)` check.
  *
  * Mirrors `org.jetbrains.kotlin.backend.jvm.lower.ExternalPackageParentPatcherLowering` (K2 JVM
- * file-class facade patching), but runs eagerly as part of REPL snippet→class lowering so the
+ * file-class facade patching), but runs eagerly as part of REPL snippet-to-class lowering so the
  * snippet body's IR is rewritten before any later JVM lowering observes the
  * `IrExternalPackageFragment` parent.
  *
@@ -333,7 +345,7 @@ private fun makeImplicitReceiversFieldsWithParameters(
  *  - have a [FacadeClassSource] container; and
  *  - currently have an [IrExternalPackageFragment] parent.
  *
- * The facade name is taken from the deserialised source's `className` / `facadeClassName`, so the
+ * The facade name is taken from the deserialized source's `className` / `facadeClassName`, so the
  * resulting JVM bytecode references the real `*Kt` (or multifile facade) class on the classpath.
  */
 private class ReplSnippetExternalPackageParentPatcher : IrVisitorVoid() {
