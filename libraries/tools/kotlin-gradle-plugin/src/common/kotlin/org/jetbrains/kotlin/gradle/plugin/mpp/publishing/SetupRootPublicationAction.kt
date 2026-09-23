@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.defaultKotlinUsageContextMaybeReplacedWithKar
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.isStoredInKotlinArchive
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
@@ -54,7 +54,7 @@ private suspend fun KotlinMultiplatformExtension.sourcesJarContent(): Map<String
         if (publishing.publicationFormat.get() == KotlinPublicationFormat.KOTLIN_ARCHIVE) {
             val platformCompilationsInKotlinArchive = getPublishedPlatformCompilations(
                 project,
-                targetFilter = { it.isSourcesPublishable && it is KotlinTargetWithKotlinArchiveSupport && it.isStoredInKotlinArchive.get() }
+                targetFilter = { it.isSourcesPublishable && it.isStoredInKotlinArchive.get() }
             ).values
             for (sourceSet in awaitSourceSets()) {
                 if (sourceSet.internal.awaitPlatformCompilations().any { it in platformCompilationsInKotlinArchive }) {
@@ -150,7 +150,7 @@ internal val SetupRootPublicationAction = KotlinProjectSetupCoroutine {
 
     val metadataVariants = multiplatformExtension.metadataVariantsSoftwareComponent(sourcesJarTask)
     val (targetsStoredInKotlinArchive, targetsNotStoredInKotlinArchive) = multiplatformExtension.awaitTargets()
-        .partition { it is KotlinTargetWithKotlinArchiveSupport && it.isStoredInKotlinArchive.get() }
+        .partition { it.isStoredInKotlinArchive.get() }
 
     multiplatformExtension.rootSoftwareComponent.referencedSoftwareComponents.complete(
         targetsNotStoredInKotlinArchive.flatMap { it.publishableSoftwareComponents() }

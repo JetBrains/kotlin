@@ -43,7 +43,7 @@ private fun ModuleVersionIdentifier.isValidForCapability(): Boolean =
  *   - Additional capabilities are set if [movedToSoftwareComponent] is not null and don't match with software component usage was initially for
  */
 internal fun defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask(
-    replacementTaskProvider: Provider<TaskProvider<*>>?,
+    replacementTaskProvider: Provider<TaskProvider<*>>,
     extraReplacementArtifactConfiguration: ConfigurablePublishArtifact.() -> Unit = {},
     extraReplacementAttributesProvider: AttributeContainer.() -> Unit = {},
     movedToSoftwareComponent: KotlinSoftwareComponent?,
@@ -54,7 +54,7 @@ internal fun defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask(
     includeIntoProjectStructureMetadata: Boolean = true,
     publishOnlyIf: DefaultKotlinUsageContext.PublishOnlyIf = DefaultKotlinUsageContext.PublishOnlyIf { true },
 ): DefaultKotlinUsageContext {
-    val overrideConfigurationArtifacts: Provider<Set<PublishArtifact>>? = replacementTaskProvider?.map { emptySet() }
+    val overrideConfigurationArtifacts: Provider<Set<PublishArtifact>>? = replacementTaskProvider.map { emptySet() }
     return DefaultKotlinUsageContext(
         compilation = compilation,
         mavenScope = mavenScope,
@@ -64,7 +64,7 @@ internal fun defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask(
         overrideConfigurationAttributes = overrideConfigurationAttributes,
         overrideConfigurationArtifacts = overrideConfigurationArtifacts,
         configurePublishedConfiguration = conf@{ kotlinComponent ->
-            val replacementTask = replacementTaskProvider?.orNull ?: return@conf
+            val replacementTask = replacementTaskProvider.orNull ?: return@conf
             outgoing.artifact(replacementTask) {
                 it.extraReplacementArtifactConfiguration()
             }
@@ -82,7 +82,7 @@ internal fun defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask(
 
 
 internal fun Project.defaultKotlinUsageContextMaybeReplacedWithKar(
-    isStoredInKotlinArchive: Provider<Boolean>?,
+    isStoredInKotlinArchive: Provider<Boolean>,
     compilation: KotlinCompilation<*>,
     mavenScope: KotlinUsageContext.MavenScope?,
     dependencyConfigurationName: String,
@@ -90,7 +90,7 @@ internal fun Project.defaultKotlinUsageContextMaybeReplacedWithKar(
     publishOnlyIf: DefaultKotlinUsageContext.PublishOnlyIf = DefaultKotlinUsageContext.PublishOnlyIf { true },
 ): DefaultKotlinUsageContext {
     return defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask(
-        replacementTaskProvider = isStoredInKotlinArchive?.map { if (it) karPackTask else null },
+        replacementTaskProvider = isStoredInKotlinArchive.map { if (it) karPackTask else null },
         extraReplacementArtifactConfiguration = {
             extension = KarLayout.KAR_XZ_PACKED_EXTENSION
         },
