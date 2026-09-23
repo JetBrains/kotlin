@@ -7821,6 +7821,12 @@ private fun KaDiagnosticConverterBuilder.addConversions172() {
             token,
         )
     }
+    add(FirWebCommonErrors.INAPPLICABLE_EAGER_INITIALIZATION) { firDiagnostic ->
+        InapplicableEagerInitializationImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.NOTHING_TO_OVERRIDE) { firDiagnostic ->
         NothingToOverrideImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),

@@ -32,6 +32,7 @@ object FirWebCommonErrors : KtDiagnosticsContainer() {
     val WRONG_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val JS_MODULE_PROHIBITED_ON_VAR: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_VAR", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NESTED_JS_MODULE_PROHIBITED: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_JS_MODULE_PROHIBITED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val INAPPLICABLE_EAGER_INITIALIZATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INAPPLICABLE_EAGER_INITIALIZATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Externals
     val NESTED_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtExpression::class, getRendererFactory())

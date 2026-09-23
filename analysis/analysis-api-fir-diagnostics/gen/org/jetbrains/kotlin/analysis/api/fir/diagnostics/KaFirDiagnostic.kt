@@ -2133,6 +2133,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InapplicableEagerInitialization : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableEagerInitialization>
+            get() = InapplicableEagerInitialization::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface UnresolvedEqualityBoundArgument : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass: KClass<UnresolvedEqualityBoundArgument>
             get() = UnresolvedEqualityBoundArgument::class

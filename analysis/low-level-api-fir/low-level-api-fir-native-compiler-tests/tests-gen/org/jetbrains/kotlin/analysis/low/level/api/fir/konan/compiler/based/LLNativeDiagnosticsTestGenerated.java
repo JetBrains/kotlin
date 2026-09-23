@@ -61,6 +61,12 @@ public class LLNativeDiagnosticsTestGenerated extends AbstractLLNativeDiagnostic
   }
 
   @Test
+  @TestMetadata("eagerInitialization.kt")
+  public void testEagerInitialization() {
+    run("eagerInitialization.kt");
+  }
+
+  @Test
   @TestMetadata("errorProneAtomicArrayArguments.kt")
   public void testErrorProneAtomicArrayArguments() {
     run("errorProneAtomicArrayArguments.kt");

@@ -1525,6 +1525,11 @@ internal class NestedJsModuleProhibitedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NestedJsModuleProhibited
 
+internal class InapplicableEagerInitializationImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InapplicableEagerInitialization
+
 internal class UnresolvedEqualityBoundArgumentImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

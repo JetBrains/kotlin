@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_INTERFACE_AS_CLASS_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.INAPPLICABLE_EAGER_INITIALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.WRONG_JS_EXPORT_TARGET_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION
@@ -125,5 +126,6 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Only external declarations are allowed in files marked with ''{0}'' annotation.",
             FirDiagnosticRenderers.RENDER_TYPE
         )
+        map.put(INAPPLICABLE_EAGER_INITIALIZATION, "'@EagerInitialization' is applicable only to top-level properties.")
     }
 }
