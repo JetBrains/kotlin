@@ -25,6 +25,16 @@ val fatJarContents = configurations.create("fatJarContents") {
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
     }
 }
+val compilerSources = configurations.create("compilerSources") {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+        attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 val fatJarContentsStripMetadata = configurations.create("fatJarContentsStripMetadata")
 val fatJarContentsStripServices = configurations.create("fatJarContentsStripServices")
 val fatJarContentsStripVersions = configurations.create("fatJarContentsStripVersions")
@@ -145,9 +155,11 @@ dependencies {
     compilerVersion(project(":compiler:compiler.version"))
     proguardLibraries(project(":compiler:compiler.version"))
     CompilerModules.compilerModules
-        .filter { it != ":compiler:compiler.version" } // Version will be added directly to the final jar excluding proguard and relocation
         .forEach {
-            fatJarContents(project(it)) { isTransitive = false }
+            compilerSources(project(it)) { isTransitive = false }
+            if (it != ":compiler:compiler.version") { // Version will be added directly to the final jar excluding proguard and relocation
+                fatJarContents(project(it)) { isTransitive = false }
+            }
         }
 
     libraries(kotlinStdlib("jdk8"))
@@ -380,13 +392,7 @@ val jar = runtimeJar {
 }
 
 sourcesJar {
-    from {
-        CompilerModules.compilerModules.map {
-            project(it).run { commonMainKotlinSourceSet()?.kotlin ?: mainSourceSet.allSource }
-        }
-    }
-
-    dependsOn(":compiler:fir:checkers:generateCheckersComponents", ":compiler:ir.tree:generateTree")
+    addEmbeddedSources("compilerSources")
 }
 
 javadocJar()
