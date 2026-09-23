@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties.Companion.KONAN_DATA_DIR
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import java.io.File
+import java.net.URL
 
 internal val Project.nativeProperties: NativeProperties
     get() = NativePropertiesLoader(this)
@@ -22,6 +23,13 @@ internal interface NativeProperties {
     val konanDataDir: Provider<File?>
     val downloadFromMaven: Provider<Boolean>
     val isToolchainEnabled: Provider<Boolean>
+
+    /**
+     * Location Kotlin/Native toolchain dependencies are downloaded from, see `kotlin.native.dependenciesUrl`.
+     *
+     * Always a url when present, so that a file name can simply be appended to it.
+     */
+    val dependenciesUrl: Provider<String>
 
     /**
      * Value of 'kotlin.native.home' property.
@@ -94,6 +102,13 @@ private class NativePropertiesLoader(private val project: Project) : NativePrope
     override val isToolchainEnabled: Provider<Boolean> = propertiesService.flatMap {
         it.property(NATIVE_TOOLCHAIN_ENABLED, project).zip(downloadFromMaven) { isToolchainEnabled, isDownloadFromMavenEnabled ->
             isToolchainEnabled && isDownloadFromMavenEnabled
+        }
+    }
+
+    override val dependenciesUrl: Provider<String> = propertiesService.flatMap { service ->
+        service.property(NATIVE_DEPENDENCIES_URL, project).map {
+            @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+            resolveNativeDependenciesUrl(it!!)
         }
     }
 
@@ -172,5 +187,29 @@ private class NativePropertiesLoader(private val project: Project) : NativePrope
             defaultValue = true
         )
 
+        /**
+         * Allows overriding the location Kotlin/Native toolchain dependencies are downloaded from.
+         *
+         * Accepts a url, such as `https://example.com/konan` or `file:///opt/konan`, or a filesystem path.
+         * As with `konan.data.dir` and `kotlin.native.home`, a path should be absolute.
+         */
+        private val NATIVE_DEPENDENCIES_URL = PropertiesBuildService.NullableStringGradleProperty(
+            name = "$PROPERTIES_PREFIX.dependenciesUrl"
+        )
+
     }
+}
+
+/**
+ * Converts a `kotlin.native.dependenciesUrl` value into a url that a file name can be appended to.
+ *
+ * A value that [URL] accepts is passed through unchanged. Anything else is treated as a filesystem path, in the
+ * same way as the other path-valued native properties. Note that `URL` only accepts known protocols, so a Windows
+ * path like `C:\konan` is correctly treated as a path rather than a url with the scheme `C`.
+ */
+internal fun resolveNativeDependenciesUrl(rawValue: String): String {
+    val raw = rawValue.trim()
+    if (runCatching { URL(raw) }.isSuccess) return raw
+    // `File.toURI` appends a trailing slash for existing directories; drop it, consumers append `/<file name>`.
+    return File(raw).toURI().toString().trimEnd('/')
 }
