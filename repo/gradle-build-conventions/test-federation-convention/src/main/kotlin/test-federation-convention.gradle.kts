@@ -28,8 +28,10 @@ tasks.withType<Test>().configureEach {
         val contractTests = testFederationExtension.contractTests
         val notCompatibleWithTestFederation = smokeTests.skip.get() || contractTests.skip.get()
 
-        logger.quiet("Current Domain: '${currentDomain.get()}'")
-        logger.quiet("Requested Test Subsets: '${formattedSubsets.get()}'")
+        logger.quiet(buildFrame(
+            "Current domain: ${currentDomain.get()}",
+            "Test subsets: [${formattedSubsets.get().replace(",", ", ")}]",
+        ))
 
         scan.value("$projectPath:${this.name} domain", currentDomain.get().toString())
         scan.value("$projectPath:${this.name} test subsets", formattedSubsets.get())
