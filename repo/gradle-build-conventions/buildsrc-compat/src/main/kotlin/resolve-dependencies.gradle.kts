@@ -96,6 +96,18 @@ val resolveJsTools = tasks.register("resolveJsTools") {
 
             extensions.findByType<YarnRootEnvSpec>()?.run(yarnRootEnvSpecAction)
             extensions.findByType<WasmYarnRootEnvSpec>()?.run(yarnRootEnvSpecAction)
+
+            // TODO KT-82969: Uncomment after swc-related KGP bootstrap bump
+//            extensions.findByType<SwcEnvSpec>()?.run {
+//                val versionValue = version.get()
+//                project.resolveDependencies(
+//                    "com.github.swc-project:swc:$versionValue:darwin-arm64",
+//                    "com.github.swc-project:swc:$versionValue:darwin-x64",
+//                    "com.github.swc-project:swc:$versionValue:linux-arm64-gnu",
+//                    "com.github.swc-project:swc:$versionValue:linux-x64-gnu",
+//                    "com.github.swc-project:swc:$versionValue:win32-x64-msvc.exe",
+//                )
+//            }
         }
     }
 }
