@@ -246,7 +246,8 @@ ObjHeader** LookupTLS(void** key, int index) RUNTIME_NOTHROW;
 void Kotlin_native_internal_GC_collect(ObjHeader*);
 void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, bool value);
 bool Kotlin_native_internal_GC_getTuneThreshold(ObjHeader*);
-RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd);
+RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryWithOptions(
+        ObjHeader*, int fd, bool omitPrimitiveArrayPayloads, bool gzip);
 
 void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
 

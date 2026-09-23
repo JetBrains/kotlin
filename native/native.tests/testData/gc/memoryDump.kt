@@ -76,3 +76,29 @@ fun dumpToFile() {
 
     fclose(file)
 }
+
+@OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
+private fun dumpAndMeasureBytes(options: MemoryDumpOptions?): Long {
+    val file = requireNotNull(tmpfile()) { "Could not open temporary file" }
+    val fd = fileno(file)
+    assertTrue(fd > -1, "Failed to obtain a temporary file descriptor")
+    val local = Data()
+    val success = if (options == null) {
+        Debugging.dumpMemory(fd.toLong())
+    } else {
+        Debugging.dumpMemory(fd.toLong(), options)
+    }
+    assertTrue(success)
+    val size = lseek(fd, 0, SEEK_END)
+    fclose(file)
+    return size.toLong()
+}
+
+@Test
+@OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
+fun dumpOmitPrimitiveArrayPayloadsIsSmaller() {
+    val full = dumpAndMeasureBytes(null)
+    val omitted = dumpAndMeasureBytes(MemoryDumpOptions(omitPrimitiveArrayPayloads = true))
+    assertTrue(omitted < full, "omitted dump ($omitted) should be smaller than full dump ($full)")
+}
+
