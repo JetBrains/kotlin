@@ -65,7 +65,10 @@ class BrokenMacosTestInterceptor : InvocationInterceptor {
             return
         }
 
-        val brokenOnMacosTest = extensionContext.element.get().getAnnotation(BrokenOnMacosTest::class.java)
+        val testElement = generateSequence(extensionContext) { it.parent.orElse(null) }
+            .mapNotNull { it.element.orElse(null) }
+            .firstOrNull()
+        val brokenOnMacosTest = testElement?.getAnnotation(BrokenOnMacosTest::class.java)
         val isTestMarkedBrokenOnMacos = brokenOnMacosTest != null
         if (!isTestMarkedBrokenOnMacos) {
             invocation.proceed()
@@ -79,7 +82,7 @@ class BrokenMacosTestInterceptor : InvocationInterceptor {
                 gradleVersion >= GradleVersion.version("8.0.0")
             }
             BrokenOnMacosTestFailureExpectation.AFTER_AGP_8_5_0 -> {
-                extensionContext.element.get().getAnnotation(GradleAndroidTest::class.java) ?: error("Not a GradleAndroidTest")
+                testElement.getAnnotation(GradleAndroidTest::class.java) ?: error("Not a GradleAndroidTest")
                 val agpVersion = (arguments.singleOrNull { it is String } as? String) ?: error(
                     "Couldn't find single Android version argument in GradleAndroidTest: $arguments"
                 )
