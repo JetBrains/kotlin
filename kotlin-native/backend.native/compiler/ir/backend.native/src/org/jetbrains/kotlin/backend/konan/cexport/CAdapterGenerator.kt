@@ -573,10 +573,11 @@ internal class CAdapterGenerator(
         moduleDescriptors += moduleDescriptor
         moduleDescriptors += moduleDescriptor.getExportedDependencies(context.config)
 
-        currentPackageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }.toSet().sortedWith(
-                Comparator { o1, o2 ->
-                    o1.fqName.toString().compareTo(o2.fqName.toString())
-                })
+        currentPackageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }.toSet()
+                .sortedWith(
+                        compareBy<PackageFragmentDescriptor> { it.fqName.toString() }
+                                .thenBy { it.module.reverseTopoRank() }
+                )
 
         moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
         return CAdapterExportedElements(typeTranslator, scopes)
