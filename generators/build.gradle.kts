@@ -65,6 +65,7 @@ dependencies {
     testImplementation(protobufCompareSourceSet.output)
 
     testImplementation(project(":compiler:cli"))
+    testImplementation(project(":kotlin-build-common"))
     testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
     testImplementation(testFixtures(project(":plugins:jvm-abi-gen")))
     testImplementation(testFixtures(project(":plugins:parcelize:parcelize-compiler")))
