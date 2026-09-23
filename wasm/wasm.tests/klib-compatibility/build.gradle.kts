@@ -83,7 +83,10 @@ fun Project.customFirstStageTest(rawVersion: String): TaskProvider<out Task> {
     return customCompilerTest(
         version = version,
         taskName = "testCustomFirstStage_$version",
-        tag = "custom-first-stage"
+        tag = "custom-first-stage",
+        // The custom-first-stage tests are migrated to the two-stage grouping test infrastructure
+        // (`AbstractCustomWasmCompilerFirstStageTest`), so the grouping test engine must be enabled.
+        enableGroupingTestEngine = true,
     )
 }
 
@@ -105,6 +108,8 @@ fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task
         version = version,
         taskName = "testMinimalInAggregate",
         tag = "aggregate",
+        // Aggregates the sanity and minimal generated tests of both stages, which are run by the grouping test engine.
+        enableGroupingTestEngine = true,
     )
 }
 

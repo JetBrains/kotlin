@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
-import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
 import org.jetbrains.kotlin.test.isSingleTestBatch
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
@@ -86,7 +86,10 @@ class WasmInProcessSecondStageFacade {
                 launcherModule,
                 listOf(batchLauncherFile.originalFile),
                 launcherKlibFile,
-                languageVersion = settings.maxLanguageVersion,
+                // The launcher is linked right here by the current compiler, so it never needs the older-ABI export
+                // that `WasmFirstStageInvoker` enables for a LV below the latest stable one. A KLIB backward-compatibility
+                // batch carries the LV of a previously released compiler, which the current one may not even support (< 2.0).
+                languageVersion = maxOf(settings.maxLanguageVersion, LanguageVersion.LATEST_STABLE),
                 customOptIns = settings.allOptIns,
                 allowKotlinPackage = settings.allAllowKotlinPackage,
                 cleanedRegularDependencies + perTestKlibPaths,
@@ -173,7 +176,7 @@ class WasmInProcessSecondStageFacade {
             testServices: TestServices,
             compilationStage: CompilationStage,
         ): DependencyPaths {
-            val [transitiveLibraries: List<File>, friendLibraries: List<File>] = getTransitivesAndFriends(module = this, testServices)
+            val [transitiveLibraries: List<File>, friendLibraries: List<File>] = collectTransitivesAndFriends(testServices)
 
             val regularDependencies: Set<String> = buildSet {
                 val wasmTarget = (targetPlatform(testServices).single() as WasmPlatformWithTarget).target

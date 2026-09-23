@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.test.GroupingStageInputArtifact
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
 import org.jetbrains.kotlin.test.isSingleTestBatch
+import org.jetbrains.kotlin.test.klib.ReflectionPackageNameHelperModuleTransformer
 import org.jetbrains.kotlin.test.model.AbstractGroupingStageTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.KotlinTestInfo
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.artifactsProvider
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.detectPackage
@@ -73,7 +76,8 @@ abstract class AbstractWasmSecondStageGroupingFacade(
      *
      * Modules whose failures are ignored (e.g. via `IGNORE_BACKEND`) or that do not have a
      * KLib artifact (e.g. because their Stage-1 compilation failed in an expected way) are
-     * silently skipped.
+     * silently skipped, and so is the [ReflectionPackageNameHelperModuleTransformer] helper module,
+     * which must never be linked (see [collectTransitivesAndFriends]).
      */
     fun collectFilteredOutputs(
         inputArtifact: GroupingStageInputArtifact,
@@ -82,6 +86,7 @@ abstract class AbstractWasmSecondStageGroupingFacade(
         for (output in inputArtifact.nonGroupingStageOutputs) {
             val services = output.testServices
             for (module in services.moduleStructure.modules) {
+                if (module.name == ReflectionPackageNameHelperModuleTransformer.HELPERS_MODULE_NAME) continue
                 if (!services.codegenSuppressionChecker.failuresInModuleAreIgnored(module)) {
                     val artifact = try {
                         services.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
@@ -341,6 +346,23 @@ abstract class AbstractWasmSecondStageGroupingFacade(
                 }
             }
         }
+    }
+
+    /**
+     * The regular and friend dependency KLIBs of this module, without the KLIB of the
+     * [ReflectionPackageNameHelperModuleTransformer] helper module.
+     *
+     * That helper only lets a first-stage compiler older than 2.5 resolve `kotlin.internal.ReflectionPackageName`;
+     * the current stdlib linked on the second stage already has the class, and linking the helper as well would
+     * declare it twice (and, in a batch, several helper KLIBs would share one `unique_name`). The annotation
+     * reference in the per-test KLIBs is then resolved by signature against the stdlib.
+     */
+    protected fun TestModule.collectTransitivesAndFriends(testServices: TestServices): Pair<List<File>, List<File>> {
+        val [transitiveLibraries: List<File>, friendLibraries: List<File>] = getTransitivesAndFriends(module = this, testServices)
+        val helperKlibPath = testServices.klibEnvironmentConfigurator
+            .getKlibArtifactFile(testServices, ReflectionPackageNameHelperModuleTransformer.HELPERS_MODULE_NAME)
+            .absolutePath
+        return transitiveLibraries.filterNot { it.absolutePath == helperKlibPath } to friendLibraries
     }
 
     /*
