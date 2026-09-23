@@ -18,25 +18,28 @@ open class KotlinJsIrTargetConfigurator :
 
     override fun configureTarget(target: KotlinJsIrTarget) {
         super.configureTarget(target)
-
-        val assemble = target.project.tasks.named(ASSEMBLE_TASK_NAME)
-
-        target.compilations.all { compilation ->
-            if (compilation.isMain()) {
-                compilation.binaries
-                    .matching { it.mode == KotlinJsBinaryMode.PRODUCTION }
-                    .all {
-                        if (target.wasmTargetType != null) {
-                            assemble.dependsOn((it as WasmBinary).optimizeTask)
-                        } else {
-                            assemble.dependsOn(it.linkTask)
-                        }
-                    }
-            }
-        }
+        configureJsLikeTarget(target)
     }
 
     internal companion object {
+        internal fun configureJsLikeTarget(target: KotlinJsIrTarget) {
+            val assemble = target.project.tasks.named(ASSEMBLE_TASK_NAME)
+
+            target.compilations.all { compilation ->
+                if (compilation.isMain()) {
+                    compilation.binaries
+                        .matching { it.mode == KotlinJsBinaryMode.PRODUCTION }
+                        .all {
+                            if (target.wasmTargetType != null) {
+                                assemble.dependsOn((it as WasmBinary).optimizeTask)
+                            } else {
+                                assemble.dependsOn(it.linkTask)
+                            }
+                        }
+                }
+            }
+        }
+
         internal fun KotlinJsCompilerOptions.configureJsDefaultOptions() {
             sourceMap.convention(true)
             sourceMapEmbedSources.convention(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)

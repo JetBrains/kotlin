@@ -11,7 +11,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -23,14 +22,10 @@ import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
-import org.jetbrains.kotlin.gradle.targets.wasm.KotlinWasmtimeSubtarget
-import org.jetbrains.kotlin.gradle.targets.wasm.WasmtimeEnvironmentConfigurator
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
-import org.jetbrains.kotlin.gradle.targets.wasm.dsl.KotlinWasmtimeDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
@@ -56,10 +51,8 @@ internal constructor(
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
-    KotlinWasmJsTargetDsl,
-    KotlinWasmWasiTargetDsl,
+    KotlinWasmTargetDsl,
     KotlinJsSubTargetContainerDsl,
-    KotlinWasmSubTargetContainerDsl,
     KotlinTargetWithKotlinArchiveSupport {
 
     @InternalKotlinGradlePluginApi
@@ -158,7 +151,7 @@ internal constructor(
             }
     }
 
-    private fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
+    internal fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
         val subTarget = project.objects.newInstance(type, this).also(configure)
         subTargets.add(subTarget)
         return subTarget
@@ -212,6 +205,10 @@ internal constructor(
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
     }
 
+    internal open fun KotlinBrowserJsIr.bundleConfigurator() {
+        subTargetConfigurators.add(WebpackConfigurator(this))
+    }
+
     //region Browser
     private val browserLazyDelegate = lazy {
         commonLazy
@@ -219,7 +216,7 @@ internal constructor(
             configureSubTarget()
             subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(WebpackConfigurator(this))
+            bundleConfigurator()
         }
     }
 
@@ -254,52 +251,7 @@ internal constructor(
     }
     //endregion
 
-    //region d8
-    @OptIn(ExperimentalWasmDsl::class)
-    private val d8LazyDelegate = lazy {
-        webTargetVariant(
-            { NodeJsRootPlugin.apply(project.jsToolingProject()) },
-            { WasmNodeJsRootPlugin.apply(project.jsToolingProject()) },
-        )
-
-        addSubTarget(KotlinD8Ir::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(D8EnvironmentConfigurator(this))
-        }
-    }
-
-    override val d8: KotlinWasmD8Dsl by d8LazyDelegate
-
-    override fun d8(body: KotlinWasmD8Dsl.() -> Unit) {
-        body(d8)
-    }
-    //endregion
-
-    //region wasmtime
-    @OptIn(ExperimentalWasmDsl::class)
-    private val wasmtimeLazyDelegate = lazy {
-        check(wasmTargetType == KotlinWasmTargetType.WASI) {
-            "Wasmtime execution environment is supported only for the Kotlin/Wasm WASI target."
-        }
-
-        addSubTarget(KotlinWasmtimeSubtarget::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(WasmtimeEnvironmentConfigurator(this))
-        }
-    }
-
-    @ExperimentalWasmDsl
-    private val wasmtime: KotlinWasmtimeDsl by wasmtimeLazyDelegate
-
-    @ExperimentalWasmDsl
-    override fun wasmtime(body: KotlinWasmtimeDsl.() -> Unit) {
-        body(wasmtime)
-    }
-    //endregion
-
-    private fun KotlinJsIrSubTarget.configureSubTarget() {
+    internal fun KotlinJsIrSubTarget.configureSubTarget() {
         configure()
     }
 
