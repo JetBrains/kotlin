@@ -19,11 +19,14 @@ import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerWasmTest
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
+import org.jetbrains.kotlin.test.klib.ReflectionPackageNameAdditionalSourceProvider
+import org.jetbrains.kotlin.test.klib.ReflectionPackageNameHelperModuleTransformer
 import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
+import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
@@ -77,8 +80,9 @@ abstract class AbstractCustomWasmCompilerFirstStageTest(
                 // which would not pass new improved IR validation rules
                 ::CustomWasmCompilerSecondStageEnvironmentConfigurator.bind(wasmTarget),
             )
-            // The first stage compiles against the custom compiler's own stdlib (see `CustomWebCompilerFirstStageFacade`).
-            useReflectionPackageNameAnnotationIfSupported(customWasmCompilerSettings.defaultLanguageVersion)
+            // The second stage is the current backend, which honors the annotation, so grouped tests keep their
+            // reflective package names whatever stdlib the first stage compiles against.
+            useAdditionalService { ReflectionPackageNameAnnotation }
         }
         nonGroupingStage {
             useGroupingTestIsolators(::WasmGroupingTestIsolator)
@@ -91,6 +95,14 @@ abstract class AbstractCustomWasmCompilerFirstStageTest(
             // shared `helpers` KLIB instead of being duplicated in every per-test KLIB.
             @OptIn(TestInfrastructureInternals::class)
             useModuleStructureTransformers(WasmCoroutineHelpersModuleTransformer)
+            if (customWasmCompilerSettings.defaultLanguageVersion < REFLECTION_PACKAGE_NAME_SINCE) {
+                // The first stage compiles against the custom compiler's own stdlib (see `CustomWebCompilerFirstStageFacade`),
+                // which predates `kotlin.internal.ReflectionPackageName`: the annotation class is supplied to that compiler
+                // in a dedicated helper module, which the second stage never links (see `AbstractWasmSecondStageGroupingFacade`).
+                useAdditionalSourceProviders(::ReflectionPackageNameAdditionalSourceProvider)
+                @OptIn(TestInfrastructureInternals::class)
+                useModuleStructureTransformers(ReflectionPackageNameHelperModuleTransformer)
+            }
 
             facadeStep(::CustomWebCompilerFirstStageFacade)
 

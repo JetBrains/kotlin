@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilderBase
 import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 
 /** The stdlib version that introduced `kotlin.internal.ReflectionPackageName`. */
-private val REFLECTION_PACKAGE_NAME_SINCE = LanguageVersion.KOTLIN_2_5
+internal val REFLECTION_PACKAGE_NAME_SINCE = LanguageVersion.KOTLIN_2_5
 
 /**
  * Registers [ReflectionPackageNameAnnotation] only when the stdlib the first stage compiles against has the annotation.
