@@ -24,7 +24,9 @@ void LLVMKotlinInitializeTargets() {
 #define INIT_LLVM_TARGET(TargetName)                                           \
   LLVMInitialize##TargetName##TargetInfo();                                    \
   LLVMInitialize##TargetName##Target();                                        \
-  LLVMInitialize##TargetName##TargetMC();
+  LLVMInitialize##TargetName##TargetMC();                                      \
+  LLVMInitialize##TargetName##AsmPrinter();                                    \
+  LLVMInitialize##TargetName##AsmParser();
 
   INIT_LLVM_TARGET(AArch64)
   INIT_LLVM_TARGET(ARM)

@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.backend.konan.BitcodeCompiler
-import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.LlvmBasedBitcodeCompiler
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import java.io.File
 
 internal data class ObjectFilesPhaseInput(
-        val bitcodeFile: File,
+        val moduleToCompile: LLVMModuleRef,
         val objectFile: File,
 )
 
-internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, ObjectFilesPhaseInput>(
+internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, ObjectFilesPhaseInput>(
         name = "ObjectFiles",
 ) { context, input ->
-    BitcodeCompiler(context).makeObjectFile(input.bitcodeFile, input.objectFile)
+    // ClangBasedBitcodeCompiler(context).makeObjectFile(input.bitcodeFile, input.objectFile)
+    LlvmBasedBitcodeCompiler(context).makeObjectFile(input.moduleToCompile, input.objectFile)
 }
