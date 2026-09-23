@@ -245,9 +245,23 @@ def force_create_directory(parent, name) -> Path:
 
 
 def llvm_build_commands(
-        install_path, bootstrap_path, llvm_src, targets, build_targets, projects, runtimes, distribution_components, debug_cmake, enable_assertions
+        install_path, bootstrap_path, llvm_src, targets, build_targets, projects, runtimes, distribution_components, debug_cmake, enable_assertions, lto=None
 ) -> List[List[str]]:
     cmake_flags = construct_cmake_flags(bootstrap_path, install_path, projects, runtimes, targets, distribution_components, enable_assertions)
+
+    if lto is not None:
+        cmake_flags.append(f"-DLLVM_ENABLE_LTO={lto.title()}")
+        if host_is_linux():
+            # When LLVM is built with LTO, its object files contain LLVM bitcode
+            # instead of native object code. Use lld to link them without requiring
+            # an additional LLVMgold plugin for GNU ld.
+            #
+            # CMAKE_LINKER specifies the executable for CMake's direct linker invocations.
+            # LLVM_USE_LINKER adds -fuse-ld=lld for links driven by Clang.
+            # Windows already uses the bootstrap lld-link via CMAKE_LINKER.
+            # On macOS, the bootstrap Clang driver passes its libLTO.dylib to
+            # Apple's linker via -lto_library, so neither needs this extra setting.
+            cmake_flags.append("-DLLVM_USE_LINKER=lld")
 
     debug_cmake_flag = ["--debug-trycompile"] if debug_cmake else []
     cmake_command = [cmake, "-G", "Ninja"] + debug_cmake_flag + cmake_flags + [os.path.join(llvm_src, "llvm")]
@@ -287,6 +301,8 @@ def build_parser() -> argparse.ArgumentParser:
                         nargs="+",
                         help="What components should be installed with `install-distribution` target")
     # Build configuration
+    parser.add_argument("--lto", choices=["thin", "full"], default=None,
+                        help="Enable LTO in the final stage only; omit to keep the original build")
     parser.add_argument("--stage0", type=str, default=None,
                         help="Path to existing LLVM toolchain")
     parser.add_argument("--num-stages", type=int, default=default_num_stages(),
@@ -371,6 +387,7 @@ def build_distribution(args):
             distribution_components=args.distribution_components,
             debug_cmake=args.debug_cmake,
             enable_assertions=args.enable_assertions,
+            lto=args.lto if building_final else None,
         )
 
         os.chdir(build_dir)
