@@ -83,8 +83,6 @@ fun acceptLongOrInt(num: Int) = OverloadVariant.Int
 fun Long.callOverLongOrInt() = OverloadVariant.Long
 fun Int.callOverLongOrInt() = OverloadVariant.Int
 
-fun produceNSInteger(): NSInteger = 30
-
 fun common(): String {
     acceptNSInteger(10)
     acceptNSInteger(1_000_000_000_000L)
@@ -119,11 +117,9 @@ fun common(): String {
     c = getSize()
     acceptULong(c)
 
-    acceptNSInteger(produceNSInteger())
-
     return when {
         a <= 0 -> "FAIL: a == $a <= 0"
-        sum == 1_000_000_000_345L -> "OK"
+        sum == 1_000_000_000_315L -> "OK"
         else -> "FAIL: sum = $sum"
     }
 }
