@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.js.config.dceUnusedProperties
 import java.io.File
 import java.util.*
 
@@ -62,7 +63,7 @@ abstract class UsefulDeclarationProcessor(
         override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {
             super.visitFieldAccess(expression, data)
 
-            if (ignoreFieldWrites && expression is IrSetField) {
+            if (context.configuration.dceUnusedProperties && ignoreFieldWrites && expression is IrSetField) {
                 // keep writes to fields of value classes so that the classes are kept
                 val parent = expression.symbol.owner.parent
                 if (parent !is IrClass || !parent.isValue)
