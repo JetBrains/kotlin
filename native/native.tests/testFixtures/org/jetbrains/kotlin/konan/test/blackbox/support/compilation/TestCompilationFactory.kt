@@ -26,12 +26,14 @@ class TestCompilationFactory {
     private val cachedExecutableCompilations = ThreadSafeCache<ExecutableCacheKey, TestCompilation<Executable>>()
     private val cachedObjCFrameworkCompilations = ThreadSafeCache<ObjCFrameworkCacheKey, ObjCFrameworkCompilation>()
     private val cachedBinaryLibraryCompilations = ThreadSafeCache<BinaryLibraryCacheKey, BinaryLibraryCompilation>()
+    private val cachedIncludedBinaryLibraryCompilations = ThreadSafeCache<IncludedBinaryLibraryCacheKey, BinaryLibraryCompilation>()
     private val cachedTestBundleCompilations = ThreadSafeCache<TestBundleCacheKey, TestBundleCompilation>()
 
     private data class KlibCacheKey(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs, val useHeaders: Boolean)
     private data class ExecutableCacheKey(val sourceModules: Set<TestModule>)
     private data class ObjCFrameworkCacheKey(val sourceModules: Set<TestModule>)
     private data class BinaryLibraryCacheKey(val sourceModules: Set<TestModule>, val kind: BinaryLibraryKind)
+    private data class IncludedBinaryLibraryCacheKey(val orderedModules: List<TestModule.Exclusive>, val kind: BinaryLibraryKind)
     private data class TestBundleCacheKey(val sourceModules: Set<TestModule>)
 
     // A pair of compilations for a KLIB itself and for its static cache that are created together.
@@ -136,9 +138,8 @@ class TestCompilationFactory {
         settings: Settings,
         kind: BinaryLibraryKind,
     ): BinaryLibraryCompilation {
-        val sourceModules = orderedIncludedModules.toSet()
-        val cacheKey = BinaryLibraryCacheKey(sourceModules, kind)
-        cachedBinaryLibraryCompilations[cacheKey]?.let { return it }
+        val cacheKey = IncludedBinaryLibraryCacheKey(orderedIncludedModules, kind)
+        cachedIncludedBinaryLibraryCompilations[cacheKey]?.let { return it }
 
         val includedDependencies = orderedIncludedModules.map { module ->
             modulesToKlib(setOf(module), freeCompilerArgs, ProduceStaticCache.No, settings)
@@ -148,7 +149,7 @@ class TestCompilationFactory {
         // `<package>.<suffix>` — not the multi-module `<fileCount>-<package>-<hash>` scheme, whose leading digit would
         // become an invalid C identifier in the exported header's name prefix.
         val expectedArtifact = BinaryLibrary(settings.artifactFileForBinaryLibrary(orderedIncludedModules.first(), kind))
-        return cachedBinaryLibraryCompilations.computeIfAbsent(cacheKey) {
+        return cachedIncludedBinaryLibraryCompilations.computeIfAbsent(cacheKey) {
             BinaryLibraryCompilation(
                 settings = settings,
                 freeCompilerArgs = freeCompilerArgs,
