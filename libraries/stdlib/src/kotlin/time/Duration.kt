@@ -292,6 +292,9 @@ internal constructor(private val rawValue: Long) :
          * - The format of string returned by the default [Duration.toString] and `toString` in a specific unit,
          *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
          *
+         * A component value that is too large to be represented as a finite duration is treated as infinite.
+         * Beyond about ±146 years, the parsed duration has only millisecond precision, see [Duration].
+         *
          * @throws IllegalArgumentException if the string doesn't represent a duration in any of the supported formats.
          * @sample samples.time.Durations.parse
          */
@@ -331,7 +334,11 @@ internal constructor(private val rawValue: Long) :
          * - Restricted ISO-8601 duration composite representation, e.g. `P1DT2H3M4.058S`, see [toIsoString] and [parseIsoString].
          * - The format of string returned by the default [Duration.toString] and `toString` in a specific unit,
          *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
-         *   @sample samples.time.Durations.parse
+         *
+         * A component value that is too large to be represented as a finite duration is treated as infinite.
+         * Beyond about ±146 years, the parsed duration has only millisecond precision, see [Duration].
+         *
+         * @sample samples.time.Durations.parse
          */
         public fun parseOrNull(value: String): Duration? =
             parseDuration(value, strictIso = false, throwException = false).onInvalid { null }
@@ -1192,11 +1199,14 @@ private fun parseDefaultStringFormat(
         isFirstComponent = false
 
         val longStartIndex = index
-        val longValue = LongParser.default.parse(value, index) { longEndIndex, _, hasOverflow ->
+        val overflow: Boolean
+        var longValue = LongParser.default.parse(value, index) { longEndIndex, _, hasOverflow ->
             // A numeric value has to be non-empty, and it has to be followed by a unit (i.e., it cannot be the last in string)
-            if (longEndIndex == longStartIndex || longEndIndex == length || hasOverflow) return handleError(throwException)
+            if (longEndIndex == longStartIndex || longEndIndex == length) return handleError(throwException)
             index = longEndIndex
+            overflow = hasOverflow
         }
+        val longEndIndex = index
 
         val hasFractionalPart = value[index] == '.'
         val fractionStartIndex: Int
@@ -1218,6 +1228,17 @@ private fun parseDefaultStringFormat(
             ?: return handleError(throwException, "Unknown duration unit short name: ${value[index]}")
         if (prevUnit != null && prevUnit <= unit) return handleError(throwException, "Unexpected order of duration components")
         prevUnit = unit
+
+        if (overflow && unit < DurationUnit.MILLISECONDS) {
+            // In nanoseconds or microseconds, a value beyond Long can still be finite, while in larger units the else branch
+            // below turns the clamped Long.MAX_VALUE into infinity. We transfer the whole milliseconds, i.e. all digits
+            // but the last 6 or 3, to totalMillis here and leave the last digits to the branches below.
+            val millisEndIndex = longEndIndex - if (unit == DurationUnit.NANOSECONDS) 6 else 3
+            // A preceding microseconds component can leave totalMillis above MAX_MILLIS, so it is coerced to avoid overflow.
+            totalMillis = totalMillis.coerceAtMost(MAX_MILLIS)
+                .addMillisWithoutOverflow(value.parseDigitsWithoutOverflow(longStartIndex, millisEndIndex))
+            longValue = value.parseDigitsWithoutOverflow(millisEndIndex, longEndIndex)
+        }
 
         when (unit) {
             DurationUnit.MICROSECONDS -> {
@@ -1433,6 +1454,22 @@ private inline fun sameSign(a: Long, b: Long): Boolean = a xor b >= 0L
  */
 private fun String.parseFractionFallback(startIndex: Int, endIndex: Int, unit: DurationUnit): Long =
     (substring(startIndex, endIndex).toDouble() * unit.fallbackFractionMultiplier).roundToLong()
+
+/**
+ * Parses the decimal digits in the given range as a non-negative number, without allocating a substring.
+ *
+ * @param startIndex the index of the first digit
+ * @param endIndex the index after the last digit
+ * @return the parsed number coerced to at most [MAX_MILLIS]
+ */
+private fun String.parseDigitsWithoutOverflow(startIndex: Int, endIndex: Int): Long {
+    var result = 0L
+    for (index in startIndex until endIndex) {
+        if (result > MAX_MILLIS / 10) return MAX_MILLIS
+        result = result.multiplyBy10() + (this[index] - '0')
+    }
+    return result.coerceAtMost(MAX_MILLIS)
+}
 
 /**
  * Converts fraction digits (scaled to 15 decimal places) to nanoseconds for the given unit.

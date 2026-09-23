@@ -830,7 +830,21 @@ class DurationTest {
             "53375995583d 15h 36m 27.902s",
             "4602453423018496273ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
         )
-        testDefaultParsing(Long.MAX_VALUE.microseconds, "106751991d 4h 0m 54.775s", "${Long.MAX_VALUE}.99999999999us")
+
+        // numbers beyond Long.MAX_VALUE
+        testDefaultParsing(
+            Long.MAX_VALUE.microseconds, "106751991d 4h 0m 54.775s", "${Long.MAX_VALUE}.99999999999us", "9223372036854775808us"
+        )
+        testDefaultParsing(
+            9223372036855.milliseconds, "106751d 23h 47m 16.855s", "999us ${Long.MAX_VALUE}ns", "999us 9223372036854775808ns"
+        )
+        testDefaultParsing(
+            10_000_000_000.seconds, "115740d 17h 46m 40s",
+            "10000000000s", "10000000000000ms", "10000000000000000us", "10000000000000000000ns", "10000000000000000000.5ns"
+        )
+        testDefaultParsing(1234567890123456.milliseconds, "14288980d 5h 2m 3.456s", "1234567890123456789012ns")
+        testDefaultParsing(10_000_000_000_000_999.milliseconds, "115740740d 17h 46m 40.999s", "10000000000000000000us 999999999ns")
+
         testDefaultParsing(
             1.days + 2.hours + 3.minutes + 4.seconds + 5.milliseconds + 6.microseconds + 7.nanoseconds,
             "1d 2h 3m 4.005006007s",
@@ -856,7 +870,7 @@ class DurationTest {
         )
         testDefaultParsing(
             53375995583.days + 15.hours + 36.minutes + 27.seconds + 902.milliseconds,
-            "53375995583d 15h 36m 27.902s", "${MAX_MILLIS - 1}ms"
+            "53375995583d 15h 36m 27.902s", "${MAX_MILLIS - 1}ms", "${MAX_MILLIS - 1}999us", "${MAX_MILLIS - 1}999999ns"
         )
 
         // all infinite
@@ -868,13 +882,23 @@ class DurationTest {
 //        test(Duration.nanoseconds(Double.MAX_VALUE), "2.08e+294d")
         testDefaultParsing(
             Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity", "123456789012345d 123456789012345h",
-            "4602453423018496274ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
+            "4602453423018496274ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns",
+            "9223372036854775808ms", "9223372036854775808s", "9223372036854775808000000ns"
         )
         testDefaultParsing(90_000_000_000_000.minutes, "Infinity", "90000000000000m")
         testDefaultParsing((-90_000_000_000_000).minutes, "-Infinity", "-90000000000000m")
         testDefaultParsing(
             Duration.INFINITE, "Infinity", "${MAX_MILLIS / MILLIS_IN_DAY + 1}d", "${MAX_MILLIS / MILLIS_IN_HOUR + 1}h",
-            "${MAX_MILLIS / MILLIS_IN_MINUTE + 1}m", "${MAX_MILLIS / MILLIS_IN_SECOND + 1}s", "${MAX_MILLIS}ms"
+            "${MAX_MILLIS / MILLIS_IN_MINUTE + 1}m", "${MAX_MILLIS / MILLIS_IN_SECOND + 1}s", "${MAX_MILLIS}ms",
+            "${MAX_MILLIS}000us", "${MAX_MILLIS}000000ns"
+        )
+        // a large total plus a component beyond Long saturates instead of wrapping around to -Infinity
+        testDefaultParsing(
+            Duration.INFINITE, "Infinity",
+            "${MAX_MILLIS - 1}ms ${Long.MAX_VALUE}us ${MAX_MILLIS - 1}000000ns",
+            "${MAX_MILLIS - 1}ms ${MAX_MILLIS - 1}000us ${Long.MAX_VALUE}ns",
+            "${MAX_MILLIS - 1}ms ${MAX_MILLIS + 6}000us", // the largest value the digit loop reaches without returning early
+            "${MAX_MILLIS - 1}ms 123456789012345678901234567890ns"
         )
         testDefaultParsing(-Duration.INFINITE, "-Infinity", "-(53375995583d 20h)")
     }
@@ -897,7 +921,7 @@ class DurationTest {
     fun parseDefaultFailing() {
         for (invalidValue in listOf(
             "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something", "P,D",
-            "1234567890123456789012ns", "Inf", "-Infinity value",
+            "10000000000000000000x", "10000000000000000000.5us 1ns", "Inf", "-Infinity value",
             "1s ", " 1s",
             "1d 1m 1h", "1s 2s",
             "-12m 15s", "-12m -15s", "-()", "-(12m 30s",
