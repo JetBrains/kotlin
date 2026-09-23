@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
 import org.jetbrains.kotlin.fir.extensions.FirReplHistoryProvider
 import org.jetbrains.kotlin.fir.extensions.FirReplSnippetResolveExtension
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -54,7 +53,7 @@ class FirReplSnippetResolveExtensionImpl(
     hostConfiguration: ScriptingHostConfiguration,
 ) : FirReplSnippetResolveExtension(session) {
 
-    private val replHistoryProvider: FirReplHistoryProvider =
+    override val replHistoryProvider: FirReplHistoryProvider =
         hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider] ?: FirReplHistoryProviderImpl()
 
     private fun getImportsFromHistory(currentSnippet: FirReplSnippet): List<FirImport> =
@@ -80,7 +79,6 @@ class FirReplSnippetResolveExtensionImpl(
             if (currentSnippet == snippet) return@forEach
             snippet.snippetClassSymbol.declarationSymbols.filter { it.isReplSnippetDeclaration == true }.forEach { symbol ->
                 val it = symbol.fir
-                it.originalReplSnippetSymbol = snippet
                 when (it) {
                     is FirProperty -> properties.getOrPut(it.name, { ArrayList() }).add(it.symbol)
                     is FirNamedFunction -> functions.getOrPut(it.name, { ArrayList() }).add(it.symbol)

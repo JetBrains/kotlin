@@ -391,6 +391,12 @@ class Fir2IrVisitor(
         data: Any?,
     ): IrElement {
         val irSnippet = declarationStorage.getCachedIrReplSnippet(replSnippet)!!
+        return conversionScope.withCurrentReplSnippet(replSnippet.symbol) {
+            convertReplSnippet(replSnippet, irSnippet, data)
+        }
+    }
+
+    private fun convertReplSnippet(replSnippet: FirReplSnippet, irSnippet: IrReplSnippet, data: Any?): IrElement {
         irSnippet.parent = conversionScope.parentFromStack()
         declarationStorage.enterScope(irSnippet.symbol)
 

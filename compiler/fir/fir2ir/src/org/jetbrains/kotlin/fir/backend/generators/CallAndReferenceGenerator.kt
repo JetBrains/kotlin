@@ -1426,8 +1426,8 @@ class CallAndReferenceGenerator(
                     // (https://github.com/Kotlin/KEEP/blob/master/proposals/type-aliases.md#type-alias-constructors-for-inner-classes),
                     // They should work as real constructors with initialized `dispatchReceiver` instead of `extensionReceiver` on IR level.
                     val baseDispatchReceiver = when {
-                        // Dispatch receivers for previous snippet declarations are injected later by ReplSnippetToClassTransformer.
-                        declarationSiteSymbol.fir.originalReplSnippetSymbol != null -> IrErrorCallExpressionImpl(
+                        // Dispatch receivers for other snippets' declarations are injected later by ReplSnippetToClassTransformer.
+                        conversionScope.isFromAnotherReplSnippet(declarationSiteSymbol, session) -> IrErrorCallExpressionImpl(
                             startOffset, endOffset, builtins.nothingType,
                             description = "No REPL snippet class instance."
                         )
