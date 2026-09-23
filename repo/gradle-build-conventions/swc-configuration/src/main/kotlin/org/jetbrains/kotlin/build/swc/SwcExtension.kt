@@ -3,14 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(InternalKotlinGradlePluginApi::class)
+
 package org.jetbrains.kotlin.build.swc
 
-import SystemPropertyClasspathProvider
+import kotlinBuildProperties
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.newInstance
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.swc.SwcEnvSpec
 
 abstract class SwcExtension(
@@ -18,7 +20,7 @@ abstract class SwcExtension(
     private val swc: SwcEnvSpec,
 ) {
     val swcVersion: String
-        get() = kotlinBuildProperties.versionsProperty("swc").get()
+        get() = project.kotlinBuildProperties.versionsProperty("swc").get()
 
     val swcExecutablePath: Provider<String> = swc.executable.also {
         project.extra["swc.path"] = it
