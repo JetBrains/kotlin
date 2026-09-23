@@ -1,5 +1,14 @@
-expression: av
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: E
+expression:
+  av
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: E
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: E

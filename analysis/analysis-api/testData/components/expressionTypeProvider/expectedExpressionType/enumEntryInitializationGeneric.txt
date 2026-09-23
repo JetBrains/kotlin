@@ -1,4 +1,12 @@
-expression: message
-expected type: KaTypeParameterType:
-  annotations: []
-  type: T
+expression:
+  message
+
+expectedType:
+  KaTypeParameterType:
+    annotations: []
+    type: T
+
+inferredExpectedType:
+  KaTypeParameterType:
+    annotations: []
+    type: T

@@ -1,5 +1,14 @@
-expression: ::dummy
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: java/lang/Runnable
+expression:
+  ::dummy
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: java/lang/Runnable
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: java/lang/Runnable
