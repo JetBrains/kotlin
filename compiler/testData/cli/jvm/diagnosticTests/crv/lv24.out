@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/diagnosticTests/crv/checker.kt:3:1: error: ignorability-related annotations are experimental and cannot be used with -Xreturn-value-checker in disabled state.
+@MustUseReturnValues
+^^^^^^^^^^^^^^^^^^^^
+compiler/testData/cli/jvm/diagnosticTests/crv/checker.kt:11:9: error: the feature "unnamed local variables" is only available since language version 2.5
+    val _ = basic()
+        ^
+COMPILATION_ERROR
