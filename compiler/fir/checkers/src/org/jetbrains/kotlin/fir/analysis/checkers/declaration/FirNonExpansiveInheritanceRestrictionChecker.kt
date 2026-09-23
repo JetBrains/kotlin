@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -124,7 +125,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
                         val bounds = SmartSet.create<ConeKotlinType>()
                         constituentTypeParameterSymbol.resolvedBounds.mapNotNullTo(bounds) { substitutor!!.substituteOrNull(it.coneType) }
                         typeProjection.type?.let(bounds::add)
-                        val boundClosure = bounds.flatMapTo(SmartSet.create()) { it.collectUpperBounds(session.typeContext) }
+                        val boundClosure = collectBoundClosure(bounds, session)
 
                         addEdges(
                             typeParameters = typeParameters,
@@ -179,6 +180,22 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
             return handler.result()
         }
     }
+}
+
+private fun collectBoundClosure(bounds: Set<ConeKotlinType>, session: FirSession): Set<ConeKotlinType> {
+    val closure = SmartSet.create<ConeKotlinType>()
+
+    fun addType(type: ConeKotlinType) {
+        if (!closure.add(type)) return
+        if (type is ConeTypeParameterType) {
+            type.lookupTag.typeParameterSymbol.resolvedBounds.forEach { addType(it.coneType) }
+        }
+    }
+
+    bounds.forEach(::addType)
+    // Unlike collectUpperBounds, B-closure retains type-parameter seeds and intermediate bounds.
+    bounds.flatMapTo(closure) { it.collectUpperBounds(session.typeContext) }
+    return closure
 }
 
 private fun ConeKotlinType.constituentTypes(): Set<ConeKotlinType> {
