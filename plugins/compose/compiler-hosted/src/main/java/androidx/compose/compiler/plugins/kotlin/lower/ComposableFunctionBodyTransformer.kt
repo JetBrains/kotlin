@@ -208,7 +208,6 @@ interface IrChangedBitMaskValue {
 
 interface IrDefaultBitMaskValue {
     fun irIsolateBitAtIndex(index: Int): IrExpression
-    fun irHasAnyProvidedAndUnstable(unstable: BooleanArray): IrExpression
     fun putAsValueArgumentIn(fn: IrFunctionAccessExpression, startIndex: Int)
 }
 
@@ -1155,40 +1154,10 @@ class ComposableFunctionBodyTransformer(
 
             // (3) is only necessary to check if we actually have unstable params, so we only
             // generate that check if we need to.
-            var shouldExecute = irShouldExecute(
+            val shouldExecute = irShouldExecute(
                 dirtyForSkipping.irHasDifferences(scope.usedParams),
                 dirtyForSkipping.irRestartFlags(),
             )
-
-            // boolean array mapped to parameters. true indicates that the type is unstable
-            // NOTE: the unstable mask is indexed by valueParameter index, which is different
-            // than the slotIndex but that is OKAY because we only care about defaults, which
-            // also use the value parameter index.
-            val realParams = declaration.namedParameters.take(scope.realValueParamCount)
-
-            val fileContainingDeclaration = declaration.fileOrNull
-            val unstableMask = realParams.map {
-                stabilityInferencer.stabilityOf(
-                    (it.varargElementType ?: it.type),
-                    fileContainingDependent = fileContainingDeclaration
-                ).knownUnstable()
-            }.toBooleanArray()
-
-            val hasAnyUnstableParams = unstableMask.any { it }
-
-            // If we aren't in strong skipping mode and
-            // if there are unstable params, then we fence the whole expression with a check to
-            // see if any of the unstable params were the ones that were provided to the
-            // function. If they were, then we short-circuit and always execute
-            if (
-                !FeatureFlag.StrongSkipping.enabled &&
-                hasAnyUnstableParams && defaultParam != null
-            ) {
-                shouldExecute = irOrOr(
-                    defaultParam.irHasAnyProvidedAndUnstable(unstableMask),
-                    shouldExecute
-                )
-            }
 
             irIfThenElse(
                 condition = shouldExecute,
@@ -1383,7 +1352,7 @@ class ComposableFunctionBodyTransformer(
         val defaultExprIsStatic = BooleanArray(parameters.size) { true }
         val defaultExpr = Array<IrExpression?>(parameters.size) { null }
         val stabilities = Array(parameters.size) { Stability.Unstable }
-        var mightSkip = isSkippableDeclaration
+        val mightSkip = isSkippableDeclaration
 
         val setDefaults = mutableStatementContainer()
         val skipDefaults = mutableStatementContainer()
@@ -1445,8 +1414,6 @@ class ComposableFunctionBodyTransformer(
 
             stabilities[slotIndex] = stability
 
-            val isRequired = param.defaultValue == null
-            val isUnstable = stability.knownUnstable()
             val isUsed = scope.usedParams[slotIndex]
 
             scope.metrics.recordParameter(
@@ -1456,17 +1423,6 @@ class ComposableFunctionBodyTransformer(
                 defaultStatic = defaultExprIsStatic[slotIndex],
                 used = isUsed
             )
-
-            if (
-                !FeatureFlag.StrongSkipping.enabled &&
-                isUsed &&
-                isUnstable &&
-                isRequired
-            ) {
-                // if it is a used + unstable parameter with no default expression and we are
-                // not in strong skipping mode, the fn will _never_ skip
-                mightSkip = false
-            }
         }
 
         // we start the skipPreamble with all of the changed calls. These need to go at the top
@@ -1479,7 +1435,6 @@ class ComposableFunctionBodyTransformer(
             val defaultIndex = scope.defaultIndexForSlotIndex(slotIndex)
             val defaultValue = param.defaultValue
             val stability = stabilities[slotIndex]
-            val isUnstable = stability.knownUnstable()
             val isUsed = scope.usedParams[slotIndex]
 
             when {
@@ -1490,20 +1445,7 @@ class ComposableFunctionBodyTransformer(
                     // this will only ever be true when mightSkip is false, but we put this
                     // branch here so that `dirty` gets smart cast in later branches
                 }
-                !FeatureFlag.StrongSkipping.enabled && isUnstable && defaultParam != null &&
-                        defaultValue != null -> {
-                    // if it has a default parameter then the function can still potentially skip
-                    skipPreamble.statements.add(
-                        irIf(
-                            condition = irGetBit(defaultParam, defaultIndex),
-                            body = dirty.irOrSetBitsAtSlot(
-                                slotIndex,
-                                irConst(ParamState.Same.bitsForSlot(slotIndex))
-                            )
-                        )
-                    )
-                }
-                FeatureFlag.StrongSkipping.enabled || !isUnstable -> {
+                else -> {
                     val defaultValueIsStatic = defaultExprIsStatic[slotIndex]
                     val callChanged = irCallChanged(stability, changedParam, slotIndex, param)
 
@@ -1525,10 +1467,7 @@ class ComposableFunctionBodyTransformer(
                         )
                     )
 
-                    val skipCondition = if (FeatureFlag.StrongSkipping.enabled)
-                        irIsUncertain(changedParam, slotIndex)
-                    else
-                        irIsUncertainAndStable(changedParam, slotIndex)
+                    val skipCondition = irIsUncertain(changedParam, slotIndex)
                     val stmt = if (defaultParam != null && defaultValue != null && defaultValueIsStatic) {
                         // if the default expression is "static", then we know that if we are using the
                         // default expression, the parameter can be considered "static".
@@ -1718,7 +1657,7 @@ class ComposableFunctionBodyTransformer(
         param: IrValueDeclaration,
     ): IrExpression {
         val fileContainingParam = param.fileOrNull
-        return if (FeatureFlag.StrongSkipping.enabled && stability.isUncertain()) {
+        return if (stability.isUncertain()) {
             irIfThenElse(
                 type = context.irBuiltIns.booleanType,
                 condition = irIsStable(changedParam, slotIndex),
@@ -2254,7 +2193,7 @@ class ComposableFunctionBodyTransformer(
         value: IrExpression,
         fileContainingValue: IrFile?,
         compareInstanceForFunctionTypes: Boolean,
-        compareInstanceForUnstableValues: Boolean = FeatureFlag.StrongSkipping.enabled,
+        compareInstanceForUnstableValues: Boolean = true,
     ): IrExpression = irChanged(
         irCurrentComposer(),
         value,
@@ -3653,13 +3592,6 @@ class ComposableFunctionBodyTransformer(
         arguments.fastForEachIndexed { slot, argInfo ->
             val stability = argInfo.stability
             when {
-                !FeatureFlag.StrongSkipping.enabled && stability.knownUnstable() -> {
-                    bitMaskConstant = bitMaskConstant or StabilityBits.UNSTABLE.bitsForSlot(slot)
-                    // If it is known to be unstable, there's no purpose in propagating any
-                    // additional metadata _for this parameter_, but we still want to propagate
-                    // the other parameters.
-                    return@fastForEachIndexed
-                }
                 stability.knownStable() -> {
                     bitMaskConstant = bitMaskConstant or StabilityBits.STABLE.bitsForSlot(slot)
                 }
@@ -4617,28 +4549,6 @@ class ComposableFunctionBodyTransformer(
             )
         }
 
-        override fun irHasAnyProvidedAndUnstable(unstable: BooleanArray): IrExpression {
-            require(count == unstable.size)
-            val expressions = params.mapIndexed { index, param ->
-                val start = index * BITS_PER_INT
-                val end = min(start + BITS_PER_INT, count)
-                val unstableMask = bitMask(*unstable.sliceArray(start until end))
-                irNotEqual(
-                    // $default and unstableMask will be different from unstableMask
-                    // iff any parameters were *provided* AND *unstable*
-                    irAnd(
-                        irGet(param),
-                        irConst(unstableMask)
-                    ),
-                    irConst(unstableMask)
-                )
-            }
-            return if (expressions.size == 1)
-                expressions.single()
-            else
-                expressions.reduce { lhs, rhs -> irOrOr(lhs, rhs) }
-        }
-
         override fun putAsValueArgumentIn(fn: IrFunctionAccessExpression, startIndex: Int) {
             params.fastForEachIndexed { i, param ->
                 fn.arguments[startIndex + i] = irGet(param)
@@ -4737,7 +4647,7 @@ class ComposableFunctionBodyTransformer(
                 // we _only_ use this pattern for the slots where the body of the function
                 // actually uses that parameter, otherwise we pass in 0b000 which will transfer
                 // none of the bits to the rhs
-                val lhsMask = if (FeatureFlag.StrongSkipping.enabled) 0b001 else 0b101
+                val lhsMask = 0b001
                 val lhs = (start until end).fold(0) { mask, slot ->
                     if (usedParams[slot]) mask or bitsForSlot(lhsMask, slot) else mask
                 }

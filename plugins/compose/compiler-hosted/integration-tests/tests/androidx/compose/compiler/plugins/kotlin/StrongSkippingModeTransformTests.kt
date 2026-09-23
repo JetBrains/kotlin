@@ -37,7 +37,6 @@ class StrongSkippingModeTransformTests(
         put(
             ComposeConfiguration.FEATURE_FLAGS,
             listOf(
-                FeatureFlag.StrongSkipping.featureName,
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
                 FeatureFlag.IntrinsicRemember.name(intrinsicRememberEnabled)
             )

@@ -801,7 +801,6 @@ class RememberIntrinsicTransformTestsStrongSkipping : AbstractIrTransformTest() 
             listOf(
                 FeatureFlag.IntrinsicRemember.featureName,
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
-                FeatureFlag.StrongSkipping.featureName
             )
         )
     }
