@@ -4,23 +4,23 @@
 // LANGUAGE: +FullValueClasses +CustomEqualsInValueClasses
 
 value class OverridesEquals(val x: Int) {
-    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS("OverridesEquals")!>equals<!>(other: Any?): Boolean = other is OverridesEquals && x == other.x
+    override fun equals(other: Any?): Boolean = other is OverridesEquals && x == other.x
     override fun hashCode(): Int = x
 }
 
 value class OverridesEqualsWithTypedEquals(val x: Int) {
-    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS("OverridesEqualsWithTypedEquals")!>equals<!>(other: Any?): Boolean = other is OverridesEqualsWithTypedEquals && equals(other)
+    override fun equals(other: Any?): Boolean = other is OverridesEqualsWithTypedEquals && equals(other)
     fun equals(other: OverridesEqualsWithTypedEquals): Boolean = x == other.x
     override fun hashCode(): Int = x
 }
 
 abstract value class AbstractOverridesEquals {
-    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS("AbstractOverridesEquals")!>equals<!>(other: Any?): Boolean = other is AbstractOverridesEquals
+    override fun equals(other: Any?): Boolean = other is AbstractOverridesEquals
     override fun hashCode(): Int = 0
 }
 
 value object ObjectOverridesEquals {
-    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS("ObjectOverridesEquals")!>equals<!>(other: Any?): Boolean = other is ObjectOverridesEquals
+    override fun equals(other: Any?): Boolean = other is ObjectOverridesEquals
     override fun hashCode(): Int = 0
 }
 
