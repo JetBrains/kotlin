@@ -258,6 +258,9 @@ def llvm_build_commands(
             #
             # CMAKE_LINKER specifies the executable for CMake's direct linker invocations.
             # LLVM_USE_LINKER adds -fuse-ld=lld for links driven by Clang.
+            # Windows already uses the bootstrap lld-link via CMAKE_LINKER.
+            # On macOS, the bootstrap Clang driver passes its libLTO.dylib to
+            # Apple's linker via -lto_library, so neither needs this extra setting.
             cmake_flags.append("-DLLVM_USE_LINKER=lld")
 
     debug_cmake_flag = ["--debug-trycompile"] if debug_cmake else []
