@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jklib.config.jklibCompileIr
+import org.jetbrains.kotlin.cli.jklib.config.jklibManifestFile
 import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
 import org.jetbrains.kotlin.cli.jklib.config.klibPaths
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
@@ -184,6 +185,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
 
         arguments.destination?.let { configuration.jklibOutputDestination = it }
         configuration.jklibCompileIr = arguments.compileIr
+        arguments.manifestFile?.let { configuration.jklibManifestFile = it }
         arguments.friendModules?.let { configuration.friendPaths = it.split(File.pathSeparator).filterNot(String::isEmpty) }
 
         // TODO(KT-87172): call configuration.setupCommonKlibArguments() instead of manual setup.
@@ -375,6 +377,9 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
                 moduleName(configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
                 versions(versions)
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
+                configuration.jklibManifestFile?.let { manifestPath ->
+                    customProperties { File(manifestPath).inputStream().use { load(it) } }
+                }
                 metadataFlags(configuration.languageVersionSettings)
             }
             includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
@@ -435,6 +440,9 @@ object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArti
                 moduleName(rawModuleName)
                 versions(versions)
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
+                configuration.jklibManifestFile?.let { manifestPath ->
+                    customProperties { File(manifestPath).inputStream().use { load(it) } }
+                }
                 metadataFlags(configuration.languageVersionSettings)
             }
             includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
