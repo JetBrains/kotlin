@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
-import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
 import org.jetbrains.kotlin.test.isSingleTestBatch
+import org.jetbrains.kotlin.test.klib.getTransitivesAndFriendsWithoutReflectionPackageNameHelper
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmSecondStageGroupingFacade
@@ -178,7 +178,8 @@ class WasmInProcessSecondStageFacade {
             testServices: TestServices,
             compilationStage: CompilationStage,
         ): DependencyPaths {
-            val [transitiveLibraries: List<File>, friendLibraries: List<File>] = getTransitivesAndFriends(module = this, testServices)
+            val [transitiveLibraries: List<File>, friendLibraries: List<File>] =
+                getTransitivesAndFriendsWithoutReflectionPackageNameHelper(testServices)
 
             val regularDependencies: Set<String> = buildSet {
                 val wasmTarget = (targetPlatform(testServices).single() as WasmPlatformWithTarget).target

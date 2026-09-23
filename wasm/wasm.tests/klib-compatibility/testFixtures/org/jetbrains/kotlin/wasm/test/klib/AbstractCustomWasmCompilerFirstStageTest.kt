@@ -20,11 +20,12 @@ import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerWasmTest
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
-import org.jetbrains.kotlin.test.klib.useReflectionPackageNameAnnotationIfSupported
+import org.jetbrains.kotlin.test.klib.useReflectionPackageNameHelperIfNeeded
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
+import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
@@ -78,7 +79,7 @@ abstract class AbstractCustomWasmCompilerFirstStageTest(
                 // which would not pass new improved IR validation rules
                 ::CustomWasmCompilerSecondStageEnvironmentConfigurator.bind(wasmTarget),
             )
-            useReflectionPackageNameAnnotationIfSupported(customWasmCompilerSettings.defaultLanguageVersion)
+            useAdditionalService { ReflectionPackageNameAnnotation }
         }
         nonGroupingStage {
             useGroupingTestIsolators(::WasmGroupingTestIsolator)
@@ -89,6 +90,8 @@ abstract class AbstractCustomWasmCompilerFirstStageTest(
             )
             @OptIn(TestInfrastructureInternals::class)
             useModuleStructureTransformers(WasmCoroutineHelpersModuleTransformer)
+            // The first stage compiles against the custom compiler's own stdlib (see `CustomWebCompilerFirstStageFacade`).
+            useReflectionPackageNameHelperIfNeeded(customWasmCompilerSettings.defaultLanguageVersion)
 
             facadeStep(::CustomWebCompilerFirstStageFacade)
 
