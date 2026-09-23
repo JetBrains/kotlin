@@ -41,7 +41,7 @@ The following tests must run and pass before a commit can be merged to master:
 - Individual tests annotated with `@MustRunOnChangesInXYZ` when domain `XYZ` is changed.
 - Tests annotated with `@MustRunAlways`, regardless of which domains are changed.
 - All tests in domains listed in the `^test:` commit command.
-- Any additional tests selected by the test task's `smokeTestConfig`.
+- Tests selected by `testFederation { smokeTests { includeAutoSamples(percentage = ...) } }`
 
 Other test filters still apply. In particular, `@NightlyTest` tests are not required for merging to master.
 
@@ -193,39 +193,71 @@ Long-running tests or tests that have not yet proven stable can be marked with `
 
 ## Running a subset of a test task
 
-A test task runs in one of two modes:
+A test task selects one or more subsets of tests. A **test subset** is a portion of tests that is executed together.
+Test subsets may overlap.
 
-- `Full`: run all tests in the task.
-- `Smoke`: run tests annotated with `@MustRunAlways`, tests annotated with `@MustRunOnChangesInXYZ` for a changed domain `XYZ`,
-  and any additional tests selected by `smokeTestConfig`.
+We define the following test subsets:
 
-Other test filters, such as `@NightlyTest`, still apply in both modes.
-Test Federation uses `Full` when all tests in the task's domain must run, and `Smoke` otherwise.
-Setting `smokeTestConfig = SmokeTestConfig.Disabled` skips the task in `Smoke` mode, including its annotated tests.
+- `AllTests`:
+  - runs every test, unconditionally — smoke-tagged, contract-tagged, and untagged alike, with full
+    parameterized/repeated/test-template/test-factory variant coverage (e.g. all Gradle/JDK versions)
+  - useful for a complete, from-scratch run (e.g. a nightly build or the first run on a branch)
+- `SmokeTests`:
+  - runs tests annotated with `@MustRunAlways`
+  - runs tests selected via `testFederation { smokeTests { ... } }` DSL
+- `ContractTestsFor<Domain>`
+  - runs tests annotated with `@MustRunOnChangesIn<Domain>`
+  - runs tests selected via `testFederation { contractTests { ... } }` DSL
 
-Use `smokeTestConfig` to select additional tests when the task runs in `Smoke` mode. By default, no additional tests are selected.
-For example, this configuration selects roughly 5% of the tests in addition to the annotated tests:
+Use `AllTests` (or simply omit `test.federation.subsets`) to request every test — this is the default when the
+property is not set.
+
+Other test filters, such as `@NightlyTest`, still apply regardless of the requested subsets.
+Test Federation requests `AllTests` when all tests in the task's domain must run, and `SmokeTests` plus the
+relevant `ContractTestsFor<Domain>` subsets otherwise.
+
+Use `smokeTests` to configure additional auto-sampling when the task's test framework supports it.
+The `includeAutoSamples` selects an approximate percentage of tests using a hash of each test's identity, and requires a JUnit 5 task:
 
 ```kotlin
 tasks.withType<Test>().configureEach {
-    smokeTestConfig = SmokeTestConfig.Enabled(
-        autoSmokeTestPercentage = 5
-    )
+    testFederation {
+        smokeTests {
+            // Sample 5% of all tests and add them to the SmokeTest subset
+            // (requires JUnit5)
+            includeAutoSamples(percentage = 5)
+        }
+    }
 }
 ```
 
-The selection is stable: it uses the fully qualified name and unique ID of each test.
+The auto-sampling selection is stable: it uses the fully qualified name and unique ID of each test.
 Choose fast and stable tests, because the selected tests are required for merging to master even for unrelated changes.
 
-To require all tests in a task regardless of which domains are changed:
+To require all tests in a task regardless of which subsets are requested:
 
 ```kotlin
 tasks.withType<Test>().configureEach {
-    smokeTestConfig = SmokeTestConfig.RunAllTests
+    testFederation {
+        smokeTests { includeAll() }
+    }
 }
 ```
 
 Other test filters still apply.
+
+You can also skip the task completely when only smoke or contract tests are requested:
+
+```kotlin
+tasks.withType<Test>().configureEach {
+    testFederation {
+        smokeTests { skip() }
+        contractTests { skip() }
+    }
+}
+```
+
+This may be useful if your task does not support partial execution
 
 ## Local testing
 
@@ -260,7 +292,7 @@ To run a test task in `Smoke` mode as if `Js` were changed:
   -Ptest.federation.changed.domains="Js"
 ```
 
-This runs `@MustRunAlways` tests, `@MustRunOnChangesInJs` tests, and any additional tests selected by `smokeTestConfig`.
+This runs `@MustRunAlways` tests, `@MustRunOnChangesInJs` tests, and tests selected by `testFederation { smokeTests { includeAutoSamples() } }`.
 Use `-Ptest.federation.mode=Full` to run all tests in the task. Other test filters still apply.
 
 `test.federation.changed.domains` accepts:
@@ -290,5 +322,5 @@ merging to master. Both teams must approve changes to these tests because the te
 ## Extra: Smoke tests
 
 A smoke test is a quick check of core functionality. `@MustRunAlways` can be used for smoke tests that should run for every change,
-but not every smoke test needs to run for unrelated changes. Selecting a percentage of fast, stable tests through `smokeTestConfig` is
+but not every smoke test needs to run for unrelated changes. Selecting a percentage of fast, stable tests through `testFederation { smokeTests { includeAutoSamples(...) } }` is
 another way to check core functionality for unrelated changes.

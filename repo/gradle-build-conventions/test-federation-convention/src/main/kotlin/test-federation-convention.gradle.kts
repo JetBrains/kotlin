@@ -2,20 +2,18 @@
 
 import com.gradle.develocity.agent.gradle.DevelocityConfiguration
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
+import org.jetbrains.kotlin.test.federation.buildFrame
 import org.jetbrains.kotlin.testFederation.*
-
-val extension = extensions.create<TestFederationExtension>("testFederation")
+import org.jetbrains.kotlin.testFederation.TestSubset.SmokeTests
 
 tasks.withType<Test>().configureEach {
+    val testFederationExtension = testFederationExtension
     val currentDomain = testFederationDomains
     val areNightlyTestsEnabled = project.areNightlyTestsEnabled
 
-    val smokeTestConfig = smokeTestConfig
+    val testSubsets = testFederationSubsets
+    val formattedSubsets = testSubsets.map { it.toArgumentString() }
 
-    val testFederationSubsets = testFederationSubsets
-    val formattedSubsets = testFederationSubsets.map { subsets -> subsets.toArgumentString() }
-
-    inputs.property(SMOKE_TEST_CONFIG_KEY, smokeTestConfig)
     inputs.property(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled)
     inputs.property(TEST_FEDERATION_SUBSETS_KEY, formattedSubsets)
 
@@ -23,62 +21,59 @@ tasks.withType<Test>().configureEach {
     val scan = project.extensions.getByType(DevelocityConfiguration::class).buildScan
 
     doFirst {
-        this as Test
-
-        scan.value("$projectPath:${this.name} domain", currentDomain.get().toString())
-        scan.value("$projectPath:${this.name} test subsets", formattedSubsets.get())
-
         val testFramework = testFramework
-        val smokeTestConfig = smokeTestConfig.get()
+        val isJUnitPlatform = testFramework is JUnitPlatformTestFramework
+        val testSubsets = testSubsets.get()
+        val smokeTests = testFederationExtension.smokeTests
+        val contractTests = testFederationExtension.contractTests
+        val notCompatibleWithTestFederation = smokeTests.skip.get() || contractTests.skip.get()
 
         logger.quiet("Current Domain: '${currentDomain.get()}'")
         logger.quiet("Requested Test Subsets: '${formattedSubsets.get()}'")
 
-        /*
-        Require JUnit 5 unless the task is configured to skip runs that select only a subset of tests.
-        */
-        if (testFramework !is JUnitPlatformTestFramework && smokeTestConfig !is SmokeTestConfig.Disabled) {
+        scan.value("$projectPath:${this.name} domain", currentDomain.get().toString())
+        scan.value("$projectPath:${this.name} test subsets", formattedSubsets.get())
+
+        if (!notCompatibleWithTestFederation && !isJUnitPlatform) {
             error(buildString {
                 appendLine("Unsupported 'testFramework' found for task '$path'")
                 appendLine("  testFramework: ${testFramework.javaClass.simpleName}; expected: '${JUnitPlatformTestFramework::class.simpleName}'")
                 appendLine("  solutions:")
                 appendLine("     - Use the 'project-tests-convention' testTask")
                 appendLine("     - Use JUnit 5 by calling 'useJUnitPlatform()'")
-                appendLine("     - Disable the task for smoke tests: 'smokeTestConfig = SmokeTestConfig.Disabled'")
+                appendLine("     - Configure name-pattern selection: 'testFederation { smokeTests { includeAutoSamples(...) } }'")
+                appendLine("     - Skip the task via: 'testFederation { smokeTests { skip() }; contractTests { skip() } }'")
             })
         }
 
-        /* Skip a task configured as Disabled when it is not selected for a full test run. */
-        if (smokeTestConfig is SmokeTestConfig.Disabled && TestSubset.AllTests !in testFederationSubsets.get()) {
-            throw StopExecutionException("The test task is disabled because a full test run was not selected")
+        val shouldSkipTask = when {
+            setOf(SmokeTests).containsAll(testSubsets) -> smokeTests.skip.get()
+            contractSubsets.containsAll(testSubsets) -> contractTests.skip.get()
+            (contractSubsets + SmokeTests).containsAll(testSubsets) -> smokeTests.skip.get() && contractTests.skip.get()
+            else -> false
+        }
+        if (shouldSkipTask) {
+            throw StopExecutionException(
+                "The test task is disabled because all requested subsets are configured with skip(): $testSubsets"
+            )
         }
 
-        /*
-        Run non-JUnit 5 tasks without further configuration when a full test run is selected.
-        These tasks must be configured as Disabled so they are skipped otherwise.
-        */
-        if (testFramework !is JUnitPlatformTestFramework && TestSubset.AllTests in testFederationSubsets.get()) {
+        if (!isJUnitPlatform) {
             return@doFirst
         }
 
-        /* At this point we know that only JUnitPlatformTestFrameworks survive */
-        testFramework as JUnitPlatformTestFramework
-
-        /*
-        Configure the test environment
-         */
         systemProperty(TEST_FEDERATION_SUBSETS_KEY, formattedSubsets.get())
         environment(TEST_FEDERATION_SUBSETS_ENV_KEY, formattedSubsets.get())
 
         systemProperty(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled.get())
         environment(TEST_FEDERATION_NIGHTLY_ENV_KEY, areNightlyTestsEnabled.get())
 
-        if (smokeTestConfig is SmokeTestConfig.Enabled) {
-            systemProperty(TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY, smokeTestConfig.autoSmokeTestPercentage)
-            environment(TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY, smokeTestConfig.autoSmokeTestPercentage)
+        smokeTests.autoSamplePercentage.orNull?.let { percentage ->
+            systemProperty(TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY, percentage)
+            environment(TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY, percentage)
         }
 
-        for (testSubset in testFederationSubsets.get()) {
+        for (testSubset in testSubsets) {
             println("##teamcity[addBuildTag '$testSubset']")
         }
 
@@ -105,9 +100,9 @@ afterEvaluate {
             else defaultFailOnNoDiscoveredTests
         }).disallowChanges()
 
-        val testFederationSubsets = testFederationSubsets
+        val subsets = testFederationSubsets
         doFirst {
-            if (TestSubset.AllTests !in testFederationSubsets.get()) {
+            if (TestSubset.AllTests !in subsets.get()) {
                 filter.isFailOnNoMatchingTests = false
             }
         }

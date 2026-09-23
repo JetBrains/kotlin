@@ -20,7 +20,11 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
 import org.junit.jupiter.params.provider.ValueSource
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.util.stream.Stream
 
 class PseudoParameterizedTest {
@@ -170,3 +174,31 @@ open class PseudoLifecycleTest {
 
 @Suppress("JUnitTestCaseWithNoTests")
 class PseudoInheritedTest : PseudoLifecycleTest()
+
+/**
+ * A smoke-tagged parameterized test whose variant set depends on [testFederationAllTestsRequested]:
+ * - `SmokeTests` requested: `testFederationAllTestsRequested = false` → minimal variant runs
+ * - `AllTests` requested: `testFederationAllTestsRequested = true` → all variants run
+ *
+ * This mirrors the real usage pattern in the codebase (e.g. `GradleArgumentsProvider`,
+ * `DefaultStrategyAgnosticCompilationTestArgumentProvider`) where expensive extra variants
+ * (additional Gradle versions, daemon execution policy) are skipped in focused subset runs.
+ */
+class PseudoExhaustiveAwareTest {
+    @MustRunAlways
+    @ParameterizedTest
+    @ArgumentsSource(ExhaustiveAwareArgumentsProvider::class)
+    fun parameterizedSmoke(variant: String) = println("Executed: $variant")
+}
+
+class ExhaustiveAwareArgumentsProvider : ArgumentsProvider {
+    private val allVariants = listOf("minimal", "extra 1", "extra 2")
+
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+        val variants =
+            if (testFederationAllTestsRequested) allVariants
+            else listOf(allVariants.first())
+
+        return variants.stream().map { Arguments.of(it) }
+    }
+}
