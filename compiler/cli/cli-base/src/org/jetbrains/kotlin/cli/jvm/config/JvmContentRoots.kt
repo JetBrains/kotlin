@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
@@ -53,14 +55,23 @@ data class JvmClasspathRoot(override val file: File, override val isSdkRoot: Boo
  * @property isSdkRoot Indicates whether the classpath root is an SDK root.
  * @property isFriend Indicates whether the classpath root should be considered as a "friend" dependency,
  * meaning it has access to internal declarations.
+ * @property isPrecompiledOutput Indicates whether this root is the output of the previous build, which
+ * incremental compilation reads as a separate classpath, see [precompiledOutputRoots]. Only a build system
+ * which registers its content roots itself can use it; a compilation driven by command line arguments states
+ * the same thing as its output directory.
  */
-data class VirtualJvmClasspathRoot(
+data class VirtualJvmClasspathRoot @JvmOverloads constructor(
     val file: VirtualFile,
     override val isSdkRoot: Boolean,
     val isFriend: Boolean = false,
-) : JvmClasspathRootBase {
-    constructor(file: VirtualFile) : this(file, false)
-}
+    val isPrecompiledOutput: Boolean = false,
+) : JvmClasspathRootBase
+
+fun CompilerConfiguration.precompiledOutputRoots(): List<JvmClasspathRootId> =
+    getList(CLIConfigurationKeys.CONTENT_ROOTS)
+        .filterIsInstance<VirtualJvmClasspathRoot>()
+        .filter { it.isPrecompiledOutput }
+        .map { it.file.asJvmClasspathRootId() }
 
 data class JavaSourceRoot(override val file: File, val packagePrefix: String?) : JvmContentRoot
 
