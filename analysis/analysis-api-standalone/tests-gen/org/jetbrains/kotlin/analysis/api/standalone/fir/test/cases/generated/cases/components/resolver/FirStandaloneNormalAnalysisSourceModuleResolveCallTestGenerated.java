@@ -237,6 +237,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("catchClauseParameter.kt")
+  public void testCatchClauseParameter() {
+    run("catchClauseParameter.kt");
+  }
+
+  @Test
   @TestMetadata("checkNotNullCall.kt")
   public void testCheckNotNullCall() {
     run("checkNotNullCall.kt");
@@ -258,6 +264,18 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   @TestMetadata("ClassInTypeConstraint.kt")
   public void testClassInTypeConstraint() {
     run("ClassInTypeConstraint.kt");
+  }
+
+  @Test
+  @TestMetadata("classNamedItInClassLiteralPositionInsideLambda.kt")
+  public void testClassNamedItInClassLiteralPositionInsideLambda() {
+    run("classNamedItInClassLiteralPositionInsideLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("classNamedItInTypePositionInsideLambda.kt")
+  public void testClassNamedItInTypePositionInsideLambda() {
+    run("classNamedItInTypePositionInsideLambda.kt");
   }
 
   @Test
@@ -525,6 +543,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("explicitItLocalShadowingImplicitLambdaParameter.kt")
+  public void testExplicitItLocalShadowingImplicitLambdaParameter() {
+    run("explicitItLocalShadowingImplicitLambdaParameter.kt");
+  }
+
+  @Test
   @TestMetadata("explicitLambdaParameter.kt")
   public void testExplicitLambdaParameter() {
     run("explicitLambdaParameter.kt");
@@ -735,6 +759,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("implicitLambdaParameterShadowingExplicitLocal.kt")
+  public void testImplicitLambdaParameterShadowingExplicitLocal() {
+    run("implicitLambdaParameterShadowingExplicitLocal.kt");
+  }
+
+  @Test
   @TestMetadata("importAlias.kt")
   public void testImportAlias() {
     run("importAlias.kt");
@@ -927,6 +957,24 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("localClassPrimaryConstructorParameterShadows.kt")
+  public void testLocalClassPrimaryConstructorParameterShadows() {
+    run("localClassPrimaryConstructorParameterShadows.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassTypeParameterShadows.kt")
+  public void testLocalClassTypeParameterShadows() {
+    run("localClassTypeParameterShadows.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassWithTypeParam.kt")
+  public void testLocalClassWithTypeParam() {
+    run("localClassWithTypeParam.kt");
+  }
+
+  @Test
   @TestMetadata("memberFunctionCallWithTypeArgument.kt")
   public void testMemberFunctionCallWithTypeArgument() {
     run("memberFunctionCallWithTypeArgument.kt");
@@ -1107,6 +1155,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("propertyTypeParameter.kt")
+  public void testPropertyTypeParameter() {
+    run("propertyTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("qualifiedCallSelector.kt")
   public void testQualifiedCallSelector() {
     run("qualifiedCallSelector.kt");
@@ -1242,6 +1296,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   @TestMetadata("samMethodReference.kt")
   public void testSamMethodReference() {
     run("samMethodReference.kt");
+  }
+
+  @Test
+  @TestMetadata("setterParameter.kt")
+  public void testSetterParameter() {
+    run("setterParameter.kt");
   }
 
   @Test
@@ -1494,6 +1554,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   @TestMetadata("TopLevelObjectVsLocalClassQualifier.kt")
   public void testTopLevelObjectVsLocalClassQualifier() {
     run("TopLevelObjectVsLocalClassQualifier.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParamInSuperCall.kt")
+  public void testTypeParamInSuperCall() {
+    run("typeParamInSuperCall.kt");
   }
 
   @Test
@@ -7327,6 +7393,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     @TestMetadata("KotlinPropertyWithGetterAndSetterAssignmentWithErrors.kt")
     public void testKotlinPropertyWithGetterAndSetterAssignmentWithErrors() {
       run("KotlinPropertyWithGetterAndSetterAssignmentWithErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("localClassWithCompanionObject.kt")
+    public void testLocalClassWithCompanionObject() {
+      run("localClassWithCompanionObject.kt");
     }
 
     @Test
