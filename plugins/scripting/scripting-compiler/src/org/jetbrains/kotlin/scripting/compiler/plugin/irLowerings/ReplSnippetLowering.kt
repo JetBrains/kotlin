@@ -36,8 +36,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import kotlin.script.experimental.jvm.REPL_SNIPPET_EVAL_FUN_NAME_STRING
 
-val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier("\$\$eval")
+val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier(REPL_SNIPPET_EVAL_FUN_NAME_STRING)
 val REPL_SNIPPET_RESULT_PROP_NAME = Name.identifier("\$\$result")
 
 internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : ModuleLoweringPass {

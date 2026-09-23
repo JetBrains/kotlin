@@ -17,12 +17,12 @@
 package kotlin.script.experimental.jvmhost.jsr223.base
 
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import java.io.Reader
 import java.io.Serializable
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.*
 import kotlin.reflect.KClass
+import kotlin.script.experimental.jvm.K2ReplEvaluator
 
 /**
  * Keep args and arg types together, so as a whole they are present or absent
