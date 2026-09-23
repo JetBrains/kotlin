@@ -54,6 +54,12 @@ class CustomKlibCompilerFirstStageTestSuppressor(
                     is BinaryArtifactHandler -> processNonFirstStageException(wrappedException, IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE)
                     else -> listOf(wrappedException)
                 }
+            } else if (wrappedException is WrappedException.FromGroupingFacade) {
+                // The grouping stage links the KLIBs produced by the first stage into an executable, so the test failed on the backend.
+                processNonFirstStageException(wrappedException, IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE)
+            } else if (wrappedException is WrappedException.FromGroupingHandler) {
+                // The grouping stage handlers run the linked executable, so the test failed at runtime.
+                processNonFirstStageException(wrappedException, IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE)
             } else {
                 listOf(wrappedException)
             }
