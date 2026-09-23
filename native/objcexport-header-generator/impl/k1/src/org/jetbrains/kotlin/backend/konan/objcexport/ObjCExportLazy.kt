@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
@@ -70,6 +69,7 @@ interface ObjCExportLazy {
 @OptIn(K1Deprecation::class)
 @InternalKotlinNativeApi
 class ObjCExportLazyImpl(
+    languageVersionSettings: LanguageVersionSettings,
     private val configuration: ObjCExportLazy.Configuration,
     problemCollector: ObjCExportProblemCollector,
     private val codeAnalyzer: KotlinCodeAnalyzer,
@@ -77,7 +77,6 @@ class ObjCExportLazyImpl(
     private val descriptorResolver: DescriptorResolver,
     private val fileScopeProvider: FileScopeProvider,
     builtIns: KotlinBuiltIns,
-    deprecationResolver: DeprecationResolver?,
 ) : ObjCExportLazy {
 
     private val namerConfiguration = createNamerConfiguration(configuration)
@@ -85,7 +84,7 @@ class ObjCExportLazyImpl(
     private val nameTranslator: ObjCExportNameTranslator = ObjCExportNameTranslatorImpl(namerConfiguration)
 
     private val mapper = ObjCExportMapper(
-        deprecationResolver,
+        languageVersionSettings,
         local = true,
         configuration.unitSuspendFunctionExport,
         configuration.entryPoints,
