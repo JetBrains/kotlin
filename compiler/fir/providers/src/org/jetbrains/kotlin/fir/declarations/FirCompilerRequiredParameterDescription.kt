@@ -15,22 +15,16 @@ class FirCompilerRequiredParameterDescription(
     val position: Int?,
 ) {
     init {
-        require((position == null) == kind.isVararg)
+        require((position != null) xor (kind is FirCraParameterKind.EnumParameter && kind.isVararg))
     }
 }
 
 sealed class FirCraParameterKind {
-    abstract val isVararg: Boolean
-
-    data class LiteralParameter(val constKind: ConstantValueKind) : FirCraParameterKind() {
-        // We could allow `vararg` literal parameters from the beginning, but
-        //  - There would be no way to test the code dealing with them (so far there are no such parameters)
-        //  - Checker for non-literal arguments passed to such parameters becomes more complicated:
-        //  `varargParam = arrayOf("a", "b")` must be allowed while `"a" + "b"` must be not
-        //  although both `arrayOf` and `+` are just function calls
-        override val isVararg: Boolean get() = false
-    }
-
-    data class GetClassParameter(override val isVararg: Boolean) : FirCraParameterKind()
-    data class EnumParameter(val enumClassId: ClassId, override val isVararg: Boolean) : FirCraParameterKind()
+    // We could allow `vararg` literal parameters from the beginning, but
+    //  - There would be no way to test the code dealing with them (so far there are no such parameters)
+    //  - Checker for non-literal arguments passed to such parameters becomes more complicated:
+    //  `varargParam = arrayOf("a", "b")` must be allowed while `"a" + "b"` must be not
+    //  although both `arrayOf` and `+` are just function calls
+    data class LiteralParameter(val constKind: ConstantValueKind) : FirCraParameterKind()
+    data class EnumParameter(val enumClassId: ClassId, val isVararg: Boolean) : FirCraParameterKind()
 }

@@ -165,6 +165,8 @@ object StandardClassIds {
     val AnnotationTarget = "AnnotationTarget".annotationId()
     val DeprecationLevel = "DeprecationLevel".baseId()
 
+    val NumericVariant = "NumericClass".baseId().createNestedClassId(Name.identifier("Variant"))
+
     val EnumEntries = "EnumEntries".enumsId()
 
     val AtomicBoolean = "AtomicBoolean".atomicsId()
