@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.builder.IrSimpleFunctionBuilder
 import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.builder.updateFrom
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -59,21 +61,14 @@ class MemoizedInlineClassReplacements(
         this is IrSimpleFunction && isFakeOverride && modality != Modality.ABSTRACT &&
                 context.cachedDeclarations.getClassFakeOverrideReplacement(this) == ClassFakeOverrideReplacement.None
 
+    @OptIn(DeprecatedCompilerApi::class)
     private fun commonBuildReplacementInner(
         function: IrFunction,
         noFakeOverride: Boolean,
         body: IrFunction.() -> Unit,
         builderBody: IrSimpleFunctionBuilder.() -> Unit,
     ): IrSimpleFunction = irFactory.buildSimpleFunction {
-        when (function) {
-            is IrSimpleFunction -> updateFrom(function)
-            is IrConstructor -> {
-                startOffset = function.startOffset
-                endOffset = function.endOffset
-                origin = function.origin
-                visibility = function.visibility
-            }
-        }
+        updateFrom(function)
         builderBody()
         if (noFakeOverride) {
             isFakeOverride = false

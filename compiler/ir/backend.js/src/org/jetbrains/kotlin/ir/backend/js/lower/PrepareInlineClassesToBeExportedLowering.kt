@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.builder.updateFrom
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -102,11 +104,12 @@ class PrepareInlineClassesToBeExportedLowering(private val context: JsIrBackendC
         return listOf(boxFunction, declaration)
     }
 
+    @OptIn(DeprecatedCompilerApi::class)
     private fun IrClass.generateBoxFunction(): IrSimpleFunction {
         val primaryConstructor = this.primaryConstructor ?: error("Inline class without primary constructor")
         val field = getInlineClassBackingField(this)
         return context.irFactory.buildSimpleFunction {
-            visibility = primaryConstructor.visibility
+            updateFrom(primaryConstructor)
             name = computeNameForBoxFunction()
             origin = EXPORTED_INLINE_CLASS_BOX_FUNCTION
             startOffset = UNDEFINED_OFFSET
