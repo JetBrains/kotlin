@@ -146,6 +146,7 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
 
         val newAccess = buildPropertyAccessExpression {
             annotations.addAll(originalExpression.annotations)
+            typeArguments.addAll(originalExpression.typeArguments)
             explicitReceiver = additionalQualifier
             source = originalExpression.source
             calleeReference = buildSimpleNamedReference {
