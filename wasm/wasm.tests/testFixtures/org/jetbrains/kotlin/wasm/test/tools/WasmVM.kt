@@ -32,6 +32,9 @@ internal sealed class WasmVM(
     /**
      * Runs [entryFile] and returns its output. A VM whose entry point is a JS file ignores [wasiEntryExport]; the
      * standalone WASI VMs run exactly one export per process, and that is the one they invoke.
+     *
+     * The output is retained up to [maxCapturedOutputLength] characters (see [BoundedOutputCapture]); a caller that
+     * parses the whole output as one structure passes [UNBOUNDED_CAPTURED_OUTPUT_LENGTH].
      */
     abstract fun run(
         entryFile: String,
@@ -41,6 +44,7 @@ internal sealed class WasmVM(
         useStackSwitching: Boolean = false,
         toolArgs: List<String> = emptyList(),
         wasiEntryExport: String = WASI_BOX_ENTRY_EXPORT,
+        maxCapturedOutputLength: Int = MAX_CAPTURED_PROCESS_OUTPUT_LENGTH,
     ): String
 
     object V8 : WasmVM(property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
@@ -52,6 +56,7 @@ internal sealed class WasmVM(
             useStackSwitching: Boolean,
             toolArgs: List<String>,
             wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -61,6 +66,7 @@ internal sealed class WasmVM(
                 *if (useStackSwitching) arrayOf("--experimental-wasm-wasmfx") else emptyArray(),
                 entryFile,
                 workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 
@@ -73,6 +79,7 @@ internal sealed class WasmVM(
             useStackSwitching: Boolean,
             toolArgs: List<String>,
             wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -80,6 +87,7 @@ internal sealed class WasmVM(
                 *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
                 "--module=$entryFile",
                 workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 
@@ -92,12 +100,14 @@ internal sealed class WasmVM(
             useStackSwitching: Boolean,
             toolArgs: List<String>,
             wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 *jsFiles.toTypedArray(),
                 "--module-file=$entryFile",
                 workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 
@@ -110,6 +120,7 @@ internal sealed class WasmVM(
             useStackSwitching: Boolean,
             toolArgs: List<String>,
             wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -118,6 +129,7 @@ internal sealed class WasmVM(
                 // runner: see `wasiStandaloneEntryExport` and `assertDriverOwnsStartTestExport`.
                 wasiEntryExport,
                 workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 
@@ -130,6 +142,7 @@ internal sealed class WasmVM(
             useStackSwitching: Boolean,
             toolArgs: List<String>,
             wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -139,6 +152,7 @@ internal sealed class WasmVM(
                 wasiEntryExport,
                 entryFile,
                 workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 
@@ -151,19 +165,25 @@ internal sealed class WasmVM(
             useStackSwitching: Boolean,
             toolArgs: List<String>,
             wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
                 *jsFiles.toTypedArray(),
                 entryFile,
-                workingDirectory = workingDirectory
+                workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 }
 
 internal class ExternalTool(val path: String) {
-    fun run(vararg arguments: String, workingDirectory: File? = null): String {
+    fun run(
+        vararg arguments: String,
+        workingDirectory: File? = null,
+        maxCapturedOutputLength: Int = MAX_CAPTURED_PROCESS_OUTPUT_LENGTH,
+    ): String {
         val command = arrayOf(path, *arguments)
         val processBuilder = ProcessBuilder(*command)
             .redirectErrorStream(true)
@@ -186,7 +206,7 @@ internal class ExternalTool(val path: String) {
         }
 
         // Drain process output without allowing an untrusted VM to grow the JVM heap without a bound.
-        val stdout = BoundedOutputCapture()
+        val stdout = BoundedOutputCapture(maxCapturedOutputLength)
         BufferedReader(InputStreamReader(process.inputStream)).use { bufferedStdout ->
             val buffer = CharArray(8 * 1024)
             while (true) {
@@ -206,20 +226,29 @@ internal class ExternalTool(val path: String) {
     }
 }
 
-private const val MAX_CAPTURED_PROCESS_OUTPUT_LENGTH = 4 * 1024 * 1024
-private const val CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH = MAX_CAPTURED_PROCESS_OUTPUT_LENGTH / 2
-private const val CAPTURED_PROCESS_OUTPUT_SUFFIX_LENGTH =
-    MAX_CAPTURED_PROCESS_OUTPUT_LENGTH - CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH
+/** How much of an untrusted VM's output a test run retains by default: enough context, but a bounded heap. */
+internal const val MAX_CAPTURED_PROCESS_OUTPUT_LENGTH = 4 * 1024 * 1024
 
-/** Keeps enough head and tail context for diagnostics while bounding output retained from an external VM. */
+/** Retains the whole output, for a caller that parses it as one structure and cannot use a truncated one. */
+internal const val UNBOUNDED_CAPTURED_OUTPUT_LENGTH = Int.MAX_VALUE
+
+/**
+ * Keeps enough head and tail context for diagnostics while bounding output retained from an external VM to
+ * [maxLength] characters: the first half of the budget is kept as the head, the last half as the tail, and a marker
+ * carrying the original length and a digest of the whole output stands in for the middle.
+ */
 internal class BoundedOutputCapture(
+    private val maxLength: Int = MAX_CAPTURED_PROCESS_OUTPUT_LENGTH,
     private val createDigest: () -> MessageDigest = { MessageDigest.getInstance("SHA-256") },
 ) {
+    private val prefixLength = maxLength / 2
     private var digest: MessageDigest? = null
     private var totalLength = 0L
     private var fullOutput = StringBuilder()
     private var prefix: String? = null
-    private var suffix = CharArray(CAPTURED_PROCESS_OUTPUT_SUFFIX_LENGTH)
+
+    // Allocated only once the limit is crossed, so an unbounded capture never reserves the tail buffer.
+    private val suffix: CharArray by lazy(LazyThreadSafetyMode.NONE) { CharArray(maxLength - prefixLength) }
     private var suffixStart = 0
     private var suffixSize = 0
     private var renderedOutput: String? = null
@@ -229,20 +258,20 @@ internal class BoundedOutputCapture(
 
         var offset = 0
         if (prefix == null) {
-            if (fullOutput.length + length <= MAX_CAPTURED_PROCESS_OUTPUT_LENGTH) {
+            if (fullOutput.length + length <= maxLength) {
                 fullOutput.appendRange(buffer, 0, length)
                 return
             }
 
             // A single chunk may cross the limit before the buffered output reaches the head length, so the head is
             // completed from the chunk itself; the remainder of the chunk then goes through the tail ring buffer.
-            offset = (CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH - fullOutput.length).coerceIn(0, length)
+            offset = (prefixLength - fullOutput.length).coerceIn(0, length)
             fullOutput.appendRange(buffer, 0, offset)
             digest = createDigest().apply {
                 update(fullOutput.toString().toByteArray(Charsets.UTF_8))
             }
-            prefix = fullOutput.substring(0, CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH)
-            appendToSuffix(fullOutput.substring(CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH))
+            prefix = fullOutput.substring(0, prefixLength)
+            appendToSuffix(fullOutput.substring(prefixLength))
             fullOutput = StringBuilder()
         }
         if (offset == length) return
