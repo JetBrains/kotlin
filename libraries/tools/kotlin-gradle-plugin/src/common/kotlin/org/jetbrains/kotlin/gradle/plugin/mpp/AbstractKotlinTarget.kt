@@ -13,11 +13,14 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
-import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.defaultKotlinUsageContextMaybeReplacedWithKar
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.isStoredInKotlinArchive
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.rootSourcesJarTask
 
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
@@ -158,19 +161,21 @@ abstract class AbstractKotlinTarget(
         val artifact = project.artifacts.add(sourcesElementsConfigurationName, sourcesJarTask) as ConfigurablePublishArtifact
         artifact.classifier = dashSeparatedName(classifierPrefix, "sources")
 
-        return DefaultKotlinUsageContext(
+        val rootSourcesJarTask = project.multiplatformExtensionOrNull?.rootSourcesJarTask()
+
+        return defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask(
+            replacementTaskProvider = if (this is KotlinTargetWithKotlinArchiveSupport) {
+                isStoredInKotlinArchive.map { rootSourcesJarTask }
+            } else {
+                null
+            },
+            movedToSoftwareComponent = project.multiplatformExtensionOrNull?.rootSoftwareComponent,
             compilation = producingCompilation,
+            mavenScope = mavenScope,
             dependencyConfigurationName = sourcesElementsConfigurationName,
             overrideConfigurationAttributes = overrideConfigurationAttributes,
-            mavenScope = mavenScope,
             includeIntoProjectStructureMetadata = false,
-            publishOnlyIf = {
-                if (this is KotlinTargetWithKotlinArchiveSupport) {
-                    isSourcesPublishable && !isStoredInKotlinArchive.get()
-                } else {
-                    isSourcesPublishable
-                }
-            }
+            publishOnlyIf = { isSourcesPublishable },
         )
     }
 

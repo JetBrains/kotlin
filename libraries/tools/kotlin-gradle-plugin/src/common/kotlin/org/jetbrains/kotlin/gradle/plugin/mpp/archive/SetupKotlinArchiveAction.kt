@@ -109,7 +109,7 @@ private fun KotlinTarget.requestKarPlatformArtifactsForCompilation() {
  * This code tries to handle the case, where you have both "library-platform" in old publication format
  * and "library" in kar format in your configuration. In that case we need to remove older variant.
  *
- * [defaultKotlinUsageContextMaybeReplacedWithKar] sets both current module and platform module
+ * [defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask] sets both current module and platform module
  * capabilities on Kotlin Archive platform variant, which creates capabilities conflict, resolved by this rule.
  *
  * Unfortunately, as old one didn't have any special capabilities we can't distinguish detect it from unrelated conflict.
