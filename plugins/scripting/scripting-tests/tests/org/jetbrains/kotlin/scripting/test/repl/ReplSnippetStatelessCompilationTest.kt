@@ -451,7 +451,6 @@ private class StatelessReplCompiler(
             add(K2JVMCompilerArguments::classpath.cliArgument)
             add(classpathEntries.joinToString(File.pathSeparator) { it.absolutePath })
             add(K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument)
-            add(@Suppress("DEPRECATION") K2JVMCompilerArguments::useFirLT.cliArgument("false"))
             add("-P")
             add("plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:repl-snippet-stateless-mode=true")
             snippetConfigurationFile?.let {
