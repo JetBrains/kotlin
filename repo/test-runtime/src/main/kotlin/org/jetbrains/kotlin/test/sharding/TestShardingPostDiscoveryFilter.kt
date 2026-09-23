@@ -15,11 +15,12 @@ import java.nio.ByteBuffer
 import java.security.MessageDigest
 import kotlin.jvm.optionals.getOrNull
 
+internal val currentShard = System.getProperty("tests.currentShard")?.toIntOrNull() ?: -1
+internal val totalShards = System.getProperty("tests.totalShards")?.toIntOrNull() ?: -1
+private val shardSeed = System.getProperty("tests.shardSeed")?.toIntOrNull() ?: 0
+
 class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
 
-    private val currentShard = System.getProperty("tests.currentShard")?.toIntOrNull() ?: -1
-    private val totalShards = System.getProperty("tests.totalShards")?.toIntOrNull() ?: -1
-    private val shardSeed = System.getProperty("tests.shardSeed")?.toIntOrNull() ?: 0
 
     /* Check inputs */
     init {
@@ -32,69 +33,18 @@ class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
         }
     }
 
-    // MessageDigest is mutable: reuse one instance per thread, without sharing its state between threads.
-    private val hashing: ThreadLocal<MessageDigest> = ThreadLocal.withInitial {
-        MessageDigest.getInstance("SHA-1")
-    }
-
     override fun apply(test: TestDescriptor): FilterResult {
         if (currentShard < 0 || totalShards < 0) return included("No shards configured")
         val isTestMethod = test.type == TestDescriptor.Type.TEST || test.mayRegisterTests()
         if (!isTestMethod) return included("Classes/Containers are always enabled")
-        val thisTestShard = calculateTestShard(test)
+        if (testsShardDynamicTag in test.tags) return included("Test is sharded dynamically")
 
+        val thisTestShard = calculateTestShard(distributionKey(test).encodeToByteArray())
         return if (thisTestShard == currentShard) {
             included("Current shard: '$currentShard'. Test shard: '$thisTestShard'")
         } else {
             excluded("Current shard: '$currentShard'. Test shard: '$thisTestShard'")
         }
-    }
-
-    /**
-     * Uses [rendezvous hashing](https://en.wikipedia.org/wiki/Rendezvous_hashing): give each shard a deterministic,
-     * random-looking score for this test's key, then choose the shard with the highest score.
-     *
-     * With the same seed and key, each shard keeps its score regardless of the total number of shards.
-     * Increasing totalShards only moves tests that a new shard wins. Decreasing it only moves tests whose shard was removed.
-     * This relies on keeping the remaining shard IDs unchanged.
-     *
-     * Scores spread keys across shards, but do not guarantee equal test counts or running times.
-     */
-    private fun calculateTestShard(test: TestDescriptor): Int {
-        var selectedShard = 1
-        var highestWeight = ULong.MIN_VALUE
-        val hash = hashing.get()
-
-        val distributionKey = distributionKey(test).encodeToByteArray()
-
-        for (shard in 1..totalShards) {
-            // Each score hashes only this (seed, shard, key), independently of previously visited shards.
-            hash.reset()
-
-            // Encode the seed in four bytes, the least significant byte first. Changing it reshuffles assignments.
-            hash.update(shardSeed.toByte())
-            hash.update(shardSeed.shr(8).toByte())
-            hash.update(shardSeed.shr(16).toByte())
-            hash.update(shardSeed.shr(24).toByte())
-
-            // Encode the shard ID in four bytes too, so the fields have fixed boundaries
-            hash.update(shard.toByte())
-            hash.update(shard.shr(8).toByte())
-            hash.update(shard.shr(16).toByte())
-            hash.update(shard.shr(24).toByte())
-
-            hash.update(distributionKey)
-            // Use the first eight digest bytes as an unsigned score
-            val weight = ByteBuffer.wrap(hash.digest()).getLong().toULong()
-
-            // On equal scores, keep the lower shard ID, since shards are visited in ascending order.
-            if (weight > highestWeight) {
-                selectedShard = shard
-                highestWeight = weight
-            }
-        }
-
-        return selectedShard
     }
 
 
@@ -142,4 +92,62 @@ class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
             else -> error("Unexpected Test Engine ID: ${uniqueId.engineId}")
         }
     }
+}
+
+internal fun isCurrentShard(distributionKey: ByteArray): Boolean {
+    if (currentShard == -1) return true
+    val thisTestShard = calculateTestShard(distributionKey)
+    return thisTestShard == currentShard
+}
+
+
+// MessageDigest is mutable: reuse one instance per thread, without sharing its state between threads.
+private val hashing: ThreadLocal<MessageDigest> = ThreadLocal.withInitial {
+    MessageDigest.getInstance("SHA-1")
+}
+
+
+/**
+ * Uses [rendezvous hashing](https://en.wikipedia.org/wiki/Rendezvous_hashing): give each shard a deterministic,
+ * random-looking score for this test's key, then choose the shard with the highest score.
+ *
+ * With the same seed and key, each shard keeps its score regardless of the total number of shards.
+ * Increasing totalShards only moves tests that a new shard wins. Decreasing it only moves tests whose shard was removed.
+ * This relies on keeping the remaining shard IDs unchanged.
+ *
+ * Scores spread keys across shards, but do not guarantee equal test counts or running times.
+ */
+private fun calculateTestShard(distributionKey: ByteArray): Int {
+    var selectedShard = 1
+    var highestWeight = ULong.MIN_VALUE
+    val hash = hashing.get()
+
+    for (shard in 1..totalShards) {
+        // Each score hashes only this (seed, shard, key), independently of previously visited shards.
+        hash.reset()
+
+        // Encode the seed in four bytes, the least significant byte first. Changing it reshuffles assignments.
+        hash.update(shardSeed.toByte())
+        hash.update(shardSeed.shr(8).toByte())
+        hash.update(shardSeed.shr(16).toByte())
+        hash.update(shardSeed.shr(24).toByte())
+
+        // Encode the shard ID in four bytes too, so the fields have fixed boundaries
+        hash.update(shard.toByte())
+        hash.update(shard.shr(8).toByte())
+        hash.update(shard.shr(16).toByte())
+        hash.update(shard.shr(24).toByte())
+
+        hash.update(distributionKey)
+        // Use the first eight digest bytes as an unsigned score
+        val weight = ByteBuffer.wrap(hash.digest()).getLong().toULong()
+
+        // On equal scores, keep the lower shard ID, since shards are visited in ascending order.
+        if (weight > highestWeight) {
+            selectedShard = shard
+            highestWeight = weight
+        }
+    }
+
+    return selectedShard
 }
