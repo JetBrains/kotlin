@@ -703,6 +703,7 @@ open class CommonizerIT : KGPBaseTest() {
                 buildScriptInjection {
                     project.applyMultiplatform {
                         macosArm64()
+                        iosArm64()
                     }
                 }
             }
@@ -710,6 +711,7 @@ open class CommonizerIT : KGPBaseTest() {
                 buildScriptInjection {
                     project.applyMultiplatform {
                         macosArm64()
+                        iosArm64()
                     }
                 }
             }

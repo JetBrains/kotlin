@@ -83,8 +83,8 @@ internal object MPPNativeTargets {
     }
 
     val unsupported = when {
-        HostManager.hostIsMingw -> setOf("macos64")
-        HostManager.hostIsLinux -> setOf("macos64")
+        HostManager.hostIsMingw -> setOf("macos64", "macosArm64")
+        HostManager.hostIsLinux -> setOf("macos64", "macosArm64")
         HostManager.hostIsMac -> emptySet()
         else -> error("Unknown host")
     }
