@@ -4895,6 +4895,7 @@ public final class kotlin/ranges/CharRange : kotlin/ranges/CharProgression, kotl
 	public fun <init> (CC)V
 	public fun contains (C)Z
 	public synthetic fun contains (Ljava/lang/Comparable;)Z
+	public fun equals (Ljava/lang/Object;)Z
 	public fun getEndExclusive ()Ljava/lang/Character;
 	public synthetic fun getEndExclusive ()Ljava/lang/Comparable;
 	public fun getEndInclusive ()Ljava/lang/Character;
@@ -4954,6 +4955,7 @@ public final class kotlin/ranges/IntRange : kotlin/ranges/IntProgression, kotlin
 	public fun <init> (II)V
 	public fun contains (I)Z
 	public synthetic fun contains (Ljava/lang/Comparable;)Z
+	public fun equals (Ljava/lang/Object;)Z
 	public synthetic fun getEndExclusive ()Ljava/lang/Comparable;
 	public fun getEndExclusive ()Ljava/lang/Integer;
 	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
@@ -4990,6 +4992,7 @@ public final class kotlin/ranges/LongRange : kotlin/ranges/LongProgression, kotl
 	public fun <init> (JJ)V
 	public fun contains (J)Z
 	public synthetic fun contains (Ljava/lang/Comparable;)Z
+	public fun equals (Ljava/lang/Object;)Z
 	public synthetic fun getEndExclusive ()Ljava/lang/Comparable;
 	public fun getEndExclusive ()Ljava/lang/Long;
 	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
@@ -5172,6 +5175,7 @@ public final class kotlin/ranges/UIntRange : kotlin/ranges/UIntProgression, kotl
 	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun contains (Ljava/lang/Comparable;)Z
 	public fun contains-WZ4Q5Ns (I)Z
+	public fun equals (Ljava/lang/Object;)Z
 	public synthetic fun getEndExclusive ()Ljava/lang/Comparable;
 	public fun getEndExclusive-pVg5ArA ()I
 	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
@@ -5207,6 +5211,7 @@ public final class kotlin/ranges/ULongRange : kotlin/ranges/ULongProgression, ko
 	public synthetic fun <init> (JJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun contains (Ljava/lang/Comparable;)Z
 	public fun contains-VKZWuLQ (J)Z
+	public fun equals (Ljava/lang/Object;)Z
 	public synthetic fun getEndExclusive ()Ljava/lang/Comparable;
 	public fun getEndExclusive-s-VKNKU ()J
 	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;

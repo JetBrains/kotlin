@@ -10,7 +10,10 @@
 package kotlin.ranges
 
 /**
- * A range of values of type `Char`.
+ * An iterable range of values of type `Char`.
+ * 
+ * The range `CharRange` is a special case of increasing [CharProgression] with the step equal to 1.
+ * When being iterated, the range `CharRange` produces all values from [start] to [endInclusive].
  */
 public class CharRange(start: Char, endInclusive: Char) : CharProgression(start, endInclusive, 1), ClosedRange<Char>, OpenEndRange<Char> {
     override val start: Char get() = first
@@ -32,6 +35,14 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
      * The range is empty if its start value is greater than the end value.
      */
     override fun isEmpty(): Boolean = first > last
+    
+    /**
+     * Checks if this range is equal to the specified [other] value.
+     *
+     * The [other] value is considered equal to `this` if [other] is [CharProgression] 
+     * and they are both [empty][isEmpty] or have the same first element, last element, and step.
+     */
+    override fun equals(other: Any?): Boolean = super.equals(other)
 
     override fun toString(): String = "$first..$last"
 
@@ -42,7 +53,10 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
 }
 
 /**
- * A range of values of type `Int`.
+ * An iterable range of values of type `Int`.
+ * 
+ * The range `IntRange` is a special case of increasing [IntProgression] with the step equal to 1.
+ * When being iterated, the range `IntRange` produces all values from [start] to [endInclusive].
  */
 public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, endInclusive, 1), ClosedRange<Int>, OpenEndRange<Int> {
     override val start: Int get() = first
@@ -64,6 +78,14 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
      * The range is empty if its start value is greater than the end value.
      */
     override fun isEmpty(): Boolean = first > last
+    
+    /**
+     * Checks if this range is equal to the specified [other] value.
+     *
+     * The [other] value is considered equal to `this` if [other] is [IntProgression] 
+     * and they are both [empty][isEmpty] or have the same first element, last element, and step.
+     */
+    override fun equals(other: Any?): Boolean = super.equals(other)
 
     override fun toString(): String = "$first..$last"
 
@@ -74,7 +96,10 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
 }
 
 /**
- * A range of values of type `Long`.
+ * An iterable range of values of type `Long`.
+ * 
+ * The range `LongRange` is a special case of increasing [LongProgression] with the step equal to 1.
+ * When being iterated, the range `LongRange` produces all values from [start] to [endInclusive].
  */
 public class LongRange(start: Long, endInclusive: Long) : LongProgression(start, endInclusive, 1), ClosedRange<Long>, OpenEndRange<Long> {
     override val start: Long get() = first
@@ -96,6 +121,14 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
      * The range is empty if its start value is greater than the end value.
      */
     override fun isEmpty(): Boolean = first > last
+    
+    /**
+     * Checks if this range is equal to the specified [other] value.
+     *
+     * The [other] value is considered equal to `this` if [other] is [LongProgression] 
+     * and they are both [empty][isEmpty] or have the same first element, last element, and step.
+     */
+    override fun equals(other: Any?): Boolean = super.equals(other)
 
     override fun toString(): String = "$first..$last"
 
