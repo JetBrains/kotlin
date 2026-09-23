@@ -98,19 +98,17 @@ public:
     }
 
     void write(std_support::span<uint8_t> data) override {
-        auto* bytes = data.data();
-        size_t size = data.size();
         // gzwrite takes `unsigned`; split large spans so we never truncate the length.
-        while (size > 0) {
-            unsigned chunk = static_cast<unsigned>(std::min(size, static_cast<size_t>(std::numeric_limits<int>::max())));
-            int n = gzwrite(gz_, bytes, chunk);
+        while (!data.empty()) {
+            unsigned chunk = static_cast<unsigned>(
+                    std::min(data.size(), static_cast<size_t>(std::numeric_limits<int>::max())));
+            int n = gzwrite(gz_, data.data(), chunk);
             if (n <= 0) {
                 int err = Z_ERRNO;
                 gzerror(gz_, &err);
                 throw std::system_error(err == Z_ERRNO ? errno : EIO, std::generic_category());
             }
-            bytes += n;
-            size -= static_cast<size_t>(n);
+            data = data.subspan(static_cast<size_t>(n));
         }
     }
 

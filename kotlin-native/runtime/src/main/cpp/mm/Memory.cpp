@@ -230,9 +230,8 @@ extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
     mm::GlobalData::Instance().gcScheduler().schedule();
 }
 
-namespace {
-
-bool dumpMemoryFromRuntime(int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
+extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryWithOptions(
+        ObjHeader*, int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
@@ -245,13 +244,6 @@ bool dumpMemoryFromRuntime(int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
     bool success = mm::DumpMemory(fd, omitPrimitiveArrayPayloads, gzip);
     mm::ResumeThreads();
     return success;
-}
-
-} // namespace
-
-extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryWithOptions(
-        ObjHeader*, int fd, bool omitPrimitiveArrayPayloads, bool gzip) {
-    return dumpMemoryFromRuntime(fd, omitPrimitiveArrayPayloads, gzip);
 }
 
 extern "C" void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, KBoolean value) {
