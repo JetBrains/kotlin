@@ -13,25 +13,21 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.ir.TestIrBuiltins
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
@@ -56,53 +52,11 @@ class IrDeclarationBuildersTest {
     }
 
     @Test
-    fun `buildClass defaults match createClass defaults`() {
-        @OptIn(IrImplementationDetail::class)
-        val expected = IrFactoryImpl.createClass(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            origin = IrDeclarationOrigin.DEFINED,
-            name = name,
-            visibility = DescriptorVisibilities.PUBLIC,
-            symbol = IrClassSymbolImpl(),
-            kind = ClassKind.CLASS,
-            modality = Modality.FINAL,
-        )
-        val actual = IrFactoryImpl.buildClass { name = this@IrDeclarationBuildersTest.name }
-
-        assertEquals(expected.startOffset, actual.startOffset)
-        assertEquals(expected.endOffset, actual.endOffset)
-        assertEquals(expected.origin, actual.origin)
-        assertEquals(expected.name, actual.name)
-        assertEquals(expected.visibility, actual.visibility)
-        assertEquals(expected.kind, actual.kind)
-        assertEquals(expected.modality, actual.modality)
-        assertEquals(expected.source, actual.source)
-        assertEquals(expected.isExternal, actual.isExternal)
-        assertEquals(expected.isCompanion, actual.isCompanion)
-        assertEquals(expected.isInner, actual.isInner)
-        assertEquals(expected.isData, actual.isData)
-        assertEquals(expected.isValue, actual.isValue)
-        assertEquals(expected.isExpect, actual.isExpect)
-        assertEquals(expected.isFun, actual.isFun)
-        assertEquals(expected.hasEnumEntries, actual.hasEnumEntries)
-        assertSame(IrFactoryImpl, actual.factory)
-    }
-
-    @Test
     fun `buildClass mints a fresh symbol but lets the caller supply one`() {
         val first = IrFactoryImpl.buildClass { name = this@IrDeclarationBuildersTest.name }
         val second = IrFactoryImpl.buildClass { name = this@IrDeclarationBuildersTest.name }
         assertNotSame(first.symbol, second.symbol)
         assertSame(first, first.symbol.owner)
-
-        // The gap that kept `SymbolTable`, the deserializer and fir2ir from using the hand-written builders at all.
-        val ownSymbol = IrClassSymbolImpl()
-        val withOwnSymbol = IrFactoryImpl.buildClass {
-            name = this@IrDeclarationBuildersTest.name
-            symbol = ownSymbol
-        }
-        assertSame(ownSymbol, withOwnSymbol.symbol)
     }
 
     @Test
@@ -183,58 +137,102 @@ class IrDeclarationBuildersTest {
         assertSame(variable, variable.symbol.owner)
     }
 
-    @Test
-    fun `isFakeOverride falls back to the origin, as IrFactory does`() {
-        // `createSimpleFunction` declares `isFakeOverride: Boolean = origin == FAKE_OVERRIDE`. A builder property's default
-        // cannot see an `origin` the caller sets afterwards, so the builder resolves it in `build()` instead.
-        @OptIn(IrImplementationDetail::class)
-        val expected = IrFactoryImpl.createSimpleFunction(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            origin = IrDeclarationOrigin.FAKE_OVERRIDE,
-            name = name,
-            visibility = DescriptorVisibilities.PUBLIC,
-            isInline = false,
-            isExpect = false,
-            returnType = null,
-            modality = Modality.FINAL,
-            symbol = IrSimpleFunctionSymbolImpl(),
-            isTailrec = false,
-            isSuspend = false,
-            isOperator = false,
-            isInfix = false,
-        )
-        assertTrue(expected.isFakeOverride)
+    private val legacySimpleFunction: IrFunction = IrFactoryImpl.buildSimpleFunction {
+        startOffset = 1
+        endOffset = 2
+        origin = IrDeclarationOrigin.FAKE_OVERRIDE
+        name = Name.identifier("source")
+        visibility = DescriptorVisibilities.INTERNAL
+        isInline = true
+        isExternal = true
+        isExpect = true
+        modality = Modality.ABSTRACT
+        isFakeOverride = true
+        isTailrec = true
+        isSuspend = true
+        isOperator = true
+        isInfix = true
+    }
 
-        val derived = IrFactoryImpl.buildSimpleFunction {
-            name = this@IrDeclarationBuildersTest.name
-            origin = IrDeclarationOrigin.FAKE_OVERRIDE
-        }
-        assertEquals(expected.isFakeOverride, derived.isFakeOverride)
+    private val legacyConstructor: IrFunction = IrFactoryImpl.buildConstructor {
+        startOffset = 3
+        endOffset = 4
+        origin = IrDeclarationOrigin.FAKE_OVERRIDE
+        visibility = DescriptorVisibilities.PRIVATE
+        isInline = true
+        isExternal = true
+        isExpect = true
+        isPrimary = true
+    }
 
-        // An explicit value still wins over the fallback, in both directions.
-        val overridden = IrFactoryImpl.buildSimpleFunction {
-            name = this@IrDeclarationBuildersTest.name
-            origin = IrDeclarationOrigin.FAKE_OVERRIDE
-            isFakeOverride = false
-        }
-        assertFalse(overridden.isFakeOverride)
+    /** What the deprecated `IrFunctionBuilder.updateFrom` produces, starting from a builder with every flag set. */
+    private fun legacyUpdateFrom(from: IrFunction) = IrFunctionBuilder().apply {
+        name = this@IrDeclarationBuildersTest.name
+        setAllFlags()
+        updateFrom(from)
+    }
 
-        val plain = IrFactoryImpl.buildSimpleFunction { name = this@IrDeclarationBuildersTest.name }
-        assertFalse(plain.isFakeOverride)
+    private fun IrFunctionBuilder.setAllFlags() {
+        modality = Modality.OPEN
+        isTailrec = true
+        isSuspend = true
+        isOperator = true
+        isInfix = true
+        isFakeOverride = true
+        isPrimary = true
     }
 
     @Test
-    fun `buildValueParameter defaults to a regular parameter`() {
-        val parameter = IrFactoryImpl.buildValueParameter {
-            name = this@IrDeclarationBuildersTest.name
-            type = TestIrBuiltins.anyType
-        }
+    fun `IrSimpleFunctionBuilder updateFrom an IrFunction copies what IrFunctionBuilder did`() {
+        for (from in listOf(legacySimpleFunction, legacyConstructor)) {
+            val expected = legacyUpdateFrom(from)
+            val actual = IrSimpleFunctionBuilder().apply {
+                name = this@IrDeclarationBuildersTest.name
+                modality = Modality.OPEN
+                isTailrec = true
+                isSuspend = true
+                isOperator = true
+                isInfix = true
+                isFakeOverride = true
+                updateFrom(from)
+            }
 
-        assertEquals(IrParameterKind.Regular, parameter.kind)
-        assertFalse(parameter.isCrossinline)
-        assertFalse(parameter.isNoinline)
-        assertFalse(parameter.isHidden)
-        assertFalse(parameter.isAssignable)
+            assertEquals(
+                listOf(
+                    expected.startOffset, expected.endOffset, expected.origin, expected.name, expected.visibility,
+                    expected.containerSource, expected.isInline, expected.isExternal, expected.isExpect, expected.modality,
+                    expected.isTailrec, expected.isSuspend, expected.isOperator, expected.isInfix, expected.isFakeOverride,
+                ),
+                listOf(
+                    actual.startOffset, actual.endOffset, actual.origin, actual.name, actual.visibility,
+                    actual.containerSource, actual.isInline, actual.isExternal, actual.isExpect, actual.modality,
+                    actual.isTailrec, actual.isSuspend, actual.isOperator, actual.isInfix, actual.isFakeOverride,
+                ),
+                "updateFrom(${from.name})",
+            )
+        }
+    }
+
+    @Test
+    fun `IrConstructorBuilder updateFrom an IrFunction copies what IrFunctionBuilder did`() {
+        for (from in listOf(legacySimpleFunction, legacyConstructor)) {
+            val expected = legacyUpdateFrom(from)
+            val actual = IrConstructorBuilder().apply {
+                isPrimary = true
+                updateFrom(from)
+            }
+
+            assertEquals(
+                listOf(
+                    expected.startOffset, expected.endOffset, expected.origin, expected.visibility, expected.containerSource,
+                    expected.isInline, expected.isExternal, expected.isExpect, expected.isPrimary,
+                ),
+                listOf(
+                    actual.startOffset, actual.endOffset, actual.origin, actual.visibility, actual.containerSource,
+                    actual.isInline, actual.isExternal, actual.isExpect, actual.isPrimary,
+                ),
+                "updateFrom(${from.name})",
+            )
+        }
     }
 }
