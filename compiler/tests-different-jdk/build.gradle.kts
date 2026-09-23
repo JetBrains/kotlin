@@ -1,6 +1,4 @@
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -63,9 +61,11 @@ projectTests {
             val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
             filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
 
-            /* No smoke tests are defined here, yet, and the 'CustomJvmTargetOnJvmBaseTest' is defined to fail if no tests are executed */
-            @OptIn(TemporaryTestFederationApi::class)
-            smokeTestConfig = SmokeTestConfig.Disabled
+            testFederation {
+                // No smoke tests are defined here, yet, and 'CustomJvmTargetOnJvmBaseTest' is defined to fail if no tests are executed
+                smokeTests { skip() }
+                contractTests { skip() }
+            }
 
             systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
             if (jdk.majorVersion >= 17 && kotlinBuildProperties.isTeamcityBuild.get()) {

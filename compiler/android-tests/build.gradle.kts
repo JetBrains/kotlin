@@ -1,8 +1,6 @@
 import org.gradle.jvm.toolchain.JavaLauncher
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -92,8 +90,11 @@ projectTests {
             provideToThisTaskAsSystemProperty(ProvisioningType.SDK_WITH_EMULATOR)
         }
 
-        @OptIn(TemporaryTestFederationApi::class)
-        smokeTestConfig = SmokeTestConfig.Disabled
+        testFederation {
+            // KTI-3196
+            smokeTests { skip() }
+            contractTests { skip() }
+        }
 
 
         testData(project(":compiler").isolated, "testData/codegen/box")

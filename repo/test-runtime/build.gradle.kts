@@ -1,15 +1,11 @@
-@file:OptIn(TemporaryTestFederationApi::class)
-
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.testFederation.DelicateTestFederationApi
 import org.jetbrains.kotlin.testFederation.Domain
 import org.jetbrains.kotlin.testFederation.GenerateTestFederationRuntimeCodeTask
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.fromArgumentStringOrThrow
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 import org.jetbrains.kotlin.testFederation.testFederationDomains
 
 plugins {
@@ -46,11 +42,15 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 
     /* Used by the TestFederationFunctionalTest and 'PseudoTest' for testing the test federations behavior */
-    providers.environmentVariable("_PSEUDO_TEST_").orNull?.let { value ->
-        smokeTestConfig = when (value) {
-            "RunAllTests" -> SmokeTestConfig.RunAllTests
-            "Disabled" -> SmokeTestConfig.Disabled
-            else -> error("Unknown _PSEUDO_TEST_ configuration")
+    testFederation {
+        providers.environmentVariable("_SMOKE_TESTS_INCLUDE_ALL_").orNull?.let {
+            smokeTests { includeAll() }
+        }
+        providers.environmentVariable("_SKIP_SMOKES_").orNull?.let {
+            smokeTests { skip() }
+        }
+        providers.environmentVariable("_SKIP_CONTRACTS_").orNull?.let {
+            contractTests { skip() }
         }
     }
 

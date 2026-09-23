@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import plugins.publishing.configureMultiModuleMavenPublishing
@@ -588,8 +587,13 @@ publishing {
 }
 
 tasks.withType<Test>().configureEach {
-    smokeTestConfig = if (testFramework is JUnitPlatformTestFramework) SmokeTestConfig.Default
-    else SmokeTestConfig.Disabled
+    if (testFramework !is JUnitPlatformTestFramework) {
+        testFederation {
+            // Not JUnit Platform, so Test Federation cannot select a subset of it
+            smokeTests { skip() }
+            contractTests { skip() }
+        }
+    }
 }
 
 tasks.withType<GenerateModuleMetadata> {
