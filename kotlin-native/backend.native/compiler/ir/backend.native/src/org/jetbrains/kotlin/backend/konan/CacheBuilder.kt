@@ -49,7 +49,8 @@ class CacheBuilder(
     private val configuration = config.configuration
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!.map { Path(Path(it).canonicalPathString()) }
     private val icEnabled = configuration[CommonConfigurationKeys.INCREMENTAL_COMPILATION]!!
-    private val includedLibraries = configuration.konanIncludedLibraries.toSet()
+    private val includedLibraries = configuration.konanIncludedLibraries
+            .map { Path(it).canonicalPathString() }.toSet()
     private val generateTestRunner = configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER)
 
     fun needToBuild() = config.ignoreCacheReason == null
