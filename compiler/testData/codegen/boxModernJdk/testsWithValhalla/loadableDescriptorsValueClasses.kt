@@ -1,4 +1,4 @@
-// VALHALLA_SUPPORT: PRIMITIVES_AND_FULL_VALUE_CLASSES
+// VALHALLA_VALUE_CLASSES
 // LANGUAGE: +FullValueClasses
 // CHECK_BYTECODE_TEXT
 
@@ -19,4 +19,4 @@ fun box(): String {
 }
 
 // 1 ATTRIBUTE LoadableDescriptors
-// 1 ATTRIBUTE LoadableDescriptors : LFullVal;, Ljava/lang/Integer;\n
+// 1 ATTRIBUTE LoadableDescriptors : LFullVal;, LInlineVal;, Ljava/lang/Integer;\n
