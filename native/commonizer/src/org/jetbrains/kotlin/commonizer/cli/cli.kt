@@ -7,7 +7,9 @@
 
 package org.jetbrains.kotlin.commonizer.cli
 
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseDiagnostic
+import org.jetbrains.kotlin.cli.common.arguments.getFatalDiagnosticsMessage
+import org.jetbrains.kotlin.cli.common.arguments.hasFatalError
 import org.jetbrains.kotlin.cli.common.arguments.preprocessCommandLineArguments
 import org.jetbrains.kotlin.commonizer.cli.Task.Category
 import kotlin.system.exitProcess
@@ -36,12 +38,10 @@ internal fun parseTasksFromCommandLineArguments(args: Array<String>): MutableLis
  * Returns an original [args] with @argfile-arguments inlined.
  */
 private fun preprocessCommandLineArguments(args: Array<String>): List<String> {
-    val errors = lazy { ArgumentParseErrors() }
-    val argumentsWithArgfilesExpanded = preprocessCommandLineArguments(args.asList(), errors)
-    // We're using kotlinc infra for argfiles parsing, so general API of ArgumentParseErrors is a bit wider than what we need
-    // In fact, 'errors' will contain only 'argfileErrors'
-    if (errors.value.argfileErrors.isNotEmpty()) {
-        printUsageAndExit("Errors while using @argfiles\n" + errors.value.argfileErrors.joinToString("\n"))
+    val diagnostics = mutableListOf<ArgumentParseDiagnostic>()
+    val argumentsWithArgfilesExpanded = preprocessCommandLineArguments(args.asList(), diagnostics)
+    if (diagnostics.hasFatalError) {
+        printUsageAndExit("Errors during arguments parsing: ${diagnostics.getFatalDiagnosticsMessage()}")
     }
     return argumentsWithArgfilesExpanded
 }
@@ -50,7 +50,7 @@ private fun preprocessCommandLineArguments(args: Array<String>): List<String> {
 // - first, execute all informational tasks
 // - then, all commonization tasks
 private fun executeTasks(tasks: MutableList<Task>) {
-    Category.values().forEach { category ->
+    Category.entries.forEach { category ->
         val sortedTasks = tasks.filter { it.category == category }.sorted()
         if (sortedTasks.isNotEmpty()) {
             category.prologue?.let(::println)
@@ -138,7 +138,7 @@ private fun printUsageAndExit(errorMessage: String? = null): Nothing {
     println("Usage: ${::printUsageAndExit.javaClass.`package`.name}.CommonizerCLI <task> <options> [<task> <options>...]")
     println()
     println("Tasks:")
-    for (taskType in TaskType.values()) {
+    for (taskType in TaskType.entries) {
         println(formatBoth(1, taskType.alias, taskType.description))
         println(formatLeft(1, if (taskType.optionTypes.isNotEmpty()) "Options:" else "No options."))
         for (optionType in taskType.optionTypes) {

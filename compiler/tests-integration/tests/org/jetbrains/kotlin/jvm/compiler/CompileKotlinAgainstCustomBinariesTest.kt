@@ -912,7 +912,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     @Test
     fun testAnonymousObjectTypeMetadataKlibWithOldCLIKey() {
         doTestAnonymousObjectTypeMetadata(listOf("-Xexpect-actual-linker")) { output ->
-            output.lines().filterNot { "argument -Xexpect-actual-linker is deprecated" in it }.joinToString("\n")
+            output.lines().filterNot { "argument '-Xexpect-actual-linker' is deprecated" in it }.joinToString("\n")
         }
     }
 

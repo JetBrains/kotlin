@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.appendFatalErrors
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -154,7 +154,7 @@ internal class MetadataArgumentsImpl(
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2MetadataCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, K2MetadataCompilerArguments())
-    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    _argumentValidationErrors.appendFatalErrors(compilerArgs)
     argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
     applyCompilerArguments(compilerArgs)
   }
@@ -165,7 +165,7 @@ internal class MetadataArgumentsImpl(
     parseCommandLineArguments(arguments, compilerArgs, false)
     handleCustomPluginArguments(this, compilerArgs)
     collectRestrictedArgViolations(compilerArgs, K2MetadataCompilerArguments())
-    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    _argumentValidationErrors.appendFatalErrors(compilerArgs)
     argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
     applyCompilerArguments(compilerArgs)
   }

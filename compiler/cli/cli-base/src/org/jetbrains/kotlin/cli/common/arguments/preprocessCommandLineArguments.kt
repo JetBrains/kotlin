@@ -22,10 +22,10 @@ private const val BACKSLASH = '\\'
  * This is done prior to *any* arguments parsing, and result of preprocessing
  * will be used instead of actual passed arguments.
  */
-fun preprocessCommandLineArguments(args: List<String>, errors: Lazy<ArgumentParseErrors>): List<String> =
+fun preprocessCommandLineArguments(args: List<String>, diagnostics: MutableList<ArgumentParseDiagnostic>): List<String> =
     args.flatMap { arg ->
         if (arg.isArgfileArgument) {
-            File(arg.argfilePath).expand(errors.value)
+            File(arg.argfilePath).expand(diagnostics)
         } else {
             listOf(arg)
         }
@@ -37,17 +37,17 @@ fun readArgumentsFromArgFile(content: String): List<String> {
     return generateSequence { reader.parseNextArgument() }.toList()
 }
 
-private fun File.expand(errors: ArgumentParseErrors): List<String> {
+private fun File.expand(diagnostics: MutableList<ArgumentParseDiagnostic>): List<String> {
     return try {
         bufferedReader(Charsets.UTF_8).use {
             generateSequence { it.parseNextArgument() }.toList()
         }
-    } catch (e: FileNotFoundException) {
+    } catch (_: FileNotFoundException) {
         // Process FNFE separately to render absolutePath in error message
-        errors.argfileErrors += "Argfile not found: $absolutePath"
+        diagnostics += ArgumentParseDiagnostic.ArgfileError("Argfile not found: '$absolutePath'.")
         emptyList()
     } catch (e: IOException) {
-        errors.argfileErrors += "Error while reading argfile: $e"
+        diagnostics += ArgumentParseDiagnostic.ArgfileError("Cannot read argfile '$absolutePath': $e")
         emptyList()
     }
 }

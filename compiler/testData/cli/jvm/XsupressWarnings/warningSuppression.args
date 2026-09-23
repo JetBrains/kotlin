@@ -5,3 +5,6 @@ $TEMP_DIR$
 -Xwarning-level=UNCHECKED_CAST\:disabled
 -Xwarning-level=REDUNDANT_PROJECTION\:disabled
 -Xwarning-level=REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION\:disabled
+
+-Xprogressive
+-Xwarning-level=CLI_ARGUMENT_WITH_DEPRECATED_NAME\:disabled
