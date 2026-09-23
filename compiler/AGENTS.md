@@ -32,6 +32,10 @@ Backend implementations:
 
 For type inference implementation details, read [inference.md](../docs/fir/inference.md).
 
+## Diagnostic Messages
+
+When adding or changing diagnostic messages, follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_guide.md).
+
 ## Commit Guidelines
 
 - **FIR prefix**: When changes are mostly related to FIR (`compiler/fir/`), use `FIR: ` prefix in the commit subject line.
