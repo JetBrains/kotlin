@@ -659,7 +659,7 @@ class FirCallCompletionResultsWriterTransformer(
     ): FirFunctionTypeConversionExpression {
         return buildFunctionTypeConversionExpression {
             expression = this@wrapInFunctionTypeConversionExpression
-            coneTypeOrNull = expectedArgumentType.withNullabilityOf(resolvedType, session.typeContext)
+            coneTypeOrNull = expectedArgumentType.withNullabilityOfCanBeNull(resolvedType, session.typeContext)
                 .let {
                     typeApproximator.approximateToSuperType(
                         it,

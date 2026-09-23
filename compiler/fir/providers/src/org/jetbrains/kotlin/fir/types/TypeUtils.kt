@@ -236,6 +236,7 @@ fun <T : ConeKotlinType> T.withAbbreviation(attribute: AbbreviatedTypeAttribute)
     return withAttributes(clearedAttributes.add(attribute))
 }
 
+// TODO(KT-89614) check usages and consider migrating to withNullabilityOfCanBeNull
 fun <T : ConeKotlinType> T.withNullabilityOf(
     otherType: ConeKotlinType,
     typeContext: ConeTypeContext
@@ -243,6 +244,21 @@ fun <T : ConeKotlinType> T.withNullabilityOf(
     if (hasFlexibleMarkedNullability && otherType.hasFlexibleMarkedNullability) return this
 
     return withNullability(otherType.isMarkedNullable, typeContext)
+}
+
+/**
+ * Version of [withNullabilityOf] that uses [canBeNull] instead of [isMarkedNullable].
+ *
+ * If [otherType] is a [ConeTypeParameterType] with nullable bounds, a [ConeCapturedType] with nullable supertypes, etc,
+ * this function would make [this] nullable, whereas [withNullability] would not.
+ */
+fun <T : ConeKotlinType> T.withNullabilityOfCanBeNull(
+    otherType: ConeKotlinType,
+    typeContext: ConeTypeContext
+): T {
+    if (hasFlexibleMarkedNullability && otherType.hasFlexibleMarkedNullability) return this
+
+    return withNullability(otherType.canBeNull(typeContext.session), typeContext)
 }
 
 fun <T : ConeKotlinType> T.withNullability(
