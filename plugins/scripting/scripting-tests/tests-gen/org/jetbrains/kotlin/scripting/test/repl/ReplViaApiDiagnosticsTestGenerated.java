@@ -64,6 +64,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("long_history_shadowing.repl.kts")
+  public void testLong_history_shadowing_repl() {
+    run("long_history_shadowing.repl.kts");
+  }
+
+  @Test
   @TestMetadata("mixed1.repl.kts")
   public void testMixed1_repl() {
     run("mixed1.repl.kts");
