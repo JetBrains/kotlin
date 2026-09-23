@@ -39,7 +39,6 @@ internal class ObjCExportedInterface(
 internal fun produceObjCExportInterface(
     context: NativeBackendPhaseContext,
     moduleDescriptor: ModuleDescriptor,
-    frontendServices: FrontendServices,
 ): ObjCExportedInterface {
     val config = context.config
     require(config.target.family.isAppleFamily)

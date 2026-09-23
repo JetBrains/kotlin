@@ -10,17 +10,12 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
-import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningAllFunctionsKlibSecondStagePhase
-import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningPrivateFunctionsKlibPhase
-import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringsSecondStagePhase
-import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringsKlibSecondStagePhase
-import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.backend.common.phaser.createFilePhases
-import org.jetbrains.kotlin.backend.common.phaser.createModulePhases
+import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
+import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
@@ -46,11 +41,7 @@ import org.jetbrains.kotlin.konan.config.verifyBitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.isNativeStdlib
-import org.jetbrains.kotlin.util.PerformanceManager
-import org.jetbrains.kotlin.util.PerformanceManagerImpl
-import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.tryMeasureDynamicPhaseTime
-import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import org.jetbrains.kotlin.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -62,24 +53,23 @@ import kotlin.io.path.writeLines
 
 private fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc").toFile()
 
-internal fun PhaseEngine<NativeBackendPhaseContext>.runFrontend(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
+internal fun PhaseEngine<NativeBackendPhaseContext>.runK1Frontend(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment): K1FrontendPhaseOutput? {
     val languageVersion = config.languageVersionSettings.languageVersion
     val kotlinSourceRoots = environment.configuration.kotlinSourceRoots
     if (languageVersion.usesK2 && kotlinSourceRoots.isNotEmpty()) {
         throw Error("Attempt to run K1 from unsupported LV=${languageVersion}")
     }
 
-    val frontendOutput = useContext(FrontendContextImpl(config)) { it.runPhase(FrontendPhase, environment) }
-    return frontendOutput as? FrontendPhaseOutput.Full
+    return useContext(BasicNativeBackendPhaseContext(config)) { it.runPhase(K1FrontendPhase, environment) }
 }
 
-internal fun PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
-        frontendOutput: FrontendPhaseOutput.Full,
-): LinkKlibsOutput = linkKlibs(frontendOutput, {}).first
+internal fun PhaseEngine<NativeBackendPhaseContext>.linkKlibs(frontendOutput: K1FrontendPhaseOutput): LinkKlibsOutput {
+    return linkKlibs(frontendOutput, {}).first
+}
 
 internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
-        frontendOutput: FrontendPhaseOutput.Full,
-        produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
+    frontendOutput: K1FrontendPhaseOutput,
+    produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
 ): Pair<LinkKlibsOutput, T> {
     val config = this.context.config
     val psiToIrContext = LinkKlibsContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
