@@ -1,3 +1,5 @@
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Wasm-JS:2.4
+// ^^^ KT-87740 is fixed in 2.5.0-Beta1
 interface FeatureFlag<OptionType : Any> {
     val default: OptionType
 }
