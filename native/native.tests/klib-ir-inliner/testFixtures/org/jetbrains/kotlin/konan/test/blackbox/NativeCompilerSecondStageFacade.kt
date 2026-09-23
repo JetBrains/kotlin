@@ -235,6 +235,7 @@ class NativeCompilerSecondStageFacade private constructor(
                     if (!(this@NativeCompilerSecondStageFacade.withPlatformLibs || withPlatformLibs)) {
                         add(K2NativeCompilerArguments::nodefaultlibs.cliArgument)
                     }
+                    addAll(customNativeCompilerSettings.provisionedXcodeArgs)
                 },
                 regularAndFriendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
