@@ -235,6 +235,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("ProtobufFullValueClasses.kt")
+    public void testProtobufFullValueClasses() {
+      run("ProtobufFullValueClasses.kt");
+    }
+
+    @Test
     @TestMetadata("repeatableSerialInfo.kt")
     public void testRepeatableSerialInfo() {
       run("repeatableSerialInfo.kt");
