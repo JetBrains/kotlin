@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -111,6 +112,12 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
 
     val publicPackageJsonTaskName: String
         get() = compilation.disambiguateName(PublicPackageJsonTask.NAME)
+
+    val generateImportMapTaskName: String
+        get() = compilation.disambiguateName(KotlinImportMapGenerateTask.NAME + "Server")
+
+    val generateImportMapDistTaskName: String
+        get() = compilation.disambiguateName(KotlinImportMapGenerateTask.NAME + "Dist")
 
     internal val modules by lazy {
         NpmProjectModules(dir.getFile())

@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
  *
  * **Note:** This interface is not intended for implementation by build script or plugin authors.
  */
-interface KotlinWasmTargetDsl : KotlinTarget, HasBinaries<KotlinJsBinaryContainer> {
+interface KotlinWasmTargetDsl :
+    KotlinTarget,
+    HasBinaries<KotlinJsBinaryContainer> {
 
     /**
      * Specifies the Wasm target (Wasi or JS) these options configure.
