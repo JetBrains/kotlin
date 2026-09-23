@@ -1314,7 +1314,7 @@ class CallAndReferenceGenerator(
         }
     }
 
-    fun IrExpression.applyTypeArguments(
+    private fun IrExpression.applyTypeArguments(
         typeArguments: List<ConeKotlinType>?,
         typeParameters: List<FirTypeParameter>?,
     ): IrExpression {
