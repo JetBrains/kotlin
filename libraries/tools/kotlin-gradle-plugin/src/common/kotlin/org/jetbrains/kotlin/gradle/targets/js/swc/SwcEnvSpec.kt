@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
@@ -16,8 +17,10 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
  * Specification for executing Swc, a transpilation tool for JS files.
+ * @suppress
  */
-internal abstract class SwcEnvSpec : EnvSpec<SwcEnv>() {
+@InternalKotlinGradlePluginApi
+abstract class SwcEnvSpec : EnvSpec<SwcEnv>() {
     /**
      * Specify Swc platform information, with name and architecture.
      */
