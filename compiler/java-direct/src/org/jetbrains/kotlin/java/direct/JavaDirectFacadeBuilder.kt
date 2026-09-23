@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
-import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
+import org.jetbrains.kotlin.fir.java.FirJavaFacadeForModule
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.java.direct.resolution.JavaModuleImportedPackages
@@ -63,7 +63,7 @@ fun createJavaDirectJavaFacadeBuilder(
             scope === javaSourcesScope -> JavaClassFinderOverAstImpl(session, sourceRootEntries, moduleImportedPackages, perfManager)
             else -> binaryFinders.getOrPut(scope) { binaryClassFinder(virtualFileFinderFactory, scope) }
         }
-        FirJavaFacadeForSource(session, moduleData, finder)
+        FirJavaFacadeForModule(session, moduleData, finder)
     }
 }
 
