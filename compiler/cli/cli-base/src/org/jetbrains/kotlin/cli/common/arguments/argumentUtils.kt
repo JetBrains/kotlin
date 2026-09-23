@@ -26,8 +26,6 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaField
 
-fun <T : Any> copyBean(bean: T): T = copyBeanTo(bean, bean::class.java.newInstance())
-
 @Suppress("UNCHECKED_CAST")
 fun <T : Any> copyBeanTo(from: T, to: T, filter: ((KProperty1<T, Any?>, Any?) -> Boolean)? = null) =
     copyProperties(from, to, true, collectProperties(from::class as KClass<T>, false), filter)
@@ -37,14 +35,6 @@ fun <From : Any, To : From> mergeBeans(from: From, to: To): To {
     @Suppress("UNCHECKED_CAST")
     return copyProperties(from, to, false, collectProperties(from::class as KClass<From>, false))
 }
-
-@Suppress("UNCHECKED_CAST")
-fun <From : Any, To : Any> copyInheritedFields(from: From, to: To) =
-    copyProperties(from, to, true, collectProperties(from::class as KClass<From>, true))
-
-@Suppress("UNCHECKED_CAST")
-fun <From : Any, To : Any> copyFieldsSatisfying(from: From, to: To, predicate: (KProperty1<From, Any?>) -> Boolean) =
-    copyProperties(from, to, true, collectProperties(from::class as KClass<From>, false).filter(predicate))
 
 private fun <From : Any, To : Any> copyProperties(
     from: From,

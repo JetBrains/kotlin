@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
+import org.jetbrains.kotlin.cli.common.arguments.Freezable
 import org.jetbrains.kotlin.cli.common.arguments.checkApiAndLanguageVersion
 import org.jetbrains.kotlin.cli.common.fromConfiguration
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -79,8 +80,12 @@ class CliDiagnosticTest {
         add(v2)
     }
 
-    private class CommonCompilerArgumentsStub() : CommonCompilerArguments() {
+    private class CommonCompilerArgumentsStub : CommonCompilerArguments() {
         override val configurator: CommonCompilerArgumentsConfigurator
             get() = TODO("Not yet implemented")
+
+        override fun copyOf(): Freezable {
+            TODO("Not yet implemented")
+        }
     }
 }
