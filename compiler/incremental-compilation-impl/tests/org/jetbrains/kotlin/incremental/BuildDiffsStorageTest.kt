@@ -28,7 +28,10 @@ import java.util.*
 class BuildDiffsStorageTest {
     lateinit var storageFile: File
     private val random = Random(System.currentTimeMillis())
-    private val icContext = IncrementalCompilationContext()
+
+    private val icContext = IncrementalCompilationContext(
+        transaction = NonRecoverableCompilationTransaction(classesDir = Files.createTempDirectory("BuildDiffsStorageTest"))
+    )
 
     @BeforeEach
     fun setUp() {
