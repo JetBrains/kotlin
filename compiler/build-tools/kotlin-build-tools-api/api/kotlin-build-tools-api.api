@@ -1408,6 +1408,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/PartialLi
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode : java/lang/Enum {
 	public static final field CHECKER Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
+	public static final field DEFAULT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 	public static final field DISABLED Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 	public static final field FULL Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 	public final fun getStringValue ()Ljava/lang/String;
