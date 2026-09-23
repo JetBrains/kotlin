@@ -12,7 +12,7 @@ import com.intellij.psi.impl.light.LightElement
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.light.classes.symbol.KaElementJavaView
+import org.jetbrains.kotlin.analysis.api.javaInterop.KaElementJavaView
 import javax.swing.Icon
 
 @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
