@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.opentest4j.TestAbortedException
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -32,7 +33,7 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkGreenNeedsUnmuting() {
-        val exception = assertThrowsIfNotMuted<AssertionError> {
+        val exception = assertThrows<AssertionError> {
             runTest(testDataRoot + "greenNeedsUnmuting.kt")
         }
         val expected = "Looks like this test can be unmuted. " +
@@ -44,7 +45,7 @@ class CustomWasmJsCompilerSecondStageSanity :
     fun checkIncorrectBoxResult() {
         // The grouped launcher validates the box result itself, throwing a plain `AssertionError` rather than
         // `WasmVMException("Wrong box result")` — in the `kotlin.test.assertEquals` message format expected below.
-        val exception = assertThrowsIfNotMuted<AssertionError> {
+        val exception = assertThrows<AssertionError> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
         checkIncorrectBoxResult(exception)
@@ -56,7 +57,7 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkNotMutedWithIgnoreRuntimeErrors1stStage() {
-        val exception = assertThrowsIfNotMuted<AssertionError> {
+        val exception = assertThrows<AssertionError> {
             runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
         checkIncorrectBoxResult(exception)
@@ -65,7 +66,7 @@ class CustomWasmJsCompilerSecondStageSanity :
     @Test
     fun checkMutedWithIgnoreRuntimeErrors2ndStage() {
         // TODO KT-87378 Reconsider behavior of IGNORE_* directives, so no exception would be thrown here
-        val exception = assertThrowsIfNotMuted<TestAbortedException> {
+        val exception = assertThrows<TestAbortedException> {
             runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
         }
         assertEquals(null, exception.message)
@@ -74,7 +75,7 @@ class CustomWasmJsCompilerSecondStageSanity :
     @Test
     fun checkMutedDueToFrontendErrorWithCustom1stStageOfLatestLV() {
         Assumptions.assumeTrue(LanguageVersion.LATEST_STABLE == customWasmJsCompilerSettings.defaultLanguageVersion)
-        val exception = assertThrowsIfNotMuted<Throwable> {
+        val exception = assertThrows<Throwable> {
             runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
         }
         // Frontend errors are not suppressed when testing within one major compiler version
@@ -86,7 +87,7 @@ class CustomWasmJsCompilerSecondStageSanity :
     fun checkMutedDueToFrontendErrorWithCustom1stStageOfOldLV() {
         Assumptions.assumeFalse(LanguageVersion.LATEST_STABLE == customWasmJsCompilerSettings.defaultLanguageVersion)
         // TODO KT-87378 Reconsider behavior of IGNORE_* directives, so no exception would be thrown here
-        val exception = assertThrowsIfNotMuted<Throwable> {
+        val exception = assertThrows<Throwable> {
             runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
         }
         // Some tests cannot be compiled with previous LV. These are just ignored
