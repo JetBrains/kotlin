@@ -59,7 +59,13 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out, anno
 
         out.println(
                 """/**
- * A progression of values of type `$t`.
+ * An iterable progression of values of type `$t`.
+ * 
+ * A progression is defined by its first element [first], last element [last], and [step].
+ * It produces elements starting from the first element and incrementing by the step until the last element is reached.
+ * If the [step] is positive, the progression is increasing; if negative, the progression is decreasing.
+ * 
+ * A progression doesn't store all its elements in memory. Instead, it calculates elements on-the-fly as they are requested.
  */
 public open class $progression
     internal constructor
@@ -98,6 +104,12 @@ public open class $progression
      */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
+    /**
+     * Checks if the progression is equal to the specified [other].
+     *
+     * `$progression` is considered equal to another `$progression` if they are both [empty][isEmpty] 
+     * or have the same first element [first], last element [last], and [step].
+     */
     override fun equals(other: Any?): Boolean =
         other is $progression && (isEmpty() && other.isEmpty() ||
         ${compare("first")} && ${compare("last")} && ${compare("step")})
@@ -125,7 +137,7 @@ public open class $progression
     override fun generateBody() {
         out.println("import kotlin.internal.getProgressionLastElement")
         out.println()
-        for (kind in ProgressionKind.values()) {
+        for (kind in ProgressionKind.entries) {
             generateDiscreteBody(kind)
         }
     }
