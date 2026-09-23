@@ -1,6 +1,11 @@
 // Klib ABI Dump
 // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm32Hfp, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, wasmWasi, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
 // Alias: native => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm32Hfp, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Alias: androidNative => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86]
+// Alias: linux => [linuxArm32Hfp, linuxArm64, linuxX64]
+// Alias: ios => [iosArm64, iosSimulatorArm64, iosX64]
+// Alias: macos => [macosArm64, macosX64]
+// Alias: tvos => [tvosArm64, tvosSimulatorArm64, tvosX64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
@@ -11911,6 +11916,10 @@ final object kotlin.native.runtime/Debugging { // kotlin.native.runtime/Debuggin
         final fun <get-forceCheckedShutdown>(): kotlin/Boolean // kotlin.native.runtime/Debugging.forceCheckedShutdown.<get-forceCheckedShutdown>|<get-forceCheckedShutdown>(){}[0]
         final fun <set-forceCheckedShutdown>(kotlin/Boolean) // kotlin.native.runtime/Debugging.forceCheckedShutdown.<set-forceCheckedShutdown>|<set-forceCheckedShutdown>(kotlin.Boolean){}[0]
 
+    // Targets: [androidNative, ios, linux, macos, mingwX64, tvos, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+    final fun dumpMemory(kotlin/Long, kotlin.native.runtime/MemoryDumpOptions = ...): kotlin/Boolean // kotlin.native.runtime/Debugging.dumpMemory|dumpMemory(kotlin.Long;kotlin.native.runtime.MemoryDumpOptions){}[0]
+
+    // Targets: [watchosArm32]
     final fun dumpMemory(kotlin/Long): kotlin/Boolean // kotlin.native.runtime/Debugging.dumpMemory|dumpMemory(kotlin.Long){}[0]
 }
 
@@ -14148,6 +14157,16 @@ final suspend inline fun <#A: kotlin/Any?> kotlin.native.internal/suspendCorouti
 
 // Targets: [native]
 final suspend inline fun kotlin.native.internal/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.native.internal/getCoroutineContext|getCoroutineContext(){}[0]
+
+// Targets: [androidNative, ios, linux, macos, mingwX64, tvos, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+final class kotlin.native.runtime/MemoryDumpOptions { // kotlin.native.runtime/MemoryDumpOptions|null[0]
+    constructor <init>(kotlin/Boolean = ..., kotlin/Boolean = ...) // kotlin.native.runtime/MemoryDumpOptions.<init>|<init>(kotlin.Boolean;kotlin.Boolean){}[0]
+
+    final val gzip // kotlin.native.runtime/MemoryDumpOptions.gzip|{}gzip[0]
+        final fun <get-gzip>(): kotlin/Boolean // kotlin.native.runtime/MemoryDumpOptions.gzip.<get-gzip>|<get-gzip>(){}[0]
+    final val omitPrimitiveArrayPayloads // kotlin.native.runtime/MemoryDumpOptions.omitPrimitiveArrayPayloads|{}omitPrimitiveArrayPayloads[0]
+        final fun <get-omitPrimitiveArrayPayloads>(): kotlin/Boolean // kotlin.native.runtime/MemoryDumpOptions.omitPrimitiveArrayPayloads.<get-omitPrimitiveArrayPayloads>|<get-omitPrimitiveArrayPayloads>(){}[0]
+}
 
 // Targets: [js, wasmJs, wasmWasi]
 open annotation class kotlin.concurrent/Volatile : kotlin/Annotation { // kotlin.concurrent/Volatile|null[1]
