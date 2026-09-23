@@ -1233,8 +1233,8 @@ private fun parseDefaultStringFormat(
             }
             DurationUnit.NANOSECONDS -> {
                 // We extract the millisecond portion from nanoseconds and transfer it to totalMillis.
-                // Since totalMillis is at most MAX_MILLIS (Long.MAX_VALUE / 2) and the added value is at most Long.MAX_VALUE / 1_000_000,
-                // their sum (Long.MAX_VALUE / 2 + Long.MAX_VALUE / 1_000_000) will never overflow.
+                // Since totalMillis is at most MAX_MILLIS + Long.MAX_VALUE / 1_000 (after microseconds) and the added value is at most
+                // Long.MAX_VALUE / 1_000_000, their sum will never overflow.
                 totalMillis += longValue / NANOS_IN_MILLIS
                 // Value is at most 999_000 + 999_999 = 1_998_999
                 totalNanos += longValue % NANOS_IN_MILLIS
