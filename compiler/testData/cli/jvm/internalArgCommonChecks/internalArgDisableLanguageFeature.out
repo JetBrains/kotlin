@@ -1,16 +1,13 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:-ExplicitContextArguments
+-XXLanguage:-UnnamedLocalVariables
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-compiler/testData/cli/jvm/internalArgCommonChecks/languageVersion.kt:6:5: error: no context argument for 'contextual: Any' found.
-    foo(contextual = "")
-    ^^^
-compiler/testData/cli/jvm/internalArgCommonChecks/languageVersion.kt:6:9: error: the feature "explicit context arguments" is disabled
-    foo(contextual = "")
-        ^^^^^^^^^^^^^^^
+compiler/testData/cli/jvm/internalArgCommonChecks/languageVersion.kt:3:9: error: the feature "unnamed local variables" is disabled
+    val _ = minOf(1, 2)
+        ^
 COMPILATION_ERROR

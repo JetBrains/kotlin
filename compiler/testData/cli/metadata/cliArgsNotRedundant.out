@@ -1,2 +1,1 @@
-warning: the argument '-Xwhen-guards' is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. It enables the features that are already on by default in every supported language version.
 OK

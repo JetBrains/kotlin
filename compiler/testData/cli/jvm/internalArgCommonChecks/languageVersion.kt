@@ -1,7 +1,4 @@
-context(contextual: Any)
-fun foo() {
-}
-
 fun main() {
-    foo(contextual = "")
+    // FF: UnnamedLocalVariables
+    val _ = minOf(1, 2)
 }

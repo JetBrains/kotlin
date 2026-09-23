@@ -670,11 +670,9 @@ class ScriptingHostTest {
     @Test
     fun testCompileOptionsLanguageVersion() {
         val script = """
-            context(contextual: Any)
-            fun foo() {}
-            
             fun main() {
-                foo(contextual = "")
+                // FF: UnnamedLocalVariables
+                val _ = minOf(1, 2)
             }
         """.trimIndent()
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
@@ -686,7 +684,7 @@ class ScriptingHostTest {
         }
         val res = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        if (res.reports.none { it.message.startsWith("The feature \"explicit context arguments\" is only available since language version 2.5") })
+        if (res.reports.none { it.message.startsWith("The feature \"unnamed local variables\" is only available since language version 2.5") })
             fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 
