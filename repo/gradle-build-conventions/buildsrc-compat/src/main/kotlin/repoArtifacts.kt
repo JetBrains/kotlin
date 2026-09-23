@@ -421,11 +421,7 @@ fun Project.publishProjectJars(
     }
 
     sourcesJar {
-        from {
-            projects.map {
-                project(it).commonMainKotlinSourceSet()?.kotlin ?: project(it).mainSourceSet.allSource
-            }
-        }
+        addEmbeddedSources("fatJarContents")
     }
 
     javadocJar()
