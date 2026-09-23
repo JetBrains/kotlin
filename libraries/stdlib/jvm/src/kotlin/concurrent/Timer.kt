@@ -13,6 +13,7 @@ import java.util.TimerTask
 /**
  * Schedules an [action] to be executed after the specified [delay] (expressed in milliseconds).
  */
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun Timer.schedule(delay: Long, crossinline action: TimerTask.() -> Unit): TimerTask {
     val task = timerTask(action)
@@ -23,6 +24,7 @@ public inline fun Timer.schedule(delay: Long, crossinline action: TimerTask.() -
 /**
  * Schedules an [action] to be executed at the specified [time].
  */
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun Timer.schedule(time: Date, crossinline action: TimerTask.() -> Unit): TimerTask {
     val task = timerTask(action)
