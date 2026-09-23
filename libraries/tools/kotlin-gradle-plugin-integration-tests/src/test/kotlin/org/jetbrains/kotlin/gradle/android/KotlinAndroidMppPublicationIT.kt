@@ -508,12 +508,17 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
     fun testAndroidMultiplatformPublicationAGPCompatibility(
         @TempDir tempDir: Path,
     ): List<DynamicContainer> {
+        val gradleVersionFilter = System.getProperty("gradle.integration.tests.gradle.version.filter")
+            ?.let { GradleVersion.version(it) }
 
         val checkedConsumerAGPVersions = AgpCompatibilityMatrix.entries
             .filter { agp ->
                 AgpCompatibilityMatrix.fromVersion(agp.version) < AgpCompatibilityMatrix.fromVersion(TestVersions.AGP.MAX_SUPPORTED)
             }
+            .filter { agp -> gradleVersionFilter == null || agp.minSupportedGradleVersion == gradleVersionFilter }
             .shardTestsBy { agp -> agp.version }
+
+        if (checkedConsumerAGPVersions.isEmpty()) return emptyList()
 
         return setOf(TestVersions.AGP.MIN_SUPPORTED, TestVersions.AGP.MAX_SUPPORTED).map { agpVersion ->
             val producerAgpVersion = AgpCompatibilityMatrix.fromVersion(agpVersion)
