@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 6,
+    "schemaVersion": 5,
     "releases": [
         {
             "name": "1.0.0",
@@ -10174,29 +10174,29 @@
                                 "deprecatedMessage": null
                             },
                             {
-                                "name": "Xvalhalla-support",
+                                "name": "Xvalhalla-value-classes",
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.",
+                                    "current": "Compile value classes to behave as experimental Project Valhalla value classes. Requires a Valhalla-compatible JDK, JVM target 27 or later and the '-Xjvm-enable-preview' flag.",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
                                 "restrictedToCompilerPhase": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
-                                        "current": true,
+                                        "current": false,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": null,
+                                        "current": false,
                                         "valueInVersions": []
                                     }
                                 },
                                 "valueDescription": {
-                                    "current": "{none|primitives|primitivesAndFullValueClasses|allValues}",
+                                    "current": null,
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {
@@ -10206,13 +10206,13 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.ValhallaSupportModeType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
-                                        "current": true,
+                                        "current": false,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": null,
+                                        "current": false,
                                         "valueInVersions": []
                                     }
                                 },

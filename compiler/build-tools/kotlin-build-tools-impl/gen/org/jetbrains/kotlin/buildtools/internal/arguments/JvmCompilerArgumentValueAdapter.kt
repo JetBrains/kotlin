@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JvmTarget as I
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.LambdasMode as InternalArgumentsEnumsLambdasMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SamConversionsMode as InternalArgumentsEnumsSamConversionsMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.StringConcatMode as InternalArgumentsEnumsStringConcatMode
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ValhallaSupportMode as InternalArgumentsEnumsValhallaSupportMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WhenExpressionsMode as InternalArgumentsEnumsWhenExpressionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode as ApiArgumentsEnumsAbiStabilityMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode as ApiArgumentsEnumsAssertionsMode
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget as ApiArgum
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode as ApiArgumentsEnumsLambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode as ApiArgumentsEnumsSamConversionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode as ApiArgumentsEnumsStringConcatMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.ValhallaSupportMode as ApiArgumentsEnumsValhallaSupportMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode as ApiArgumentsEnumsWhenExpressionsMode
 
 /**
@@ -51,7 +49,6 @@ internal object JvmCompilerArgumentValueAdapter {
     is InternalArgumentsEnumsSamConversionsMode -> value.toApiEnum<ApiArgumentsEnumsSamConversionsMode>()
     is InternalArgumentsEnumsStringConcatMode -> value.toApiEnum<ApiArgumentsEnumsStringConcatMode>()
     is InternalArgumentsEnumsCompatqualAnnotationsMode -> value.toApiEnum<ApiArgumentsEnumsCompatqualAnnotationsMode>()
-    is InternalArgumentsEnumsValhallaSupportMode -> value.toApiEnum<ApiArgumentsEnumsValhallaSupportMode>()
     is InternalArgumentsEnumsWhenExpressionsMode -> value.toApiEnum<ApiArgumentsEnumsWhenExpressionsMode>()
     is InternalArgumentsEnumsJvmDefaultMode -> value.toApiEnum<ApiArgumentsEnumsJvmDefaultMode>()
     is InternalArgumentsEnumsJvmTarget -> value.toApiEnum<ApiArgumentsEnumsJvmTarget>()
@@ -68,7 +65,6 @@ internal object JvmCompilerArgumentValueAdapter {
     is ApiArgumentsEnumsSamConversionsMode -> value.toImplEnum<InternalArgumentsEnumsSamConversionsMode>()
     is ApiArgumentsEnumsStringConcatMode -> value.toImplEnum<InternalArgumentsEnumsStringConcatMode>()
     is ApiArgumentsEnumsCompatqualAnnotationsMode -> value.toImplEnum<InternalArgumentsEnumsCompatqualAnnotationsMode>()
-    is ApiArgumentsEnumsValhallaSupportMode -> value.toImplEnum<InternalArgumentsEnumsValhallaSupportMode>()
     is ApiArgumentsEnumsWhenExpressionsMode -> value.toImplEnum<InternalArgumentsEnumsWhenExpressionsMode>()
     is ApiArgumentsEnumsJvmDefaultMode -> value.toImplEnum<InternalArgumentsEnumsJvmDefaultMode>()
     is ApiArgumentsEnumsJvmTarget -> value.toImplEnum<InternalArgumentsEnumsJvmTarget>()
