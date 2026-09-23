@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
+import org.jetbrains.kotlin.analysis.api.javaInterop.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AlwaysAllowedAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationFilter
