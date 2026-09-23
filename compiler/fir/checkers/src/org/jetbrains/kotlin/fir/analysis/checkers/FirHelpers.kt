@@ -155,7 +155,7 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     val asRegularClass = plainRegularClass ?: leastUpperBound(session).toRegularClassSymbol(session) ?: return null
     val primaryConstructor = asRegularClass.primaryConstructorIfAny(session) ?: return null
     val valueClassRepresentation = asRegularClass.valueClassRepresentation
-    val isFullValueClass = valueClassRepresentation is FullValueClassRepresentation ||
+    val isOrWillBeFullValueClass = valueClassRepresentation is FullValueClassRepresentation ||
             valueClassRepresentation == null && asRegularClass.willBecomeKotlinValueClass(session)
     // Recursion in Value Classes with nullable types (e.g. `value class VC(val x: VC?, ...)`) is supported only for Multi-Field Full Value Classes
     // Generally, there is no need to disallow it for single-field value classes as well, so there is KT-86498 for that.
@@ -163,8 +163,8 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     // Reminder: single-field value class is considered inline if it has @JvmInline annotation or if the FullValueClasses feature is disabled
     val isSubjectForCheck = when {
         valueClassRepresentation is InlineClassRepresentation -> true
-        isFullValueClass && isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
-        else -> isFullValueClass
+        isOrWillBeFullValueClass && isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
+        else -> isOrWillBeFullValueClass
     }
     if (!isSubjectForCheck) return null
 
