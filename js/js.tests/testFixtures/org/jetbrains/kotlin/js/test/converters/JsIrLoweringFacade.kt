@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.artifactConfigurations
+import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.test.tools.SwcRunner
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
@@ -121,7 +122,7 @@ class JsIrLoweringFacade(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
-        val sourceMapsEnabled = JsEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in module.directives
+        val sourceMapsEnabled = configuration.sourceMap
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in module.directives
         val delegateTranspilationToExternalTool =
             JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION in module.directives &&

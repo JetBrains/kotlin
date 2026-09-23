@@ -22,8 +22,8 @@ object SwcConfig {
         add("--env-name=${environmentCode}")
         add("--out-dir")
         add(outputDirectory)
-        add("--out-file-extension=$fileExtension")
-        add("--extensions=$fileExtension")
+        add("--out-file-extension=${fileExtension.removePrefix(".")}")
+        add("--extensions=${fileExtension.removePrefix(".")}")
     }
 
     public fun getConfigWhen(
@@ -36,7 +36,7 @@ object SwcConfig {
         set("sourceMaps", sourceMapEnabled)
         set("inputSourceMap", sourceMapEnabled)
         set("exclude", arrayOf(".*\\.d\\.m?ts$"))
-        set("jsc", buildMap<String, Any> {
+        set("jsc", buildMap {
             set("parser", buildMap {
                 set("syntax", "ecmascript")
                 set("dynamicImport", true)
@@ -47,10 +47,17 @@ object SwcConfig {
             set("externalHelpers", includeExternalHelpers)
             set("target", target)
         })
-        set("module", buildMap {
-            set("resolveFully", true)
-            set("type", if (moduleKind === ModuleKind.ES) "nodenext" else moduleKind.type)
-            set("outFileExtension", moduleKind.jsExtension)
-        })
+
+        if (moduleKind === ModuleKind.ES) {
+            set("module", buildMap {
+                set("resolveFully", true)
+                set("type", "nodenext")
+                set("outFileExtension", moduleKind.jsExtension.removePrefix("."))
+            })
+        } else {
+            // The Kotlin compiler already emits the final module system (AMD/UMD/CommonJS wrappers),
+            // so swc must treat the input as a script and not wrap it into a module once again.
+            set("isModule", false)
+        }
     }
 }

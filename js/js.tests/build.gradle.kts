@@ -142,15 +142,23 @@ fun Test.forwardProperties() {
 }
 
 projectTests {
+    val swcTag = "swc"
+    val swcEnabledLocally = kotlinBuildProperties.booleanProperty("kotlin.js.enable.swc.tests").get()
+
     jsTestTask {
+        if (swcEnabledLocally) {
+            with(swcKotlinBuild) { setupSwc() }
+        } else {
+            useJUnitPlatform { excludeTags(swcTag) }
+        }
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsTest", tag = "!es6 & !jsNightlyOnly", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsTest", tag = "!es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true) {
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsES6Test", tag = "es6 & !jsNightlyOnly", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsES6Test", tag = "es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true) {
         setUpJsBoxTests()
     }
 
@@ -159,6 +167,13 @@ projectTests {
     }
 
     jsTestTask(taskName = "jsES6InlineAnonymousFunctionsTest", tag = "es6 & jsInlineAnonymousFunctions", skipInLocalBuild = true) {
+        setUpJsBoxTests()
+    }
+
+    jsTestTask(taskName = "jsSwcTest", tag = swcTag) {
+        with(swcKotlinBuild) {
+            setupSwc()
+        }
         setUpJsBoxTests()
     }
 
