@@ -116,7 +116,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         var primaryConstructorParametersByName = mapOf<Name, FirValueParameterSymbol>()
         val primaryConstructorPropertiesByName = hashMapOf<Name, FirPropertySymbol>()
         var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
-        val isCustomEqualsSupported = LanguageFeature.CustomEqualsInValueClasses.isEnabled()
+        val isCustomEqualsSupported = !isFullValueClass && LanguageFeature.CustomEqualsInValueClasses.isEnabled()
 
         declaration.constructors(context.session).forEach { innerDeclaration ->
             when {

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -370,7 +369,7 @@ private object Checks {
             }
             val message = buildString {
                 append("must override 'equals()' in Any")
-                if (customEqualsSupported && containingClassSymbol.isInlineOrValue) {
+                if (customEqualsSupported && (containingClassSymbol as? FirRegularClassSymbol)?.isInlineClass == true) {
                     val expectedParameterTypeRendered =
                         containingClassSymbol.defaultType().replaceArgumentsWithStarProjections().renderReadable()
                     append(" or define 'equals(other: ${expectedParameterTypeRendered}): Boolean'")
