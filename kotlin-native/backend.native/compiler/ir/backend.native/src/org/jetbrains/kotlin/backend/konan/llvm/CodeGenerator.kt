@@ -770,8 +770,14 @@ internal abstract class FunctionGenerationContext(
         require(alignment == null || alignment % runtime.pointerAlignment == 0)
 
         if (onStack) {
-            require(!isVolatile) { "Stack ref update can't be volatile"}
-            call(llvm.updateStackRefFunction, listOf(address, value))
+            require(!isVolatile) { "Stack ref update can't be volatile" }
+
+            if (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+                call(llvm.updateStackRefFunction, listOf(address, value))
+            } else {
+                store(value, address)
+            }
+
         } else {
             if (isVolatile) {
                 call(llvm.UpdateVolatileHeapRef, listOf(address, value))
