@@ -18,5 +18,5 @@ val resourcesRoot: Path
 val String.osVariantSeparatorsPathString: String
     get() {
         val separator = File.separator
-        return if (separator != "/") toString().replace("/", separator) else toString()
+        return if (separator != "/") replace("/", separator) else this
     }

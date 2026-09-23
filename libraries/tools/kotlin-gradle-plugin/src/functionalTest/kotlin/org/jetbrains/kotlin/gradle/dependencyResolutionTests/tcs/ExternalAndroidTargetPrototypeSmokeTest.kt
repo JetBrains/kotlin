@@ -140,6 +140,6 @@ class ExternalAndroidTargetPrototypeSmokeTest {
 
         val compileTask = unitTest.compileTaskProvider.get() as KotlinCompile
         val args = compileTask.createCompilerArguments(default)
-        if (file.absolutePath !in args.friendPaths!!) fail("File $file was not found int the friend paths ${args.friendPaths!!.toList()}")
+        if (file.absolutePath !in args.friendPaths) fail("File $file was not found int the friend paths ${args.friendPaths.toList()}")
     }
 }
