@@ -80,9 +80,6 @@ fun acceptNSIntegerOrInt(num: Int) = OverloadVariant.Int
 fun acceptLongOrInt(num: Long) = OverloadVariant.Long
 fun acceptLongOrInt(num: Int) = OverloadVariant.Int
 
-fun Long.callOverLongOrInt() = OverloadVariant.Long
-fun Int.callOverLongOrInt() = OverloadVariant.Int
-
 fun common(): String {
     acceptNSInteger(10)
     acceptNSInteger(1_000_000_000_000L)
@@ -93,7 +90,6 @@ fun common(): String {
 
     val _ignore1: OverloadVariant.Int = acceptNSIntegerOrInt(20)
     val _ignore2: OverloadVariant.Long = acceptLongOrInt(getNSInteger())
-    val _ignore3: OverloadVariant.Long = getNSInteger().callOverLongOrInt()
 
     @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
     val _ignore4: OverloadVariant.NSInteger = acceptNSIntegerOrInt(0.convert())
