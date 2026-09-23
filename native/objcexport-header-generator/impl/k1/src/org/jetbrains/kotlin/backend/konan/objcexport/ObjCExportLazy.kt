@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -65,28 +66,6 @@ interface ObjCExportLazy {
 
     fun translate(file: KtFile): List<ObjCTopLevel>
 }
-
-@OptIn(K1Deprecation::class)
-@JvmOverloads
-fun createObjCExportLazy(
-    configuration: ObjCExportLazy.Configuration,
-    problemCollector: ObjCExportProblemCollector,
-    codeAnalyzer: KotlinCodeAnalyzer,
-    typeResolver: TypeResolver,
-    descriptorResolver: DescriptorResolver,
-    fileScopeProvider: FileScopeProvider,
-    builtIns: KotlinBuiltIns,
-    deprecationResolver: DeprecationResolver? = null,
-): ObjCExportLazy = ObjCExportLazyImpl(
-    configuration,
-    problemCollector,
-    codeAnalyzer,
-    typeResolver,
-    descriptorResolver,
-    fileScopeProvider,
-    builtIns,
-    deprecationResolver
-)
 
 @OptIn(K1Deprecation::class)
 @InternalKotlinNativeApi
