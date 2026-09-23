@@ -16,6 +16,7 @@ package kotlin.concurrent
  * @param contextClassLoader the class loader to use for loading classes and resources in this thread.
  * @param name the name of the thread.
  * @param priority the priority of the thread.
+ * @param block the block of code that the thread will run after starting.
  */
 @IgnorableReturnValue
 public fun thread(
