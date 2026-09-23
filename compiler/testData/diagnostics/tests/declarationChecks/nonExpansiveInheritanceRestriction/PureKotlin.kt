@@ -4,6 +4,10 @@
 interface A<T>
 interface B<T> : A<A<*>>
 
+interface ProjectedOut<<!EXPANSIVE_INHERITANCE!>T<!>> : A<ProjectedOut<out T>>
+interface ProjectedIn<<!EXPANSIVE_INHERITANCE!>T<!>> : A<ProjectedIn<in T>>
+interface InvariantSelf<T> : A<InvariantSelf<T>>
+
 interface N0<in T>
 interface C0<<!EXPANSIVE_INHERITANCE!>X<!>> : N0<N0<C0<C0<X>>>>
 
