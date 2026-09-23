@@ -10,6 +10,9 @@ package kotlin.ranges
 /**
  * Represents a range of values (for example, numbers or characters) where both the lower and upper bounds are included in the range.
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/ranges.html) for more information.
+ *
+ * **Equality**: the range interface does not define any equality contract.
+ * However, particular `ClosedRange` implementations may define their own equality contract.
  */
 public interface ClosedRange<T : Comparable<T>> {
     /**
@@ -42,6 +45,9 @@ public interface ClosedRange<T : Comparable<T>> {
 /**
  * Represents a range of values (for example, numbers or characters) where the upper bound is not included in the range.
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/ranges.html) for more information.
+ *
+ * **Equality**: the range interface does not define any equality contract.
+ * However, particular `OpenEndRange` implementations may define their own equality contract.
  */
 @SinceKotlin("1.9")
 @WasExperimental(ExperimentalStdlibApi::class)
