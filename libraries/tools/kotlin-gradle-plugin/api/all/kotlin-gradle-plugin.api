@@ -3747,25 +3747,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scop
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclaration : java/io/Serializable {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;Ljava/lang/String;Ljava/lang/String;)V
-	public final fun component1 ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Ljava/lang/String;
-	public final fun copy (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclaration;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclaration;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclaration;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getName ()Ljava/lang/String;
-	public final fun getScope ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;
-	public final fun getVersion ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclarationKt {
-	public static final fun uniqueRepresentation (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclaration;)Ljava/lang/String;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyExtension : org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmDependencyExtension, org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyWithExternalsExtension, org/jetbrains/kotlin/gradle/targets/js/npm/NpmDirectoryDependencyExtension, org/jetbrains/kotlin/gradle/targets/js/npm/NpmDirectoryDependencyWithExternalsExtension {
 }
 

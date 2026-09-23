@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import java.io.File
 
 /**
@@ -454,29 +455,29 @@ interface KotlinDependencyHandler : HasProject {
      * NPM dev dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
      * Calling [npmDev] will automatically add it to the enclosing dependency collector.
      *
-     * [name] and [version] are resolved lazily, so they may be provided by values
-     * that are not yet known when the declaration is made:
+     * [version] is resolved lazily, so it may be provided by a value
+     * that is not yet known when the declaration is made:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
      *     npmDev(
-     *         project.providers.gradleProperty("isOddEvenName"),
+     *         "is-odd-even",
      *         project.providers.gradleProperty("isOddEvenVersion"),
      *     )
      * }
      * ```
      *
-     * If either [name] or [version] has no value, then the build fails when the declaration is used.
+     * If [version] has no value, then the build fails when the declaration is used.
      *
      * The version will be parsed by node-semver.
      * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
      *
      * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
-     * @param name The provider of the NPM dependency name
+     * @param name The NPM dependency name
      * @param version The provider of the NPM dependency version
      */
     fun npmDev(
-        name: Provider<String>,
+        name: String,
         version: Provider<String>,
     )
 
@@ -512,7 +513,7 @@ interface KotlinDependencyHandler : HasProject {
      * that is added to [devDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#devdependencies).
      *
      * NPM dev dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
-     * Calling [npmDev] will automatically add it to the enclosing dependency collector.
+     * Calling [npmDevDirectory] will automatically add it to the enclosing dependency collector.
      *
      * [directory] is resolved lazily, so it may be provided by a value
      * that are not yet known when the declaration is made:
@@ -533,7 +534,8 @@ interface KotlinDependencyHandler : HasProject {
      * @param name The NPM dependency name
      * @param directory The provider of the directory where dependency files are located
      */
-    fun npmDev(
+    @ExperimentalKotlinGradlePluginApi
+    fun npmDevDirectory(
         name: String,
         directory: Provider<Directory>,
     )
@@ -569,29 +571,29 @@ interface KotlinDependencyHandler : HasProject {
      * NPM optional dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
      * Calling [npmOptional] will automatically add it to the enclosing dependency collector.
      *
-     * [name] and [version] are resolved lazily, so they may be provided by values
-     * that are not yet known when the declaration is made:
+     * [version] is resolved lazily, so it may be provided by a value
+     * that is not yet known when the declaration is made:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
      *     npmOptional(
-     *         project.providers.gradleProperty("isOddEvenName"),
+     *         "is-odd-even",
      *         project.providers.gradleProperty("isOddEvenVersion"),
      *     )
      * }
      * ```
      *
-     * If either [name] or [version] has no value, then the build fails when the declaration is used.
+     * If [version] has no value, then the build fails when the declaration is used.
      *
      * The version will be parsed by node-semver.
      * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
      *
      * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
-     * @param name The provider of the NPM dependency name
+     * @param name The NPM dependency name
      * @param version The provider of the NPM dependency version
      */
     fun npmOptional(
-        name: Provider<String>,
+        name: String,
         version: Provider<String>,
     )
 
@@ -627,7 +629,7 @@ interface KotlinDependencyHandler : HasProject {
      * that is added to [optionalDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#optionaldependencies).
      *
      * NPM optional dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
-     * Calling [npmOptional] will automatically add it to the enclosing dependency collector.
+     * Calling [npmOptionalDirectory] will automatically add it to the enclosing dependency collector.
      *
      * [directory] is resolved lazily, so it may be provided by a value
      * that are not yet known when the declaration is made:
@@ -648,7 +650,8 @@ interface KotlinDependencyHandler : HasProject {
      * @param name The NPM dependency name
      * @param directory The provider of the directory where dependency files are located
      */
-    fun npmOptional(
+    @ExperimentalKotlinGradlePluginApi
+    fun npmOptionalDirectory(
         name: String,
         directory: Provider<Directory>,
     )
@@ -684,29 +687,29 @@ interface KotlinDependencyHandler : HasProject {
      * NPM peer dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
      * Calling [npmPeer] will automatically add it to the enclosing dependency collector.
      *
-     * [name] and [version] are resolved lazily, so they may be provided by values
-     * that are not yet known when the declaration is made:
+     * [version] is resolved lazily, so it may be provided by a value
+     * that is not yet known when the declaration is made:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
      *     npmPeer(
-     *         project.providers.gradleProperty("isOddEvenName"),
+     *         "is-odd-even",
      *         project.providers.gradleProperty("isOddEvenVersion"),
      *     )
      * }
      * ```
      *
-     * If either [name] or [version] has no value, then the build fails when the declaration is used.
+     * If [version] has no value, then the build fails when the declaration is used.
      *
      * The version will be parsed by node-semver.
      * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
      *
      * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
-     * @param name The provider of the NPM dependency name
+     * @param name The NPM dependency name
      * @param version The provider of the NPM dependency version
      */
     fun npmPeer(
-        name: Provider<String>,
+        name: String,
         version: Provider<String>,
     )
 
