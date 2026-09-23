@@ -2,6 +2,7 @@
 
 import com.gradle.develocity.agent.gradle.DevelocityConfiguration
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
+import org.jetbrains.kotlin.test.federation.buildFrame
 import org.jetbrains.kotlin.testFederation.*
 import org.jetbrains.kotlin.testFederation.TestSubset.*
 
@@ -28,8 +29,10 @@ tasks.withType<Test>().configureEach {
         val contractTests = testFederationExtension.contractTests
         val notCompatibleWithTestFederation = smokeTests.skip.get() || contractTests.skip.get()
 
-        logger.quiet("Current Domain: '${domains.get()}'")
-        logger.quiet("Requested Test Subsets: '${formattedSubsets.get()}'")
+        logger.quiet(buildFrame(
+            "Current domain: ${domains.get()}",
+            "Test subsets: [${formattedSubsets.get().replace(",", ", ")}]",
+        ))
 
         scan.value("$projectPath:${this.name} domain", domains.get().toString())
         scan.value("$projectPath:${this.name} test subsets", formattedSubsets.get())
