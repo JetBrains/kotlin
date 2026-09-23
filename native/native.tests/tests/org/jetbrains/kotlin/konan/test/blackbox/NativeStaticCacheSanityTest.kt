@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.provisionedXcodeCompilerArgs
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -226,15 +227,16 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
     }
 
     private fun callNativeCompiler(vararg args: String?) {
+        val compilerArgs = (args.filterNotNull() + provisionedXcodeCompilerArgs).toTypedArray()
         val result = callCompiler(
-            compilerArgs = args.filterNotNull().toTypedArray(),
+            compilerArgs = compilerArgs,
             kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>().classLoader,
         )
 
         assertEquals(ExitCode.OK, result.exitCode) {
             buildString {
                 appendLine("Compilation failed with exit code = ${result.exitCode}")
-                appendLine("Command-line arguments: ${args.joinToString(" ")}")
+                appendLine("Command-line arguments: ${compilerArgs.joinToString(" ")}")
                 appendLine("Compiler output:")
                 appendLine(result.toolOutput)
             }
