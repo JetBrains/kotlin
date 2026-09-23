@@ -794,7 +794,7 @@ internal class KaFirResolver(
                 parent.receiverExpression != callExpression -> {}
 
                 // The workaround is required only without the feature
-                analysisSession.firSession.languageVersionSettings.supportsFeature(LanguageFeature.ForbidUselessTypeArgumentsIn25) -> {}
+                analysisSession.firSession.languageVersionSettings.supportsFeature(LanguageFeature.ForbidUselessTypeArgumentsIn26) -> {}
                 else -> return null
             }
         }

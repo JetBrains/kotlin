@@ -1,3 +1,5 @@
+// LANGUAGE: +ForbidUselessTypeArgumentsIn26
+
 // FILE: JavaClass.java
 public class JavaClass<T> {
     public static Integer field = 1;

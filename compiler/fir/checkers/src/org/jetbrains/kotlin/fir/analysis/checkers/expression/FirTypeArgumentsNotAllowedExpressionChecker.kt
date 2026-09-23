@@ -46,7 +46,7 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
             ) {
                 val diagnostic =
                     // Skip deprecation phase for companion block members/extensions but not static enum members
-                    if (symbol.requiresCompanionBlockLf() || LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()) {
+                    if (symbol.requiresCompanionBlockLf() || LanguageFeature.ForbidUselessTypeArgumentsIn26.isEnabled()) {
                         FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
                     } else {
                         FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_WARNING

@@ -42,7 +42,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext)
     private val areUselessTypeArgumentsForbidden: Boolean
-        get() = LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()
+        get() = LanguageFeature.ForbidUselessTypeArgumentsIn26.isEnabled()
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirGetClassCall) {
@@ -131,7 +131,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
     /**
      * Type arguments are only allowed in `Array` (not typealiases to `Array`!) on JVM.
      *
-     * Without [LanguageFeature.ForbidUselessTypeArgumentsIn25], the following cases must produce deprecation warnings:
+     * Without [LanguageFeature.ForbidUselessTypeArgumentsIn26], the following cases must produce deprecation warnings:
      *  1. typealiases to non-generic classes with arbitrary non-zero number of type arguments;
      *  2. typealiases to `Array` on JVM (with arbitrary non-zero number of type arguments);
      *  3. reified type parameters with non-zero number of type arguments.

@@ -440,7 +440,7 @@ fun FirAbstractResolvedQualifierBuilder.initTypeAndObjectAccess() {
     val classSymbol = qualifierSymbol
     if (classSymbol != null) {
         // This crazy condition is required to keep backward compatibility to before KT-84281
-        if (classSymbol !is FirTypeAliasSymbol || typeArguments.isEmpty() || LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()) {
+        if (classSymbol !is FirTypeAliasSymbol || typeArguments.isEmpty() || LanguageFeature.ForbidUselessTypeArgumentsIn26.isEnabled()) {
             val objectSymbol = classSymbol
                 .fullyExpandedClass(components.session)
                 ?.let { regularClass ->

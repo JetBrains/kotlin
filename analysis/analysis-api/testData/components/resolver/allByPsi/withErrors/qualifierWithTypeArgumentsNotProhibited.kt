@@ -1,4 +1,4 @@
-// LANGUAGE: -ForbidUselessTypeArgumentsIn25
+// LANGUAGE: -ForbidUselessTypeArgumentsIn26
 // FILE: JavaClass.java
 
 public class JavaClass<T> {
