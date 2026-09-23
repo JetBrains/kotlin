@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -30,7 +32,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 
 @OptIn(K1Deprecation::class)
 internal object TopDownAnalyzerFacadeForKonan {
-    fun analyzeFiles(files: Collection<KtFile>, context: FrontendContext): AnalysisResult {
+    fun analyzeFiles(files: Collection<KtFile>, context: NativeBackendPhaseContext): AnalysisResult {
         val config = context.config
         val moduleName = Name.special("<${config.moduleId}>")
 
@@ -88,7 +90,7 @@ internal object TopDownAnalyzerFacadeForKonan {
             files: Collection<KtFile>,
             trace: BindingTrace,
             moduleContext: ModuleContext,
-            context: FrontendContext,
+            context: NativeBackendPhaseContext,
             projectContext: ProjectContext,
             additionalPackages: List<PackageFragmentProvider> = emptyList()
     ): AnalysisResult {

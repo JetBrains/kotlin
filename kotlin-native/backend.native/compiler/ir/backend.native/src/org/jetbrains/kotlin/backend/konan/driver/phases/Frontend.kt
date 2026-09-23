@@ -8,41 +8,26 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.KonanCompilationException
+import org.jetbrains.kotlin.backend.konan.TopDownAnalyzerFacadeForKonan
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
+import org.jetbrains.kotlin.backend.konan.sourcesModules
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-sealed class FrontendPhaseOutput {
-    object ShouldNotGenerateCode : FrontendPhaseOutput()
-
-    data class Full(
-            val moduleDescriptor: ModuleDescriptor,
-            val bindingContext: BindingContext,
-            val frontendServices: FrontendServices,
-    ) : FrontendPhaseOutput()
-}
-
-internal interface FrontendContext : NativeBackendPhaseContext {
-    var frontendServices: FrontendServices
-}
-
-internal class FrontendContextImpl(
-        config: NativeSecondStageCompilationConfig
-) : BasicNativeBackendPhaseContext(config), FrontendContext {
-    override lateinit var frontendServices: FrontendServices
-}
+data class K1FrontendPhaseOutput(val moduleDescriptor: ModuleDescriptor, val bindingContext: BindingContext)
 
 @OptIn(K1Deprecation::class)
-internal val FrontendPhase = createSimpleNamedCompilerPhase(
+internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, KotlinCoreEnvironment, K1FrontendPhaseOutput?> = createSimpleNamedCompilerPhase(
         "Frontend",
-        outputIfNotEnabled = { _, _, _, _ -> FrontendPhaseOutput.ShouldNotGenerateCode }
-) { context: FrontendContext, input: KotlinCoreEnvironment ->
+        outputIfNotEnabled = { _, _, _, _ -> null }
+) { context, input: KotlinCoreEnvironment ->
     lateinit var analysisResult: AnalysisResult
 
     do {
@@ -75,12 +60,7 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
 
     val moduleDescriptor = analysisResult.moduleDescriptor
     val bindingContext = analysisResult.bindingContext
-
-    if (analysisResult.shouldGenerateCode) {
-        context.config.configuration.sourcesModules =
-                moduleDescriptor.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
-        FrontendPhaseOutput.Full(moduleDescriptor, bindingContext, context.frontendServices)
-    } else {
-        FrontendPhaseOutput.ShouldNotGenerateCode
-    }
+    context.config.configuration.sourcesModules =
+            moduleDescriptor.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
+    K1FrontendPhaseOutput(moduleDescriptor, bindingContext)
 }

@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
@@ -18,13 +19,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.konan.config.emitLazyObjcHeaderFile
 import org.jetbrains.kotlin.konan.config.objcGenerics
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.K1Deprecation
 
 @OptIn(K1Deprecation::class)
 internal fun StorageComponentContainer.initContainer(config: NativeSecondStageCompilationConfig) {
-    useImpl<FrontendServices>()
-
     if (!config.configuration.emitLazyObjcHeaderFile.isNullOrEmpty()) {
         useImpl<ObjCExportLazyImpl>()
         useInstance(object : ObjCExportProblemCollector {
@@ -64,13 +61,8 @@ internal fun StorageComponentContainer.initContainer(config: NativeSecondStageCo
 }
 
 @OptIn(K1Deprecation::class)
-internal fun ComponentProvider.postprocessComponents(context: FrontendContext, files: Collection<KtFile>) {
-    context.frontendServices = this.get<FrontendServices>()
-
+internal fun ComponentProvider.postprocessComponents(context: NativeBackendPhaseContext, files: Collection<KtFile>) {
     context.config.configuration.emitLazyObjcHeaderFile?.takeIf { it.isNotEmpty() }?.let {
         this.get<ObjCExportLazy>().dumpObjCHeader(files, it, context.shouldExportKDoc())
     }
 }
-
-@OptIn(K1Deprecation::class)
-class FrontendServices(val deprecationResolver: DeprecationResolver)
