@@ -11,8 +11,11 @@ import kotlin.io.path.exists
 private const val GRAALVM_VERSION_PROPERTY = "GRAALVM_VERSION"
 private const val MIN_GRAALVM_VERSION = "25.1.3"
 
-fun JavaLauncher.resolveNativeImageExecutable(isWindows: Boolean = false): Path {
-    val javaHome = executablePath.asFile.toPath().parent.parent
+fun JavaLauncher.resolveNativeImageExecutable(isWindows: Boolean = false): Path =
+    executablePath.asFile.toPath().parent.parent.resolveNativeImageExecutable(isWindows)
+
+fun Path.resolveNativeImageExecutable(isWindows: Boolean = false): Path {
+    val javaHome = this
 
     val nativeImageName = if (isWindows) "native-image.exe" else "native-image"
     val nativeImageBin = javaHome.resolve("lib/svm/bin/$nativeImageName")

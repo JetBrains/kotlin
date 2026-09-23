@@ -24,6 +24,15 @@ Produce a native image binary:
 
 The task requires a GraalVM JDK version 25.1.3+ toolchain, which is automatically resolved via Gradle.
 
+To select a local GraalVM installation, set `GRAALVM_HOME` or pass
+`-Pkotlin.build.native-image.java-home=/path/to/graalvm`. The Gradle property takes precedence.
+The default build uses `-O3` without requiring a machine-specific profile. For profile-guided
+optimization, first build with `-Pkotlin.build.native-image.pgo-instrument=true`, run a representative
+workload, then rebuild with `-Pkotlin.build.native-image.pgo-profile=/path/to/default.iprof`.
+These two options are mutually exclusive; the profile is tracked as a build input.
+On macOS, `SDKROOT` is forwarded explicitly to native-image's isolated build environment;
+set it to an installed SDK compatible with your C compiler and linker if needed.
+
 Produce a native image distribution:
 ```
 ./gradlew :kotlin-compiler-native-image:kotlincNativeImageDist
@@ -51,6 +60,69 @@ dist/kotlinc-native-image/bin/kotlinc-native-image.sh path/to/Foo.kt -d out/
 ```
 
 ## Tests
+
+### Persistent Build Tools API worker
+
+`createNativeImageExecutionPolicy()` uses one lazily started compiler process per `BuildSession`.
+Close the session after the build to release the process and its application/plugin caches.
+Compilation errors leave the worker available for another request; cancellation or a broken
+connection discards it, and the next request starts a new worker. Native incremental compilation
+is not supported and must be disabled by the caller.
+
+Set the JVM system property `kotlin.native.image.home` or the environment variable
+`KOTLIN_NATIVE_IMAGE_HOME` to the distribution root (containing `bin` and `lib`).
+The system property takes precedence. No checkout-specific default is used.
+The worker uses `JAVA_HOME`, falling back to the host JVM's `java.home`.
+
+For the Gradle Kotlin DSL integration, opt in with
+`-Dorg.gradle.kotlin.dsl.compiler.execution.strategy=native-image` and export
+`KOTLIN_NATIVE_IMAGE_HOME` before starting Gradle. The Gradle integration must use the matching
+Build Tools API artifacts and turn off incremental compilation for this policy.
+The native distribution must be built with `-Pkotlin.build.native-image.dynamic-plugins=true`.
+This enables Crema runtime class loading and the metadata preservation configured in
+`preserved-packages.txt`. It is required even when all compiler plugins are bundled: Gradle's
+script base classes and compilation configuration are loaded from the supplied script classpath.
+Without it, the worker protocol and ordinary Kotlin compilation can work while Kotlin DSL
+compilation fails with `Unable to load base class org.gradle.kotlin.dsl.support.CompiledKotlinSettingsPluginManagementBlock`.
+
+Publish the implementation and matching compiler to this checkout's `build/repo`:
+
+```bash
+./gradlew :compiler:build-tools:kotlin-build-tools-impl:publish \
+  :kotlin-compiler-embeddable:publish \
+  -Pbuild.number=2.5.0-native-image -Pkotlin.build.useBootstrapStdlib=true --dependency-verification off
+```
+
+Build the matching native distribution on the target OS and architecture:
+
+```bash
+./gradlew :kotlin-compiler-native-image:kotlincNativeImageDist \
+  -Pkotlin.build.native-image.dynamic-plugins=true \
+  -Pbuild.number=2.5.0-native-image -Pkotlin.build.useBootstrapStdlib=true --dependency-verification off
+```
+
+Select GraalVM and, on macOS if necessary, a compatible SDK as described under [Building](#building).
+PGO is optional; the command above does not depend on a locally recovered profile.
+The dynamic-plugin flag is a build-time option: passing it to the consuming Gradle build
+does not enable class loading in an image built without it.
+
+The private `--native-image-server` entry point reserves stdout for the versioned `KNI1` protocol.
+It is intended for the matching BTA implementation, not interactive use.
+
+The worker lifecycle tests exercise the same server implementation on the JVM without rebuilding
+the native image:
+
+```bash
+./gradlew :compiler:build-tools:kotlin-build-tools-impl:test \
+  --tests NativeImageCompilerSessionTest --dependency-verification off
+```
+
+To run those tests against an already built native distribution instead, add
+`-Pkotlin.test.native-image.home=/path/to/distribution`. This verifies the native protocol,
+compilation errors, classpath isolation, worker reuse, cancellation/restart, and shutdown
+without rebuilding the native executable.
+
+### Native compilation
 
 For a quick sanity check, use:
 ```

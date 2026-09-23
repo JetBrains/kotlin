@@ -74,6 +74,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         override val projectId: ProjectId,
         val classloadersCache: LruClassLoadersCache,
     ) : KotlinToolchains.BuildSession {
+        private val nativeImageCompiler = NativeImageCompilerSession()
         private val sessionIsAliveFlagFile = lazy { createSessionIsAliveFlagFile() }
         private val executorDelegate = lazy {
             Executors.newCachedThreadPool()
@@ -108,7 +109,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
                     projectId,
                     executionPolicy,
                     logger,
-                    ExecutionContext(sessionIsAliveFlagFile, classloadersCacheWithLogger)
+                    ExecutionContext(sessionIsAliveFlagFile, classloadersCacheWithLogger, nativeImageCompiler)
                 )
             }
             return if (executionPolicy is ExecutionPolicy.InProcess) {
@@ -136,6 +137,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         }
 
         override fun close() {
+            nativeImageCompiler.close()
             if (applicationEnvironmentPin.isInitialized()) {
                 applicationEnvironmentPin.value.close()
             }
@@ -165,4 +167,5 @@ internal sealed interface BtaApiVersion {
 internal class ExecutionContext(
     val sessionIsAliveFlagFile: Lazy<File>,
     val classloadersCache: LruClassLoadersCache?,
+    val nativeImageCompiler: NativeImageCompilerSession? = null,
 )

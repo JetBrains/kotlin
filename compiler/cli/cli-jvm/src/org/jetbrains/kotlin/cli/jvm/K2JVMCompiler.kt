@@ -43,7 +43,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            doMain(K2JVMCompiler(), args)
+            if (args.contentEquals(arrayOf("--native-image-server"))) {
+                NativeImageCompilerServer.run()
+            } else {
+                doMain(K2JVMCompiler(), args)
+            }
         }
     }
 

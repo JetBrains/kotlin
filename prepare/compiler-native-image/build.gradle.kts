@@ -79,6 +79,12 @@ val dynamicPluginsEnabled = kotlinBuildProperties
     .get()
 
 val graalLauncher = getNativeImageToolchainLauncherFor(JdkMajorVersion.JDK_25_0)
+val nativeImageJavaHome = layout.projectDirectory.let { projectDirectory ->
+    providers.gradleProperty("kotlin.build.native-image.java-home")
+        .orElse(providers.environmentVariable("GRAALVM_HOME"))
+        .map { projectDirectory.file(it).asFile }
+        .orElse(graalLauncher.map { it.metadata.installationPath.asFile })
+}
 
 projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
@@ -150,7 +156,7 @@ val currentOs = OperatingSystem.current()
 val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     description = "Build a native image of the kotlin-compiler-embeddable"
 
-    val launcher = graalLauncher
+    val javaHome = nativeImageJavaHome
     val resources = layout.projectDirectory.dir("resources")
     val preservedPackagesFile = layout.projectDirectory.file("preserved-packages.txt")
     val classpathFiles = files(nativeImageClasspath, resources)
@@ -180,9 +186,12 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
             .toList().toTypedArray(),
     ) else emptyList()
 
-    val nativeArgs = basicNativeArgs + dynamicPluginsNativeArgs
+    val projectDirectory = layout.projectDirectory
+    val sdkRoot = providers.environmentVariable("SDKROOT")
+    val sdkArgs = if (currentOs.isMacOsX && sdkRoot.isPresent) listOf("-ESDKROOT=${sdkRoot.get()}") else emptyList()
+    val nativeArgs = basicNativeArgs + dynamicPluginsNativeArgs + sdkArgs
 
-    inputs.files(nativeImageClasspath, resources, launcher.map { it.metadata.installationPath.asFile })
+    inputs.files(nativeImageClasspath, resources, javaHome)
         .withNormalizer(ClasspathNormalizer::class)
         .withPropertyName("nativeImageClasspath")
 
@@ -199,7 +208,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     outputs.file(executableFile)
 
     doFirst {
-        val nativeImageExecutable = launcher.get().resolveNativeImageExecutable(isWindows)
+        val nativeImageExecutable = javaHome.get().toPath().resolveNativeImageExecutable(isWindows)
         val fullClasspath = classpathFiles.joinToString(File.pathSeparator) { it.absolutePath }
         commandLine(
             nativeImageExecutable,

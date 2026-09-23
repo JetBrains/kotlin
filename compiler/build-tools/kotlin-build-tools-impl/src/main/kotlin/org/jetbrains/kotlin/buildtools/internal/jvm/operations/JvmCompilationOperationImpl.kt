@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.compilerRunner.CompilerOutputParser
@@ -230,34 +229,22 @@ internal class JvmCompilationOperationImpl private constructor(
         executionContext: ExecutionContext
     ): CompilationResult {
         require(!shouldCompileIncrementally()) { "Native image CLI compilation does not support incremental compilation." }
-        loggerAdapter.kotlinLogger.debug("Compiling using the native image CLI strategy")
+        loggerAdapter.kotlinLogger.debug("Compiling using the persistent native image worker")
         val arguments = createAndPrepareCompilerArguments().apply { addSources() }
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
 
-        val distribution = "/Users/Azat.Abdullin/IdeaProjects/kotlin/prepare/compiler-native-image/build/dist"
-        val executable = "$distribution/bin/kotlinc-native-image.sh"
-        val command = listOf(
-            executable,
-            "-D${MessageRenderer.PROPERTY_KEY}=${MessageRenderer.XML.name}",
-        ) + arguments.toArgumentStrings(allowArgFileInValues = false)
-
+        val worker = checkNotNull(executionContext.nativeImageCompiler) { "Native image compilation requires a build session" }
         val temporaryDirectory = Files.createTempDirectory("kotlin-native-image-")
         val stdout = temporaryDirectory.resolve("stdout").toFile()
         val stderr = temporaryDirectory.resolve("stderr").toFile()
-        var process: Process? = null
         try {
-            cancellationHandle.checkCanceled()
-            val compilerProcess = ProcessBuilder(command)
-                .redirectOutput(stdout)
-                .redirectError(stderr)
-                .apply { environment().putIfAbsent("JAVA_HOME", System.getProperty("java.home")) }
-                .start()
-            process = compilerProcess
-            onCancel { compilerProcess.destroyForcibly() }
-            // Cancellation may have happened between starting the process and installing the callback.
-            cancellationHandle.checkCanceled()
-            val exitCode = compilerProcess.waitFor()
-            cancellationHandle.checkCanceled()
+            val exitCode = worker.compile(
+                arguments.toArgumentStrings(allowArgFileInValues = false),
+                stdout.toPath(),
+                stderr.toPath(),
+                cancellationHandle::checkCanceled,
+                ::onCancel,
+            )
 
             stdout.forEachLine { loggerAdapter.kotlinLogger.info(it) }
             stderr.reader().use { reader ->
@@ -275,10 +262,14 @@ internal class JvmCompilationOperationImpl private constructor(
             Thread.currentThread().interrupt()
             throw OperationCancelledException()
         } catch (e: IOException) {
-            loggerAdapter.kotlinLogger.error("Failed to run the native image compiler", e)
+            try {
+                cancellationHandle.checkCanceled()
+            } catch (_: CompilationCanceledException) {
+                throw OperationCancelledException()
+            }
+            loggerAdapter.kotlinLogger.error("Failed to communicate with the native image compiler", e)
             return CompilationResult.COMPILER_INTERNAL_ERROR
         } finally {
-            process?.destroyForcibly()
             Files.deleteIfExists(stdout.toPath())
             Files.deleteIfExists(stderr.toPath())
             Files.deleteIfExists(temporaryDirectory)

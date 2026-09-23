@@ -75,6 +75,14 @@ tasks.named<ShadowJar>(EMBEDDABLE_COMPILER_TASK_NAME) {
 sourcesJar()
 javadocJar()
 
+projectTests {
+    testTask {
+        providers.gradleProperty("kotlin.test.native-image.home").orNull?.let {
+            systemProperty("kotlin.test.native-image.home", it)
+        }
+    }
+}
+
 kotlin {
     explicitApi()
     compilerOptions {
