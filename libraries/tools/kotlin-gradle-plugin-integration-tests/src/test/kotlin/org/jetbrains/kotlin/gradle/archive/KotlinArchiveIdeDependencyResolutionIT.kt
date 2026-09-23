@@ -125,16 +125,24 @@ class KotlinArchiveIdeDependencyResolutionIT : KGPBaseTest() {
     }
 
     /**
-     * Sources for kotlin archive contained target are not supported yet. Would be supported in following PR.
+     * In fact, that coordinates don't correspond to maven coordinates.
+     *
+     * They are synthetic ones computed by [org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates.displayString]
+     *    - For platform dependency, capability becomes part of "coordinates", so we see target name in it.
+     *    - For metadata dependency, sourceSet name becomes part of "coordinates".
+     *
+     * Also, their sources are resolved by different mechanisms, resulting in different names:
+     *   - Platform sources are resolved via [org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeSourcesVariantsResolver],
+     *     which is aware of Gradle variants, and resolved to Gradle caches, who use name from Gradle metadata for file name
+     *   - Metadata sources can't be resolved that way, as they don't have gradleArtifact, so they are resolved with
+     *     [org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeArtifactResolutionQuerySourcesResolver],
+     *     which uses .m2 directory under the hood, which uses url name as file name.
+     *
+     * Having two different names is fine, as content of these files is identical.
      */
-    private fun PublishedProject.platformDependency(legacyTargetName: String): IdeaKotlinDependencyMatcher =
-        binaryCoordinates("$group:$name-$legacyTargetName:$version")
-            .withoutResolvedSources()
-
-    private fun IdeaKotlinDependencyMatcher.withoutResolvedSources(): IdeaKotlinDependencyMatcher =
-        IdeaKotlinDependencyMatcher("$description without resolved sources") { dependency ->
-            matches(dependency) && dependency is IdeaKotlinBinaryDependency && dependency.sourcesClasspath.isEmpty()
-        }
+    private fun PublishedProject.platformDependency(targetName: String): IdeaKotlinDependencyMatcher =
+        binaryCoordinates("$group:$name-$targetName:$version")
+            .withResolvedSourcesFile("${name}-kotlin-${version}-sources.jar")
 
     private fun PublishedProject.metadataDependency(producerSourceSetName: String): IdeaKotlinDependencyMatcher =
         binaryCoordinates("$group:$name:$producerSourceSetName:$version")

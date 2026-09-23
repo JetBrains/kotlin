@@ -311,18 +311,29 @@ internal suspend fun getCommonSourceSetsForMetadataCompilation(project: Project)
         .keys
 }
 
-internal suspend fun getPublishedPlatformCompilations(project: Project): Map<KotlinUsageContext, KotlinCompilation<*>> {
+internal suspend inline fun getPublishedPlatformCompilations(
+    project: Project,
+): Map<KotlinUsageContext, KotlinCompilation<*>> =
+    getPublishedPlatformCompilations(project, targetFilter = { true })
+
+internal suspend inline fun getPublishedPlatformCompilations(
+    project: Project,
+    crossinline targetFilter: (InternalKotlinTarget) -> Boolean,
+): Map<KotlinUsageContext, KotlinCompilation<*>> {
     val result = mutableMapOf<KotlinUsageContext, KotlinCompilation<*>>()
 
-    project.multiplatformExtension.awaitTargets().withType(InternalKotlinTarget::class.java).forEach { target ->
-        if (target.platformType == KotlinPlatformType.common)
-            return@forEach
+    project.multiplatformExtension.awaitTargets()
+        .withType(InternalKotlinTarget::class.java)
+        .matching { targetFilter(it) }
+        .forEach { target ->
+            if (target.platformType == KotlinPlatformType.common)
+                return@forEach
 
-        target.kotlinComponents
-            .flatMap { component -> component.internal.usages }
-            .filter { it.includeIntoProjectStructureMetadata }
-            .forEach { usage -> result[usage] = usage.compilation }
-    }
+            target.kotlinComponents
+                .flatMap { component -> component.internal.usages }
+                .filter { it.includeIntoProjectStructureMetadata }
+                .forEach { usage -> result[usage] = usage.compilation }
+        }
 
     return result
 }
