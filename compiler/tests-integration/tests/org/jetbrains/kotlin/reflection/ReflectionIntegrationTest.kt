@@ -80,7 +80,7 @@ class ReflectionIntegrationTest {
         val latch = CountDownLatch(1)
         val error = AtomicReference<Throwable?>()
         repeat(2) {
-            thread {
+            val _ = thread {
                 while (latch.count == 1L) {
                     try {
                         val classLoader = URLClassLoader(urls, null)
