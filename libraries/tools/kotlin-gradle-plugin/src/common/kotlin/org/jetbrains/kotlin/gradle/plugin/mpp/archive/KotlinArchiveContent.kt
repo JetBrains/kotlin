@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.crossCompilationSharedData
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropMetadataDirectoryPath
@@ -53,8 +54,18 @@ internal fun TaskProvider<AssembleKotlinArchiveTask>.fillKotlinArchiveTargetCont
     val pathInKotlinArchive = target.platformNameInKotlinArchive
     configure { task ->
         task.addPlatformKlib(pathInKotlinArchive, task.project.klibFileCollection(mainCompilation.compileTaskProvider))
+        task.targetsNotPublishableOnCurrentHost.addAll(
+            task.project.provider { if (target.publishable) emptyList() else listOf(target.targetName) }
+        )
     }
     if (mainCompilation is KotlinNativeCompilation) {
+        val crossCompilationSharedData = mainCompilation.crossCompilationSharedData
+        configure { task ->
+            task.checkTargetHasNoMissingDependenciesBecauseOfCrossCompilationDisabled(
+                targetName = target.targetName,
+                crossCompilationData = crossCompilationSharedData,
+            )
+        }
         for (cinterop in mainCompilation.cinterops) {
             val cinteropTaskProvider = target.project.tasks.named<CInteropProcess>(cinterop.interopProcessingTaskName)
             configure { task ->

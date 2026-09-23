@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.fus.internal.isCiBuild
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CLASSLOADER_CACHE_TIMEOUT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS
@@ -472,6 +473,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = enumProvider<KotlinPublicationFormat>(KOTLIN_PUBLICATION_FORMAT)
             .orElse(KotlinPublicationFormat.LEGACY_MULTIPLE_PUBLICATIONS)
 
+    val allowIncompleteKotlinArchivePublication: Boolean
+        get() = booleanProperty(KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION) ?: false
+
     @Suppress("DEPRECATION")
     @Deprecated("KT-85433: non-BTA JVM compiler invocation is deprecated")
     val runKotlinCompilerViaBuildToolsApi: Provider<Boolean>
@@ -888,6 +892,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_DEPRECATED_TEST_PROPERTY = property("${KOTLIN_INTERNAL_NAMESPACE}.deprecatedTestProperty")
         val KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE = property("kotlin.publishJvmEnvironmentAttribute")
         val KOTLIN_PUBLICATION_FORMAT = property("kotlin.publicationFormat")
+        val KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION = property("kotlin.allowIncompleteKotlinArchivePublication")
         val KOTLIN_EXPERIMENTAL_TRY_NEXT = property("kotlin.experimental.tryNext")
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = property(KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY)
         val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = property("kotlin.native.ignoreDisabledTargets")
