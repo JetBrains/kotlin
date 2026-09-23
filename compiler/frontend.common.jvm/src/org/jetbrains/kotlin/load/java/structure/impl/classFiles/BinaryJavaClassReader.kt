@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.io.URLUtil.JAR_SEPARATOR
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 
@@ -20,14 +22,14 @@ import org.jetbrains.kotlin.name.ClassId
  */
 fun readBinaryJavaClass(
     classId: ClassId,
-    topLevelVirtualFile: VirtualFile,
+    topLevelClassFile: BinaryClassFileHandle,
     classFileContent: ByteArray?,
     outerClassFromRequest: JavaClass?,
-    binaryCache: MutableMap<ClassId, JavaClass?>,
+    binaryCache: BinaryJavaClasses,
     signatureParser: BinaryClassSignatureParser,
     findOuterClass: (ClassId) -> JavaClass?,
     resolveCrossReference: (ClassId) -> JavaClass?,
-): JavaClass? = binaryCache.getOrPut(classId) {
+): JavaClass? = binaryCache.getOrPut(topLevelClassFile, classId) {
     val outerClassId = classId.outerClassId
     if (outerClassId != null) {
         val outerClass = outerClassFromRequest ?: findOuterClass(outerClassId)
@@ -38,16 +40,17 @@ fun readBinaryJavaClass(
         }
     }
 
-    val classContent = classFileContent ?: topLevelVirtualFile.contentsToByteArray()
-    // Class files with '$' in the name may still be nested and must not be treated as top-level.
-    if (topLevelVirtualFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContent)) {
+    val classContent = classFileContent ?: topLevelClassFile.readBytes()
+    // A '$' in the file name may come from a nested class instead of a top-level class named with '$':
+    // such a class has no top-level id and is only reachable through its outer class.
+    if (topLevelClassFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContent)) {
         return@getOrPut null
     }
 
     val resolver = ClassifierResolutionContext(resolveCrossReference)
 
     BinaryJavaClass(
-        topLevelVirtualFile,
+        topLevelClassFile.virtualFile,
         classId.asSingleFqName(),
         resolver,
         signatureParser,
@@ -55,3 +58,53 @@ fun readBinaryJavaClass(
         classContent = classContent,
     )
 }
+
+/**
+ * The classes read from binary class files, indexed by the class file they were read from *and* by the
+ * [ClassId] inside it: a class file declares its top-level class together with every class nested in it,
+ * and the same [ClassId] may be declared by several classpath roots.
+ */
+class BinaryJavaClasses {
+    private val classesByFile: MutableMap<BinaryClassFileHandle, MutableMap<ClassId, JavaClass?>> = HashMap()
+
+    // A `null` is not remembered, so a class which was not found is looked for again on the next request.
+    internal fun getOrPut(classFile: BinaryClassFileHandle, classId: ClassId, read: () -> JavaClass?): JavaClass? =
+        classesByFile.getOrPut(classFile) { HashMap() }.getOrPut(classId, read)
+}
+
+fun VirtualFile.asBinaryClassFileHandle(): BinaryClassFileHandle = VirtualFileBinaryClassFileHandle(this)
+
+private class VirtualFileBinaryClassFileHandle(val virtualFile: VirtualFile) : BinaryClassFileHandle {
+    /** The content version of [virtualFile] at the time of the creation of this handle. */
+    private val modificationStamp: Long = virtualFile.modificationStamp
+
+    override val nameWithoutExtension: String
+        get() = virtualFile.nameWithoutExtension
+
+    override fun isUnder(classpathRoot: JvmClasspathRootId): Boolean {
+        val root = classpathRoot.id
+        val path = virtualFile.path
+        val archiveSeparator = path.indexOf(JAR_SEPARATOR)
+        return when {
+            // An entry of an archive: the root is the archive itself; see `VfsBasedProjectEnvironment.psiSearchScope`.
+            archiveSeparator >= 0 -> archiveSeparator == root.length && path.startsWith(root)
+            else -> path.length > root.length && path[root.length] == '/' && path.startsWith(root)
+        }
+    }
+
+    override fun readBytes(): ByteArray = virtualFile.contentsToByteArray()
+
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+                other is VirtualFileBinaryClassFileHandle &&
+                virtualFile == other.virtualFile &&
+                modificationStamp == other.modificationStamp
+
+    override fun hashCode(): Int = virtualFile.hashCode()
+
+    override fun toString(): String = virtualFile.toString()
+}
+
+/** Only [BinaryJavaClass] still needs the file itself, to find the class files of nested classes next to it. */
+private val BinaryClassFileHandle.virtualFile: VirtualFile
+    get() = (this as VirtualFileBinaryClassFileHandle).virtualFile
