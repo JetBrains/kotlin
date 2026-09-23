@@ -42,9 +42,9 @@ object RegularObjectId
 @Serializable
 class Ids(
     @ProtoType(ProtoIntegerType.FIXED) val inline: InlineId,
-    @ProtoType(ProtoIntegerType.FIXED) val singleField: SingleFieldId,
-    @ProtoType(ProtoIntegerType.FIXED) val multiField: MultiFieldId,
-    @ProtoType(ProtoIntegerType.FIXED) val valueObject: ValueObjectId,
+    <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val singleField: SingleFieldId,
+    <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val multiField: MultiFieldId,
+    <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val valueObject: ValueObjectId,
     <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val regular: RegularId,
     <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val regularObject: RegularObjectId,
 )
@@ -52,9 +52,9 @@ class Ids(
 @Serializable
 class IdCollections(
     @ProtoType(ProtoIntegerType.FIXED) val inlines: List<InlineId>,
-    @ProtoType(ProtoIntegerType.FIXED) val singleFields: List<SingleFieldId>,
-    @ProtoType(ProtoIntegerType.FIXED) val multiFields: List<MultiFieldId>,
+    <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val singleFields: List<SingleFieldId>,
+    <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val multiFields: List<MultiFieldId>,
     <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val regulars: List<RegularId>,
-    @ProtoType(ProtoIntegerType.FIXED) val multiFieldValues: Map<String, MultiFieldId>,
+    <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val multiFieldValues: Map<String, MultiFieldId>,
     <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val regularValues: Map<String, RegularId>,
 )
