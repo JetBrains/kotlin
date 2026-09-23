@@ -63,7 +63,6 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
      *   3) In a subsequent version remove the enum entry and the @JvmField field.
      */
     private enum class Feature(val flag: String) {
-        StrongSkipping("StrongSkipping"),
         IntrinsicRemember("IntrinsicRemember"),
         OptimizeNonSkippingGroups("OptimizeNonSkippingGroups"),
         PausableComposition("PausableComposition"),
@@ -73,30 +72,6 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
      * Contains currently available [ComposeFeatureFlag]s.
      */
     companion object {
-        /**
-         * Enable strong skipping.
-         *
-         * Strong Skipping is a mode that improves the runtime performance of your application by skipping unnecessary
-         * invocations of composable functions for which the parameters have not changed. In particular, when enabled, composable functions
-         * with unstable parameters become skippable and lambdas with unstable captures will be memoized.
-         *
-         * For more information, see this link:
-         *  - [Strong skipping](https://https://github.com/JetBrains/kotlin/blob/master/plugins/compose/design/strong-skipping.md)
-         *
-         * This feature is enabled by default. To disable, provide this feature flag in a [disabled] state:
-         * ```
-         * composeCompiler {
-         *     featureFlags = setOf(ComposeFeatureFlag.StrongSkipping.disabled())
-         * }
-         * ```
-         */
-        @Deprecated(
-            message = "This flag is now enabled by default and will be removed with Kotlin 2.5.0.",
-            level = DeprecationLevel.ERROR
-        )
-        @JvmField
-        val StrongSkipping: ComposeFeatureFlag = Enabled(Feature.StrongSkipping)
-
         /**
          * Enable the intrinsic remember performance optimization.
          *
