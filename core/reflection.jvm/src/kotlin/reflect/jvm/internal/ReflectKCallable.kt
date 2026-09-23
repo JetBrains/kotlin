@@ -25,7 +25,7 @@ import java.lang.reflect.Array as ReflectArray
  * (K1 descriptor-based, kotlin-metadata-jvm, and Java-based) that are not yet exposed in the public API of [KCallable].
  */
 internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerImpl {
-    val container: KDeclarationContainerImpl
+    override val container: KDeclarationContainerImpl
 
     val rawBoundReceiver: Any?
 

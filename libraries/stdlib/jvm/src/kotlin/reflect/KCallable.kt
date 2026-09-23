@@ -91,4 +91,11 @@ public actual interface KCallable<out R> : KAnnotatedElement {
     @SinceKotlin("2.5")
     @ExperimentalCompanionExtensions
     public val companionExtensionClass: KClass<*>?
+
+    /**
+     * An entity containing this callable declaration.
+     * `null` for local functions and local delegated properties.
+     */
+    @SinceKotlin("2.5")
+    public val container: KDeclarationContainer?
 }
