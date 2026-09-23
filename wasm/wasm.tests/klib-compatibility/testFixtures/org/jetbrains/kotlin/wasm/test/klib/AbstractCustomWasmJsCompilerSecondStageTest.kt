@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
-import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
@@ -101,13 +100,8 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
 
             useConfigurators(::WasmSecondStageEnvironmentConfigurator.bind(WasmTarget.JS))
             // The first stage compiles against the custom compiler's own stdlib whenever its language version is
-            // below the latest stable one (see `createKotlinStandardLibrariesPathProvider`), and the annotation the
-            // batching package inserter adds exists in the stdlib only since Kotlin 2.5. Registering it against an
-            // older stdlib made every batched test fail its first stage with an unresolved reference, which the
-            // suppressor then muted into a silent skip.
-            if (customWasmJsCompilerSettings.defaultLanguageVersion >= REFLECTION_PACKAGE_NAME_SINCE) {
-                useAdditionalService { ReflectionPackageNameAnnotation }
-            }
+            // below the latest stable one (see `createKotlinStandardLibrariesPathProvider`).
+            useReflectionPackageNameAnnotationIfSupported(customWasmJsCompilerSettings.defaultLanguageVersion)
         }
         nonGroupingStage {
             useGroupingTestIsolators(::WasmGroupingTestIsolator)
@@ -165,6 +159,3 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
         }
     }
 }
-
-/** The stdlib version that introduced `kotlin.internal.ReflectionPackageName`. */
-private val REFLECTION_PACKAGE_NAME_SINCE = LanguageVersion.KOTLIN_2_5
