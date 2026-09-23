@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.search.ProjectScope.getLibrariesScope
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createLibraryListForJvm
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.fir.*
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -69,7 +69,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val libraryList = createLibraryListForJvm("repl", configuration, emptyList())
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
-        val librariesSearchScope = PsiBasedProjectFileSearchScope(getLibrariesScope(project))
 
         val projectEnvironment =
             VfsBasedProjectEnvironment(project, VirtualFileManager.getInstance().getFileSystem(FILE_PROTOCOL)) {
@@ -79,7 +78,8 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
-            librariesSearchScope,
+            JvmClasspath.ProjectLibraries(),
+            projectEnvironment.javaInterop(configuration),
         )
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
@@ -147,12 +147,10 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
         val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,
-            javaSourcesScope = PsiBasedProjectFileSearchScope(FirFrontendFacade.newModuleSearchScope(project, ktFiles.values)),
             createIncrementalCompilationSymbolProviders = { null },
             extensionRegistrars = replCompilationEnvironment.extensionRegistrars,
             configuration = compilerConfiguration,
             context = replCompilationEnvironment.jvmSessionFactoryContext,
-            needRegisterJavaElementFinder = true,
             kmpModuleKind = KmpModuleKind.SingleModule,
         ) {
             if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
