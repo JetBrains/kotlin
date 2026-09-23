@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
-import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
-import org.jetbrains.kotlin.fir.backend.utils.createWhenForSafeFall
-import org.jetbrains.kotlin.fir.backend.utils.varargElementType
+import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -36,14 +33,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrDeclarationWithAccessorsSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.implicitCastIfNeededTo
 import org.jetbrains.kotlin.ir.util.isKMutableProperty
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.ir.util.render
@@ -743,23 +737,42 @@ class AdapterGenerator(
         }
 
         val expectedIrType = expectedType.toIrType() as IrSimpleType
+        val expectedIrTypeNonNullable = expectedIrType.withNullability(false)
+        val adapteeParameterType = functionTypeBeforeConversion.withNullability(false, session.typeContext).toIrType()
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(
                 startOffset,
                 endOffset,
-                expectedIrType,
-                adapteeParameterType = functionTypeBeforeConversion.toIrType(),
-                originalArgumentType.isMarkedNullable,
+                expectedIrTypeNonNullable,
+                adapteeParameterType = adapteeParameterType,
                 invokeSymbol,
                 isSuspendFunctionTypeExpected,
             )
             val irAdapterRef = IrFunctionReferenceImpl(
-                startOffset, endOffset, expectedIrType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
+                startOffset, endOffset, expectedIrTypeNonNullable, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
                 null, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION
             )
-            IrBlockImpl(startOffset, endOffset, expectedIrType, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION).apply {
-                statements.add(irAdapterFunction)
-                statements.add(irAdapterRef.apply { arguments[0] = this@applyConversionBetweenFunctionTypes })
+
+            fun createConversionBlock(boundReceiver: IrExpression): IrBlockImpl {
+                return IrBlockImpl(startOffset, endOffset, expectedIrTypeNonNullable, FUNCTION_TYPE_EXPRESSION_CONVERSION)
+                    .apply {
+                        statements.add(irAdapterFunction)
+                        statements.add(irAdapterRef.apply { arguments[0] = boundReceiver })
+                    }
+            }
+
+            if (originalArgumentType.canBeNull(session)) {
+                IrBlockImpl(startOffset, endOffset, expectedIrType).apply {
+                    val [tempVariable, tempVariableSymbol] = conversionScope.createTemporaryVariable(this@applyConversionBetweenFunctionTypes)
+                    statements.add(tempVariable)
+
+                    val boundReceiver = IrGetValueImpl(startOffset, endOffset, tempVariableSymbol)
+                        .implicitCastIfNeededTo(adapteeParameterType)
+                    val conversionBlock = createConversionBlock(boundReceiver)
+                    statements.add(createWhenForSafeFall(expectedIrType, tempVariableSymbol, conversionBlock))
+                }
+            } else {
+                createConversionBlock(this@applyConversionBetweenFunctionTypes)
             }
         }
     }
@@ -835,7 +848,6 @@ class AdapterGenerator(
         endOffset: Int,
         type: IrSimpleType,
         adapteeParameterType: IrType,
-        argumentIsNullable: Boolean,
         invokeSymbol: IrSimpleFunctionSymbol,
         isSuspend: Boolean,
     ): IrSimpleFunction {
@@ -878,11 +890,7 @@ class AdapterGenerator(
                 }
             }
             irAdapterFunction.body = IrFactoryImpl.createBlockBody(startOffset, endOffset) {
-                var irCall = createAdapteeCallForArgument(startOffset, endOffset, irAdapterFunction, invokeSymbol)
-
-                if (argumentIsNullable) {
-                    irCall = createWhenForSafeFall(irCall.type, irAdapterFunction.parameters[0].symbol, irCall)
-                }
+                val irCall = createAdapteeCallForArgument(startOffset, endOffset, irAdapterFunction, invokeSymbol)
 
                 if (returnType.isUnit()) {
                     statements.add(irCall)
