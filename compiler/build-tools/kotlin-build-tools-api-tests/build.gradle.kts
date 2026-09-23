@@ -205,6 +205,7 @@ val businessLogicTestSuits = setOf(
     "testArgumentParsingWarnings",
     "testClasspathMetadata",
     "testBuildSession",
+    "testIcEvents",
 )
 
 val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
