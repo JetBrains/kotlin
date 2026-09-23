@@ -36,10 +36,6 @@ tasks.withType<Test>().configureEach {
         scan.value("$projectPath:${this.name} domain", currentDomain.get().toString())
         scan.value("$projectPath:${this.name} test subsets", formattedSubsets.get())
 
-        if (!isJUnitPlatform && smokeTests.autoSamplePercentage.isPresent) {
-            error("'includeAutoSamples' requires a JUnit 5 test task; task '$path' uses '${testFramework.javaClass.simpleName}'")
-        }
-
         if (!notCompatibleWithTestFederation && !isJUnitPlatform) {
             error(buildString {
                 appendLine("Unsupported 'testFramework' found for task '$path'")
