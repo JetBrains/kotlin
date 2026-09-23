@@ -22,9 +22,10 @@ tasks.withType<Test>().configureEach {
     doFirst {
         val testFramework = testFramework
 
-        logger.quiet("Current Domain: '${domains.get()}'")
-        logger.quiet("Requested Test Subsets: '${formattedSubsets.get()}'")
-
+        logger.quiet(buildFrame(
+            "Domain: ${domains.get()}",
+            "Test subsets: [${formattedSubsets.get().replace(",", ", ")}]",
+        ))
         scan.value("$projectPath:${this.name} domain", domains.get().toString())
         scan.value("$projectPath:${this.name} test subsets", formattedSubsets.get())
 

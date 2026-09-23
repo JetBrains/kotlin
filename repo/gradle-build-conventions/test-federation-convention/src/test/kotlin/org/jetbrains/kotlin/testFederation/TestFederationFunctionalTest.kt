@@ -130,7 +130,7 @@ class TestFederationFunctionalTest {
             ),
             result.executedTests
         )
-        assertTrue(result.buildResult.output.contains("Requested Test Subsets: 'SmokeTests'"))
+        assertTrue(result.buildResult.output.contains("Test subsets: [SmokeTests]"))
     }
 
     @Test
@@ -144,7 +144,7 @@ class TestFederationFunctionalTest {
             ),
             result.executedTests
         )
-        assertTrue(result.buildResult.output.contains("Requested Test Subsets: 'SmokeTests,ContractTestsForJs'"))
+        assertTrue(result.buildResult.output.contains("Test subsets: [SmokeTests, ContractTestsForJs]"))
     }
 
     @Test
@@ -159,14 +159,14 @@ class TestFederationFunctionalTest {
             ),
             result.executedTests
         )
-        assertTrue(result.buildResult.output.contains("Requested Test Subsets: 'SmokeTests,ContractTestsForWasm,ContractTestsForJs'"))
+        assertTrue(result.buildResult.output.contains("Test subsets: [SmokeTests, ContractTestsForWasm, ContractTestsForJs]"))
     }
 
     @Test
     fun `test - mode=Full - maps to AllTests`() {
         val result = runTestBuild(mode = TestFederationMode.Full)
         assertEquals(allTests, result.executedTests)
-        assertTrue(result.buildResult.output.contains("Requested Test Subsets: 'AllTests'"))
+        assertTrue(result.buildResult.output.contains("Test subsets: [AllTests]"))
     }
 
     /**
