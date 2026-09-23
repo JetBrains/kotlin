@@ -95,6 +95,7 @@ Jvm:
  - compiler/backend.common.jvm
  - compiler/ir/backend.jvm
  - compiler/ir/serialization.jvm
+ - compiler/jvm.tests
  - compiler/tests-different-jdk
 
 Wasm:

@@ -48,7 +48,7 @@ internal object CommonBackendDomainInfo : DomainInfo {
 
 internal object JvmDomainInfo : DomainInfo {
     override val domain = Domain.Jvm
-    override val include: List<String> = listOf("compiler/android-tests", "compiler/backend", "compiler/backend.common.jvm", "compiler/ir/backend.jvm", "compiler/ir/serialization.jvm", "compiler/tests-different-jdk")
+    override val include: List<String> = listOf("compiler/android-tests", "compiler/backend", "compiler/backend.common.jvm", "compiler/ir/backend.jvm", "compiler/ir/serialization.jvm", "compiler/tests-different-jdk", "compiler/jvm.tests")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo, FrontendDomainInfo, CommonBackendDomainInfo) }
 }

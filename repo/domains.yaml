@@ -92,6 +92,7 @@ Jvm:
     - "compiler/ir/backend.jvm"
     - "compiler/ir/serialization.jvm"
     - "compiler/tests-different-jdk"
+    - "compiler/jvm.tests"
   mustRunAllTestsOnChangesIn:
     - CoreLibs
     - CompilerInfrastructure

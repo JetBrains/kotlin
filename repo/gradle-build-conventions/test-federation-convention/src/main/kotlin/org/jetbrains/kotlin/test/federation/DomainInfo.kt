@@ -52,7 +52,7 @@ data class RepositoryPath(private val root: Path, val value: Path) {
     }
 
     init {
-        require(!value.isAbsolute) { "Path must not be absolute" }
+        require(!value.isAbsolute) { "Path must not be absolute, got $value" }
     }
 }
 

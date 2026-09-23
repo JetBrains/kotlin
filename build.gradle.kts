@@ -314,10 +314,6 @@ tasks {
         dependsOn(":compiler:jvm.tests:aggregateTests")
     }
 
-    testLifecycleTask("testsForBootstrapBuildTest", QualityGate.Master) {
-        dependsOn(":compiler:jvm.tests:test")
-    }
-
     val jvmCompilerIntegrationTest = testLifecycleTask("jvmCompilerIntegrationTest", QualityGate.Master) {
         dependsOn(
             ":kotlin-compiler-embeddable:test",
