@@ -54,7 +54,7 @@ internal abstract class SwcPlugin internal constructor() : Plugin<Project> {
         downloadBaseUrl.set("https://github.com/swc-project/swc/releases/download")
         allowInsecureProtocol.convention(false)
         installationDirectory.fileValue(gradleHome.resolve("swc"))
-        version.convention("1.15.3")
+        version.convention("1.16.2")
         command.convention("compile")
         platform.convention(
             project.providers.systemProperty("os.name")
