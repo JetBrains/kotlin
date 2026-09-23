@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.daemon.client
 
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.*
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
@@ -25,7 +23,8 @@ open class CompilerCallbackServicesFacadeServer(
     val inlineConstTracker: InlineConstTracker? = null,
     val enumWhenTracker: EnumWhenTracker? = null,
     val importTracker: ImportTracker? = null,
-    port: Int = SOCKET_ANY_FREE_PORT
+    val icFileMappingTracker: ICFileMappingTracker? = null,
+    port: Int = SOCKET_ANY_FREE_PORT,
 ) : @Suppress("DEPRECATION") CompilerCallbackServicesFacade,
     UnicastRemoteObject(
         port,
@@ -45,6 +44,8 @@ open class CompilerCallbackServicesFacadeServer(
     override fun hasEnumWhenTracker(): Boolean = enumWhenTracker != null
 
     override fun hasImportTracker(): Boolean = importTracker != null
+
+    override fun hasICFileMappingTracker(): Boolean = icFileMappingTracker != null
 
     // TODO: consider replacing NPE with other reporting, although NPE here means most probably incorrect usage
 
@@ -118,5 +119,21 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun importTracker_report(filePath: String, importedFqName: String) {
         importTracker?.report(filePath, importedFqName) ?: throw NullPointerException("importTracker was not initialized")
+    }
+
+    override fun icFileMappingTracker_recordSourceFilesToOutputFileMapping(sourceFilePaths: Collection<String>, outputFilePath: String) {
+        icFileMappingTracker!!.recordSourceFilesToOutputFileMapping(sourceFilePaths.map(::File), File(outputFilePath))
+    }
+
+    override fun icFileMappingTracker_recordSourceReferencedByCompilerPlugin(sourceFilePath: String) {
+        icFileMappingTracker!!.recordSourceReferencedByCompilerPlugin(File(sourceFilePath))
+    }
+
+    override fun icFileMappingTracker_recordOutputFileGeneratedForPlugin(outputFilePath: String) {
+        icFileMappingTracker!!.recordOutputFileGeneratedForPlugin(File(outputFilePath))
+    }
+
+    override fun icFileMappingTracker_recordSourceFileGeneratedForPlugin(sourceFilePath: String) {
+        icFileMappingTracker!!.recordSourceFileGeneratedForPlugin(File(sourceFilePath))
     }
 }
