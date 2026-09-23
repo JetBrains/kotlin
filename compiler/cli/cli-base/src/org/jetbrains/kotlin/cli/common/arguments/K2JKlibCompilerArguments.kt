@@ -263,6 +263,17 @@ The default value is 'indy'.""",
             field = value
         }
 
+    @Argument(
+        value = "-Xklib-manifest-property",
+        valueDescription = "<key=value>",
+        description = "Provide a custom property (key=value) to be added to the KLIB manifest.",
+    )
+    var klibManifestProperties: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     // TODO(KT-87172): Remove if we decide to extend CommonKlibBasedCompilerArguments 
     @Argument(
         value = "-Xklib-zip-file-accessor-cache-limit",
