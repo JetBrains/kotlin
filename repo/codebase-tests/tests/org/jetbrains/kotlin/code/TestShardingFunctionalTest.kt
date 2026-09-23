@@ -98,6 +98,35 @@ class TestShardingFunctionalTest {
     }
 
     @Test
+    fun `junit5 - DynamicTestSharding`() {
+        junit5SourcesDirectory.resolve("DynamicTestShardingTest.kt").writeCode(
+            """
+            import org.jetbrains.kotlin.test.sharding.DynamicTestSharding
+            import org.jetbrains.kotlin.test.sharding.DynamicTestShardingContext
+            import org.jetbrains.kotlin.test.sharding.shardTestsBy
+            import org.junit.jupiter.api.DynamicTest
+            import org.junit.jupiter.api.TestFactory
+
+            class MyDynamicTestShardingTest {
+                @TestFactory
+                @DynamicTestSharding
+                context(_: DynamicTestShardingContext)
+                fun tests() = (1..16).shardTestsBy { it.toString() }.map { name ->
+                    DynamicTest.dynamicTest(name.toString()) { }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val runner = createGradleRunner()
+        val allTests = runner.runTests().parseExecutedTests()
+        assertEquals(16, allTests.size)
+        val shard1 = runner.runTests(currentShard = 1, totalShards = 2).parseExecutedTests()
+        val shard2 = runner.runTests(currentShard = 2, totalShards = 2).parseExecutedTests()
+        checkShardDistribution(allTests, shard1, shard2)
+    }
+
+    @Test
     fun `junit5 - TestFactory`() {
         junit5SourcesDirectory.resolve("TestFactoryTest.kt").writeCode(
             """
