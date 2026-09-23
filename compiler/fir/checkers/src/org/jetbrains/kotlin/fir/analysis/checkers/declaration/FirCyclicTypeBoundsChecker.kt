@@ -49,7 +49,7 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
                 //for some reason FE 1.0 report differently for class declarations
                 val targets = if (declaration is FirRegularClass) {
                     typeParameter.originalBounds()
-                        .filter { extractTypeParamSymbol(it.coneType).any(typeParameterCycle::contains) }
+                        .filter { extractTypeParamSymbols(it.coneType).any(typeParameterCycle::contains) }
                         .mapNotNull { it.source }
                 } else {
                     listOf(typeParameter.source)
@@ -72,21 +72,22 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
 
 
     private fun extractTypeParamSymbols(ref: FirTypeRef): List<FirTypeParameterSymbol> =
-        ref.unwrapBound().flatMap { extractTypeParamSymbol(it.coneType) }
+        ref.unwrapBound().flatMap { extractTypeParamSymbols(it.coneType) }
 
-    private fun extractTypeParamSymbol(type: ConeKotlinType): List<FirTypeParameterSymbol> {
+    private fun extractTypeParamSymbols(type: ConeKotlinType): List<FirTypeParameterSymbol> {
         return when (val simpleKotlinType = type.unwrapToSimpleTypeUsingLowerBound()) {
             is ConeTypeParameterType -> [simpleKotlinType.lookupTag.typeParameterSymbol]
             is ConeUnionType -> buildList {
-                addAll(extractTypeParamSymbol(simpleKotlinType.primaryType))
-                simpleKotlinType.richErrorTypes.flatMapTo(this) { extractTypeParamSymbol(it) }
+                addAll(extractTypeParamSymbols(simpleKotlinType.primaryType))
+                simpleKotlinType.richErrorTypes.flatMapTo(this) { extractTypeParamSymbols(it) }
             }
             is ConeCapturedType,
             is ConeIntegerLiteralType,
             is ConeIntersectionType,
             is ConeClassLikeType,
             is ConeStubType,
-            is ConeTypeVariableType -> emptyList()
+            is ConeTypeVariableType,
+                -> emptyList()
         }
     }
 }
