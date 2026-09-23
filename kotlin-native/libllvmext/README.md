@@ -45,3 +45,4 @@ Custom LLVM passes live in the [Passes](src/main/cpp/Passes) directory:
   `kotlin-remove-sp<inline>` to additionally inline the remaining safepoints.
 - `ModuleCallsCheckerPass` (`kotlin-calls-checker-module`): module pass for external calls checker instrumentation; creates module contructor; should be run after DCE
 - `CallsCheckerPass` (`kotlin-calls-checker`): function pass for external calls checker instrumentation; performs the instrumentation
+- `ArrayLoadMetadataPass` (`kotlin-array-load-metadata`): function pass that attaches `!invariant.load` and `!range [0, INT_MAX]` metadata to `ArrayHeader::count_` loads identified by their TBAA tag.
