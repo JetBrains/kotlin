@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
+import org.jetbrains.kotlin.wasm.test.tools.UNBOUNDED_CAPTURED_OUTPUT_LENGTH
 import java.io.File
 
 abstract class WasmDebugRunnerBase(testServices: TestServices, includeLocalVariableInformation: Boolean) :
@@ -66,7 +67,10 @@ abstract class WasmDebugRunnerBase(testServices: TestServices, includeLocalVaria
             entryFile = "./${collectedJsArtifacts.entryPath}",
             jsFiles = jsFilePaths,
             workingDirectory = outputDir,
-            toolArgs = listOf("--enable-inspector", "--allow-natives-syntax")
+            toolArgs = listOf("--enable-inspector", "--allow-natives-syntax"),
+            // The output is the debugger's frame dump, parsed as one JSON document: a truncated dump is not a
+            // diagnostic to bound but an input that cannot be parsed, so the whole of it is retained.
+            maxCapturedOutputLength = UNBOUNDED_CAPTURED_OUTPUT_LENGTH,
         )
     }
 }

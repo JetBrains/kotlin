@@ -146,4 +146,30 @@ class WasmVMTest {
         assertTrue(output.endsWith(tail), output.takeLast(64))
         assertTrue("original length=${buffered.size + chunk.size} chars" in output, output.takeLast(256))
     }
+
+    @Test
+    fun `given a caller's own limit then the capture is bounded by it`() {
+        val capture = BoundedOutputCapture(maxLength = 1024)
+        val chunk = ("head\n" + "x".repeat(4000) + "\ntail").toCharArray()
+
+        capture.append(chunk, chunk.size)
+
+        val output = capture.toString()
+        assertTrue(output.length <= 1024 + 256, output.length.toString())
+        assertTrue(output.startsWith("head\n"), output.take(32))
+        assertTrue(output.endsWith("\ntail"), output.takeLast(32))
+        assertTrue(GroupedTestsResultProtocol.OUTPUT_TRUNCATED in output, output)
+    }
+
+    @Test
+    fun `given an unbounded capture then output beyond the default limit is kept whole`() {
+        val capture = BoundedOutputCapture(maxLength = UNBOUNDED_CAPTURED_OUTPUT_LENGTH)
+        val chunk = CharArray(8 * 1024) { 'x' }
+        val chunks = (5 * 1024 * 1024) / chunk.size
+        repeat(chunks) { capture.append(chunk, chunk.size) }
+
+        val output = capture.toString()
+        assertEquals(chunks * chunk.size, output.length)
+        assertFalse(GroupedTestsResultProtocol.OUTPUT_TRUNCATED in output)
+    }
 }
