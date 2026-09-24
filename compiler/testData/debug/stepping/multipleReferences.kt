@@ -1,5 +1,5 @@
 // WITH_STDLIB
-
+// IGNORE_NATIVE: useThreadStateChecker=ENABLED
 // FILE: test.kt
 fun test(x: Int) {
     println(x)
