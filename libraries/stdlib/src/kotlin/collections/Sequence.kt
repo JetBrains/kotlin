@@ -5,6 +5,8 @@
 
 package kotlin.sequences
 
+import kotlin.internal.InlineOnly
+
 /**
  * A sequence that returns values through its iterator. The values are evaluated lazily, and the sequence
  * is potentially infinite.
@@ -25,4 +27,41 @@ public interface Sequence<out T> {
      * Throws an exception if the sequence is constrained to be iterated once and `iterator` is invoked the second time.
      */
     public operator fun iterator(): Iterator<T>
+
+    companion {
+        /**
+         * Creates an empty [Sequence].
+         *
+         * @return an empty sequence.
+         * @sample samples.collections.Sequences.Building.sequenceOfEmptyLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @InlineOnly
+        public inline operator fun <T> of(): Sequence<T> =
+            emptySequence()
+
+        /**
+         * Creates a [Sequence] that contains a single given element.
+         *
+         * @param element the single element to be contained in the resulting sequence.
+         * @return a sequence containing only the specified [element].
+         * @sample samples.collections.Sequences.Building.sequenceOfSingleValueLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @InlineOnly
+        public inline operator fun <T> of(element: T): Sequence<T> =
+            sequenceOf(element)
+
+        /**
+         * Creates a sequence that returns the specified values.
+         *
+         * @sample samples.collections.Sequences.Building.sequenceOfValuesLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public operator fun <T> of(vararg elements: T): Sequence<T> =
+            elements.asSequence()
+    }
 }

@@ -51,31 +51,14 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     // apiVersion = KotlinVersion.KOTLIN_...
     freeCompilerArgs.add("-Xstdlib-compilation")
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
-    freeCompilerArgs.add("-Xcontext-parameters")
-    freeCompilerArgs.add("-Xname-based-destructuring=complete")
-    freeCompilerArgs.add("-Xcollection-literals")
-    freeCompilerArgs.add("-Xcontext-sensitive-resolution")
-    addReturnValueCheckerInfo()
+    freeCompilerArgs.addAll(dogfoodedExperimentalFeatures)
+    freeCompilerArgs.add("-Xreturn-value-checker=full")
+    freeCompilerArgs.add("-Xcompanion-blocks")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
     if (this is KotlinJvmCompilerOptions) {
-        suppressRedundantCliArgumentWarning()
+        freeCompilerArgs.add(redundantCliArgWarningSuppression)
     }
-}
-
-fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
-    freeCompilerArgs.add("-Xreturn-value-checker=full")
-}
-
-/**
- * Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
- * But this produces a warning
- * "The argument ... is redundant for the current language version ..."
- * in the bootstrap test and fails because of -Werror.
- * To work around it, we suppress the warning.
- */
-fun KotlinCommonCompilerOptions.suppressRedundantCliArgumentWarning() {
-    freeCompilerArgs.add("-Xwarning-level=REDUNDANT_CLI_ARG:disabled")
 }
 
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
@@ -105,10 +88,12 @@ kotlin {
 
     compilerOptions {
         // Some main compilations use freeCompilerArgs.set instead of .addAll,
-        // so addReturnValueCheckerInfo() duplicated there as well.
+        // so these options may be duplicated there as well.
         // Here it mainly serves the purpose to set up test compilations/source sets
         // and especially commonTest in IDE since there is no separate metadata compilation for it.
-        addReturnValueCheckerInfo()
+        freeCompilerArgs.add("-Xreturn-value-checker=full")
+        freeCompilerArgs.add("-Xcompanion-blocks")
+        freeCompilerArgs.addAll(dogfoodedExperimentalFeatures)
     }
 
     metadata {
@@ -125,10 +110,10 @@ kotlin {
                                 "-Xexpect-actual-classes",
                                 "-Xexplicit-api=strict",
                                 diagnosticNamesArg,
+                                redundantCliArgWarningSuppression,
                             )
                         )
                         mainCompilationOptions()
-                        suppressRedundantCliArgumentWarning()
                     }
                 }
             }
@@ -143,11 +128,13 @@ kotlin {
                             listOfNotNull(
                                 "-Xallow-kotlin-package",
                                 "-Xsuppress-missing-builtins-error",
-                                diagnosticNamesArg
+                                diagnosticNamesArg,
+                                *dogfoodedExperimentalFeatures.toTypedArray(),
+                                "-Xreturn-value-checker=full",
+                                "-Xcompanion-blocks",
+                                redundantCliArgWarningSuppression,
                             )
                         )
-                        addReturnValueCheckerInfo()
-                        suppressRedundantCliArgumentWarning()
                     }
                 }
             }
@@ -685,9 +672,6 @@ kotlin {
                     commonTestOptIns.forEach { optIn(it) }
                 }
             }
-            compilerOptions.freeCompilerArgs.add("-Xname-based-destructuring=complete")
-            compilerOptions.freeCompilerArgs.add("-Xcollection-literals")
-            compilerOptions.freeCompilerArgs.add("-Xcontext-sensitive-resolution")
         }
     }
 }

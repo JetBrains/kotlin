@@ -1,0 +1,20 @@
+Module: companionsOn
+FILE: withCompanions.kt
+    public final fun testOn(): R|kotlin/Unit| {
+        lval a: R|kotlin/sequences/Sequence<kotlin/String>| = Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of*s|<R|kotlin/String|>()
+        lval b: R|kotlin/sequences/Sequence<kotlin/Any?>| = Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of*s|<R|kotlin/Any?|>(Null(null))
+        lval c: R|kotlin/sequences/Sequence<kotlin/Int>| = Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of*s|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval x: R|kotlin/sequences/Sequence<kotlin/String>| = Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of*s|<R|kotlin/String|>()
+        lval y: R|kotlin/sequences/Sequence<kotlin/Any?>| = Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of*s|<R|kotlin/Any?|>(Null(null))
+        lval z: R|kotlin/sequences/Sequence<kotlin/Int>| = Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of*s|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+    }
+Module: companionsOff
+FILE: withoutCompanions.kt
+    public final fun testOff(): R|kotlin/Unit| {
+        lval a: R|kotlin/sequences/Sequence<kotlin/String>| = Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of*s<Inapplicable(INAPPLICABLE): kotlin/sequences/Sequence.of>#|<R|kotlin/String|>()
+        lval b: R|kotlin/sequences/Sequence<kotlin/Any?>| = Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of*s<Inapplicable(INAPPLICABLE): kotlin/sequences/Sequence.of>#|<R|kotlin/Any?|>(Null(null))
+        lval c: R|kotlin/sequences/Sequence<kotlin/Int>| = Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of*s<Inapplicable(INAPPLICABLE): kotlin/sequences/Sequence.of>#|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval x: R|kotlin/sequences/Sequence<kotlin/String>| = Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/String|>()
+        lval y: R|kotlin/sequences/Sequence<kotlin/Any?>| = Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Any?|>(Null(null))
+        lval z: R|kotlin/sequences/Sequence<kotlin/Int>| = Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+    }

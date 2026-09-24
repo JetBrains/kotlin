@@ -187,22 +187,15 @@ fun Project.configureKotlinCompilationOptions() {
                         "-opt-in=kotlin.RequiresOptIn",
                         "-progressive".takeIf { project.kotlinBuildProperties.booleanProperty("test.progressive.mode", false).get() },
                         "-Xdont-warn-on-error-suppression",
-                        "-Xcontext-parameters", // KT-72222
-                        "-Xexplicit-backing-fields".takeUnless { skipNewLanguageFeatures }, // KT-14663
-                        "-Xname-based-destructuring=complete".takeUnless { skipNewLanguageFeatures },
-                        "-Xcollection-literals".takeUnless { skipNewLanguageFeatures },
-                        "-Xcontext-sensitive-resolution".takeUnless { skipNewLanguageFeatures },
-                        "-Xexplicit-context-arguments".takeUnless { skipNewLanguageFeatures },
+
+                        // Enabled by default in 2.4, but we have modules compiled with `kotlinCompilerVersionForGradle`
+                        // which still use this feature.
+                        // So we can neither remove it here nor even add to `dogfoodedExperimentalFeatures`.
+                        "-Xcontext-parameters",
+
+                        *if (skipNewLanguageFeatures) emptyArray() else dogfoodedExperimentalFeatures.toTypedArray(),
                         "-Xallow-pre-17-runtime-jdk", // KT-88174
-                        // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
-                        // But this produces a warning
-                        // "The argument ... is redundant for the current language version ..."
-                        // in the bootstrap test and fails because of -Werror.
-                        // To work around it, we suppress the warning.
-                        @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
-                        "-Xwarning-level=REDUNDANT_CLI_ARG:disabled".takeIf {
-                            project.kotlinExtension.compilerVersion.get() == project.kotlinToolingVersion.toString()
-                        },
+                        redundantCliArgWarningSuppression.takeUnless { skipNewLanguageFeatures },
                     )
                 }
 

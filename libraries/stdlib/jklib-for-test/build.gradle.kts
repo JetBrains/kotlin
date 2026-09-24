@@ -199,7 +199,9 @@ fun JavaExec.configureJklibCompilation(
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalExtendedContracts",
+            *dogfoodedExperimentalFeatures.toTypedArray(),
             "-Xreturn-value-checker=full",
+            "-Xcompanion-blocks",
             "-Xcommon-sources=${(commonSourceFiles).joinToString(",")}",
         )
 

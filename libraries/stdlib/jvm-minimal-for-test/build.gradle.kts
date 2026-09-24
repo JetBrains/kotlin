@@ -111,14 +111,10 @@ kotlin {
                                 "-Xdont-warn-on-error-suppression",
                                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                                 "-opt-in=kotlin.ExperimentalMultiplatform",
-                                "-Xcontext-parameters",
+                                *dogfoodedExperimentalFeatures.toTypedArray(),
+                                redundantCliArgWarningSuppression,
                                 "-Xreturn-value-checker=full",
-                                // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
-                                // But this produces a warning
-                                // "The argument ... is redundant for the current language version ..."
-                                // in the bootstrap test and fails because of -Werror.
-                                // To work around it, we suppress the warning.
-                                "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
+                                "-Xcompanion-blocks",
                             )
                         )
                     }

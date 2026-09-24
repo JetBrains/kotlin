@@ -241,6 +241,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         }
     }
 
+    @OptIn(KtExperimentalApi::class)
     private fun isKnownToBeNotTraversedByFirTree(it: KtElement): Boolean {
         return it is KtPackageDirective || it is KtImportList || it is KtClassBody ||
                 it is KtModifierList ||
@@ -286,6 +287,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it is KtConstructorDelegationCall && it.text == "" ||
                 it is KtIfExpression && it.parent is KtContainerNodeForControlStructureBody && it.parent.parent is KtIfExpression ||
                 it is KtContextParameterList ||
+                it is KtCompanionBlock ||
                 it is KtContextReceiver && it.parent is KtContextParameterList && it.parent?.parent is KtFunctionType ||
                 it is KtConstantExpression && it.parent.let { parent ->
             parent is KtPrefixExpression && (parent.operationToken == KtTokens.MINUS || parent.operationToken == KtTokens.PLUS)

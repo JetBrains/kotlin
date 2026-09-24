@@ -676,10 +676,8 @@ val stdlibBuildTask = tasks.register("stdlibBuildTask", KonanCompileTask::class)
             "-Xallow-kotlin-package",
             "-Xexplicit-api=strict",
             "-Xexpect-actual-classes",
-            "-Xcontext-parameters",
-            "-Xname-based-destructuring=complete",
-            "-Xcollection-literals",
-            "-Xcontext-sensitive-resolution",
+            *dogfoodedExperimentalFeatures.toTypedArray(),
+            redundantCliArgWarningSuppression,
             "-module-name", KOTLIN_NATIVE_STDLIB_NAME,
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
@@ -689,18 +687,12 @@ val stdlibBuildTask = tasks.register("stdlibBuildTask", KonanCompileTask::class)
             "-Xstdlib-compilation",
             "-Xklib-relative-path-base=${rootDir.canonicalPath}",
 
-            // See addReturnValueCheckerInfo() in libraries/stdlib/build.gradle.kts:
+            // See libraries/stdlib/build.gradle.kts:
             "-Xreturn-value-checker=full",
+            "-Xcompanion-blocks",
 
             "-Xfragment-refines=nativeMain:nativeWasm,nativeMain:nativeWasmWasi,nativeMain:common,nativeWasmWasi:nativeWasm,nativeWasm:common,nativeWasm:commonNonJvm,commonNonJvm:common",
             "-Xmanifest-native-targets=${platformManager.targetValues.joinToString(separator = ",") { it.visibleName }}",
-
-            // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
-            // But this produces a warning
-            // "The argument ... is redundant for the current language version ..."
-            // in the bootstrap test and fails because of -Werror.
-            // To work around it, we suppress the warning.
-            "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
     ))
 
     val common = sourceSets.create("common") {

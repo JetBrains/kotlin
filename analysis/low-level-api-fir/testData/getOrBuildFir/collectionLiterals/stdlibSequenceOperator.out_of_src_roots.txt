@@ -1,0 +1,13 @@
+KT element: KtValueArgument
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Q|kotlin/collections|.<Unresolved name: listOf>#(Int(42))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] stdlibSequenceOperator.kt
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> accept([ResolvedTo(STATUS)] set: <ERROR TYPE REF: Symbol not found for Sequence>): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|kotlin/collections|.<Unresolved name: listOf>#(Int(42)))
+    }
