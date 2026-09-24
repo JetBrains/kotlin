@@ -676,6 +676,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/ProjectLocalConfigurations
 public final class org/jetbrains/kotlin/gradle/plugin/SubpluginEnvironment {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/SubpluginEnvironment$Companion;
 	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
+	public fun <init> (Ljava/util/List;Lorg/gradle/api/provider/Provider;)V
 	public final fun addSubpluginOptions (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Ljava/util/List;
 }
 
