@@ -1428,6 +1428,7 @@ public final annotation class RequiresOptIn public constructor(
     }
 }
 
+@kotlin.SinceKotlin(version = "2.5")
 public abstract class RichError public constructor() {
 }
 

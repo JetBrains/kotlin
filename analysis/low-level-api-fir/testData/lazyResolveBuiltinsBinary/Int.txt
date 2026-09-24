@@ -3612,7 +3612,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         }
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] class RichError : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[Types](version = String(2.5) [evaluated = String(2.5)]) public abstract [ResolvedTo(BODY_RESOLVE)] class RichError : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=RichError] constructor(): R|kotlin/RichError| {
             super<R|kotlin/Any|>()
         }
