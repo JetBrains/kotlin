@@ -77,9 +77,10 @@ internal fun getBoxedBoolean(x: Boolean): Boolean? =
         FALSE as Boolean? ?: boxBoolean(false).also { FALSE = it }
     }
 
+// Returns `Any?` rather than `T?`: callers only store the box, and narrowing a generic result would be a checked cast.
 //@ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
-internal fun <T> createBoxIntrinsic(x: T): T? =
+internal fun <T> createBoxIntrinsic(x: T): Any? =
     TODO("Make intrinsic after bootstap")
 
 private var TRUE: Any? = null
