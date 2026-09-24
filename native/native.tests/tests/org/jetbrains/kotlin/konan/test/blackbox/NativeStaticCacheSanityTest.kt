@@ -21,12 +21,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompiler
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ForcedNoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.provisionedXcodeCompilerArgs
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -81,10 +83,14 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun eagerInitializationOrderIsCorrectWithoutCaches() = doTestEagerInitializationOrderIsCorrect(useCaches = false)
+    fun eagerInitializationOrderIsCorrectWithoutCaches() {
+        assumeExecutableIsRun()
+        doTestEagerInitializationOrderIsCorrect(useCaches = false)
+    }
 
     @Test
     fun eagerInitializationOrderIsCorrectWithCaches() {
+        assumeExecutableIsRun()
         assertThrows(AssertionError::class.java) {
             doTestEagerInitializationOrderIsCorrect(useCaches = true)
         }
@@ -201,6 +207,11 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
                 testNames = listOf(TestName("main"))
             ),
         )
+    }
+
+    private fun assumeExecutableIsRun() {
+        // The eager initialization order is checked against the output of the executable, which is not run in the compile-only mode.
+        assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value) { "The test requires running the executable" }
     }
 
     private val systemCacheDir: File by lazy {
