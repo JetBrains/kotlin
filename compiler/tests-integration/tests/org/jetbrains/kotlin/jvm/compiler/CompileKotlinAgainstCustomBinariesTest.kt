@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.cli.transformMetadataInClassFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.inline.LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES
+import org.jetbrains.kotlin.codegen.inline.LoadableDescriptorsAttribute
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -625,6 +627,49 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
         val [_, exitCode] = compileKotlin("shouldNotCompile.kt", tmpdir, listOf(tmpdir))
         assertEquals(1, exitCode.code) // double-check that we failed :) output.txt also says so
+    }
+
+    // A class file that does not use preview features is an identity class, even without `ACC_SUPER` (`ACC_IDENTITY` of JEP 401).
+    // Kotlin currently treats such a class as a Java value class.
+    @Test
+    fun testNonPreviewClassFileWithoutAccSuper() {
+        val library = File(tmpdir, "library")
+        File(library, "lib/NoSuper.class").apply { parentFile.mkdirs() }.writeBytes(generateClassWithoutAccSuper("lib/NoSuper"))
+        val output = File(tmpdir, "output")
+        compileKotlin(
+            "source.kt", output, listOf(library),
+            additionalOptions = listOf(
+                K2JVMCompilerArguments::jvmTarget.cliArgument, JvmTarget.JVM_28.description,
+                K2JVMCompilerArguments::enableJvmPreview.cliArgument,
+                K2JVMCompilerArguments::valhallaValueClasses.cliArgument,
+            ),
+        )
+        assertEquals(listOf("Llib/NoSuper;"), readLoadableDescriptors(File(output, "test/Holder.class")))
+    }
+
+    private fun generateClassWithoutAccSuper(internalName: String): ByteArray {
+        val writer = ClassWriter(0)
+        writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, internalName, null, "java/lang/Object", null)
+        writer.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null).apply {
+            visitCode()
+            visitVarInsn(Opcodes.ALOAD, 0)
+            visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
+            visitInsn(Opcodes.RETURN)
+            visitMaxs(1, 1)
+            visitEnd()
+        }
+        writer.visitEnd()
+        return writer.toByteArray()
+    }
+
+    private fun readLoadableDescriptors(classFile: File): List<String> {
+        val descriptors = mutableListOf<String>()
+        ClassReader(classFile.readBytes()).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+            override fun visitAttribute(attribute: Attribute) {
+                if (attribute is LoadableDescriptorsAttribute) descriptors += attribute.descriptors
+            }
+        }, LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES, 0)
+        return descriptors
     }
 
     @Test
