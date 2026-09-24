@@ -283,6 +283,61 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
         }
     }
 
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("A dependency's module-info.java change unrelated to the consumer still recompiles it fully (externally tracked)")
+    @TestMetadata("ic-scenarios/dependency-module-info-unrelated-change")
+    fun testUnrelatedDependencyModuleInfoChangeRecompilesNonModularConsumerExternallyTracked(
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+    ) {
+        jvmScenario(strategyConfig) {
+            val dependency = module(
+                moduleName = "ic-scenarios/dependency-module-info-unrelated-change/module-a",
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            val consumer = module(
+                moduleName = "ic-scenarios/dependency-module-info-unrelated-change/module-b",
+                dependencies = listOf(dependency),
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            dependency.addUnrelatedRequiresAndAssertConsumerIsFullyRecompiled(consumer, strategyConfig)
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("A dependency's module-info.java change unrelated to the consumer still recompiles it fully (internally tracked)")
+    @TestMetadata("ic-scenarios/dependency-module-info-unrelated-change")
+    fun testUnrelatedDependencyModuleInfoChangeRecompilesNonModularConsumerInternallyTracked(
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+    ) {
+        jvmScenario(strategyConfig) {
+            val dependency = module(
+                moduleName = "ic-scenarios/dependency-module-info-unrelated-change/module-a",
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            val consumer = trackedModule(
+                moduleName = "ic-scenarios/dependency-module-info-unrelated-change/module-b",
+                dependencies = listOf(dependency),
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            dependency.addUnrelatedRequiresAndAssertConsumerIsFullyRecompiled(consumer, strategyConfig)
+        }
+    }
+
+    private fun ScenarioModule.addUnrelatedRequiresAndAssertConsumerIsFullyRecompiled(
+        consumer: ScenarioModule,
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+    ) {
+        replaceFileWithVersion("module-info.java", "add-requires")
+        compile()
+        consumer.compile {
+            assertLogContainsLines(
+                expectedLogLevelForRebuildReason(strategyConfig),
+                "Non-incremental compilation will be performed: ${BuildAttribute.DEPENDENCY_MODULE_INFO_CHANGED.readableString}"
+            )
+            assertCompiledSources("bpkg/UseA.kt", "bpkg/Unrelated.kt")
+        }
+    }
+
     companion object {
         private val jpmsSupportConfigAction: (JvmCompilationOperation.Builder) -> Unit = {
             it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_9
