@@ -10,14 +10,11 @@ package org.jetbrains.kotlin.scripting.resolve
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -27,85 +24,16 @@ import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.scripting.scriptFileName
 import org.jetbrains.kotlin.scripting.withCorrectExtension
 import java.io.File
-import java.net.URL
-import java.nio.charset.StandardCharsets
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
-import kotlin.script.experimental.util.PropertiesCollection
 
 /**
- * The implementation of the SourceCode for a script located in a virtual file
+* The legacy PSI-based refinement entry points, called outside any FIR session (e.g. by the Kotlin IntelliJ plugin).
+* The package and the file name keep the functions in the `RefineCompilationConfigurationKt` facade for binary compatibility.
  */
-open class VirtualFileScriptSource(val virtualFile: VirtualFile, private val preloadedText: String? = null) :
-    FileBasedScriptSource() {
-    override val file: File get() = File(virtualFile.path)
-    override val externalLocation: URL get() = URL(virtualFile.url)
-    override val text: String by lazy { preloadedText ?: virtualFile.inputStream.bufferedReader().use { it.readText() } }
-    override val name: String? get() = virtualFile.name
-    override val locationId: String? get() = virtualFile.path
-
-    override fun equals(other: Any?): Boolean =
-        this === other || (other as? VirtualFileScriptSource)?.let { virtualFile == it.virtualFile } == true
-
-    override fun hashCode(): Int = virtualFile.hashCode()
-}
-
-/**
- * The implementation of the SourceCode for a script located in a KtFile
- */
-open class KtFileScriptSource(val ktFile: KtFile, preloadedText: String? = null) :
-    VirtualFileScriptSource(ktFile.virtualFile ?: ktFile.originalFile.virtualFile ?: ktFile.viewProvider.virtualFile, preloadedText) {
-
-    override val text: String by lazy { preloadedText ?: ktFile.text }
-    override val name: String? get() = ktFile.name
-
-    override fun equals(other: Any?): Boolean =
-        this === other || (other as? KtFileScriptSource)?.let { ktFile == it.ktFile } == true
-
-    override fun hashCode(): Int = ktFile.hashCode()
-}
-
-class ScriptLightVirtualFile(name: String, private val _path: String?, text: String) :
-    LightVirtualFile(
-        name,
-        KotlinLanguage.INSTANCE,
-        StringUtil.convertLineSeparators(text)
-    ) {
-
-    init {
-        charset = StandardCharsets.UTF_8
-    }
-
-    override fun getPath(): String = _path ?: if (parent != null) parent.path + "/" + name else name
-
-    override fun getCanonicalPath() = path
-}
-
-class GenericKtSourceFileScriptSource(val ktSourceFile: KtSourceFile) : SourceCode {
-    override val text: String by lazy { ktSourceFile.getContentsAsStream().use { it.reader().readText() } }
-    override val name: String get() = ktSourceFile.name
-    override val locationId: String? get() = ktSourceFile.path
-}
-
-open class LazyTextScriptSource(
-    override val name: String? = null,
-    locationId: String? = null,
-    getSource: () -> String,
-) : SourceCode {
-
-    override val text: String by lazy { getSource() }
-
-    override val locationId: String? = locationId ?: name ?: "\$${System.identityHashCode(this).toHexString()}.kts"
-
-    override fun equals(other: Any?): Boolean =
-        this === other || (other as? StringScriptSource)?.let { name == it.name && locationId == it.locationId } == true
-
-    override fun hashCode(): Int = name.hashCode() * 17 + locationId.hashCode() * 23
-}
-
 
 fun KtSourceFile.toSourceCode(): SourceCode = when (this) {
     is KtPsiSourceFile -> {
@@ -117,44 +45,6 @@ fun KtSourceFile.toSourceCode(): SourceCode = when (this) {
     is KtInMemoryTextSourceFile -> LazyTextScriptSource(name, path) { text.toString() }
     else -> LazyTextScriptSource(name, path) { getContentsAsStream().use { it.reader().readText() } }
 }
-
-@Deprecated("Use APIs that return ScriptCompilationConfiguration or ResultWithDiagnostics<ScriptCompilationConfiguration> instead")
-class ScriptCompilationConfigurationWrapper(
-    val script: SourceCode,
-    val configuration: ScriptCompilationConfiguration?,
-) {
-
-    // optimizing most common ops for the IDE
-    // TODO: consider dropping after complete migration
-    val dependenciesClassPath: List<File> by lazy {
-        configuration?.get(ScriptCompilationConfiguration.dependencies).toClassPathOrEmpty()
-    }
-
-    val dependenciesSources: List<File> by lazy {
-        configuration?.get(ScriptCompilationConfiguration.ide.dependenciesSources).toClassPathOrEmpty()
-    }
-
-    val javaHome: File?
-        get() = configuration?.get(ScriptCompilationConfiguration.jvm.jdkHome)
-
-    val defaultImports: List<String>
-        get() = configuration?.get(ScriptCompilationConfiguration.defaultImports).orEmpty()
-
-    val importedScripts: List<SourceCode>
-        get() = (configuration?.get(ScriptCompilationConfiguration.resolvedImportScripts) ?: configuration?.get(
-            ScriptCompilationConfiguration.importScripts
-        )).orEmpty()
-
-    override fun equals(other: Any?): Boolean = script == (other as? ScriptCompilationConfigurationWrapper)?.script
-
-    override fun hashCode(): Int = script.hashCode()
-}
-
-@Deprecated("Use APIs that return ScriptCompilationConfiguration or ResultWithDiagnostics<ScriptCompilationConfiguration> instead")
-typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCompilationConfigurationWrapper>
-
-// TODO consider dropping and using disambiguation of the sources collection (KT-83502)
-val ScriptCompilationConfigurationKeys.resolvedImportScripts by PropertiesCollection.key<List<SourceCode>>(isTransient = true)
 
 // left for binary compatibility with Kotlin Notebook plugin
 fun refineScriptCompilationConfiguration(
@@ -264,7 +154,8 @@ fun SourceCode.getVirtualFile(definition: ScriptDefinition?): VirtualFile {
         return virtualFile
     }
     if (this is FileScriptSource) {
-        val vFile = LocalFileSystem.getInstance().findFileByIoFile(file)
+        val vFile = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+            ?.findFileByPath(file.absoluteFile.invariantSeparatorsPath)
         if (vFile != null) return vFile
     }
     val scriptName = withCorrectExtension(name ?: definition?.defaultClassName ?: "script", definition?.fileExtension)

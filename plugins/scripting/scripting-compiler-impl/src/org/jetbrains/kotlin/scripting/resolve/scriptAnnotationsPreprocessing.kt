@@ -35,12 +35,12 @@ private val ARRAY_OF_METHODS = setOf(ARRAY_OF_FUNCTION, EMPTY_ARRAY) + PRIMITIVE
 // basic text comparison of function name, todo: better handling?
 private val KtCallExpression.isArrayCall: Boolean get() = Name.identifier(calleeExpression!!.text) in ARRAY_OF_METHODS
 
-internal val KtAnnotationEntry.typeName: String get() = (typeReference?.typeElement as? KtUserType)?.referencedName.orAnonymous()
+val KtAnnotationEntry.typeName: String get() = (typeReference?.typeElement as? KtUserType)?.referencedName.orAnonymous()
 
-internal fun String?.orAnonymous(kind: String = ""): String =
+fun String?.orAnonymous(kind: String = ""): String =
         this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 
-internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out Annotation>, project: Project): Annotation {
+fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out Annotation>, project: Project): Annotation {
     val module = ModuleDescriptorImpl(
         Name.special("<script-annotations-preprocessing>"),
         LockBasedStorageManager("scriptAnnotationsPreprocessing", {
