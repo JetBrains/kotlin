@@ -307,7 +307,8 @@ internal object StaticInitializersOptimization {
                 else if (irCall.origin == STATEMENT_ORIGIN_JOB_INVOCATION)
                     jobInvocations[irCall.arguments[0] as IrCall] = irCall
                 if (call !is DataFlowIR.Node.VirtualCall) continue
-                check(virtualCallSites[irCall] == null) { "Error: duplicate call site for ${irCall.render()}" }
+                // Identity intrinsics can share a DFG node across scopes, so the same IR call may be visited more than once.
+                // These call sites have the same callees; keep one entry per IR call.
                 virtualCallSites[irCall] = callSite
             }
             val returnTargetsInitializedFiles = mutableMapOf<IrReturnTargetSymbol, CustomBitSet>()
