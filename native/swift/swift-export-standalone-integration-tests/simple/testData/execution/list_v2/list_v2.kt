@@ -1,5 +1,32 @@
 // KIND: STANDALONE
-// MODULE: ListExport
+// WITH_PLATFORM_LIBS
+
+// MODULE: ListExportObjCInterop
+
+// FILE: listExportObjCInterop.def
+language = Objective-C
+modules = ListExportObjC
+package = list_export_objc
+
+// FILE: ArrayProvider.h
+#import <Foundation/Foundation.h>
+
+@protocol Foo
+- (int)value;
+@end
+
+@protocol FooArrayProvider
+- (NSArray<id<Foo>> *)getFooArray;
+- (void)setFooArray:(NSArray<id<Foo>> *)array;
+@end
+
+// FILE: module.modulemap
+module ListExportObjC {
+    header "ArrayProvider.h"
+    export *
+}
+
+// MODULE: ListExport(ListExportObjCInterop)
 // SWIFT_EXPORT_CONFIG: collectionsV2=true
 // FILE: main.kt
 
@@ -46,3 +73,30 @@ val List<Int>.extReverseListIntProp
         get() = this.reversed()
 
 fun mutableListOf(vararg elements: Int): MutableList<Int> = elements.toMutableList()
+
+// FILE: objcInterop.kt
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
+import platform.darwin.NSObject
+import list_export_objc.FooProtocol
+import list_export_objc.FooArrayProviderProtocol
+
+//private class KotlinFoo(private val value: Int) : NSObject(), FooProtocol {
+//    override fun value(): Int = value
+//}
+//
+//private class KotlinFooArrayProvider : NSObject(), FooArrayProviderProtocol {
+//    override fun fooArray(): List<FooProtocol> = listOf(KotlinFoo(1))
+//}
+//
+//fun kotlinFooArrayProvider(): FooArrayProviderProtocol = KotlinFooArrayProvider()
+
+// TODO: Test Kotlin implementation
+
+fun listOf(vararg elements: FooProtocol): List<FooProtocol> = elements.asList()
+
+fun getFooList(provider: FooArrayProviderProtocol): List<FooProtocol> = provider.getFooArray() as List<FooProtocol>
+
+fun setFooList(provider: FooArrayProviderProtocol, list: List<FooProtocol>) {
+    provider.setFooArray(list)
+}

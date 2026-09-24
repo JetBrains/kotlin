@@ -1,5 +1,6 @@
 import KotlinRuntime
 import ListExport
+import ListExportObjC
 import Testing
 import KotlinRuntimeSupport
 
@@ -132,4 +133,57 @@ func testMutableArrayOfInt() throws {
     original[1] = 64
     let expected = listOf(elements: Int32(4), 64, 5, 16, 23, 42)
     try assertReversed(reversed: reverseListInt(l: original), original: expected)
+}
+
+class SwiftFoo : Foo {
+    private let _value: Int32
+
+    init(_ value: Int32) {
+        self._value = value
+    }
+
+    func value() -> Int32 {
+        _value
+    }
+}
+
+class SwiftFooArrayProvider : FooArrayProvider {
+    private var array: [any Foo] = []
+
+    func getFooArray() -> [any Foo] {
+        array
+    }
+
+    func setFooArray(_ array: [any Foo]) {
+        self.array = array
+    }
+}
+
+@Test
+func testObjCInterop() throws {
+    let provider: FooArrayProvider = SwiftFooArrayProvider()
+
+    let array: [any Foo] = [SwiftFoo(1), SwiftFoo(2)]
+    try #require(array.count == 2)
+    try #require(array[0].value() == 1)
+    try #require(array[1].value() == 2)
+
+    provider.setFooArray(array)
+    let list: any KotlinRuntimeSupport.List<any Foo> = getFooList(provider: provider)
+    try #require(list.count == 2)
+//     try #require(list[0].value() == 1)
+//     try #require(list[1].value() == 2)
+
+    let newList = listOf(elements: SwiftFoo(3), SwiftFoo(4), SwiftFoo(5))
+    try #require(newList.count == 3)
+//     try #require(newList[0].value() == 3)
+//     try #require(newList[1].value() == 4)
+//     try #require(newList[2].value() == 5)
+
+    setFooList(provider: provider, list: newList)
+    let newArray: [any Foo] = provider.getFooArray()
+    try #require(newArray.count == 3)
+//     try #require(newArray[0].value() == 3)
+//     try #require(newArray[1].value() == 4)
+//     try #require(newArray[2].value() == 5)
 }
