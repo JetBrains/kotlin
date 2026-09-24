@@ -448,7 +448,6 @@ internal class KClassImpl<T : Any>(
         // TODO: KT-85727 Reflection: support collections and their subclasses in the new implementation
         val isComplicatedBuiltinSubclass: Boolean by lazy(PUBLICATION) {
             Iterable::class.java.isAssignableFrom(jClass) ||
-                    Iterator::class.java.isAssignableFrom(jClass) ||
                     Map::class.java.isAssignableFrom(jClass)
         }
 

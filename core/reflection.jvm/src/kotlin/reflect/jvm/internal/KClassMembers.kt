@@ -24,6 +24,9 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference.NO_RECEIVER
 import kotlin.metadata.ClassKind
+import kotlin.metadata.KmClass
+import kotlin.metadata.KmClassifier
+import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.kind
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -366,10 +369,16 @@ internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
         it.computeJvmSignature(this).toString()
     }
 
+    collectJvmSignaturesOfMutableCounterpart(declaredJvmSignatures)
+
     return javaAnalogue.declaredMethods.mapNotNull { method ->
         if (Modifier.isStatic(method.modifiers) || method.isSynthetic) return@mapNotNull null
         if (!Modifier.isPublic(method.modifiers) && !Modifier.isProtected(method.modifiers)) return@mapNotNull null
         if (method.isAnnotationPresent(JavaLangDeprecated::class.java)) return@mapNotNull null
+
+        if (SignatureBuildingComponents.signature(javaAnalogue.classId.internalName, method.jvmSignature)
+            in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES
+        ) return@mapNotNull null
 
         val parameterCount = method.parameterTypes.size
         if (parameterCount == 0 && method.name in getterLikeNames) return@mapNotNull null
@@ -394,6 +403,27 @@ internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
         if (function.overridden.any { it !is JavaKNamedFunction }) return@mapNotNull null
 
         function
+    }
+}
+
+// Collects JVM signatures of all functions of the mutable counterpart of this read-only collection class (e.g. `MutableIterator` for
+// `Iterator`), including functions inherited from its supertypes. Does nothing if this class has no mutable counterpart.
+private fun KClassImpl<*>.collectJvmSignaturesOfMutableCounterpart(result: MutableSet<String>) {
+    val mutableKmClass = getMutableCollectionKClass(this)?.mutableKmClass ?: return
+    val visited = HashSet<String>()
+    val queue = ArrayDeque<KmClass>().apply { add(mutableKmClass) }
+    while (queue.isNotEmpty()) {
+        val klass = queue.removeFirst()
+        if (!visited.add(klass.name)) continue
+        for (function in klass.functions) {
+            val mapped = function.mapSignature(klass)
+            val jvmName = getBuiltinSpecialFunctionJvmName(function.name, mapped.descriptor, this) ?: mapped.name
+            result.add(JvmMethodSignature(jvmName, mapped.descriptor).toString())
+        }
+        for (supertype in klass.supertypes) {
+            val superClassId = (supertype.classifier as? KmClassifier.Class)?.name?.toClassId() ?: continue
+            readBuiltinClassMetadata(superClassId)?.let(queue::add)
+        }
     }
 }
 
