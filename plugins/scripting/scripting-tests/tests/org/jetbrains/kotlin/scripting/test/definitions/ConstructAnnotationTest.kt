@@ -11,16 +11,18 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.scripting.test.TestDisposable
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.PsiScriptAnnotationsCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createCompilationContextFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.getScriptKtFile
-import org.jetbrains.kotlin.scripting.test.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.resolve.InvalidScriptResolverAnnotation
-import org.jetbrains.kotlin.scripting.resolve.getScriptCollectedData
+import org.jetbrains.kotlin.scripting.test.TestDisposable
+import org.jetbrains.kotlin.scripting.test.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -29,22 +31,35 @@ import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 private const val testDataPath = "plugins/scripting/scripting-tests/testData/definitions/constructAnnotations"
 
 @Target(AnnotationTarget.FILE)
 @Repeatable
 @Retention(AnnotationRetention.SOURCE)
-private annotation class TestAnnotation(vararg val options: String)
+annotation class TestAnnotation(vararg val options: String)
 
 @Target(AnnotationTarget.FILE)
 @Repeatable
 @Retention(AnnotationRetention.SOURCE)
-private annotation class AnnotationWithVarArgAndArray(vararg val options: String, val moreOptions: Array<String>)
+annotation class AnnotationWithVarArgAndArray(vararg val options: String, val moreOptions: Array<String>)
+
+@Target(AnnotationTarget.FILE)
+@Repeatable
+@Retention(AnnotationRetention.SOURCE)
+annotation class AnnotationWithPrimitiveArrays(val ints: IntArray, vararg val flags: Boolean)
+
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+annotation class AnnotationWithDefault(val value: String = "default")
 
 class ConstructAnnotationTest {
     private val testRootDisposable: Disposable = TestDisposable("${ConstructAnnotationTest::class.simpleName}.testRootDisposable")
@@ -117,12 +132,36 @@ class ConstructAnnotationTest {
         assertEquals(listOf("otherOption"), annotations.first().moreOptions.toList())
     }
 
+    @Test
+    fun testPrimitiveArraysInAnnotation() {
+        val annotations = annotations("TestAnnotationWithPrimitiveArrays.kts", AnnotationWithPrimitiveArrays::class)
+            .valueOrThrow()
+            .filterIsInstance<AnnotationWithPrimitiveArrays>()
+
+        assertEquals(2, annotations.count())
+        assertEquals(listOf(1, 2), annotations[0].ints.toList())
+        assertEquals(listOf(true, false), annotations[0].flags.toList())
+        assertEquals(listOf(3), annotations[1].ints.toList())
+        assertEquals(listOf(true), annotations[1].flags.toList())
+    }
+
+    @Test
+    fun testUnknownNamedArgumentIsNotReplacedByDefault() {
+        val result = annotations("TestAnnotationWithUnknownArgument.kts", AnnotationWithDefault::class)
+
+        assertIs<ResultWithDiagnostics.Failure>(result)
+        val messages = result.reports.map { it.message }
+        assertTrue(messages.any { "Error resolving annotation" in it && "typo" in it }, messages.toString())
+    }
+
     private fun annotations(filename: String, vararg classes: KClass<out Annotation>): ResultWithDiagnostics<List<Annotation>> {
         val file = ForTestCompileRuntime.transformTestDataPath(testDataPath + File.separator + filename)
         val compilationConfiguration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.MOCK_JDK).apply {
             useFir = true
             updateWithBaseCompilerArguments()
             addKotlinSourceRoot(file.path)
+            // the annotations are resolved against the compilation classpath, so the annotation classes should be on it
+            addJvmClasspathRoots(classes.flatMap { classpathFromClass(it).orEmpty() })
             loadScriptingPlugin(this, testRootDisposable)
         }
         val configuration = ScriptCompilationConfiguration {
@@ -155,7 +194,9 @@ class ConstructAnnotationTest {
             return makeFailureResult(messageCollector.diagnostics)
         }
 
-        val data = getScriptCollectedData(ktFile, configuration, null)
+        val data = PsiScriptAnnotationsCollector { compilationConfiguration.jvmClasspathRoots }
+            .collectAnnotations(ktFile, configuration, defaultJvmScriptingHostConfiguration)
+            .valueOr { return it }
         val annotations = data[ScriptCollectedData.collectedAnnotations]?.map { it.annotation } ?: emptyList()
 
         annotations

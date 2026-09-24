@@ -229,7 +229,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
             ).apply {
                 register(
                     FirScriptCompilationComponent::class,
-                    FirScriptCompilationComponent(hostConfiguration, { _, _ -> this })
+                    FirScriptCompilationComponent(hostConfiguration)
                 )
                 dummySessionForAnnotationResolution = this
             }

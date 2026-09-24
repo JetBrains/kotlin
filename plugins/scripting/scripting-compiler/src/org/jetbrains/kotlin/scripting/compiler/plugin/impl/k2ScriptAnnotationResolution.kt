@@ -73,13 +73,13 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     if (messageCollector.hasErrors()) return failure(messageCollector)
 
     val sessionForAnnotationResolution = getSessionForAnnotationResolution(script, compilationConfiguration)
+    // without the refined configurations cache, the base configuration is used for the script, so no recursive refinement happens
     sessionForAnnotationResolution.register(
         FirScriptCompilationComponent::class,
         FirScriptCompilationComponent(
             hostConfiguration.with {
                 reset(scriptRefinedCompilationConfigurationsCache)
-            } ,
-            getSessionForAnnotationResolution = { _, _ -> error("recursive refinement attempted") }
+            }
         )
     )
 
