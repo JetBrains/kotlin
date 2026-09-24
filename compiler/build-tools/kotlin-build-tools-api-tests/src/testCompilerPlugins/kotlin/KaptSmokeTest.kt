@@ -29,14 +29,6 @@ class KaptSmokeTest : BaseCompilationTest() {
     val exampleApClasspath = System.getProperty("EXAMPLE_ANNOTATION_PROCESSOR").split(File.pathSeparator).map { Paths.get(it) }
     val kaptClasspath = System.getProperty("KAPT_COMPILER_PLUGIN").split(File.pathSeparator).map { Paths.get(it) }
 
-    val toolsJar: File
-        get() {
-            val javaHome = System.getProperty("java.home")
-            return File(javaHome, "lib/tools.jar").takeIf(File::exists)
-                ?: File(javaHome, "../lib/tools.jar").takeIf(File::exists)
-                ?: error("Can't find 'tools.jar' in $javaHome or $javaHome/..")
-        }
-
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of Kapt configuration application")
     @TestMetadata("kapt-project")
@@ -47,7 +39,7 @@ class KaptSmokeTest : BaseCompilationTest() {
                 it.compilerArguments[CommonToolArguments.VERBOSE] = true
                 val kaptConfig =
                     kotlinToolchain.jvm.kaptCompilerPluginBuilder(
-                        kaptClasspath = kaptClasspath.plusElement(toolsJar.toPath()),
+                        kaptClasspath = kaptClasspath,
                         stubsOutputDir = module.outputDirectory.resolve("generated/stubs"),
                         annotationProcessorsClasspath = exampleApClasspath
                     ).apply {
@@ -96,7 +88,7 @@ class KaptSmokeTest : BaseCompilationTest() {
                     it.compilerArguments[CommonToolArguments.VERBOSE] = true
                     val kaptConfig =
                         kotlinToolchain.jvm.kaptCompilerPluginBuilder(
-                            kaptClasspath = kaptClasspath.plusElement(toolsJar.toPath()),
+                            kaptClasspath = kaptClasspath,
                             stubsOutputDir = moduleBuildDir.resolve("generated/stubs"),
                             annotationProcessorsClasspath = exampleApClasspath
                         ).apply {
