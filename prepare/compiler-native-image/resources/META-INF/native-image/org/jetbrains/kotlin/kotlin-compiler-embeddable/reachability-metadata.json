@@ -215,6 +215,9 @@
       "type": "kotlin.Array"
     },
     {
+      "type": "kotlin.Boolean"
+    },
+    {
       "type": "kotlin.Metadata",
       "methods": [
         {
@@ -405,6 +408,383 @@
     },
     {
       "type": "kotlinx.coroutines.scheduling.CoroutineScheduler"
+    },
+    {
+      "type": "org.jetbrains.kotlin.KtNodeTypes",
+      "fields": [
+        {
+          "name": "ANNOTATED_EXPRESSION"
+        },
+        {
+          "name": "ANNOTATION"
+        },
+        {
+          "name": "ANNOTATION_ENTRY"
+        },
+        {
+          "name": "ANNOTATION_TARGET"
+        },
+        {
+          "name": "ARRAY_ACCESS_EXPRESSION"
+        },
+        {
+          "name": "BACKING_FIELD"
+        },
+        {
+          "name": "BINARY_EXPRESSION"
+        },
+        {
+          "name": "BINARY_WITH_TYPE"
+        },
+        {
+          "name": "BLOCK"
+        },
+        {
+          "name": "BLOCK_CODE_FRAGMENT"
+        },
+        {
+          "name": "BODY"
+        },
+        {
+          "name": "BOOLEAN_CONSTANT"
+        },
+        {
+          "name": "BREAK"
+        },
+        {
+          "name": "CALLABLE_REFERENCE_EXPRESSION"
+        },
+        {
+          "name": "CALL_EXPRESSION"
+        },
+        {
+          "name": "CATCH"
+        },
+        {
+          "name": "CHARACTER_CONSTANT"
+        },
+        {
+          "name": "CLASS"
+        },
+        {
+          "name": "CLASS_BODY"
+        },
+        {
+          "name": "CLASS_INITIALIZER"
+        },
+        {
+          "name": "CLASS_LITERAL_EXPRESSION"
+        },
+        {
+          "name": "COLLECTION_LITERAL_EXPRESSION"
+        },
+        {
+          "name": "COMPANION_BLOCK"
+        },
+        {
+          "name": "CONDITION"
+        },
+        {
+          "name": "CONSTRUCTOR_CALLEE"
+        },
+        {
+          "name": "CONSTRUCTOR_DELEGATION_CALL"
+        },
+        {
+          "name": "CONSTRUCTOR_DELEGATION_REFERENCE"
+        },
+        {
+          "name": "CONTEXT_PARAMETER_LIST"
+        },
+        {
+          "name": "CONTEXT_RECEIVER"
+        },
+        {
+          "name": "CONTINUE"
+        },
+        {
+          "name": "CONTRACT_EFFECT"
+        },
+        {
+          "name": "CONTRACT_EFFECT_LIST"
+        },
+        {
+          "name": "DELEGATED_SUPER_TYPE_ENTRY"
+        },
+        {
+          "name": "DESTRUCTURING_DECLARATION"
+        },
+        {
+          "name": "DESTRUCTURING_DECLARATION_ENTRY"
+        },
+        {
+          "name": "DOT_QUALIFIED_EXPRESSION"
+        },
+        {
+          "name": "DO_WHILE"
+        },
+        {
+          "name": "DYNAMIC_TYPE"
+        },
+        {
+          "name": "ELSE"
+        },
+        {
+          "name": "ENUM_ENTRY"
+        },
+        {
+          "name": "ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION"
+        },
+        {
+          "name": "ERROR_SAFE_ACCESS_EXPRESSION"
+        },
+        {
+          "name": "ESCAPE_STRING_TEMPLATE_ENTRY"
+        },
+        {
+          "name": "EXPRESSION_CODE_FRAGMENT"
+        },
+        {
+          "name": "FILE"
+        },
+        {
+          "name": "FILE_ANNOTATION_LIST"
+        },
+        {
+          "name": "FINALLY"
+        },
+        {
+          "name": "FLOAT_CONSTANT"
+        },
+        {
+          "name": "FOR"
+        },
+        {
+          "name": "FUN"
+        },
+        {
+          "name": "FUNCTION_LITERAL"
+        },
+        {
+          "name": "FUNCTION_TYPE"
+        },
+        {
+          "name": "FUNCTION_TYPE_RECEIVER"
+        },
+        {
+          "name": "IF"
+        },
+        {
+          "name": "IMPORT_ALIAS"
+        },
+        {
+          "name": "IMPORT_DIRECTIVE"
+        },
+        {
+          "name": "IMPORT_LIST"
+        },
+        {
+          "name": "INDICES"
+        },
+        {
+          "name": "INITIALIZER_LIST"
+        },
+        {
+          "name": "INTEGER_CONSTANT"
+        },
+        {
+          "name": "INTERSECTION_TYPE"
+        },
+        {
+          "name": "IS_EXPRESSION"
+        },
+        {
+          "name": "LABEL"
+        },
+        {
+          "name": "LABELED_EXPRESSION"
+        },
+        {
+          "name": "LABEL_QUALIFIER"
+        },
+        {
+          "name": "LAMBDA_ARGUMENT"
+        },
+        {
+          "name": "LAMBDA_EXPRESSION"
+        },
+        {
+          "name": "LITERAL_STRING_TEMPLATE_ENTRY"
+        },
+        {
+          "name": "LONG_STRING_TEMPLATE_ENTRY"
+        },
+        {
+          "name": "LOOP_RANGE"
+        },
+        {
+          "name": "MODIFIER_LIST"
+        },
+        {
+          "name": "NULL"
+        },
+        {
+          "name": "NULLABLE_TYPE"
+        },
+        {
+          "name": "OBJECT_DECLARATION"
+        },
+        {
+          "name": "OBJECT_LITERAL"
+        },
+        {
+          "name": "OPERATION_REFERENCE"
+        },
+        {
+          "name": "PACKAGE_DIRECTIVE"
+        },
+        {
+          "name": "PARENTHESIZED"
+        },
+        {
+          "name": "POSTFIX_EXPRESSION"
+        },
+        {
+          "name": "PREFIX_EXPRESSION"
+        },
+        {
+          "name": "PRIMARY_CONSTRUCTOR"
+        },
+        {
+          "name": "PROPERTY"
+        },
+        {
+          "name": "PROPERTY_ACCESSOR"
+        },
+        {
+          "name": "PROPERTY_DELEGATE"
+        },
+        {
+          "name": "REFERENCE_EXPRESSION"
+        },
+        {
+          "name": "RETURN"
+        },
+        {
+          "name": "SAFE_ACCESS_EXPRESSION"
+        },
+        {
+          "name": "SCRIPT"
+        },
+        {
+          "name": "SCRIPT_INITIALIZER"
+        },
+        {
+          "name": "SECONDARY_CONSTRUCTOR"
+        },
+        {
+          "name": "SHORT_STRING_TEMPLATE_ENTRY"
+        },
+        {
+          "name": "STRING_INTERPOLATION_PREFIX"
+        },
+        {
+          "name": "STRING_TEMPLATE"
+        },
+        {
+          "name": "SUPER_EXPRESSION"
+        },
+        {
+          "name": "SUPER_TYPE_CALL_ENTRY"
+        },
+        {
+          "name": "SUPER_TYPE_ENTRY"
+        },
+        {
+          "name": "SUPER_TYPE_LIST"
+        },
+        {
+          "name": "THEN"
+        },
+        {
+          "name": "THIS_EXPRESSION"
+        },
+        {
+          "name": "THROW"
+        },
+        {
+          "name": "TRY"
+        },
+        {
+          "name": "TYPEALIAS"
+        },
+        {
+          "name": "TYPE_ARGUMENT_LIST"
+        },
+        {
+          "name": "TYPE_CODE_FRAGMENT"
+        },
+        {
+          "name": "TYPE_CONSTRAINT"
+        },
+        {
+          "name": "TYPE_CONSTRAINT_LIST"
+        },
+        {
+          "name": "TYPE_PARAMETER"
+        },
+        {
+          "name": "TYPE_PARAMETER_LIST"
+        },
+        {
+          "name": "TYPE_PROJECTION"
+        },
+        {
+          "name": "TYPE_REFERENCE"
+        },
+        {
+          "name": "UNION_TYPE"
+        },
+        {
+          "name": "USER_TYPE"
+        },
+        {
+          "name": "VALUE_ARGUMENT"
+        },
+        {
+          "name": "VALUE_ARGUMENT_LIST"
+        },
+        {
+          "name": "VALUE_ARGUMENT_NAME"
+        },
+        {
+          "name": "VALUE_PARAMETER"
+        },
+        {
+          "name": "VALUE_PARAMETER_LIST"
+        },
+        {
+          "name": "WHEN"
+        },
+        {
+          "name": "WHEN_CONDITION_EXPRESSION"
+        },
+        {
+          "name": "WHEN_CONDITION_IN_RANGE"
+        },
+        {
+          "name": "WHEN_CONDITION_IS_PATTERN"
+        },
+        {
+          "name": "WHEN_ENTRY"
+        },
+        {
+          "name": "WHEN_ENTRY_GUARD"
+        },
+        {
+          "name": "WHILE"
+        }
+      ]
     },
     {
       "type": "org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor",
