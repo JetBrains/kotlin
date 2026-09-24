@@ -528,7 +528,10 @@ class IrExpressionLambdaImpl(
         val captureEnd = captureStart + capturedParameters.size
         capturedVars = capturedParameters.mapIndexed { index, parameter ->
             val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunction()
-            capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[captureStart + index], isSuspend)
+            val type = asmMethod.argumentTypes[captureStart + index]
+            // Objects regenerated at the call site store the captured values in fields.
+            val isLoadable = with(codegen.classCodegen) { parameter.type.isValhallaLoadable(type.descriptor, owner = null) }
+            capturedParamDesc(parameter.name.asString(), type, isSuspend, isLoadable)
         }
         // The parameter list should include the continuation if this is a suspend lambda. In the IR backend,
         // the lambda is suspend iff the inline function's parameter is marked suspend, so FunctionN.invoke call
