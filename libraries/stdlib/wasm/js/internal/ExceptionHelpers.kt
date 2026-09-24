@@ -32,5 +32,9 @@ internal fun throw0(v: JsAny?): Nothing = implementedAsIntrinsic
 
 @UsedFromCompilerGeneratedCode
 internal fun getKotlinException(v: JsAny?): Throwable {
-    return (v as? JsError)?.kotlinException?.get() ?: JsException(v)
+    // `kotlinException` is a plain JS property, so it may hold something else than a `Throwable`. Get it as `Any` and use
+    // a safe cast instead of a checked one: this falls back to wrapping the value, and keeps the cast failure machinery
+    // (`THROW_CCE_WITH_INFO`) out of every program, as this function is always kept.
+    val kotlinException: JsReference<Any>? = (v as? JsError)?.kotlinException
+    return kotlinException?.get() as? Throwable ?: JsException(v)
 }
