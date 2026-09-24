@@ -617,6 +617,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.isClassWithId(classId: ClassId): Boolean
 
     fun TypeConstructorMarker.isAnyConstructor(): Boolean = isClassWithId(StandardClassIds.Any)
+    fun TypeConstructorMarker.isValueConstructor(): Boolean = isClassWithId(StandardClassIds.Value)
+    fun TypeConstructorMarker.isRichErrorConstructor(): Boolean = isClassWithId(StandardClassIds.RichError)
     fun TypeConstructorMarker.isNothingConstructor(): Boolean = isClassWithId(StandardClassIds.Nothing)
     fun TypeConstructorMarker.isArrayConstructor(): Boolean = isClassWithId(StandardClassIds.Array)
 

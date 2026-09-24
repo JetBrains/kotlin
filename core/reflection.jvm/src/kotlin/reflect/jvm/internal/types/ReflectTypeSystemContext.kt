@@ -310,6 +310,15 @@ object ReflectTypeSystemContext : TypeSystemContext {
         return this == Any::class
     }
 
+    override fun TypeConstructorMarker.isValueConstructor(): Boolean {
+        return false
+    }
+
+    @Suppress("UNSUPPORTED_FEATURE") // TODO remove when RichErrors LF is enabled
+    override fun TypeConstructorMarker.isRichErrorConstructor(): Boolean {
+        return this == RichError::class
+    }
+
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean {
         return this == NothingKClass
     }

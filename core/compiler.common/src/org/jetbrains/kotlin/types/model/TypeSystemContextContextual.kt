@@ -339,6 +339,12 @@ context(c: TypeSystemContext)
 fun TypeConstructorMarker.isAnyConstructor(): Boolean = with(c) { isAnyConstructor() }
 
 context(c: TypeSystemContext)
+fun TypeConstructorMarker.isValueConstructor(): Boolean = with(c) { isValueConstructor() }
+
+context(c: TypeSystemContext)
+fun TypeConstructorMarker.isRichErrorConstructor(): Boolean = with(c) { isRichErrorConstructor() }
+
+context(c: TypeSystemContext)
 fun TypeConstructorMarker.isNothingConstructor(): Boolean = with(c) { isNothingConstructor() }
 
 context(c: TypeSystemContext)
