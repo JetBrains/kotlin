@@ -193,12 +193,6 @@ fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String
     }
 }
 
-fun IrClassSymbol.hasEqualClassId(classId: ClassId): Boolean {
-    return with(signature as? IdSignature.CommonSignature ?: return false) {
-        classId.packageFqName.asString() == packageFqName && classId.relativeClassName.asString() == declarationFqName
-    }
-}
-
 fun List<IrAnnotation>.hasAnnotation(classId: ClassId): Boolean =
     // Note: check can be simplified to just classId comparison after IrAnnotation node migration is complete KT-74200.
     hasAnnotation(
