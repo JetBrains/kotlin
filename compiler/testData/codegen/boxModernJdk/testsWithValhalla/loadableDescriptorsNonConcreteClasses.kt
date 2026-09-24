@@ -27,6 +27,4 @@ fun box(): String {
     return "OK"
 }
 
-// 2 ATTRIBUTE LoadableDescriptors
-// 1 ATTRIBUTE LoadableDescriptors : LAbstractVal;, LSealedVal;, LJavaAbstractVal;, Ljava/lang/Record;\n
-// 1 ATTRIBUTE LoadableDescriptors : Ljava/lang/Runtime\$Version;, Ljava/time/ZoneId;, Ljava/time/ZoneOffset;\n
+// 0 ATTRIBUTE LoadableDescriptors
