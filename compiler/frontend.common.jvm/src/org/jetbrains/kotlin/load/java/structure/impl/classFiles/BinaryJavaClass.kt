@@ -70,9 +70,9 @@ class BinaryJavaClass(
     // `ACC_SUPER` is `ACC_IDENTITY` (JEP 401) only in a class file that uses preview features; any other class is an identity class.
     private var usesPreviewFeatures: Boolean = false
 
+    // Interfaces are never value classes, and `module-info` is not a class at all.
     override val isValue: Boolean
-        get() = usesPreviewFeatures &&
-                !isInterface && !isAnnotationType && !isEnum && !isSet(Opcodes.ACC_MODULE) && !isSet(Opcodes.ACC_SUPER)
+        get() = usesPreviewFeatures && !isInterface && !isSet(Opcodes.ACC_MODULE) && !isSet(Opcodes.ACC_SUPER)
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
