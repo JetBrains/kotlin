@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.incremental.impl.hashToLong
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
@@ -116,23 +117,19 @@ open class IncrementalJsCache(
         incrementalResults: IncrementalResultsConsumerImpl,
         changesCollector: ChangesCollector,
     ) {
-        val oldData = irInlineTranslationResults[srcFile]
-        val oldDeclarations = IrArrayReader(oldData?.declarations ?: byteArrayOf(0, 0, 0, 0))
-        val oldInlineFunctions: Map<CallableId, MutableList<ByteArray>> = buildMap {
+        val oldInlineFunctions: Map<CallableId, MutableList<Long>> = buildMap {
             val oldIds = irInlineIdsResults[srcFile] ?: return@buildMap
+            val oldData = irInlineTranslationResults[srcFile] ?: return@buildMap
             for (i in oldIds.indices) {
-                // TODO potential optimization spot.
-                //  We don't need to copy ByteArray because we just need it for comparison. We can store some sort of view, for example ByteBuffer.
-                getOrPut(oldIds[i]) { mutableListOf() }.add(oldDeclarations.tableItemBytes(i))
+                getOrPut(oldIds[i]) { mutableListOf() }.add(oldData.hash())
             }
         }
 
-        val newData = incrementalResults.irInlineFileData[srcFile]
-        val newDeclarations = IrArrayReader(newData?.declarations ?: byteArrayOf(0, 0, 0, 0))
-        val newInlineFunctions: Map<CallableId, MutableList<ByteArray>> = buildMap {
+        val newInlineFunctions: Map<CallableId, MutableList<Long>> = buildMap {
             val newIds = incrementalResults.irInlineIds[srcFile] ?: return@buildMap
+            val newData = incrementalResults.irInlineFileData[srcFile] ?: return@buildMap
             for (i in newIds.indices) {
-                getOrPut(newIds[i]) { mutableListOf() }.add(newDeclarations.tableItemBytes(i))
+                getOrPut(newIds[i]) { mutableListOf() }.add(newData.hash())
             }
         }
 
@@ -141,6 +138,21 @@ open class IncrementalJsCache(
             val name = callableId.callableName.asString()
             changesCollector.collectMemberIfValueWasChanged(scope, name, oldInlineFunctions[callableId], newInlineFunctions[callableId])
         }
+    }
+
+    private fun IrTranslationResultValue.hash(): Long {
+        val hashCodes = listOfNotNull(
+            this.fileData.hashToLong(),
+            this.types.hashToLong(),
+            this.signatures.hashToLong(),
+            this.strings.hashToLong(),
+            this.declarations.hashToLong(),
+            this.bodies.hashToLong(),
+            this.fqn.hashToLong(),
+            this.debugInfo?.hashToLong(),
+            this.fileEntries?.hashToLong(),
+        )
+        return hashCodes.reduce { acc, hashCode -> acc * 31 + hashCode }
     }
 
     private fun registerOutputForFile(srcFile: File, name: FqName) {
