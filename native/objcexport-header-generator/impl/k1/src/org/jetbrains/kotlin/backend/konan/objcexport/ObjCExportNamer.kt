@@ -85,8 +85,8 @@ interface ObjCExportNamer {
     fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySwiftName(descriptor: ClassDescriptor): String
-    fun getClosedEnumEntrySelector(descriptor: ClassDescriptor): String
-    fun getClosedEnumEntrySwiftName(descriptor: ClassDescriptor): String
+    fun getNSClosedEnumEntryName(nsEnumTypeName: String, descriptor: ClassDescriptor): String
+    fun getNSClosedEnumEntrySwiftName(descriptor: ClassDescriptor): String
     fun getEnumStaticMemberSelector(descriptor: CallableMemberDescriptor): String
     fun getTypeParameterName(typeParameterDescriptor: TypeParameterDescriptor): String
 
@@ -463,7 +463,7 @@ class ObjCExportNamerImpl(
 
     private val enumClassSelectors = EnumNameMapping()
     private val enumClassSwiftNames = EnumNameMapping()
-    private val closedEnumClassSelectors = EnumNameMapping()
+    private val closedEnumEntryNames = EnumNameMapping()
     private val closedEnumSwiftNames = EnumNameMapping()
 
     override fun getFileClassName(file: SourceFile): ObjCExportNamer.ClassOrProtocolName {
@@ -725,21 +725,22 @@ class ObjCExportNamerImpl(
         }
     }
 
-    override fun getClosedEnumEntrySelector(descriptor: ClassDescriptor): String {
+    override fun getNSClosedEnumEntryName(nsEnumTypeName: String, descriptor: ClassDescriptor): String {
         assert(descriptor.kind == ClassKind.ENUM_ENTRY)
 
         val entryName = descriptor.getObjCEnumEntryName()
         val objCName = entryName.getName(forSwift = false)
-        return closedEnumClassSelectors.getOrPut(descriptor) {
+
+        return closedEnumEntryNames.getOrPut(descriptor) {
             if (objCName != null) {
-                StringBuilder(objCName).mangledBySuffixUnderscores()
+                StringBuilder(nsEnumTypeName + objCName.replaceFirstChar(Char::uppercase)).mangledBySuffixUnderscores()
             } else {
-                descriptor.getEnumEntryName(forSwift = false)
+                descriptor.getEnumEntryName(forSwift = false).map { nsEnumTypeName + it.replaceFirstChar(Char::uppercase) }
             }
         }
     }
 
-    override fun getClosedEnumEntrySwiftName(descriptor: ClassDescriptor): String {
+    override fun getNSClosedEnumEntrySwiftName(descriptor: ClassDescriptor): String {
         assert(descriptor.kind == ClassKind.ENUM_ENTRY)
 
         val entryName = descriptor.getObjCEnumEntryName()

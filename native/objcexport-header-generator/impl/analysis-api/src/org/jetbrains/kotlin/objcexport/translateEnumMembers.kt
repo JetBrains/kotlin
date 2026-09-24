@@ -75,7 +75,16 @@ private fun ObjCExportContext.getEnumEntriesProperty(symbol: KaClassSymbol): Obj
     )
 }
 
-internal fun ObjCExportContext.getNSEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean, mangleObjCName: Boolean): String {
+internal fun ObjCExportContext.getNSEnumEntryName(nsEnumTypeName: String, symbol: KaEnumEntrySymbol): String {
+    val name = getNSEnumEntryBaseName(symbol, forSwift = false, mangleObjCName = false)
+    return nsEnumTypeName + name.replaceFirstChar(Char::uppercaseChar)
+}
+
+internal fun ObjCExportContext.getNSEnumEntrySwiftName(symbol: KaEnumEntrySymbol): String {
+    return getNSEnumEntryBaseName(symbol, forSwift = true, mangleObjCName = false)
+}
+
+private fun ObjCExportContext.getNSEnumEntryBaseName(symbol: KaEnumEntrySymbol, forSwift: Boolean, mangleObjCName: Boolean): String {
     val objCEnumEntryNameAnnotation = symbol.resolveObjCEnumEntryNameAnnotation()
     val name = (if (forSwift) objCEnumEntryNameAnnotation?.swiftName?.ifEmpty { null } else null) ?: objCEnumEntryNameAnnotation?.objCName
     return name?.ifEmpty { null } ?: getEnumEntryName(symbol, forSwift, mangleObjCName)
