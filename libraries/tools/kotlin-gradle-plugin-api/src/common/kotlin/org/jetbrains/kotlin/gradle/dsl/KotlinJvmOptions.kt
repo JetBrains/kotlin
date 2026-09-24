@@ -44,9 +44,9 @@ interface KotlinJvmOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
     private val org.jetbrains.kotlin.gradle.dsl.JvmTarget.jvmTargetKotlinOption get() = this.target
 
     /**
-     * The target version of the generated JVM bytecode (1.8 and 9–27), with 1.8 as the default.
+     * The target version of the generated JVM bytecode (1.8 and 9–28), with 1.8 as the default.
      *
-     * Possible values: "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27"
+     * Possible values: "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28"
      *
      * Default value: JvmTarget.DEFAULT
      */
