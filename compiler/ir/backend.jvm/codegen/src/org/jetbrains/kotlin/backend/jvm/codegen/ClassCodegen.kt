@@ -245,8 +245,8 @@ class ClassCodegen private constructor(
             namedClass?.isKotlinValhallaValueClass(languageVersionSettings) == true -> true
             // A value class defined in Java (`value class`, resolved from source or a binary/jar dependency).
             namedClass?.isJavaValueClass == true -> true
-            // A JDK class that JEP 401 migrates to a concrete value class is loadable, exactly like javac.
-            descriptor in JDK_VALUE_CLASS_DESCRIPTORS -> true
+            // A JDK value class, also as the Java class of a Kotlin type like `Int?`, exactly like javac.
+            descriptor.removeSurrounding("L", ";") in JDK_VALUE_CLASSES -> true
             else -> false
         }
     }
@@ -653,24 +653,6 @@ class ClassCodegen private constructor(
             name.splitToSequence('/').any { identifier -> identifier.any { it in JvmConstants.INVALID_CHARS } }
     }
 }
-
-// The concrete JDK classes that JEP 401 migrates to value classes, so a field of such a type must be listed in `LoadableDescriptors`
-// exactly like a field of a user value class (this mirrors javac's output). `Number` and `Record` become abstract value classes, which
-// javac never lists, and value-based classes such as `ZoneId` stay identity classes. Regenerate the set by listing the non-abstract
-// classes of the target JDK image whose `Class.isValue()` is true when preview features are enabled.
-private val JDK_VALUE_CLASS_DESCRIPTORS = setOf(
-    // java.lang primitive wrappers
-    "Ljava/lang/Boolean;", "Ljava/lang/Byte;", "Ljava/lang/Character;", "Ljava/lang/Short;",
-    "Ljava/lang/Integer;", "Ljava/lang/Long;", "Ljava/lang/Float;", "Ljava/lang/Double;",
-    // java.time
-    "Ljava/time/Duration;", "Ljava/time/Instant;", "Ljava/time/LocalDate;", "Ljava/time/LocalDateTime;",
-    "Ljava/time/LocalTime;", "Ljava/time/MonthDay;", "Ljava/time/OffsetDateTime;", "Ljava/time/OffsetTime;",
-    "Ljava/time/Period;", "Ljava/time/Year;", "Ljava/time/YearMonth;", "Ljava/time/ZonedDateTime;",
-    "Ljava/time/chrono/HijrahDate;", "Ljava/time/chrono/JapaneseDate;", "Ljava/time/chrono/MinguoDate;",
-    "Ljava/time/chrono/ThaiBuddhistDate;",
-    // java.util
-    "Ljava/util/Optional;", "Ljava/util/OptionalDouble;", "Ljava/util/OptionalInt;", "Ljava/util/OptionalLong;",
-)
 
 private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or
