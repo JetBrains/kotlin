@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.ExpressionBodyTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
+import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
 import org.jetbrains.kotlin.backend.konan.llvm.storageKind
@@ -19,10 +21,15 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGetField
+import org.jetbrains.kotlin.ir.builders.irIfThen
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irSetField
+import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
@@ -127,6 +134,11 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
         val eagerThreadLocalInitializers = mutableListOf<IrExpression>()
         val eagerGlobalInitializers = mutableListOf<IrExpression>()
 
+        // Accessors of eagerly-initialized properties: each of them must trigger the corresponding
+        // eager initializer, so that reading an eager property forces its file to be initialized first.
+        val eagerThreadLocalAccessors = mutableListOf<IrSimpleFunction>()
+        val eagerGlobalAccessors = mutableListOf<IrSimpleFunction>()
+
         val builder = context.irBuiltIns.createIrBuilder((container as IrSymbolOwner).symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
 
         if (container is IrClass && !container.isInterface && container.moduleFragment.kotlinLibrary?.newCompanionInitializationEnabled == true) {
@@ -217,6 +229,11 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
                     origin = if (isThreadLocal) StaticInitializersOrigins.INITIALIZE_THREAD_LOCAL_FIELD else StaticInitializersOrigins.INITIALIZE_GLOBAL_FIELD
             ))
             irField.initializer = null
+
+            if (isEager) {
+                val accessors = (declaration as? IrProperty)?.let { listOfNotNull(it.getter, it.setter) }.orEmpty()
+                if (isThreadLocal) eagerThreadLocalAccessors += accessors else eagerGlobalAccessors += accessors
+            }
         }
 
         val globalInitFunction = runIf(globalInitializers.isNotEmpty()) {
@@ -239,26 +256,39 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
             )
         }
 
-        runIf(eagerGlobalInitializers.isNotEmpty()) {
-            buildInitFunction(
+        val eagerGlobalInitFunction = runIf(eagerGlobalInitializers.isNotEmpty()) {
+            buildEagerInitFunction(
                     container = container,
                     name = $$"$init_global_eager",
                     origin = StaticInitializersOrigins.EAGER_STATIC_GLOBAL_INITIALIZER,
-                    initializers = eagerGlobalInitializers
+                    initializers = eagerGlobalInitializers,
+                    threadLocalGuard = false
             )
         }
 
-        runIf(eagerThreadLocalInitializers.isNotEmpty()) {
-            buildInitFunction(
+        val eagerThreadLocalInitFunction = runIf(eagerThreadLocalInitializers.isNotEmpty()) {
+            buildEagerInitFunction(
                     container = container,
                     name = $$"$init_thread_local_eager",
                     origin = StaticInitializersOrigins.EAGER_STATIC_THREAD_LOCAL_INITIALIZER,
-                    initializers = eagerThreadLocalInitializers
+                    initializers = eagerThreadLocalInitializers,
+                    threadLocalGuard = true
             )
         }
 
+        // Trigger the eager initializer from each eager property accessor. This must happen before the
+        // early return below, because a file with only eager properties has no lazy initializers.
+        fun IrSimpleFunction.addEagerInitCall(initFunction: IrSimpleFunction) {
+            val statements = (body as? IrBlockBody)?.statements ?: return
+            context.createIrBuilder(symbol, this.startOffset, this.startOffset).run {
+                statements.add(0, irCall(initFunction.symbol))
+            }
+        }
+        eagerGlobalInitFunction?.let { fn -> eagerGlobalAccessors.forEach { it.addEagerInitCall(fn) } }
+        eagerThreadLocalInitFunction?.let { fn -> eagerThreadLocalAccessors.forEach { it.addEagerInitCall(fn) } }
+
         if (globalInitFunction == null && threadLocalInitFunction == null) return
-        
+
         fun IrFunction.addInitializersCall() {
             val body = body ?: return
             val statements = (body as IrBlockBody).statements
@@ -305,6 +335,52 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
         body = context.irFactory.createBlockBody(startOffset, endOffset, initializers)
                 .setDeclarationsParent(this)
         container.declarations.add(0, this)
+    }
+
+    // Builds an eager initializer function guarded by a boolean flag: `if (!guard) { guard = true; <initializers> }`.
+    // Unlike lazy initializers (whose "run once" is managed by code generation), an eager initializer is now called
+    // both at program startup and from every eager property accessor, so it needs its own idempotency guard.
+    private fun buildEagerInitFunction(
+            container: IrDeclarationContainer,
+            name: String,
+            origin: IrDeclarationOrigin,
+            initializers: List<IrExpression>,
+            threadLocalGuard: Boolean,
+    ): IrSimpleFunction {
+        val function = buildInitFunction(container, name, origin, initializers = emptyList())
+
+        // The guard field is created after the field-collection loop, so this lowering never processes it.
+        // It defaults to `false` via zero-initialization, hence no initializer is needed.
+        val guardField = context.irFactory.buildField {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            this.name = Name.identifier(function.name.asString() + "\$guard")
+            type = context.irBuiltIns.booleanType
+            visibility = DescriptorVisibilities.PRIVATE
+            isStatic = true
+            isFinal = false
+        }.apply {
+            parent = container
+            // The thread-local eager initializer must run once per thread, so its guard is thread-local too.
+            if (threadLocalGuard) {
+                annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.symbols.threadLocal.owner)
+            }
+        }
+        container.declarations.add(0, guardField)
+
+        // The guard is set before running the initializers so that a re-entrant call (an initializer may read
+        // another eager property from the same file via its accessor) becomes a no-op instead of recursing.
+        context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+            val guardedBlock = irBlock(resultType = context.irBuiltIns.unitType) {
+                +irSetField(receiver = null, field = guardField, value = irTrue())
+                initializers.forEach { +it }
+            }
+            function.body = context.irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(
+                    irIfThen(context.irBuiltIns.unitType, irNot(irGetField(receiver = null, field = guardField)), guardedBlock)
+            )).setDeclarationsParent(function)
+        }
+
+        return function
     }
 
 }
