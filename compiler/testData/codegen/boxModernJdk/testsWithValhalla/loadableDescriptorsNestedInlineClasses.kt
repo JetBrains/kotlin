@@ -107,41 +107,43 @@ fun box(): String {
     return "OK"
 }
 
+// Like javac for the same descriptors, each class lists the value classes they name: `Val` behind any number of `@JvmInline` classes
+// and bounds, and the box of a nullable `WrapWrapInt`, but neither `int` nor `Object`.
 // @WrapWrapVal.class:
 // 1 ATTRIBUTE LoadableDescriptors : LVal;\n
 // @WrapWrapInt.class:
-// 1 ATTRIBUTE LoadableDescriptors : I\n
-// @Bounded.class:
 // 0 ATTRIBUTE LoadableDescriptors
+// @Bounded.class:
+// 1 ATTRIBUTE LoadableDescriptors : LVal;\n
 // @Unbounded.class:
 // 0 ATTRIBUTE LoadableDescriptors
 // @NestedField.class:
 // 1 ATTRIBUTE LoadableDescriptors : LVal;\n
 // @NestedSignature.class:
-// 0 ATTRIBUTE LoadableDescriptors
+// 1 ATTRIBUTE LoadableDescriptors : LVal;\n
 // @NullableNestedSignature.class:
-// 0 ATTRIBUTE LoadableDescriptors
+// 1 ATTRIBUTE LoadableDescriptors : LVal;\n
 // @NestedIntField.class:
-// 1 ATTRIBUTE LoadableDescriptors : I\n
+// 0 ATTRIBUTE LoadableDescriptors
 // @NullableNestedIntField.class:
 // 1 ATTRIBUTE LoadableDescriptors : LWrapWrapInt;\n
 // @NestedIntSignature.class:
 // 0 ATTRIBUTE LoadableDescriptors
 // @NullableNestedIntSignature.class:
-// 0 ATTRIBUTE LoadableDescriptors
+// 1 ATTRIBUTE LoadableDescriptors : LWrapWrapInt;\n
 // @BoundedField.class:
 // 1 ATTRIBUTE LoadableDescriptors : LVal;\n
 // @BoundedSignature.class:
-// 0 ATTRIBUTE LoadableDescriptors
+// 1 ATTRIBUTE LoadableDescriptors : LVal;\n
 // @UnboundedField.class:
-// 1 ATTRIBUTE LoadableDescriptors : Ljava/lang/Object;\n
+// 0 ATTRIBUTE LoadableDescriptors
 // @UnboundedSignature.class:
 // 0 ATTRIBUTE LoadableDescriptors
 // @TypeParameterField.class:
-// 0 ATTRIBUTE LoadableDescriptors
+// 1 ATTRIBUTE LoadableDescriptors : LVal;\n
 // @TypeParameterSignature.class:
-// 0 ATTRIBUTE LoadableDescriptors
+// 1 ATTRIBUTE LoadableDescriptors : LVal;\n
 // @NullableTypeParameterSignature.class:
-// 0 ATTRIBUTE LoadableDescriptors
+// 1 ATTRIBUTE LoadableDescriptors : LVal;\n
 // @UnboundedTypeParameterSignature.class:
 // 0 ATTRIBUTE LoadableDescriptors

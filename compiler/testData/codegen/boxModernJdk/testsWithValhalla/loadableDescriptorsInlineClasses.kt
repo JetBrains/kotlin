@@ -76,9 +76,13 @@ fun box(): String {
     return "OK"
 }
 
-// 6 ATTRIBUTE LoadableDescriptors
-// 2 ATTRIBUTE LoadableDescriptors : LVal;\n
+// Like javac for fields and parameters of the underlying types, the classes above list the underlying value classes, but neither
+// `String` nor `int`. The boxed signature of `exposed` lists `WrapVal` itself too.
+// 9 ATTRIBUTE LoadableDescriptors
+// 3 ATTRIBUTE LoadableDescriptors : LVal;\n
 // 1 ATTRIBUTE LoadableDescriptors : LJavaVal;\n
 // 1 ATTRIBUTE LoadableDescriptors : Ljava/lang/Integer;\n
 // 1 ATTRIBUTE LoadableDescriptors : Ljava/util/Optional;\n
-// 1 ATTRIBUTE LoadableDescriptors : LVal;, LJavaVal;, Ljava/lang/Integer;, Ljava/util/Optional;, Ljava/lang/String;, I\n
+// 1 ATTRIBUTE LoadableDescriptors : LVal;, LJavaVal;, Ljava/lang/Integer;, Ljava/util/Optional;\n
+// 1 ATTRIBUTE LoadableDescriptors : LVal;, LJavaVal;\n
+// 1 ATTRIBUTE LoadableDescriptors : LVal;, LWrapVal;\n
