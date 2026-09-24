@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isTrivialGetter
+import org.jetbrains.kotlin.ir.util.markAsErasureBoundaryCast
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -116,9 +117,10 @@ open class PropertyAccessorInlineLowering(
                 IrGetFieldImpl(startOffset, endOffset, backingField.symbol, backingField.type, call.dispatchReceiver, origin)
             }
 
-            // Preserve call types when backingField have different type. This usually happens with generic field types.
+            // Preserve call types when backingField have different type. This usually happens with generic field types,
+            // in which case the cast crosses an erasure boundary just like the one on the result of the getter call would.
             return if (backingField.type != call.type)
-                builder.irImplicitCast(getField, call.type)
+                builder.irImplicitCast(getField, call.type).markAsErasureBoundaryCast()
             else
                 getField
         }

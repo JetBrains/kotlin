@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.backend.js.wasMovedFromItsDeclarationPlace
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -30,6 +31,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.isTypeParameter
+import org.jetbrains.kotlin.ir.util.markAsErasureBoundaryCast
 import org.jetbrains.kotlin.ir.util.previousOffset
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -310,9 +313,16 @@ class StateMachineBuilder(
             doContinue()
 
             updateState(continueState)
-            addStatement(getSuspendResultAsType(expression.type))
+            val resumedValue = getSuspendResultAsType(expression.type)
+            addStatement(if (expression.returnsErasedGenericValue()) resumedValue.markAsErasureBoundaryCast() else resumedValue)
         }
     }
+
+    // The result of a call to a function returning a type parameter is produced at the erased type, so narrowing it back
+    // to the substituted type of the call crosses an erasure boundary (normally marked by Wasm's GenericReturnTypeLowering,
+    // which runs after this lowering and so doesn't see suspend calls any more).
+    private fun IrCall.returnsErasedGenericValue(): Boolean =
+        symbol.owner.realOverrideTarget.returnType.isTypeParameter() && !type.isTypeParameter()
 
     override fun visitBreak(jump: IrBreak) {
         val exitState = loopMap[jump.loop]!!.exitState

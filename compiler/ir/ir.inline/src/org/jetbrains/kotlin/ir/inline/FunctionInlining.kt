@@ -306,17 +306,58 @@ private class CallInlining(
         }
     }
 
-    private fun IrExpression.doImplicitCastIfNeededTo(type: IrType): IrExpression {
+    /**
+     * The frontend has already checked arguments and return values of inline functions against the substituted types.
+     * So, apart from casts which were already there before (see [unwrapAdditionalImplicitCastsIfNeeded]), a cast is needed
+     * only because the inliner erased a non-reified type parameter: it narrows a value produced at an erased generic type
+     * back to the substituted one, i.e. it crosses an erasure boundary.
+     *
+     * [original] is the expression before the implicit casts on top of it were unwrapped. If it already had exactly [type]
+     * without an erasure boundary cast, the new cast just restores what the unwrapped one (e.g. a smart cast) has proven.
+     *
+     * Note: this can't use a real subtype check, because the symbols involved aren't necessarily bound yet at the first
+     * (pre-serialization) stage.
+     */
+    private fun IrExpression.doImplicitCastIfNeededTo(type: IrType, original: IrExpression = this): IrExpression {
         return when {
             type.isUnit() -> this.coerceToUnit(context.irBuiltIns)
-            else -> this.implicitCastIfNeededTo(type)
+            else -> {
+                val cast = this.implicitCastIfNeededTo(type)
+                when {
+                    cast === this -> cast
+                    original !== this && original.type == type && !original.hasErasureBoundaryCastOnTop() -> cast
+                    context.checkErasureBoundaryCastsInInliner -> checkedErasureBoundaryCastTo(type)
+                    else -> cast.markAsErasureBoundaryCast()
+                }
+            }
         }
     }
+
+    /**
+     * The check lets `null` through (see `checkErasureBoundaryCastsInInliner`): it is done by a `CAST` to the nullable [type],
+     * and an `IMPLICIT_CAST` on top of it restores the non-null [type].
+     */
+    private fun IrExpression.checkedErasureBoundaryCastTo(type: IrType): IrExpression {
+        val nullableType = type.makeNullable()
+        val check = IrTypeOperatorCallImpl(startOffset, endOffset, nullableType, IrTypeOperator.CAST, nullableType, this)
+            .markAsErasureBoundaryCast()
+        if (nullableType == type) return check
+        return IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, check)
+    }
+
+    private fun IrExpression.hasErasureBoundaryCastOnTop(): Boolean =
+        this is IrTypeOperatorCall && isImplicitOrErasureBoundaryCast() &&
+                (crossesErasureBoundary || argument.hasErasureBoundaryCastOnTop())
+
+    // A checked erasure boundary cast (see `checkErasureBoundaryCastsInInliner`) is one of ours as well, so it has to be
+    // unwrapped just like an implicit one.
+    private fun IrTypeOperatorCall.isImplicitOrErasureBoundaryCast(): Boolean =
+        operator == IrTypeOperator.IMPLICIT_CAST || (operator == IrTypeOperator.CAST && crossesErasureBoundary)
 
     // We sometimes insert casts to inline lambda parameters before calling `invoke` on them.
     // Unwrapping these casts helps us satisfy inline lambda call detection logic.
     private fun IrExpression.unwrapAdditionalImplicitCastsIfNeeded(): IrExpression {
-        if (this is IrTypeOperatorCall && this.operator == IrTypeOperator.IMPLICIT_CAST) {
+        if (this is IrTypeOperatorCall && this.isImplicitOrErasureBoundaryCast()) {
             return this.argument.unwrapAdditionalImplicitCastsIfNeeded()
         }
         return this
@@ -378,12 +419,13 @@ private class CallInlining(
     ) {
         for ([parameter, argument] in callee.parameters.zip(callSite.arguments)) {
             val isDefaultArg = argument == null && parameter.defaultValue != null
-            val argumentValue = when {
+            val originalArgumentValue = when {
                 argument != null -> argument
                 parameter.defaultValue != null -> parameter.defaultValue!!.expression
                 parameter.varargElementType != null -> callSiteBuilder.emptyVararg(parameter)
                 else -> error("Incomplete expression: call to ${callee.render()} has no argument at index ${parameter.indexInParameters}")
-            }.unwrapAdditionalImplicitCastsIfNeeded()
+            }
+            val argumentValue = originalArgumentValue.unwrapAdditionalImplicitCastsIfNeeded()
 
             /*
              * We need to create a temporary variable for each argument except inlinable lambda arguments.
@@ -418,7 +460,7 @@ private class CallInlining(
                 continue
             }
 
-            val castedArgumentValue = argumentValue.doImplicitCastIfNeededTo(parameter.type)
+            val castedArgumentValue = argumentValue.doImplicitCastIfNeededTo(parameter.type, original = originalArgumentValue)
 
             val valueForTmpVar = if (isDefaultArg) {
                 castedArgumentValue
