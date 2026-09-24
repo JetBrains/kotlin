@@ -92,7 +92,7 @@ class ULongTest {
 
         assertEquals(number, div * divisor + rem)
         assertTrue(rem < divisor)
-        assertTrue(div < number)
+        if (number > 0uL && divisor != 1uL) assertTrue(div < number)
     }
 
     @Test
@@ -100,6 +100,9 @@ class ULongTest {
         val number = Random.nextULong()
         val divisor = Random.nextULong(until = ULong.MAX_VALUE) + 1u
         testMulDivRem(number, divisor, number / divisor, number % divisor)
+        // special cases
+        testMulDivRem(zero, divisor, zero, zero)
+        testMulDivRem(number, one, number, zero)
     }
 
     @Test
