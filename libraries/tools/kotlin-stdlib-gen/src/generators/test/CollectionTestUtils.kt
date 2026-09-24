@@ -46,3 +46,17 @@ fun writeGeneratedFile(path: String, block: BufferedWriter.() -> Unit) {
 
 fun emptyCollectionExpr(ctor: String, primitive: PrimitiveType?): String =
     if (primitive == null) "$ctor<String>()" else "$ctor()"
+
+class Receiver(private val family: Family, private val primitive: PrimitiveType?) {
+    operator fun invoke(vararg elements: String): String = invoke(elements.asList())
+
+    operator fun invoke(elements: List<String>): String {
+        val ctor = constructorName(family, primitive)
+        return if (elements.isEmpty()) emptyCollectionExpr(ctor, primitive) else "$ctor(${elements.joinToString()})"
+    }
+
+    fun sized(size: Int, init: String): String = when (family) {
+        ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned -> "${collectionClassName(family, primitive)}($size) { $init }"
+        else -> error(family)
+    }
+}

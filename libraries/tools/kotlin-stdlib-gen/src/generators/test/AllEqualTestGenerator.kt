@@ -16,9 +16,8 @@ object AllEqualTestGenerator {
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {
         val collectionClass = collectionClassName(family, primitive)
-        val ctor = constructorName(family, primitive)
+        val receiver = Receiver(family, primitive)
         val config = allEqualConfigFor(primitive)
-        val emptyCollection = emptyCollectionExpr(ctor, primitive)
         val fpTypes = when (primitive) {
             null -> PrimitiveType.floatingPointPrimitives.toList()
             in PrimitiveType.floatingPointPrimitives -> listOf(primitive)
@@ -28,10 +27,10 @@ object AllEqualTestGenerator {
         val className = "AllEqual${collectionClass}Test"
         writeGeneratedFile("libraries/stdlib/test/generated/allequal/$className.kt") {
             writeHeader(className)
-            writeAllEqualTest(ctor, config, emptyCollection)
-            writeAllEqualByTest(ctor, config, emptyCollection)
+            writeAllEqualTest(receiver, config)
+            writeAllEqualByTest(receiver, config)
             for (fpType in fpTypes) {
-                writeFpTests(ctor, fpType)
+                writeFpTests(receiver, fpType)
             }
             appendLine("}")
         }
@@ -49,46 +48,46 @@ object AllEqualTestGenerator {
         appendLine("class $className {")
     }
 
-    private fun BufferedWriter.writeAllEqualTest(ctor: String, config: AllEqualTypeConfig, emptyCollection: String) {
+    private fun BufferedWriter.writeAllEqualTest(receiver: Receiver, config: AllEqualTypeConfig) {
         val equal = config.equalValue
         val other = config.otherValue
         appendLine(
             """
     @Test
     fun allEqual() {
-        assertTrue($emptyCollection.allEqual())
-        assertTrue($ctor($equal).allEqual())
-        assertTrue($ctor($equal, $equal).allEqual())
-        assertTrue($ctor($equal, $equal, $equal).allEqual())
-        assertFalse($ctor($equal, $other).allEqual())
-        assertFalse($ctor($other, $equal).allEqual())
-        assertFalse($ctor($equal, $equal, $other).allEqual())
-        assertFalse($ctor($other, $equal, $equal).allEqual())
+        assertTrue(${receiver()}.allEqual())
+        assertTrue(${receiver(equal)}.allEqual())
+        assertTrue(${receiver(equal, equal)}.allEqual())
+        assertTrue(${receiver(equal, equal, equal)}.allEqual())
+        assertFalse(${receiver(equal, other)}.allEqual())
+        assertFalse(${receiver(other, equal)}.allEqual())
+        assertFalse(${receiver(equal, equal, other)}.allEqual())
+        assertFalse(${receiver(other, equal, equal)}.allEqual())
     }"""
         )
     }
 
-    private fun BufferedWriter.writeAllEqualByTest(ctor: String, config: AllEqualTypeConfig, emptyCollection: String) {
+    private fun BufferedWriter.writeAllEqualByTest(receiver: Receiver, config: AllEqualTypeConfig) {
         val selectorExpr = config.selectorExpr
-        val equalSelectorArgs = config.valuesWithEqualSelector.joinToString()
-        val diffSelectorArgs = config.valuesWithDiffSelector.joinToString()
-        val firstEqual = config.valuesWithEqualSelector.first()
+        val equalSelectorValues = receiver(config.valuesWithEqualSelector)
+        val diffSelectorValues = receiver(config.valuesWithDiffSelector)
+        val firstEqual = receiver(config.valuesWithEqualSelector.first())
         appendLine(
             """
     @Test
     fun allEqualBy() {
-        assertTrue($emptyCollection.allEqualBy { $selectorExpr })
-        assertTrue($ctor($firstEqual).allEqualBy { $selectorExpr })
-        assertTrue($ctor($firstEqual).allEqualBy { error("should not be called") })
-        assertTrue($ctor($equalSelectorArgs).allEqualBy { $selectorExpr })
-        assertFalse($ctor($diffSelectorArgs).allEqualBy { $selectorExpr })
-        assertTrue($ctor($diffSelectorArgs).allEqualBy { 0 })
-        assertTrue($ctor($equalSelectorArgs).allEqualBy { null })
+        assertTrue(${receiver()}.allEqualBy { $selectorExpr })
+        assertTrue($firstEqual.allEqualBy { $selectorExpr })
+        assertTrue($firstEqual.allEqualBy { error("should not be called") })
+        assertTrue($equalSelectorValues.allEqualBy { $selectorExpr })
+        assertFalse($diffSelectorValues.allEqualBy { $selectorExpr })
+        assertTrue($diffSelectorValues.allEqualBy { 0 })
+        assertTrue($equalSelectorValues.allEqualBy { null })
     }"""
         )
     }
 
-    private fun BufferedWriter.writeFpTests(ctor: String, fpType: PrimitiveType) {
+    private fun BufferedWriter.writeFpTests(receiver: Receiver, fpType: PrimitiveType) {
         val typeName = fpType.name
         val suffix = if (fpType == PrimitiveType.Float) "f" else ""
         val nanVal = "$typeName.NaN"
@@ -104,52 +103,52 @@ object AllEqualTestGenerator {
             """
     @Test
     fun allEqualNaN$typeName() {
-        assertTrue($ctor($nanVal, $nanVal).allEqual())
-        assertTrue($ctor($nanVal, $nanVal, $nanVal).allEqual())
-        assertFalse($ctor($nanVal, $finite).allEqual())
-        assertFalse($ctor($finite, $nanVal).allEqual())
-        assertFalse($ctor($nanVal, $finite, $nanVal).allEqual())
+        assertTrue(${receiver(nanVal, nanVal)}.allEqual())
+        assertTrue(${receiver(nanVal, nanVal, nanVal)}.allEqual())
+        assertFalse(${receiver(nanVal, finite)}.allEqual())
+        assertFalse(${receiver(finite, nanVal)}.allEqual())
+        assertFalse(${receiver(nanVal, finite, nanVal)}.allEqual())
     }
 
     @Test
     fun allEqualNegativeZero$typeName() {
-        assertTrue($ctor($zeroPos, $zeroPos).allEqual())
-        assertTrue($ctor($zeroNeg, $zeroNeg).allEqual())
-        assertFalse($ctor($zeroPos, $zeroNeg).allEqual())
-        assertFalse($ctor($zeroNeg, $zeroPos).allEqual())
+        assertTrue(${receiver(zeroPos, zeroPos)}.allEqual())
+        assertTrue(${receiver(zeroNeg, zeroNeg)}.allEqual())
+        assertFalse(${receiver(zeroPos, zeroNeg)}.allEqual())
+        assertFalse(${receiver(zeroNeg, zeroPos)}.allEqual())
     }
 
     @Test
     fun allEqualByNaN$typeName() {
-        assertTrue($ctor($nanVal, $nanVal).allEqualBy { it })
-        assertTrue($ctor($nanVal, $nanVal, $nanVal).allEqualBy { it })
-        assertFalse($ctor($nanVal, $finite).allEqualBy { it })
-        assertFalse($ctor($finite, $nanVal).allEqualBy { it })
-        assertFalse($ctor($nanVal, $finite, $nanVal).allEqualBy { it })
+        assertTrue(${receiver(nanVal, nanVal)}.allEqualBy { it })
+        assertTrue(${receiver(nanVal, nanVal, nanVal)}.allEqualBy { it })
+        assertFalse(${receiver(nanVal, finite)}.allEqualBy { it })
+        assertFalse(${receiver(finite, nanVal)}.allEqualBy { it })
+        assertFalse(${receiver(nanVal, finite, nanVal)}.allEqualBy { it })
     }
 
     @Test
     fun allEqualByNegativeZero$typeName() {
-        assertTrue($ctor($zeroPos, $zeroPos).allEqualBy { it })
-        assertTrue($ctor($zeroNeg, $zeroNeg).allEqualBy { it })
-        assertFalse($ctor($zeroPos, $zeroNeg).allEqualBy { it })
-        assertFalse($ctor($zeroNeg, $zeroPos).allEqualBy { it })
+        assertTrue(${receiver(zeroPos, zeroPos)}.allEqualBy { it })
+        assertTrue(${receiver(zeroNeg, zeroNeg)}.allEqualBy { it })
+        assertFalse(${receiver(zeroPos, zeroNeg)}.allEqualBy { it })
+        assertFalse(${receiver(zeroNeg, zeroPos)}.allEqualBy { it })
     }
 
     @Test
     fun allEqualDifferentNaNBits$typeName() {
-        assertTrue($ctor($nanVal, $negNaN).allEqual())
-        assertTrue($ctor($nanVal, $negNaN, $mantissaNaN).allEqual())
-        assertTrue($ctor($mantissaNaN, $negNaN, $nanVal).allEqual())
-        assertFalse($ctor($nanVal, $finite).allEqual())
-        assertFalse($ctor($finite, $negNaN).allEqual())
+        assertTrue(${receiver(nanVal, negNaN)}.allEqual())
+        assertTrue(${receiver(nanVal, negNaN, mantissaNaN)}.allEqual())
+        assertTrue(${receiver(mantissaNaN, negNaN, nanVal)}.allEqual())
+        assertFalse(${receiver(nanVal, finite)}.allEqual())
+        assertFalse(${receiver(finite, negNaN)}.allEqual())
     }
 
     @Test
     fun allEqualByDifferentNaNBits$typeName() {
-        assertTrue($ctor($nanVal, $negNaN).allEqualBy { it })
-        assertTrue($ctor($nanVal, $negNaN, $mantissaNaN).allEqualBy { it })
-        assertFalse($ctor($nanVal, $finite).allEqualBy { it })
+        assertTrue(${receiver(nanVal, negNaN)}.allEqualBy { it })
+        assertTrue(${receiver(nanVal, negNaN, mantissaNaN)}.allEqualBy { it })
+        assertFalse(${receiver(nanVal, finite)}.allEqualBy { it })
     }"""
         )
     }

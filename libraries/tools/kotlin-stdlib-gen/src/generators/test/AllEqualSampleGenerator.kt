@@ -16,16 +16,15 @@ object AllEqualSampleGenerator {
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {
         val collectionClass = collectionClassName(family, primitive)
-        val ctor = constructorName(family, primitive)
+        val receiver = Receiver(family, primitive)
         val config = allEqualConfigFor(primitive)
-        val emptyCollection = emptyCollectionExpr(ctor, primitive)
         val isSequence = family == Sequences
 
         val className = "AllEqual${collectionClass}Samples"
         writeGeneratedFile("libraries/stdlib/samples/test/samples/generated/allequal/$className.kt") {
             writeHeader(className, config.sampleNeedsAbsImport)
-            writeAllEqualSample(ctor, config, emptyCollection, isSequence)
-            writeAllEqualBySample(ctor, config, emptyCollection, isSequence)
+            writeAllEqualSample(receiver, config, isSequence)
+            writeAllEqualBySample(receiver, config, isSequence)
             appendLine("}")
         }
     }
@@ -45,27 +44,25 @@ object AllEqualSampleGenerator {
         appendLine("class $className {")
     }
 
-    private fun valOrInline(isSequence: Boolean, ctor: String, name: String, args: String): Pair<String, String> {
-        val ctorCall = "$ctor($args)"
-        return if (isSequence) "" to ctorCall else "        val $name = $ctorCall\n" to name
+    private fun valOrInline(isSequence: Boolean, name: String, value: String): Pair<String, String> {
+        return if (isSequence) "" to value else "        val $name = $value\n" to name
     }
 
     private fun BufferedWriter.writeAllEqualSample(
-        ctor: String,
+        receiver: Receiver,
         config: AllEqualTypeConfig,
-        emptyCollection: String,
         isSequence: Boolean,
     ) {
         val equal = config.sampleEqualValue
         val other = config.sampleOtherValue
-        val [sameDecl, sameRef] = valOrInline(isSequence, ctor, "sameValues", "$equal, $equal, $equal")
-        val [mixedDecl, mixedRef] = valOrInline(isSequence, ctor, "mixedValues", "$equal, $equal, $other")
+        val [sameDecl, sameRef] = valOrInline(isSequence, "sameValues", receiver(equal, equal, equal))
+        val [mixedDecl, mixedRef] = valOrInline(isSequence, "mixedValues", receiver(equal, equal, other))
         appendLine(
             """
     @Sample
     fun allEqual() {
-        assertPrints($emptyCollection.allEqual(), "true")
-        assertPrints($ctor($equal).allEqual(), "true")
+        assertPrints(${receiver()}.allEqual(), "true")
+        assertPrints(${receiver(equal)}.allEqual(), "true")
 
 $sameDecl        assertPrints($sameRef.allEqual(), "true")
 
@@ -75,16 +72,14 @@ $mixedDecl        assertPrints($mixedRef.allEqual(), "false")
     }
 
     private fun BufferedWriter.writeAllEqualBySample(
-        ctor: String,
+        receiver: Receiver,
         config: AllEqualTypeConfig,
-        emptyCollection: String,
         isSequence: Boolean,
     ) {
         val selectorValues = config.sampleSelectorValues
-        val args = selectorValues.joinToString(", ")
         val singleElement = selectorValues.first()
         val firstSelector = config.sampleSelectorAssertions.first().first
-        val [valuesDecl, valuesRef] = valOrInline(isSequence, ctor, "values", args)
+        val [valuesDecl, valuesRef] = valOrInline(isSequence, "values", receiver(selectorValues))
         val assertionLines = config.sampleSelectorAssertions.joinToString("\n") { [selector, expected] ->
             "        assertPrints($valuesRef.allEqualBy { $selector }, \"$expected\")"
         }
@@ -92,8 +87,8 @@ $mixedDecl        assertPrints($mixedRef.allEqual(), "false")
             """
     @Sample
     fun allEqualBy() {
-        assertPrints($emptyCollection.allEqualBy { $firstSelector }, "true")
-        assertPrints($ctor($singleElement).allEqualBy { $firstSelector }, "true")
+        assertPrints(${receiver()}.allEqualBy { $firstSelector }, "true")
+        assertPrints(${receiver(singleElement)}.allEqualBy { $firstSelector }, "true")
 
 $valuesDecl$assertionLines
     }"""
