@@ -70,6 +70,8 @@ annotation class Bind(val id: Int)
 annotation class MultiValue(val ids: IntArray)
 annotation class MultiValueString(val ids: Array<String>)
 annotation class MultiValueByte(val ids: ByteArray)
+annotation class VarargValue(vararg val ids: Int)
+annotation class VarargValueString(vararg val ids: String)
 
 @Target(AnnotationTarget.FIELD)
 annotation class BindField(val id: Int)
@@ -133,23 +135,37 @@ class MyActivity(
     @Bind(B.id.textView)
     fun plainIntConstant() {}
 
+    @VarargValue(ids = [])
     @MultiValue(ids = [])
     fun multi0() {}
 
+    @VarargValue(ids = [B.id.textView])
     @MultiValue(ids = [B.id.textView])
     fun multi1() {}
 
+    @VarargValue(ids = [B.id.textView, B.a3])
     @MultiValue(ids = [B.id.textView, B.a3])
     fun multi2() {}
 
+    @VarargValue(ids = intArrayOf(B.id.textView, B.a3))
     @MultiValue(ids = intArrayOf(B.id.textView, B.a3))
     fun multi3() {}
 
+    @VarargValueString(ids = arrayOf(B.a9))
     @MultiValueString(ids = arrayOf(B.a9))
     fun multi4() {}
 
     @MultiValueByte(ids = byteArrayOf(B.a2))
     fun multi5() {}
+
+    @VarargValue
+    fun multi6() {}
+
+    @VarargValue(B.id.textView)
+    fun multi7() {}
+
+    @VarargValueString(B.a9)
+    fun multi8() {}
 
     @OnClick(B.id.textView)
     fun multiJava1() {}
