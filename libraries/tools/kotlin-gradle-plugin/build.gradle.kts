@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.nativeDistribution.useProvidedNativeBootstrapDistrib
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.writeText
 
 plugins {
     id("common-configuration")
@@ -815,4 +817,148 @@ kotlin.sourceSets.common {
 node {
     version = nodejsVersion
     distBaseUrl.set(null as String?)
+}
+
+
+val lintConfiguration = configurations.detachedConfiguration(project.dependencyFactory.create("com.android.tools.lint", "lint-gradle", "32.4.0"))
+val lintChecksConfiguration = configurations.detachedConfiguration(project.dependencyFactory.create("androidx.lint", "lint-gradle", "1.0.0"))
+abstract class BasicLintRunner : DefaultTask() {
+    @get:Inject abstract val execOperations: ExecOperations
+    @get:Classpath
+    abstract val lintClasspath: ConfigurableFileCollection
+    @get:Classpath
+    abstract val additionalLintChecks: ConfigurableFileCollection
+
+    @get:[InputFiles PathSensitive(PathSensitivity.RELATIVE)]
+    abstract val sources: ConfigurableFileCollection
+    @get:Classpath
+    abstract val classes: ConfigurableFileCollection
+    @get:Classpath
+    abstract val compileClasspath: ConfigurableFileCollection
+    @get:Internal
+    abstract val projectDir: DirectoryProperty
+
+    private fun createLintModel(): java.nio.file.Path {
+        val lintModel = this.temporaryDir.toPath()
+        val sourceDirs = sources.filter {it.exists()}.joinToString(":") { it.absolutePath }
+        val classesDirs = classes.filter {it.exists()}.joinToString(":") { it.absolutePath }
+        lintModel.resolve("main.xml").writeText("""
+            <variant name="main" package="" debuggable="true">
+              <buildFeatures/>
+              <sourceProviders>
+                <sourceProvider javaDirectories="$sourceDirs"/>
+              </sourceProviders>
+              <testSourceProviders>
+              </testSourceProviders>
+              <testFixturesSourceProviders>
+              </testFixturesSourceProviders>
+              <artifact
+                  classOutputs="$classesDirs"
+                  type="MAIN"
+                  applicationId="">
+              </artifact>
+            </variant>
+            """.trimIndent()
+        )
+        lintModel.resolve("module.xml").writeText("""
+            <lint-module
+                format="1"
+                dir="${projectDir.get().asFile.absolutePath}"
+                name=""
+                type="JAVA_LIBRARY"
+                maven=""
+                agpVersion=""
+                buildFolder="build"
+                resourcePrefix=""
+                javaSourceLevel="17"
+                compileTarget=""
+                neverShrinking="true"
+                highlightGradualR8Api="false">
+              <lintOptions
+                  abortOnError="true"
+                  absolutePaths="true"
+                  checkReleaseBuilds="true"
+                  explainIssues="true"/>
+              <variant name="main"/>
+            </lint-module>
+        """.trimIndent()
+        )
+        val artifactLibraries = buildString {
+            append("<libraries>")
+            compileClasspath.files.forEach {
+                append("""
+                    <library
+                      name="__local_aars__:${it.absolutePath}:unspecified@jar"
+                      jars="${it.absolutePath}"
+                      resolved="__local_aars__:${it.absolutePath}:unspecified"/>
+                    """.trimIndent()
+                )
+            }
+            append("</libraries>")
+        }
+        lintModel.resolve("main-artifact-libraries.xml").writeText(artifactLibraries)
+
+        val commaSeparatedClasspath = compileClasspath.files.joinToString(",") { "__local_aars__:$it:unspecified@jar" }
+        val artifactDependencies = buildString {
+            append("""
+                <dependencies>
+                    <compile
+                        roots="$commaSeparatedClasspath">""".trimIndent())
+            compileClasspath.files.forEach {
+                append("""
+                    <dependency
+                        name="__local_aars__:${it.absolutePath}:unspecified@jar"
+                        simpleName="${it.absolutePath}"/>""".trimIndent()
+                )
+            }
+            append("""
+                </compile>
+                    <package roots="$commaSeparatedClasspath">""".trimIndent()
+            )
+            compileClasspath.files.forEach {
+                append("""
+                    <dependency
+                        name="__local_aars__:${it.absolutePath}:unspecified@jar"
+                        simpleName="${it.absolutePath}"/>""".trimIndent()
+                )
+            }
+            append("""
+               </package>
+               </dependencies>""".trimIndent()
+            )
+        }
+        lintModel.resolve("main-artifact-dependencies.xml").writeText(artifactDependencies)
+        return lintModel
+    }
+
+    @TaskAction
+    fun runLint() {
+        val lintModel = createLintModel()
+        execOperations.javaexec {
+            classpath = lintClasspath
+            mainClass = "com.android.tools.lint.Main"
+            systemProperty("java.awt.headless", "true")
+            args = listOf(
+                "--jdk-home",
+                System.getProperty("java.home"),
+                "--lint-model",
+                "${lintModel.absolutePathString()};",
+                "--lint-rule-jars",
+                additionalLintChecks.files.joinToString(";") { it.absolutePath },
+            )
+
+//            println("All lint args:")
+//            logger.warn(this.allJvmArgs.joinToString(" "))
+//            logger.warn(this.args.joinToString(" "))
+        }
+    }
+}
+
+tasks.register<BasicLintRunner>("basicLint") {
+    lintClasspath.from(lintConfiguration)
+    additionalLintChecks.from(lintChecksConfiguration)
+    sources.from(sourceSets.common.map { it.allSource.sourceDirectories })
+    classes.from(sourceSets.common.map { it.output.classesDirs })
+    compileClasspath.from(configurations.commonCompileClasspath)
+    projectDir.set(layout.projectDirectory)
 }
