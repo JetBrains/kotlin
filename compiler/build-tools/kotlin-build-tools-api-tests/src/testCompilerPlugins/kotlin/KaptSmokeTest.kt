@@ -124,7 +124,6 @@ class KaptSmokeTest : BaseCompilationTest() {
                     "generated/source/example/TestFunctionGenerated.java",
                     addKotlinModuleFile = false,
                 )
-                println(logLines)
                 assertLogContainsPatterns(
                     logLevel = LogLevel.DEBUG,
                     ".*plugin:org.jetbrains.kotlin.kapt3:incrementalData=.*".toRegex(),
