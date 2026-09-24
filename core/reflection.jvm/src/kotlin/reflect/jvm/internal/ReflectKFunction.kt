@@ -77,7 +77,7 @@ internal fun patchJvmDescriptorByExtraBoxing(function: ReflectKFunction, jvmDesc
 internal fun ReflectKFunction.getFunctionWithDefaultParametersForValueClassOverride(): ReflectKFunction? {
     if (
         valueParameters.none { (it as? ReflectKParameter)?.declaresDefaultValue == true } &&
-        (container as? KClass<*>)?.isValue == true &&
+        (container as? KClassImpl<*>)?.isJvmInlineValue == true &&
         Modifier.isStatic(caller.member!!.modifiers)
     ) {
         // firstOrNull is used to mimic the wrong behavior of regular class reflection as KT-40327 is not fixed.
