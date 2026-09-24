@@ -24,9 +24,6 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
-    // FIXME: drop after removing references to LocalFileSystem they don't exist in intellij-core
-    compileOnly(intellijAnalysis())
-
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
