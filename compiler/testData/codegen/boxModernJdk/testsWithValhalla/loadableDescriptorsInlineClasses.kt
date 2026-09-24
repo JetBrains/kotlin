@@ -74,9 +74,11 @@ fun box(): String {
     return "OK"
 }
 
-// 6 ATTRIBUTE LoadableDescriptors
-// 2 ATTRIBUTE LoadableDescriptors : LVal;\n
+// 9 ATTRIBUTE LoadableDescriptors
+// 3 ATTRIBUTE LoadableDescriptors : LVal;\n
 // 1 ATTRIBUTE LoadableDescriptors : LJavaVal;\n
 // 1 ATTRIBUTE LoadableDescriptors : Ljava/lang/Integer;\n
 // 1 ATTRIBUTE LoadableDescriptors : Ljava/util/Optional;\n
-// 1 ATTRIBUTE LoadableDescriptors : LVal;, LJavaVal;, Ljava/lang/Integer;, Ljava/util/Optional;, Ljava/lang/String;, I\n
+// 1 ATTRIBUTE LoadableDescriptors : LVal;, LJavaVal;, Ljava/lang/Integer;, Ljava/util/Optional;\n
+// 1 ATTRIBUTE LoadableDescriptors : LVal;, LJavaVal;\n
+// 1 ATTRIBUTE LoadableDescriptors : LVal;, LWrapVal;\n

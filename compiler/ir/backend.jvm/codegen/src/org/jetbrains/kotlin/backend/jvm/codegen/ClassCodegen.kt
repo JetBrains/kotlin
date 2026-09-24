@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.isJavaValueClass
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
@@ -138,9 +139,9 @@ class ClassCodegen private constructor(
 
     private var generated = false
 
-    // Descriptors of this class's fields whose type is a Valhalla value class, collected during field generation and emitted as
-    // the `LoadableDescriptors` attribute (JEP 401).
-    private val loadableFieldDescriptors = mutableSetOf<String>()
+    // Descriptors of the Valhalla value classes mentioned by this class's field and method signatures, collected during generation
+    // and emitted as the `LoadableDescriptors` attribute (JEP 401).
+    private val loadableDescriptors = mutableSetOf<String>()
 
     fun generate() {
         // TODO: reject repeated generate() calls; currently, these can happen for objects in finally
@@ -224,27 +225,49 @@ class ClassCodegen private constructor(
     }
 
     private fun generateLoadableDescriptorsAttribute() {
-        if (loadableFieldDescriptors.isEmpty()) return
-        visitor.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableFieldDescriptors.toList()))
+        if (loadableDescriptors.isEmpty()) return
+        visitor.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableDescriptors.toList()))
     }
 
-    private fun IrField.isValhallaLoadableFieldType(descriptor: String): Boolean {
+    // Whether the class named by [descriptor], the JVM descriptor of this type in a field or method signature, is a value class listed in
+    // `LoadableDescriptors`.
+    private fun IrType.isValhallaLoadable(descriptor: String): Boolean {
         val languageVersionSettings = config.languageVersionSettings
         if (!languageVersionSettings.isValhallaSupportEnabled()) return false
-        val fieldClass = type.classOrNull?.owner
+        val namedClass = classNamedBy(descriptor)
         return when {
-            // A field of the class's own type is never listed: the class is already being loaded, so there is nothing to preload
+            // The class's own type is never listed: the class is already being loaded, so there is nothing to preload
             // (matches javac, which excludes only the exact self-type — mutually-referential value classes still list each other).
-            fieldClass == irClass -> false
-            // Neither is an abstract value class (matches javac): only concrete value classes can be flattened.
-            fieldClass?.modality == Modality.ABSTRACT || fieldClass?.modality == Modality.SEALED -> false
+            namedClass == irClass -> false
+            // Neither is an abstract value class (matches javac): only concrete value classes can be flattened or scalarized.
+            namedClass?.modality == Modality.ABSTRACT || namedClass?.modality == Modality.SEALED -> false
             // A Kotlin value class compiled as a Valhalla value class
-            fieldClass?.isKotlinValhallaValueClass(languageVersionSettings) == true -> true
+            namedClass?.isKotlinValhallaValueClass(languageVersionSettings) == true -> true
             // A value class defined in Java (`value class`, resolved from source or a binary/jar dependency).
-            fieldClass?.isJavaValueClass == true -> true
-            // A field of a JDK class that JEP 401 migrates to a concrete value class is loadable, exactly like javac.
+            namedClass?.isJavaValueClass == true -> true
+            // A JDK class that JEP 401 migrates to a concrete value class is loadable, exactly like javac.
             descriptor in JDK_VALUE_CLASS_DESCRIPTORS -> true
             else -> false
+        }
+    }
+
+    // The class of this type that [descriptor] names: the erasure, which javac also lists for a type parameter, or the class named by the
+    // underlying type of a `@JvmInline` class. Null if it names neither, e.g. for the box of a primitive type.
+    private fun IrType.classNamedBy(descriptor: String): IrClass? {
+        val erasure = (this as? IrSimpleType)?.erasedUpperBound ?: return null
+        if (descriptor == typeMapper.mapClass(erasure).descriptor) return erasure
+        return InlineClassAbi.unboxType(eraseIfTypeParameter())?.classNamedBy(descriptor)
+    }
+
+    private fun collectLoadableMethodDescriptors(method: IrFunction, methodDescriptor: String) {
+        if (!config.languageVersionSettings.isValhallaSupportEnabled()) return
+        // The descriptor has a type for each parameter but the dispatch receiver, and it may box one, like the `Int` of an override.
+        val types = method.nonDispatchParameters.map { it.type } + method.returnType
+        val asmTypes = Type.getArgumentTypes(methodDescriptor).asList() + Type.getReturnType(methodDescriptor)
+        for ([type, asmType] in types zip asmTypes) {
+            if (type.isValhallaLoadable(asmType.descriptor)) {
+                loadableDescriptors.add(asmType.descriptor)
+            }
         }
     }
 
@@ -404,8 +427,8 @@ class ClassCodegen private constructor(
 
     private fun generateField(field: IrField) {
         val fieldType = typeMapper.mapType(field)
-        if (field.isValhallaLoadableFieldType(fieldType.descriptor)) {
-            loadableFieldDescriptors.add(fieldType.descriptor)
+        if (field.type.isValhallaLoadable(fieldType.descriptor)) {
+            loadableDescriptors.add(fieldType.descriptor)
         }
         val fieldSignature =
             if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null
@@ -485,6 +508,7 @@ class ClassCodegen private constructor(
         }
 
         (val node, val smap = classSMAP) = generateMethodNode(method)
+        collectLoadableMethodDescriptors(method, node.desc)
         node.preprocessSuspendMarkers(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
