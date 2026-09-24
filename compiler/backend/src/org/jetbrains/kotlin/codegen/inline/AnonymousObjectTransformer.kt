@@ -39,6 +39,7 @@ class AnonymousObjectTransformer(
     private val fieldNames = hashMapOf<String, MutableList<String>>()
 
     private var constructor: MethodNode? = null
+    private val loadableDescriptors = LinkedHashSet<String>()
     private lateinit var sourceMap: SMAP
     private lateinit var sourceMapper: SourceMapper
 
@@ -116,6 +117,15 @@ class AnonymousObjectTransformer(
                 debugInfo = debug
             }
 
+            override fun visitAttribute(attribute: Attribute) {
+                // Written together with the fields for the captured values, see `generateConstructorAndFields`.
+                if (attribute is LoadableDescriptorsAttribute) {
+                    loadableDescriptors.addAll(attribute.descriptors)
+                } else {
+                    super.visitAttribute(attribute)
+                }
+            }
+
             override fun visitEnd() {}
         }, LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES, ClassReader.SKIP_FRAMES)
         val header = metadataReader.createHeader(inliningContext.state.config.languageVersionSettings.languageVersion.toMetadataVersion())
@@ -139,6 +149,9 @@ class AnonymousObjectTransformer(
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
         generateConstructorAndFields(classBuilder, constructorParamBuilder, parentRemapper)
+        if (loadableDescriptors.isNotEmpty()) {
+            classBuilder.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableDescriptors.toList()))
+        }
 
         val coroutineTransformer = CoroutineTransformer(
             inliningContext,
@@ -408,6 +421,9 @@ class AnonymousObjectTransformer(
                 val desc = info.type.descriptor
                 val access = AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
                 classBuilder.newField(null, access, info.newFieldName, desc, null, null)
+                if (info.desc.isLoadable) {
+                    loadableDescriptors.add(desc)
+                }
                 constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0)
                 constructorVisitor.visitVarInsn(info.type.getOpcode(Opcodes.ILOAD), offset)
                 constructorVisitor.visitFieldInsn(Opcodes.PUTFIELD, transformationInfo.newClassName, info.newFieldName, desc)
