@@ -368,9 +368,9 @@ Finish by reporting:
 
 ## Out of scope
 
-- **The other four `gradle-wrapper.properties` files** —
+- **The other 3 `gradle-wrapper.properties` files** —
   `kotlin-native/performance/`, `kotlin-native/backend.native/tests/samples/`,
-  `libraries/tools/kotlin-stdlib-docs/`, `libraries/tools/kotlin-stdlib-docs-legacy/` — are
+  `libraries/tools/kotlin-stdlib-docs/` — are
   independent standalone sub-builds, intentionally pinned to their own Gradle versions. Do
   **not** sync them with the root wrapper.
 - **`GRADLE_COMMON_COMPILE_API_VERSION`** → `build-tools-bump-gradle-api`.
