@@ -1,10 +1,5 @@
 // ISSUE: KT-89949
-// IGNORE_BACKEND: JVM
 // WITH_REFLECT
-
-// Only JVM preview features are enabled here, so `LocalDate`, `Optional` and `JavaVal` are value classes at runtime. Reflection
-// mistakes them for Kotlin inline value classes: it hides constructors taking them and looks for the `unbox-impl` methods of their
-// values.
 
 // FILE: JavaVal.java
 public value class JavaVal {
