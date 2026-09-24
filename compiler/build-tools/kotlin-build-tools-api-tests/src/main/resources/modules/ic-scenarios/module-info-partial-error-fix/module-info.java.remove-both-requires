@@ -1,0 +1,3 @@
+module partial.error.fix.test {
+    requires kotlin.stdlib;
+}
