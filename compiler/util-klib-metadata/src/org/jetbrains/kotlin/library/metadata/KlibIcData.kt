@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.utils.checkWithAttachment
 import java.io.File
 
 class KlibIcData(
     val metadata: KlibIcMetadataComponent,
+    val inlineData: KlibIrComponent? = null
 )
 
 class KlibIcMetadataComponent(

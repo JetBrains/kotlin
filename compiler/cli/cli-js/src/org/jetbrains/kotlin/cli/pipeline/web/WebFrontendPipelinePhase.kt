@@ -33,12 +33,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.pipeline.*
+import org.jetbrains.kotlin.library.metadata.KlibIcData
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.KlibIcData
+import org.jetbrains.kotlin.library.SerializedIrFile
+import org.jetbrains.kotlin.library.impl.klibIrComponentFromFiles
 import org.jetbrains.kotlin.library.metadata.KlibIcMetadataComponent
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -254,8 +257,23 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
     }
 
     private fun IncrementalDataProvider.toKlibIcData(): KlibIcData {
+        val inlineData = serializedIrInlineFiles.entries.map {
+            SerializedIrFile(
+                it.value.fileData,
+                FqName.ROOT.asString(), // the exact `fqName` and `path` do not matter for our use case
+                it.key.path,
+                it.value.types,
+                it.value.signatures,
+                it.value.strings,
+                it.value.bodies,
+                it.value.declarations,
+                it.value.debugInfo,
+                it.value.fileEntries
+            )
+        }
         return KlibIcData(
             KlibIcMetadataComponent(compiledPackageParts.mapValues { [_, result] -> result.metadata }),
+            klibIrComponentFromFiles(inlineData)
         )
     }
 }
