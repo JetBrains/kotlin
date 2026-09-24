@@ -40,9 +40,8 @@ OBJ_GETTER(setupArgs, int argc, const char** argv) {
   ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, std::max(0, argc - 1), OBJ_RESULT);
   ArrayHeader* array = result->array();
   for (int index = 1; index < argc; index++) {
-    ObjHolder result;
-    CreateStringFromCString(argv[index], result.slot());
-    UpdateHeapRef(ArrayAddressOfElementAt(array, index - 1), result.obj());
+    ObjHolder result; 
+    UpdateHeapRef(ArrayAddressOfElementAt(array, index - 1), CreateStringFromCString(argv[index], result.slot()));
   }
   return result;
 }
@@ -50,8 +49,7 @@ OBJ_GETTER(setupArgs, int argc, const char** argv) {
 //--- main --------------------------------------------------------------------//
 extern "C" KInt Konan_run_start(int argc, const char** argv) {
     ObjHolder args;
-    setupArgs(argc, argv, args.slot());
-    return Konan_start(args.obj());
+    return Konan_start(setupArgs(argc, argv, args.slot()));
 }
 
 extern "C" RUNTIME_EXPORT int Init_and_run_start(int argc, const char** argv, int memoryDeInit) {

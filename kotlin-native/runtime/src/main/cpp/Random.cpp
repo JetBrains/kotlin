@@ -37,8 +37,8 @@ RUNTIME_NORETURN __attribute__((format(printf, 1, 2))) void throwReadingRandomBy
     va_end(args);
 
     ObjHolder holder;
-    CreateStringFromUtf8(buffer.data(), buffer.size() - span.size(), holder.slot());
-    ThrowIllegalStateExceptionWithMessage(holder.obj());
+    ObjHeader* string = CreateStringFromUtf8(buffer.data(), buffer.size() - span.size(), holder.slot());
+    ThrowIllegalStateExceptionWithMessage(string);
 }
 #endif
 

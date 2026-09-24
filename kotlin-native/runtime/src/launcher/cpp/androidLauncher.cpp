@@ -81,8 +81,7 @@ void launchMain() {
 
   {
     ObjHolder args;
-    AllocArrayInstance(theArrayTypeInfo, 0, args.slot());
-    Konan_start(args.obj());
+    Konan_start(AllocArrayInstance(theArrayTypeInfo, 0, args.slot()));
   }
 
   // TODO: Can we shutdown runtime here?

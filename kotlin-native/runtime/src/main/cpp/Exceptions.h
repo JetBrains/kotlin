@@ -67,8 +67,8 @@ void wrappingCppExceptions(Fun fun) {
         fun();
     } catch (const std::exception& exception) {
         ObjHolder messageHoled;
-        CreateStringFromCString(exception.what(), messageHoled.slot());
-        ThrowRuntimeException(messageHoled.obj());
+        ObjHeader* string = CreateStringFromCString(exception.what(), messageHoled.slot());
+        ThrowRuntimeException(string);
     } catch(...) {
         ThrowRuntimeException(nullptr);
     }

@@ -583,9 +583,9 @@ class State {
           }
       }
       ObjHolder arrayHolder;
-      AllocArrayInstance(theIntArrayTypeInfo, workers.size(), arrayHolder.slot());
-      std::copy(workers.begin(), workers.end(), IntArrayAddressOfElementAt(arrayHolder.obj()->array(), 0));
-      RETURN_OBJ(arrayHolder.obj());
+      ObjHeader* array = AllocArrayInstance(theIntArrayTypeInfo, workers.size(), arrayHolder.slot());
+      std::copy(workers.begin(), workers.end(), IntArrayAddressOfElementAt(array->array(), 0));
+      RETURN_OBJ(array);
   }
 
  private:
