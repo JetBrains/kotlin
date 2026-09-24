@@ -1520,6 +1520,16 @@ internal class JsModuleProhibitedOnVarImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnVar
 
+internal class JsModuleProhibitedOnVarInModuleFileErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnVarInModuleFileError
+
+internal class JsModuleProhibitedOnVarInModuleFileWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnVarInModuleFileWarning
+
 internal class NestedJsModuleProhibitedImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

@@ -2126,6 +2126,20 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnVarInModuleFileError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileError>
+            get() = JsModuleProhibitedOnVarInModuleFileError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnVarInModuleFileWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileWarning>
+            get() = JsModuleProhibitedOnVarInModuleFileWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NestedJsModuleProhibited : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<NestedJsModuleProhibited>
             get() = NestedJsModuleProhibited::class

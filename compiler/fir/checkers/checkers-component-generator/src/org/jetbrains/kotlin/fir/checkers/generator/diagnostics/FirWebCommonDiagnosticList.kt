@@ -19,6 +19,10 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
     val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
         val WRONG_JS_QUALIFIER by error<KtElement>()
         val JS_MODULE_PROHIBITED_ON_VAR by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE by deprecationError<KtElement>(
+            ProhibitVarInJsModuleFile,
+            PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT,
+        )
         val NESTED_JS_MODULE_PROHIBITED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val INAPPLICABLE_EAGER_INITIALIZATION by deprecationError<KtElement>(ForbidNonTopLevelEagerInitialization)
     }
