@@ -609,6 +609,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode : java
 	public static final field Check Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
 	public static final field Disabled Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
 	public static final field Full Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
 }
