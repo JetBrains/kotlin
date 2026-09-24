@@ -376,25 +376,32 @@ class ExpressionCodegen(
             mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0)
         }
         for (parameter in irFunction.parameters) {
-            fun writeToLVT(isReceiver: Boolean) = writeValueParameterInLocalVariableTable(parameter, startLabel, endLabel, isReceiver)
+            fun writeToLVT(useReceiverNaming: Boolean) =
+                writeValueParameterInLocalVariableTable(parameter, startLabel, endLabel, useReceiverNaming)
             when (parameter.kind) {
                 IrParameterKind.DispatchReceiver -> {}
-                IrParameterKind.Context -> writeToLVT(isReceiver = false)
-                IrParameterKind.ExtensionReceiver -> writeToLVT(isReceiver = true)
+                IrParameterKind.Context -> writeToLVT(useReceiverNaming = false)
+                // A parameter with a fixed name already encodes the value class it originates from, see `hasFixedName`.
+                IrParameterKind.ExtensionReceiver -> writeToLVT(useReceiverNaming = !parameter.hasFixedName)
                 IrParameterKind.Regular -> when (parameter.origin) {
                     IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION, IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION -> {}
-                    else -> writeToLVT(isReceiver = false)
+                    else -> writeToLVT(useReceiverNaming = false)
                 }
             }
         }
     }
 
-    private fun writeValueParameterInLocalVariableTable(param: IrValueParameter, startLabel: Label, endLabel: Label, isReceiver: Boolean) {
+    private fun writeValueParameterInLocalVariableTable(
+        param: IrValueParameter, startLabel: Label, endLabel: Label, useReceiverNaming: Boolean
+    ) {
         if (!param.isVisibleInLVT) return
 
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
-        val name = if (param.origin == BOUND_RECEIVER_PARAMETER || param.origin == IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER || isReceiver) {
+        val name = if (param.origin == BOUND_RECEIVER_PARAMETER ||
+            param.origin == IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER ||
+            useReceiverNaming
+        ) {
             getNameForReceiverParameter(irFunction, context.config.languageVersionSettings)
         } else {
             param.name.asString()
