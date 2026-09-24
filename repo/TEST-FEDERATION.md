@@ -41,7 +41,7 @@ The following tests must run and pass before a commit can be merged to master:
 - Individual tests annotated with `@MustRunOnChangesInXYZ` when domain `XYZ` is changed.
 - Tests annotated with `@MustRunAlways`, regardless of which domains are changed.
 - All tests in domains listed in the `^test:` commit command.
-- Any additional tests selected by the test task's `testFederation { smokeTests { ... } }` configuration.
+- Tests selected by `testFederation { smokeTests { includeAutoSamples(percentage = ...) } }`
 
 Other test filters still apply. In particular, `@NightlyTest` tests are not required for merging to master.
 
@@ -294,7 +294,7 @@ To run a test task in `Smoke` mode as if `Js` were changed:
   -Ptest.federation.changed.domains="Js"
 ```
 
-This runs `@MustRunAlways` tests, `@MustRunOnChangesInJs` tests, and any additional tests selected by `testFederation { smokeTests { ... } }`.
+This runs `@MustRunAlways` tests, `@MustRunOnChangesInJs` tests, and tests selected by `testFederation { smokeTests { includeAutoSamples() } }`.
 Use `-Ptest.federation.mode=Full` to run all tests in the task. Other test filters still apply.
 
 `test.federation.changed.domains` accepts:
