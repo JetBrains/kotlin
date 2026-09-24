@@ -69,7 +69,8 @@ class FirScriptConfiguratorExtensionImpl(
                 0,
                 buildAnonymousInitializer {
                     symbol = FirAnonymousInitializerSymbol()
-                    source = this@configure.source
+                    // the initializer is generated, so it gets a fake source to keep the declaration sources distinct from the script's one
+                    source = this@configure.source.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
                     moduleData = this@configure.moduleData
                     origin = FirDeclarationOrigin.ScriptCustomization.Default
                     body = buildSingleExpressionBlock(

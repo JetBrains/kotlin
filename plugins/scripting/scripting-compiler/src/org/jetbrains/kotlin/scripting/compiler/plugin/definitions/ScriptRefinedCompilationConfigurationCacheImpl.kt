@@ -13,7 +13,6 @@ import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asSuccess
-import kotlin.script.experimental.api.onSuccess
 import kotlin.script.experimental.api.valueOrNull
 
 class ScriptRefinedCompilationConfigurationCacheImpl : ScriptRefinedCompilationConfigurationCache {
@@ -47,7 +46,13 @@ class ScriptRefinedCompilationConfigurationCacheOverConfigurationsProvider(
             @OptIn(K1SpecificScriptingServiceAccessor::class)
             legacyConfigurationsProvider.project = project
             legacyConfigurationsProvider.getScriptCompilationConfiguration(sourceCode, providedConfiguration?.valueOrNull())
-                ?.onSuccess { it.configuration?.asSuccess() ?: return@getRefinedCompilationConfiguration null }
+                ?.let { result ->
+                    when (result) {
+                        // a successful result without a configuration means that the configuration is not available (yet)
+                        is ResultWithDiagnostics.Success -> result.value.configuration?.asSuccess(result.reports)
+                        is ResultWithDiagnostics.Failure -> result
+                    }
+                }
         }
 
     override fun storeRefinedCompilationConfiguration(
