@@ -4,9 +4,10 @@
 // FULL_JDK
 // PARAMETERS_METADATA
 
-// Whether a nullable value class parameter keeps its plain name depends on whether the JVM slot ends up
-// holding a boxed instance or the underlying value, which in turn depends on the underlying type.
-// See `addOrInheritInlineClassPropertyNameParts`.
+// A parameter gets a value class-encoded name exactly when its JVM slot holds the underlying value, and keeps its
+// plain name when the slot holds a boxed instance. For nullable value class types this depends on the underlying type:
+// primitive or nullable underlying types are boxed, since `null` could not be represented otherwise, whereas a
+// non-null reference underlying type is stored as a nullable reference. See `addOrInheritInlineClassPropertyNameParts`.
 
 // FILE: A.kt
 
@@ -19,18 +20,44 @@ value class NullableRefUnderlying(val s: String?)
 @JvmInline
 value class NotNullRefUnderlying(val s: String)
 
-// `PrimitiveUnderlying?` is boxed to `LPrimitiveUnderlying;`, since `int` cannot hold null.
+@JvmInline
+value class Nested(val inner: NotNullRefUnderlying)
+
+@JvmInline
+value class Generic<T>(val t: T)
+
+@JvmInline
+value class GenericBounded<T : CharSequence>(val t: T)
+
+// `PrimitiveUnderlying?` is boxed to `LPrimitiveUnderlying;`.
 fun primitive(nullable: PrimitiveUnderlying?, notNull: PrimitiveUnderlying) =
     (nullable?.i ?: 0) + notNull.i
 
-// `NullableRefUnderlying?` is boxed to `LNullableRefUnderlying;`, since a bare `String?` could not tell
+// `NullableRefUnderlying?` is boxed to `LNullableRefUnderlying;`: a bare `String?` could not tell
 // `null` apart from `NullableRefUnderlying(null)`.
 fun nullableRef(nullable: NullableRefUnderlying?, notNull: NullableRefUnderlying) =
     (nullable?.s ?: "") + (notNull.s ?: "")
 
-// `NotNullRefUnderlying?` is *not* boxed: both parameters are `Ljava/lang/String;`.
+// `NotNullRefUnderlying?` is not boxed: both slots are `Ljava/lang/String;`.
 fun notNullRef(nullable: NotNullRefUnderlying?, notNull: NotNullRefUnderlying) =
     (nullable?.s ?: "") + notNull.s
+
+// The expansion goes all the way down, so `Nested?` is a `Ljava/lang/String;` slot as well.
+fun nested(nullable: Nested?, notNull: Nested) =
+    (nullable?.inner?.s ?: "") + notNull.inner.s
+
+// For a generic value class the upper bound of the type parameter decides, not the type argument:
+// `Generic<String>?` is boxed since `T`'s bound is `Any?`, while `GenericBounded<String>?` is a
+// `Ljava/lang/CharSequence;` slot.
+fun genericUnbounded(nullable: Generic<String>?, notNull: Generic<String>) =
+    (nullable?.t ?: "") + notNull.t
+
+fun genericBounded(nullable: GenericBounded<String>?, notNull: GenericBounded<String>) =
+    (nullable?.t ?: "") + notNull.t
+
+// A type parameter bounded by a value class follows the bound: `T` is an `int` slot, `T?` is boxed.
+fun <T : PrimitiveUnderlying> typeParameter(nullable: T?, notNull: T) =
+    (nullable?.i ?: 0) + notNull.i
 
 private fun check(methodNamePrefix: String, expectedNullableName: String, expectedNotNullName: String): String? {
     val method = Class.forName("AKt").declaredMethods.single { it.name.startsWith(methodNamePrefix) }
@@ -43,13 +70,16 @@ private fun check(methodNamePrefix: String, expectedNullableName: String, expect
 }
 
 fun box(): String {
-    // Boxed: the slot holds a real value class instance, so the name needs no encoding.
+    // Boxed nullable slots keep the plain name.
     check("primitive", "nullable", "\$v\$c\$PrimitiveUnderlying\$-notNull")?.let { return it }
     check("nullableRef", "nullable", "\$v\$c\$NullableRefUnderlying\$-notNull")?.let { return it }
+    check("genericUnbounded", "nullable", "\$v\$c\$Generic\$-notNull")?.let { return it }
+    check("typeParameter", "nullable", "\$v\$c\$PrimitiveUnderlying\$-notNull")?.let { return it }
 
-    // Unboxed: the slot holds the underlying string. The name is currently left alone all the same,
-    // because the encoding is skipped for every nullable type.
-    check("notNullRef", "nullable", "\$v\$c\$NotNullRefUnderlying\$-notNull")?.let { return it }
+    // Unboxed nullable slots are encoded like non-null ones; a `null` in such a slot is a `null` value class instance.
+    check("notNullRef", "\$v\$c\$NotNullRefUnderlying\$-nullable", "\$v\$c\$NotNullRefUnderlying\$-notNull")?.let { return it }
+    check("nested", "\$v\$c\$Nested\$-nullable", "\$v\$c\$Nested\$-notNull")?.let { return it }
+    check("genericBounded", "\$v\$c\$GenericBounded\$-nullable", "\$v\$c\$GenericBounded\$-notNull")?.let { return it }
 
     return "OK"
 }

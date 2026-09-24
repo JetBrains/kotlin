@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(copyByDefault = false)
@@ -331,6 +332,36 @@ class MemoizedInlineClassReplacements(
             }
         }
 
+    /**
+     * `true` if a value of this inline class type is stored on the JVM as an instance of the inline class itself
+     * rather than as its underlying value.
+     *
+     * This mirrors the decision of the type mapper: a nullable inline class type is boxed when its (expanded) underlying
+     * type is primitive or itself nullable, since `null` could not be represented otherwise. A nullable inline class
+     * over a non-null reference type is stored as a nullable reference to the underlying value instead.
+     */
+    private fun IrType.isStoredBoxed(): Boolean {
+        val expandedType = context.typeSystem.computeExpandedTypeForInlineClass(this) as IrType? ?: return true
+        return expandedType.isInlineClassType()
+    }
+
+    /**
+     * Encodes the value class origin into the name of this parameter if its JVM slot holds the underlying value of an
+     * inline class, or inherits the already encoded name of [oldParameter].
+     *
+     * Boxed slots keep the plain name: they hold a real instance of the value class, so there is nothing to reconstruct.
+     */
+    private fun IrValueParameter.addOrInheritInlineClassPropertyNameParts(oldParameter: IrValueParameter) {
+        when {
+            hasFixedName -> return
+            oldParameter.hasFixedName -> hasFixedName = true
+            type.isInlineClassType() && !type.isStoredBoxed() -> {
+                name = name.withValueClassParameterName(type.erasedUpperBound)
+                hasFixedName = true
+            }
+        }
+    }
+
     private fun buildReplacement(
         function: IrFunction,
         replacementOrigin: IrDeclarationOrigin,
@@ -447,6 +478,10 @@ private fun String.escapeForValueClassParameterName(): String = asIterable().joi
  * instance. They cannot clash with names of user-declared variables, which is exactly what the previously used
  * `arg0` name did, see KT-73995.
  *
+ * The contract is: a slot with such a name always holds the underlying value of [bound], never a boxed instance.
+ * The slot may hold `null` if the declared type was a nullable inline class over a non-null reference type;
+ * in that case the value class instance itself is `null`.
+ *
  * Since the escaping never produces `$-` inside the encoded fq name, everything after the first `$-` is the
  * original parameter name, verbatim.
  */
@@ -454,23 +489,6 @@ internal fun Name.withValueClassParameterName(bound: IrClass): Name =
     Name.identifier(
         $$"$v$c$$${bound.fqNameWhenAvailable?.asString().orEmpty().escapeForValueClassParameterName()}$-$${asString()}"
     )
-
-/**
- * Encodes the value class origin into the name of this parameter if its type is an inline class,
- * or inherits the already encoded name of [oldParameter].
- */
-internal fun IrValueParameter.addOrInheritInlineClassPropertyNameParts(oldParameter: IrValueParameter) {
-    when {
-        hasFixedName -> return
-        oldParameter.hasFixedName -> hasFixedName = true
-        type.isNullable() -> return
-        type.isInlineClassType() -> {
-            name = name.withValueClassParameterName(type.erasedUpperBound)
-            hasFixedName = true
-        }
-        else -> return
-    }
-}
 
 private object InlinedEqualsNames {
     val SPECIALIZED_EQUALS_NAME = Name.identifier("equals-impl0")
