@@ -25,13 +25,13 @@ fun expectsA(x: A) {}
 
 fun main() {
     expectsA(<!DEBUG_INFO_CSR_MIGHT_BE_USED!>A.X<!>)
-    expectsA(A.Y)
-    expectsA(A.Z)
-    expectsA(A.W)
+    expectsA(<!DEBUG_INFO_CSR_MIGHT_BE_USED!>A.Y<!>)
+    expectsA(<!DEBUG_INFO_CSR_MIGHT_BE_USED!>A.Z<!>)
+    expectsA(<!DEBUG_INFO_CSR_MIGHT_BE_USED!>A.W<!>)
     val a1: A = <!DEBUG_INFO_CSR_MIGHT_BE_USED!>A.X<!>
-    val a2: A = A.Y
-    val a3: A = A.Z
-    val a4: A = A.W
+    val a2: A = <!DEBUG_INFO_CSR_MIGHT_BE_USED!>A.Y<!>
+    val a3: A = <!DEBUG_INFO_CSR_MIGHT_BE_USED!>A.Z<!>
+    val a4: A = <!DEBUG_INFO_CSR_MIGHT_BE_USED!>A.W<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,

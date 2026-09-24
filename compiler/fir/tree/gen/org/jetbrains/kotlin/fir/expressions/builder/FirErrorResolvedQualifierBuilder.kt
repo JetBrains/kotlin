@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -44,6 +45,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override var resolvedToCompanionObject: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = []
     override var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
+    override var originalNameForContextSensitiveResolution: Name? = null
     override val typeArguments: MutableList<FirTypeProjection> = []
     lateinit var diagnostic: ConeDiagnostic
 
@@ -63,6 +65,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             resolvedToCompanionObject,
             nonFatalDiagnostics.toMutableOrEmpty(),
             resolvedSymbolOrigin,
+            originalNameForContextSensitiveResolution,
             typeArguments.toMutableOrEmpty(),
             diagnostic,
         )

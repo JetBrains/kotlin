@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-86093
 
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN)
@@ -14,8 +14,8 @@ enum class E {
 }
 
 fun test() {
-    val p1: E = <!DEPRECATION_ERROR, INITIALIZER_TYPE_MISMATCH!>D<!>
-    val p2: E = <!DEPRECATION_ERROR, INITIALIZER_TYPE_MISMATCH!>HiddenCompanion<!>
+    val p1: E = D
+    val p2: E = HiddenCompanion
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration, localProperty,

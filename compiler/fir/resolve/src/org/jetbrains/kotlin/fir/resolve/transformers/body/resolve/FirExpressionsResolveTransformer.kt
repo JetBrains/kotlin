@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
@@ -51,6 +53,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.sourceKindForIncOrDec
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
@@ -242,17 +245,41 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         isForContextSensitiveAlternative: Boolean,
         mode: ResolutionMode,
     ): FirExpression {
+        if (expressionBeforeResolution !is FirPropertyAccessExpression) return resolvedPropertyAccess
         if (isForContextSensitiveAlternative) return resolvedPropertyAccess
 
-        runContextSensitiveResolutionIfNeeded(resolvedPropertyAccess, mode, forceResolutionInIdeMode = false)?.let { return it }
+        val name = expressionBeforeResolution.calleeReference.name
+
+        runContextSensitiveResolutionIfNeeded(resolvedPropertyAccess, name, mode, forceResolutionInIdeMode = false)?.let { return it }
+
+        if (resolvedPropertyAccess is FirResolvedQualifier) {
+            resolvedPropertyAccess.initializeOriginalNameForContextSensitiveResolutionIfNeeded(name, mode)
+        }
 
         when {
-            AnalysisFlags.ideMode.isSet() && expressionBeforeResolution is FirPropertyAccessExpression ->
+            AnalysisFlags.ideMode.isSet() ->
                 @OptIn(FirIdeOnly::class)
                 resolvedPropertyAccess.prepareContextSensitiveAlternativeIfNeeded(original = expressionBeforeResolution, mode)
         }
 
         return resolvedPropertyAccess
+    }
+
+    /**
+     * Information from the qualifier might be not enough when creating synthetic property access expressions for CSR attempts
+     * because it looses original name when resolved via an alias. So, we have to store the original name.
+     */
+    private fun FirResolvedQualifier.initializeOriginalNameForContextSensitiveResolutionIfNeeded(
+        originalName: Name,
+        mode: ResolutionMode,
+    ) {
+        // We only need the original name for ContextDependent (when it's used as a value argument in a call).
+        // WithExpectedType case is handled at [runContextSensitiveResolutionIfNeeded].
+        if (mode !is ContextDependent) return
+        if (LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isDisabled()) return
+        if (!shouldBeResolvedInContextSensitiveMode(components = components)) return
+
+        replaceOriginalNameForContextSensitiveResolution(originalName)
     }
 
     /**
@@ -312,19 +339,19 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
 
         // the simple name has been resolved to something different from erroneous expression => we can't run CSR
-        if (resolvedAlternative !is FirPropertyAccessExpression || !resolvedAlternative.shouldBeResolvedInContextSensitiveMode()) return
+        if (!isContextSensitiveResolutionApplicable(resolvedAlternative)) return
 
         when {
             mode is WithExpectedType || mode.hintForContextSensitiveResolution != null ->
                 context.withReturnTypeCalculator(AlreadyComputedOrError) {
-                    runContextSensitiveResolutionIfNeeded(resolvedAlternative, mode, forceResolutionInIdeMode = true)
+                    runContextSensitiveResolutionIfNeeded(resolvedAlternative, name, mode, forceResolutionInIdeMode = true)
                 }?.let { resolvedCSR ->
                     this.appendCSRAlternativeDiagnosticIfNeeded(resolvedCSR)
                 }
 
             mode is ContextDependent ->
                 // For context-dependent leave it for call completer to proceed with
-                replaceContextSensitiveAlternative(resolvedAlternative)
+                replaceContextSensitiveAlternative(simpleNameAlternative)
 
             else -> error("When should be exhaustive: $mode")
         }
@@ -371,7 +398,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 val expectedType = mode.hintForContextSensitiveResolution ?: mode.expectedType ?: return
 
                 context.withReturnTypeCalculator(AlreadyComputedOrError) {
-                    components.runContextSensitiveResolutionForPropertyAccess(freshSimpleNamePropertyAccess, expectedType)
+                    components.runContextSensitiveResolutionForSimpleName(
+                        freshSimpleNamePropertyAccess, original.calleeReference.name, expectedType
+                    )
                 }?.let { resolvedCSR ->
                     appendCSRAlternativeDiagnosticIfNeeded(resolvedCSR)
                 }
@@ -421,18 +450,24 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     private fun runContextSensitiveResolutionIfNeeded(
-        originalExpression: FirExpression,
+        resolvedExpression: FirExpression,
+        name: Name,
         data: ResolutionMode,
         forceResolutionInIdeMode: Boolean,
     ): FirExpression? {
-        if (originalExpression !is FirPropertyAccessExpression) return null
         if (!forceResolutionInIdeMode && LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isDisabled()) return null
 
         val expectedType = data.hintForContextSensitiveResolution ?: data.expectedType ?: return null
 
-        if (!originalExpression.shouldBeResolvedInContextSensitiveMode()) return null
+        if (!isContextSensitiveResolutionApplicable(resolvedExpression)) return null
 
-        return components.runContextSensitiveResolutionForPropertyAccess(originalExpression, expectedType)
+        return components.runContextSensitiveResolutionForSimpleName(resolvedExpression, name, expectedType)
+    }
+
+    private fun isContextSensitiveResolutionApplicable(resolvedExpression: FirExpression): Boolean = when (resolvedExpression) {
+        is FirPropertyAccessExpression -> resolvedExpression.shouldBeResolvedInContextSensitiveMode()
+        is FirResolvedQualifier -> resolvedExpression.shouldBeResolvedInContextSensitiveMode(components = components)
+        else -> false
     }
 
     override fun transformQualifiedErrorAccessExpression(

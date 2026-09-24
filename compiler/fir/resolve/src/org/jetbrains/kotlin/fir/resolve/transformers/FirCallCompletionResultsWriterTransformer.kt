@@ -388,6 +388,15 @@ class FirCallCompletionResultsWriterTransformer(
         return transformQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
+    override fun transformResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: ExpectedArgumentType?): FirStatement {
+        data?.argumentReplacements?.get(resolvedQualifier)?.let { replacement ->
+            return replacement.transformSingle(this, data)
+        }
+        // The original name is not needed anymore once the containing call is completed
+        resolvedQualifier.replaceOriginalNameForContextSensitiveResolution(null)
+        return super.transformResolvedQualifier(resolvedQualifier, data)
+    }
+
     @ArrayLiteralResolution
     private fun transformArrayLiteralInAnnotation(arrayLiteral: FirCollectionLiteral, data: ExpectedArgumentType?): FirStatement {
         if (arrayLiteral.hasResolvedType) return arrayLiteral

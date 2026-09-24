@@ -1440,6 +1440,12 @@ object FirTree : AbstractFirTreeBuilder() {
         }
         +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
         +field("resolvedSymbolOrigin", resolvedSymbolOrigin, nullable = true, withReplace = true)
+        +field("originalNameForContextSensitiveResolution", nameType, nullable = true, withReplace = true) {
+            kDoc = """
+                |Having a non-null value in a case when the qualifier should be considered as a candidate for CSR.
+                |It might be different from the name of [qualifierSymbol], e.g., when the qualifier is resolved via an import alias.
+            """.trimMargin()
+        }
         +typeArguments {
             withTransform = true
         }

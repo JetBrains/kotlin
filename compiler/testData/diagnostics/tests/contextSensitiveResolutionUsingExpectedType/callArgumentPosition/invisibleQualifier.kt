@@ -24,11 +24,11 @@ fun overloaded(e: E, i: Int) {}
 fun overloaded(e: E, s: String) {}
 
 fun test() {
-    takesE(<!ARGUMENT_TYPE_MISMATCH, INVISIBLE_REFERENCE!>B<!>)
-    takesE(<!ARGUMENT_TYPE_MISMATCH, INVISIBLE_REFERENCE!>C<!>)
-    takesE(<!ARGUMENT_TYPE_MISMATCH, INVISIBLE_REFERENCE!>X<!>)
-    <!NONE_APPLICABLE!>overloaded<!>(<!ARGUMENT_TYPE_MISMATCH, INVISIBLE_REFERENCE!>B<!>, 1)
-    <!NONE_APPLICABLE!>overloaded<!>(<!ARGUMENT_TYPE_MISMATCH, INVISIBLE_REFERENCE!>C<!>, "")
+    takesE(B)
+    takesE(C)
+    takesE(X)
+    overloaded(B, 1)
+    overloaded(C, "")
 }
 
 fun negative() {

@@ -21,9 +21,9 @@ enum class E {
 
 fun test() {
     val p1: E = A
-    val p2: E = <!INITIALIZER_TYPE_MISMATCH, INVISIBLE_REFERENCE!>B<!>
-    val p3: E = <!INITIALIZER_TYPE_MISMATCH, INVISIBLE_REFERENCE!>C<!>
-    val p4: E = <!INITIALIZER_TYPE_MISMATCH, INVISIBLE_REFERENCE!>X<!>
+    val p2: E = B
+    val p3: E = C
+    val p4: E = X
 }
 
 fun negative() {
