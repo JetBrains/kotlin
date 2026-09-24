@@ -1,0 +1,5 @@
+module dep {
+    requires kotlin.stdlib;
+    requires java.logging;
+    exports apkg;
+}
