@@ -19,7 +19,7 @@ package lib
 
 external fun `@get something-invalid`(): String = definedExternally
 
-external var `some+value`: Int = definedExternally
+external val `some+value`: Int = definedExternally
 
 external object `+some+object%:` {
     val foo: String = definedExternally
