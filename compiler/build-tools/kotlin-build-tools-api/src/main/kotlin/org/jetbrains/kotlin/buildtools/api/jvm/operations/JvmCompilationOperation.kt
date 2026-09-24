@@ -252,6 +252,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
          * @since 2.5.0
          */
         @JvmField
+        @ExperimentalBuildToolsApi
         public val KAPT_CONFIGURATION: Option<KaptConfiguration?> = Option("KAPT_CONFIGURATION", KotlinReleaseVersion(2, 5, 0))
 
     }
