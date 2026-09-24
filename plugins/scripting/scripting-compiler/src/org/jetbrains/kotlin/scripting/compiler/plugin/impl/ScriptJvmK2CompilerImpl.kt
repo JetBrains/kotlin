@@ -228,14 +228,7 @@ class ScriptJvmK2CompilerImpl(
 
         session.register(
             FirScriptCompilationComponent::class,
-            FirScriptCompilationComponent(
-                state.hostConfiguration,
-                getSessionForAnnotationResolution = { _, scriptCompilationConfiguration ->
-                    state.getOrCreateSessionForAnnotationResolution(
-                        scriptCompilationConfiguration
-                    )
-                }
-            )
+            FirScriptCompilationComponent(state.hostConfiguration)
         )
 
         state.hostConfiguration[ScriptingHostConfiguration.configureFirSession]?.also {
@@ -339,7 +332,7 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
     ).apply {
         register(
             FirScriptCompilationComponent::class,
-            FirScriptCompilationComponent(hostConfiguration, getSessionForAnnotationResolution = { _, _ -> this })
+            FirScriptCompilationComponent(hostConfiguration)
         )
         dummySessionForAnnotationResolution = this
     })
