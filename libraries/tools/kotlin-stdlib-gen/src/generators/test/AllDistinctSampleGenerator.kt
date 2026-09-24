@@ -12,19 +12,20 @@ import java.io.BufferedWriter
 object AllDistinctSampleGenerator {
     fun generate() {
         forEachCollectionFamily { family, primitive -> generate(family, primitive) }
+        generate(CharSequences, PrimitiveType.Char)
     }
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {
         val collectionClass = collectionClassName(family, primitive)
         val receiver = Receiver(family, primitive)
         val config = allDistinctConfigFor(primitive)
-        val isSequence = family == Sequences
+        val inlineReceivers = family == Sequences || family == CharSequences
 
         val className = "AllDistinct${collectionClass}Samples"
         writeGeneratedFile("libraries/stdlib/samples/test/samples/generated/alldistinct/$className.kt") {
             writeHeader(className, config.sampleNeedsAbsImport)
-            writeAllDistinctSample(receiver, config, isSequence, primitive)
-            writeAllDistinctBySample(receiver, config, isSequence)
+            writeAllDistinctSample(receiver, config, inlineReceivers, primitive)
+            writeAllDistinctBySample(receiver, config, inlineReceivers)
             appendLine("}")
         }
     }
@@ -44,8 +45,8 @@ object AllDistinctSampleGenerator {
         appendLine("class $className {")
     }
 
-    private fun valOrInline(isSequence: Boolean, name: String, value: String): Pair<String, String> {
-        return if (isSequence) "" to value else "\n        val $name = $value\n" to name
+    private fun valOrInline(inline: Boolean, name: String, value: String): Pair<String, String> {
+        return if (inline) "" to value else "\n        val $name = $value\n" to name
     }
 
     private fun floatingPointShowcase(receiver: Receiver, primitive: PrimitiveType?): String {
@@ -60,12 +61,12 @@ object AllDistinctSampleGenerator {
     private fun BufferedWriter.writeAllDistinctSample(
         receiver: Receiver,
         config: AllDistinctTypeConfig,
-        isSequence: Boolean,
+        inlineReceivers: Boolean,
         primitive: PrimitiveType?,
     ) {
         val single = config.sampleDistinctValues.first()
-        val [distinctDecl, distinctRef] = valOrInline(isSequence, "distinctValues", receiver(config.sampleDistinctValues))
-        val [duplicateDecl, duplicateRef] = valOrInline(isSequence, "duplicateValues", receiver(config.sampleDuplicateValues))
+        val [distinctDecl, distinctRef] = valOrInline(inlineReceivers, "distinctValues", receiver(config.sampleDistinctValues))
+        val [duplicateDecl, duplicateRef] = valOrInline(inlineReceivers, "duplicateValues", receiver(config.sampleDuplicateValues))
         val fpShowcase = floatingPointShowcase(receiver, primitive)
         appendLine(
             """
@@ -82,12 +83,12 @@ $duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$fpShowc
     private fun BufferedWriter.writeAllDistinctBySample(
         receiver: Receiver,
         config: AllDistinctTypeConfig,
-        isSequence: Boolean,
+        inlineReceivers: Boolean,
     ) {
         val selectorValues = config.sampleSelectorValues
         val singleElement = selectorValues.first()
         val firstSelector = config.sampleSelectorAssertions.first().first
-        val [valuesDecl, valuesRef] = valOrInline(isSequence, "values", receiver(selectorValues))
+        val [valuesDecl, valuesRef] = valOrInline(inlineReceivers, "values", receiver(selectorValues))
         val assertionLines = config.sampleSelectorAssertions.joinToString("\n") { [selector, expected] ->
             "        assertPrints($valuesRef.allDistinctBy { $selector }, \"$expected\")"
         }

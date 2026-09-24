@@ -12,7 +12,7 @@ import java.io.BufferedWriter
 import java.io.File
 
 fun collectionClassName(family: Family, primitive: PrimitiveType?): String = when (family) {
-    Iterables, Sequences -> family.toString()
+    Iterables, Sequences, CharSequences -> family.toString()
     ArraysOfObjects -> "Array"
     ArraysOfPrimitives, ArraysOfUnsigned -> "${primitive!!}Array"
     else -> error(family)
@@ -51,12 +51,14 @@ class Receiver(private val family: Family, private val primitive: PrimitiveType?
     operator fun invoke(vararg elements: String): String = invoke(elements.asList())
 
     operator fun invoke(elements: List<String>): String {
+        if (family == CharSequences) return elements.joinToString("", "\"", "\"") { it.removeSurrounding("'") }
         val ctor = constructorName(family, primitive)
         return if (elements.isEmpty()) emptyCollectionExpr(ctor, primitive) else "$ctor(${elements.joinToString()})"
     }
 
     fun sized(size: Int, init: String): String = when (family) {
         ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned -> "${collectionClassName(family, primitive)}($size) { $init }"
+        CharSequences -> "CharArray($size) { $init }.concatToString()"
         else -> error(family)
     }
 }

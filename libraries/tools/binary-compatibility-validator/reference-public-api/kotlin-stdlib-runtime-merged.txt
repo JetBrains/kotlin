@@ -6024,6 +6024,10 @@ public final class kotlin/text/RegexOption : java/lang/Enum, kotlin/text/FlagEnu
 
 public final class kotlin/text/StringsKt {
 	public static final fun all (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinct (Ljava/lang/CharSequence;)Z
+	public static final fun allDistinctBy (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqual (Ljava/lang/CharSequence;)Z
+	public static final fun allEqualBy (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun any (Ljava/lang/CharSequence;)Z
 	public static final fun any (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun append (Ljava/lang/Appendable;[Ljava/lang/CharSequence;)Ljava/lang/Appendable;

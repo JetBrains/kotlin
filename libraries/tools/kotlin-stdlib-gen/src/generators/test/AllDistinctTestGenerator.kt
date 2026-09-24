@@ -11,6 +11,7 @@ import java.io.BufferedWriter
 object AllDistinctTestGenerator {
     fun generate() {
         forEachCollectionFamily { family, primitive -> generate(family, primitive) }
+        generate(Family.CharSequences, PrimitiveType.Char)
     }
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {
@@ -28,6 +29,9 @@ object AllDistinctTestGenerator {
             writeHeader(className)
             writeAllDistinctTest(receiver, config)
             writeAllDistinctByTest(receiver, config)
+            if (family == Family.CharSequences) {
+                writeStringBuilderTest(receiver, config)
+            }
             if (primitive == PrimitiveType.Boolean) {
                 writeBooleanCasesTest()
             }
@@ -89,6 +93,23 @@ object AllDistinctTestGenerator {
         assertFalse($duplicateKeyValues.allDistinctBy { $selectorExpr })
         assertFalse(${receiver(v1, v2)}.allDistinctBy { 0 })
         assertFalse(${receiver(v1, v2)}.allDistinctBy { null })
+    }"""
+        )
+    }
+
+    private fun BufferedWriter.writeStringBuilderTest(receiver: Receiver, config: AllDistinctTypeConfig) {
+        val v1 = config.value1
+        val v2 = config.value2
+        val selectorExpr = config.selectorExpr
+        appendLine(
+            """
+    @Test
+    fun allDistinctStringBuilder() {
+        assertTrue(StringBuilder().allDistinct())
+        assertTrue(StringBuilder(${receiver(v1, v2)}).allDistinct())
+        assertFalse(StringBuilder(${receiver(v1, v2, v1)}).allDistinct())
+        assertTrue(StringBuilder(${receiver(config.valuesWithDistinctKeys)}).allDistinctBy { $selectorExpr })
+        assertFalse(StringBuilder(${receiver(config.valuesWithDuplicateKeys)}).allDistinctBy { $selectorExpr })
     }"""
         )
     }

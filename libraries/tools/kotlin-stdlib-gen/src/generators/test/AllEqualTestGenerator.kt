@@ -12,6 +12,7 @@ import java.io.BufferedWriter
 object AllEqualTestGenerator {
     fun generate() {
         forEachCollectionFamily { family, primitive -> generate(family, primitive) }
+        generate(CharSequences, PrimitiveType.Char)
     }
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {
@@ -29,6 +30,9 @@ object AllEqualTestGenerator {
             writeHeader(className)
             writeAllEqualTest(receiver, config)
             writeAllEqualByTest(receiver, config)
+            if (family == CharSequences) {
+                writeStringBuilderTest(receiver, config)
+            }
             for (fpType in fpTypes) {
                 writeFpTests(receiver, fpType)
             }
@@ -83,6 +87,23 @@ object AllEqualTestGenerator {
         assertFalse($diffSelectorValues.allEqualBy { $selectorExpr })
         assertTrue($diffSelectorValues.allEqualBy { 0 })
         assertTrue($equalSelectorValues.allEqualBy { null })
+    }"""
+        )
+    }
+
+    private fun BufferedWriter.writeStringBuilderTest(receiver: Receiver, config: AllEqualTypeConfig) {
+        val equal = config.equalValue
+        val other = config.otherValue
+        val selectorExpr = config.selectorExpr
+        appendLine(
+            """
+    @Test
+    fun allEqualStringBuilder() {
+        assertTrue(StringBuilder().allEqual())
+        assertTrue(StringBuilder(${receiver(equal, equal, equal)}).allEqual())
+        assertFalse(StringBuilder(${receiver(equal, equal, other)}).allEqual())
+        assertTrue(StringBuilder(${receiver(config.valuesWithEqualSelector)}).allEqualBy { $selectorExpr })
+        assertFalse(StringBuilder(${receiver(config.valuesWithDiffSelector)}).allEqualBy { $selectorExpr })
     }"""
         )
     }

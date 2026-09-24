@@ -12,19 +12,20 @@ import java.io.BufferedWriter
 object AllEqualSampleGenerator {
     fun generate() {
         forEachCollectionFamily { family, primitive -> generate(family, primitive) }
+        generate(CharSequences, PrimitiveType.Char)
     }
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {
         val collectionClass = collectionClassName(family, primitive)
         val receiver = Receiver(family, primitive)
         val config = allEqualConfigFor(primitive)
-        val isSequence = family == Sequences
+        val inlineReceivers = family == Sequences || family == CharSequences
 
         val className = "AllEqual${collectionClass}Samples"
         writeGeneratedFile("libraries/stdlib/samples/test/samples/generated/allequal/$className.kt") {
             writeHeader(className, config.sampleNeedsAbsImport)
-            writeAllEqualSample(receiver, config, isSequence)
-            writeAllEqualBySample(receiver, config, isSequence)
+            writeAllEqualSample(receiver, config, inlineReceivers)
+            writeAllEqualBySample(receiver, config, inlineReceivers)
             appendLine("}")
         }
     }
@@ -44,19 +45,19 @@ object AllEqualSampleGenerator {
         appendLine("class $className {")
     }
 
-    private fun valOrInline(isSequence: Boolean, name: String, value: String): Pair<String, String> {
-        return if (isSequence) "" to value else "\n        val $name = $value\n" to name
+    private fun valOrInline(inline: Boolean, name: String, value: String): Pair<String, String> {
+        return if (inline) "" to value else "\n        val $name = $value\n" to name
     }
 
     private fun BufferedWriter.writeAllEqualSample(
         receiver: Receiver,
         config: AllEqualTypeConfig,
-        isSequence: Boolean,
+        inlineReceivers: Boolean,
     ) {
         val equal = config.sampleEqualValue
         val other = config.sampleOtherValue
-        val [sameDecl, sameRef] = valOrInline(isSequence, "sameValues", receiver(equal, equal, equal))
-        val [mixedDecl, mixedRef] = valOrInline(isSequence, "mixedValues", receiver(equal, equal, other))
+        val [sameDecl, sameRef] = valOrInline(inlineReceivers, "sameValues", receiver(equal, equal, equal))
+        val [mixedDecl, mixedRef] = valOrInline(inlineReceivers, "mixedValues", receiver(equal, equal, other))
         appendLine(
             """
     @Sample
@@ -72,12 +73,12 @@ $mixedDecl        assertPrints($mixedRef.allEqual(), "false")
     private fun BufferedWriter.writeAllEqualBySample(
         receiver: Receiver,
         config: AllEqualTypeConfig,
-        isSequence: Boolean,
+        inlineReceivers: Boolean,
     ) {
         val selectorValues = config.sampleSelectorValues
         val singleElement = selectorValues.first()
         val firstSelector = config.sampleSelectorAssertions.first().first
-        val [valuesDecl, valuesRef] = valOrInline(isSequence, "values", receiver(selectorValues))
+        val [valuesDecl, valuesRef] = valOrInline(inlineReceivers, "values", receiver(selectorValues))
         val assertionLines = config.sampleSelectorAssertions.joinToString("\n") { [selector, expected] ->
             "        assertPrints($valuesRef.allEqualBy { $selector }, \"$expected\")"
         }
