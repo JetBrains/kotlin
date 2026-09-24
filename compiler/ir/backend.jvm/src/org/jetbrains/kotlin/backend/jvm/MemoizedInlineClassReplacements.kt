@@ -43,7 +43,7 @@ var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by ir
  * (in particular, without replacing it with the `$this$callableName` extension receiver name).
  *
  * It is set for parameters whose names encode the value class they originate from, see
- * [withValueClassParameterNameIfNeeded].
+ * [withValueClassParameterName].
  */
 var IrValueParameter.hasFixedName: Boolean by irFlag(copyByDefault = true)
     internal set
@@ -441,15 +441,18 @@ private fun String.escapeForValueClassParameterName(): String = asIterable().joi
 }
 
 /**
- * Builds the name of a parameter which holds the [index]-th field of the value class [bound].
+ * Builds the name of a parameter which holds the underlying value of the value class [bound].
  *
  * Such names are meant to be recognized by the debugger, which renders them back as the corresponding value class
  * instance. They cannot clash with names of user-declared variables, which is exactly what the previously used
  * `arg0` name did, see KT-73995.
+ *
+ * Since the escaping never produces `$-` inside the encoded fq name, everything after the first `$-` is the
+ * original parameter name, verbatim.
  */
-internal fun Name.withValueClassParameterNameIfNeeded(bound: IrClass, index: Int): Name =
+internal fun Name.withValueClassParameterName(bound: IrClass): Name =
     Name.identifier(
-        $$"$v$c$$${bound.fqNameWhenAvailable?.asString().orEmpty().escapeForValueClassParameterName()}$-$${asString()}$$$index"
+        $$"$v$c$$${bound.fqNameWhenAvailable?.asString().orEmpty().escapeForValueClassParameterName()}$-$${asString()}"
     )
 
 /**
@@ -462,7 +465,7 @@ internal fun IrValueParameter.addOrInheritInlineClassPropertyNameParts(oldParame
         oldParameter.hasFixedName -> hasFixedName = true
         type.isNullable() -> return
         type.isInlineClassType() -> {
-            name = name.withValueClassParameterNameIfNeeded(type.erasedUpperBound, index = 0)
+            name = name.withValueClassParameterName(type.erasedUpperBound)
             hasFixedName = true
         }
         else -> return

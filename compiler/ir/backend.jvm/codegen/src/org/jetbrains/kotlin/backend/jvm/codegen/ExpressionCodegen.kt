@@ -398,7 +398,8 @@ class ExpressionCodegen(
 
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
-        val name = if (param.origin == BOUND_RECEIVER_PARAMETER ||
+        val name = if (
+            param.origin == BOUND_RECEIVER_PARAMETER ||
             param.origin == IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER ||
             useReceiverNaming
         ) {
