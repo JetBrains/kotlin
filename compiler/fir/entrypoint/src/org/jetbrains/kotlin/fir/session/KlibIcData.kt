@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.library.KlibComponent
+import org.jetbrains.kotlin.library.KlibComponentsContainer
+import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
@@ -12,8 +15,18 @@ import org.jetbrains.kotlin.utils.checkWithAttachment
 import java.io.File
 
 class KlibIcData(
-    val metadata: KlibIcMetadataComponent,
-)
+    private val metadata: KlibIcMetadataComponent,
+    private val inlineData: KlibIrComponent? = null
+) : KlibComponentsContainer {
+    override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>): KC? {
+        @Suppress("UNCHECKED_CAST")
+        return when (kind) {
+            is KlibMetadataComponent.Kind -> metadata as KC
+            is KlibIrComponent.Kind.InlinableFunctions -> inlineData as KC?
+            else -> null
+        }
+    }
+}
 
 class KlibIcMetadataComponent(
     nonDirtyPreviousPackageFragments: Map<File, ByteArray>,
