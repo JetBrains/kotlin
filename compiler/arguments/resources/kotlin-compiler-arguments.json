@@ -769,6 +769,15 @@
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
+                },
+                {
+                    "name": "28",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
+                        "stabilizedVersion": "2.5.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
             ]
         },
@@ -1359,6 +1368,15 @@
                 },
                 {
                     "name": "27",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
+                        "stabilizedVersion": "2.5.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "28",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.5.0",
                         "stabilizedVersion": "2.5.0",
@@ -8507,7 +8525,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.\nThe supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–27.\nThis also sets the value of '-jvm-target' to be equal to the selected JDK version.",
+                                    "current": "Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.\nThe supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–28.\nThis also sets the value of '-jvm-target' to be equal to the selected JDK version.",
                                     "valueInVersions": [
                                         {
                                             "minReleaseVersion": "1.0.0",
@@ -10802,7 +10820,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "The target version of the generated JVM bytecode (1.8 and 9–27), with 1.8 as the default.",
+                                    "current": "The target version of the generated JVM bytecode (1.8 and 9–28), with 1.8 as the default.",
                                     "valueInVersions": [
                                         {
                                             "minReleaseVersion": "1.0.0",
