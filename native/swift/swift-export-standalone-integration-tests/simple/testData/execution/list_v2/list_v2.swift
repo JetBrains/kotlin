@@ -161,7 +161,7 @@ class SwiftFooArrayProvider : FooArrayProvider {
 
 @Test
 func testObjCInterop() throws {
-    let provider: FooArrayProvider = SwiftFooArrayProvider()
+    let provider: FooArrayProvider = ObjCFooArrayProvider()
 
     let array: [any Foo] = [SwiftFoo(1), SwiftFoo(2)]
     try #require(array.count == 2)

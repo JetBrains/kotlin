@@ -20,9 +20,36 @@ package = list_export_objc
 - (void)setFooArray:(NSArray<id<Foo>> *)array;
 @end
 
+// FILE: ObjCFooArrayProvider.h
+#import "ArrayProvider.h"
+
+@interface ObjCFooArrayProvider : NSObject <FooArrayProvider>
+@end
+
+// FILE: ObjCFooArrayProvider.m
+#import "ObjCFooArrayProvider.h"
+
+@implementation ObjCFooArrayProvider{
+    NSArray<id<Foo>> *_array;
+}
+
+- (NSArray<id<Foo>> *)getFooArray {
+    return _array;
+}
+
+- (void)setFooArray:(NSArray<id<Foo>> *)array {
+    _array = array;
+}
+
+@end
+
+// FILE: ListExportObjC.h
+#import "ArrayProvider.h"
+#import "ObjCFooArrayProvider.h"
+
 // FILE: module.modulemap
 module ListExportObjC {
-    header "ArrayProvider.h"
+    header "ListExportObjC.h"
     export *
 }
 
