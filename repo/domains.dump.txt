@@ -324,7 +324,6 @@ Unknown:
  - libraries/tools/kotlin-serialization
  - libraries/tools/kotlin-serialization-unshaded
  - libraries/tools/kotlin-stdlib-docs
- - libraries/tools/kotlin-stdlib-docs-legacy
  - libraries/tools/kotlin-stdlib-gen
  - libraries/tools/kotlin-tooling-core
  - libraries/tools/kotlin-tooling-metadata
