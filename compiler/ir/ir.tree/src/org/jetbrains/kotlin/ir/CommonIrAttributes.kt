@@ -17,7 +17,8 @@ var IrClass.capturedFields: Collection<IrField>? by irAttribute(copyByDefault = 
  * True if this class originates from a Java class declared with the `value` modifier (a JEP 401 value class), loaded from source
  * or a binary dependency.
  *
- * Used by the JVM backend to include such field types in `LoadableDescriptors`.
+ * Used by the JVM backend to include such field types in `LoadableDescriptors` and to omit `ACC_IDENTITY` from their
+ * `InnerClasses` entries.
  */
 var IrClass.isJavaValueClass: Boolean by irFlag(copyByDefault = false)
 
