@@ -7,56 +7,56 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2PlatformAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectWithPolicyCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 
 class DaemonSessionsTest : BaseCompilationTest() {
 
-    @Test
+    @BtaV2PlatformAgnosticCompilationTest
     @DisplayName("Only one session is opened for the same Daemon options")
-    fun testDaemonSingleSessionIsOpen() {
+    fun testDaemonSingleSessionIsOpen(project: ProjectWithPolicyCreator) {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         runSingleShotDaemonTest(kotlinToolchains) { daemonPolicy, _ ->
-            jvmProject(kotlinToolchains to daemonPolicy) {
+            project(daemonPolicy) {
                 val module = module("basic-multimodule-project/module-1")
                 module.compile {
-                    assertDaemonWasCreated(true)
+                    assertDaemonConnectionWasCreated(true)
                 }
                 module.compile {
-                    assertDaemonWasCreated(false)
+                    assertDaemonConnectionWasCreated(false)
                 }
                 // also run with a separate, but equal instance of daemonPolicy
                 module.compile(daemonPolicy.toBuilder().build()) {
-                    assertDaemonWasCreated(false)
+                    assertDaemonConnectionWasCreated(false)
                 }
             }
         }
     }
 
 
-    @Test
+    @BtaV2PlatformAgnosticCompilationTest
     @DisplayName("Two sessions are opened for different Daemon options")
-    fun testDaemonSeparateSessionsAreOpen() {
+    fun testDaemonSeparateSessionsAreOpen(project: ProjectWithPolicyCreator) {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         runSingleShotDaemonTest(kotlinToolchains) { daemonPolicy, _ ->
-            jvmProject(kotlinToolchains to daemonPolicy) {
+            project(daemonPolicy) {
                 val module = module("basic-multimodule-project/module-1")
                 module.compile {
-                    assertDaemonWasCreated(true)
+                    assertDaemonConnectionWasCreated(true)
                 }
                 module.compile(daemonPolicy.toBuilder().apply {
                     this[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 5L
                 }.build()) {
-                    assertDaemonWasCreated(true)
+                    assertDaemonConnectionWasCreated(true)
                 }
             }
         }
     }
 
-    private fun CompilationOutcome.assertDaemonWasCreated(wasCreated: Boolean) {
+    private fun CompilationOutcome.assertDaemonConnectionWasCreated(wasCreated: Boolean) {
         assertLogContainsSubstringExactlyTimes(DEBUG, "successfully leased a compile session", if (wasCreated) 1 else 0)
     }
 }
