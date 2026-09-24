@@ -1,9 +1,7 @@
-// IGNORE_BACKEND: JVM
 // WITH_REFLECT
 
-// Only JVM preview features are enabled here, so `LocalDate`, `Optional` and `JavaVal` are value classes at runtime. Reflection
-// mistakes them for Kotlin inline value classes: it hides constructors taking them and looks for the `unbox-impl` methods of their
-// values.
+// Only JVM preview features are enabled here, so `LocalDate`, `Optional` and `JavaVal` are value classes at runtime. Unlike Kotlin
+// inline value classes, they are passed as is, so reflection calls the callables taking them as usual.
 
 // FILE: JavaVal.java
 public value class JavaVal {

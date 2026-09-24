@@ -115,7 +115,9 @@ internal class ValueClassAwareCaller<out M : Member?>(
         // If the actual called member lies in the interface/DefaultImpls class, it accepts a boxed parameter as ex-dispatch receiver.
         // Forbid unboxing dispatchReceiver in this case.
         val container = callable.container
-        if (!callable.isConstructor && container is KClass<*> && container.isValue && member?.acceptsBoxedReceiverParameter() == true) {
+        if (!callable.isConstructor && container is KClassImpl<*> && container.isJvmInlineValue &&
+            member?.acceptsBoxedReceiverParameter() == true
+        ) {
             unbox[0] = null
         }
 
@@ -163,7 +165,7 @@ private fun Caller<*>.checkParametersSize(expectedArgsSize: Int, callable: Refle
 private fun makeKotlinParameterTypes(callable: ReflectKCallable<*>, member: Member?): List<KType> {
     val result = mutableListOf<KType>()
     val container = callable.container
-    if (!callable.isConstructor && container is KClass<*> && container.isValue) {
+    if (!callable.isConstructor && container is KClassImpl<*> && container.isJvmInlineValue) {
         result.add(container.createDefaultType())
     }
     val isInnerClassConstructor = callable.isConstructor && (container as? KClass<*>)?.isInner == true
@@ -184,7 +186,7 @@ private fun Member.acceptsBoxedReceiverParameter(): Boolean {
     // Here we need to understand that it is the second or the third case. Both of the cases cannot be value classes,
     // so the simplest solution is to check declaringClass for being a value class.
     val clazz = declaringClass ?: return false
-    return !clazz.kotlin.isValue
+    return (clazz.kotlin as? KClassImpl<*>)?.isJvmInlineValue != true
 }
 
 internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(
@@ -212,8 +214,8 @@ private fun Class<*>.getBoxMethod(callable: ReflectKCallable<*>): Method =
 
 internal fun KType?.toInlineClass(): Class<*>? {
     // See computeExpandedTypeForInlineClass.
-    val klass = this?.classifier as? KClass<*> ?: return null
-    if (!klass.isValue) return null
+    val klass = this?.classifier as? KClassImpl<*> ?: return null
+    if (!klass.isJvmInlineValue) return null
     if (!isNullableType()) return klass.java
 
     val expandedUnderlyingType = unsubstitutedUnderlyingType() ?: return null
