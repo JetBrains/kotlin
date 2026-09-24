@@ -308,11 +308,6 @@ class DisabledNativeCacheTest {
     }
 }
 
-//    cacheableTargets.macos_x64 = \
-//    macos_x64 \
-//    ios_x64 \
-//    ios_arm64
-//
 //    cacheableTargets.linux_x64 = \
 //    linux_x64
 //
@@ -322,7 +317,7 @@ class DisabledNativeCacheTest {
 //    macos_arm64 \
 //    ios_simulator_arm64 \
 //    ios_arm64
-@Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+// fixme: KT-89587 Clean up tests after iosX64 target deprecation
 private fun KotlinMultiplatformExtension.createCacheableTargets(): List<KotlinNativeTarget> {
     val isArm64 = HostManager.hostArch() == "aarch64"
 
@@ -335,7 +330,6 @@ private fun KotlinMultiplatformExtension.createCacheableTargets(): List<KotlinNa
         HostManager.hostIsMac && !isArm64 -> listOf(
             iosArm64(),
             iosX64(),
-            macosX64()
         )
         HostManager.hostIsLinux -> listOf(
             linuxX64()

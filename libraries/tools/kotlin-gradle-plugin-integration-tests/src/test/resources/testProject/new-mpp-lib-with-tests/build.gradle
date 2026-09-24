@@ -12,7 +12,6 @@ repositories {
 
 kotlin {
     jvm("jvmWithoutJava")
-    macosX64("macos64")
     macosArm64()
     linuxX64("linux64")
     mingwX64("mingw64")
@@ -47,7 +46,7 @@ kotlin {
         nativeMain {
             dependsOn commonMain
         }
-        configure([macos64Main, macosArm64Main, linux64Main, mingw64Main]) {
+        configure([macosArm64Main, linux64Main, mingw64Main]) {
             dependsOn nativeMain
         }
     }

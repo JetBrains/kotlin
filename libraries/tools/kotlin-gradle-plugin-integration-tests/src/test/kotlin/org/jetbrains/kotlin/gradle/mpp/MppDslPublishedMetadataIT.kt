@@ -45,7 +45,7 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                 val moduleMetadata = localRepoDir.resolve("com/example/sample-lib/1.0/sample-lib-1.0.module")
                 assertFileContains(moduleMetadata, """"name": "linux64ApiElements-published"""")
                 assertFileContains(moduleMetadata, """"name": "mingw64ApiElements-published"""")
-                assertFileContains(moduleMetadata, """"name": "macos64ApiElements-published"""")
+                assertFileContains(moduleMetadata, """"name": "macosArm64ApiElements-published"""")
             }
         }
     }
@@ -72,7 +72,7 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                 val moduleMetadata = localRepoDir.resolve("com/example/sample-lib/1.0/sample-lib-1.0.module")
                 assertFileContains(moduleMetadata, """"name": "linux64ApiElements-published"""")
                 assertFileContains(moduleMetadata, """"name": "mingw64ApiElements-published"""")
-                assertFileContains(moduleMetadata, """"name": "macos64ApiElements-published"""")
+                assertFileContains(moduleMetadata, """"name": "macosArm64ApiElements-published"""")
             }
         }
     }

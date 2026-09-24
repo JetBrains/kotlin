@@ -321,7 +321,7 @@ class EmbedAndSignTaskTests {
             }
         ) {
             kotlin {
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                 listOf(iosSimulatorArm64(), iosX64()).forEach {
                     it.binaries.framework {
                         baseName = "Foo"
