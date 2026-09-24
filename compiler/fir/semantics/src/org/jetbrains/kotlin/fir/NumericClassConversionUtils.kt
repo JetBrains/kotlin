@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.isPrimitiveNumberOrNullableType
 import org.jetbrains.kotlin.fir.types.isUnsignedTypeOrNullableUnsignedType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds.allIntegerTypes
 import org.jetbrains.kotlin.utils.addToStdlib.eachIsInstanceOrNull
 
 fun FirExpression.wrapIntoNumericClassConversionIfNeeded(expectedType: ConeKotlinType, session: FirSession): FirExpression = when {
@@ -39,8 +40,10 @@ fun FirExpression.wrapIntoNumericClassConversionTo(expectedType: ConeKotlinType)
     }
 
 fun isNumericConversionPossibleBetween(from: ConeKotlinType, to: ConeKotlinType, session: FirSession): Boolean {
-    return to.toSymbol(session)?.supportsNumericClassConversionFrom(from, session) == true ||
-            from.toSymbol(session)?.supportsNumericClassConversionTo(to, session) == true
+    fun ConeKotlinType.isBuiltinNumeric() = this is ConeIntegerLiteralType || classId in allIntegerTypes
+
+    return from.isBuiltinNumeric() && to.toSymbol(session)?.supportsNumericClassConversionFrom(from, session) == true ||
+            to.isBuiltinNumeric() && from.toSymbol(session)?.supportsNumericClassConversionTo(to, session) == true
 }
 
 private fun FirBasedSymbol<*>.supportsNumericClassConversionFrom(type: ConeKotlinType, session: FirSession): Boolean =
