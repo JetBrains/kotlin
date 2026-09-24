@@ -32,7 +32,7 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
                     """
                     kotlin {
                         compilerVersion.set("${"2.4.20-RC"}")
-                        coreLibrariesVersion = "${"2.4.20-RC"}"
+                        coreKotlinLibrariesVersion.set("${"2.4.20-RC"}")
                     }
                     """.trimIndent()
                 )

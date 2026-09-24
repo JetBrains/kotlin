@@ -47,7 +47,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 //language=groovy
                 """
                 |
-                |kotlin.coreLibrariesVersion = "1.9.0"
+                |kotlin.coreKotlinLibrariesVersion.set("1.9.0")
                 """.trimMargin()
             )
 
@@ -606,7 +606,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 
-                kotlin.coreLibrariesVersion = "$customVersion"
+                kotlin.coreKotlinLibrariesVersion.set("$customVersion")
                 dependencies {
                     testImplementation("org.jetbrains.kotlin:kotlin-reflect")
                     testImplementation("org.jetbrains.kotlin:kotlin-test")
