@@ -95,11 +95,12 @@ internal fun CodeGenerator.bindObjCExportConvertToRetained(
  */
 internal fun CodeGenerator.bindObjCExportTypeAdapterTo(
         irClass: IrClass,
-        typeAdapter: ConstPointer
+        typeAdapter: ConstPointer,
+        convertToRetained: ConstPointer? = null,
 ) = setWritableTypeInfo(
         irClass,
         buildWritableTypeInfoValue(
-                convertToRetained = null,
+                convertToRetained = convertToRetained,
                 objCClass = null,
                 typeAdapter = typeAdapter,
         )

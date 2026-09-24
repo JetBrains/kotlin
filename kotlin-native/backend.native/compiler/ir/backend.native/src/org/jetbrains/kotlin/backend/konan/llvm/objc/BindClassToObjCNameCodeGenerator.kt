@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCTypeAdapter.Companion.ObjCTypeAdapterForBindClassToObjCName
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoOverrideError
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.bindObjCExportTypeAdapterTo
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.importObjCCollectionConverter
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.objCCollectionConverters
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 
 internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {
     val reverseBridgesByClass = collectReverseBridgeAdapters(file)
+    val collectionConverts = context.objCCollectionConverters
 
     file.allBindClassToObjCName.forEach {
         val layoutBuilder = generationState.context.getLayoutBuilder(it.kotlinClass)
@@ -33,8 +36,9 @@ internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {
             generationState.bindClassToObjCNameClassAdapters
         }
         adaptersMap[it.objCName] = typeAdapter
+        val convertToRetained = collectionConverts[it.kotlinClass]?.let(::importObjCCollectionConverter)
         try {
-            bindObjCExportTypeAdapterTo(it.kotlinClass, typeAdapter)
+            bindObjCExportTypeAdapterTo(it.kotlinClass, typeAdapter, convertToRetained)
         } catch (e: WritableTypeInfoOverrideError) {
             val reason = when (e.reason) {
                 WritableTypeInfoOverrideError.Reason.NON_OVERRIDABLE -> "class cannot have ObjC class attachments"

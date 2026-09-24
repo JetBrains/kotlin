@@ -585,7 +585,7 @@ internal class ObjCExportCodeGenerator(
 
 }
 
-private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LlvmFunctionSignature
+private val CodeGenerator.kotlinToObjCFunctionType: LlvmFunctionSignature
     get() = LlvmFunctionSignature(
             LlvmRetType(llvm.pointerType, isObjectType = false),
             listOf(LlvmParamType(llvm.pointerType)),
@@ -616,7 +616,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
     val boxClass = boxClassSymbol.owner
     val name = "${boxClass.name}ToNSNumber"
 
-    val converter = functionGenerator(kotlinToObjCFunctionType.toProto(name, null, LLVMLinkage.LLVMPrivateLinkage)).generate {
+    val converter = functionGenerator(codegen.kotlinToObjCFunctionType.toProto(name, null, LLVMLinkage.LLVMPrivateLinkage)).generate {
         val unboxFunction = context.getUnboxFunction(boxClass).llvmFunction
         val kotlinValue = callFromBridge(
                 unboxFunction,
@@ -731,40 +731,33 @@ private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
     emitBoxConverters()
 }
 
+internal val NativeBackendContext.objCCollectionConverters: Map<IrClass, String>
+    get() = mapOf(
+            irBuiltIns.listClass.owner to "Kotlin_Interop_CreateRetainedNSArrayFromKList",
+            irBuiltIns.mutableListClass.owner to "Kotlin_Interop_CreateRetainedNSMutableArrayFromKList",
+            irBuiltIns.setClass.owner to "Kotlin_Interop_CreateRetainedNSSetFromKSet",
+            irBuiltIns.mutableSetClass.owner to "Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet",
+            irBuiltIns.mapClass.owner to "Kotlin_Interop_CreateRetainedNSDictionaryFromKMap",
+            irBuiltIns.mutableMapClass.owner to "Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap",
+    )
+
+internal fun CodeGenerator.importObjCCollectionConverter(name: String): ConstPointer =
+        llvm.externalNativeRuntimeFunction(name, kotlinToObjCFunctionType).toConstPointer()
+
+/**
+ * Binds the [objCCollectionConverters].
+ *
+ * Note: Swift Export uses `@BindClassToObjCName` for (some) collections.
+ * This function only binds converters for types that haven't already been bound (by Swift Export).
+ * Swift Export makes sure to also bind the converter from [objCCollectionConverters].
+ *
+ * @see org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAnnotations
+ */
 private fun ObjCExportCodeGenerator.emitCollectionConverters() {
-
-    fun importConverter(name: String): ConstPointer =
-            llvm.externalNativeRuntimeFunction(name, kotlinToObjCFunctionType).toConstPointer()
-
-    tryBindObjCExportConvertToRetained(
-            irBuiltIns.listClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSArrayFromKList")
-    )
-
-    tryBindObjCExportConvertToRetained(
-            irBuiltIns.mutableListClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSMutableArrayFromKList")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.setClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSSetFromKSet")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mutableSetClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mapClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSDictionaryFromKMap")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mutableMapClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap")
-    )
+    context.objCCollectionConverters.forEach { [irClass, name] ->
+        if (codegen.staticData.getGlobal(irClass.writableTypeInfoSymbolName) != null) return@forEach
+        bindObjCExportConvertToRetained(irClass, codegen.importObjCCollectionConverter(name))
+    }
 }
 
 private fun ObjCExportFunctionGenerationContextBuilder.setupBridgeDebugInfo() {
@@ -1944,16 +1937,4 @@ private fun ObjCExportCodeGeneratorBase.bindObjCExportConvertToRetained(
     } catch (_: WritableTypeInfoOverrideError) {
         // ObjCExport never tried to catch this error, so ignore.
     }
-}
-
- /**
- * Used for classes with a custom Swift Export binding.
- * It will only call [bindObjCExportConvertToRetained] if the binding doesn't exist yet.
- */
-private fun ObjCExportCodeGeneratorBase.tryBindObjCExportConvertToRetained(
-        irClass: IrClass,
-        convertToRetained: ConstPointer,
-) {
-    if (codegen.staticData.getGlobal(irBuiltIns.listClass.owner.writableTypeInfoSymbolName) != null) return
-    bindObjCExportConvertToRetained(irClass, convertToRetained)
 }
