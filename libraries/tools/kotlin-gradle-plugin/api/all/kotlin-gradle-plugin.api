@@ -5962,20 +5962,17 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile : 
 	protected fun skipCondition ()Z
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileTool : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/internal/CompilerArgumentAware, org/jetbrains/kotlin/gradle/internal/tasks/TaskWithLocalState, org/jetbrains/kotlin/gradle/plugin/KotlinCompilerArgumentsProducer, org/jetbrains/kotlin/gradle/tasks/KotlinCompileTool {
+public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileTool : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/internal/tasks/TaskWithLocalState, org/jetbrains/kotlin/gradle/plugin/KotlinCompilerArgumentsProducer, org/jetbrains/kotlin/gradle/tasks/KotlinCompileTool {
 	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
-	public fun createCompilerArgs ()Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;
+	public abstract fun createCompilerArguments (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerArgumentsProducer$CreateCompilerArgumentsContext;)Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;
 	public final fun disallowSourceChanges ()V
 	public final fun exclude (Lgroovy/lang/Closure;)Lorg/gradle/api/tasks/util/PatternFilterable;
 	public final fun exclude (Ljava/lang/Iterable;)Lorg/gradle/api/tasks/util/PatternFilterable;
 	public final fun exclude (Lorg/gradle/api/specs/Spec;)Lorg/gradle/api/tasks/util/PatternFilterable;
 	public final fun exclude ([Ljava/lang/String;)Lorg/gradle/api/tasks/util/PatternFilterable;
-	public fun getDefaultSerializedCompilerArguments ()Ljava/util/List;
 	public final fun getExcludes ()Ljava/util/Set;
 	public final fun getIncludes ()Ljava/util/Set;
 	public final fun getMetrics ()Lorg/gradle/api/provider/Property;
-	public fun getSerializedCompilerArguments ()Ljava/util/List;
-	public fun getSerializedCompilerArgumentsIgnoreClasspathIssues ()Ljava/util/List;
 	protected final fun getSourceFileFilter ()Lorg/gradle/api/tasks/util/PatternSet;
 	public fun getSources ()Lorg/gradle/api/file/FileCollection;
 	public final fun include (Lgroovy/lang/Closure;)Lorg/gradle/api/tasks/util/PatternFilterable;
@@ -5985,7 +5982,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileToo
 	public final fun setExcludes (Ljava/lang/Iterable;)Lorg/gradle/api/tasks/util/PatternFilterable;
 	public final fun setIncludes (Ljava/lang/Iterable;)Lorg/gradle/api/tasks/util/PatternFilterable;
 	public fun setSource ([Ljava/lang/Object;)V
-	public fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;ZZ)V
 	public fun source ([Ljava/lang/Object;)V
 	protected final fun validateCompilerClasspath ()V
 }
@@ -6167,8 +6163,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/Kotlin2JsCompile : org/j
 	public fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun kotlinOptions (Lorg/gradle/api/Action;)V
 	protected fun processArgsBeforeCompile (Lorg/jetbrains/kotlin/cli/common/arguments/K2JSCompilerArguments;)V
-	public synthetic fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;ZZ)V
-	public fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/K2JSCompilerArguments;ZZ)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompile : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile, org/jetbrains/kotlin/gradle/dsl/KotlinJvmCompile, org/jetbrains/kotlin/gradle/tasks/K2MultiplatformCompilationTask {
@@ -6197,8 +6191,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompile : org/jetb
 	public final fun setJavaPackagePrefix (Ljava/lang/String;)V
 	public fun setSource ([Ljava/lang/Object;)V
 	public final fun setUsePreciseJavaTracking (Z)V
-	public synthetic fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;ZZ)V
-	public fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/K2JVMCompilerArguments;ZZ)V
 	protected fun skipCondition ()Z
 	public fun source ([Ljava/lang/Object;)V
 }
@@ -6222,8 +6214,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompileCommon : or
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun kotlinOptions (Lorg/gradle/api/Action;)V
-	public synthetic fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;ZZ)V
-	public fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/K2MetadataCompilerArguments;ZZ)V
 }
 
 public final class org/jetbrains/kotlin/gradle/tasks/KotlinCompilerPluginData$InputsOutputsState {
@@ -6262,8 +6252,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public final fun getShortModuleName ()Ljava/lang/String;
 	public fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun kotlinOptions (Lorg/gradle/api/Action;)V
-	public synthetic fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;ZZ)V
-	public fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments;ZZ)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileTool, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics, org/jetbrains/kotlin/gradle/plugin/statistics/UsesBuildFusService, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService, org/jetbrains/kotlin/gradle/tasks/KotlinToolTask {
