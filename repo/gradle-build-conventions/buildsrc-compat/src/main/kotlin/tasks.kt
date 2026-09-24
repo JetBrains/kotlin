@@ -79,6 +79,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-metadata-jvm",
     ":gradle:kotlin-gradle-ecosystem-plugin",
     ":kotlin-klib-abi-reader",
+    ":js:typescript-export-standalone-embeddable",
 )
 
 fun Task.dependsOnKotlinGradlePluginInstall() {
