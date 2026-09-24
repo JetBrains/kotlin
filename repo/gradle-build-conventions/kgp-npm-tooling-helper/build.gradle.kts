@@ -12,6 +12,7 @@ description = "Generates KGP npm tooling dependency versions."
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = embeddedKotlinVersion
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
     compilerOptions {

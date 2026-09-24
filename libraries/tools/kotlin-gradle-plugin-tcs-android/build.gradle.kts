@@ -23,6 +23,7 @@ jvmToolchains {
 }
 
 kotlin {
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     compilerOptions {
         optIn.add("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")

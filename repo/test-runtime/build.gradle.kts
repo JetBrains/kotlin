@@ -18,6 +18,7 @@ plugins {
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
 }
 
