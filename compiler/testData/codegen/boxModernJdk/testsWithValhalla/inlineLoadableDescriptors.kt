@@ -27,9 +27,8 @@ inline fun makeBox(v: Val): ValBox = object : ValBox {
 
 // SAM conversion of a function value to a Java SAM interface (forced to a class by `SAM_CONVERSIONS: CLASS`), inside an inline
 // function. At the cross-module call site the SAM wrapper is regenerated through `SamWrapperTransformer`, the third read-and-re-emit
-// path that must pass `LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES` to `ClassReader.accept`. The wrapper's only field is the captured
-// `Function0`, not the value class, so it carries no `LoadableDescriptors` attribute itself — this case pins that (the count below
-// stays at one) and checks the SAM-wrapper regeneration round-trips without a `ClassFormatError`.
+// path that must pass `LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES` to `ClassReader.accept`. The wrapper's `get()` returns `Val`, so it
+// carries `LoadableDescriptors : LVal;` too, which the SAM-wrapper regeneration must round-trip without a `ClassFormatError`.
 inline fun makeSamBox(noinline supplier: () -> Val): JavaValBox = JavaValBox(supplier)
 
 // MODULE: main(lib)
@@ -46,9 +45,9 @@ fun box(): String {
     return "OK"
 }
 
-// The regenerated inlined object in `main` must still carry the `LoadableDescriptors` attribute for its captured `Val` field.
-// With the raw-byte copy box() would fail to load the class (dangling constant-pool index); with the attribute stripped this count
-// would be 0. The proper round-trip keeps exactly one, with the descriptor re-interned into `main`'s constant pool. The regenerated
-// SAM wrapper adds none (its field is the captured function), so the total stays at one.
-// 1 ATTRIBUTE LoadableDescriptors
-// 1 ATTRIBUTE LoadableDescriptors : LVal;\n
+// The regenerated inlined object and SAM wrapper in `main` must still carry their `LoadableDescriptors` attributes (for the captured
+// `Val` field and the `get(): Val` signatures). With the raw-byte copy box() would fail to load them (dangling constant-pool index);
+// with the attributes stripped only `BoxKt` would keep one (for the `Val` returned by the lambda passed to `makeSamBox`). The proper
+// round-trip keeps all three, with the descriptors re-interned into `main`'s constant pool.
+// 3 ATTRIBUTE LoadableDescriptors
+// 3 ATTRIBUTE LoadableDescriptors : LVal;\n
