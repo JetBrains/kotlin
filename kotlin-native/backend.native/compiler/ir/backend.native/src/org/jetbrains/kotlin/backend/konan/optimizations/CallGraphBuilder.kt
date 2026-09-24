@@ -18,11 +18,15 @@ internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.Functi
     override val key get() = symbol
 
     override val directEdges: List<DataFlowIR.FunctionSymbol.Declared> by lazy {
-        graph.directEdges[symbol]!!.callSites
-                .filterIsInstance<CallSite.Static>()
-                .flatMap { it.callees }
-                .filterIsInstance<DataFlowIR.FunctionSymbol.Declared>()
-                .filter { graph.directEdges.containsKey(it) }
+        buildSet {
+            for (callSite in callSites) {
+                if (callSite !is CallSite.Static) continue
+                for (callee in callSite.callees) {
+                    if (callee is DataFlowIR.FunctionSymbol.Declared && graph.directEdges.containsKey(callee))
+                        add(callee)
+                }
+            }
+        }.toList()
     }
 
     override val reversedEdges: List<DataFlowIR.FunctionSymbol.Declared> by lazy {
