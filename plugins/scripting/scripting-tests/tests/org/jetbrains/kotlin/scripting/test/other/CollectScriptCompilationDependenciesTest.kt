@@ -8,22 +8,28 @@ package org.jetbrains.kotlin.scripting.test.other
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import org.jetbrains.kotlin.cli.common.allFiles
+import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.scripting.test.TestDisposable
-import org.jetbrains.kotlin.scripting.test.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.compiler.test.TestScriptWithRequire
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.test.TestDisposable
+import org.jetbrains.kotlin.scripting.test.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -91,6 +97,7 @@ class CollectScriptCompilationDependenciesTest {
                 )
             )
 
+            addJvmClasspathRoots(listOf(PathUtil.getResourcePathForClass(TestScriptWithRequire::class.java)))
             addKotlinSourceRoot(ForTestCompileRuntime.transformTestDataPath(testDataPath + File.separator + scriptFile).path)
             put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, true)
 
@@ -100,16 +107,32 @@ class CollectScriptCompilationDependenciesTest {
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
+        val updatedClasspath = mutableListOf<File>()
+        val baseProjectEnvironment = environment.toVfsBasedProjectEnvironment()
+        val projectEnvironment = object : VfsBasedProjectEnvironment(
+            environment.project, baseProjectEnvironment.knownFileSystems, { environment.createPackagePartProvider(it) }
+        ) {
+            override fun updateClasspath(classpath: List<File>) {
+                updatedClasspath.addAll(classpath)
+            }
+        }
+
         val expectedSources = (expectedDependencies + scriptFile).sorted()
-        val actualSources = environment.getSourceFiles().map { it.name }.sorted()
+
+        // the legacy (PSI-based) pipeline collects the sources via the `CollectAdditionalSourcesExtension` during the environment creation
+        val legacySources = environment.getSourceFiles().map { it.name }.sorted()
+        assertContentEquals(expectedSources, legacySources)
+        if (classPath.isNotEmpty()) {
+            val legacyClasspath = environment.configuration.jvmClasspathRoots
+            assertTrue(legacyClasspath.containsAll(classPath), "expect that $legacyClasspath contains $classPath")
+        }
+
+        val actualSources = collectSources(configuration, projectEnvironment).allFiles.map { it.name }.sorted()
 
         assertContentEquals(expectedSources, actualSources)
 
         if (classPath.isNotEmpty()) {
-
-            val actualClasspath = environment.configuration.jvmClasspathRoots
-
-            assertTrue(actualClasspath.containsAll(classPath), "expect that $actualClasspath contains $classPath")
+            assertTrue(updatedClasspath.containsAll(classPath), "expect that $updatedClasspath contains $classPath")
         }
     }
 }
