@@ -10,6 +10,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
+    compileOnly(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
     implementation(kotlinStdlib())
     compileOnly(libs.guava)
     compileOnly(project(":compiler:cli"))
