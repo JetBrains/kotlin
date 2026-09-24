@@ -49,7 +49,9 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
         // Must be decided before the argument is lowered, as that changes its type.
-        val implicitCastNeedsRuntimeCheck = expression.operator == IrTypeOperator.IMPLICIT_CAST && expression.needsRuntimeCheck()
+        val implicitCastNeedsRuntimeCheck =
+            (expression.operator == IrTypeOperator.IMPLICIT_CAST || expression.operator == IrTypeOperator.IMPLICIT_NOTNULL) &&
+                    expression.needsRuntimeCheck()
         super.visitTypeOperator(expression)
         builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
 
@@ -58,7 +60,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Dynamic casts are not supported in Wasm backend")
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression
             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression)
-            IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitNotNull(expression)
+            IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitNotNull(expression, implicitCastNeedsRuntimeCheck)
             IrTypeOperator.INSTANCEOF -> lowerInstanceOf(expression, inverted = false)
             IrTypeOperator.NOT_INSTANCEOF -> lowerInstanceOf(expression, inverted = true)
             IrTypeOperator.CAST -> lowerCast(expression, isSafe = false)
@@ -336,35 +338,6 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
     }
 
-    private fun shouldGenerateKotlinCast(expression: IrExpression, toType: IrType): Boolean {
-        if (toType.isNullableAny()) return false
-        if (toType.isTypeParameter()) return false
-        // For the cases of casts of callable references to return Unit type, such as
-        //
-        // fun suspect(): Dummy { ... }
-        // ::suspect as () -> Unit
-        //
-        // just need to return a Unit instance +builder.irCall(unitGetInstance)
-        // instead of trying to cast to Unit
-        //
-        // also fixes testData/codegen/box/basics/unchecked_cast10.kt
-        if (toType.isUnit()) return false
-
-        val argumentType = when (expression) {
-            is IrCall -> {
-                val function = expression.symbol.owner
-
-                val packageFragment = function.getPackageFragment()
-                if (context.getExcludedPackageFragment(packageFragment.packageFqName) == packageFragment) return false
-
-                function.returnType
-            }
-            is IrGetField -> expression.symbol.owner.type
-            else -> expression.type
-        }
-        return argumentType.isTypeParameter()
-    }
-
     /**
      * An `IMPLICIT_CAST` gets a runtime check iff it [crossesErasureBoundary]: those are the casts where a value
      * produced at an erased generic type is narrowed back to its substituted type, so this is where heap pollution
@@ -404,19 +377,24 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         return argument.type.isTypeParameter() && !typeOperand.isTypeParameter() && !typeOperand.isNullableAny()
     }
 
-    private fun lowerImplicitNotNull(expression: IrTypeOperatorCall): IrExpression {
-        return if (shouldGenerateKotlinCast(expression.argument, expression.typeOperand)) {
-            lowerCast(
-                expression = expression,
-                isSafe = false
-            )
-        } else {
-            narrowType(
-                fromType = expression.argument.type,
-                toType = expression.typeOperand,
-                value = expression.argument
-            )
+    /**
+     * A value of a type with flexible nullability (e.g. from Java) used as non-null: like on the JVM and JS, `null` throws an NPE.
+     * Otherwise, it's an implicit cast like any other (see [lowerImplicitCast]).
+     */
+    private fun lowerImplicitNotNull(expression: IrTypeOperatorCall, needsRuntimeCheck: Boolean): IrExpression {
+        val argument = expression.argument
+        if (argument.type.isNullable()) {
+            expression.argument = builder.irComposite(resultType = argument.type.makeNotNull()) {
+                val temporary = irTemporary(argument)
+                +irIfNull(
+                    type = argument.type.makeNotNull(),
+                    subject = irGet(temporary),
+                    thenPart = irCall(symbols.throwNullPointerException),
+                    elsePart = irGet(temporary)
+                )
+            }
         }
+        return lowerImplicitCast(expression, needsRuntimeCheck)
     }
 
     private fun generateTypeCheckWithTypeParameter(argument: IrExpression, toType: IrType): IrExpression {
