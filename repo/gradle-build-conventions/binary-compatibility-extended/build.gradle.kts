@@ -11,6 +11,7 @@ description = "Binary Compatibility Validator compat - track ABI changes"
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = embeddedKotlinVersion
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
 
