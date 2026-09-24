@@ -1,11 +1,7 @@
 // ISSUE: KT-89949
-// IGNORE_BACKEND: JVM
 // VALHALLA_VALUE_CLASSES
 // LANGUAGE: +FullValueClasses
 // WITH_REFLECT
-
-// Full value classes are passed as is, but reflection mistakes them for Kotlin inline value classes: it hides constructors taking them
-// and looks for the `unbox-impl` methods of their values.
 
 import kotlin.reflect.full.primaryConstructor
 
