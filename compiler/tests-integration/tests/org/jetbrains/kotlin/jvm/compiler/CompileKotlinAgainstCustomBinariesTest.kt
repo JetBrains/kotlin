@@ -629,8 +629,8 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         assertEquals(1, exitCode.code) // double-check that we failed :) output.txt also says so
     }
 
-    // A class file that does not use preview features is an identity class, even without `ACC_SUPER` (`ACC_IDENTITY` of JEP 401).
-    // Kotlin currently treats such a class as a Java value class.
+    // A class file that does not use preview features is an identity class, even without `ACC_SUPER` (`ACC_IDENTITY` of JEP 401),
+    // so it is not listed in `LoadableDescriptors`.
     @Test
     fun testNonPreviewClassFileWithoutAccSuper() {
         val library = File(tmpdir, "library")
@@ -644,7 +644,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 K2JVMCompilerArguments::valhallaValueClasses.cliArgument,
             ),
         )
-        assertEquals(listOf("Llib/NoSuper;"), readLoadableDescriptors(File(output, "test/Holder.class")))
+        assertEquals(emptyList<String>(), readLoadableDescriptors(File(output, "test/Holder.class")))
     }
 
     private fun generateClassWithoutAccSuper(internalName: String): ByteArray {
