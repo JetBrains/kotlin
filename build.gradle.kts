@@ -1,3 +1,5 @@
+// elo
+
 import TestLifecycleTask.QualityGate
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
