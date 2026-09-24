@@ -1,0 +1,16 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingPrivateConstructorOfMultiFieldValueClass.kt */
+
+public value class A
+    /* TARGET declaration */ private constructor(first: String, second: String) /* primary */
+    public constructor(first: String)
+        /* TARGET use-site */ A(first = first, second = "K")
+    internal inline fun ok(): String
+        /* ACCESSOR use-site */ A(first = <this>.<get-first>(), second = <this>.<get-second>(), $constructor_marker = null)
+        /* ACCESSOR use-site */ A(first = <this>.<get-first>(), second = <this>.<get-second>(), $constructor_marker = null)
+    /* ACCESSOR declaration */ internal constructor(first: String, second: String, $constructor_marker: SyntheticConstructorMarker?)
+        /* TARGET use-site */ A(first = first, second = second)
+public fun box(): String
+    /* ACCESSOR use-site */ A(first = this.<get-first>(), second = this.<get-second>(), $constructor_marker = null)
+    /* ACCESSOR use-site */ A(first = this.<get-first>(), second = this.<get-second>(), $constructor_marker = null)
