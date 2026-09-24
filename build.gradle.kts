@@ -1,4 +1,4 @@
-// elo
+// elo 1
 
 import TestLifecycleTask.QualityGate
 import org.gradle.crypto.checksum.Checksum
