@@ -75,7 +75,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
@@ -189,7 +189,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
 
         (
-            val daemon = compileService, val sessionId
+            val daemon = compileService, val sessionId,
         ) =
             KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId,
@@ -275,7 +275,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     abstract fun shouldCompileIncrementally(): Boolean
 
-    protected open fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter, executionContext: ExecutionContext): CompilationResult {
+    protected open fun compileInProcess(
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext,
+    ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         val arguments = createAndPrepareCompilerArguments()
 
