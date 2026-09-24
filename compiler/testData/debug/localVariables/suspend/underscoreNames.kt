@@ -50,7 +50,7 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // test.kt:12 $box: $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (29, 29, 20)
 // test.kt:10 $foo: $a:(ref $A)=(ref $A), $block:(ref $SuspendFunction1)=(ref $SuspendFunction1), $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (62, 68, 68, 62, 62, 62, 62, 62, 62)
 // test.kt:12 $SuspendFunction1.invoke: $<this>:(ref $SuspendFunction1)=(ref $SuspendFunction1), $p0:(ref $A)=(ref $A), $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (29, 29, 29, 29, 29, 29, 29, 29)
-// test.kt:12 $box$slambda.invoke: $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $x_param:(ref null $kotlin.String)=null, $y_param:(ref null $kotlin.String)=null (29, 29, 32, 32)
+// test.kt:12 $box$slambda.invoke: $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $x_param:(ref null $kotlin.String)=null, $y_param:(ref null $kotlin.String)=null (29, 29, 29, 29, 29, 29, 29, 29, 29, 32, 32)
 // test.kt:5 $A.component1: $<this>:(ref $A)=(ref $A) (32, 32, 32, 35)
 // test.kt:12 $box$slambda.invoke: $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $x_param:(ref $kotlin.String)=(ref $kotlin.String), $y_param:(ref null $kotlin.String)=null (32, 44, 44)
 // test.kt:7 $A.component3: $<this>:(ref $A)=(ref $A) (32, 32, 32, 35)
