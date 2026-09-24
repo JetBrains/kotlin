@@ -437,8 +437,8 @@ class JsBrowserTestsIT : KGPBaseTest() {
                     }
                 }
                 val actualTestCases = readTestCases("wasmJsBrowserTest")
-                assertEquals(expectedTestCases.size, actualTestCases.size)
                 assertEquals(expectedTestCases.toSet(), actualTestCases.toSet())
+                assertEquals(expectedTestCases.size, actualTestCases.size, "Duplicate test cases in wasmJsBrowserTest report")
             }
         }
     }
