@@ -20,15 +20,15 @@ enum class E {
 fun takesE(e: E) {}
 
 fun test() {
-    takesE(<!ARGUMENT_TYPE_MISMATCH!>if (true) <!INVISIBLE_REFERENCE!>B<!> else E.C<!>)
-    takesE(<!ARGUMENT_TYPE_MISMATCH!><!INVISIBLE_REFERENCE!>B<!> <!USELESS_ELVIS!>?: E.C<!><!>)
-    takesE(<!ARGUMENT_TYPE_MISMATCH!>when { true -> <!INVISIBLE_REFERENCE!>B<!>; else -> <!INVISIBLE_REFERENCE!>C<!> }<!>)
+    takesE(if (true) B else E.C)
+    takesE(B <!USELESS_ELVIS!>?: E.C<!>)
+    takesE(when { true -> B; else -> C })
     if (<!EQUALITY_NOT_APPLICABLE!><!INVISIBLE_REFERENCE!>B<!> == E.B<!>) {}
-    if (<!EQUALITY_NOT_APPLICABLE!>E.B == <!INVISIBLE_REFERENCE!>B<!><!>) {}
+    if (E.B == B) {}
     val e: E = E.B
-    <!NO_ELSE_IN_WHEN!>when<!> (e) {
-        <!INCOMPATIBLE_TYPES, INVISIBLE_REFERENCE!>B<!> -> {}
-        <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, INCOMPATIBLE_TYPES, INVISIBLE_REFERENCE!>C<!> -> {}
+    when (e) {
+        B -> {}
+        C -> {}
     }
 }
 

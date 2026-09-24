@@ -18,10 +18,10 @@ fun <T : E> takesT(t: T) {}
 fun takesInt(i: Int) {}
 
 fun test() {
-    takesE(<!ARGUMENT_TYPE_MISMATCH, DEPRECATION_ERROR!>D<!>)
-    takesE(<!ARGUMENT_TYPE_MISMATCH, DEPRECATION_ERROR!>HiddenCompanion<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>takesT<!>(<!ARGUMENT_TYPE_MISMATCH, DEPRECATION_ERROR!>D<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>takesT<!>(<!ARGUMENT_TYPE_MISMATCH, DEPRECATION_ERROR!>HiddenCompanion<!>)
+    takesE(D)
+    takesE(HiddenCompanion)
+    takesT(D)
+    takesT(HiddenCompanion)
 }
 
 fun negative() {
