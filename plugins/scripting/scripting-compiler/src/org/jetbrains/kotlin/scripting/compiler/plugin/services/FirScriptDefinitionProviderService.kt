@@ -10,28 +10,22 @@ import org.jetbrains.kotlin.config.disableStandardScriptDefinition
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
-import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaLightTree
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaPsi
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createScriptAnnotationResolutionSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.toKtSourceFile
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
-import org.jetbrains.kotlin.scripting.resolve.getScriptCollectedData
-import org.jetbrains.kotlin.toSourceLinesMapping
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.with
-import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
 
@@ -93,32 +87,18 @@ class FirScriptDefinitionProviderService(
                 (it.refineAllForK2(
                     sourceCode,
                     hostConfiguration
-                ) { source, configuration ->
-                    if (source is KtFileScriptSource) {
-                        getScriptCollectedData(
-                            source.ktFile,
-                            configuration,
-                            hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
-                        ).asSuccess()
-                    } else {
-                        collectAndResolveScriptAnnotationsViaFir(
-                            sourceCode, it, hostConfiguration,
-                            getSessionForAnnotationResolution =
-                                { source, configuration ->
-                                    session.scriptCompilationComponent?.getSessionForAnnotationResolution(source, configuration)
-                                        ?: session
-                                },
-                            convertToFir = { session, diagnosticsReporter ->
-                                val sourcesToPathsMapper = session.sourcesToPathsMapper
-                                val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
-                                val linesMapping = this.text.toSourceLinesMapping()
-                                builder.buildFirFile(text, toKtSourceFile(), linesMapping).also { firFile ->
-                                    (session.firProvider as FirProviderImpl).recordFile(firFile)
-                                    sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
-                                }
-                            }
-                        )
-                    }
+                ) { script, configuration ->
+                    // the script's own session cannot be used: the script file would be recorded in it twice
+                    collectAndResolveScriptAnnotationsViaFir(
+                        script, configuration, hostConfiguration,
+                        getSessionForAnnotationResolution = { source, sourceConfiguration ->
+                            session.scriptCompilationComponent?.getSessionForAnnotationResolution(source, sourceConfiguration)
+                                ?: createScriptAnnotationResolutionSession(session, hostConfiguration)
+                        },
+                        convertToFir = if (script is KtFileScriptSource) SourceCode::convertToFirViaPsi
+                        else SourceCode::convertToFirViaLightTree,
+                        tolerateInvalidAnnotations = script is KtFileScriptSource,
+                    )
                 }).also { refined ->
                     hostBasedCache.storeRefinedCompilationConfiguration(sourceCode, refined)
                 }

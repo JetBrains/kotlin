@@ -11,6 +11,12 @@ Tower Data Context:
         Scope: FirDefaultSimpleImportingScope
     Element 5
         Scope: FirExplicitSimpleImportingScope
+            Import name:AddTestImport
+                Qualified name: org.jetbrains.kotlin.scripting.test.definition.AddTestImport
+                Is all under: false
+            Import name:TestRefinementMarker
+                Qualified name: org.jetbrains.kotlin.scripting.test.definition.TestRefinementMarker
+                Is all under: false
             Import name:asSequence
                 Qualified name: kotlin.streams.asSequence
                 Is all under: false

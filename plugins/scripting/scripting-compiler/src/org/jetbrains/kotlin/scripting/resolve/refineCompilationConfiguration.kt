@@ -8,31 +8,26 @@
 package org.jetbrains.kotlin.scripting.resolve
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.PsiScriptAnnotationsCollector
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.scripting.scriptFileName
 import org.jetbrains.kotlin.scripting.withCorrectExtension
 import java.io.File
-import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 
 /**
-* The legacy PSI-based refinement entry points, called outside any FIR session (e.g. by the Kotlin IntelliJ plugin).
-* The package and the file name keep the functions in the `RefineCompilationConfigurationKt` facade for binary compatibility.
+ * The legacy PSI-based refinement entry points, called outside any FIR session (e.g. by the Kotlin IntelliJ plugin).
+ * The package and the file name keep the functions in the `RefineCompilationConfigurationKt` facade for binary compatibility.
  */
 
 fun KtSourceFile.toSourceCode(): SourceCode = when (this) {
@@ -66,17 +61,17 @@ fun refineScriptCompilationConfiguration(
     // TODO: add location information on refinement errors
     val ktFileSource = script.toKtFileSource(definition, project)
     val compilationConfiguration = providedConfiguration ?: definition.compilationConfiguration
-    val collectedData =
-        runReadAction {
-            getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, definition.contextClassLoader)
-        }
-    return refineScriptCompilationConfiguration(
-        compilationConfiguration,
-        script,
-        collectedData,
-        knownVirtualFileSources,
-        definition
-    )
+    return runReadAction {
+        collectScriptAnnotations(ktFileSource.ktFile, compilationConfiguration, definition.contextClassLoader)
+    }.onSuccess { collectedData ->
+        refineScriptCompilationConfiguration(
+            compilationConfiguration,
+            script,
+            collectedData,
+            knownVirtualFileSources,
+            definition
+        )
+    }
 }
 
 fun refineScriptCompilationConfiguration(
@@ -184,72 +179,28 @@ fun SourceCode.getKtFile(definition: ScriptDefinition?, project: Project): KtFil
 fun SourceCode.toKtFileSource(definition: ScriptDefinition, project: Project): KtFileScriptSource =
     this as? KtFileScriptSource ?: KtFileScriptSource(this.getKtFile(definition, project))
 
+private fun collectScriptAnnotations(
+    scriptFile: KtFile,
+    compilationConfiguration: ScriptCompilationConfiguration,
+    contextClassLoader: ClassLoader?,
+): ResultWithDiagnostics<ScriptCollectedData> =
+    PsiScriptAnnotationsCollector().collectAnnotations(
+        scriptFile, compilationConfiguration, compilationConfiguration.hostConfigurationOrDefault(contextClassLoader)
+    )
+
+internal fun ScriptCompilationConfiguration.hostConfigurationOrDefault(contextClassLoader: ClassLoader?): ScriptingHostConfiguration =
+    this[ScriptCompilationConfiguration.hostConfiguration]
+        ?: defaultJvmScriptingHostConfiguration.let { default ->
+            if (contextClassLoader == null) default
+            else ScriptingHostConfiguration(default) { jvm.baseClassLoader(contextClassLoader) }
+        }
+
+// the diagnostics of the annotation collecting are not returned here, but the annotations which cannot be constructed are returned as
+// `InvalidScriptResolverAnnotation`s
 fun getScriptCollectedData(
     scriptFile: KtFile,
     compilationConfiguration: ScriptCompilationConfiguration,
     contextClassLoader: ClassLoader?,
-): ScriptCollectedData {
-    val hostConfiguration =
-        compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
-    val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
-    val jvmGetScriptingClass = (getScriptingClass as? GetScriptingClassByClassLoader)
-        ?: throw IllegalArgumentException("Expecting class implementing GetScriptingClassByClassLoader in the hostConfiguration[getScriptingClass], got $getScriptingClass")
-    val acceptedAnnotations =
-        compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.flatMap {
-            it.annotations.mapNotNull { ann ->
-                @Suppress("UNCHECKED_CAST")
-                jvmGetScriptingClass(ann, contextClassLoader, hostConfiguration) as? KClass<Annotation> // TODO errors
-            }
-        }.orEmpty()
-    val annotations = scriptFile.annotationEntries.construct(
-        contextClassLoader,
-        acceptedAnnotations,
-        scriptFile.project,
-        scriptFile.viewProvider.document,
-        scriptFile.virtualFilePath
-    )
-    return ScriptCollectedData(mapOf(ScriptCollectedData.collectedAnnotations to annotations))
-}
-
-private fun Iterable<KtAnnotationEntry>.construct(
-    classLoader: ClassLoader?, acceptedAnnotations: List<KClass<out Annotation>>, project: Project, document: Document?, filePath: String,
-): List<ScriptSourceAnnotation<*>> = construct(classLoader, acceptedAnnotations, project).map { [annotation, psiAnn] ->
-    ScriptSourceAnnotation(
-        annotation = annotation,
-        location = document?.let { document ->
-            SourceCode.LocationWithId(
-                codeLocationId = filePath,
-                locationInText = psiAnn.location(document)
-            )
-        }
-    )
-}
-
-private fun Iterable<KtAnnotationEntry>.construct(
-    classLoader: ClassLoader?, acceptedAnnotations: List<KClass<out Annotation>>, project: Project,
-): List<Pair<Annotation, KtAnnotationEntry>> =
-    mapNotNull { psiAnn ->
-        // TODO: consider advanced matching using semantic similar to actual resolving
-        acceptedAnnotations.find { ann ->
-            psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-        }?.let {
-            @Suppress("UNCHECKED_CAST")
-            constructAnnotation(
-                psiAnn,
-                (classLoader ?: ClassLoader.getSystemClassLoader()).loadClass(it.qualifiedName).kotlin as KClass<out Annotation>,
-                project
-            ) to psiAnn
-        }
-    }
-
-private fun PsiElement.location(document: Document): SourceCode.Location {
-    val start = document.offsetToPosition(startOffset)
-    val end = if (endOffset > startOffset) document.offsetToPosition(endOffset) else null
-    return SourceCode.Location(start, end)
-}
-
-private fun Document.offsetToPosition(offset: Int): SourceCode.Position {
-    val line = getLineNumber(offset)
-    val column = offset - getLineStartOffset(line)
-    return SourceCode.Position(line + 1, column + 1, offset)
-}
+): ScriptCollectedData =
+    collectScriptAnnotations(scriptFile, compilationConfiguration, contextClassLoader).valueOrNull()
+        ?: ScriptCollectedData(emptyMap())

@@ -9,4 +9,5 @@ ERROR: Unable to construct the annotation AddTestImport: Error resolving annotat
 
 -- refinement in the script session --
 status: failure
+WARNING: Unable to construct the annotation AddTestImport: Error resolving annotation argument: Unresolved name: unknownValue
 ERROR: Unable to construct the annotation AddTestImport: Error resolving annotation argument: Unresolved name: unknownValue

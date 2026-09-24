@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -114,7 +115,7 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
         @OptIn(MessageCollectorAccess::class) // TODO(KT-84516)
         val messageCollector = configuration[CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY]
         ScriptConfigurationsProvider.registerExtension(
-            CliScriptConfigurationsProvider(project = null) {
+            CliScriptConfigurationsProvider(project = null, getRegularClasspath = { configuration.jvmClasspathRoots }) {
                 scriptDefinitionProvider
             }.apply {
                 if (messageCollector != null) {
