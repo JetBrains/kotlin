@@ -14,11 +14,11 @@ public abstract value class JavaAbstractVal {
 public abstract class JavaAbstractIdentity {}
 
 // FILE: test.kt
-value class ValueChild(val x: Int) : <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>JavaAbstractVal<!>() {
+value class ValueChild(val x: Int) : JavaAbstractVal() {
     override fun get(): Int = x
 }
 
-abstract value class AbstractValueChild : <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>JavaAbstractVal<!>()
+abstract value class AbstractValueChild : JavaAbstractVal()
 
 class IdentityChild : JavaAbstractVal() {
     override fun get(): Int = 0
