@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -20,7 +21,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
@@ -31,9 +34,20 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(copyByDefault = false)
+
+/**
+ * `true` if the name of the parameter must be used as is, without any further adjustments in the codegen
+ * (in particular, without replacing it with the `$this$callableName` extension receiver name).
+ *
+ * It is set for parameters whose names encode the value class they originate from, see
+ * [withValueClassParameterName].
+ */
+var IrValueParameter.hasFixedName: Boolean by irFlag(copyByDefault = true)
+    internal set
 
 private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(copyByDefault = false)
 
@@ -267,6 +281,7 @@ class MemoizedInlineClassReplacements(
                         Name.identifier(function.extensionReceiverName(context.config))
                     } else parameter.name
                 ).also {
+                    it.addOrInheritInlineClassPropertyNameParts(oldParameter = parameter)
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
@@ -282,10 +297,12 @@ class MemoizedInlineClassReplacements(
                 when (parameter.kind) {
                     IrParameterKind.DispatchReceiver -> {
                         // FAKE_OVERRIDEs have broken dispatch receivers
-                        function.parentAsClass.thisReceiver!!.copyTo(
+                        val parentClass = function.parentAsClass
+                        parentClass.thisReceiver!!.copyTo(
                             this,
-                            name = Name.identifier("arg0"),
-                            type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
+                            name = Name.identifier(AsmUtil.THIS),
+                            type = parentClass.defaultType,
+                            origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
                     }
@@ -311,9 +328,39 @@ class MemoizedInlineClassReplacements(
                             it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                         }
                     }
-                }
+                }.apply { addOrInheritInlineClassPropertyNameParts(oldParameter = parameter) }
             }
         }
+
+    /**
+     * `true` if a value of this inline class type is stored on the JVM as an instance of the inline class itself
+     * rather than as its underlying value.
+     *
+     * This mirrors the decision of the type mapper: a nullable inline class type is boxed when its (expanded) underlying
+     * type is primitive or itself nullable, since `null` could not be represented otherwise. A nullable inline class
+     * over a non-null reference type is stored as a nullable reference to the underlying value instead.
+     */
+    private fun IrType.isStoredBoxed(): Boolean {
+        val expandedType = context.typeSystem.computeExpandedTypeForInlineClass(this) as IrType? ?: return true
+        return expandedType.isInlineClassType()
+    }
+
+    /**
+     * Encodes the value class origin into the name of this parameter if its JVM slot holds the underlying value of an
+     * inline class, or inherits the already encoded name of [oldParameter].
+     *
+     * Boxed slots keep the plain name: they hold a real instance of the value class, so there is nothing to reconstruct.
+     */
+    private fun IrValueParameter.addOrInheritInlineClassPropertyNameParts(oldParameter: IrValueParameter) {
+        when {
+            hasFixedName -> return
+            oldParameter.hasFixedName -> hasFixedName = true
+            type.isInlineClassType() && !type.isStoredBoxed() -> {
+                name = name.withValueClassParameterName(type.erasedUpperBound)
+                hasFixedName = true
+            }
+        }
+    }
 
     private fun buildReplacement(
         function: IrFunction,
@@ -410,6 +457,43 @@ fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, 
             ?: IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "")
     }
 }
+
+/**
+ * Makes the string usable as a part of a `$v$c$...` parameter name: `.` separates the name parts, so the characters
+ * which are meaningful for the encoding (`-`, `$`) are doubled, and `.` itself is replaced with `-`.
+ */
+private fun String.escapeForValueClassParameterName(): String = asIterable().joinToString("") {
+    when (it) {
+        '-' -> "--"
+        '$' -> "\$\$"
+        '.' -> "-"
+        else -> "$it"
+    }
+}
+
+/**
+ * Builds the name of a parameter which holds the underlying value of the value class [bound].
+ *
+ * Such names are meant to be recognized by the debugger, which renders them back as the corresponding value class
+ * instance. They cannot clash with names of user-declared variables, which is exactly what the previously used
+ * `arg0` name did, see KT-73995.
+ *
+ * The contract is: a slot with such a name always holds the underlying value of [bound], never a boxed instance
+ * of [bound] itself (although the underlying value may in turn be a boxed instance of another inline class).
+ * The slot may hold `null` in exactly one of two mutually exclusive situations, which the debugger can tell apart
+ * by looking at the underlying type of [bound]:
+ * - the underlying type is a non-null reference type: the declared parameter type was `bound?`, and the instance
+ *   itself is `null`;
+ * - the underlying type is nullable: the declared parameter type was a non-null `bound` (a nullable one would have
+ *   been boxed), and the instance wraps `null`.
+ *
+ * Since the escaping never produces `$-` inside the encoded fq name, everything after the first `$-` is the
+ * original parameter name, verbatim.
+ */
+internal fun Name.withValueClassParameterName(bound: IrClass): Name =
+    Name.identifier(
+        $$"$v$c$$${bound.fqNameWhenAvailable?.asString().orEmpty().escapeForValueClassParameterName()}$-$${asString()}"
+    )
 
 private object InlinedEqualsNames {
     val SPECIALIZED_EQUALS_NAME = Name.identifier("equals-impl0")
