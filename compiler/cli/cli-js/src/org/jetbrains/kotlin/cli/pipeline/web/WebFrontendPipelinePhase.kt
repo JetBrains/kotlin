@@ -33,11 +33,12 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.library.metadata.KlibIcData
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.KlibIcData
+import org.jetbrains.kotlin.library.metadata.KlibIcMetadataComponent
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -253,6 +254,8 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
     }
 
     private fun IncrementalDataProvider.toKlibIcData(): KlibIcData {
-        return KlibIcData(compiledPackageParts.mapValues { [file, result] -> result.metadata })
+        return KlibIcData(
+            KlibIcMetadataComponent(compiledPackageParts.mapValues { [_, result] -> result.metadata }),
+        )
     }
 }

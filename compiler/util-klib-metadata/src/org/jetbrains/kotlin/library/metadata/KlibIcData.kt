@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.utils.checkWithAttachment
 import java.io.File
 
-class KlibIcData(nonDirtyPreviousPackageFragments: Map<File, ByteArray>) : KlibMetadataComponent {
+class KlibIcData(
+    val metadata: KlibIcMetadataComponent,
+)
 
-//    constructor(incrementalData: IncrementalDataProvider) : this(incrementalData.compiledPackageParts.mapValues { [file, result] -> result.metadata })
-
+class KlibIcMetadataComponent(
+    nonDirtyPreviousPackageFragments: Map<File, ByteArray>,
+) : KlibMetadataComponent {
     private val fragments: Map<String, Map<String, ByteArray>> by lazy {
         val result = mutableMapOf<String, MutableMap<String, ByteArray>>()
 
