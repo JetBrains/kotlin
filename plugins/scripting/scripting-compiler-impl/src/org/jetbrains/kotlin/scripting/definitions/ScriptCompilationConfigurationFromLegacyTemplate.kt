@@ -90,9 +90,12 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
         }
         asyncDependenciesResolver(dependencyResolver is AsyncDependenciesResolver || dependencyResolver is ApiChangeDependencyResolverWrapper)
         if (dependencyResolver != DependenciesResolver.NoDependencies) {
+            @Suppress("DEPRECATION")
+            val acceptedAnnotations = dependencyResolver.acceptedAnnotations
+            // TODO: for legacy compatibility, remove together with the legacy script templates support (KT-87149)
+            defaultImports.append(acceptedAnnotations.mapNotNull { it.qualifiedName })
             refineConfiguration {
-                @Suppress("DEPRECATION")
-                onAnnotations(dependencyResolver.acceptedAnnotations.map(::KotlinType)) { context ->
+                onAnnotations(acceptedAnnotations.map(::KotlinType)) { context ->
                     refineWithResolver(dependencyResolver, context)
                 }
             }
