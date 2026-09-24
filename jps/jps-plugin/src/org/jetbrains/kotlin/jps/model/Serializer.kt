@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jps.model
 
-import com.intellij.util.text.VersionComparatorUtil
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 import org.jetbrains.jps.model.JpsElement
@@ -15,6 +14,7 @@ import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer
 import org.jetbrains.jps.model.serialization.facet.JpsFacetConfigurationSerializer
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.compilerRunner.setApiVersionToLanguageVersionIfNeeded
 import org.jetbrains.kotlin.config.*
 
 class KotlinModelSerializerService : KotlinCommonJpsModelSerializerExtension() {
@@ -103,11 +103,5 @@ internal class Kotlin2JvmCompilerArgumentsSerializer : BaseJpsCompilerSettingsSe
 ) {
     override fun onLoad(project: JpsProject, settings: K2JVMCompilerArguments) {
         project.k2JvmCompilerArguments = settings
-    }
-}
-
-private fun CommonCompilerArguments.setApiVersionToLanguageVersionIfNeeded() {
-    if (languageVersion != null && VersionComparatorUtil.compare(languageVersion, apiVersion) < 0) {
-        apiVersion = languageVersion
     }
 }

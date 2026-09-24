@@ -5,19 +5,28 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.arguments.collectProperties
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import kotlin.jvm.java
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-internal fun <From : Any, To : From> mergeBeans(from: From, to: To): To {
+fun CommonCompilerArguments.setApiVersionToLanguageVersionIfNeeded() {
+    if (languageVersion != null && VersionComparatorUtil.compare(languageVersion, apiVersion) < 0) {
+        apiVersion = languageVersion
+    }
+}
+
+fun <From : Any, To : From> mergeBeans(from: From, to: To): To {
     // TODO: rewrite when updated version of com.intellij.util.xmlb is available on TeamCity
     @Suppress("UNCHECKED_CAST")
     return copyProperties(from, to, false, collectProperties(from::class as KClass<From>, false))
 }
 
-internal fun <From : Any, To : Any> copyProperties(
+fun <From : Any, To : Any> copyProperties(
     from: From,
     to: To,
     deepCopyWhenNeeded: Boolean,
