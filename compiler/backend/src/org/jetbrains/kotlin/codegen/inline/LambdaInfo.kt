@@ -61,8 +61,10 @@ abstract class LambdaInfo : FunctionalArgument {
     }
 
     companion object {
-        fun LambdaInfo.capturedParamDesc(fieldName: String, fieldType: Type, isSuspend: Boolean): CapturedParamDesc {
-            return CapturedParamDesc(lambdaClassType, fieldName, fieldType, isSuspend)
+        fun LambdaInfo.capturedParamDesc(
+            fieldName: String, fieldType: Type, isSuspend: Boolean, isLoadable: Boolean = false,
+        ): CapturedParamDesc {
+            return CapturedParamDesc(lambdaClassType, fieldName, fieldType, isSuspend, isLoadable)
         }
     }
 }
@@ -127,6 +129,8 @@ class DefaultLambda(
         // is already `Object`, and this field is never used.
         originalBoundReceiverType =
             info.capturedArgs.singleOrNull()?.takeIf { isReference && AsmUtil.isPrimitive(it) }
+        // An object that the lambda is inlined into stores its captured values, so it lists those that the lambda lists.
+        val loadableDescriptors = readLoadableDescriptors(classBytes)
         capturedVars =
             if (isReference)
                 info.capturedArgs.singleOrNull()?.let {
@@ -135,7 +139,8 @@ class DefaultLambda(
                 } ?: emptyList()
             else
                 constructor?.findCapturedFieldAssignmentInstructions()?.map { fieldNode ->
-                    capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc), isSuspend = false)
+                    val isLoadable = fieldNode.desc in loadableDescriptors
+                    capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc), isSuspend = false, isLoadable)
                 }?.toList() ?: emptyList()
         isBoundCallableReference = isReference && capturedVars.isNotEmpty()
         (val originNode = node, val classSmap = classSMAP) = loadDefaultLambdaBody(classBytes, lambdaClassType, isPropertyReference)
