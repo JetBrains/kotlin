@@ -55,6 +55,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_ALL_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_CALL_RECEIVER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_CALL_RECEIVER_WITH_HINT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_INVOKE_CALL_RECEIVER_WITH_HINT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VARIABLE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.WHEN_MISSING_CASES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.prefix
@@ -3421,39 +3424,40 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             UNSAFE_CALL,
-            "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type ''{0}''.",
-            RENDER_TYPE,
+            "Unsafe call {0}.",
+            UNSAFE_CALL_RECEIVER_WITH_HINT,
             NOT_RENDERED,
         )
         map.put(
             UNSAFE_IMPLICIT_INVOKE_CALL,
-            "Reference has a nullable type ''{0}''. Use explicit ''?.invoke'' to make a function-like call instead.",
-            RENDER_TYPE,
+            "Unsafe implicit ''invoke'' call {0}.",
+            UNSAFE_INVOKE_CALL_RECEIVER_WITH_HINT,
         )
         map.put(
             UNSAFE_INFIX_CALL,
-            "Infix call is prohibited on a nullable receiver of type ''{0}''. Use ''?.''-qualified call instead.",
-            RENDER_TYPE,
+            "Unsafe infix call {0}.",
+            UNSAFE_CALL_RECEIVER_WITH_HINT,
             NOT_RENDERED,
             NOT_RENDERED,
             NOT_RENDERED,
         )
         map.put(
             UNSAFE_OPERATOR_CALL,
-            "Operator call is prohibited on a nullable receiver of type ''{0}''. Use ''?.''-qualified call instead.",
-            RENDER_TYPE,
+            "Unsafe operator call {0}.",
+            UNSAFE_CALL_RECEIVER_WITH_HINT,
             NOT_RENDERED,
             NOT_RENDERED,
             NOT_RENDERED,
         )
         map.put(
             UNSAFE_CALLABLE_REFERENCE,
-            "Bound callable reference cannot be created on nullable receiver of type ''{0}''.",
-            RENDER_TYPE,
+            "Bound callable reference cannot be created {0}.",
+            UNSAFE_CALL_RECEIVER,
         )
         map.put(
             ITERATOR_ON_NULLABLE,
-            "Non-nullable value required to call an 'iterator()' method in a for-loop.",
+            "Method ''iterator()'' cannot be called {0} in a for-loop.",
+            UNSAFE_CALL_RECEIVER,
         )
         map.put(
             COMPONENT_FUNCTION_ON_NULLABLE,
