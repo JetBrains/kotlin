@@ -1,0 +1,17 @@
+value class C(val first: Int, val second: Int = 0) {
+    constructor(first: Int) : this(first, 0)
+}
+
+value class D(val first: Int) {
+    constructor(first: Int, second: Int) : this(first)
+}
+
+abstract value class E(first: Int, second: Int)
+
+value class F(val first: Int, val second: Int)
+
+value class G(val first: Int, val second: Int)
+
+class H(val first: Int, val second: Int)
+
+value class J(val first: Int, @IntroducedAt("1") val second: Int = 0)
