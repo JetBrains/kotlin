@@ -148,7 +148,6 @@ open class GradleArgumentsProvider : ArgumentsProvider {
         val minGradleVersion = GradleVersion.version(versionsAnnotation.minVersion)
         // Max is used for cases when test is annotated with `@GradleTestVersions(minVersion = LATEST)` but MAX_SUPPORTED isn't latest
         val maxGradleVersion = maxOf(GradleVersion.version(versionsAnnotation.maxVersion), minGradleVersion)
-        if (testFederationMode == TestFederationMode.Smoke) return setOf(maxGradleVersion)
 
         val additionalGradleVersions = versionsAnnotation
             .additionalVersions
@@ -248,11 +247,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
             .map {
                 Arguments.of(it.first, it.second)
             }
-            .run {
-                /* We only take the last configuration in smoke test mode */
-                if (testFederationMode == TestFederationMode.Smoke) toList().takeLast(1)
-                else toList()
-            }
+            .toList()
             .stream()
     }
 
@@ -346,10 +341,6 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
                 null
             }
         )
-
-        if (testFederationMode == TestFederationMode.Smoke) {
-            agpVersions = setOf(agpVersions.last())
-        }
 
         val gradleVersions = gradleVersions(context)
         val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
