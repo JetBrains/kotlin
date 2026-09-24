@@ -21,7 +21,7 @@ fun SourceCode.scriptFileName(
     }
 }
 
-internal fun withCorrectExtension(name: String, mainExtension: String?): String =
+fun withCorrectExtension(name: String, mainExtension: String?): String =
     // TODO: consider checking for all registered extensions
     if ((mainExtension != null && name.endsWith(".$mainExtension")) || name.endsWith(".kts")) name else "$name.${mainExtension ?: "kts"}"
 
