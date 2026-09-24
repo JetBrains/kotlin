@@ -29,7 +29,7 @@ fun test1() {
         x = (null as Any?)
         x <!UNRESOLVED_REFERENCE!>+<!> 1
     }
-    x + 1 // bad: ClassCastException
+    x <!UNRESOLVED_REFERENCE!>+<!> 1
 }
 
 fun test2() {
