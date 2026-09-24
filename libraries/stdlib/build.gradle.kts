@@ -110,6 +110,7 @@ kotlin {
         // Here it mainly serves the purpose to set up test compilations/source sets
         // and especially commonTest in IDE since there is no separate metadata compilation for it.
         addReturnValueCheckerInfo()
+        freeCompilerArgs.addAll(listOf("-Xallow-kotlin-package"))
     }
 
     metadata {
