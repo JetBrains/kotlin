@@ -9,17 +9,14 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.toTargetPlatform
 import org.jetbrains.kotlin.platform.WasmPlatform as CoreWasmPlatform
 
-abstract class WasmPlatform(platformName: String) : CoreWasmPlatform(platformName) {
-    override val oldFashionedDescription: String
-        get() = "Wasm"
-}
+abstract class WasmPlatform : CoreWasmPlatform("Wasm")
 
-object WasmPlatformUnspecifiedTarget : WasmPlatform("Wasm") {
+object WasmPlatformUnspecifiedTarget : WasmPlatform() {
     override val targetName: String
         get() = "general"
 }
 
-data class WasmPlatformWithTarget(val target: WasmTarget) : WasmPlatform(target.alias) {
+data class WasmPlatformWithTarget(val target: WasmTarget) : WasmPlatform() {
     override val targetName: String
         get() = target.name
 
