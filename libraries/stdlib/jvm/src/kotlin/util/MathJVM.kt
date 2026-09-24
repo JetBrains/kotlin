@@ -643,9 +643,10 @@ public actual inline fun Double.withSign(sign: Int): Double = nativeMath.copySig
  *
  * An ulp is a positive distance between this value and the next nearest [Double] value larger in magnitude.
  *
- * Special Cases:
+ * Special cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
+ *   - `x.ulp` is `2^971` when `x` is `Double.MAX_VALUE` or `-Double.MAX_VALUE`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
  *
  */
