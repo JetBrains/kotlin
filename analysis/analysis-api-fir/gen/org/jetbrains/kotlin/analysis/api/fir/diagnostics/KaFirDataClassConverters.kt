@@ -2381,6 +2381,12 @@ private fun KaDiagnosticConverterBuilder.addConversions49() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions50() {
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.errorFactory) { firDiagnostic ->
+        JsModuleProhibitedOnVarInModuleFileErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.OPERATOR_MODIFIER_REQUIRED) { firDiagnostic ->
         OperatorModifierRequiredImpl(
             firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
@@ -4480,6 +4486,12 @@ private fun KaDiagnosticConverterBuilder.addConversions98() {
     }
     add(FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE) { firDiagnostic ->
         InapplicableTargetPropertyHasNoDelegateImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.warningFactory) { firDiagnostic ->
+        JsModuleProhibitedOnVarInModuleFileWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

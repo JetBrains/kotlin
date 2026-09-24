@@ -45,6 +45,11 @@ object WasmJsDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirWasmJsNativeInvokeChecker,
         )
+
+    override val propertyCheckers: Set<FirPropertyChecker>
+        get() = setOf(
+            FirWasmJsVarInJsModuleFileChecker,
+        )
 }
 
 object WasmWasiDeclarationCheckers : DeclarationCheckers() {
