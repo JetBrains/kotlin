@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":compiler:cli"))
     implementation(project(":compiler:ir.serialization.jklib"))
+    implementation(project(":compiler:ir.inline"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
     implementation(project(":compiler:fir:fir2ir:jvm-backend"))
     implementation(project(":compiler:cli-jvm"))

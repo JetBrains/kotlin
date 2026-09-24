@@ -72,3 +72,16 @@ data class JKlibIrCompilationArtifact(
         return copy(configuration = newConfiguration)
     }
 }
+
+/** The IR of a module compiled by [org.jetbrains.kotlin.cli.jklib.K2JKlibCompiler.compileToIr]. */
+data class IrCompilationResult(
+    val moduleFragment: IrModuleFragment,
+    val pluginContext: IrPluginContext,
+    override val configuration: CompilerConfiguration,
+    override val exitCode: ExitCode = ExitCode.OK,
+) : PipelineArtifactWithExitCode() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): PipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}

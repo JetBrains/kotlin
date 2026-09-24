@@ -393,6 +393,17 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
     }
 }
 
+/**
+ * Hands the lowered IR produced by FIR2IR over as the result of the IR compilation, instead of serializing the module
+ * into a KLIB and deserializing it back.
+ */
+object JKlibIrCompilationResultPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, IrCompilationResult>(
+    name = "JKlibIrCompilationResultPhase",
+) {
+    override fun executePhase(input: JKlibFir2IrPipelineArtifact): IrCompilationResult =
+        IrCompilationResult(input.result.irModuleFragment, input.result.pluginContext, input.configuration)
+}
+
 object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArtifact, JKlibSerializationArtifact>(
     name = "JKlibMetadataSerializationPhase",
     postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
