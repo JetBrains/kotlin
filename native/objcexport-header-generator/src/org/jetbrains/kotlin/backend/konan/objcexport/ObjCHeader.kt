@@ -37,6 +37,27 @@ data class ObjCHeader(
 
     fun render(exportKDoc: Boolean = true): List<String> = render(exportKDoc, emptyList())
 
+    fun renderForProtocolStubs(baseDeclarations: Collection<ObjCExportStub>): List<String> {
+        val interfaces = stubs.filterIsInstance<ObjCInterface>()
+        val definedClasses = interfaces.filter { it.categoryName == null }.mapTo(mutableSetOf()) { it.name }
+        val extendedClasses = interfaces.filter { it !in baseDeclarations }
+            .mapNotNullTo(mutableSetOf()) { if (it.categoryName == null) it.superClass else it.name }
+        val declaredProtocols = stubs.filterIsInstance<ObjCProtocol>().mapTo(protocolForwardDeclarations.toMutableSet()) { it.name }
+        val undeclaredProtocols = stubs.filterIsInstance<ObjCClass>().flatMap { it.superProtocols }.filter { it !in declaredProtocols }.distinct()
+        val standIns = buildList {
+            if (undeclaredProtocols.isNotEmpty()) add("@protocol ${undeclaredProtocols.joinToString()};")
+            classForwardDeclarations.filter { it.className in extendedClasses && it.className !in definedClasses }.forEach {
+                add(buildString {
+                    append("@interface ${it.className}")
+                    formatGenerics(this, it.typeDeclarations)
+                    append(" : NSObject")
+                })
+                add("@end")
+            }
+        }
+        return render(exportKDoc = false, listOf(0 to standIns))
+    }
+
     fun render(exportKDoc: Boolean, insertions: List<Pair<Int, List<String>>>): List<String> {
         return buildList {
             addImports(foundationImports)

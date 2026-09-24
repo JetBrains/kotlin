@@ -720,6 +720,36 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         framework.assertObjCCachesLinked("libA", "libB")
         framework.runSwift("let alpha: Alpha = Beta().hidden()\ntry assertEquals(actual: alpha.name, expected: \"fromBeta\")")
     }
+
+    @Test
+    fun testStaticFrameworkProtocolObjects() {
+        val libraries = compileLibraries(
+            Library("libA", "package liba\ninterface AlphaListener { fun onAlpha(): Int }\nopen class Alpha"),
+            Library(
+                "libB",
+                """
+                package libb
+                import liba.Alpha
+                import liba.AlphaListener
+                import platform.Foundation.NSError
+                interface BetaListener : AlphaListener { fun onBeta(): Int }
+                class Beta : Alpha() {
+                    fun domain(error: NSError): String? = error.domain
+                }
+                """,
+                listOf("libA"),
+            ),
+        )
+        val framework = linkFramework(libraries)
+        framework.assertObjCCachesLinked("libA", "libB")
+        framework.runSwift(
+            """
+            let _ = Beta()
+            try assertTrue(NSProtocolFromString("KtAlphaListener") != nil)
+            try assertTrue(NSProtocolFromString("KtBetaListener") != nil)
+            """
+        )
+    }
 }
 
 @Tag("caches")

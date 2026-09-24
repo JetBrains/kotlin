@@ -26,6 +26,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     problemCollector: ObjCExportProblemCollector,
 ) {
     private val stubs = mutableListOf<ObjCExportStub>()
+    private val baseDeclarations = mutableListOf<ObjCExportStub>()
 
     private val classForwardDeclarations = linkedSetOf<ObjCClassForwardDeclaration>()
     private val protocolForwardDeclarations = linkedSetOf<String>()
@@ -57,8 +58,13 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
 
     @InternalKotlinNativeApi
     fun buildInterface(objCCacheUnits: ObjCExportUnits? = null): ObjCExportedInterface {
-        val headerLines = build()
-        return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, mapper, objCCacheUnits)
+        val header = buildHeader()
+        val protocolStubHeaderLines =
+            if (insertedLines.isEmpty() && objCCacheUnits == null) emptyList() else header.renderForProtocolStubs(baseDeclarations)
+        return ObjCExportedInterface(
+            generatedClasses, extensions, topLevel, header.render(shouldExportKDoc, insertedLines), namer, mapper,
+            protocolStubHeaderLines, objCCacheUnits,
+        )
     }
 
     fun getExportStubs(): ObjCExportedStubs =
@@ -78,7 +84,8 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     }
 
     fun translateBaseDeclarations() {
-        stubs += translator.generateBaseDeclarations()
+        baseDeclarations += translator.generateBaseDeclarations()
+        stubs += baseDeclarations
     }
 
     fun translateModuleDeclarations() {

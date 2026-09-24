@@ -279,37 +279,42 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
     // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
     // so the easiest way to achieve this (quickly) is to compile a stub by clang.
 
+    val protocolNames = generatedClasses.mapNotNull { descriptor ->
+        if (descriptor.isInterface) namer.getClassOrProtocolName(descriptor).objCName else null
+    }
+    if (protocolNames.isEmpty()) return
+
     val protocolsStub = listOf(
             "__attribute__((used)) static void __workaroundSwiftSR10177() {",
-            buildString {
-                append("    ")
-                generatedClasses.forEach {
-                    if (it.isInterface) {
-                        val protocolName = namer.getClassOrProtocolName(it).objCName
-                        append("@protocol($protocolName); ")
-                    }
-                }
-            },
+            protocolNames.joinToString(separator = " ", prefix = "    ") { "@protocol($it);" },
             "}"
     )
 
-    val source = createTempFile("protocols", ".m").apply { deleteOnExit() }
-    source.writeLines(headerLines + protocolsStub)
-
-    val bitcode = createTempFile("protocols", ".bc").apply { deleteOnExit() }
-
-    val clangCommand = generationState.config.clang.clangC(
-            source.absolutePathString(),
-            "-O2",
-            "-emit-llvm",
-            "-c", "-o", bitcode.absolutePathString()
-    )
-
-    val result = Command(clangCommand).getResult(withErrors = true)
-
-    if (result.exitCode == 0) {
-        generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePathString()
+    val candidates = if (protocolStubHeaderLines.isEmpty()) {
+        listOf(headerLines)
     } else {
+        listOf(protocolStubHeaderLines, headerLines)
+    }
+
+    candidates.forEach { lines ->
+        val source = createTempFile("protocols", ".m").apply { deleteOnExit() }
+        source.writeLines(lines + protocolsStub)
+
+        val bitcode = createTempFile("protocols", ".bc").apply { deleteOnExit() }
+
+        val clangCommand = generationState.config.clang.clangC(
+                source.absolutePathString(),
+                "-O2",
+                "-emit-llvm",
+                "-c", "-o", bitcode.absolutePathString()
+        )
+
+        val result = Command(clangCommand).getResult(withErrors = true)
+
+        if (result.exitCode == 0) {
+            generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePathString()
+            return
+        }
         // Note: ignoring compile errors intentionally.
         // In this case resulting framework will likely be unusable due to compile errors when importing it.
     }
