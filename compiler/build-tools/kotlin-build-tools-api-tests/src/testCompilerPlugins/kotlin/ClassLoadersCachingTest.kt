@@ -31,7 +31,7 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
             })
 
-            module.compile(forceOutput = LogLevel.INFO) {
+            module.compile {
                 assertLogContainsPatterns(LogLevel.INFO, "Creating new classloader for classpath.*".toRegex())
             }
             module.compile {
@@ -54,7 +54,7 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
             kotlinToolchains.clearClassloadersCache()
 
             module.replaceFileWithVersion("main.kt", "step1")
-            module.compile(forceOutput = LogLevel.INFO) {
+            module.compile {
                 assertLogContainsPatterns(LogLevel.INFO, "Creating new classloader for classpath.*".toRegex())
             }
 
@@ -82,7 +82,7 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
                 operation[BuildOperation.ENABLE_CLASSLOADER_CACHE] = false
             })
 
-            module.compile(forceOutput = LogLevel.INFO) {
+            module.compile {
                 assertLogDoesNotContainPatterns(LogLevel.INFO, "Creating new classloader for classpath.*".toRegex())
             }
         }
