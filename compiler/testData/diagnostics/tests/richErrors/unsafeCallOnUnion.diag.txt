@@ -1,0 +1,85 @@
+/unsafeCallOnUnion.kt:4:1: error: Modifier 'error' is not applicable to 'class'.
+
+/unsafeCallOnUnion.kt:7:6: error: Unsafe call on receiver of union type 'String | Foo'. Consider using a safe call '|.'.
+
+/unsafeCallOnUnion.kt:9:6: error: Unsafe call on receiver of nullable union type 'String? | Foo'.
+
+/unsafeCallOnUnion.kt:10:6: error: Unsafe call on receiver of nullable union type 'String? | Foo'.
+
+/unsafeCallOnUnion.kt:11:6: error: Unsafe call on receiver of nullable union type 'String? | Foo'.
+
+/unsafeCallOnUnion.kt:13:6: error: Unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
+
+/unsafeCallOnUnion.kt:14:6: error: Unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
+
+/unsafeCallOnUnion.kt:16:6: error: Unsafe call on receiver of union type 'String | Foo'. Consider using a safe call '|.'.
+
+/unsafeCallOnUnion.kt:18:6: error: Unsafe call on receiver of nullable union type 'String? | Foo'.
+
+/unsafeCallOnUnion.kt:19:6: error: Unsafe call on receiver of nullable union type 'String? | Foo'.
+
+/unsafeCallOnUnion.kt:20:6: error: Unsafe call on receiver of nullable union type 'String? | Foo'.
+
+/unsafeCallOnUnion.kt:22:6: error: Unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
+
+/unsafeCallOnUnion.kt:23:6: error: Unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
+
+/unsafeCallOnUnion.kt:29:15: error: Method 'iterator()' cannot be called on receiver of union type 'List<String> | Foo' in a for-loop.
+
+/unsafeCallOnUnion.kt:30:15: error: Method 'iterator()' cannot be called on receiver of nullable union type 'List<String>? | Foo' in a for-loop.
+
+/unsafeCallOnUnion.kt:31:15: error: Method 'iterator()' cannot be called on receiver of nullable type 'List<String>?' in a for-loop.
+
+/unsafeCallOnUnion.kt:36:5: error: Unsafe implicit 'invoke' call on receiver of union type '() -> Unit | Foo'. Consider using a safe call '|.invoke'.
+
+/unsafeCallOnUnion.kt:37:5: error: Unsafe implicit 'invoke' call on receiver of nullable union type '(() -> Unit)? | Foo'.
+
+/unsafeCallOnUnion.kt:38:5: error: Unsafe implicit 'invoke' call on receiver of nullable type '(() -> Unit)?'. Consider using a safe call '?.invoke' or non-null asserted call '!!()'.
+
+/unsafeCallOnUnion.kt:50:7: error: Unsafe infix call on receiver of union type 'A | Foo'. Consider using a safe call '|.'.
+
+/unsafeCallOnUnion.kt:51:7: error: Unsafe infix call on receiver of union type 'A | Foo'. Consider using a safe call '|.'.
+
+/unsafeCallOnUnion.kt:52:7: error: Unsafe infix call on receiver of nullable union type 'A? | Foo'.
+
+/unsafeCallOnUnion.kt:53:7: error: Unsafe infix call on receiver of nullable union type 'A? | Foo'.
+
+/unsafeCallOnUnion.kt:54:7: error: Unsafe infix call on receiver of nullable type 'A?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
+
+/unsafeCallOnUnion.kt:55:7: error: Unsafe infix call on receiver of nullable type 'A?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
+
+/unsafeCallOnUnion.kt:59:7: error: Unsafe operator call on receiver of union type 'A | Foo'. Consider using a safe call '|.'.
+
+/unsafeCallOnUnion.kt:60:7: error: Unsafe operator call on receiver of union type 'A | Foo'. Consider using a safe call '|.'.
+
+/unsafeCallOnUnion.kt:61:7: error: Unsafe operator call on receiver of nullable union type 'A? | Foo'.
+
+/unsafeCallOnUnion.kt:62:7: error: Unsafe operator call on receiver of nullable union type 'A? | Foo'.
+
+/unsafeCallOnUnion.kt:63:7: error: Unsafe operator call on receiver of nullable type 'A?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
+
+/unsafeCallOnUnion.kt:64:7: error: Unsafe operator call on receiver of nullable type 'A?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
+
+/unsafeCallOnUnion.kt:68:5: warning: Expression is unused.
+
+/unsafeCallOnUnion.kt:68:8: error: Bound callable reference cannot be created on receiver of union type 'String | Foo'.
+
+/unsafeCallOnUnion.kt:69:5: warning: Expression is unused.
+
+/unsafeCallOnUnion.kt:69:8: error: Bound callable reference cannot be created on receiver of union type 'String | Foo'.
+
+/unsafeCallOnUnion.kt:70:5: warning: Expression is unused.
+
+/unsafeCallOnUnion.kt:70:8: error: Bound callable reference cannot be created on receiver of nullable union type 'String? | Foo'.
+
+/unsafeCallOnUnion.kt:71:5: warning: Expression is unused.
+
+/unsafeCallOnUnion.kt:71:8: error: Bound callable reference cannot be created on receiver of nullable union type 'String? | Foo'.
+
+/unsafeCallOnUnion.kt:72:5: warning: Expression is unused.
+
+/unsafeCallOnUnion.kt:72:8: error: Bound callable reference cannot be created on receiver of nullable type 'String?'.
+
+/unsafeCallOnUnion.kt:73:5: warning: Expression is unused.
+
+/unsafeCallOnUnion.kt:73:8: error: Bound callable reference cannot be created on receiver of nullable type 'String?'.

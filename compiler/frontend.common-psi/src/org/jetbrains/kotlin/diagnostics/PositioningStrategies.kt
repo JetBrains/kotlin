@@ -983,7 +983,7 @@ object PositioningStrategies {
                     left.findDescendantOfType<KtDotQualifiedExpression>()?.let { return mark(it) }
                 }
             }
-            if (element is KtDotQualifiedExpression) {
+            if (element is KtQualifiedExpression) {
                 return mark(element.operationTokenNode.psi)
             }
             // Fallback to mark the callee reference.
