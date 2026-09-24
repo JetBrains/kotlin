@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
-class KlibIcDeserializedContainerSource(packageFqName: FqName) : DeserializedContainerSource {
+class KlibIcDeserializedContainerSource(val klibIcData: KlibIcData, packageFqName: FqName) : DeserializedContainerSource {
     override val presentableString: String = "Package '$packageFqName'"
     override val incompatibility: IncompatibleVersionErrorData<*>? get() = null
     override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo.DEFAULT_VISIBLE

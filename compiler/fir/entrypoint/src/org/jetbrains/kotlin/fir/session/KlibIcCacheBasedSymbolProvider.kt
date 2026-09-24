@@ -59,6 +59,6 @@ class KlibIcCacheBasedSymbolProvider(
     }
 
     override fun createDeserializedContainerSource(resolvedLibrary: KlibIcData, packageFqName: FqName): DeserializedContainerSource {
-        return KlibIcDeserializedContainerSource(packageFqName)
+        return KlibIcDeserializedContainerSource(resolvedLibrary, packageFqName)
     }
 }

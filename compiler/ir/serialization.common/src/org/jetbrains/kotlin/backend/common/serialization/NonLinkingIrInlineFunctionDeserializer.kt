@@ -17,12 +17,13 @@ import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
+import org.jetbrains.kotlin.library.metadata.KlibIcDeserializedContainerSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
@@ -45,8 +46,8 @@ class NonLinkingIrInlineFunctionDeserializer(
      */
     private val detachedSymbolTable = SymbolTable(signaturer = null, irBuiltIns.irFactory)
 
-    private val moduleDeserializers = hashMapOf<KotlinLibrary, ModuleDeserializer?>()
-    private val modules = hashMapOf<KotlinLibrary, IrModuleFragment>()
+    private val moduleDeserializers = hashMapOf<DeserializedContainerSource, ModuleDeserializer?>()
+    private val modules = hashMapOf<DeserializedContainerSource, IrModuleFragment>()
 
     fun deserializeInlineFunction(function: IrSimpleFunction): IrSimpleFunction? {
         check(function.isInline) { "Non-inline function: ${function.render()}" }
@@ -60,14 +61,17 @@ class NonLinkingIrInlineFunctionDeserializer(
         if (function.getPackageFragment() !is IrExternalPackageFragment) return null
 
         val deserializedContainerSource = function.containerSource
-        check(deserializedContainerSource is KlibDeserializedContainerSource) {
-            "Cannot deserialize inline function from a non-Kotlin library: ${function.render()}\nFunction source: " +
-                    deserializedContainerSource?.let { "${it::class.java}, ${it.presentableString}" }
+        val klibComponent = when (deserializedContainerSource) {
+            is KlibDeserializedContainerSource -> deserializedContainerSource.klib.inlinableFunctionsIr
+            is KlibIcDeserializedContainerSource -> deserializedContainerSource.klibIcData.inlineData
+            else -> error {
+                "Cannot deserialize inline function from a non-Kotlin library: ${function.render()}\nFunction source: " +
+                        deserializedContainerSource?.let { "${it::class.java}, ${it.presentableString}" }
+            }
         }
 
-        val library = deserializedContainerSource.klib
-        val moduleDeserializer = moduleDeserializers.getOrPut(library) {
-            library.inlinableFunctionsIr?.let { inlinableFunctionsIr ->
+        val moduleDeserializer = moduleDeserializers.getOrPut(deserializedContainerSource) {
+            klibComponent?.let { inlinableFunctionsIr ->
                 ModuleDeserializer(
                     inlinableFunctionsIr = inlinableFunctionsIr,
                     detachedSymbolTable = detachedSymbolTable,
@@ -82,7 +86,7 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         val functionSignature: IdSignature = signatureComputer.computeSignature(function)
         // Inside the module deserializer "functionSignature" will be mapped to erased copy of inline function and this copy will be returned.
-        val originalFunctionModule = modules.getOrPut(library) { function.moduleFragment }
+        val originalFunctionModule = modules.getOrPut(deserializedContainerSource) { function.moduleFragment }
         val deserializedFunction: IrSimpleFunction =
             moduleDeserializer.deserializeInlineFunction(functionSignature, function.getPackageFragment(), originalFunctionModule)
                 ?: return null
