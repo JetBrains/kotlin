@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.isArrayOfOrArrayDotOfFunction
+import org.jetbrains.kotlin.fir.declarations.unwrapArgumentsOfArrayOfCall
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.evalBinaryOp
 import org.jetbrains.kotlin.resolve.constants.evaluate.evalUnaryOp
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 @RequiresOptIn(
@@ -300,18 +302,23 @@ object FirExpressionEvaluator {
         }
 
         override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?): FirEvaluatorResult {
-            var coneType = getClassCall.argument.getExpandedType()
-
-            if (coneType is ConeErrorType)
-                return NotConst(getClassCall.source)
-
-            while (coneType.classId == StandardClassIds.Array)
-                coneType = (coneType.lowerBoundIfFlexible().typeArguments.first() as? ConeKotlinTypeProjection)?.type ?: break
-
             val argument = getClassCall.argument
+            var coneType = argument.getExpandedType()
+
+            val argumentIsError = coneType is ConeErrorType
+
+            if (!argumentIsError) {
+                while (coneType.classId == StandardClassIds.Array)
+                    coneType = (coneType.lowerBoundIfFlexible().typeArguments.first() as? ConeKotlinTypeProjection)?.type ?: break
+            }
+
             return when {
                 coneType is ConeTypeParameterType -> KClassLiteralOfTypeParameterError(getClassCall.source)
-                argument is FirResolvedQualifier || argument is FirClassReferenceExpression -> getClassCall.wrap()
+
+                // The last condition is not only to avoid reporting of ARGUMENT_IS_NOT_CONST when there is
+                //  already UNRESOLVED_REFERENCE, but actually required for KAPT to work on unresolved
+                //  class literals.
+                argument is FirResolvedQualifier || argument is FirClassReferenceExpression || argumentIsError -> getClassCall.wrap()
                 else -> NotKClassLiteral(getClassCall.source)
             }
         }
@@ -517,7 +524,7 @@ object FirExpressionEvaluator {
             if (useArrayLiteralResolution()) return NotConst(functionCall.source)
 
             // vararg argument needs to be flattened
-            val flatArguments = functionCall.arguments.flatMap { (it as? FirVarargArgumentsExpression)?.arguments ?: [] }
+            val flatArguments = functionCall.unwrapArgumentsOfArrayOfCall()
             return buildCollectionLiteral {
                 source = functionCall.source
                 coneTypeOrNull = functionCall.resolvedType

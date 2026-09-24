@@ -1314,6 +1314,9 @@ abstract class ParameterizedKaptStubConverter<
             is FirVarargArgumentsExpression -> {
                 convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments)
             }
+            is FirFunctionCall if (value.isArrayOfOrArrayDotOfCall()) -> {
+                convertConstantValueArgumentsFir(containingClass, constantValue, value.unwrapArgumentsOfArrayOfCall())
+            }
             is FirGetClassCall -> {
                 convertFirGetClassCall(value)
             }
@@ -1376,9 +1379,12 @@ abstract class ParameterizedKaptStubConverter<
     }
 
     private fun convertFirSpreadArgumentExpression(argumentExpression: FirSpreadArgumentExpression): Expression {
-        val literal = argumentExpression.expression as? FirCollectionLiteral
-            ?: return makeArray(emptyList())
-        val converted = literal.arguments.mapNotNull(::convertFirGetClassCall)
+        val arguments = when (val expression = argumentExpression.expression) {
+            is FirCollectionLiteral -> expression.arguments
+            is FirFunctionCall if (expression.isArrayOfOrArrayDotOfCall()) -> expression.unwrapArgumentsOfArrayOfCall()
+            else -> return makeArray([])
+        }
+        val converted = arguments.mapNotNull(::convertFirGetClassCall)
         return makeArray(converted)
     }
 

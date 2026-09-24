@@ -13,7 +13,7 @@ class A2
 @Ann3(arrayOf(A1::class, A2::class))
 class MyClass1
 
-@Ann1(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>A3<!>::class<!>)
+@Ann1(<!UNRESOLVED_REFERENCE!>A3<!>::class)
 class MyClass2
 
 val x = A1::class

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.isArrayOfOrArrayDotOfCall
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.unwrapArgumentsOfArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.isDisabled
@@ -317,9 +318,5 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     ) {
         if (annotationClassId != StandardClassIds.Annotations.ContextFunctionTypeParams) return
         source.requireFeatureSupport(LanguageFeature.ContextReceivers)
-    }
-
-    private fun FirFunctionCall.unwrapArgumentsOfArrayOfCall(): List<FirExpression> {
-        return arguments.flatMap { (it as? FirVarargArgumentsExpression)?.arguments ?: [it] }
     }
 }

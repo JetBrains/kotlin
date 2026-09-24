@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.resolve.ArrayFqNames
@@ -26,4 +29,11 @@ fun FirFunctionCall.isArrayOfCall(): Boolean {
 fun FirFunctionCall.isArrayOfOrArrayDotOfCall(): Boolean {
     val symbol = (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol ?: return false
     return symbol.isArrayOfOrArrayDotOfFunction()
+}
+
+/**
+ * Flattens arguments of `*arrayOf` call (they are wrapped into [FirVarargArgumentsExpression]).
+ */
+fun FirFunctionCall.unwrapArgumentsOfArrayOfCall(): List<FirExpression> {
+    return arguments.flatMap { (it as? FirVarargArgumentsExpression)?.arguments ?: [it] }
 }
