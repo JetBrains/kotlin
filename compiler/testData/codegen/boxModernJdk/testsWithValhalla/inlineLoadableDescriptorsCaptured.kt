@@ -58,6 +58,11 @@ fun box(): String {
     return "OK"
 }
 
-// 2 ATTRIBUTE LoadableDescriptors
+// Like the fields of the original objects, the fields for the captured values are listed.
+// 8 ATTRIBUTE LoadableDescriptors
 // 1 ATTRIBUTE LoadableDescriptors : LOther;, Ljava/lang/Integer;, LVal;\n
+// 3 ATTRIBUTE LoadableDescriptors : LOther;\n
+// 1 ATTRIBUTE LoadableDescriptors : LVal;, LOther;\n
+// 1 ATTRIBUTE LoadableDescriptors : Ljava/lang/Integer;\n
 // 1 ATTRIBUTE LoadableDescriptors : LVal;\n
+// 1 ATTRIBUTE LoadableDescriptors : LHolder;\n
