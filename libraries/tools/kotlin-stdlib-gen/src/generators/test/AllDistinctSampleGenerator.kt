@@ -45,7 +45,7 @@ object AllDistinctSampleGenerator {
     }
 
     private fun valOrInline(isSequence: Boolean, name: String, value: String): Pair<String, String> {
-        return if (isSequence) "" to value else "        val $name = $value\n" to name
+        return if (isSequence) "" to value else "\n        val $name = $value\n" to name
     }
 
     private fun floatingPointShowcase(receiver: Receiver, primitive: PrimitiveType?): String {
@@ -73,9 +73,7 @@ object AllDistinctSampleGenerator {
     fun allDistinct() {
         assertPrints(${receiver()}.allDistinct(), "true")
         assertPrints(${receiver(single)}.allDistinct(), "true")
-
 $distinctDecl        assertPrints($distinctRef.allDistinct(), "true")
-
 $duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$fpShowcase
     }"""
         )
@@ -99,7 +97,6 @@ $duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$fpShowc
     fun allDistinctBy() {
         assertPrints(${receiver()}.allDistinctBy { $firstSelector }, "true")
         assertPrints(${receiver(singleElement)}.allDistinctBy { $firstSelector }, "true")
-
 $valuesDecl$assertionLines
     }"""
         )

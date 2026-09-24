@@ -19,9 +19,7 @@ class AllEqualSequencesSamples {
     fun allEqual() {
         assertPrints(sequenceOf<String>().allEqual(), "true")
         assertPrints(sequenceOf("apple").allEqual(), "true")
-
         assertPrints(sequenceOf("apple", "apple", "apple").allEqual(), "true")
-
         assertPrints(sequenceOf("apple", "apple", "orange").allEqual(), "false")
     }
 
@@ -29,7 +27,6 @@ class AllEqualSequencesSamples {
     fun allEqualBy() {
         assertPrints(sequenceOf<String>().allEqualBy { it.length }, "true")
         assertPrints(sequenceOf("apple").allEqualBy { it.length }, "true")
-
         assertPrints(sequenceOf("apple", "mango", "peach").allEqualBy { it.length }, "true")
         assertPrints(sequenceOf("apple", "mango", "peach").allEqualBy { it }, "false")
     }

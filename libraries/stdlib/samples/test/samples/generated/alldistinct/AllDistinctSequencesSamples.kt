@@ -19,9 +19,7 @@ class AllDistinctSequencesSamples {
     fun allDistinct() {
         assertPrints(sequenceOf<String>().allDistinct(), "true")
         assertPrints(sequenceOf("apple").allDistinct(), "true")
-
         assertPrints(sequenceOf("apple", "mango", "peach").allDistinct(), "true")
-
         assertPrints(sequenceOf("apple", "mango", "apple").allDistinct(), "false")
     }
 
@@ -29,7 +27,6 @@ class AllDistinctSequencesSamples {
     fun allDistinctBy() {
         assertPrints(sequenceOf<String>().allDistinctBy { it.length }, "true")
         assertPrints(sequenceOf("apple").allDistinctBy { it.length }, "true")
-
         assertPrints(sequenceOf("apple", "mango", "peach").allDistinctBy { it.length }, "false")
         assertPrints(sequenceOf("apple", "mango", "peach").allDistinctBy { it }, "true")
     }

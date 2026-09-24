@@ -45,7 +45,7 @@ object AllEqualSampleGenerator {
     }
 
     private fun valOrInline(isSequence: Boolean, name: String, value: String): Pair<String, String> {
-        return if (isSequence) "" to value else "        val $name = $value\n" to name
+        return if (isSequence) "" to value else "\n        val $name = $value\n" to name
     }
 
     private fun BufferedWriter.writeAllEqualSample(
@@ -63,9 +63,7 @@ object AllEqualSampleGenerator {
     fun allEqual() {
         assertPrints(${receiver()}.allEqual(), "true")
         assertPrints(${receiver(equal)}.allEqual(), "true")
-
 $sameDecl        assertPrints($sameRef.allEqual(), "true")
-
 $mixedDecl        assertPrints($mixedRef.allEqual(), "false")
     }"""
         )
@@ -89,7 +87,6 @@ $mixedDecl        assertPrints($mixedRef.allEqual(), "false")
     fun allEqualBy() {
         assertPrints(${receiver()}.allEqualBy { $firstSelector }, "true")
         assertPrints(${receiver(singleElement)}.allEqualBy { $firstSelector }, "true")
-
 $valuesDecl$assertionLines
     }"""
         )
