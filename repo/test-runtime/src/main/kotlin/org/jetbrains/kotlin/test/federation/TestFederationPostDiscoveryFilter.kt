@@ -37,24 +37,10 @@ internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
         if (TestSubset.PlainTests in subsets) {
             val isContractTest = descriptor.tags.any { it.name.startsWith("contract:") }
             if (!isSmokeTest && !isContractTest) return included("'${TestSubset.PlainTests}' is requested")
-            if (isExhaustiveCapable(source)) {
-                return included("'${TestSubset.PlainTests}' is requested (exhaustive-capable test, also selected for full variant coverage)")
-            }
         }
 
         return excluded("Not selected automatically / Not @MustRunAlways / Not a contract test")
     }
-}
-
-/**
- * Returns true for test methods that produce multiple execution variants — i.e., methods annotated
- * (directly or via meta-annotation) with `@TestTemplate` (which covers `@ParameterizedTest` and
- * `@RepeatedTest`) or `@TestFactory`. These are the methods controlled by [testFederationExhaustive].
- */
-private fun isExhaustiveCapable(source: MethodSource): Boolean {
-    val method = source.javaMethod
-    return AnnotationSupport.isAnnotated(method, TestTemplate::class.java) ||
-            AnnotationSupport.isAnnotated(method, TestFactory::class.java)
 }
 
 /**

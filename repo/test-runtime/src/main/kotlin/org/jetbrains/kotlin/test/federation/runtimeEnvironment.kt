@@ -15,17 +15,6 @@ const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
 private const val ALL_SUBSETS_NOTATION = "*"
 
 /**
- * Whether the current run should exercise the full exhaustive variant set for `@Parameterized`, `@Repeated`,
- * `@TestTemplate`, and `@TestFactory` methods. When `false`, only the minimal variant (e.g. a single
- * Gradle/JDK version) is used to keep pre-merge smoke/contract runs fast.
- *
- * This is `true` whenever [TestSubset.PlainTests] is among the requested subsets, because `PlainTests`
- * represents a complete, non-smoke, non-contract run where full coverage is expected.
- */
-val testFederationExhaustive: Boolean
-    get() = TestSubset.PlainTests in testFederationSubsets
-
-/**
  * Provides the configured test subsets. Defaults to every subset (`*`) when [TEST_FEDERATION_SUBSETS_KEY]
  * is not explicitly configured.
  */

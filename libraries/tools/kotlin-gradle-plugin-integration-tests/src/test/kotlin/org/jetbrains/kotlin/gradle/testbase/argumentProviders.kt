@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
-import org.jetbrains.kotlin.testFederation.testFederationExhaustive
 import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -148,8 +147,6 @@ open class GradleArgumentsProvider : ArgumentsProvider {
         // Max is used for cases when test is annotated with `@GradleTestVersions(minVersion = LATEST)` but MAX_SUPPORTED isn't latest
         val maxGradleVersion = maxOf(GradleVersion.version(versionsAnnotation.maxVersion), minGradleVersion)
 
-        if (!testFederationExhaustive) return setOf(maxGradleVersion)
-
         val additionalGradleVersions = versionsAnnotation
             .additionalVersions
             .map(GradleVersion::version)
@@ -248,10 +245,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
             .map {
                 Arguments.of(it.first, it.second)
             }
-            .run {
-                if (testFederationExhaustive) toList()
-                else toList().takeLast(1)
-            }
+            .toList()
             .stream()
     }
 
@@ -345,10 +339,6 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
                 null
             }
         )
-
-        if (!testFederationExhaustive) {
-            agpVersions = setOf(agpVersions.last())
-        }
 
         val gradleVersions = gradleVersions(context)
         val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")

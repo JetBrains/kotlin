@@ -174,31 +174,3 @@ open class PseudoLifecycleTest {
 
 @Suppress("JUnitTestCaseWithNoTests")
 class PseudoInheritedTest : PseudoLifecycleTest()
-
-/**
- * A smoke-tagged parameterized test whose variant set depends on [testFederationExhaustive]:
- * - `SmokeTests` requested: `testFederationExhaustive = false` → only the minimal variant runs
- * - `PlainTests` requested: `testFederationExhaustive = true` → all variants run
- *
- * This mirrors the real usage pattern in the codebase (e.g. `GradleArgumentsProvider`,
- * `DefaultStrategyAgnosticCompilationTestArgumentProvider`) where expensive extra variants
- * (additional Gradle versions, daemon execution policy) are skipped in focused subset runs.
- */
-class PseudoExhaustiveAwareTest {
-    @MustRunAlways
-    @ParameterizedTest
-    @ArgumentsSource(ExhaustiveAwareArgumentsProvider::class)
-    fun `exhaustive aware smoke test`(variant: String) = println("Executed: $variant")
-}
-
-class ExhaustiveAwareArgumentsProvider : ArgumentsProvider {
-    private val allVariants = listOf("minimal", "extra 1", "extra 2")
-
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        val variants =
-            if (testFederationExhaustive) allVariants
-            else listOf(allVariants.first())
-
-        return variants.stream().map { Arguments.of(it) }
-    }
-}

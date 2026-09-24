@@ -732,33 +732,6 @@ class TestFederationFunctionalTest {
     }
 
     /**
-     * Demonstrates the real use case for `testFederationExhaustive`:
-     * a smoke-tagged parameterized test runs only the minimal variant when SmokeTests is requested
-     * (fast pre-merge check) but runs all variants when PlainTests is requested (full coverage).
-     *
-     * This mirrors external ArgumentsProviders (e.g. `GradleArgumentsProvider`) that use
-     * `testFederationExhaustive` to decide whether to include extra Gradle/JDK/AGP versions.
-     */
-    @Test
-    fun `test - testFederationExhaustive - parameterized smoke test runs minimal variant in SmokeTests but all variants in PlainTests`() {
-        val testClass = "org.jetbrains.kotlin.testFederation.PseudoExhaustiveAwareTest"
-
-        val smokeVariants = runTestEvents(SmokeTests, testFilter = testClass)
-        assertEquals(
-            listOf("Executed: minimal"),
-            smokeVariants,
-            "SmokeTests: testFederationExhaustive=false → only the minimal variant should run"
-        )
-
-        val plainVariants = runTestEvents(PlainTests, testFilter = testClass)
-        assertEquals(
-            listOf("Executed: extra 1", "Executed: extra 2", "Executed: minimal"),
-            plainVariants,
-            "PlainTests: testFederationExhaustive=true → all variants should run"
-        )
-    }
-
-    /**
      * Invariant: executing `*` (all subsets together in one run) selects the same tests as
      * executing each subset in separate runs. Contracts are folded into a single run to keep
      * execution time short — only the contracts covered by PseudoTest annotations are used.
