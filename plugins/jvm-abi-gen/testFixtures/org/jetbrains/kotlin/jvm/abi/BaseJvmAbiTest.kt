@@ -103,7 +103,7 @@ abstract class BaseJvmAbiTest {
 
             if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// VALHALLA_VALUE_CLASSES") != null) {
                 valhallaValueClasses = true
-                jvmTarget = "27"
+                jvmTarget = "28"
                 enableJvmPreview = true
             }
 

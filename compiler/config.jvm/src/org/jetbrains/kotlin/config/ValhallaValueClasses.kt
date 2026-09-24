@@ -15,9 +15,16 @@ fun ValueClassRepresentation<*>?.isKotlinValhallaValueClass(languageVersionSetti
 }
 
 /**
+ * Whether value classes (JEP 401) are available with [jvmTarget]: they are a preview feature since JVM 28, so they also need JVM preview
+ * features to be enabled ([isJvmPreviewEnabled]).
+ */
+fun isJvmTargetValhallaCompatible(jvmTarget: JvmTarget, isJvmPreviewEnabled: Boolean): Boolean =
+    isJvmPreviewEnabled && jvmTarget >= JvmTarget.JVM_28
+
+/**
  * Whether every value class is compiled to and behaves as a Project Valhalla value class, selected via `-Xvalhalla-value-classes`.
  *
- * Requires a Valhalla-compatible JDK: when disabled, no declaration is compiled as a Valhalla value class and regular JVM bytecode
- * is generated.
+ * Requires JVM target 28 or later and the `-Xjvm-enable-preview` flag. When disabled, no declaration is compiled as a Valhalla value
+ * class and regular JVM bytecode is generated.
  */
 fun LanguageVersionSettings.isValhallaSupportEnabled(): Boolean = getFlag(JvmAnalysisFlags.valhallaValueClasses)
