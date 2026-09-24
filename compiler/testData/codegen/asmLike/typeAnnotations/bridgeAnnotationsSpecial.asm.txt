@@ -26,7 +26,7 @@ public class B : java/lang/Object {
       @Lkotlin/jvm/JvmName;([name="customName"]) // invisible
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
-    public final void testExposeBoxed-WZ4Q5Ns(int t)
+    public final void testExposeBoxed-WZ4Q5Ns(int $v$c$kotlin-UInt$-t)
 
     public final void testExposeBoxedBoxed(kotlin.UInt t)
       @Lkotlin/jvm/JvmExposeBoxed;([jvmName="testExposeBoxedBoxed"]) // invisible
