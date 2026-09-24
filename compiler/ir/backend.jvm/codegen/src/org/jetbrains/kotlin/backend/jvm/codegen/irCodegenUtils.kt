@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
-import org.jetbrains.kotlin.config.isValhallaSupportEnabled
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -82,7 +82,7 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
         visibility === DescriptorVisibilities.LOCAL -> Opcodes.ACC_PUBLIC
         else -> getVisibilityAccessFlag()
     }
-    val isIdentity = isValhallaSupportEnabled(context) &&
+    val isIdentity = context.writesIdentityFlags &&
             !isInterface &&
             !isAnnotationClass &&
             !isKotlinValhallaValueClass(context.config.languageVersionSettings) &&
@@ -95,8 +95,11 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
 }
 
 
-private fun isValhallaSupportEnabled(context: JvmBackendContext): Boolean =
-    context.configuration.languageVersionSettings.isValhallaSupportEnabled()
+// `ACC_IDENTITY` (JEP 401) is only meaningful in preview class files of JVM target 28 or later. There, identity classes need it in
+// their `InnerClasses` entries too: the JVM rejects a non-final, non-abstract class without it, and reflection reads a nested
+// class's identity from its `InnerClasses` entry.
+private val JvmBackendContext.writesIdentityFlags: Boolean
+    get() = isJvmTargetValhallaCompatible(config.target, configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW))
 
 private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
     when (kind) {

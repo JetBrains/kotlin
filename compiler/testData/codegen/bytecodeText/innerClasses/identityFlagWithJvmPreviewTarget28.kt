@@ -8,6 +8,6 @@ class A {
     interface I
 }
 
-// 2 public final static INNERCLASS A\$B A B
-// 2 public static INNERCLASS A\$C A C
+// 2 public final static synchronized INNERCLASS A\$B A B
+// 2 public static synchronized INNERCLASS A\$C A C
 // 2 public static abstract INNERCLASS A\$I A I
