@@ -236,13 +236,14 @@ class ClassCodegen private constructor(
             // A field of the class's own type is never listed: the class is already being loaded, so there is nothing to preload
             // (matches javac, which excludes only the exact self-type — mutually-referential value classes still list each other).
             fieldClass == irClass -> false
+            // Neither is an abstract value class (matches javac): only concrete value classes can be flattened.
+            fieldClass?.modality == Modality.ABSTRACT || fieldClass?.modality == Modality.SEALED -> false
             // A Kotlin value class compiled as a Valhalla value class
             fieldClass?.isKotlinValhallaValueClass(languageVersionSettings) == true -> true
             // A value class defined in Java (`value class`, resolved from source or a binary/jar dependency).
             fieldClass?.isJavaValueClass == true -> true
-            // A field of a JDK value-based class (JEP 401 migrates all of them to value classes) is loadable, exactly like javac.
-            // The set covers the whole value-based list (wrappers, java.time, Optional, …), not just boxed primitives.
-            descriptor in JDK_VALUE_BASED_FIELD_DESCRIPTORS -> true
+            // A field of a JDK class that JEP 401 migrates to a concrete value class is loadable, exactly like javac.
+            descriptor in JDK_VALUE_CLASS_DESCRIPTORS -> true
             else -> false
         }
     }
@@ -629,29 +630,22 @@ class ClassCodegen private constructor(
     }
 }
 
-// The JDK value-based classes (marked `@jdk.internal.ValueBased`). JEP 401 migrates all of them to value classes, so a field of
-// such a type must be listed in `LoadableDescriptors` exactly like a field of a user value class (this mirrors javac's output).
-// The set is the whole list of publicly-nameable value-based classes, retrieved from the target JDK (JEP 401 EA) rather than
-// limited to primitive wrappers; regenerate it by scanning the JDK image for classes carrying `@jdk.internal.ValueBased`:
-//   jimage extract --dir out "$JDK/lib/modules" && grep -rl 'jdk/internal/ValueBased' out
-// (internal implementation classes, which can never be a declared field type, are omitted.)
-private val JDK_VALUE_BASED_FIELD_DESCRIPTORS = setOf(
+// The concrete JDK classes that JEP 401 migrates to value classes, so a field of such a type must be listed in `LoadableDescriptors`
+// exactly like a field of a user value class (this mirrors javac's output). `Number` and `Record` become abstract value classes, which
+// javac never lists, and value-based classes such as `ZoneId` stay identity classes. Regenerate the set by listing the non-abstract
+// classes of the target JDK image whose `Class.isValue()` is true when preview features are enabled.
+private val JDK_VALUE_CLASS_DESCRIPTORS = setOf(
     // java.lang primitive wrappers
     "Ljava/lang/Boolean;", "Ljava/lang/Byte;", "Ljava/lang/Character;", "Ljava/lang/Short;",
     "Ljava/lang/Integer;", "Ljava/lang/Long;", "Ljava/lang/Float;", "Ljava/lang/Double;",
-    // other java.lang value-based classes
-    "Ljava/lang/Record;", "Ljava/lang/Runtime\$Version;",
     // java.time
     "Ljava/time/Duration;", "Ljava/time/Instant;", "Ljava/time/LocalDate;", "Ljava/time/LocalDateTime;",
     "Ljava/time/LocalTime;", "Ljava/time/MonthDay;", "Ljava/time/OffsetDateTime;", "Ljava/time/OffsetTime;",
     "Ljava/time/Period;", "Ljava/time/Year;", "Ljava/time/YearMonth;", "Ljava/time/ZonedDateTime;",
-    "Ljava/time/ZoneId;", "Ljava/time/ZoneOffset;",
     "Ljava/time/chrono/HijrahDate;", "Ljava/time/chrono/JapaneseDate;", "Ljava/time/chrono/MinguoDate;",
     "Ljava/time/chrono/ThaiBuddhistDate;",
     // java.util
     "Ljava/util/Optional;", "Ljava/util/OptionalDouble;", "Ljava/util/OptionalInt;", "Ljava/util/OptionalLong;",
-    // jdk.incubator.vector
-    "Ljdk/incubator/vector/Float16;",
 )
 
 private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): Int =
