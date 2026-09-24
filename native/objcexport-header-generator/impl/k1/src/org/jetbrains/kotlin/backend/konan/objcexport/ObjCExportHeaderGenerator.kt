@@ -57,8 +57,13 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
 
     @InternalKotlinNativeApi
     fun buildInterface(objCCacheUnits: ObjCExportUnits? = null): ObjCExportedInterface {
-        val headerLines = build()
-        return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, mapper, objCCacheUnits)
+        val header = buildHeader()
+        val protocolStubHeaderLines =
+            if (insertedLines.isEmpty() && objCCacheUnits == null) emptyList() else header.renderForProtocolStubs()
+        return ObjCExportedInterface(
+            generatedClasses, extensions, topLevel, header.render(shouldExportKDoc, insertedLines), namer, mapper,
+            protocolStubHeaderLines, objCCacheUnits,
+        )
     }
 
     fun getExportStubs(): ObjCExportedStubs =

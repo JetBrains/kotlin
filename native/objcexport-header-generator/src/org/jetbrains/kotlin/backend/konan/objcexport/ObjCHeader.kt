@@ -37,6 +37,24 @@ data class ObjCHeader(
 
     fun render(exportKDoc: Boolean = true): List<String> = render(exportKDoc, emptyList())
 
+    fun renderForProtocolStubs(): List<String> {
+        val definedClasses = stubs.filterIsInstance<ObjCInterface>().filter { it.categoryName == null }.mapTo(mutableSetOf()) { it.name }
+        val declaredProtocols = stubs.filterIsInstance<ObjCProtocol>().mapTo(protocolForwardDeclarations.toMutableSet()) { it.name }
+        val undeclaredProtocols = stubs.filterIsInstance<ObjCClass>().flatMap { it.superProtocols }.filter { it !in declaredProtocols }.distinct()
+        val standIns = buildList {
+            if (undeclaredProtocols.isNotEmpty()) add("@protocol ${undeclaredProtocols.joinToString()};")
+            classForwardDeclarations.filter { it.className !in definedClasses }.forEach {
+                add(buildString {
+                    append("@interface ${it.className}")
+                    formatGenerics(this, it.typeDeclarations)
+                    append(" : NSObject")
+                })
+                add("@end")
+            }
+        }
+        return render(exportKDoc = false, listOf(0 to standIns))
+    }
+
     fun render(exportKDoc: Boolean, insertions: List<Pair<Int, List<String>>>): List<String> {
         return buildList {
             addImports(foundationImports)
