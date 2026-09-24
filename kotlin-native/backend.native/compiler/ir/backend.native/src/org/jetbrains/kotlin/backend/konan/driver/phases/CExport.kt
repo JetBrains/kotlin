@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
 import org.jetbrains.kotlin.backend.konan.LinkKlibsOutput
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
@@ -40,10 +41,10 @@ internal val BuildCExportsFromIr = createSimpleNamedCompilerPhase<NativeBackendP
 ) { context, input ->
     val config = context.config
     val prefix = config.cExportPrefix
-    val exportedFragments = (config.loadedKlibs.included + config.loadedKlibs.exported)
-            .mapNotNull { input.irModules[it.path] }
-            .distinct()
-    CAdapterIrGenerator(prefix, input.irBuiltIns).buildExports(exportedFragments)
+    val exportedLibraries = (config.loadedKlibs.included + config.loadedKlibs.exported).toSet()
+    // `input.irModules` is in reverse-topological order(a dependency before its dependent), which matches the K1 path.
+    val orderedFragments = input.irModules.filter { it.kotlinLibrary in exportedLibraries }
+    CAdapterIrGenerator(prefix, input.irBuiltIns).buildExports(orderedFragments)
 }
 
 private val NativeSecondStageCompilationConfig.cExportPrefix: String
