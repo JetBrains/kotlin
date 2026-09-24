@@ -132,6 +132,10 @@ fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
     return toRegularClassSymbol(session)?.isInlineOrValue == true
 }
 
+@OptIn(SymbolInternals::class)
+val FirRegularClassSymbol.isJavaValueClass: Boolean
+    get() = fir.isJavaValueClass == true
+
 fun ConeKotlinType.isInlineClass(session: FirSession): Boolean =
     with(session.typeContext) { typeConstructor().isInlineClass() }
 
