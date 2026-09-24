@@ -478,9 +478,14 @@ private fun String.escapeForValueClassParameterName(): String = asIterable().joi
  * instance. They cannot clash with names of user-declared variables, which is exactly what the previously used
  * `arg0` name did, see KT-73995.
  *
- * The contract is: a slot with such a name always holds the underlying value of [bound], never a boxed instance.
- * The slot may hold `null` if the declared type was a nullable inline class over a non-null reference type;
- * in that case the value class instance itself is `null`.
+ * The contract is: a slot with such a name always holds the underlying value of [bound], never a boxed instance
+ * of [bound] itself (although the underlying value may in turn be a boxed instance of another inline class).
+ * The slot may hold `null` in exactly one of two mutually exclusive situations, which the debugger can tell apart
+ * by looking at the underlying type of [bound]:
+ * - the underlying type is a non-null reference type: the declared parameter type was `bound?`, and the instance
+ *   itself is `null`;
+ * - the underlying type is nullable: the declared parameter type was a non-null `bound` (a nullable one would have
+ *   been boxed), and the instance wraps `null`.
  *
  * Since the escaping never produces `$-` inside the encoded fq name, everything after the first `$-` is the
  * original parameter name, verbatim.
