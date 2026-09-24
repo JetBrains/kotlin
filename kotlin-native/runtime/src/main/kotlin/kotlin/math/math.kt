@@ -564,6 +564,7 @@ public actual fun Double.withSign(sign: Int): Double = withSign(sign.toDouble())
  * Special cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
+ *   - `x.ulp` is `2^971` when `x` is `Double.MAX_VALUE` or `-Double.MAX_VALUE`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
  *
  * @sample samples.math.MathSamples.Doubles.ulp
@@ -571,13 +572,17 @@ public actual fun Double.withSign(sign: Int): Double = withSign(sign.toDouble())
  */
 @SinceKotlin("1.2")
 public actual val Double.ulp: Double
-    get() = when {
-        isNaN() -> Double.NaN
-        isInfinite() -> Double.POSITIVE_INFINITY
-        this == Double.MAX_VALUE || this == -Double.MAX_VALUE -> 2.0.pow(971)
-        else -> {
-            val d = absoluteValue
-            d.nextUp() - d
+    get() {
+        val magnitude = abs(this)
+        val bits = magnitude.toRawBits()
+        // 1. Check the exponent: drop 52 fraction bits and check if what's left is 0x7ffL (the sign bit isn't set, all eight exponent bits
+        // are), if yes, it's either NaN or +Inf.
+        return if (bits shr 52 != 0x7ffL) {
+            // 2.1. If magnitude is Double.MAX_VALUE, return 2^971, otherwise the difference between magnitude.nextUp() & magnitude.
+            if (bits == 0x7fef_ffff_ffff_ffffL) Double.fromBits(0x7ca0_0000_0000_0000L) else Double.fromBits(bits + 1) - magnitude
+        } else {
+            // 2.2. If this is NaN, return as-is (abs won't change it), if this is +Inf or -Inf, return +Inf.
+            magnitude
         }
     }
 
@@ -1239,7 +1244,8 @@ public actual fun Float.withSign(sign: Int): Float = withSign(sign.toFloat())
  * Special cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
- *   - `0.0.ulp` is `Float.MIN_VALUE`
+ *   - `x.ulp` is `2^104` when `x` is `Float.MAX_VALUE` or `-Float.MAX_VALUE`
+ *   - `0.0f.ulp` is `Float.MIN_VALUE`
  *
  * @see nextUp
  * @see nextDown
@@ -1249,13 +1255,17 @@ public actual fun Float.withSign(sign: Int): Float = withSign(sign.toFloat())
  */
 @SinceKotlin("1.2")
 public val Float.ulp: Float
-    get() = when {
-        isNaN() -> Float.NaN
-        isInfinite() -> Float.POSITIVE_INFINITY
-        this == Float.MAX_VALUE || this == -Float.MAX_VALUE -> 2.0f.pow(104)
-        else -> {
-            val d = absoluteValue
-            d.nextUp() - d
+    get() {
+        val magnitude = abs(this)
+        val bits = magnitude.toRawBits()
+        // 1. Check the exponent: drop 23 fraction bits and check if what's left is 0xff (the sign bit isn't set, all eight exponent bits
+        // are), if yes, it's either NaN or +Inf.
+        return if (bits shr 23 != 0xff) {
+            // 2.1. If magnitude is Float.MAX_VALUE return 2^104, otherwise the difference between magnitude.nextUp() & magnitude.
+            if (bits == 0x7f7f_ffff) Float.fromBits(0x7380_0000) else Float.fromBits(bits + 1) - magnitude
+        } else {
+            // 2.2. If this is NaN, return as-is (abs won't change it), if this is +Inf or -Inf, return +Inf.
+            magnitude
         }
     }
 
