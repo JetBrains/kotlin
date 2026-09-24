@@ -668,10 +668,16 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
             val builder = context.createIrBuilder(symbol, invokeFunction.startOffset, invokeFunction.endOffset)
             body = builder.irBlockBody {
                 val variablesMapping = buildMap {
+                    // The unbound parameters come from an erased `FunctionN.invoke` call, so narrowing them to the types
+                    // the function expects crosses an erasure boundary. The bound values below were checked against their
+                    // types when the reference was created, so they don't.
                     for (i in functionReference.boundValues.size until invokeFunction.parameters.size) {
                         val invokeParameter = invokeFunction.parameters[i]
                         val erasedParameter = this@apply.parameters[i]
-                        put(invokeParameter, irTemporary(irGet(erasedParameter).implicitCastTo(invokeParameter.type)))
+                        put(
+                            invokeParameter,
+                            irTemporary(irGet(erasedParameter).implicitCastTo(invokeParameter.type).markAsErasureBoundaryCast())
+                        )
                     }
                     for (i in functionReference.boundValues.indices) {
                         val invokeParameter = invokeFunction.parameters[i]

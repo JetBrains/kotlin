@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
+import org.jetbrains.kotlin.ir.util.markAsErasureBoundaryCast
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -47,6 +49,11 @@ class GenericReturnTypeLowering(val context: WasmBackendContext) : FileLoweringP
             type.makeNullable()
         else
             type
+    }
+
+    private fun IrSimpleFunction.isExcludedFromCodegen(): Boolean {
+        val packageFragment = getPackageFragment()
+        return context.getExcludedPackageFragment(packageFragment.packageFqName) == packageFragment
     }
 
     private fun transformGenericCall(call: IrCall, scopeOwnerSymbol: IrSymbol): IrExpression {
@@ -74,8 +81,12 @@ class GenericReturnTypeLowering(val context: WasmBackendContext) : FileLoweringP
                 newSuperQualifierSymbol = call.superQualifierSymbol
             )
 
+            // The call now produces a value of the erased return type, narrowing it to the substituted one crosses
+            // an erasure boundary (and has to be checked, see WasmTypeOperatorLowering). The exception are intrinsics
+            // excluded from codegen, e.g. `unsafeCast`, whose whole point is to narrow without a check.
             context.createIrBuilder(scopeOwnerSymbol).apply {
-                return irImplicitCast(newCall, call.type)
+                val cast = irImplicitCast(newCall, call.type)
+                return if (function.isExcludedFromCodegen()) cast else cast.markAsErasureBoundaryCast()
             }
         }
         return call

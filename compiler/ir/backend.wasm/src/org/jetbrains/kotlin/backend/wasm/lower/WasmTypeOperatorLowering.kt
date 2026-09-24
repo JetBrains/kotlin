@@ -48,15 +48,17 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private lateinit var builder: DeclarationIrBuilder
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        // Must be decided before the argument is lowered, as that changes its type.
+        val implicitCastNeedsRuntimeCheck = expression.operator == IrTypeOperator.IMPLICIT_CAST && expression.needsRuntimeCheck()
         super.visitTypeOperator(expression)
         builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
 
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression)
+            IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression, implicitCastNeedsRuntimeCheck)
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Dynamic casts are not supported in Wasm backend")
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression
             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression)
-            IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitCast(expression)
+            IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitNotNull(expression)
             IrTypeOperator.INSTANCEOF -> lowerInstanceOf(expression, inverted = false)
             IrTypeOperator.NOT_INSTANCEOF -> lowerInstanceOf(expression, inverted = true)
             IrTypeOperator.CAST -> lowerCast(expression, isSafe = false)
@@ -363,7 +365,46 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         return argumentType.isTypeParameter()
     }
 
-    private fun lowerImplicitCast(expression: IrTypeOperatorCall): IrExpression {
+    /**
+     * An `IMPLICIT_CAST` gets a runtime check iff it [crossesErasureBoundary]: those are the casts where a value
+     * produced at an erased generic type is narrowed back to its substituted type, so this is where heap pollution
+     * caused by an unchecked cast must be caught (KT-87090, KT-88828, KT-89267). This mirrors the JVM, where such
+     * values get a `checkcast` to the erased expected type.
+     *
+     * All other implicit casts are either proven by the frontend (smart casts), or introduced by lowerings to keep
+     * the IR well-typed, and only need the narrowing (which may still box or unbox).
+     *
+     * An implicit cast to `Unit` is a coercion rather than a check, even on an erasure boundary: the value is discarded
+     * and the `Unit` instance produced instead (which is what `narrowType` does). This is what makes
+     * `foo<Unit>() === Unit` hold for a `fun <T> foo(): T = any as T`, see unchecked_cast10.kt and KT-82732.
+     *
+     * Unlike the JVM's `checkcast`, the check rejects `null` for a non-null type (genericDelegateUncheckedCast2.kt, KT-8135).
+     * The erasure boundaries created by the inliner are the exception, see `checkErasureBoundaryCastsInInliner`.
+     */
+    private fun lowerImplicitCast(expression: IrTypeOperatorCall, needsRuntimeCheck: Boolean): IrExpression {
+        return if (needsRuntimeCheck) {
+            lowerCast(expression, isSafe = false)
+        } else {
+            narrowType(
+                fromType = expression.argument.type,
+                toType = expression.typeOperand,
+                value = expression.argument
+            )
+        }
+    }
+
+    private fun IrTypeOperatorCall.needsRuntimeCheck(): Boolean {
+        if (typeOperand.isUnit()) return false
+        if (crossesErasureBoundary) return true
+        // A value whose static type is still a type parameter comes straight from generic code, so narrowing it to anything
+        // more specific than its bound crosses an erasure boundary too, even if the lowering which produced this cast
+        // didn't mark it: e.g. `DefaultParameterInjector` casts the result of a call to a generic `$default` stub
+        // (unchecked_cast9.kt), and `ForLoopsLowering` the elements it gets from an `Array<T>` (unchecked_cast6x.kt).
+        // `GenericReturnTypeLowering` then only marks the inner cast of such a chain (from the erased type to `T`).
+        return argument.type.isTypeParameter() && !typeOperand.isTypeParameter() && !typeOperand.isNullableAny()
+    }
+
+    private fun lowerImplicitNotNull(expression: IrTypeOperatorCall): IrExpression {
         return if (shouldGenerateKotlinCast(expression.argument, expression.typeOperand)) {
             lowerCast(
                 expression = expression,

@@ -25,4 +25,7 @@ class WasmPreSerializationLoweringContext(
     override val sharedVariablesManager: SharedVariablesManager = KlibSharedVariablesManager(symbols)
 
     override val irMangler: KotlinMangler.IrMangler = JsManglerIr
+
+    override val checkErasureBoundaryCastsInInliner: Boolean
+        get() = true
 }

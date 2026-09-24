@@ -48,6 +48,10 @@ class WasmBackendContext(
     override val configuration: CompilerConfiguration,
 ) : JsCommonBackendContext {
     val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
+
+    // Keep the second-stage inliner consistent with the first-stage one, see `WasmPreSerializationLoweringContext`.
+    override val checkErasureBoundaryCastsInInliner: Boolean
+        get() = true
     val isDebugFriendlyCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
 
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
