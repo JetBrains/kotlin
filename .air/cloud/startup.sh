@@ -136,9 +136,13 @@ write_env_file() {
             env_name="$(jdk_env_name "$major")"
             echo "export $env_name=\"$JDK_DIR/temurin-$major\""
         done
-        # Build with a real JDK instead of the JetBrains Runtime the workspace image ships.
+        # Build with a real JDK instead of the JetBrains Runtime the workspace image ships;
+        # Gradle's daemon criteria (gradle/gradle-daemon-jvm.properties) ask for Java $DAEMON_JDK.
         echo "export JAVA_HOME=\"$JDK_DIR/temurin-$DAEMON_JDK\""
-        echo "export PATH=\"\$JAVA_HOME/bin:\$PATH\""
+        echo "case \":\$PATH:\" in"
+        echo "    *:\$JAVA_HOME/bin:*) ;;"
+        echo "    *) export PATH=\"\$JAVA_HOME/bin:\$PATH\" ;;"
+        echo "esac"
     } > "$ENV_FILE"
 
     local hook="$MARKER
@@ -199,6 +203,13 @@ gradle_warmup() {
     log "this downloads the intellij-core/idea-full dependencies and fills the Gradle build cache"
     ./gradlew dist || fail "'./gradlew dist' failed; see the output above"
     log "compiler distribution built at $REPO_DIR/dist/kotlinc"
+
+    # Most tasks in this repository end in running compiler tests, so compile the main
+    # compiler test module too: it is a small increment on top of `dist` and it puts the
+    # test fixtures into the build cache that the snapshot keeps.
+    log "compiling the compiler test sources: ./gradlew :compiler:tests-common-new:testClasses"
+    ./gradlew :compiler:tests-common-new:testClasses \
+        || fail "'./gradlew :compiler:tests-common-new:testClasses' failed; see the output above"
 
     # Free the daemon's heap before the health check runs; daemons are not part of the
     # snapshot anyway, only the caches they wrote to disk are.
