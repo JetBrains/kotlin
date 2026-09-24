@@ -111,6 +111,11 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
         }
         nonGroupingStage {
             useGroupingTestIsolators(::WasmGroupingTestIsolator)
+            if (customWasmJsCompilerSettings.defaultLanguageVersion < REFLECTION_PACKAGE_NAME_SINCE) {
+                // The released backend that links the second stage does not know `kotlin.internal.ReflectionPackageName`,
+                // so a renamed test cannot keep its reflective package names: such tests must not be renamed at all.
+                useGroupingTestIsolators(::ReflectionPackageNameDependentTestIsolator)
+            }
             useAdditionalSourceProviders(::WasmJsLauncherAdditionalSourceProvider)
             commonCodegenConfiguration()
 
