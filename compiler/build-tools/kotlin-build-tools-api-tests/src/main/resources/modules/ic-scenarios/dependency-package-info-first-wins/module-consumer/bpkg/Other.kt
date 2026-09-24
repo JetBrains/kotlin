@@ -1,0 +1,3 @@
+package bpkg
+
+class Other

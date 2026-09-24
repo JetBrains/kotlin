@@ -1,0 +1,3 @@
+package apkg
+
+class SecondClass
