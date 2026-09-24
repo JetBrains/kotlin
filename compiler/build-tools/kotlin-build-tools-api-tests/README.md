@@ -27,6 +27,9 @@ The module defines test suites using the `jvm-test-suite` plugin.
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testArgumentParsingWarnings` to run them
 * Classpath metadata: verifies the experimental incremental compilation feature for KMP projects targeting the JVM
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testClasspathMetadata` to run them
+* JPS: verifies the JPS-managed incremental compilation configuration (`kotlin-build-tools-api-jps`): the
+  client-owned IC configuration, its trackers and its incremental cache
+    * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testJps` to run them
 * Example: provides examples of the DSL usage. Excluded from the `check` task
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testExample` to run them
 

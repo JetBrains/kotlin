@@ -189,7 +189,6 @@ val businessLogicTestSuits = setOf(
     "testKotlinLogger",
     "testDefaultOptions",
     "testDaemonOptions",
-    "testInternalInputsTracker",
     "testAbiValidation",
     "testRestrictedArguments",
     "testCompatibility",
@@ -271,12 +270,6 @@ testing {
             named<JvmTestSuite>("testInputChangesTracking$apiVersion") {
                 dependencies {
                     implementation("org.jetbrains.kotlin:kotlin-build-statistics:${apiVersion}")
-                }
-            }
-
-            named<JvmTestSuite>("testInternalInputsTracker$apiVersion") {
-                dependencies {
-                    implementation(project(":compiler:build-tools:kotlin-build-tools-impl")) { isTransitive = false }
                 }
             }
 

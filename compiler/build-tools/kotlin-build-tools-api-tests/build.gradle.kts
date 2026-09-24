@@ -197,7 +197,7 @@ val businessLogicTestSuits = setOf(
     "testKotlinLogger",
     "testDefaultOptions",
     "testDaemonOptions",
-    "testInternalInputsTracker",
+    "testJps",
     "testAbiValidation",
     "testRestrictedArguments",
     "testArgumentParsingWarnings",
@@ -323,9 +323,9 @@ testing {
             }
         }
 
-        named<JvmTestSuite>("testInternalInputsTracker") {
+        named<JvmTestSuite>("testJps") {
             dependencies {
-                implementation(project(":compiler:build-tools:kotlin-build-tools-impl"))
+                implementation(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
             }
         }
 
