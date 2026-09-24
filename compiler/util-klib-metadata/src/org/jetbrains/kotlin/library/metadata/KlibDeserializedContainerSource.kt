@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_FLAGS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES
+import org.jetbrains.kotlin.library.KlibComponentsContainer
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Header
 import org.jetbrains.kotlin.name.FqName
@@ -23,7 +24,9 @@ class KlibDeserializedContainerSource(
     override val presentableString: String,
     val klib: KotlinLibrary,
     override val incompatibility: IncompatibleVersionErrorData<*>?,
-) : DeserializedContainerSource {
+) : DeserializedContainerSource, KlibContainerSourceComponentsProvider {
+    override val klibComponentsContainer: KlibComponentsContainer = klib
+
     constructor(
         klib: KotlinLibrary,
         header: Header,

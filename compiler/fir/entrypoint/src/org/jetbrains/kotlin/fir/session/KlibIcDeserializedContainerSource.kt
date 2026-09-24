@@ -6,13 +6,19 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.library.KlibComponentsContainer
+import org.jetbrains.kotlin.library.metadata.KlibContainerSourceComponentsProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
-class KlibIcDeserializedContainerSource(packageFqName: FqName) : DeserializedContainerSource {
+class KlibIcDeserializedContainerSource(
+    klibIcData: KlibIcData, packageFqName: FqName
+) : DeserializedContainerSource, KlibContainerSourceComponentsProvider {
+    override val klibComponentsContainer: KlibComponentsContainer = klibIcData
+
     override val presentableString: String = "Package '$packageFqName'"
     override val incompatibility: IncompatibleVersionErrorData<*>? get() = null
     override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo.DEFAULT_VISIBLE
