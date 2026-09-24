@@ -1,3 +1,8 @@
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
+// WITH_STDLIB
+// KT-89267
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+
 private interface Bindings {
     val value: String
 }
