@@ -14,10 +14,21 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
+import org.jetbrains.kotlin.wasm.test.tools.WASI_BOX_ENTRY_EXPORT
 import java.io.File
 
-data class WasmTestFailure(val name: String, val message: String?, val details: String?)
+/** Captured stdout from one VM invocation, kept separate so grouped results cannot be merged across VM boundaries. */
+data class WasmVMOutput(
+    val vmName: String,
+    val output: String,
+    /** Identifies this invocation when the same VM runs more than one compilation mode. */
+    val executionName: String = vmName,
+)
+
+internal fun formatWasmExecutionName(vmName: String, mode: String): String =
+    if (mode.isEmpty()) vmName else "$vmName ($mode)"
 
 abstract class WasmBoxRunnerBase(
     testServices: TestServices,
@@ -41,7 +52,8 @@ abstract class WasmBoxRunnerBase(
         mark: String,
         filesToIgnoreInSizeChecks: MutableSet<File>,
         useUnitTestRunnerOnly: Boolean = false,
-        outputCollector: MutableList<String>? = null,
+        outputCollector: MutableList<WasmVMOutput>? = null,
+        callGroupedTestsDriver: Boolean = false,
     ): List<Throwable> {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val collectedJsArtifacts = collectJsArtifacts(originalFile, mark)
@@ -63,12 +75,7 @@ abstract class WasmBoxRunnerBase(
                         console.log = print;
                     }
                     try {
-                        await jsModule.startUnitTests();
-                        const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
-                                            (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
-                        if (hasFailures) {
-                            throw new Error('Unit test failed');
-                        }
+                        ${generateWasmJsUnitTestRunnerInvocation(callGroupedTestsDriver)}
                     } catch(e) {
                         console.log('Failed with exception!')
 
@@ -190,13 +197,53 @@ abstract class WasmBoxRunnerBase(
                     entryFile = collectedJsArtifacts.entryPath,
                     jsFilePaths = jsFilePaths,
                     workingDirectory = outputDir,
+                    executionName = formatWasmExecutionName(vm.vmName, mark),
                     outputCollector = outputCollector,
                 )
             }
     }
 }
 
-class WasmVMException(nested: Throwable, val vmName: String) : Throwable("WasmVM $vmName failed", cause = nested)
+/** Generates the wasm-js unit-test call from artifact metadata, never from a user-controlled export name. */
+internal fun generateWasmJsUnitTestRunnerInvocation(callGroupedTestsDriver: Boolean): String =
+    if (callGroupedTestsDriver) {
+        """
+        // Grouped batch: pass/fail is attributed on the JVM side, so a failure must NOT throw here.
+        await jsModule.runGroupedTests();
+        """.trimIndent()
+    } else {
+        """
+        await jsModule.startUnitTests();
+        const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
+                            (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
+        if (hasFailures) {
+            throw new Error('Unit test failed');
+        }
+        """.trimIndent()
+    }
+
+class WasmVMException(
+    nested: Throwable,
+    val vmName: String,
+    val executionName: String = vmName,
+) : Throwable("WasmVM $executionName failed", cause = nested)
+
+/** The event `kotlin.test`'s TeamCity reporter prints before it runs a `@Test` function. */
+internal const val UNIT_TEST_STARTED_MARKER = "##teamcity[testStarted"
+
+/**
+ * Rejects a `// RUN_UNIT_TESTS` run whose output shows no `@Test` function starting. Such a test always has at least
+ * one: the `@Test` launcher that calls its `box()`. An empty report therefore means the VM never reached the
+ * unit-test runner, and the test would otherwise pass without a single `@Test` function having run.
+ */
+internal fun checkUnitTestsReported(output: String, executionName: String): AssertionError? {
+    if (output.contains(UNIT_TEST_STARTED_MARKER)) return null
+    return AssertionError(
+        "The unit-test runner reported no test in $executionName: its output has no `$UNIT_TEST_STARTED_MARKER` " +
+                "event, so none of the `@Test` functions of this `// RUN_UNIT_TESTS` test ran there, not even the " +
+                "launcher that calls `box()`. Output:\n$output"
+    )
+}
 
 internal fun WasmVM.runWithCaughtExceptions(
     debugMode: DebugMode,
@@ -205,11 +252,14 @@ internal fun WasmVM.runWithCaughtExceptions(
     entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
-    outputCollector: MutableList<String>? = null,
+    executionName: String,
+    outputCollector: MutableList<WasmVMOutput>? = null,
+    wasiEntryExport: String = WASI_BOX_ENTRY_EXPORT,
+    expectUnitTestReport: Boolean = false,
 ): Throwable? {
     try {
         if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Run in $vmName")
+            println(" ------ Run in $executionName")
         }
         val str = run(
             "./${entryFile}",
@@ -217,16 +267,22 @@ internal fun WasmVM.runWithCaughtExceptions(
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
             useStackSwitching = useStackSwitching,
+            wasiEntryExport = wasiEntryExport,
         )
-        outputCollector?.add(str)
+        outputCollector?.add(WasmVMOutput(vmName = vmName, output = str, executionName = executionName))
         if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Run in $vmName is completed")
+            println(" ------ Run in $executionName is completed")
         }
+        // Only single-test batches still go through `startUnitTests()`, and hence through `kotlin.test`'s TeamCity
+        // reporter; a grouped batch's launchers carry no `@Test`, so this marker cannot come from them.
         if (str.contains("##teamcity[testFailed")) {
-            return AssertionError("Unit test failed in $vmName. Output:\n$str")
+            return WasmVMException(AssertionError("Unit test failed in $executionName. Output:\n$str"), vmName, executionName)
+        }
+        if (expectUnitTestReport) {
+            checkUnitTestsReported(str, executionName)?.let { return WasmVMException(it, vmName, executionName) }
         }
     } catch (e: Throwable) {
-        return WasmVMException(e, vmName)
+        return WasmVMException(e, vmName, executionName)
     }
     return null
 }
@@ -251,6 +307,19 @@ fun checkExpectedOptimizedOutputSize(debugMode: DebugMode, testFileContent: Stri
         ?.toInt() ?: return emptyList()
 
     return assertExpectedSizesMatchActual(debugMode, testDir, listOf("wasm" to expectedOptimizeSizes), filesToIgnore)
+}
+
+fun checkExpectedOutputSize(
+    mode: String,
+    debugMode: DebugMode,
+    testFileText: String,
+    outputDir: File,
+    filesToIgnoreInSizeChecks: Set<File> = emptySet(),
+): List<Throwable> = when (mode) {
+    "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, outputDir, filesToIgnoreInSizeChecks)
+    "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, outputDir, filesToIgnoreInSizeChecks)
+    "dev" -> emptyList()
+    else -> testInfraError("Unknown mode: $mode")
 }
 
 private fun assertExpectedSizesMatchActual(
@@ -291,43 +360,3 @@ private fun assertExpectedSizesMatchActual(
 private fun Long.toFormattedString(): String {
     return this.toString().reversed().chunked(3).joinToString("_").reversed()
 }
-
-fun parseTeamCityFailures(output: String): Map<String, WasmTestFailure> {
-    val failures = mutableMapOf<String, WasmTestFailure>()
-    val lines = output.lines()
-    val suiteStack = mutableListOf<String>()
-    for (line in lines) {
-        val trimmed = line.trim()
-        if (trimmed.startsWith("##teamcity[testSuiteStarted")) {
-            extractAttribute(trimmed, "name")?.let { suiteStack.add(it) }
-        } else if (trimmed.startsWith("##teamcity[testSuiteFinished")) {
-            if (suiteStack.isNotEmpty()) suiteStack.removeAt(suiteStack.size - 1)
-        } else if (trimmed.startsWith("##teamcity[testFailed")) {
-            val name = extractAttribute(trimmed, "name")
-            val message = extractAttribute(trimmed, "message")
-            val details = extractAttribute(trimmed, "details")
-            val fullSuiteName = suiteStack.lastOrNull()
-            if (fullSuiteName != null) {
-                failures[fullSuiteName] = WasmTestFailure(name ?: "unknown", message, details)
-            }
-        }
-    }
-    return failures
-}
-
-private fun extractAttribute(line: String, attribute: String): String? {
-    val key = "$attribute='"
-    val start = line.indexOf(key)
-    if (start == -1) return null
-    val end = line.indexOf("'", start + key.length)
-    if (end == -1) return null
-    return line.substring(start + key.length, end).tcUnescape()
-}
-
-private fun String.tcUnescape(): String = this
-    .replace("|n", "\n")
-    .replace("|r", "\r")
-    .replace("|'", "'")
-    .replace("||", "|")
-    .replace("|[", "[")
-    .replace("|]", "]")

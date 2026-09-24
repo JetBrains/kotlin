@@ -5,13 +5,21 @@
 
 package org.jetbrains.kotlin.wasm.test.tools
 
+import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.lang.Boolean.getBoolean
+import java.security.MessageDigest
 import kotlin.test.fail
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
+
+/** The export the standalone WASI VMs invoke for a box run: `wasiBoxTestRun.kt`'s glue, or the grouped driver. */
+internal const val WASI_BOX_ENTRY_EXPORT = "startTest"
+
+/** The export the compiler links into a binary with `@kotlin.test.Test` functions; it runs every registered suite. */
+internal const val WASI_UNIT_TESTS_ENTRY_EXPORT = "startUnitTests"
 
 internal sealed class WasmVM(
     val property: String,
@@ -21,6 +29,13 @@ internal sealed class WasmVM(
     val vmName: String
         get() = javaClass.simpleName
 
+    /**
+     * Runs [entryFile] and returns its output. A VM whose entry point is a JS file ignores [wasiEntryExport]; the
+     * standalone WASI VMs run exactly one export per process, and that is the one they invoke.
+     *
+     * The output is retained up to [maxCapturedOutputLength] characters (see [BoundedOutputCapture]); a caller that
+     * parses the whole output as one structure passes [UNBOUNDED_CAPTURED_OUTPUT_LENGTH].
+     */
     abstract fun run(
         entryFile: String,
         jsFiles: List<String>,
@@ -28,6 +43,8 @@ internal sealed class WasmVM(
         useNewExceptionHandling: Boolean = false,
         useStackSwitching: Boolean = false,
         toolArgs: List<String> = emptyList(),
+        wasiEntryExport: String = WASI_BOX_ENTRY_EXPORT,
+        maxCapturedOutputLength: Int = MAX_CAPTURED_PROCESS_OUTPUT_LENGTH,
     ): String
 
     object V8 : WasmVM(property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
@@ -38,6 +55,8 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -47,6 +66,7 @@ internal sealed class WasmVM(
                 *if (useStackSwitching) arrayOf("--experimental-wasm-wasmfx") else emptyArray(),
                 entryFile,
                 workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 
@@ -58,6 +78,8 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -65,6 +87,7 @@ internal sealed class WasmVM(
                 *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
                 "--module=$entryFile",
                 workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 
@@ -75,13 +98,16 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
-            toolArgs: List<String>
+            toolArgs: List<String>,
+            wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 *jsFiles.toTypedArray(),
                 "--module-file=$entryFile",
                 workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 
@@ -93,12 +119,17 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 entryFile,
-                "startTest",
+                // The grouped result-collecting driver, `wasiBoxTestRun.kt`'s box glue or the compiler's unit-test
+                // runner: see `wasiStandaloneEntryExport` and `assertDriverOwnsStartTestExport`.
+                wasiEntryExport,
                 workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 
@@ -110,15 +141,18 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 "-W",
                 "gc,function-references,exceptions",
                 "--invoke",
-                "startTest",
+                wasiEntryExport,
                 entryFile,
                 workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 
@@ -129,20 +163,27 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
-            toolArgs: List<String>
+            toolArgs: List<String>,
+            wasiEntryExport: String,
+            maxCapturedOutputLength: Int,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
                 *jsFiles.toTypedArray(),
                 entryFile,
-                workingDirectory = workingDirectory
+                workingDirectory = workingDirectory,
+                maxCapturedOutputLength = maxCapturedOutputLength,
             )
     }
 }
 
 internal class ExternalTool(val path: String) {
-    fun run(vararg arguments: String, workingDirectory: File? = null): String {
+    fun run(
+        vararg arguments: String,
+        workingDirectory: File? = null,
+        maxCapturedOutputLength: Int = MAX_CAPTURED_PROCESS_OUTPUT_LENGTH,
+    ): String {
         val command = arrayOf(path, *arguments)
         val processBuilder = ProcessBuilder(*command)
             .redirectErrorStream(true)
@@ -164,21 +205,164 @@ internal class ExternalTool(val path: String) {
             )
         }
 
-        // Print process output
-        val stdout = StringBuilder()
-        val bufferedStdout = BufferedReader(InputStreamReader(process.inputStream))
-
-        while (true) {
-            val line = bufferedStdout.readLine() ?: break
-            stdout.appendLine(line)
+        // Drain process output without allowing an untrusted VM to grow the JVM heap without a bound.
+        val stdout = BoundedOutputCapture(maxCapturedOutputLength)
+        BufferedReader(InputStreamReader(process.inputStream)).use { bufferedStdout ->
+            val buffer = CharArray(8 * 1024)
+            while (true) {
+                val count = bufferedStdout.read(buffer)
+                if (count < 0) break
+                stdout.append(buffer, count)
+            }
         }
 
         val exitValue = process.waitFor()
+        val capturedStdout = stdout.toString()
         if (exitValue != 0) {
-            fail("Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"\nOUTPUT:\n$stdout\n---")
+            fail("Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"\nOUTPUT:\n$capturedStdout\n---")
         }
 
-        return stdout.toString()
+        return capturedStdout
+    }
+}
+
+/** How much of an untrusted VM's output a test run retains by default: enough context, but a bounded heap. */
+internal const val MAX_CAPTURED_PROCESS_OUTPUT_LENGTH = 4 * 1024 * 1024
+
+/** Retains the whole output, for a caller that parses it as one structure and cannot use a truncated one. */
+internal const val UNBOUNDED_CAPTURED_OUTPUT_LENGTH = Int.MAX_VALUE
+
+/**
+ * Keeps enough head and tail context for diagnostics while bounding output retained from an external VM to
+ * [maxLength] characters: the first half of the budget is kept as the head, the last half as the tail, and a marker
+ * carrying the original length and a digest of the whole output stands in for the middle.
+ */
+internal class BoundedOutputCapture(
+    private val maxLength: Int = MAX_CAPTURED_PROCESS_OUTPUT_LENGTH,
+    private val createDigest: () -> MessageDigest = { MessageDigest.getInstance("SHA-256") },
+) {
+    private val prefixLength = maxLength / 2
+    private var digest: MessageDigest? = null
+    private var totalLength = 0L
+    private var fullOutput = StringBuilder()
+    private var prefix: String? = null
+
+    // Allocated only once the limit is crossed, so an unbounded capture never reserves the tail buffer.
+    private val suffix: CharArray by lazy(LazyThreadSafetyMode.NONE) { CharArray(maxLength - prefixLength) }
+    private var suffixStart = 0
+    private var suffixSize = 0
+    private var renderedOutput: String? = null
+
+    fun append(buffer: CharArray, length: Int) {
+        totalLength += length
+
+        var offset = 0
+        if (prefix == null) {
+            if (fullOutput.length + length <= maxLength) {
+                fullOutput.appendRange(buffer, 0, length)
+                return
+            }
+
+            // A single chunk may cross the limit before the buffered output reaches the head length, so the head is
+            // completed from the chunk itself; the remainder of the chunk then goes through the tail ring buffer.
+            offset = (prefixLength - fullOutput.length).coerceIn(0, length)
+            fullOutput.appendRange(buffer, 0, offset)
+            digest = createDigest().apply {
+                update(fullOutput.toString().toByteArray(Charsets.UTF_8))
+            }
+            prefix = fullOutput.substring(0, prefixLength)
+            appendToSuffix(fullOutput.substring(prefixLength))
+            fullOutput = StringBuilder()
+        }
+        if (offset == length) return
+        val chunk = String(buffer, offset, length - offset)
+        checkNotNull(digest).update(chunk.toByteArray(Charsets.UTF_8))
+        appendToSuffix(buffer, offset, length - offset)
+    }
+
+    private fun appendToSuffix(buffer: CharArray, offset: Int, length: Int) {
+        val capacity = suffix.size
+        if (length >= capacity) {
+            System.arraycopy(buffer, offset + length - capacity, suffix, 0, capacity)
+            suffixStart = 0
+            suffixSize = capacity
+            return
+        }
+
+        val writePos = (suffixStart + suffixSize) % capacity
+        val firstPart = minOf(length, capacity - writePos)
+        System.arraycopy(buffer, offset, suffix, writePos, firstPart)
+        if (firstPart < length) {
+            System.arraycopy(buffer, offset + firstPart, suffix, 0, length - firstPart)
+        }
+
+        if (suffixSize + length > capacity) {
+            val evicted = suffixSize + length - capacity
+            suffixStart = (suffixStart + evicted) % capacity
+            suffixSize = capacity
+        } else {
+            suffixSize += length
+        }
+    }
+
+    private fun appendToSuffix(text: String) {
+        val chars = text.toCharArray()
+        appendToSuffix(chars, 0, chars.size)
+    }
+
+    override fun toString(): String {
+        renderedOutput?.let { return it }
+        val output = prefix?.let { outputPrefix ->
+            val hash = checkNotNull(digest).digest().toHexString()
+            val retainedPrefix = outputPrefix.throughLastLineBreak()
+            val retainedSuffix = if (suffixSize == 0) "" else {
+                val chars = CharArray(suffixSize)
+                val firstPart = minOf(suffixSize, suffix.size - suffixStart)
+                System.arraycopy(suffix, suffixStart, chars, 0, firstPart)
+                if (firstPart < suffixSize) {
+                    System.arraycopy(suffix, 0, chars, firstPart, suffixSize - firstPart)
+                }
+                String(chars).afterFirstLineBreak()
+            }
+            buildString(retainedPrefix.length + retainedSuffix.length + 128) {
+                append(retainedPrefix)
+                // A head kept whole (no line break) ends mid-line; the marker must still start its own line.
+                if (retainedPrefix.isNotEmpty() && !retainedPrefix.endsWith('\n') && !retainedPrefix.endsWith('\r')) {
+                    append('\n')
+                }
+                append(GroupedTestsResultProtocol.LINE_PREFIX)
+                append(GroupedTestsResultProtocol.SEP)
+                append(GroupedTestsResultProtocol.OUTPUT_TRUNCATED)
+                append(GroupedTestsResultProtocol.SEP)
+                append("original length=").append(totalLength).append(" chars; SHA-256=").append(hash)
+                append('\n')
+                append(retainedSuffix)
+            }
+        } ?: fullOutput.toString()
+        renderedOutput = output
+        return output
+    }
+
+    /**
+     * Drops the partial line at the end of retained head output. A head without any line break is one long line,
+     * and is kept whole: dropping it would discard the entire head for the sake of a clean cut.
+     */
+    private fun String.throughLastLineBreak(): String {
+        val lineBreakIndex = indexOfLast { it == '\n' || it == '\r' }
+        if (lineBreakIndex < 0) return this
+        return substring(0, lineBreakIndex + 1)
+    }
+
+    /** Drops the partial line at the start of retained tail output; a tail without any line break is kept whole. */
+    private fun String.afterFirstLineBreak(): String {
+        val lineBreakIndex = indexOfFirst { it == '\n' || it == '\r' }
+        if (lineBreakIndex < 0) return this
+        val firstRetainedIndex = if (this[lineBreakIndex] == '\r' && getOrNull(lineBreakIndex + 1) == '\n') {
+            lineBreakIndex + 2
+        } else {
+            lineBreakIndex + 1
+        }
+        return substring(firstRetainedIndex)
     }
 }
 
