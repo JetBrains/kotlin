@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/valhallaValueClassesJvmTarget27.kt
+-d
+$TEMP_DIR$
+-jvm-target
+27
+-Xjvm-enable-preview
+-Xvalhalla-value-classes
+-Xrender-internal-diagnostic-names
