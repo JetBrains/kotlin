@@ -15,10 +15,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.declarations.utils.isLocalClassLike
 import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.expressions.PrivateConstantEvaluatorAPI
 import org.jetbrains.kotlin.fir.expressions.canBeUsedForConstVal
@@ -40,8 +41,7 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             }
         }
 
-        val classKind = (context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol)?.classKind
-        if (classKind != ClassKind.OBJECT && context.containingDeclarations.size > 1 && !declaration.isCompanionBlockMember) {
+        if (!declaration.isDeclaredInTheProperScope()) {
             reporter.reportOn(declaration.source, FirErrors.CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT)
             return
         }
@@ -91,5 +91,19 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             else -> FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
         }
         reporter.reportOn((evaluationResult as? FirEvaluatorResult.NotEvaluated)?.source ?: initializer.source, errorKind)
+    }
+
+    context(context: CheckerContext)
+    private fun FirProperty.isDeclaredInTheProperScope(): Boolean {
+        val containerDeclaration = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
+        return when {
+            // `object` and `companion object` cannot be local, so they are always allowed
+            containerDeclaration?.classKind == ClassKind.OBJECT || containerDeclaration?.isCompanion == true -> true
+            // top level declarations are always allowed
+            context.containingDeclarations.size == 1 -> true
+            // declarations in `companion` blocks are allowed only for non-local classes
+            this.isCompanionBlockMember && context.containingDeclarations.none { it.isLocalClassLike } -> true
+            else -> false
+        }
     }
 }
