@@ -1,21 +1,23 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.session
+package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
-import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
-import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.utils.checkWithAttachment
 import java.io.File
 
-class KlibIcData(nonDirtyPreviousPackageFragments: Map<File, ByteArray>) : KlibMetadataComponent {
+class KlibIcData(
+    val metadata: KlibIcMetadataComponent,
+    val inlineData: KlibIrComponent? = null
+)
 
-    constructor(incrementalData: IncrementalDataProvider) : this(incrementalData.compiledPackageParts.mapValues { [file, result] -> result.metadata })
-
+class KlibIcMetadataComponent(
+    nonDirtyPreviousPackageFragments: Map<File, ByteArray>,
+) : KlibMetadataComponent {
     private val fragments: Map<String, Map<String, ByteArray>> by lazy {
         val result = mutableMapOf<String, MutableMap<String, ByteArray>>()
 

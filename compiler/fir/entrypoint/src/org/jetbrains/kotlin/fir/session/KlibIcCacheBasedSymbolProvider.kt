@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.library.metadata.KlibIcData
+import org.jetbrains.kotlin.library.metadata.KlibIcDeserializedContainerSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.SmartList
@@ -29,7 +31,7 @@ class KlibIcCacheBasedSymbolProvider(
     kotlinScopeProvider,
     flexibleTypeFactory,
     defaultDeserializationOrigin,
-    metadataProvider = { it },
+    metadataProvider = { it.metadata },
 ) {
     override fun moduleData(library: KlibIcData): FirModuleData {
         return moduleDataProvider.allModuleData.single()
@@ -37,7 +39,7 @@ class KlibIcCacheBasedSymbolProvider(
 
     override val fragmentNamesInLibraries: Map<String, List<KlibIcData>> by lazy {
         buildMap<String, SmartList<KlibIcData>> {
-            for (fragmentName in icData.packageFragmentNameList) {
+            for (fragmentName in icData.metadata.packageFragmentNameList) {
                 getOrPut(fragmentName) { SmartList() }
                     .add(icData)
             }
@@ -46,7 +48,7 @@ class KlibIcCacheBasedSymbolProvider(
 
     override val knownPackagesInLibraries: Set<FqName> by lazy {
         buildSet<FqName> {
-            for (fragmentName in icData.packageFragmentNameList) {
+            for (fragmentName in icData.metadata.packageFragmentNameList) {
                 var curPackage = FqName(fragmentName)
                 while (!curPackage.isRoot) {
                     add(curPackage)
@@ -57,6 +59,6 @@ class KlibIcCacheBasedSymbolProvider(
     }
 
     override fun createDeserializedContainerSource(resolvedLibrary: KlibIcData, packageFqName: FqName): DeserializedContainerSource {
-        return KlibIcDeserializedContainerSource(packageFqName)
+        return KlibIcDeserializedContainerSource(resolvedLibrary, packageFqName)
     }
 }

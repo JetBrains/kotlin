@@ -30,6 +30,7 @@ dependencies {
     implementation(project(":native:native.config"))
     implementation(project(":wasm:wasm.config"))
     implementation(project(":wasm:wasm.frontend"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())

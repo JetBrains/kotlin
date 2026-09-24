@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.library.metadata.KlibIcData
+import org.jetbrains.kotlin.library.metadata.KlibIcMetadataComponent
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
 
@@ -72,7 +74,7 @@ fun createIncrementalProvidersForNonLeafMppModules(
         session = session,
         moduleDataProvider = SingleModuleDataProvider(moduleData),
         kotlinScopeProvider = session.kotlinScopeProvider,
-        icData = KlibIcData(incrementalCache.getMetadata(moduleName)),
+        icData = KlibIcData(KlibIcMetadataComponent(incrementalCache.getMetadata(moduleName))),
         defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled,
     )
     return FirJvmIncrementalCompilationSymbolProviders(
