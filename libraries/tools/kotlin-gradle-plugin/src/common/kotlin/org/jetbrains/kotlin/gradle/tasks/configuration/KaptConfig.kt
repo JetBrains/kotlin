@@ -203,7 +203,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
                         project.dependencies.create(kaptDependency),
                         project.dependencies.kotlinDependency(
                             "kotlin-stdlib",
-                            project.topLevelExtension.coreLibrariesVersion
+                            project.topLevelExtension.kotlinCoreLibrariesVersion.get()
                         )
                     )
                 })

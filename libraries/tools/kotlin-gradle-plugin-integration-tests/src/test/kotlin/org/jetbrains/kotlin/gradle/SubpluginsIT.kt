@@ -63,10 +63,10 @@ class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests
     @DisplayName("Allopen plugin opens classes and methods")
-    @GradleTest
-    fun testAllOpenPlugin(gradleVersion: GradleVersion) {
-        project("allOpenSimple", gradleVersion) {
-            build("assemble") {
+    @GradleWithCompilerVersionTest
+    fun testAllOpenPlugin(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("allOpenSimple", gradleVersion, compilerVersion = compilerVersion) {
+            build("assemble", forwardBuildOutput = true ) {
                 val classesDir = kotlinClassesDir()
                 val openClass = classesDir.resolve("test/OpenClass.class")
                 val closedClass = classesDir.resolve("test/ClosedClass.class")
@@ -245,10 +245,10 @@ class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests
     @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
-    @GradleTest
-    fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion) {
+    @GradleWithCompilerVersionTest
+    fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion, compilerVersion: String) {
         val languageVersionForBuildSrc = KotlinVersion.firstNonDeprecated.name
-        project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion) {
+        project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion, compilerVersion = compilerVersion) {
             subProject("buildSrc").buildGradleKts.modify {
                 //language=kts
                 """

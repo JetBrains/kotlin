@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.gradle.utils.named
  * Resolves dependencies of jvm and Android source sets from the perspective jvm
  */
 internal fun IdeJvmAndAndroidPlatformBinaryDependencyResolver(project: Project): IdeDependencyResolver {
-    val coreLibrariesVersion = project.provider { project.kotlinExtension.coreLibrariesVersion }
+    val coreLibrariesVersion = project.provider { project.kotlinExtension.kotlinCoreLibrariesVersion.get() }
     return IdeBinaryDependencyResolver(
         binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
         artifactResolutionStrategy = IdeBinaryDependencyResolver.ArtifactResolutionStrategy.PlatformLikeSourceSet(

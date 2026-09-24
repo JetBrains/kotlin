@@ -60,9 +60,9 @@ interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceS
     var kotlinDaemonJvmArgs: List<String>
 
     /**
-     * The version of the Kotlin compiler.
+     * The version of the Kotlin compiler to use for compilation.
      *
-     * By default, the Kotlin Build Tools API implementation of the same version as the KGP is used.
+     * Default: The same version as the Kotlin Gradle Plugin.
      *
      * Be careful with reading the property's value as eager reading will finalize the value and prevent it from being configured.
      *
@@ -71,6 +71,23 @@ interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceS
     @ExperimentalKotlinGradlePluginApi
     @ExperimentalBuildToolsApi
     val compilerVersion: Property<String>
+
+    /**
+     * Specifies the version of the core Kotlin libraries that are added to the Kotlin compile classpath,
+     * unless there is already a dependency added to this project.
+     *
+     * The core Kotlin libraries are:
+     * - 'kotlin-stdlib'
+     * - 'kotlin-test'
+     * - 'kotlin-dom-api-compat'
+     * - 'kotlin-reflect'
+     *
+     * Be careful with reading the property's value as eager reading will finalize the value and prevent it from being configured.
+     *
+     * Default: The same version as the version used in [compilerVersion]
+     */
+    @ExperimentalKotlinGradlePluginApi
+    val kotlinCoreLibrariesVersion: Property<String>
 
     /**
      * This function can be used to configure objects that are not yet created, or are created by

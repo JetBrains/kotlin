@@ -31,8 +31,12 @@ interface KotlinTopLevelExtensionConfig {
      * - 'kotlin-dom-api-compat'
      * - 'kotlin-reflect'
      *
-     * Default: The same version as the version used in the Kotlin Gradle plugin
+     * Be careful with reading the property's value as eager reading will finalize the value of [KotlinBaseExtension.compilerVersion] and
+     * prevent it from being configured.
+     *
+     * Default: The same version as the version used in [KotlinBaseExtension.compilerVersion]
      */
+    @Deprecated("Use KotlinBaseExtension.kotlinCoreLibrariesVersion instead", ReplaceWith("kotlinCoreLibrariesVersion"))
     var coreLibrariesVersion: String
 
     /**

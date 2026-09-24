@@ -534,6 +534,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelEx
 	public abstract fun abiValidation (Lorg/gradle/api/Action;)V
 	public abstract fun getAbiValidation ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;
 	public abstract fun getCompilerVersion ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKotlinCoreLibrariesVersion ()Lorg/gradle/api/provider/Property;
 	public abstract synthetic fun getKotlinDaemonJvmArgs ()Ljava/util/List;
 	public abstract fun invokeWhenCreated (Lorg/gradle/api/NamedDomainObjectContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun jvmToolchain (I)V

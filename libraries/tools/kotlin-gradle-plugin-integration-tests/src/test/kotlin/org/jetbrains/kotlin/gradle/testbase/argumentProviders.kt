@@ -390,6 +390,98 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
     )
 }
 
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class CompilerVersions(
+    val versions: Array<String> = [],
+    val additionalVersions: Array<String> = [],
+) {
+    companion object {
+        const val CURRENT = "CURRENT"
+        const val STABLE_RELEASE = TestVersions.Kotlin.STABLE_RELEASE
+    }
+}
+
+/**
+ * Parameterized test against different Gradle and Kotlin compiler versions.
+ * Test should accept [GradleVersion] and [String] (compiler version) as parameters.
+ *
+ * By default, [TestVersions.Gradle.MIN_SUPPORTED] and [TestVersions.Gradle.MAX_SUPPORTED] Gradle versions are provided.
+ * To modify it use additional [GradleTestVersions] annotation on the test method.
+ *
+ * By default, [TestVersions.Kotlin.STABLE_RELEASE] and [TestVersions.Kotlin.CURRENT] compiler versions are provided.
+ * To modify it use additional [CompilerVersions] annotation on the test method.
+ *
+ * @see [GradleTestVersions]
+ * @see [CompilerVersions]
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@GradleTestVersions
+@CompilerVersions
+@ParameterizedTest(name = "{1} with {0}: {displayName}")
+@ArgumentsSource(GradleAndCompilerVersionArgumentsProvider::class)
+annotation class GradleWithCompilerVersionTest
+
+class GradleAndCompilerVersionArgumentsProvider : GradleArgumentsProvider() {
+    override fun provideArguments(
+        parameters: ParameterDeclarations,
+        context: ExtensionContext,
+    ): Stream<out Arguments> {
+        val compilerVersions = compilerVersions(context)
+        val gradleVersions = gradleVersions(context)
+        val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
+            .map { GradleVersion.version(it) }
+
+        return compilerVersions
+            .flatMap { compilerVersion ->
+                gradleVersions.map { gradleVersion ->
+                    gradleVersion to compilerVersion
+                }
+            }
+            .asSequence()
+            .filter { pair -> versionFilter.map { pair.first == it }.orElse(true) }
+            .map { it: Pair<GradleVersion, String> ->
+                Arguments.of(it.first, it.second)
+            }
+            .run {
+                /* We only take the last configuration in smoke test mode */
+                if (testFederationMode == TestFederationMode.Smoke) toList().takeLast(1)
+                else toList()
+            }
+            .stream()
+    }
+
+    protected fun compilerVersions(context: ExtensionContext): Set<String> {
+        val versionsAnnotation = findAnnotationOrNull<CompilerVersions>(context)
+
+        val defaultVersions = listOf(TestVersions.Kotlin.STABLE_RELEASE, TestVersions.Kotlin.CURRENT)
+        val baseVersions = if (versionsAnnotation == null || versionsAnnotation.versions.isEmpty()) {
+            defaultVersions
+        } else {
+            versionsAnnotation.versions.map { resolveCompilerVersion(it) }
+        }
+
+        val additionalVersions = versionsAnnotation?.additionalVersions?.map { resolveCompilerVersion(it) } ?: emptyList()
+
+        val allVersions = (baseVersions + additionalVersions).distinct()
+
+        if (testFederationMode == TestFederationMode.Smoke) {
+            return setOf(allVersions.last())
+        }
+
+        return allVersions.toSet()
+    }
+
+    companion object {
+        private fun resolveCompilerVersion(version: String): String = when (version.uppercase()) {
+            CompilerVersions.CURRENT -> TestVersions.Kotlin.CURRENT
+            "STABLE_RELEASE", "STABLE" -> TestVersions.Kotlin.STABLE_RELEASE
+            else -> version
+        }
+    }
+}
+
 /**
  * Disables a parametrized test if any of argument providers doesn't have arguments to provide.
  * When gradle.integration.tests.gradle.version.filter property is used, all arguments of a GradleArgumentsProvider may be filtered out.

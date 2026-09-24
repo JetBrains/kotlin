@@ -98,7 +98,10 @@ abstract class KotlinProjectExtension @Inject constructor(
     HasProject,
     ExtensionAware {
 
-    override lateinit var coreLibrariesVersion: String
+    @Deprecated("Use KotlinBaseExtension.kotlinCoreLibrariesVersion instead", replaceWith = ReplaceWith("kotlinCoreLibrariesVersion"))
+    override var coreLibrariesVersion: String
+        get() = kotlinCoreLibrariesVersion.get()
+        set(value) = kotlinCoreLibrariesVersion.set(value)
 
     final override val extras: MutableExtras = mutableExtrasOf()
 
@@ -172,6 +175,9 @@ abstract class KotlinProjectExtension @Inject constructor(
     @ExperimentalBuildToolsApi
     override val compilerVersion: Property<String> =
         project.objects.propertyWithConvention(project.getKotlinPluginVersion()).chainedFinalizeValueOnRead()
+
+    override val kotlinCoreLibrariesVersion: Property<String> =
+        project.objects.propertyWithConvention(compilerVersion).chainedFinalizeValueOnRead()
 
     internal val abiValidationInternal: AbiValidationExtensionImpl = project.AbiValidationExtensionImpl()
 

@@ -74,6 +74,7 @@ fun KGPBaseTest.project(
     localRepoDir: Path? = defaultLocalRepo(gradleVersion),
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
+    compilerVersion: String? = null,
     test: TestProject.() -> Unit = {},
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -85,6 +86,7 @@ fun KGPBaseTest.project(
     projectPath.addDefaultSettingsToSettingsGradle(
         dependencyManagement,
         localRepoDir,
+        compilerVersion,
     )
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
@@ -934,6 +936,7 @@ private val String.testProjectPath: Path get() = Paths.get("src", "test", "resou
 internal fun Path.addDefaultSettingsToSettingsGradle(
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     localRepo: Path? = null,
+    overrideCompilerVersion: String? = null,
 ) {
     addPluginManagementToSettings()
     when (dependencyManagement) {
@@ -944,6 +947,9 @@ internal fun Path.addDefaultSettingsToSettingsGradle(
             )
         }
         is DependencyManagement.DisabledDependencyManagement -> {}
+    }
+    if (overrideCompilerVersion != null) {
+        addCompilerVersionOverrideToSettings(overrideCompilerVersion)
     }
 }
 
@@ -1103,6 +1109,43 @@ internal fun Path.addPluginManagementToSettings() {
     }
 }
 
+
+internal fun Path.addCompilerVersionOverrideToSettings(compilerVersion: String) {
+    val buildGradle = resolve("build.gradle")
+    val buildGradleKts = resolve("build.gradle.kts")
+    val settingsGradle = resolve("settings.gradle")
+    val settingsGradleKts = resolve("settings.gradle.kts")
+    when {
+        Files.exists(settingsGradle) -> settingsGradle.append(getGroovyCompilerVersionBlock(compilerVersion))
+        Files.exists(settingsGradleKts) -> settingsGradleKts.append(getKtsCompilerVersionBlock(compilerVersion))
+        Files.exists(buildGradle) ->settingsGradle.writeText(getGroovyCompilerVersionBlock(compilerVersion))
+        Files.exists(buildGradleKts) -> settingsGradleKts.writeText(getKtsCompilerVersionBlock(compilerVersion))
+        else -> error("No build-file or settings file found")
+    }
+}
+
+private fun getKtsCompilerVersionBlock(compilerVersion: String) = """
+    gradle.lifecycle.beforeProject {     
+        plugins.withId("org.jetbrains.kotlin.jvm") {
+            val ext = extensions.getByName("kotlin")
+            val method = ext.javaClass.getMethod("getCompilerVersion")
+            val property = method.invoke(ext)
+            
+            // If it's a Gradle Property<String>
+            if (property is org.gradle.api.provider.Property<*>) {
+                (property as org.gradle.api.provider.Property<Any>).set("$compilerVersion")
+            }
+        }
+    }
+""".trimIndent()
+
+private fun getGroovyCompilerVersionBlock(compilerVersion: String) = """
+    gradle.lifecycle.beforeProject {     
+        plugins.withId("org.jetbrains.kotlin.jvm") {
+            extensions.getByName("kotlin").compilerVersion = "$compilerVersion"
+        }
+    }
+""".trimIndent()
 
 internal fun Path.addDependencyManagementToSettings(
     gradleRepositoriesMode: RepositoriesMode = RepositoriesMode.PREFER_SETTINGS,

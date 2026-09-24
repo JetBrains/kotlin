@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.kaptGenerateStubsTaskName
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -14,12 +16,12 @@ import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
 
 class SubpluginEnvironment(
     private val subplugins: List<KotlinCompilerPluginSupportPlugin>,
-    private val kotlinPluginVersion: String
+    private val compilerVersion: Provider<String>
 ) {
     companion object {
         fun loadSubplugins(project: Project): SubpluginEnvironment {
-            val kotlinPluginVersion = project.getKotlinPluginVersion()
-            return SubpluginEnvironment(project.plugins.filterIsInstance<KotlinCompilerPluginSupportPlugin>(), kotlinPluginVersion)
+            val compilerVersion = project.kotlinExtension.compilerVersion
+            return SubpluginEnvironment(project.plugins.filterIsInstance<KotlinCompilerPluginSupportPlugin>(), compilerVersion)
         }
     }
 
@@ -96,7 +98,7 @@ class SubpluginEnvironment(
     }
 
     private fun Project.addMavenDependency(configuration: String, artifact: SubpluginArtifact) {
-        val artifactVersion = artifact.version ?: kotlinPluginVersion
+        val artifactVersion = artifact.version ?: compilerVersion.get()
         val mavenCoordinate = "${artifact.groupId}:${artifact.artifactId}:$artifactVersion"
         project.logger.kotlinDebug { "Adding '$mavenCoordinate' to '$configuration' configuration" }
         project.dependencies.add(configuration, mavenCoordinate)

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.legacyApiConfigurationName
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 
 internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
@@ -29,9 +28,7 @@ internal const val PLATFORM_INTEGERS_SUPPORT_LIBRARY = "platform-integers"
 internal val CustomizeKotlinDependenciesSetupAction = KotlinProjectSetupAction {
     val kotlinExtension = project.kotlinExtension
     val propertiesProvider = PropertiesProvider(project)
-    val coreLibrariesVersion = project.objects.providerWithLazyConvention {
-        kotlinExtension.coreLibrariesVersion
-    }
+    val coreLibrariesVersion = kotlinExtension.kotlinCoreLibrariesVersion
 
     if (propertiesProvider.stdlibDefaultDependency)
         project.configureStdlibDefaultDependency(kotlinExtension, coreLibrariesVersion)

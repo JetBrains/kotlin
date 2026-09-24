@@ -302,14 +302,14 @@ class IdeStdlibResolutionTest {
     private fun Project.stdlibSourceSetDependency(stdlibSourceSetName: String) = multiplatformExtension.stdlibSourceSetDependency(stdlibSourceSetName)
 
     private fun KotlinMultiplatformExtension.stdlibSourceSetDependency(stdlibSourceSetName: String) =
-        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$stdlibSourceSetName:${coreLibrariesVersion}")
+        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$stdlibSourceSetName:${kotlinCoreLibrariesVersion.get()}")
 
     private fun jvmStdlibDependencies(kotlin: KotlinMultiplatformExtension) = listOf(
-        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:${kotlin.coreLibrariesVersion}"),
+        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:${kotlin.kotlinCoreLibrariesVersion.get()}"),
     )
 
     private fun jsStdlibDependency(kotlin: KotlinMultiplatformExtension) =
-        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-js:${kotlin.coreLibrariesVersion}")
+        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-js:${kotlin.kotlinCoreLibrariesVersion.get()}")
 
     private fun nativeStdlibDependency(kotlin: KotlinMultiplatformExtension) =
         binaryCoordinates("org.jetbrains.kotlin.native:stdlib:${kotlin.project.nativeProperties.kotlinNativeVersion.get()}")
