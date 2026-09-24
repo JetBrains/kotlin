@@ -41,7 +41,7 @@ RUN curl https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21
 
 RUN curl https://corretto.aws/downloads/resources/25.0.2.10.1/amazon-corretto-25.0.2.10.1-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl https://download.java.net/java/early_access/valhalla/27/1/openjdk-27-jep401ea3+1-1_${JDK_PLATFORM_SUFFIX}_bin.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://download.java.net/java/early_access/jdk28/16/GPL/openjdk-28-ea+16_${JDK_PLATFORM_SUFFIX}_bin.tar.gz | tar -xz -C /usr/lib/jvm
 
 RUN curl -L https://gds.oracle.com/download/graal/25i2/latest/graalvm-jdk-25i2-25_${JDK_PLATFORM_SUFFIX}_bin.tar.gz | tar -xz -C /usr/lib/jvm
 
@@ -64,7 +64,7 @@ ENV JDK_11_0=$JDK11 \
     JDK_21_0=$JDK21 \
     JDK_25_0=$JDK25
 
-ENV JDK_VALHALLA=/usr/lib/jvm/jdk-27
+ENV JDK_VALHALLA=/usr/lib/jvm/jdk-28
 ENV JDK_NATIVE_IMAGE=/usr/lib/jvm/graalvm-25.2.4+7.1
 
 ENV JAVA_HOME=$JDK_17_0
