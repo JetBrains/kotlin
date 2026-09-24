@@ -8031,6 +8031,12 @@ private fun KaDiagnosticConverterBuilder.addConversions175() {
             token,
         )
     }
+    add(FirErrors.COMPANION_BLOCK_LATEINIT) { firDiagnostic ->
+        CompanionBlockLateinitImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions176() {
