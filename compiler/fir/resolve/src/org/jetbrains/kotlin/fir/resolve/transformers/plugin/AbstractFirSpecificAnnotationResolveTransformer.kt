@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.addToStdlib.eachIsInstanceOrNull
 
 @OptIn(PrivateForInline::class)
 abstract class AbstractFirSpecificAnnotationResolveTransformer(
@@ -367,6 +368,13 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                 regularClass.transformDeclarations(this, data)
             },
         )
+
+        regularClass.numericClassActualizations = regularClass.symbol.resolvedCompilerAnnotationsWithClassIds
+            .getAnnotationByClassId(StandardClassIds.Annotations.NumericClass, session)
+            ?.findArgumentByName(StandardClassIds.Annotations.ParameterNames.actualizations)
+            ?.unwrapAndFlattenArgument(flattenArrays = true)
+            ?.eachIsInstanceOrNull<FirGetClassCall>()
+            ?.mapNotNull { it.getTargetType() }
 
         return regularClass
     }

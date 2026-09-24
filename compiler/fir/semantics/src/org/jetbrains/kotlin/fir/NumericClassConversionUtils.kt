@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.declarations.findArgumentByName
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildNumericClassConversion
-import org.jetbrains.kotlin.fir.expressions.unwrapAndFlattenArgument
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
@@ -24,7 +20,6 @@ import org.jetbrains.kotlin.fir.types.isPrimitiveNumberOrNullableType
 import org.jetbrains.kotlin.fir.types.isUnsignedTypeOrNullableUnsignedType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.eachIsInstanceOrNull
 
 fun FirExpression.wrapIntoNumericClassConversionIfNeeded(expectedType: ConeKotlinType, session: FirSession): FirExpression = when {
     !isNumericConversionPossibleBetween(resolvedType, expectedType, session) -> this
@@ -49,14 +44,8 @@ private fun FirBasedSymbol<*>.supportsNumericClassConversionFrom(type: ConeKotli
 private fun FirBasedSymbol<*>.supportsNumericClassConversionTo(type: ConeKotlinType, session: FirSession): Boolean =
     getSupportedNumericClassConversions(session)?.all { it.fitsInto(type) } ?: false
 
-fun FirBasedSymbol<*>.getSupportedNumericClassConversions(session: FirSession): List<ConeKotlinType>? {
-    val arguments = resolvedCompilerAnnotationsWithClassIds.getAnnotationByClassId(StandardClassIds.Annotations.NumericClass, session)
-        ?.findArgumentByName(StandardClassIds.Annotations.ParameterNames.actualizations)
-        ?.unwrapAndFlattenArgument(flattenArrays = true)
-        ?: return null
-
-    return arguments.eachIsInstanceOrNull<FirGetClassCall>()?.mapNotNull { it.getTargetType()?.fullyExpandedType(session) }
-}
+fun FirBasedSymbol<*>.getSupportedNumericClassConversions(session: FirSession): List<ConeKotlinType>? =
+    (this as? FirRegularClassSymbol)?.numericClassActualizations?.map { it.fullyExpandedType(session) }
 
 private fun ConeKotlinType.fitsInto(other: ConeKotlinType): Boolean {
     val primitiveClassIds = when {

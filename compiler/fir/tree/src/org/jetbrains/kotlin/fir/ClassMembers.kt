@@ -309,3 +309,7 @@ var FirClass.companionBlocks: CompanionBlockInfo? by FirDeclarationDataRegistry.
 private object FirIllegalCompanionBlockMemberKey : FirDeclarationDataKey()
 
 var FirDeclaration.isIllegalCompanionBlockMember: Boolean? by FirDeclarationDataRegistry.data(FirIllegalCompanionBlockMemberKey)
+
+private object NumericClassKey : FirDeclarationDataKey()
+var FirRegularClass.numericClassActualizations: List<ConeKotlinType>? by FirDeclarationDataRegistry.data(NumericClassKey)
+val FirRegularClassSymbol.numericClassActualizations: List<ConeKotlinType>? get() = fir.numericClassActualizations
