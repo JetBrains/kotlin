@@ -124,7 +124,9 @@ fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId, session: Fir
 }
 
 fun List<FirAnnotation>.getAnnotationByClassId(classId: ClassId, session: FirSession): FirAnnotation? {
-    return getAnnotationsByClassId(classId, session).firstOrNull()
+    return firstOrNull {
+        it.doesMatchesClassId(classId, session)
+    }
 }
 
 fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> =
