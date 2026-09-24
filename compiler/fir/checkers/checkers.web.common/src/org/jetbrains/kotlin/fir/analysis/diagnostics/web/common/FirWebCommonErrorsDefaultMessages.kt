@@ -126,6 +126,6 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Only external declarations are allowed in files marked with ''{0}'' annotation.",
             FirDiagnosticRenderers.RENDER_TYPE
         )
-        map.put(INAPPLICABLE_EAGER_INITIALIZATION, "'@EagerInitialization' is applicable only to top-level properties.")
+        map.put(INAPPLICABLE_EAGER_INITIALIZATION, "'@EagerInitialization' is only applicable to a top-level property with an initializer.")
     }
 }

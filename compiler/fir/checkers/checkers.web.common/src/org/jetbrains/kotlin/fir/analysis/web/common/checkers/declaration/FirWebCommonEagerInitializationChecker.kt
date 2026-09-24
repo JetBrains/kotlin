@@ -26,7 +26,7 @@ abstract class FirWebCommonAbstractEagerInitializationChecker(
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
-        if (context.isTopLevel) return
+        if (context.isTopLevel && declaration.initializer != null) return
 
         val annotation = declaration.getAnnotationByClassId(requiredAnnotation, context.session) ?: return
         reporter.reportOn(annotation.source, FirWebCommonErrors.INAPPLICABLE_EAGER_INITIALIZATION)

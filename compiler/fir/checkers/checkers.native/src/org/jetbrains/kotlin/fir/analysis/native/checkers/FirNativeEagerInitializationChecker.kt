@@ -25,8 +25,7 @@ object FirNativeEagerInitializationChecker : FirPropertyChecker(MppCheckerKind.P
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
-
-        if (!context.isTopLevel) {
+        if (!context.isTopLevel || declaration.initializer == null) {
             reporter.reportIfHasAnnotation(declaration, eagerInitializationClassId, FirNativeErrors.INAPPLICABLE_EAGER_INITIALIZATION)
         }
     }

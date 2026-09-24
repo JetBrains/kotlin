@@ -79,7 +79,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "'@ThreadLocal' is applicable only to property with backing field, to property with delegation, or to objects."
         )
         map.put(INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL, "'@ThreadLocal' is applicable only to top-level declarations.")
-        map.put(INAPPLICABLE_EAGER_INITIALIZATION, "'@EagerInitialization' is applicable only to top-level properties.")
+        map.put(INAPPLICABLE_EAGER_INITIALIZATION, "'@EagerInitialization' is only applicable to a top-level property with an initializer.")
         map.put(INVALID_CHARACTERS_NATIVE_ERROR, "Name {0}.", TO_STRING)
         map.put(REDUNDANT_SWIFT_REFINEMENT, "ObjC refined declarations cannot be refined in Swift.")
         map.put(
