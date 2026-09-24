@@ -1,10 +1,9 @@
-// IGNORE_BACKEND: JVM
 // LANGUAGE: +FullValueClasses
 // CHECK_BYTECODE_TEXT
 
-// Only JVM preview features are enabled here, not Valhalla value classes, so every Kotlin class below is an identity class. Their
-// `InnerClasses` entries lack `ACC_IDENTITY`, so the JVM rejects the open nested class `A.C` as an illegal value class, and
-// reflection reports the other nested classes as value classes.
+// Only JVM preview features are enabled here, not Valhalla value classes, so every Kotlin class below is an identity class and
+// has `ACC_IDENTITY` in its `InnerClasses` entries (unlike the Java value record `Outer.V`). Without it, the JVM would reject the
+// open nested class `A.C` as an illegal value class, and reflection would report the other nested classes as value classes.
 
 // FILE: Outer.java
 public class Outer {
@@ -46,17 +45,17 @@ fun box(): String {
     return "OK"
 }
 
-// 3 public final static INNERCLASS A\$B A B
-// 3 public static INNERCLASS A\$C A C
-// 3 public static abstract INNERCLASS A\$D A D
-// 3 public final INNERCLASS A\$E A E
+// 3 public final static synchronized INNERCLASS A\$B A B
+// 3 public static synchronized INNERCLASS A\$C A C
+// 3 public static synchronized abstract INNERCLASS A\$D A D
+// 3 public final synchronized INNERCLASS A\$E A E
 // 3 public static abstract INNERCLASS A\$F A F
-// 3 public final static enum INNERCLASS A\$H A H
-// 3 public final static INNERCLASS A\$I A I
-// 3 public final static INNERCLASS A\$O A O
-// 3 public final static INNERCLASS A\$Companion A Companion
-// 2 public final static INNERCLASS TestKt\$box\$identityObjects\$1 null null
-// 2 public final static INNERCLASS TestKt\$box\$identityObjects\$2 null null
-// 2 public final static INNERCLASS TestKt\$box\$Local null Local
+// 3 public final static synchronized enum INNERCLASS A\$H A H
+// 3 public final static synchronized INNERCLASS A\$I A I
+// 3 public final static synchronized INNERCLASS A\$O A O
+// 3 public final static synchronized INNERCLASS A\$Companion A Companion
+// 2 public final static synchronized INNERCLASS TestKt\$box\$identityObjects\$1 null null
+// 2 public final static synchronized INNERCLASS TestKt\$box\$identityObjects\$2 null null
+// 2 public final static synchronized INNERCLASS TestKt\$box\$Local null Local
 // 1 public final static INNERCLASS Outer\$V Outer V
-// 1 public final static INNERCLASS Outer\$NV Outer NV
+// 1 public final static synchronized INNERCLASS Outer\$NV Outer NV
