@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 buildscript {
     val rootBuildDirectory = project.file("../..")
-    extra.set("rootBuildDirectory", rootBuildDirectory)
+    extra["rootBuildDirectory"] = rootBuildDirectory
     apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
 
     dependencies {

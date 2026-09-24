@@ -7,9 +7,9 @@ How to Publish
  */
 
 val protobufVersion = "2.6.1"
-extra.set("protobufVersion", protobufVersion)
+extra["protobufVersion"] = protobufVersion
 val publishedVersion = "2.6.1-2"
-extra.set("publishedVersion", publishedVersion)
+extra["publishedVersion"] = publishedVersion
 
 allprojects {
     group = "org.jetbrains.kotlin"
