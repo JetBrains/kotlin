@@ -311,6 +311,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun TypeConstructorMarker.isValueConstructor(): Boolean {
+        // TODO(KT-89093) proper implementation
         return false
     }
 
