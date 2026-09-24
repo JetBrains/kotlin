@@ -1,0 +1,243 @@
+FILE: polymorphicDataSchemas.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface UserLike : R|kotlin/Any| {
+        public abstract val name: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public abstract val age: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface WithUserGroup : R|kotlin/Any| {
+        public abstract val user: R|org/jetbrains/kotlinx/dataframe/UserLike|
+            public get(): R|org/jetbrains/kotlinx/dataframe/UserLike|
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface WithUserValue : R|kotlin/Any| {
+        public abstract val user: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Anything : R|kotlin/Any| {
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Generic<T> : R|kotlin/Any| {
+        public abstract val name: R|T|
+            public get(): R|T|
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final data class NotAnInterface : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+        public constructor(name: R|kotlin/String|, age: R|kotlin/Int|): R|org/jetbrains/kotlinx/dataframe/NotAnInterface| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public final val age: R|kotlin/Int| = R|<local>/age|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final operator fun component2(): R|kotlin/Int|
+
+        public final fun copy(name: R|kotlin/String| = this@R|org/jetbrains/kotlinx/dataframe/NotAnInterface|.R|org/jetbrains/kotlinx/dataframe/NotAnInterface.name|, age: R|kotlin/Int| = this@R|org/jetbrains/kotlinx/dataframe/NotAnInterface|.R|org/jetbrains/kotlinx/dataframe/NotAnInterface.age|): R|org/jetbrains/kotlinx/dataframe/NotAnInterface|
+
+    }
+    public final fun useSchema(row: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/UserLike>|): R|kotlin/String| {
+        ^useSchema <strcat>(R|<local>/row|.R|org/jetbrains/kotlinx/dataframe/name|, String( is ), R|<local>/row|.R|org/jetbrains/kotlinx/dataframe/age|, String( years old))
+    }
+    public final fun useGroupSchema(row: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/WithUserGroup>|): R|kotlin/String| {
+        ^useGroupSchema R|<local>/row|.R|org/jetbrains/kotlinx/dataframe/user|.R|kotlin/Any.toString|()
+    }
+    public final fun useValueSchema(row: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/WithUserValue>|): R|kotlin/String| {
+        ^useValueSchema R|<local>/row|.R|org/jetbrains/kotlinx/dataframe/user|
+    }
+    public final fun compatible(): R|kotlin/Unit| {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_53>| = R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_53>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_53>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_53I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val name: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val age: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val favoriteColor: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public constructor(): R|<local>/DataFrameOf_53I|
+
+            }
+
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_53I>|.name: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_53I>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_53I>|.age: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_53I>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_53I>|.favoriteColor: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_53I>|.favoriteColor: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope0|
+
+            }
+
+            local abstract class DataFrameOf_53 : R|<local>/DataFrameOf_53I|, R|org/jetbrains/kotlinx/dataframe/UserLike| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
+
+                public constructor(): R|<local>/DataFrameOf_53|
+
+            }
+
+            ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(name).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/String|>(vararg(String(Alice)))), String(age).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/Int|>(vararg(Int(12)))), String(favoriteColor).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/String|>(vararg(String(blue))))))
+        }
+        )
+    }
+    public final fun columnGroup(): R|kotlin/Unit| {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_93>| = R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_52>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_52>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_52I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val name: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val age: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public constructor(): R|<local>/DataFrameOf_52I|
+
+            }
+
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_52I>|.name: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_52I>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_52I>|.age: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_52I>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope0|
+
+            }
+
+            local abstract class DataFrameOf_52 : R|<local>/DataFrameOf_52I|, R|org/jetbrains/kotlinx/dataframe/UserLike| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
+
+                public constructor(): R|<local>/DataFrameOf_52|
+
+            }
+
+            ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(name).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/String|>(vararg(String(Alice)))), String(age).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/Int|>(vararg(Int(12))))))
+        }
+        ).R|org/jetbrains/kotlinx/dataframe/api/group|<R|<local>/DataFrameOf_52|, R|it(kotlin/Comparable<*> & java/io/Serializable)|>(<L> = group@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/DataFrameOf_52>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/DataFrameOf_52>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<it(kotlin/Comparable<*> & java/io/Serializable)>| <inline=NoInline>  {
+            ^ (this@R|special/anonymous|, (this@R|org/jetbrains/kotlinx/dataframe/columnGroup|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.name|).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl.and: R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<C>|>|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>((this@R|org/jetbrains/kotlinx/dataframe/columnGroup|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.age|)
+        }
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupClause<<local>/DataFrameOf_52, it(kotlin/Comparable<*> & java/io/Serializable)>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_93>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupClause<<local>/DataFrameOf_52, it(kotlin/Comparable<*> & java/io/Serializable)>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_93>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_93I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val user: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/User_001>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/User_001>|
+
+                public constructor(): R|<local>/DataFrameOf_93I|
+
+            }
+
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_93I>|.user: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/User_001>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/User_001>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_93I>|.user: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/User_001>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/User_001>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope0|
+
+            }
+
+            local abstract class User_001 : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val name: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val age: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public constructor(): R|<local>/User_001|
+
+            }
+
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/User_001>|.name: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/User_001>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/User_001>|.age: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/User_001>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope1|
+
+            }
+
+            local abstract class DataFrameOf_93 : R|<local>/DataFrameOf_93I|, R|org/jetbrains/kotlinx/dataframe/WithUserGroup| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
+
+                public constructor(): R|<local>/DataFrameOf_93|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/into|<R|<local>/DataFrameOf_52|, R|it(kotlin/Comparable<*> & java/io/Serializable)|>(String(user))
+        }
+        )
+    }
+FILE: org/jetbrains/kotlinx/dataframe/__GENERATED__CALLABLES__.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/UserLike>|.name: R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(UserLike_name)) public get(): R|kotlin/String|
+    public final val <T> R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Generic<T>>|.name: R|T|
+        @R|kotlin/jvm/JvmName|(name = String(Generic_name)) public get(): R|T|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/NotAnInterface>|.name: R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(NotAnInterface_name)) public get(): R|kotlin/String|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/UserLike>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(UserLike_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+    public final val <T> R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Generic<T>>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<T>|
+        @R|kotlin/jvm/JvmName|(name = String(Generic_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<T>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/NotAnInterface>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(NotAnInterface_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/UserLike>|.age: R|kotlin/Int|
+        @R|kotlin/jvm/JvmName|(name = String(UserLike_age)) public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/NotAnInterface>|.age: R|kotlin/Int|
+        @R|kotlin/jvm/JvmName|(name = String(NotAnInterface_age)) public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/UserLike>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        @R|kotlin/jvm/JvmName|(name = String(UserLike_age)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/NotAnInterface>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        @R|kotlin/jvm/JvmName|(name = String(NotAnInterface_age)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/WithUserGroup>|.user: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/UserLike>|
+        @R|kotlin/jvm/JvmName|(name = String(WithUserGroup_user)) public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/UserLike>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/WithUserValue>|.user: R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(WithUserValue_user)) public get(): R|kotlin/String|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/WithUserGroup>|.user: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/UserLike>|
+        @R|kotlin/jvm/JvmName|(name = String(WithUserGroup_user)) public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/UserLike>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/WithUserValue>|.user: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(WithUserValue_user)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
