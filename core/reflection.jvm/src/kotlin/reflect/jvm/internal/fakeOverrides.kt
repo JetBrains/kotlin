@@ -178,20 +178,32 @@ internal fun computeOverriddenFunctions(callable: ReflectKFunction): Collection<
     return computeOverriddenFunctions(container, thisKotlinSignature)
 }
 
+/**
+ * Finds functions in supertypes of [container] which are overridden by a function with the given Kotlin [signature] declared in [container].
+ *
+ * If [substituted] is true, the result contains copies of the overridden functions with types substituted to the type parameters of
+ * [container] (in other words, fake overrides of the overridden functions in [container]), otherwise the original functions declared in
+ * supertypes. Substituted copies are needed when types of the overridden functions are compared with or applied to types of the overriding
+ * function, e.g. during type enhancement.
+ *
+ * [supertypes] are the supertypes of [container] where the overridden functions are looked for. They are different from `container.supertypes`
+ * only for additional functions of mapped built-in classes, see `javaAnalogueSupertypes`.
+ */
 internal fun computeOverriddenFunctions(
     container: MemberContainer<*>,
     signature: EquatableCallableSignature<EqualityMode.KotlinSignature>,
+    substituted: Boolean = false,
+    supertypes: List<KType> = container.supertypes,
 ): Collection<ReflectKFunction> {
     val result = mutableListOf<ReflectKFunction>()
-    for (supertype in container.supertypes) {
+    for (supertype in supertypes) {
         val supertypeKClass = supertype.memberContainer ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
         for (supertypeMember in getSupertypeMembersByName(supertype, supertypeKClass, signature.name)) {
             if (supertypeMember !is ReflectKFunction) continue
-            val kotlinSignature =
-                supertypeMember.createFakeOverride(container, substitutor).toEquatableCallableSignature(EqualityMode.KotlinSignature)
-            if (signature == kotlinSignature) {
-                result.add(supertypeMember)
+            val fakeOverride = supertypeMember.createFakeOverride(container, substitutor) as ReflectKFunction
+            if (signature == fakeOverride.toEquatableCallableSignature(EqualityMode.KotlinSignature)) {
+                result.add(if (substituted) fakeOverride else supertypeMember)
             }
         }
     }

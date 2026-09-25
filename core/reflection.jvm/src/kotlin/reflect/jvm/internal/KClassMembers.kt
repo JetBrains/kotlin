@@ -30,6 +30,7 @@ import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.kind
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty1
+import kotlin.reflect.KType
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.valueParameters
@@ -422,6 +423,26 @@ internal fun MemberContainer<*>.getAdditionalFunctions(): List<ReflectKFunction>
         function
     }
 }
+
+/**
+ * Supertypes of the Java analogue class of this mapped built-in class, e.g. `java.lang.Iterable<E!>` for `kotlin.collections.Collection`
+ * (whose Java analogue is `java.util.Collection`), converted from Java reflection in the same way as supertypes of any Java class.
+ *
+ * Additional functions (see `getAdditionalFunctions`) are enhanced in the same way as members of the Java analogue class would be: by the
+ * signatures of the overridden functions found through these supertypes. Unlike in supertypes of the Kotlin class (`Iterable<E>`), type
+ * arguments in Java supertypes are flexible, which affects the result, e.g. `java.util.Collection.spliterator()` overriding
+ * `java.lang.Iterable.spliterator(): Spliterator<T>` is enhanced to `Spliterator<E!>`, not `Spliterator<E>`.
+ */
+internal val MemberContainer<*>.javaAnalogueSupertypes: List<KType>
+    get() {
+        val javaAnalogue = jClass.wrapperByPrimitive ?: jClass
+        return listOfNotNull(javaAnalogue.genericSuperclass, *javaAnalogue.genericInterfaces).mapNotNull { superClass ->
+            if (superClass == Any::class.java) return@mapNotNull null
+            superClass.toKType(
+                knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL, howThisTypeIsUsed = TypeUsage.SUPERTYPE,
+            )
+        }
+    }
 
 // For a collection class, collects names of properties and JVM signatures of functions of the whole Kotlin collection hierarchy: for a
 // mutable class (e.g. `MutableList`), all its supertypes (`List`, `MutableCollection`, `Collection`, ...); for a read-only class

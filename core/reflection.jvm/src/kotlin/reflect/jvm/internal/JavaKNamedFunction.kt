@@ -48,16 +48,32 @@ internal class JavaKNamedFunction(
     // Predefined enhancement of well-known JDK methods (e.g. `Iterator.forEachRemaining`, whose `Consumer<in T>` parameter must not be
     // flexible). It's applied only in the "errors" mode; the "warnings-only" entries don't change the type. See
     // `SignatureEnhancement.enhanceSignature` in the compiler.
+    // It applies only to the declaration itself, not to its fake overrides in subclasses, which are enhanced by the (already enhanced)
+    // signatures of the overridden functions instead.
     override val predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
-        get() = PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[
+        get() = if (overriddenStorage.isFakeOverride) null else PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[
             SignatureBuildingComponents.signature(jMethod.declaringClass.classId.internalName, jMethod.jvmSignature)
         ]?.takeIf { it.errorsSinceLanguageVersion == null }
 
-    override fun computeOverriddenFunctionsForEnhancement(): Collection<ReflectKFunction>? {
+    override fun computeOverriddenFunctionsForEnhancement(supertypes: List<KType>?): Collection<ReflectKFunction>? {
         if (Modifier.isStatic(jMethod.modifiers)) return emptyList()
         val signature = toEquatableCallableSignature(EqualityMode.KotlinSignature)
-        val overridden = computeOverriddenFunctions(container as MemberContainer<*>, signature)
-        if (overriddenStorage.isFakeOverride && overridden.size == 1) return null
+        // The overridden functions are substituted to the type parameters of this class, because their types are compared with and applied
+        // to the types of this function. For example, `get(): E` in `AbstractMutableList<Int!>` becomes `get(): Int!` and thus does not
+        // enhance the return type of the overriding Java method `Integer get(int)`.
+        // Note that the substituted copies are fake overrides in this class, so we must take their unenhanced types (which are the
+        // substituted types of the original overridden functions) to avoid infinite recursion in case this function is a fake override too.
+        val overridden = if (supertypes != null) {
+            // The only functions in Kotlin classes which are enhanced are additional built-in members (see `getAdditionalFunctions`). They
+            // are enhanced by the predefined enhancement info, and by the signatures of other additional members they override, which are
+            // found through the supertypes of the Java analogue class, e.g. `java.util.Collection.spliterator` is enhanced by
+            // `java.lang.Iterable.spliterator` which has a predefined enhancement.
+            computeOverriddenFunctions(container as MemberContainer<*>, signature, substituted = true, supertypes)
+        } else {
+            computeOverriddenFunctions(container as MemberContainer<*>, signature, substituted = true).also {
+                if (overriddenStorage.isFakeOverride && overridden.size == 1) return null
+            }
+        }
         return overridden
     }
 

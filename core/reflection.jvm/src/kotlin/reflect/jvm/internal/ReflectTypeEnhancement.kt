@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeProjection
+import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.types.*
 
 internal class ReflectSignatureParts(
@@ -148,8 +145,9 @@ private fun AbstractKType.enhanceInflexible(
     val enhancedNullability = getEnhancedNullability(effectiveQualifiers, position)
 
     val typeConstructor = enhancedClassifier ?: originalClass
+    val typeParameters = (typeConstructor as? KClass<*>)?.allTypeParameters()
     var globalArgIndex = index + 1
-    val enhancedArguments = arguments.map { arg ->
+    val enhancedArguments = arguments.mapIndexed { argIndex, arg ->
         val enhanced = when {
             !shouldEnhanceArguments -> EnhancementResult(null, 0)
             arg != KTypeProjection.STAR ->
@@ -168,9 +166,10 @@ private fun AbstractKType.enhanceInflexible(
             else -> EnhancementResult(null, 1)
         }
         globalArgIndex += enhanced.subtreeSize
+        val typeParameter = typeParameters?.getOrNull(argIndex)
         when {
-            enhanced.type != null -> KTypeProjection(arg.variance, enhanced.type)
-            enhancedClassifier != null && arg != KTypeProjection.STAR -> KTypeProjection(arg.variance, arg.type)
+            enhanced.type != null -> createProjection(enhanced.type, arg.variance, typeParameter)
+            enhancedClassifier != null && arg != KTypeProjection.STAR -> createProjection(arg.type!!, arg.variance, typeParameter)
             enhancedClassifier != null -> KTypeProjection.STAR
             else -> null
         }
@@ -188,7 +187,9 @@ private fun AbstractKType.enhanceInflexible(
         enhancedNullability ?: isMarkedNullable,
         lazyAnnotations, // In contrast to the compiler, we're not adding synthetic EnhancedNullability/EnhancedMutability annotations.
         abbreviation,
-        isDefinitelyNotNullType || (effectiveQualifiers.definitelyNotNull && !effectiveQualifiers.isNullabilityQualifierForWarning),
+        // See `SimpleKType.makeDefinitelyNotNullAsSpecified` on why only type parameter types can be definitely non-null.
+        (isDefinitelyNotNullType || (effectiveQualifiers.definitelyNotNull && !effectiveQualifiers.isNullabilityQualifierForWarning)) &&
+                typeConstructor is KTypeParameter,
         isNothingType,
         isSuspendFunctionType,
         enhancedMutableCollectionClass,
@@ -196,6 +197,9 @@ private fun AbstractKType.enhanceInflexible(
 
     return EnhancementResult(enhancedType, subtreeSize)
 }
+
+private fun createProjection(type: KType, variance: KVariance?, typeParameter: KTypeParameter?): KTypeProjection =
+    KTypeProjection(if (variance != null && typeParameter?.variance == variance) KVariance.INVARIANT else variance, type)
 
 private fun KClassifier.enhanceMutability(
     qualifiers: JavaTypeQualifiers,

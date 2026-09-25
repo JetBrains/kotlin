@@ -10,6 +10,7 @@ import kotlin.jvm.internal.KTypeBase
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
+import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KTypeProjection
 
 internal class SimpleKType(
@@ -34,9 +35,11 @@ internal class SimpleKType(
         return if (nullable) javaObjectType.kotlin else javaPrimitiveType?.kotlin ?: this
     }
 
+    // Only types with undefined nullability (type parameter types) can be definitely non-null. For other types, `X & Any` is the same as
+    // `X`, so only the nullability is changed (see `ConeDefinitelyNotNullType.create` in the compiler).
     override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType = SimpleKType(
         classifier, arguments, isMarkedNullable = isMarkedNullable && !isDefinitelyNotNull, lazyAnnotations, abbreviation,
-        isDefinitelyNotNull, isNothingType, isSuspendFunctionType, mutableCollectionClass,
+        isDefinitelyNotNull && classifier is KTypeParameter, isNothingType, isSuspendFunctionType, mutableCollectionClass,
     )
 
     override fun lowerBoundIfFlexible(): AbstractKType? = null

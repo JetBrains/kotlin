@@ -19,8 +19,8 @@ KClass: abstract interface B : A, Any
     public abstract fun B<R>.bar1(Inv<Inv<R!>!>!): kotlin.Unit
     public abstract fun B<R>.bar2(Inv<Inv<(raw) kotlin.Any!>>!): kotlin.Unit
     public abstract fun B<R>.bar3(Inv<(raw) kotlin.Any!>): kotlin.Unit
-    public abstract fun B<R>.baz1(Inv<(raw) kotlin.Any!>): kotlin.Unit
-    public abstract fun B<R>.baz2(Inv<(raw) kotlin.Any!>): kotlin.Unit
+    public abstract fun B<R>.baz1(Inv<(raw) kotlin.Any?>): kotlin.Unit
+    public abstract fun B<R>.baz2(Inv<(raw) kotlin.Any?>): kotlin.Unit
     public open operator fun B<R>.equals(kotlin.Any?): kotlin.Boolean
     public abstract fun B<R>.foo1(Inv<(raw) kotlin.Any?>): kotlin.Unit
     public abstract fun B<R>.foo2(Inv<(raw) kotlin.Any?>): kotlin.Unit
@@ -31,14 +31,14 @@ KClass: abstract interface B : A, Any
     public abstract fun B<R>.bar1(Inv<Inv<R!>!>!): kotlin.Unit
     public abstract fun B<R>.bar2(Inv<Inv<(raw) kotlin.Any!>>!): kotlin.Unit
     public abstract fun B<R>.bar3(Inv<(raw) kotlin.Any!>): kotlin.Unit
-    public abstract fun B<R>.baz1(Inv<(raw) kotlin.Any!>): kotlin.Unit
-    public abstract fun B<R>.baz2(Inv<(raw) kotlin.Any!>): kotlin.Unit
+    public abstract fun B<R>.baz1(Inv<(raw) kotlin.Any?>): kotlin.Unit
+    public abstract fun B<R>.baz2(Inv<(raw) kotlin.Any?>): kotlin.Unit
 KClass: abstract interface C1 : B, Any
   members:
     public abstract fun C1.bar1(Inv<Inv<kotlin.Int!>!>!): kotlin.Unit
     public abstract fun C1.bar2(Inv<Inv<(raw) kotlin.Any!>>!): kotlin.Unit
     public abstract fun C1.bar3(Inv<(raw) kotlin.Any!>): kotlin.Unit
-    public abstract fun C1.baz1(Inv<(raw) kotlin.Any!>): kotlin.Unit
+    public abstract fun C1.baz1(Inv<(raw) kotlin.Any?>): kotlin.Unit
     public abstract fun C1.baz2(Inv<*>?): kotlin.Unit
     public open operator fun C1.equals(kotlin.Any?): kotlin.Boolean
     public abstract fun C1.foo1(Inv<(raw) kotlin.Any?>): kotlin.Unit
@@ -54,8 +54,8 @@ KClass: abstract interface C2 : B, Any
     public abstract fun C2.bar1(Inv<Inv<kotlin.Int>>): kotlin.Unit
     public abstract fun C2.bar2(Inv<Inv<*>>): kotlin.Unit
     public abstract fun C2.bar3(Inv<*>): kotlin.Unit
-    public abstract fun C2.baz1(Inv<(raw) kotlin.Any!>): kotlin.Unit
-    public abstract fun C2.baz2(Inv<(raw) kotlin.Any!>): kotlin.Unit
+    public abstract fun C2.baz1(Inv<(raw) kotlin.Any?>): kotlin.Unit
+    public abstract fun C2.baz2(Inv<(raw) kotlin.Any?>): kotlin.Unit
     public open operator fun C2.equals(kotlin.Any?): kotlin.Boolean
     public abstract fun C2.foo1(Inv<(raw) kotlin.Any?>): kotlin.Unit
     public abstract fun C2.foo2(Inv<(raw) kotlin.Any?>): kotlin.Unit

@@ -138,12 +138,13 @@ internal class KTypeSubstitutor(
     // TODO (KT-77700): also keep annotations of 'other'
     private fun KType.withWorseNullabilityOfBoth(other: KType): KType {
         check(other is KotlinTypeMarker && !other.isFlexible()) { "'$other' must be non flexible" }
-        if (isNullabilityFlexible() && !other.isMarkedNullable) return this
+        val otherIsDefinitelyNotNull = (other as? AbstractKType)?.isDefinitelyNotNullType == true
+        // A definitely non-null type `T & Any` substituted with a flexible type `X!` becomes `X & Any`, which is not flexible anymore.
+        if (isNullabilityFlexible() && !other.isMarkedNullable && !otherIsDefinitelyNotNull) return this
         val thiz = this as RigidTypeMarker
         return when (val withNullability = withNullabilityFromTypeSystem(other.isMarkedNullable || isMarkedNullable)) {
             is AbstractKType -> withNullability.makeDefinitelyNotNullAsSpecified(
-                (other as? AbstractKType)?.isDefinitelyNotNullType == true ||
-                        ((thiz as? AbstractKType)?.isDefinitelyNotNullType == true && !other.isMarkedNullable)
+                otherIsDefinitelyNotNull || ((thiz as? AbstractKType)?.isDefinitelyNotNullType == true && !other.isMarkedNullable)
             )
             else -> withNullability as KType
         }
