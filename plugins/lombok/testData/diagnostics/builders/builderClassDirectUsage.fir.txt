@@ -1,0 +1,7 @@
+FILE: test.kt
+    public final fun usage(): R|kotlin/Unit| {
+        lval builder: <ERROR TYPE REF: Unresolved name: TestJavaBuilder> = Q|TestJava|.<Unresolved name: TestJavaBuilder>#()
+        R|<local>/builder|.<Unresolved name: a>#(Int(1)).<Unresolved name: build>#()
+        lval justBuilder: R|TestJava.TestJavaBuilder?| = Null(null)
+        R|<local>/justBuilder|?.{ $subj$.R|/TestJava.TestJavaBuilder.a|(Int(2)) }?.{ $subj$.R|/TestJava.TestJavaBuilder.build|() }
+    }
