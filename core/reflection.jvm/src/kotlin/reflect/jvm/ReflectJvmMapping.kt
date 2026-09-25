@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import java.lang.reflect.*
 import kotlin.reflect.*
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.functions
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.staticProperties
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.internal.*
 import kotlin.reflect.javaType as stdlibJavaType
 
@@ -70,6 +67,28 @@ val KFunction<*>.javaMethod: Method?
 @Suppress("UNCHECKED_CAST")
 val <T> KFunction<T>.javaConstructor: Constructor<T>?
     get() = this.asReflectCallable()?.caller?.member as? Constructor<T>
+
+
+/**
+ * Returns a [Parameter] instance corresponding to the given Kotlin [KParameter] instance,
+ * or `null` if this parameter cannot be represented by a Java parameter.
+ * (for example, instance parameters of top-level classes)
+ */
+@SinceKotlin("2.5")
+val KParameter.javaParameter: Parameter?
+    get() {
+        return when (val member = (this as ReflectKParameter).callable.caller.member) {
+            is Method -> {
+                if (kind == KParameter.Kind.INSTANCE) return null
+                member.parameters[index + (if (callable.instanceParameter == null) 0 else -1)]
+            }
+            is Constructor<*> -> {
+                val shift = if (member.declaringClass.isEnum) 2 else 0
+                member.parameters[shift + index]
+            }
+            else -> throw KotlinReflectionInternalError("Unsupported parameter owner: $member")
+        }
+    }
 
 
 /**
@@ -177,4 +196,25 @@ private fun Collection<KCallable<*>>.findKProperty(field: Field): KProperty<*>? 
 val <T : Any> Constructor<T>.kotlinFunction: KFunction<T>?
     get() {
         return declaringClass.kotlin.constructors.firstOrNull { it.javaConstructor == this }
+    }
+
+/**
+ * Returns a [KParameter] instance corresponding to the given Java [Parameter] instance,
+ * or `null` if this parameter cannot be represented by a Kotlin parameter.
+ *
+ * Examples of unsupported parameters:
+ * - Parameters declared by executables that can't be represented by a [KFunction], such as generated inline class methods
+ * - `name`/`ordinal` of enum constructors
+ * - Special compiler-generated parameters such as continuations or default markers
+ */
+@SinceKotlin("2.5")
+val Parameter.kotlinParameter: KParameter?
+    get() {
+        val function = when (val executable = declaringExecutable) {
+            is Method -> executable.kotlinFunction
+            is Constructor<*> -> executable.kotlinFunction
+            else -> throw KotlinReflectionInternalError("Unsupported parameter owner: $this")
+        }
+        if (function == null) return null
+        return function.parameters.firstOrNull { it.javaParameter == this }
     }
