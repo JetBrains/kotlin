@@ -827,6 +827,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
       }
 
       @Test
+      @TestMetadata("t65.kt")
+      public void testT65() {
+        run("t65.kt");
+      }
+
+      @Test
       @TestMetadata("t7.kt")
       public void testT7() {
         run("t7.kt");
