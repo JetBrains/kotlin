@@ -173,7 +173,7 @@ public actual annotation class JvmSuppressWildcards(actual val suppress: Boolean
 public actual annotation class JvmWildcard
 
 /**
- * Specifies that given value class is inline class.
+ * Specifies that given value class is an inline class.
  *
  * Adding or removing the annotation is a binary-incompatible change, since methods of inline classes
  * and functions with inline classes in their signatures are mangled.
