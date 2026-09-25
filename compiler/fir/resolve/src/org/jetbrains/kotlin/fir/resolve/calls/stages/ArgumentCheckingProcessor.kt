@@ -330,8 +330,16 @@ internal object ArgumentCheckingProcessor {
 
                 val nullableExpectedType = expectedType.withNullability(nullable = true, session.typeContext)
 
-                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
-                    reportDiagnostic(InapplicableNullableReceiver(argumentType))
+                if (csBuilder.addSubtypeConstraintIfCompatible(
+                        argumentType.applyIf(argumentType is ConeUnionType) { argumentType.primaryType },
+                        nullableExpectedType,
+                        position,
+                    )
+                ) {
+                    val actualType = (atom.expression as? FirCheckedSafeCallSubject)?.originalReceiverRef?.value?.resolvedType
+                        ?: argumentType
+
+                    reportDiagnostic(InapplicableUnsafeReceiver(actualType))
                 } else {
                     csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
                     reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))

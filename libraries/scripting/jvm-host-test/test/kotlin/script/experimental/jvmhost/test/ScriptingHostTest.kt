@@ -544,7 +544,7 @@ class ScriptingHostTest {
             }
             assertTrue(comp0 is ResultWithDiagnostics.Failure)
             val errors = comp0.reports.filter { it.severity == ScriptDiagnostic.Severity.ERROR }
-            assertTrue( errors.any { it.message.contains( "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type ") })
+            assertTrue( errors.any { it.message.contains( "Unsafe call on receiver of nullable type") })
 
             // runtime
             fun evalWith(evalConfig: ScriptEvaluationConfiguration) =

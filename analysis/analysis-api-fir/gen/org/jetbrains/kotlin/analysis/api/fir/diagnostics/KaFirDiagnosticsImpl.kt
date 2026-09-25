@@ -4753,6 +4753,7 @@ internal class UnsafeCallableReferenceImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsafeCallableReference
 
 internal class IteratorOnNullableImpl(
+    override val actualType: KaType,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.IteratorOnNullable

@@ -717,11 +717,11 @@ object LightTreePositioningStrategies {
                 tree.findDescendantByTypes(node, ALL_ASSIGNMENTS) != null
             ) {
                 tree.findDescendantByType(node, KtNodeTypes.DOT_QUALIFIED_EXPRESSION)?.let {
-                    return markElement(tree.dotOperator(it) ?: it, startOffset, endOffset, tree, node)
+                    return markElement(tree.dotOrSafeAccess(it) ?: it, startOffset, endOffset, tree, node)
                 }
             }
-            if (node.tokenType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION) {
-                return markElement(tree.dotOperator(node) ?: node, startOffset, endOffset, tree, node)
+            if (node.tokenType in QUALIFIED_ACCESS) {
+                return markElement(tree.dotOrSafeAccess(node) ?: node, startOffset, endOffset, tree, node)
             }
             // Fallback to mark the callee reference.
             return REFERENCE_BY_QUALIFIED.mark(node, startOffset, endOffset, tree)
@@ -1508,11 +1508,15 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.companionKeyword(node:
 private fun FlyweightCapableTreeStructure<LighterASTNode>.constructorKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, CONSTRUCTOR_KEYWORD)
 
-private fun FlyweightCapableTreeStructure<LighterASTNode>.dotOperator(node: LighterASTNode): LighterASTNode? =
-    findChildByType(node, DOT)
+private val ALL_SAFE_ACCESSES = TokenSet.create(SAFE_ACCESS, ERROR_SAFE_ACCESS)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.safeAccess(node: LighterASTNode): LighterASTNode? =
-    findChildByType(node, SAFE_ACCESS)
+    findChildByType(node, ALL_SAFE_ACCESSES)
+
+private val DOT_OR_SAFE_ACCESSES = TokenSet.orSet(ALL_SAFE_ACCESSES, TokenSet.create(DOT))
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.dotOrSafeAccess(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, DOT_OR_SAFE_ACCESSES)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.initKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, INIT_KEYWORD)

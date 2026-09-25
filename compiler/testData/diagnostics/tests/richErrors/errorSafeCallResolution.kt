@@ -13,11 +13,11 @@ fun test(
     b: C | Foo,
     c: Foo | Bar,
 ) {
-    val x1 = <!UNNECESSARY_SAFE_CALL!>a|.length<!>
-    val x2 = <!UNNECESSARY_SAFE_CALL!>b|.memberFun()<!>
-    val x3 = <!UNNECESSARY_SAFE_CALL!>b|.memberVal<!>
-    val x4 = <!UNNECESSARY_SAFE_CALL!>c|.toString()<!>
-    val x5 = <!UNNECESSARY_SAFE_CALL!>""|.length<!>
+    val x1 = a<!UNNECESSARY_SAFE_CALL!>|.<!>length
+    val x2 = b<!UNNECESSARY_SAFE_CALL!>|.<!>memberFun()
+    val x3 = b<!UNNECESSARY_SAFE_CALL!>|.<!>memberVal
+    val x4 = c<!UNNECESSARY_SAFE_CALL!>|.<!>toString()
+    val x5 = ""<!UNNECESSARY_SAFE_CALL!>|.<!>length
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, safeCall */

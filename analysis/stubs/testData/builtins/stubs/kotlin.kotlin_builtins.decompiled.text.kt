@@ -1428,6 +1428,10 @@ public final annotation class RequiresOptIn public constructor(
     }
 }
 
+@kotlin.SinceKotlin(version = "2.5")
+public abstract class RichError public constructor() {
+}
+
 public final class Short private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public companion object {
         public const val MIN_VALUE: kotlin.Short = -32768

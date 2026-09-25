@@ -62,7 +62,8 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 object FirOptInUsageBaseChecker {
     data class Experimentality(
-        val annotationClassId: ClassId,
+        val annotationClassId: ClassId?,
+        val languageFeature: LanguageFeature?,
         val severity: Severity,
         val message: String?,
         val supertypeName: String? = null,
@@ -78,6 +79,7 @@ object FirOptInUsageBaseChecker {
             if (other !is Experimentality) return false
 
             if (annotationClassId != other.annotationClassId) return false
+            if (languageFeature != other.languageFeature) return false
             if (severity != other.severity) return false
             if (message != other.message) return false
             if (fromSupertype != other.fromSupertype) return false
@@ -87,6 +89,7 @@ object FirOptInUsageBaseChecker {
 
         override fun hashCode(): Int {
             var result = annotationClassId.hashCode()
+            result = 31 * result + languageFeature.hashCode()
             result = 31 * result + severity.hashCode()
             result = 31 * result + (message?.hashCode() ?: 0)
             result = 31 * result + fromSupertype.hashCode()
@@ -302,6 +305,10 @@ object FirOptInUsageBaseChecker {
                 parentClassSymbol?.loadExperimentalities(
                     result, visited, fromSetter = false, fromSupertype = false
                 )
+
+                if (classId == StandardClassIds.RichError || classId == StandardClassIds.Value) {
+                    result.add(Experimentality(annotationClassId = null, languageFeature = RichErrors, ERROR, null))
+                }
             }
 
             is FirAnonymousObjectSymbol, is FirTypeAliasSymbol -> {
@@ -337,7 +344,7 @@ object FirOptInUsageBaseChecker {
 
         val severity = Experimentality.Severity.entries.firstOrNull { it.name == levelName } ?: Experimentality.DEFAULT_SEVERITY
         val message = experimental.getStringArgument(MESSAGE)
-        return Experimentality(classId, severity, message, annotatedOwnerClassName)
+        return Experimentality(classId, languageFeature = null, severity, message, annotatedOwnerClassName)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -350,7 +357,14 @@ object FirOptInUsageBaseChecker {
         val isSubclassOptInApplicable = (context.containingDeclarations.lastOrNull() as? FirClassSymbol)
             ?.let { getSubclassOptInApplicabilityAndMessage(it).first }
             ?: false
-        for ((val annotationClassId, val severity, val message, val _ = supertypeName, val fromSupertype) in experimentalities) {
+        for ((annotationClassId, languageFeature, severity, message, fromSupertype) in experimentalities) {
+            if (annotationClassId == null) {
+                if (languageFeature!!.isDisabled()) {
+                    reporter.reportOn(source, FirErrors.UNSUPPORTED_FEATURE, languageFeature to context.languageVersionSettings)
+                }
+                continue
+            }
+
             context.session.lookupTracker?.recordClassLikeLookup(annotationClassId, source, context.containingFileSymbol?.source)
             if (!isExperimentalityAcceptableInContext(annotationClassId, fromSupertype)) {
                 val [diagnostic, messageProvider, verb] = when (severity) {
@@ -397,7 +411,14 @@ object FirOptInUsageBaseChecker {
         experimentalities: Collection<Experimentality>,
         symbol: FirCallableSymbol<*>,
     ) {
-        for ((val annotationClassId, val severity, val markerMessage = message, val supertypeName) in experimentalities) {
+        for ((annotationClassId, languageFeature, severity, markerMessage = message, supertypeName) in experimentalities) {
+            if (annotationClassId == null) {
+                if (languageFeature!!.isDisabled()) {
+                    reporter.reportOn(symbol.source, FirErrors.UNSUPPORTED_FEATURE, languageFeature to context.languageVersionSettings)
+                }
+                continue
+            }
+
             context.session.lookupTracker?.recordClassLikeLookup(annotationClassId, symbol.source, context.containingFileSymbol?.source)
             if (!symbol.isExperimentalityAcceptable(annotationClassId, fromSupertype = false) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, fromSupertype = false)

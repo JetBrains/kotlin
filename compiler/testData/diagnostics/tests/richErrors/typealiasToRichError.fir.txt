@@ -1,0 +1,24 @@
+FILE: typealiasToRichError.kt
+    public final error class Foo : R|kotlin/RichError| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class Bar : R|kotlin/RichError| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final typealias TA = R|Foo|
+    public final fun test(a: R|union(errors={TA=} Foo | Bar)|): R|kotlin/Unit| {
+        R|/test2|(R|<local>/a|)
+        R|/test2|((R|/Foo.Foo|() as R|{TA=} Foo|))
+    }
+    public final fun test2(a: R|union(errors=Foo | Bar)|): R|kotlin/Unit| {
+        R|/test|(R|<local>/a|)
+        R|/test|(R|/Foo.Foo|())
+        R|/test|(R|/Bar.Bar|())
+        R|/test|((R|/Foo.Foo|() as R|{TA=} Foo|))
+    }

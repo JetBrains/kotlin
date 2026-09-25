@@ -18,6 +18,7 @@ fun foo(
     l: <!OTHER_ERROR!>String | Foo?<!>,
     m: <!OTHER_ERROR!>String | Int<!>,
     n: <!OTHER_ERROR!>String | <!OTHER_ERROR!>(Foo | Int)<!><!>,
+    o: String | RichError,
 ){
 }
 

@@ -1,15 +1,15 @@
 FILE: unionTypeSmoke.kt
-    public final error class Foo : R|kotlin/Any| {
+    public final error class Foo : R|kotlin/RichError| {
         public constructor(): R|Foo| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/RichError|>()
         }
 
     }
-    public final error class Bar : R|kotlin/Any| {
+    public final error class Bar : R|kotlin/RichError| {
         public constructor(): R|Bar| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/RichError|>()
         }
 
     }
-    public final fun foo(a: R|union(kotlin/String | Foo)|, b: R|union(kotlin/String | Foo | Bar)|, c: R|union(kotlin/String? | Foo | Bar)|, d: R|union(kotlin/String? | Foo)|, e: R|union(Foo | Bar)|, f: R|union(kotlin/Nothing? | Foo | Bar)|, g: R|union(kotlin/String | Foo)|, h: <ERROR TYPE REF: Nullable nested union type>, i: R|union(Foo)|, j: R|Foo?|, k: <ERROR TYPE REF: Non error component in nested union type>, l: <ERROR TYPE REF: Nullable error component>, m: <ERROR TYPE REF: Non-rich error component must appear first>, n: <ERROR TYPE REF: Non-rich error component must appear first>): R|kotlin/Unit| {
+    public final fun foo(a: R|union(primary=kotlin/String, errors=Foo)|, b: R|union(primary=kotlin/String, errors=Foo | Bar)|, c: R|union(primary=kotlin/String?, errors=Foo | Bar)|, d: R|union(primary=kotlin/String?, errors=Foo)|, e: R|union(errors=Foo | Bar)|, f: R|union(primary=kotlin/Nothing?, errors=Foo | Bar)|, g: R|union(primary=kotlin/String, errors=Foo)|, h: <ERROR TYPE REF: Nullable nested union type>, i: R|union(errors=Foo)|, j: R|Foo?|, k: <ERROR TYPE REF: Non error component in nested union type>, l: <ERROR TYPE REF: Nullable error component>, m: <ERROR TYPE REF: Non-rich error component must appear first>, n: <ERROR TYPE REF: Non-rich error component must appear first>, o: R|union(primary=kotlin/String, errors=kotlin/RichError)|): R|kotlin/Unit| {
     }

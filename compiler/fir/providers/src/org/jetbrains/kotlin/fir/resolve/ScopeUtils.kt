@@ -138,6 +138,7 @@ private fun ConeKotlinType.scope(
                 ?: listOf(useSiteSession.builtinTypes.anyType.coneType)
         useSiteSession.typeContext.intersectTypes(supertypes).scope(useSiteSession, scopeSession, requiredMembersPhase)
     }
+    is ConeUnionType -> primaryType.scope(useSiteSession, scopeSession, requiredMembersPhase)
     else -> null
 }
 
