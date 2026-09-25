@@ -17,15 +17,15 @@ object AllEqualSampleGenerator {
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {
         val collectionClass = collectionClassName(family, primitive)
-        val receiver = Receiver(family, primitive)
+        val receiverFactory = ReceiverFactory(family, primitive)
         val config = allEqualConfigFor(primitive)
         val inlineReceivers = family == Sequences || family == CharSequences
 
         val className = "AllEqual${collectionClass}Samples"
         writeGeneratedFile("libraries/stdlib/samples/test/samples/generated/allequal/$className.kt") {
             writeHeader(className, config.sampleNeedsAbsImport)
-            writeAllEqualSample(receiver, config, inlineReceivers, family)
-            writeAllEqualBySample(receiver, config, inlineReceivers)
+            writeAllEqualSample(receiverFactory, config, inlineReceivers, family)
+            writeAllEqualBySample(receiverFactory, config, inlineReceivers)
             appendLine("}")
         }
     }
@@ -57,21 +57,21 @@ object AllEqualSampleGenerator {
     }
 
     private fun BufferedWriter.writeAllEqualSample(
-        receiver: Receiver,
+        receiverFactory: ReceiverFactory,
         config: AllEqualTypeConfig,
         inlineReceivers: Boolean,
         family: Family,
     ) {
         val equal = config.sampleEqualValue
         val other = config.sampleOtherValue
-        val [sameDecl, sameRef] = valOrInline(inlineReceivers, "sameValues", receiver(equal, equal, equal))
-        val [mixedDecl, mixedRef] = valOrInline(inlineReceivers, "mixedValues", receiver(equal, equal, other))
+        val [sameDecl, sameRef] = valOrInline(inlineReceivers, "sameValues", receiverFactory(equal, equal, equal))
+        val [mixedDecl, mixedRef] = valOrInline(inlineReceivers, "mixedValues", receiverFactory(equal, equal, other))
         appendLine(
             """
     @Sample
     fun allEqual() {
-        assertPrints(${receiver()}.allEqual(), "true")
-        assertPrints(${receiver(equal)}.allEqual(), "true")
+        assertPrints(${receiverFactory()}.allEqual(), "true")
+        assertPrints(${receiverFactory(equal)}.allEqual(), "true")
 $sameDecl        assertPrints($sameRef.allEqual(), "true")
 $mixedDecl        assertPrints($mixedRef.allEqual(), "false")${charSequenceShowcase(family)}
     }"""
@@ -79,14 +79,14 @@ $mixedDecl        assertPrints($mixedRef.allEqual(), "false")${charSequenceShowc
     }
 
     private fun BufferedWriter.writeAllEqualBySample(
-        receiver: Receiver,
+        receiverFactory: ReceiverFactory,
         config: AllEqualTypeConfig,
         inlineReceivers: Boolean,
     ) {
         val selectorValues = config.sampleSelectorValues
         val singleElement = selectorValues.first()
         val firstSelector = config.sampleSelectorAssertions.first().first
-        val [valuesDecl, valuesRef] = valOrInline(inlineReceivers, "values", receiver(selectorValues))
+        val [valuesDecl, valuesRef] = valOrInline(inlineReceivers, "values", receiverFactory(selectorValues))
         val assertionLines = config.sampleSelectorAssertions.joinToString("\n") { [selector, expected] ->
             "        assertPrints($valuesRef.allEqualBy { $selector }, \"$expected\")"
         }
@@ -94,8 +94,8 @@ $mixedDecl        assertPrints($mixedRef.allEqual(), "false")${charSequenceShowc
             """
     @Sample
     fun allEqualBy() {
-        assertPrints(${receiver()}.allEqualBy { $firstSelector }, "true")
-        assertPrints(${receiver(singleElement)}.allEqualBy { $firstSelector }, "true")
+        assertPrints(${receiverFactory()}.allEqualBy { $firstSelector }, "true")
+        assertPrints(${receiverFactory(singleElement)}.allEqualBy { $firstSelector }, "true")
 $valuesDecl$assertionLines
     }"""
         )

@@ -17,15 +17,15 @@ object AllDistinctSampleGenerator {
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {
         val collectionClass = collectionClassName(family, primitive)
-        val receiver = Receiver(family, primitive)
+        val receiverFactory = ReceiverFactory(family, primitive)
         val config = allDistinctConfigFor(primitive)
         val inlineReceivers = family == Sequences || family == CharSequences
 
         val className = "AllDistinct${collectionClass}Samples"
         writeGeneratedFile("libraries/stdlib/samples/test/samples/generated/alldistinct/$className.kt") {
             writeHeader(className, config.sampleNeedsAbsImport)
-            writeAllDistinctSample(receiver, config, inlineReceivers, family, primitive)
-            writeAllDistinctBySample(receiver, config, inlineReceivers)
+            writeAllDistinctSample(receiverFactory, config, inlineReceivers, family, primitive)
+            writeAllDistinctBySample(receiverFactory, config, inlineReceivers)
             appendLine("}")
         }
     }
@@ -49,13 +49,13 @@ object AllDistinctSampleGenerator {
         return if (inline) "" to value else "\n        val $name = $value\n" to name
     }
 
-    private fun floatingPointShowcase(receiver: Receiver, primitive: PrimitiveType?): String {
+    private fun floatingPointShowcase(receiverFactory: ReceiverFactory, primitive: PrimitiveType?): String {
         if (primitive != PrimitiveType.Float && primitive != PrimitiveType.Double) return ""
         val typeName = primitive.name
         val suffix = if (primitive == PrimitiveType.Float) "f" else ""
         return "\n\n" +
-                "        assertPrints(${receiver("$typeName.NaN", "$typeName.NaN")}.allDistinct(), \"false\")\n" +
-                "        assertPrints(${receiver("0.0$suffix", "-0.0$suffix")}.allDistinct(), \"true\")"
+                "        assertPrints(${receiverFactory("$typeName.NaN", "$typeName.NaN")}.allDistinct(), \"false\")\n" +
+                "        assertPrints(${receiverFactory("0.0$suffix", "-0.0$suffix")}.allDistinct(), \"true\")"
     }
 
     private fun charSequenceShowcase(family: Family): String {
@@ -66,22 +66,22 @@ object AllDistinctSampleGenerator {
     }
 
     private fun BufferedWriter.writeAllDistinctSample(
-        receiver: Receiver,
+        receiverFactory: ReceiverFactory,
         config: AllDistinctTypeConfig,
         inlineReceivers: Boolean,
         family: Family,
         primitive: PrimitiveType?,
     ) {
         val single = config.sampleDistinctValues.first()
-        val [distinctDecl, distinctRef] = valOrInline(inlineReceivers, "distinctValues", receiver(config.sampleDistinctValues))
-        val [duplicateDecl, duplicateRef] = valOrInline(inlineReceivers, "duplicateValues", receiver(config.sampleDuplicateValues))
-        val showcase = floatingPointShowcase(receiver, primitive) + charSequenceShowcase(family)
+        val [distinctDecl, distinctRef] = valOrInline(inlineReceivers, "distinctValues", receiverFactory(config.sampleDistinctValues))
+        val [duplicateDecl, duplicateRef] = valOrInline(inlineReceivers, "duplicateValues", receiverFactory(config.sampleDuplicateValues))
+        val showcase = floatingPointShowcase(receiverFactory, primitive) + charSequenceShowcase(family)
         appendLine(
             """
     @Sample
     fun allDistinct() {
-        assertPrints(${receiver()}.allDistinct(), "true")
-        assertPrints(${receiver(single)}.allDistinct(), "true")
+        assertPrints(${receiverFactory()}.allDistinct(), "true")
+        assertPrints(${receiverFactory(single)}.allDistinct(), "true")
 $distinctDecl        assertPrints($distinctRef.allDistinct(), "true")
 $duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$showcase
     }"""
@@ -89,14 +89,14 @@ $duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$showcas
     }
 
     private fun BufferedWriter.writeAllDistinctBySample(
-        receiver: Receiver,
+        receiverFactory: ReceiverFactory,
         config: AllDistinctTypeConfig,
         inlineReceivers: Boolean,
     ) {
         val selectorValues = config.sampleSelectorValues
         val singleElement = selectorValues.first()
         val firstSelector = config.sampleSelectorAssertions.first().first
-        val [valuesDecl, valuesRef] = valOrInline(inlineReceivers, "values", receiver(selectorValues))
+        val [valuesDecl, valuesRef] = valOrInline(inlineReceivers, "values", receiverFactory(selectorValues))
         val assertionLines = config.sampleSelectorAssertions.joinToString("\n") { [selector, expected] ->
             "        assertPrints($valuesRef.allDistinctBy { $selector }, \"$expected\")"
         }
@@ -104,8 +104,8 @@ $duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$showcas
             """
     @Sample
     fun allDistinctBy() {
-        assertPrints(${receiver()}.allDistinctBy { $firstSelector }, "true")
-        assertPrints(${receiver(singleElement)}.allDistinctBy { $firstSelector }, "true")
+        assertPrints(${receiverFactory()}.allDistinctBy { $firstSelector }, "true")
+        assertPrints(${receiverFactory(singleElement)}.allDistinctBy { $firstSelector }, "true")
 $valuesDecl$assertionLines
     }"""
         )

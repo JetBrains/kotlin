@@ -17,7 +17,7 @@ object AllEqualTestGenerator {
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {
         val collectionClass = collectionClassName(family, primitive)
-        val receiver = Receiver(family, primitive)
+        val receiverFactory = ReceiverFactory(family, primitive)
         val config = allEqualConfigFor(primitive)
         val fpTypes = when (primitive) {
             null -> PrimitiveType.floatingPointPrimitives.toList()
@@ -28,13 +28,13 @@ object AllEqualTestGenerator {
         val className = "AllEqual${collectionClass}Test"
         writeGeneratedFile("libraries/stdlib/test/generated/allequal/$className.kt") {
             writeHeader(className)
-            writeAllEqualTest(receiver, config)
-            writeAllEqualByTest(receiver, config)
+            writeAllEqualTest(receiverFactory, config)
+            writeAllEqualByTest(receiverFactory, config)
             if (family == CharSequences) {
-                writeStringBuilderTest(receiver, config)
+                writeStringBuilderTest(receiverFactory, config)
             }
             for (fpType in fpTypes) {
-                writeFpTests(receiver, fpType)
+                writeFpTests(receiverFactory, fpType)
             }
             appendLine("}")
         }
@@ -52,35 +52,35 @@ object AllEqualTestGenerator {
         appendLine("class $className {")
     }
 
-    private fun BufferedWriter.writeAllEqualTest(receiver: Receiver, config: AllEqualTypeConfig) {
+    private fun BufferedWriter.writeAllEqualTest(receiverFactory: ReceiverFactory, config: AllEqualTypeConfig) {
         val equal = config.equalValue
         val other = config.otherValue
         appendLine(
             """
     @Test
     fun allEqual() {
-        assertTrue(${receiver()}.allEqual())
-        assertTrue(${receiver(equal)}.allEqual())
-        assertTrue(${receiver(equal, equal)}.allEqual())
-        assertTrue(${receiver(equal, equal, equal)}.allEqual())
-        assertFalse(${receiver(equal, other)}.allEqual())
-        assertFalse(${receiver(other, equal)}.allEqual())
-        assertFalse(${receiver(equal, equal, other)}.allEqual())
-        assertFalse(${receiver(other, equal, equal)}.allEqual())
+        assertTrue(${receiverFactory()}.allEqual())
+        assertTrue(${receiverFactory(equal)}.allEqual())
+        assertTrue(${receiverFactory(equal, equal)}.allEqual())
+        assertTrue(${receiverFactory(equal, equal, equal)}.allEqual())
+        assertFalse(${receiverFactory(equal, other)}.allEqual())
+        assertFalse(${receiverFactory(other, equal)}.allEqual())
+        assertFalse(${receiverFactory(equal, equal, other)}.allEqual())
+        assertFalse(${receiverFactory(other, equal, equal)}.allEqual())
     }"""
         )
     }
 
-    private fun BufferedWriter.writeAllEqualByTest(receiver: Receiver, config: AllEqualTypeConfig) {
+    private fun BufferedWriter.writeAllEqualByTest(receiverFactory: ReceiverFactory, config: AllEqualTypeConfig) {
         val selectorExpr = config.selectorExpr
-        val equalSelectorValues = receiver(config.valuesWithEqualSelector)
-        val diffSelectorValues = receiver(config.valuesWithDiffSelector)
-        val firstEqual = receiver(config.valuesWithEqualSelector.first())
+        val equalSelectorValues = receiverFactory(config.valuesWithEqualSelector)
+        val diffSelectorValues = receiverFactory(config.valuesWithDiffSelector)
+        val firstEqual = receiverFactory(config.valuesWithEqualSelector.first())
         appendLine(
             """
     @Test
     fun allEqualBy() {
-        assertTrue(${receiver()}.allEqualBy { $selectorExpr })
+        assertTrue(${receiverFactory()}.allEqualBy { $selectorExpr })
         assertTrue($firstEqual.allEqualBy { $selectorExpr })
         assertTrue($firstEqual.allEqualBy { error("should not be called") })
         assertTrue($equalSelectorValues.allEqualBy { $selectorExpr })
@@ -91,7 +91,7 @@ object AllEqualTestGenerator {
         )
     }
 
-    private fun BufferedWriter.writeStringBuilderTest(receiver: Receiver, config: AllEqualTypeConfig) {
+    private fun BufferedWriter.writeStringBuilderTest(receiverFactory: ReceiverFactory, config: AllEqualTypeConfig) {
         val equal = config.equalValue
         val other = config.otherValue
         val selectorExpr = config.selectorExpr
@@ -100,15 +100,15 @@ object AllEqualTestGenerator {
     @Test
     fun allEqualStringBuilder() {
         assertTrue(StringBuilder().allEqual())
-        assertTrue(StringBuilder(${receiver(equal, equal, equal)}).allEqual())
-        assertFalse(StringBuilder(${receiver(equal, equal, other)}).allEqual())
-        assertTrue(StringBuilder(${receiver(config.valuesWithEqualSelector)}).allEqualBy { $selectorExpr })
-        assertFalse(StringBuilder(${receiver(config.valuesWithDiffSelector)}).allEqualBy { $selectorExpr })
+        assertTrue(StringBuilder(${receiverFactory(equal, equal, equal)}).allEqual())
+        assertFalse(StringBuilder(${receiverFactory(equal, equal, other)}).allEqual())
+        assertTrue(StringBuilder(${receiverFactory(config.valuesWithEqualSelector)}).allEqualBy { $selectorExpr })
+        assertFalse(StringBuilder(${receiverFactory(config.valuesWithDiffSelector)}).allEqualBy { $selectorExpr })
     }"""
         )
     }
 
-    private fun BufferedWriter.writeFpTests(receiver: Receiver, fpType: PrimitiveType) {
+    private fun BufferedWriter.writeFpTests(receiverFactory: ReceiverFactory, fpType: PrimitiveType) {
         val typeName = fpType.name
         val suffix = if (fpType == PrimitiveType.Float) "f" else ""
         val nanVal = "$typeName.NaN"
@@ -124,52 +124,52 @@ object AllEqualTestGenerator {
             """
     @Test
     fun allEqualNaN$typeName() {
-        assertTrue(${receiver(nanVal, nanVal)}.allEqual())
-        assertTrue(${receiver(nanVal, nanVal, nanVal)}.allEqual())
-        assertFalse(${receiver(nanVal, finite)}.allEqual())
-        assertFalse(${receiver(finite, nanVal)}.allEqual())
-        assertFalse(${receiver(nanVal, finite, nanVal)}.allEqual())
+        assertTrue(${receiverFactory(nanVal, nanVal)}.allEqual())
+        assertTrue(${receiverFactory(nanVal, nanVal, nanVal)}.allEqual())
+        assertFalse(${receiverFactory(nanVal, finite)}.allEqual())
+        assertFalse(${receiverFactory(finite, nanVal)}.allEqual())
+        assertFalse(${receiverFactory(nanVal, finite, nanVal)}.allEqual())
     }
 
     @Test
     fun allEqualNegativeZero$typeName() {
-        assertTrue(${receiver(zeroPos, zeroPos)}.allEqual())
-        assertTrue(${receiver(zeroNeg, zeroNeg)}.allEqual())
-        assertFalse(${receiver(zeroPos, zeroNeg)}.allEqual())
-        assertFalse(${receiver(zeroNeg, zeroPos)}.allEqual())
+        assertTrue(${receiverFactory(zeroPos, zeroPos)}.allEqual())
+        assertTrue(${receiverFactory(zeroNeg, zeroNeg)}.allEqual())
+        assertFalse(${receiverFactory(zeroPos, zeroNeg)}.allEqual())
+        assertFalse(${receiverFactory(zeroNeg, zeroPos)}.allEqual())
     }
 
     @Test
     fun allEqualByNaN$typeName() {
-        assertTrue(${receiver(nanVal, nanVal)}.allEqualBy { it })
-        assertTrue(${receiver(nanVal, nanVal, nanVal)}.allEqualBy { it })
-        assertFalse(${receiver(nanVal, finite)}.allEqualBy { it })
-        assertFalse(${receiver(finite, nanVal)}.allEqualBy { it })
-        assertFalse(${receiver(nanVal, finite, nanVal)}.allEqualBy { it })
+        assertTrue(${receiverFactory(nanVal, nanVal)}.allEqualBy { it })
+        assertTrue(${receiverFactory(nanVal, nanVal, nanVal)}.allEqualBy { it })
+        assertFalse(${receiverFactory(nanVal, finite)}.allEqualBy { it })
+        assertFalse(${receiverFactory(finite, nanVal)}.allEqualBy { it })
+        assertFalse(${receiverFactory(nanVal, finite, nanVal)}.allEqualBy { it })
     }
 
     @Test
     fun allEqualByNegativeZero$typeName() {
-        assertTrue(${receiver(zeroPos, zeroPos)}.allEqualBy { it })
-        assertTrue(${receiver(zeroNeg, zeroNeg)}.allEqualBy { it })
-        assertFalse(${receiver(zeroPos, zeroNeg)}.allEqualBy { it })
-        assertFalse(${receiver(zeroNeg, zeroPos)}.allEqualBy { it })
+        assertTrue(${receiverFactory(zeroPos, zeroPos)}.allEqualBy { it })
+        assertTrue(${receiverFactory(zeroNeg, zeroNeg)}.allEqualBy { it })
+        assertFalse(${receiverFactory(zeroPos, zeroNeg)}.allEqualBy { it })
+        assertFalse(${receiverFactory(zeroNeg, zeroPos)}.allEqualBy { it })
     }
 
     @Test
     fun allEqualDifferentNaNBits$typeName() {
-        assertTrue(${receiver(nanVal, negNaN)}.allEqual())
-        assertTrue(${receiver(nanVal, negNaN, mantissaNaN)}.allEqual())
-        assertTrue(${receiver(mantissaNaN, negNaN, nanVal)}.allEqual())
-        assertFalse(${receiver(nanVal, finite)}.allEqual())
-        assertFalse(${receiver(finite, negNaN)}.allEqual())
+        assertTrue(${receiverFactory(nanVal, negNaN)}.allEqual())
+        assertTrue(${receiverFactory(nanVal, negNaN, mantissaNaN)}.allEqual())
+        assertTrue(${receiverFactory(mantissaNaN, negNaN, nanVal)}.allEqual())
+        assertFalse(${receiverFactory(nanVal, finite)}.allEqual())
+        assertFalse(${receiverFactory(finite, negNaN)}.allEqual())
     }
 
     @Test
     fun allEqualByDifferentNaNBits$typeName() {
-        assertTrue(${receiver(nanVal, negNaN)}.allEqualBy { it })
-        assertTrue(${receiver(nanVal, negNaN, mantissaNaN)}.allEqualBy { it })
-        assertFalse(${receiver(nanVal, finite)}.allEqualBy { it })
+        assertTrue(${receiverFactory(nanVal, negNaN)}.allEqualBy { it })
+        assertTrue(${receiverFactory(nanVal, negNaN, mantissaNaN)}.allEqualBy { it })
+        assertFalse(${receiverFactory(nanVal, finite)}.allEqualBy { it })
     }"""
         )
     }

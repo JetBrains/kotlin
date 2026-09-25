@@ -47,7 +47,7 @@ fun writeGeneratedFile(path: String, block: BufferedWriter.() -> Unit) {
 fun emptyCollectionExpr(ctor: String, primitive: PrimitiveType?): String =
     if (primitive == null) "$ctor<String>()" else "$ctor()"
 
-class Receiver(private val family: Family, private val primitive: PrimitiveType?) {
+class ReceiverFactory(private val family: Family, private val primitive: PrimitiveType?) {
     operator fun invoke(vararg elements: String): String = invoke(elements.asList())
 
     operator fun invoke(elements: List<String>): String {
