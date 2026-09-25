@@ -126,7 +126,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         }
 
         perfManager?.notifyPhaseStarted(PhaseType.Analysis)
-        if (!configuration.useLightTree) {
+        if (!configuration.parserMode.treeBased) {
             val ktFiles = allSources.map { (it as KtPsiSourceFile).psiFile as KtFile }
             if (checkIfScriptsInCommonSources(configuration, ktFiles)) {
                 return null
@@ -163,9 +163,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
         val diagnosticsCollector = configuration.diagnosticsCollector
         val outputs = sessionsWithSources.map { (val session, val sources = files) ->
-            val rawFirFiles = when (configuration.useLightTree) {
+            val rawFirFiles = when (configuration.parserMode.treeBased) {
                 true -> session.buildFirViaLightTree(sources, diagnosticsCollector, useMultiplatformParsing = false, countFilesAndLines)
-                else -> session.buildFirFromKtFiles(sources.asKtFilesList())
+                false -> session.buildFirFromKtFiles(sources.asKtFilesList())
             }
             resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)
         }
@@ -192,7 +192,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         targetDescription: String,
     ): EnvironmentAndSources? {
         val diagnosticReporter = configuration.diagnosticsCollector
-        return when (configuration.useLightTree) {
+        return when (configuration.parserMode.treeBased) {
             true -> {
                 val environment = createProjectEnvironment(
                     configuration,

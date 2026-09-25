@@ -72,7 +72,8 @@ open class FirKaptAnalysisHandlerExtension(
         if (options.mode.generateStubs) {
             val updatedConfiguration = configuration.copy().apply {
                 skipBodies = true
-                useLightTree = false
+                // TODO: change to LightTree (KT-70784)
+                parserMode = ParserMode.Psi
 
                 /*
                  * Later the KAPT pipeline registers extensions once again, so the extensions storage

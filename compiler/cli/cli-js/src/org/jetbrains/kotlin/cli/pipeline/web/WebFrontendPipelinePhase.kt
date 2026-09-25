@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
@@ -69,7 +69,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         val extensionStorage = configuration.extensionsStorage ?: error("Extensions storage is not registered")
 
-        val analyzedOutput = if (configuration.useLightTree) {
+        val analyzedOutput = if (configuration.parserMode.treeBased) {
             val groupedSources =
                 collectSources(
                     configuration,
