@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.statistics.metrics
 
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy.*
-import org.jetbrains.kotlin.statistics.metrics.StringOverridePolicy.*
-import org.jetbrains.kotlin.statistics.metrics.StringListOverridePolicy.*
+import org.jetbrains.kotlin.statistics.metrics.StringOverridePolicy.OVERRIDE
+import org.jetbrains.kotlin.statistics.metrics.StringOverridePolicy.OVERRIDE_VERSION_IF_NOT_SET
 
 enum class StringMetrics(val type: StringOverridePolicy, val anonymization: StringAnonymizationPolicy, val perProject: Boolean = false) {
 
@@ -40,9 +40,52 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     KOTLIN_API_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     JS_OUTPUT_GRANULARITY(OVERRIDE, RegexControlled("(whole_program|per_module|per_file)", false)),
     JS_ES_TARGET(OVERRIDE, AllowedListAnonymizer(listOf("es5", "es2015", "es2020", "default"))),
-    JS_MODULE_SYSTEM(OVERRIDE, AllowedListAnonymizer(listOf("plain", "amd", "commonjs", "umd", "es", "default")));
+    JS_MODULE_SYSTEM(OVERRIDE, AllowedListAnonymizer(listOf("plain", "amd", "commonjs", "umd", "es", "default"))),
+
+    // CLI arguments
+    CLI_EXPLICIT_RETURN_TYPES_MODE(OVERRIDE, AllowedListAnonymizer(listOf("strict", "warning", "disable"))),
+    CLI_ANNOTATION_DEFAULT_TARGET(OVERRIDE, AllowedListAnonymizer(listOf("first-only", "first-only-warn", "param-property"))),
+    CLI_EXPLICIT_API_MODE(OVERRIDE, AllowedListAnonymizer(listOf("strict", "warning", "disable"))),
+    CLI_HEADER_MODE_TYPE(OVERRIDE, AllowedListAnonymizer(listOf("any", "compilation"))),
+    CLI_METADATA_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
+    CLI_NAME_BASED_DESTRUCTURING_MODE(OVERRIDE, AllowedListAnonymizer(listOf("only-syntax", "name-mismatch", "complete"))),
+    CLI_RETURN_VALUE_CHECKER_MODE(OVERRIDE, AllowedListAnonymizer(listOf("check", "full", "disable"))),
+    CLI_VERIFY_IR_MODE(OVERRIDE, AllowedListAnonymizer(listOf("none", "warning", "error"))),
+    CLI_ABI_STABILITY_MODE(OVERRIDE, AllowedListAnonymizer(listOf("stable", "unstable"))),
+    CLI_ASSERTIONS_MODE(OVERRIDE, AllowedListAnonymizer(listOf("always-enable", "always-disable", "jvm", "legacy"))),
+    CLI_JDK_RELEASE_VERSION(OVERRIDE, AllowedListAnonymizer(listOf("1.8") + (9..27).map { it.toString() })),
+    CLI_JSPECIFY_ANNOTATIONS_MODE(OVERRIDE, AllowedListAnonymizer(listOf("ignore", "strict", "warn"))),
+    CLI_LAMBDAS_CODEGEN_MODE(OVERRIDE, AllowedListAnonymizer(listOf("class", "indy"))),
+    CLI_SAM_CONVERSIONS_CODEGEN_MODE(OVERRIDE, AllowedListAnonymizer(listOf("class", "indy"))),
+    CLI_STRING_CONCAT_CODEGEN_MODE(OVERRIDE, AllowedListAnonymizer(listOf("indy-with-constants", "indy", "inline"))),
+    CLI_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_MODE(OVERRIDE, AllowedListAnonymizer(listOf("enable", "disable"))),
+    CLI_VALHALLA_SUPPORT_MODE(OVERRIDE, AllowedListAnonymizer(listOf("none", "primitives", "primitivesAndFullValueClasses", "allValues"))),
+    CLI_WHEN_EXPRESSIONS_CODEGEN_MODE(OVERRIDE, AllowedListAnonymizer(listOf("indy", "inline"))),
+    CLI_JVM_TARGET_VERSION(OVERRIDE, AllowedListAnonymizer(listOf("1.8") + (9..27).map { it.toString() })),
+    CLI_KLIB_ABI_VERSION(OVERRIDE, RegexControlled("\\d+(\\.\\d+)*", false)),
+    CLI_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY(OVERRIDE, AllowedListAnonymizer(listOf("deny", "allow-all-with-warning", "allow-first-with-warning"))),
+    CLI_KLIB_IR_INLINER_MODE(OVERRIDE, AllowedListAnonymizer(listOf("intra-module", "full", "disabled", "default"))),
+    CLI_PARTIAL_LINKAGE_MODE(OVERRIDE, AllowedListAnonymizer(listOf("enable", "disable"))),
+    CLI_PARTIAL_LINKAGE_LOG_LEVEL(OVERRIDE, AllowedListAnonymizer(listOf("silent", "info", "warning", "error"))),
+    CLI_IR_DCE_RUNTIME_DIAGNOSTIC_MODE(OVERRIDE, AllowedListAnonymizer(listOf("log", "exception"))),
+    CLI_MAIN_FUNCTION_EXECUTION_MODE(OVERRIDE, AllowedListAnonymizer(listOf("call", "noCall"))),
+    CLI_SOURCE_MAP_EMBED_SOURCES_MODE(OVERRIDE, AllowedListAnonymizer(listOf("always", "never", "inlining"))),
+    CLI_SOURCE_MAP_NAMES_POLICY(OVERRIDE, AllowedListAnonymizer(listOf("no", "simple-names", "fully-qualified-names"))),
+    CLI_WASM_TARGET_MODE(OVERRIDE, AllowedListAnonymizer(listOf("wasm-js", "wasm-wasi"))),
+    CLI_JS_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC_MODE(OVERRIDE, AllowedListAnonymizer(listOf("log", "exception"))),
+    CLI_NATIVE_LIGHT_DEBUG_MODE(OVERRIDE, AllowedListAnonymizer(listOf("disable", "enable"))),
+    CLI_NATIVE_ALLOCATOR(OVERRIDE, AllowedListAnonymizer(listOf("std", "mimalloc", "custom"))),
+    CLI_NATIVE_DEBUG_INFO_FORMAT_VERSION(OVERRIDE, AllowedListAnonymizer(listOf("1", "2"))),
+    CLI_NATIVE_DEBUG_TRAMPOLINE_MODE(OVERRIDE, AllowedListAnonymizer(listOf("disable", "enable"))),
+    CLI_NATIVE_IR_PROPERTY_LAZY_INITIALIZATION_MODE(OVERRIDE, AllowedListAnonymizer(listOf("disable", "enable"))),
+    CLI_NATIVE_PRE_LINK_CACHES_MODE(OVERRIDE, AllowedListAnonymizer(listOf("disable", "enable"))),
+    CLI_NATIVE_MEMORY_MODEL(OVERRIDE, AllowedListAnonymizer(listOf("strict", "experimental"))),
+    CLI_NATIVE_PRODUCE_OUTPUT_KIND(OVERRIDE, AllowedListAnonymizer(listOf("program", "static", "dynamic", "framework", "library", "bitcode")))
+    ;
 
     companion object {
-        const val VERSION = 13
+        const val VERSION = 14
     }
 }
+
+private val ARRAY_REGEX: RegexControlled = RegexControlled("\\[.*\\]", anonymizeInIde = false)

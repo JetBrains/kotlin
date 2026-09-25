@@ -6,6 +6,7 @@ description = "kotlin-gradle-statistics"
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
+    id("generated-sources")
     `java-library`
     id("org.jetbrains.kotlin.jvm")
     `maven-publish`
@@ -41,3 +42,10 @@ publishing {
 }
 sourcesJar()
 javadocJar()
+
+
+generatedSourcesTask(
+    taskName = "generateMetricHelpers",
+    generatorProject = ":kotlin-gradle-statistics:metric-helpers-generator",
+    generatorMainClass = "org.jetbrains.kotlin.statistics.generator.MainKt",
+)

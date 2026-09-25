@@ -57,6 +57,8 @@ abstract class StringAnonymizationPolicy : ValueAnonymizer<String> {
             const val UNEXPECTED_VALUE = "UNEXPECTED-VALUE"
         }
 
+        constructor(vararg allowedValues: String) : this(allowedValues.toList())
+
         override fun validationRegexp(separator: String): String {
             return "^((${UNEXPECTED_VALUE}|${allowedValues.joinToString("|")})($separator)?)+$"
         }
