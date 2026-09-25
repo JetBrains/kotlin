@@ -164,7 +164,6 @@ public:
         log();
     }
 
-private:
     std::map<RootLocation, std::set<RootLocation>> base2Derived_;
 };
 

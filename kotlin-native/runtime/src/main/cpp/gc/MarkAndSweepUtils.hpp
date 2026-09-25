@@ -159,7 +159,9 @@ void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueu
 
         while (stackMapBuilder.pc2RootsInfo().find((uintptr_t) pc) != stackMapBuilder.pc2RootsInfo().end()) {
             RuntimeLogDebug({logging::Tag::kGC}, "Start new frame pc=%p fp=%p", pc, fp);
-            for (stackMap::RootLocation rootsInfo : stackMapBuilder.pc2RootsInfo().at((uintptr_t)pc)) {
+            for (auto pair : stackMapBuilder.pc2RootsInfo().at((uintptr_t)pc).base2Derived_) {
+                stackMap::RootLocation rootsInfo = pair.first;
+
                 if (rootsInfo.Type == stackMap::RootLocation::Indirect) {
                     uint8_t* address = (uint8_t*) fp + rootsInfo.Offset;
                     RuntimeLogDebug({logging::Tag::kGC}, "Trying to collect root slot pc=%p fp=%p address=%p", pc, fp, address);
