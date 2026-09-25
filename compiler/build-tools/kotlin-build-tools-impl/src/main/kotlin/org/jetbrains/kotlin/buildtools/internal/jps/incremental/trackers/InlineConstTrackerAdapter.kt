@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.buildtools.internal.jps.incremental.trackers
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerInlineConstTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import kotlin.io.path.Path
 
 @OptIn(InternalBuildToolsApi::class)
 internal class InlineConstTrackerAdapter(private val tracker: CompilerInlineConstTracker) : InlineConstTracker {
     override fun report(filePath: String, owner: String, name: String, constType: String) {
-        tracker.report(filePath, owner, name, constType)
+        tracker.report(Path(filePath), owner, name, constType)
     }
 }

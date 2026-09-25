@@ -13,10 +13,10 @@ import java.io.File
 @OptIn(InternalBuildToolsApi::class)
 internal class ExpectActualTrackerAdapter(private val tracker: CompilerExpectActualTracker) : ExpectActualTracker {
     override fun report(expectedFile: File, actualFile: File) {
-        tracker.report(expectedFile.path, actualFile.path)
+        tracker.report(expectedFile.toPath(), actualFile.toPath())
     }
 
     override fun reportExpectOfLenientStub(expectedFile: File) {
-        tracker.reportExpectOfLenientStub(expectedFile.path)
+        tracker.reportExpectOfLenientStub(expectedFile.toPath())
     }
 }

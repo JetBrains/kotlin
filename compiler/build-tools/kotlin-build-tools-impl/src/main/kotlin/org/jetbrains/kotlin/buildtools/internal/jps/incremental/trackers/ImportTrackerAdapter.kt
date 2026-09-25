@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.buildtools.internal.jps.incremental.trackers
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerImportTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
+import kotlin.io.path.Path
 
 @OptIn(InternalBuildToolsApi::class)
 internal class ImportTrackerAdapter(private val tracker: CompilerImportTracker) : ImportTracker {
     override fun report(filePath: String, importedFqName: String) {
-        tracker.report(filePath, importedFqName)
+        tracker.report(Path(filePath), importedFqName)
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
+import java.nio.file.Path
 
 /**
  * A tracker that will be informed of the import directives the compiler resolves.
@@ -24,5 +25,5 @@ public interface CompilerImportTracker {
      * @param importedFqName the fully qualified name being imported, with all parts separated by `.`
      *   (for example, `com.example.Outer.Inner`)
      */
-    public fun report(filePath: String, importedFqName: String)
+    public fun report(filePath: Path, importedFqName: String)
 }

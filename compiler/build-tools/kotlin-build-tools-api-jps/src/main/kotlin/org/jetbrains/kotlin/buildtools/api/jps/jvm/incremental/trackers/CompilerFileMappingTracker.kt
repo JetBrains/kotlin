@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
+import java.nio.file.Path
 
 /**
  * A tracker that will be informed which source files produced each file the compiler writes.
@@ -23,7 +24,7 @@ public interface CompilerFileMappingTracker {
      * @param sourceFilePaths the source files the output was produced from
      * @param outputFilePath the file that was written
      */
-    public fun recordSourceFilesToOutputFileMapping(sourceFilePaths: Collection<String>, outputFilePath: String)
+    public fun recordSourceFilesToOutputFileMapping(sourceFilePaths: Collection<Path>, outputFilePath: Path)
 
     /**
      * A callback that will be invoked when a source file is read while producing declarations for a compiler
@@ -31,7 +32,7 @@ public interface CompilerFileMappingTracker {
      *
      * @param sourceFilePath the source file that was read
      */
-    public fun recordSourceReferencedByCompilerPlugin(sourceFilePath: String)
+    public fun recordSourceReferencedByCompilerPlugin(sourceFilePath: Path)
 
     /**
      * A callback that will be invoked when an output file is produced from declarations a compiler plugin
@@ -39,12 +40,12 @@ public interface CompilerFileMappingTracker {
      *
      * @param outputFilePath the file that was written
      */
-    public fun recordOutputFileGeneratedForPlugin(outputFilePath: String)
+    public fun recordOutputFileGeneratedForPlugin(outputFilePath: Path)
 
     /**
      * A callback that will be invoked when a compiler plugin generates a source file that is not present on disk.
      *
      * @param sourceFilePath the path reported for the generated source file
      */
-    public fun recordSourceFileGeneratedForPlugin(sourceFilePath: String)
+    public fun recordSourceFileGeneratedForPlugin(sourceFilePath: Path)
 }
