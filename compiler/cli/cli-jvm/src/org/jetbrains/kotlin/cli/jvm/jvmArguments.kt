@@ -92,10 +92,10 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
 
-    if (arguments.valhallaValueClasses && (jvmTarget.majorVersion < JvmTarget.JVM_27.majorVersion || !arguments.enableJvmPreview)) {
+    if (arguments.valhallaValueClasses && !isJvmTargetValhallaCompatible(jvmTarget, arguments.enableJvmPreview)) {
         this.report(
             COMPILER_ARGUMENTS_ERROR,
-            "Valhalla value classes ('-Xvalhalla-value-classes') require JVM target 27 or later and the '-Xjvm-enable-preview' flag."
+            "Valhalla value classes ('-Xvalhalla-value-classes') require JVM target 28 or later and the '-Xjvm-enable-preview' flag."
         )
     }
 

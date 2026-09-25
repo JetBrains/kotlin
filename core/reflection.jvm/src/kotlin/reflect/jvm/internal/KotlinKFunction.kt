@@ -169,7 +169,7 @@ internal abstract class KotlinKFunction(
                 constructor.parameters.any { it.type.jvmErasure.isValueClassThatRequiresMangling() }
 
     private fun KClass<*>.isValueClassThatRequiresMangling(): Boolean =
-        isValue && this != Result::class
+        (this as? KClassImpl<*>)?.isJvmInlineValue == true && this != Result::class
 
     override fun equals(other: Any?): Boolean {
         val that = other.asReflectFunction() ?: return false

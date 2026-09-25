@@ -84,10 +84,9 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
         for ([argument, parameter] in expression.resolvedArgumentMapping?.entries ?: return) {
             if (parameter.name != lockParameterName) continue
             val type = argument.resolvedType
-            if (type.isPrimitive || type.isValueClass(context.session)) {
+            if (type.isPrimitive || type.isValueClass(context.session) || type.isJavaValueClass()) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type)
-            }
-            if (type.isJavaValueBasedClassAndWarningsEnabled()) {
+            } else if (type.isJavaValueBasedClassAndWarningsEnabled()) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, type)
             }
             if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives() && type.isFlexiblePrimitive()) {
