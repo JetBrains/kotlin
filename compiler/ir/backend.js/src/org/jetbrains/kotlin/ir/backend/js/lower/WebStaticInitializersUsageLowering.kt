@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isEnumEntry
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
@@ -149,7 +150,8 @@ abstract class WebStaticInitializersUsageLowering(private val context: JsCommonB
                 is IrSimpleFunction if declaration == staticInitFunction -> continue
                 // Do not insert a call to a static_init into an enum constructor, since it would be only accessible from static_init.
                 // Redundant re-entrance into static_init pollutes stepping.
-                is IrConstructor if (container.isEnumClass || container.isEnumEntry) -> continue
+                // Same goes for object constructors.
+                is IrConstructor if (container.isEnumClass || container.isEnumEntry || container.isObject) -> continue
                 is IrFunction -> {
                     if (declaration.dispatchReceiverParameter != null) continue // already initialized when instance was created
                     builder.insertCall(declaration, staticInitFunction)
