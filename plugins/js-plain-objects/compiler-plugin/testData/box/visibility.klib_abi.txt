@@ -1,0 +1,28 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class foo/PublicParent { // foo/PublicParent|null[0]
+    constructor <init>() // foo/PublicParent.<init>|<init>(){}[0]
+}
+abstract interface foo/PublicUser { // foo/PublicUser|null[0]
+    abstract val name // foo/PublicUser.name|{}name[0]
+        abstract fun <get-name>(): kotlin/String // foo/PublicUser.name.<get-name>|<get-name>(){}[0]
+    final object Companion { // foo/PublicUser.Companion|null[0]
+        final inline fun copy(noinline foo/PublicUser, noinline kotlin/String = ...): foo/PublicUser // foo/PublicUser.Companion.copy|copy(foo.PublicUser;kotlin.String){}[0]
+        final inline fun invoke(noinline kotlin/String): foo/PublicUser // foo/PublicUser.Companion.invoke|invoke(kotlin.String){}[0]
+    }
+}
+final fun foo/box(): kotlin/String // foo/box|box(){}[0]
+final inline fun foo/foo_InternalParent_NestedUser_Companion_4s75z3_copy_1tks5(noinline foo/InternalParent.NestedUser, noinline kotlin/String = ...): foo/InternalParent.NestedUser // foo/foo_InternalParent_NestedUser_Companion_4s75z3_copy_1tks5|foo_InternalParent_NestedUser_Companion_4s75z3_copy_1tks5(foo.InternalParent.NestedUser;kotlin.String){}[0]
+final inline fun foo/foo_InternalParent_NestedUser_Companion_4s75z3_invoke_jkqnwo(noinline kotlin/String): foo/InternalParent.NestedUser // foo/foo_InternalParent_NestedUser_Companion_4s75z3_invoke_jkqnwo|foo_InternalParent_NestedUser_Companion_4s75z3_invoke_jkqnwo(kotlin.String){}[0]
+final inline fun foo/foo_InternalUser_Companion_rp268i_copy_1tks5(noinline foo/InternalUser, noinline kotlin/String = ...): foo/InternalUser // foo/foo_InternalUser_Companion_rp268i_copy_1tks5|foo_InternalUser_Companion_rp268i_copy_1tks5(foo.InternalUser;kotlin.String){}[0]
+final inline fun foo/foo_InternalUser_Companion_rp268i_invoke_jkqnwo(noinline kotlin/String): foo/InternalUser // foo/foo_InternalUser_Companion_rp268i_invoke_jkqnwo|foo_InternalUser_Companion_rp268i_invoke_jkqnwo(kotlin.String){}[0]
+final inline fun foo/foo_PrivateUser_Companion_4j5xus_copy_1tks5(noinline foo/PrivateUser, noinline kotlin/String = ...): foo/PrivateUser // foo/foo_PrivateUser_Companion_4j5xus_copy_1tks5|foo_PrivateUser_Companion_4j5xus_copy_1tks5(foo.PrivateUser;kotlin.String){}[0]
+final inline fun foo/foo_PrivateUser_Companion_4j5xus_invoke_jkqnwo(noinline kotlin/String): foo/PrivateUser // foo/foo_PrivateUser_Companion_4j5xus_invoke_jkqnwo|foo_PrivateUser_Companion_4j5xus_invoke_jkqnwo(kotlin.String){}[0]
+final inline fun foo/foo_PublicParent_NestedInternalUser_Companion_z7p1xs_copy_1tks5(noinline foo/PublicParent.NestedInternalUser, noinline kotlin/String = ...): foo/PublicParent.NestedInternalUser // foo/foo_PublicParent_NestedInternalUser_Companion_z7p1xs_copy_1tks5|foo_PublicParent_NestedInternalUser_Companion_z7p1xs_copy_1tks5(foo.PublicParent.NestedInternalUser;kotlin.String){}[0]
+final inline fun foo/foo_PublicParent_NestedInternalUser_Companion_z7p1xs_invoke_jkqnwo(noinline kotlin/String): foo/PublicParent.NestedInternalUser // foo/foo_PublicParent_NestedInternalUser_Companion_z7p1xs_invoke_jkqnwo|foo_PublicParent_NestedInternalUser_Companion_z7p1xs_invoke_jkqnwo(kotlin.String){}[0]
+final inline fun foo/foo_PublicUser_Companion_rpzvqe_copy_1tks5(noinline foo/PublicUser, noinline kotlin/String = ...): foo/PublicUser // foo/foo_PublicUser_Companion_rpzvqe_copy_1tks5|foo_PublicUser_Companion_rpzvqe_copy_1tks5(foo.PublicUser;kotlin.String){}[0]
+final inline fun foo/foo_PublicUser_Companion_rpzvqe_invoke_jkqnwo(noinline kotlin/String): foo/PublicUser // foo/foo_PublicUser_Companion_rpzvqe_invoke_jkqnwo|foo_PublicUser_Companion_rpzvqe_invoke_jkqnwo(kotlin.String){}[0]
