@@ -1011,6 +1011,9 @@ class CompileServiceImpl(
         if (facade.hasEnumWhenTracker()) {
             builder.register(EnumWhenTracker::class.java, RemoteEnumWhenTracker(facade, rpcProfiler))
         }
+        if (facade.hasImportTracker()) {
+            builder.register(ImportTracker::class.java, RemoteImportTracker(facade, rpcProfiler))
+        }
         if (facade.hasICFileMappingTracker()) {
             builder.register(ICFileMappingTracker::class.java, RemoteICFileMappingTracker(facade, rpcProfiler))
         }
