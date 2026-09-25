@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
-import org.jetbrains.kotlin.testFederation.TestFederationMode
-import org.jetbrains.kotlin.testFederation.testFederationMode
+import org.jetbrains.kotlin.testFederation.testFederationAllTestsRequested
 import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -148,7 +147,8 @@ open class GradleArgumentsProvider : ArgumentsProvider {
         val minGradleVersion = GradleVersion.version(versionsAnnotation.minVersion)
         // Max is used for cases when test is annotated with `@GradleTestVersions(minVersion = LATEST)` but MAX_SUPPORTED isn't latest
         val maxGradleVersion = maxOf(GradleVersion.version(versionsAnnotation.maxVersion), minGradleVersion)
-        if (testFederationMode == TestFederationMode.Smoke) return setOf(maxGradleVersion)
+
+        if (!testFederationAllTestsRequested) return setOf(maxGradleVersion)
 
         val additionalGradleVersions = versionsAnnotation
             .additionalVersions
@@ -249,9 +249,8 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
                 Arguments.of(it.first, it.second)
             }
             .run {
-                /* We only take the last configuration in smoke test mode */
-                if (testFederationMode == TestFederationMode.Smoke) toList().takeLast(1)
-                else toList()
+                if (testFederationAllTestsRequested) toList()
+                else toList().takeLast(1)
             }
             .stream()
     }
@@ -347,7 +346,7 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
             }
         )
 
-        if (testFederationMode == TestFederationMode.Smoke) {
+        if (!testFederationAllTestsRequested) {
             agpVersions = setOf(agpVersions.last())
         }
 

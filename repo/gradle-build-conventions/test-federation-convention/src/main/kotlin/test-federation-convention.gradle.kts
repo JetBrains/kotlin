@@ -8,17 +8,9 @@ val extension = extensions.create<TestFederationExtension>("testFederation")
 
 tasks.withType<Test>().configureEach {
     val currentDomain = testFederationDomains
-    val changedDomains = project.testFederationChangedDomains
     val areNightlyTestsEnabled = project.areNightlyTestsEnabled
 
-    val formattedChangedDomains = changedDomains.map { domains -> domains.toArgumentString() }
     val smokeTestConfig = smokeTestConfig
-
-    /*
-    'testFederationMode' is resolved only to forward 'test.federation.mode' to the test runtime for backward
-    compatibility (some fixtures still read it directly). Every selection decision below uses subsets instead.
-    */
-    val testFederationMode: Provider<TestFederationMode> = testFederationMode
 
     val testFederationSubsets = testFederationSubsets
     val formattedSubsets = testFederationSubsets.map { subsets -> subsets.toArgumentString() }
@@ -34,14 +26,12 @@ tasks.withType<Test>().configureEach {
         this as Test
 
         scan.value("$projectPath:${this.name} domain", currentDomain.get().toString())
-        scan.value("$projectPath:${this.name} changed domains", formattedChangedDomains.get())
         scan.value("$projectPath:${this.name} test subsets", formattedSubsets.get())
 
         val testFramework = testFramework
         val smokeTestConfig = smokeTestConfig.get()
 
         logger.quiet("Current Domain: '${currentDomain.get()}'")
-        logger.quiet("Changed Domains: '${formattedChangedDomains.get()}'")
         logger.quiet("Requested Test Subsets: '${formattedSubsets.get()}'")
 
         /*
@@ -75,39 +65,21 @@ tasks.withType<Test>().configureEach {
         testFramework as JUnitPlatformTestFramework
 
         /*
-        Configure the test environment.
-        'test.federation.mode' and 'test.federation.changed.domains' are forwarded only for backward
-        compatibility with runtime consumers that still read them directly; selection itself is driven
-        entirely by 'test.federation.subsets' below.
+        Configure the test environment
          */
-        systemProperty(TEST_FEDERATION_MODE_KEY, testFederationMode.get().name)
-        environment(TEST_FEDERATION_MODE_ENV_KEY, testFederationMode.get().name)
-
         systemProperty(TEST_FEDERATION_SUBSETS_KEY, formattedSubsets.get())
         environment(TEST_FEDERATION_SUBSETS_ENV_KEY, formattedSubsets.get())
 
         systemProperty(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled.get())
         environment(TEST_FEDERATION_NIGHTLY_ENV_KEY, areNightlyTestsEnabled.get())
 
-        /*
-        Provide changed domains only when a full test run is not selected.
-        Full test runs do not use this selection, so their build cache entries can be reused across selections.
-        */
-        if (TestSubset.AllTests !in testFederationSubsets.get()) {
-            systemProperty(TEST_FEDERATION_CHANGED_DOMAINS_KEY, formattedChangedDomains.get())
-            environment(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY, formattedChangedDomains.get())
-        }
-
         if (smokeTestConfig is SmokeTestConfig.Enabled) {
             systemProperty(TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY, smokeTestConfig.autoSmokeTestPercentage)
             environment(TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY, smokeTestConfig.autoSmokeTestPercentage)
         }
 
-        /* Set TeamCity tags */
-        if (TestSubset.AllTests !in testFederationSubsets.get()) {
-            changedDomains.get().forEach { domain ->
-                println("##teamcity[addBuildTag 'Changed: $domain']")
-            }
+        for (testSubset in testFederationSubsets.get()) {
+            println("##teamcity[addBuildTag '$testSubset']")
         }
 
         /* Exclude nightly tests if not specifically running in 'nightly' mode */
