@@ -1,0 +1,13 @@
+-- collected annotations --
+INVALID(AddTestImport, error=Error resolving annotation argument: Unresolved name: unknownValue)
+@AddTestImport(imports = ["foo.bar.Baz"])
+
+-- refinement --
+status: failure
+WARNING: Unable to construct the annotation AddTestImport: Error resolving annotation argument: Unresolved name: unknownValue
+ERROR: Unable to construct the annotation AddTestImport: Error resolving annotation argument: Unresolved name: unknownValue
+
+-- refinement in the script session --
+status: failure
+WARNING: Unable to construct the annotation AddTestImport: Error resolving annotation argument: Unresolved name: unknownValue
+ERROR: Unable to construct the annotation AddTestImport: Error resolving annotation argument: Unresolved name: unknownValue

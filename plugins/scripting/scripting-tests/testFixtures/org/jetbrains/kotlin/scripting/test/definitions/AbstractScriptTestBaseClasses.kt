@@ -16,6 +16,7 @@ open class AbstractScriptWithCustomDefDiagnosticsTestBase : AbstractFirDiagnosti
         super.configure(builder)
         with(builder) {
             configureWithCustomScriptDef()
+            configureCliLikeScriptPreRefinement()
         }
     }
 }
@@ -25,6 +26,7 @@ open class AbstractScriptWithCustomDefBlackBoxCodegenTest : AbstractFirScriptCod
         super.configure(builder)
         with(builder) {
             configureWithCustomScriptDef()
+            configureCliLikeScriptPreRefinement()
             useCustomRuntimeClasspathProviders(::ScriptWithCustomDefRuntimeClassPathProvider)
         }
     }
@@ -37,4 +39,12 @@ fun TestConfigurationBuilder.configureWithCustomScriptDef() {
     defaultDirectives {
         +WITH_STDLIB
     }
+}
+
+/**
+ * Refines the scripts in advance, as the CLI pipeline does. Needed for the compiler-based (LightTree) test hosts only: the Analysis API
+ * hosts refine the scripts themselves, via the PSI annotation collecting.
+ */
+fun TestConfigurationBuilder.configureCliLikeScriptPreRefinement() {
+    usePreAnalysisHandlers(::ScriptWithCustomDefPreRefinementHandler)
 }

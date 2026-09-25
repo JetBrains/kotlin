@@ -193,6 +193,10 @@ fun main(args: Array<String>) {
                 model("contextCollector", pattern = TestGeneratorUtil.KTS)
             }
 
+            testClass<AbstractCustomScriptDefinitionConfigurationRefinementTest> {
+                model("scriptConfigurationRefinement", pattern = TestGeneratorUtil.KTS)
+            }
+
             testClass<AbstractResolveExtensionDisposalAfterModificationEventTest> {
                 model("resolveExtensionDisposal")
             }

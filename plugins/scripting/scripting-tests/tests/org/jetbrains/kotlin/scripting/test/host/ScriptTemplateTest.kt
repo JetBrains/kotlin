@@ -322,6 +322,17 @@ class ScriptTemplateTest {
     }
 
     @Test
+    fun testAcceptedAnnotationsImportedByDefault() {
+        val messageCollector = MessageCollectorImpl()
+        val aClass = compileScript(
+            "acceptedAnnotationsWithoutImports.kts",
+            ScriptWithAcceptedAnnotationsSyncResolver::class,
+            messageCollector = messageCollector
+        )
+        assertNotNull(aClass, "Compilation failed:\n$messageCollector")
+    }
+
+    @Test
     fun testSeveralConstructors() {
         val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib.kts", ScriptWithSeveralConstructorsResolver::class, messageCollector = messageCollector)
