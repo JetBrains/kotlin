@@ -133,8 +133,13 @@ fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
 }
 
 @OptIn(SymbolInternals::class)
-val FirRegularClassSymbol.isJavaValueClass: Boolean
-    get() = fir.isJavaValueClass == true
+fun FirRegularClassSymbol.isJavaValueClass(session: FirSession): Boolean =
+    fir.isJavaValueClass == true || session.platformValueClassDeterminer.isPlatformValueClass(this)
+
+fun FirRegularClassSymbol.isMappedToJavaValueClass(session: FirSession): Boolean {
+    val platformClassId = session.platformClassMapper.getCorrespondingPlatformClass(classId) ?: return false
+    return (platformClassId.toSymbol(session) as? FirRegularClassSymbol)?.isJavaValueClass(session) == true
+}
 
 fun ConeKotlinType.isInlineClass(session: FirSession): Boolean =
     with(session.typeContext) { typeConstructor().isInlineClass() }

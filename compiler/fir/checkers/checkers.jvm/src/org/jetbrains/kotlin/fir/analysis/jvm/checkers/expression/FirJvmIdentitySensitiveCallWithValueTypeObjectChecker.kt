@@ -86,11 +86,9 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             val type = argument.resolvedType
             if (type.isPrimitive || type.isValueClass(context.session) || type.isJavaValueClass()) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type)
-            }
-            if (type.isJavaValueBasedClassAndWarningsEnabled()) {
+            } else if (type.isJavaValueBasedClassAndWarningsEnabled()) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, type)
-            }
-            if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives() && type.isFlexiblePrimitive()) {
+            } else if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives() && type.isFlexiblePrimitive()) {
                 reporter.reportOn(argument.source, IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)
             }
         }

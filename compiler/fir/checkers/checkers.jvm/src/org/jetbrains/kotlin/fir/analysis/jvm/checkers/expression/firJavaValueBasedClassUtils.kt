@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.isJavaValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.isMappedToJavaValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
@@ -50,17 +51,19 @@ internal fun ConeKotlinType.isValueTypeAndWarningsEnabled(): Boolean {
     return this.isJavaValueBasedClassAndWarningsEnabled()
 }
 
-// Like javac, this includes type parameters and captured types bounded by a Java value class.
+// Like javac, this includes type parameters and captured types bounded by a Java value class. A flexible primitive type like `Int!` is
+// its Java box, like `java.lang.Integer`.
 context(sessionHolder: SessionHolder)
 internal fun ConeKotlinType.isJavaValueClass(visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf()): Boolean =
     when (this) {
-        is ConeFlexibleType -> lowerBound.isJavaValueClass(visited)
+        is ConeFlexibleType -> lowerBound.isJavaValueClass(visited) ||
+                isFlexiblePrimitive() && lowerBound.toRegularClassSymbol()?.isMappedToJavaValueClass(sessionHolder.session) == true
         is ConeDefinitelyNotNullType -> original.isJavaValueClass(visited)
         is ConeIntersectionType -> intersectedTypes.any { it.isJavaValueClass(visited) }
         is ConeTypeParameterType ->
             visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.isJavaValueClass(visited) }
         is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.isJavaValueClass(visited) }
-        is ConeClassLikeType -> toRegularClassSymbol()?.isJavaValueClass == true
+        is ConeClassLikeType -> toRegularClassSymbol()?.isJavaValueClass(sessionHolder.session) == true
         is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
             -> false
     }
