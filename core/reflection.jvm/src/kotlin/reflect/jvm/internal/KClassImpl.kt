@@ -613,7 +613,11 @@ internal class KClassImpl<T : Any>(
         get() = kmClass?.isFunInterface == true
 
     override val isValue: Boolean
-        get() = kmClass?.isValue ?: ValhallaValueClassLoader.loadIsValue(jClass)
+        get() = when {
+            // A builtin like `kotlin.Int` is a value class if the Java class it is mapped to, like `java.lang.Integer`, is one.
+            isMappedBuiltin -> ValhallaValueClassLoader.loadIsValue(javaObjectType)
+            else -> kmClass?.isValue ?: ValhallaValueClassLoader.loadIsValue(jClass)
+        }
 
     internal val isJvmInlineValue: Boolean
         get() = isValue && inlineClassUnderlyingPropertyName != null
