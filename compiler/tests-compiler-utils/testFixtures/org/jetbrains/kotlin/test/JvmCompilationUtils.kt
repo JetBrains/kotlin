@@ -65,7 +65,7 @@ fun compileJavaFiles(files: Collection<File>, options: List<String?>, jdkHome: F
                 compilerOutputWriter,
                 fileManager,
                 diagnosticCollector,
-                options + listOf("-Djava.ext.dirs="),
+                options + listOf("-Djava.ext.dirs=") + extractPatchModuleOptions(files),
                 null,
                 javaFileObjectsFromFiles
             )
@@ -78,6 +78,21 @@ fun compileJavaFiles(files: Collection<File>, options: List<String?>, jdkHome: F
         }
     }
 }
+
+private val JAVA_SOURCE_SET_PATH_PATTERN = """(.*/java-sources/[^/]+/java/).+""".toRegex()
+
+/**
+ * With JDK 17, it's no longer possible to "just overload" classes from `java.base` module
+ * by redeclaring custom ones in the same package: to do so, we now need to pass
+ * `--patch-module java.base=<path-to-java-sources>` to javac.
+ */
+private fun extractPatchModuleOptions(files: Collection<File>): List<String> =
+    files.mapNotNullTo(mutableSetOf()) {
+        val normalizedPath = it.path.replace(File.separator, "/")
+        JAVA_SOURCE_SET_PATH_PATTERN.matchEntire(normalizedPath)?.groupValues?.getOrNull(1)
+    }.flatMap {
+        listOf("--patch-module", "java.base=$it")
+    }
 
 private fun compileJavaFilesExternally(files: Collection<File>, options: List<String?>, jdkHome: File): JavaCompilationResult {
     val command: MutableList<String?> = ArrayList()

@@ -278,7 +278,6 @@ testing {
                     projectTests {
                         testTask(
                             taskName = testTask.name,
-                            javaLauncher = JdkMajorVersion.JDK_17_0,
                             skipInLocalBuild = false,
                             garbageCollector = GarbageCollector.Parallel
                         ) {
