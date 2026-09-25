@@ -15,6 +15,8 @@ public class IdContainer {
 
 // FILE: main.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val container = IdContainer()
     // Should call the setter/getter, and not access the field
@@ -23,7 +25,11 @@ fun box(): String {
     container.publicId = container.id
     container.id = container.publicId
     val s = container.toString()
-    return if (i == 123 && s == "IdContainer(id=123, publicId=123)") "OK" else "i = $i s = $s"
+
+    assertEquals(123, i)
+    assertEquals("IdContainer(id=123, publicId=123)", s)
+
+    return "OK"
 }
 
 // FILE: lombok.config
