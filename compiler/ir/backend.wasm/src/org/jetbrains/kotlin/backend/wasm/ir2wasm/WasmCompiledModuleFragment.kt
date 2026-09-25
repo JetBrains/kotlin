@@ -310,12 +310,9 @@ class WasmCompiledModuleFragment(
             }
         }
 
-        val contTagType = if (generateStackSwitchingTag) {
-            val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-            val contTagFuncType = WasmFunctionType(listOf(kotlinAnyRefType), listOf())
-            definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.wasmContTagFuncType.type] = contTagFuncType
-            WasmTag(Synthetics.FunctionHeapTypes.wasmContTagFuncType)
-        } else null
+        // The suspend tag is `() -> ()`.
+        val contTagType =
+            if (generateStackSwitchingTag) WasmTag(Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType) else null
 
         return listOfNotNull(exceptionTag, contTagType)
     }

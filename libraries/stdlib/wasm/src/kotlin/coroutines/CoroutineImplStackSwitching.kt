@@ -9,12 +9,11 @@ package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
-import kotlin.wasm.internal.WasmPrimitiveConstructor
 import kotlin.wasm.internal.WasmCoroutineMode
 import kotlin.wasm.internal.nullContrefIntrinsic
 import kotlin.wasm.internal.reftypes.typedcontref
-import kotlin.wasm.internal.resumeThrowImpl
-import kotlin.wasm.internal.resumeWithImpl
+import kotlin.wasm.internal.resumeThrowIntrinsic
+import kotlin.wasm.internal.resumeWithIntrinsic
 
 
 @SinceKotlin("1.3")
@@ -32,9 +31,8 @@ internal open class CoroutineImplStackSwitching<T, R>(
         ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
             .also { intercepted_ = it }
 
-    // Box for the inner WebAssembly continuation object.
-    internal val wasmContBox: WasmContinuationBox =
-        WasmContinuationBox(nullContrefIntrinsic())
+    // WebAssembly continuation of this coroutine.
+    internal var wasmContinuation: typedcontref<(Any?) -> Unit>? = nullContrefIntrinsic()
 
     // True while this coroutine's wasm stack is executing
     internal var isRunning = true
@@ -87,19 +85,14 @@ internal open class CoroutineImplStackSwitching<T, R>(
     }
 
     open fun doResume(): Any? {
-        val wasmCont = wasmContBox.wasmContinuation!!
-        wasmContBox.wasmContinuation = nullContrefIntrinsic()
+        val wasmCont = wasmContinuation!!
+        wasmContinuation = nullContrefIntrinsic()
         isRunning = true
 
         val e = exception
-        val resumeResult: Any? =
-            if (e != null)
-                resumeThrowImpl(e, wasmCont)
-            else
-                resumeWithImpl(wasmCont)
+        wasmContinuation =
+            if (e != null) resumeThrowIntrinsic(e, wasmCont) else resumeWithIntrinsic(wasmCont)
 
-        return resumeResult
+        return COROUTINE_SUSPENDED
     }
 }
-
-internal class WasmContinuationBox @WasmPrimitiveConstructor constructor(var wasmContinuation: typedcontref<(Any?) -> Unit>?)
