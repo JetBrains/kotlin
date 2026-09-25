@@ -93,7 +93,7 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
     return result
 }
 
-private fun ReflectKCallable<*>.createFakeOverride(subclass: MemberContainer<*>, substitutor: KTypeSubstitutor): ReflectKCallable<*> =
+internal fun ReflectKCallable<*>.createFakeOverride(subclass: MemberContainer<*>, substitutor: KTypeSubstitutor): ReflectKCallable<*> =
     shallowCopy(
         subclass,
         overriddenStorage.withChainedClassTypeParametersSubstitutor(substitutor).copy(
@@ -106,13 +106,15 @@ private fun ReflectKCallable<*>.createFakeOverride(subclass: MemberContainer<*>,
 
 private fun createIntersectionOverride(a: ReflectKCallable<*>, b: ReflectKCallable<*>): ReflectKCallable<*> {
     val result = minOf(a, b, CovariantOverrideComparator)
-    if (a !is ReflectKFunction || b !is ReflectKFunction) return result
     val other = if (result === a) b else a
+    val storage = result.overriddenStorage.copy(
+        modality = computeIntersectionOverrideModality(a, b),
+        overridden = result.overriddenStorage.overridden + other.overriddenStorage.overridden,
+    )
+    if (a !is ReflectKFunction || b !is ReflectKFunction) return result.shallowCopy(result.container, storage)
     return result.shallowCopy(
         result.container,
-        result.overriddenStorage.copy(
-            modality = computeIntersectionOverrideModality(a, b),
-            overridden = result.overriddenStorage.overridden + other.overriddenStorage.overridden,
+        storage.copy(
             forceIsExternal = a.isExternal || b.isExternal,
             forceIsOperator = a.isOperator || b.isOperator,
             forceIsInfix = a.isInfix || b.isInfix,
@@ -136,7 +138,7 @@ private val ReflectKCallable<*>.isBuiltinWithDifferentJvmName: Boolean
     }
 
 // See `OverridingUtil.determineModalityForFakeOverride`.
-private fun computeIntersectionOverrideModality(a: ReflectKFunction, b: ReflectKFunction): Modality {
+private fun computeIntersectionOverrideModality(a: ReflectKCallable<*>, b: ReflectKCallable<*>): Modality {
     val aModality = a.modality
     val bModality = b.modality
     if (aModality == bModality) return aModality
@@ -144,12 +146,12 @@ private fun computeIntersectionOverrideModality(a: ReflectKFunction, b: ReflectK
 
     // One of the members is open, and the other is abstract. The result is open if there's an open declaration in the hierarchy which is
     // not overridden by any abstract declaration. Otherwise, it's abstract.
-    val declarations = LinkedHashSet<ReflectKFunction>()
+    val declarations = LinkedHashSet<ReflectKCallable<*>>()
     a.collectOverriddenDeclarations(declarations, transitively = false)
     b.collectOverriddenDeclarations(declarations, transitively = false)
-    val overriddenByOtherDeclarations = HashSet<ReflectKFunction>()
+    val overriddenByOtherDeclarations = HashSet<ReflectKCallable<*>>()
     for (declaration in declarations) {
-        for (overridden in declaration.overridden) {
+        for (overridden in declaration.overriddenCallables) {
             overridden.collectOverriddenDeclarations(overriddenByOtherDeclarations, transitively = true)
         }
     }
@@ -159,14 +161,24 @@ private fun computeIntersectionOverrideModality(a: ReflectKFunction, b: ReflectK
         Modality.ABSTRACT
 }
 
-private fun ReflectKFunction.collectOverriddenDeclarations(result: MutableSet<ReflectKFunction>, transitively: Boolean) {
+private fun ReflectKCallable<*>.collectOverriddenDeclarations(result: MutableSet<ReflectKCallable<*>>, transitively: Boolean) {
     if (!overriddenStorage.isFakeOverride) {
         if (!result.add(this) || !transitively) return
     }
-    for (overridden in overridden) {
+    for (overridden in overriddenCallables) {
         overridden.collectOverriddenDeclarations(result, transitively)
     }
 }
+
+// Callables overridden by this callable. Unlike for functions, overridden properties are computed only for fake overrides and for Java
+// methods overriding Kotlin properties, because there's no general way to find overridden properties yet.
+private val ReflectKCallable<*>.overriddenCallables: Collection<ReflectKCallable<*>>
+    get() = when {
+        this is ReflectKFunction -> overridden
+        overriddenStorage.isFakeOverride -> overriddenStorage.overridden
+        this is JavaForKotlinOverrideKProperty<*> -> listOf(overriddenProperty)
+        else -> emptyList()
+    }
 
 internal fun computeOverriddenFunctions(callable: ReflectKFunction): Collection<ReflectKFunction> {
     if (callable.overriddenStorage.isFakeOverride) {

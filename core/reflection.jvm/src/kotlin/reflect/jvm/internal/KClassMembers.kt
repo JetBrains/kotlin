@@ -36,6 +36,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.MemberBelonginess.INHERITED
+import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.areEqualKTypes
 import java.lang.Deprecated as JavaLangDeprecated
@@ -280,8 +281,18 @@ private fun MemberContainer<*>.getDeclaredNonStaticMethodsFromJavaClass(name: St
     }
 }
 
+// Returns member properties with the given name inherited from the supertypes of this class, with types substituted to the type parameters
+// of this class, so that they can be compared with the types of the Java methods declared in this class (see `doesClassOverrideProperty`).
+// For example, for `abstract class A : SortedMap<Boolean, Boolean>`, the result for `keys` is `MutableSet<Boolean!>`, not `MutableSet<K>`.
 private fun MemberContainer<*>.getPropertiesFromSupertypes(name: String): List<KProperty1<*, *>> =
-    supertypes.flatMap { supertype -> supertype.memberContainer?.memberProperties?.filter { it.name == name }.orEmpty() }
+    supertypes.flatMap { supertype ->
+        val supertypeKClass = supertype.memberContainer ?: return@flatMap emptyList()
+        val substitutor = KTypeSubstitutor.create(supertype)
+        supertypeKClass.getFakeOverrideMembersByName(name).values.mapNotNull { member ->
+            if (member !is KProperty1<*, *> || member.isStatic) return@mapNotNull null
+            member.createFakeOverride(this, substitutor) as KProperty1<*, *>
+        }
+    }
 
 private val ReflectKFunction.jvmName: String
     get() = signature.substringBeforeLast('(')
@@ -315,14 +326,14 @@ private fun MemberContainer<*>.getFunctionsFromSupertypes(name: String): List<Re
         supertype.memberContainer?.getFakeOverrideMembersByName(name)?.values?.filterIsInstance<ReflectKFunction>().orEmpty()
     }
 
-private fun doesClassOverrideProperty(
+private fun MemberContainer<*>.doesClassOverrideProperty(
     property: KProperty1<*, *>,
     functions: (String) -> Collection<ReflectKFunction>,
 ): Boolean {
     // Java fields cannot be overridden.
     if (property is JavaFieldKProperty<*>) return false
 
-    val getter = property.findGetterOverride(functions)
+    val getter = findGetterOverride(property, functions)
     val setter = property.findSetterOverride(functions)
 
     if (getter == null) return false
@@ -331,13 +342,38 @@ private fun doesClassOverrideProperty(
     return setter != null && setter.modality == getter.modality
 }
 
-private fun KProperty1<*, *>.findGetterOverride(functions: (String) -> Collection<ReflectKFunction>): ReflectKFunction? =
-    findGetterByName(getBuiltinSpecialPropertyGetterName() ?: JvmAbi.getterName(name), functions)
+private fun MemberContainer<*>.findGetterOverride(
+    property: KProperty1<*, *>,
+    functions: (String) -> Collection<ReflectKFunction>,
+): ReflectKFunction? {
+    val specialGetterName = property.getBuiltinSpecialPropertyGetterName()
+    if (specialGetterName != null && !hasRealKotlinSuperClassWithOverrideOf(property)) {
+        return property.findGetterByName(specialGetterName, functions)
+    }
+    return property.findGetterByName(JvmAbi.getterName(property.name), functions)
+}
 
+// If this Java class has a Kotlin (non-built-in) superclass which inherits a built-in property with a special JVM getter name (e.g. `size`),
+// the getter with the regular JVM name (`getSize`) is generated in that superclass along with a bridge with the special name, so a method
+// overriding the property getter in this Java class has the regular name. See `hasRealKotlinSuperClassWithOverrideOf` in the compiler.
+private fun MemberContainer<*>.hasRealKotlinSuperClassWithOverrideOf(property: KProperty1<*, *>): Boolean {
+    var superclass = jClass.superclass
+    while (superclass != null) {
+        val superKClass = superclass.kotlin as? MemberContainer<*> ?: return false
+        if (superKClass.isKotlin && superKClass.getFakeOverrideMembersByName(property.name).values.any { it is ReflectKProperty<*> }) {
+            return !superKClass.isMappedBuiltin
+        }
+        superclass = superclass.superclass
+    }
+    return false
+}
+
+// Returns the special JVM getter name if this property is a built-in property with such a name (e.g. `size` for `Collection.size`), or its
+// override (including fake overrides) which is compiled to a method with the special name (e.g. `Java1.size()` overriding `Collection.size`).
 private fun KProperty1<*, *>.getBuiltinSpecialPropertyGetterName(): String? {
-    if (this !is KotlinKProperty<*>) return null
+    if (this !is KotlinKProperty<*> && this !is JavaForKotlinOverrideKProperty<*>) return null
     if (Name.identifier(name) !in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES) return null
-    return signature.substringBeforeLast('(').takeIf { it != JvmAbi.getterName(name) }
+    return (this as ReflectKProperty<*>).signature.substringBeforeLast('(').takeIf { it != JvmAbi.getterName(name) }
 }
 
 private fun KProperty1<*, *>.findGetterByName(
@@ -521,7 +557,7 @@ private fun MemberContainer<*>.createPropertyByMethods(
 ): ReflectKProperty<*>? {
     if (!doesClassOverrideProperty(overriddenProperty, functions)) return null
 
-    val getterMethod = overriddenProperty.findGetterOverride(functions)!!
+    val getterMethod = findGetterOverride(overriddenProperty, functions)!!
     overriddenProperty as ReflectKProperty<*>
     return if (overriddenProperty is KMutableProperty<*>)
         JavaForKotlinOverrideKMutableProperty1<Any, Any>(

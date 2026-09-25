@@ -62,7 +62,7 @@ internal abstract class KotlinKProperty<out V>(
     override val typeParameters: List<KTypeParameter> get() = typeParameterTable.value.ownTypeParameters
 
     override val visibility: KVisibility? get() = kmProperty.visibility.toKVisibility()
-    override val modality: Modality get() = kmProperty.modality
+    override val modality: Modality get() = overriddenStorage.modality ?: kmProperty.modality
     override val isSuspend: Boolean get() = false
     override val isLateinit: Boolean get() = kmProperty.isLateinit
     override val isConst: Boolean get() = kmProperty.isConst

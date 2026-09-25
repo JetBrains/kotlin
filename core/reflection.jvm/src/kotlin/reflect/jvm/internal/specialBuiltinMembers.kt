@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.name.Name
  */
 internal fun getBuiltinSpecialPropertyGetterName(propertyName: String, container: KDeclarationContainerImpl): String? {
     if (Name.identifier(propertyName) !in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES) return null
+    // Only getters in the built-in classes themselves have special JVM names. A Kotlin class overriding such a property (e.g. `size` in
+    // `kotlin.collections.AbstractMutableList`) has the getter with the regular name (`getSize`), and a bridge with the special name (`size`).
+    if ((container as? MemberContainer<*>)?.isMappedBuiltin != true) return null
     val fqName = container.findBuiltinSpecialPropertyFqName(propertyName) ?: return null
     return BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[fqName]?.asString()
 }
