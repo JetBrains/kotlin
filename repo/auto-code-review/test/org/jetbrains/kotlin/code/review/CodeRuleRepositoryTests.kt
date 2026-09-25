@@ -28,7 +28,7 @@ class CodeRuleRepositoryTests {
         val todoRule = rule(
             name = "TODOs",
             text = "If a TODO is added to the code, it should be accompanied by a YouTrack issue number.",
-            patterns = listOf(),
+            patterns = listOf("*"),
             source = "code-rules.md"
         )
 
@@ -52,7 +52,7 @@ class CodeRuleRepositoryTests {
         val nativeSpecificRule = rule(
             name = "Native-specific code location",
             text = "Use native/ and kotlin-native/ only for Kotlin/Native-specific files.",
-            patterns = listOf(),
+            patterns = listOf("*"),
             source = "native/code-rules.md"
         )
 
@@ -68,6 +68,8 @@ class CodeRuleRepositoryTests {
                 todoRule.source,
                 """
                     # ${todoRule.name}
+                    
+                    Applies to: `${todoRule.patterns.patterns.single()}`
                     
                     ${todoRule.text}
                 """.trimIndent()
@@ -95,6 +97,8 @@ class CodeRuleRepositoryTests {
                 nativeSpecificRule.source,
                 """
                     # ${nativeSpecificRule.name}
+                    
+                    Applies to: `${nativeSpecificRule.patterns.patterns.single()}`
                     
                     ${nativeSpecificRule.text}
                 """.trimIndent()
