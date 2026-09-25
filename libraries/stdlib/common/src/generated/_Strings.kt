@@ -1102,6 +1102,10 @@ public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
  * The characters are compared using structural equality (`==`).
  * The operation returns `false` as soon as a duplicate character is found.
  * 
+ * The char sequence is treated as a sequence of [Char]s. It implies that the result may not correspond to
+ * the printed graphemes: a grapheme may consist of several [Char]s, for example, a UTF-16 surrogate pair
+ * that encodes a Unicode code point not representable by a single [Char], or a letter followed by a combining mark.
+ * 
  * @sample samples.generated.alldistinct.AllDistinctCharSequencesSamples.allDistinct
  */
 @SinceKotlin("2.5")
@@ -1129,6 +1133,10 @@ public fun CharSequence.allDistinct(): Boolean {
  * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
  * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
  * 
+ * The char sequence is treated as a sequence of [Char]s. It implies that the result may not correspond to
+ * the printed graphemes: a grapheme may consist of several [Char]s, for example, a UTF-16 surrogate pair
+ * that encodes a Unicode code point not representable by a single [Char], or a letter followed by a combining mark.
+ * 
  * @sample samples.generated.alldistinct.AllDistinctCharSequencesSamples.allDistinctBy
  */
 @SinceKotlin("2.5")
@@ -1150,6 +1158,10 @@ public inline fun <K> CharSequence.allDistinctBy(selector: (Char) -> K): Boolean
  * The characters are compared sequentially using structural equality (`==`),
  * and all characters are considered equal if the first character equals
  * every subsequent character.
+ * 
+ * The char sequence is treated as a sequence of [Char]s. It implies that the result may not correspond to
+ * the printed graphemes: a grapheme may consist of several [Char]s, for example, a UTF-16 surrogate pair
+ * that encodes a Unicode code point not representable by a single [Char], or a letter followed by a combining mark.
  * 
  * @sample samples.generated.allequal.AllEqualCharSequencesSamples.allEqual
  */
@@ -1176,6 +1188,10 @@ public fun CharSequence.allEqual(): Boolean {
  * 
  * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
  * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * The char sequence is treated as a sequence of [Char]s. It implies that the result may not correspond to
+ * the printed graphemes: a grapheme may consist of several [Char]s, for example, a UTF-16 surrogate pair
+ * that encodes a Unicode code point not representable by a single [Char], or a letter followed by a combining mark.
  * 
  * @sample samples.generated.allequal.AllEqualCharSequencesSamples.allEqualBy
  */

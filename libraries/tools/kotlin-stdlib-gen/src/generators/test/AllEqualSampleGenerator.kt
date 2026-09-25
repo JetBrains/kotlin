@@ -24,7 +24,7 @@ object AllEqualSampleGenerator {
         val className = "AllEqual${collectionClass}Samples"
         writeGeneratedFile("libraries/stdlib/samples/test/samples/generated/allequal/$className.kt") {
             writeHeader(className, config.sampleNeedsAbsImport)
-            writeAllEqualSample(receiver, config, inlineReceivers)
+            writeAllEqualSample(receiver, config, inlineReceivers, family)
             writeAllEqualBySample(receiver, config, inlineReceivers)
             appendLine("}")
         }
@@ -49,10 +49,18 @@ object AllEqualSampleGenerator {
         return if (inline) "" to value else "\n        val $name = $value\n" to name
     }
 
+    private fun charSequenceShowcase(family: Family): String {
+        if (family != CharSequences) return ""
+        return "\n" +
+                "        // 😲 is represented by a pair of different UTF-16 characters, thus the characters of \"😲😲\" are not all equal\n" +
+                "        assertPrints(\"😲😲\".allEqual(), \"false\")"
+    }
+
     private fun BufferedWriter.writeAllEqualSample(
         receiver: Receiver,
         config: AllEqualTypeConfig,
         inlineReceivers: Boolean,
+        family: Family,
     ) {
         val equal = config.sampleEqualValue
         val other = config.sampleOtherValue
@@ -65,7 +73,7 @@ object AllEqualSampleGenerator {
         assertPrints(${receiver()}.allEqual(), "true")
         assertPrints(${receiver(equal)}.allEqual(), "true")
 $sameDecl        assertPrints($sameRef.allEqual(), "true")
-$mixedDecl        assertPrints($mixedRef.allEqual(), "false")
+$mixedDecl        assertPrints($mixedRef.allEqual(), "false")${charSequenceShowcase(family)}
     }"""
         )
     }

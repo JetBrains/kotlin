@@ -21,6 +21,8 @@ class AllEqualCharSequencesSamples {
         assertPrints("a".allEqual(), "true")
         assertPrints("aaa".allEqual(), "true")
         assertPrints("aab".allEqual(), "false")
+        // 😲 is represented by a pair of different UTF-16 characters, thus the characters of "😲😲" are not all equal
+        assertPrints("😲😲".allEqual(), "false")
     }
 
     @Sample

@@ -225,6 +225,18 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.appendGraphemeNote() {
+        if (f == CharSequences) {
+            doc {
+                doc + """
+                The char sequence is treated as a sequence of [Char]s. It implies that the result may not correspond to
+                the printed graphemes: a grapheme may consist of several [Char]s, for example, a UTF-16 surrogate pair
+                that encodes a Unicode code point not representable by a single [Char], or a letter followed by a combining mark.
+                """
+            }
+        }
+    }
+
     val f_allEqual = fn("allEqual()") {
         includeDefault()
         include(ArraysOfUnsigned, CharSequences)
@@ -249,6 +261,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         appendFloatingPointEqualityNote()
+        appendGraphemeNote()
         sample(allEqualSampleRef("allEqual"))
         body {
             """
@@ -310,6 +323,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         appendSelectorFloatingPointEqualityNote()
+        appendGraphemeNote()
         sample(allEqualSampleRef("allEqualBy"))
         body {
             """
@@ -381,6 +395,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         appendFloatingPointEqualityNote()
+        appendGraphemeNote()
         sample(allDistinctSampleRef("allDistinct"))
         body {
             """
@@ -463,6 +478,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         appendSelectorFloatingPointEqualityNote()
+        appendGraphemeNote()
         sample(allDistinctSampleRef("allDistinctBy"))
         body {
             """

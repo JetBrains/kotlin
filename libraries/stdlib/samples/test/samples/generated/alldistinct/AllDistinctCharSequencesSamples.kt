@@ -21,6 +21,8 @@ class AllDistinctCharSequencesSamples {
         assertPrints("a".allDistinct(), "true")
         assertPrints("abc".allDistinct(), "true")
         assertPrints("aba".allDistinct(), "false")
+        // 😱 and 😲 are represented by pairs of UTF-16 characters with the same first character, thus they are not all distinct
+        assertPrints("😱😲".allDistinct(), "false")
     }
 
     @Sample

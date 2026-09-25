@@ -24,7 +24,7 @@ object AllDistinctSampleGenerator {
         val className = "AllDistinct${collectionClass}Samples"
         writeGeneratedFile("libraries/stdlib/samples/test/samples/generated/alldistinct/$className.kt") {
             writeHeader(className, config.sampleNeedsAbsImport)
-            writeAllDistinctSample(receiver, config, inlineReceivers, primitive)
+            writeAllDistinctSample(receiver, config, inlineReceivers, family, primitive)
             writeAllDistinctBySample(receiver, config, inlineReceivers)
             appendLine("}")
         }
@@ -58,16 +58,24 @@ object AllDistinctSampleGenerator {
                 "        assertPrints(${receiver("0.0$suffix", "-0.0$suffix")}.allDistinct(), \"true\")"
     }
 
+    private fun charSequenceShowcase(family: Family): String {
+        if (family != CharSequences) return ""
+        return "\n" +
+                "        // 😱 and 😲 are represented by pairs of UTF-16 characters with the same first character, thus they are not all distinct\n" +
+                "        assertPrints(\"😱😲\".allDistinct(), \"false\")"
+    }
+
     private fun BufferedWriter.writeAllDistinctSample(
         receiver: Receiver,
         config: AllDistinctTypeConfig,
         inlineReceivers: Boolean,
+        family: Family,
         primitive: PrimitiveType?,
     ) {
         val single = config.sampleDistinctValues.first()
         val [distinctDecl, distinctRef] = valOrInline(inlineReceivers, "distinctValues", receiver(config.sampleDistinctValues))
         val [duplicateDecl, duplicateRef] = valOrInline(inlineReceivers, "duplicateValues", receiver(config.sampleDuplicateValues))
-        val fpShowcase = floatingPointShowcase(receiver, primitive)
+        val showcase = floatingPointShowcase(receiver, primitive) + charSequenceShowcase(family)
         appendLine(
             """
     @Sample
@@ -75,7 +83,7 @@ object AllDistinctSampleGenerator {
         assertPrints(${receiver()}.allDistinct(), "true")
         assertPrints(${receiver(single)}.allDistinct(), "true")
 $distinctDecl        assertPrints($distinctRef.allDistinct(), "true")
-$duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$fpShowcase
+$duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$showcase
     }"""
         )
     }
