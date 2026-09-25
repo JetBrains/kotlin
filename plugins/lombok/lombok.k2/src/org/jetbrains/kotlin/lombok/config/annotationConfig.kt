@@ -44,8 +44,6 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.FLOGGER_LOG_FLAG_USA
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.JBOSS_LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.LOG4J2_LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.XSLF4J_LOG_FLAG_USAGE_CONFIG
-import org.jetbrains.kotlin.lombok.config.LombokConfigNames.DO_NOT_USE_GETTERS
-import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EXCLUDE
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_FIELD_NAMES
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.JAVA_UTIL_LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.LOG4J_LOG_FLAG_USAGE_CONFIG
@@ -68,7 +66,7 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.NO_ARGS_CONSTRUCTOR_
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ALL_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_ONLY_EXPLICITLY_INCLUDED_CONFIG
-import org.jetbrains.kotlin.lombok.config.LombokConfigNames.OF
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.FIELD_DEFAULTS_PRIVATE
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TO_STRING_DO_NOT_USE_GETTERS_CONFIG
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -139,6 +137,7 @@ class GlobalConfig(
     val noArgsConstructorFlagUsage: FlagUsageValue?,
     val allArgsConstructorFlagUsage: FlagUsageValue?,
     val requiredArgsConstructorFlagUsage: FlagUsageValue?,
+    val fieldDefaultPrivate: Boolean,
 ) {
     companion object {
         fun extract(config: LombokConfig): GlobalConfig {
@@ -182,6 +181,7 @@ class GlobalConfig(
                 noArgsConstructorFlagUsage = parseFlagUsage(config, NO_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
                 allArgsConstructorFlagUsage = parseFlagUsage(config, ALL_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
                 requiredArgsConstructorFlagUsage = parseFlagUsage(config, REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
+                fieldDefaultPrivate = config.getBoolean(FIELD_DEFAULTS_PRIVATE) ?: false,
             )
         }
     }

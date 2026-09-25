@@ -34,13 +34,12 @@ class DeclarationWithValueAnnStatusTransformer(session: FirSession) : FirStatusT
         containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean,
     ): FirDeclarationStatus {
-        return if (containingClass == null ||
-            status.visibility != JavaVisibilities.PackageVisibility ||
-            session.lombokService.getValue(containingClass) == null
-        ) {
-            status
-        } else {
-            status.copy(visibility = Visibilities.Private)
+        return when {
+            containingClass == null -> status
+            status.visibility != JavaVisibilities.PackageVisibility -> status
+            session.lombokService.config.fieldDefaultPrivate -> status.copy(visibility = Visibilities.Private)
+            session.lombokService.getValue(containingClass) == null -> status
+            else -> status.copy(visibility = Visibilities.Private)
         }
     }
 
