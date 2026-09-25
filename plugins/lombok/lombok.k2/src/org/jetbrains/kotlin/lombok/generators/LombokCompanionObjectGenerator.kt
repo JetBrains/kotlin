@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.plugin.createCompanionObject
-import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
+import org.jetbrains.kotlin.fir.plugin.createDefaultConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -99,7 +99,7 @@ class LombokCompanionObjectGenerator(session: FirSession) : FirDeclarationGenera
         if (!context.owner.isGeneratedLombokCompanionObject) return emptyList()
 
         return buildList {
-            add(createDefaultPrivateConstructor(context.owner, LombokCompanionObjectKey).symbol)
+            add(createDefaultConstructor(context.owner, LombokCompanionObjectKey).symbol)
             contributors.flatMapTo(this) { it.generateConstructors(context) }
         }
     }

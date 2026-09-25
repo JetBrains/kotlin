@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.plugin.createCompanionObject
-import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
+import org.jetbrains.kotlin.fir.plugin.createDefaultConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
@@ -48,7 +48,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val constructor = createDefaultPrivateConstructor(context.owner, CompanionGeneratorKey)
+        val constructor = createDefaultConstructor(context.owner, CompanionGeneratorKey)
         return listOf(constructor.symbol)
     }
 

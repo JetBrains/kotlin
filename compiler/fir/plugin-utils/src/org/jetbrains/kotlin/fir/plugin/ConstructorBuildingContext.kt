@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -142,21 +142,22 @@ public fun FirExtension.createConstructor(
 }
 
 /**
- * Creates private primary constructor without parameters for [owner] object.
+ * Creates a primary constructor without parameters for [owner] object.
  *
  * This is a shorthand for [createConstructor] which is useful for creating constructors for companions and other objects, as they should be private.
  *
- * [generateDelegatedNoArgConstructorCall] specifies whether default delegating constructor call to superclass should be generated.
- * This generation works only if superclass of the [owner] has constructor without arguments.
+ * [generateDelegatedNoArgConstructorCall] specifies whether a default delegating constructor call to superclass should be generated.
+ * This generation works only if the superclass of the [owner] has a constructor without arguments.
  * Custom delegated constructor calls should be generated in IR backend (see `IrGenerationExtension`).
  */
-public fun FirExtension.createDefaultPrivateConstructor(
+public fun FirExtension.createDefaultConstructor(
     owner: FirClassSymbol<*>,
     key: GeneratedDeclarationKey,
+    visibility: Visibility = Visibilities.Private,
     generateDelegatedNoArgConstructorCall: Boolean = true
 ): FirConstructor {
     return createConstructor(owner, key, isPrimary = true, generateDelegatedNoArgConstructorCall) {
-        visibility = Visibilities.Private
+        this.visibility = visibility
     }
 }
 

@@ -304,7 +304,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         val owner = context.owner
 
         val result = mutableListOf<FirConstructorSymbol>()
-        result += createDefaultPrivateConstructor(owner, SerializationPluginKey).symbol
+        result += createDefaultConstructor(owner, SerializationPluginKey).symbol
 
         if (owner.name == SerialEntityNames.SERIALIZER_CLASS_NAME && owner.typeParameterSymbols.isNotEmpty()) {
             result += createConstructor(owner, SerializationPluginKey) {
