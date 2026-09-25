@@ -1230,10 +1230,14 @@ open class PsiRawFirBuilder(
 
             val constructedClassId = this@PsiRawFirBuilder.context.currentClassId
             val isKotlinAny = constructedClassId == StandardClassIds.Any
+            val defaultSuperTypeRef = when {
+                this.modifierList?.hasModifier(ERROR_KEYWORD) == true -> implicitRichErrorType
+                else -> implicitAnyType
+            }
             val defaultDelegatedSuperTypeRef =
                 when {
                     classKind == ClassKind.ENUM_ENTRY && this is KtClass -> delegatedEnumSuperTypeRef ?: implicitAnyType
-                    container.superTypeRefs.isEmpty() && !isKotlinAny -> implicitAnyType
+                    container.superTypeRefs.isEmpty() && !isKotlinAny -> defaultSuperTypeRef
                     else -> FirImplicitTypeRefImplWithoutSource
                 }
 
@@ -1241,9 +1245,9 @@ open class PsiRawFirBuilder(
                 val classIsKotlinNothing = constructedClassId == StandardClassIds.Nothing
                 // kotlin.Nothing doesn't have `Any` supertype, but does have delegating constructor call to Any
                 if (!classIsKotlinNothing) {
-                    container.superTypeRefs += implicitAnyType
+                    container.superTypeRefs += defaultSuperTypeRef
                 }
-                delegatedSuperTypeRef = implicitAnyType
+                delegatedSuperTypeRef = defaultSuperTypeRef
             }
 
             // TODO: in case we have no primary constructor,

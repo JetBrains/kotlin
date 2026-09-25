@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.model.*
@@ -301,8 +302,22 @@ object ReflectTypeSystemContext : TypeSystemContext {
         return this as TypeArgumentListMarker
     }
 
+    override fun TypeConstructorMarker.isClassWithId(classId: ClassId): Boolean {
+        shouldNotBeCalled()
+    }
+
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean {
         return this == Any::class
+    }
+
+    override fun TypeConstructorMarker.isValueConstructor(): Boolean {
+        // TODO(KT-89093) proper implementation
+        return false
+    }
+
+    @Suppress("UNSUPPORTED_FEATURE") // TODO remove when RichErrors LF is enabled
+    override fun TypeConstructorMarker.isRichErrorConstructor(): Boolean {
+        return this == RichError::class
     }
 
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean {

@@ -262,6 +262,10 @@ class FirJavaTypeParameter(
         return this
     }
 
+    override fun <D> transformBounds(transformer: FirTransformer<D>, data: D): FirJavaTypeParameter {
+        return this
+    }
+
     override fun replaceBounds(newBounds: List<FirTypeRef>) {
         shouldNotBeCalled(::replaceBounds, ::bounds)
     }

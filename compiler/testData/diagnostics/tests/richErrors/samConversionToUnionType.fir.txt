@@ -1,0 +1,19 @@
+FILE: samConversionToUnionType.kt
+    public abstract fun interface Sam : R|kotlin/Any| {
+        public abstract fun invoke(): R|kotlin/Unit|
+
+    }
+    public final error class Foo : R|kotlin/RichError| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final fun foo(f: R|union(primary=Sam, errors=Foo)|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo|(<L> = SAM(foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@foo Unit
+        }
+        ))
+    }

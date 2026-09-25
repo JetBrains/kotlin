@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -16,23 +17,48 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@RequiresOptIn("Creating FirValueSymbolProvider unconditionally is only available for Analysis API")
+annotation class AnalysisApiOnly
+
+/**
+ * The symbol provider for the synthetic `kotlin.Value` class.
+ */
 @NoMutableState
-class FirCloneableSymbolProvider(
+class FirValueSymbolProvider private constructor(
     session: FirSession,
     moduleData: FirModuleData,
     scopeProvider: FirScopeProvider,
-) : FirSingleClassSymbolProvider(buildCloneableClass(moduleData, session, scopeProvider), session)
+) : FirSingleClassSymbolProvider(buildValueClass(moduleData, session, scopeProvider), session) {
+    companion object {
+        /**
+         * Returns a [FirValueSymbolProvider] if [LanguageFeature.RichErrors] is enabled in the given [session] or null otherwise.
+         */
+        fun createIfRichErrorsEnabled(
+            session: FirSession,
+            moduleData: FirModuleData,
+            scopeProvider: FirScopeProvider,
+        ): FirValueSymbolProvider? = runIf(session.languageVersionSettings.supportsFeature(LanguageFeature.RichErrors)) {
+            FirValueSymbolProvider(session, moduleData, scopeProvider)
+        }
 
-private fun buildCloneableClass(
+        @AnalysisApiOnly
+        fun create(
+            session: FirSession,
+            moduleData: FirModuleData,
+            scopeProvider: FirScopeProvider,
+        ): FirValueSymbolProvider = FirValueSymbolProvider(session, moduleData, scopeProvider)
+    }
+}
+
+private fun buildValueClass(
     moduleData: FirModuleData,
     session: FirSession,
     scopeProvider: FirScopeProvider,
@@ -48,33 +74,13 @@ private fun buildCloneableClass(
         )
 
         classKind = ClassKind.INTERFACE
-        val classSymbol = FirRegularClassSymbol(StandardClassIds.Cloneable)
+        val classSymbol = FirRegularClassSymbol(StandardClassIds.Value)
         symbol = classSymbol
         superTypeRefs += buildResolvedTypeRef {
             coneType = session.builtinTypes.anyType.coneType
         }
 
-        declarations += buildNamedFunction {
-            this.moduleData = moduleData
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            origin = FirDeclarationOrigin.Library
-            returnTypeRef = buildResolvedTypeRef {
-                coneType = session.builtinTypes.anyType.coneType
-            }
-
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Protected,
-                Modality.OPEN,
-                Visibilities.Protected.toEffectiveVisibility(classSymbol)
-            )
-            isLocal = false
-
-            name = StandardClassIds.Callables.clone.callableName
-            symbol = FirNamedFunctionSymbol(StandardClassIds.Callables.clone)
-            dispatchReceiverType = this@buildRegularClass.symbol.constructType()
-        }
-
         this.scopeProvider = scopeProvider
-        name = StandardClassIds.Cloneable.shortClassName
+        name = StandardClassIds.Value.shortClassName
     }
 }

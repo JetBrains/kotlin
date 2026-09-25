@@ -120,6 +120,8 @@ object StandardNames {
 
     object FqNames {
         @JvmField val any: FqNameUnsafe = fqNameUnsafe("Any")
+        @JvmField val value: FqNameUnsafe = fqNameUnsafe("Value")
+        @JvmField val richError: FqNameUnsafe = fqNameUnsafe("RichError")
         @JvmField val nothing: FqNameUnsafe = fqNameUnsafe("Nothing")
         @JvmField val cloneable: FqNameUnsafe = fqNameUnsafe("Cloneable")
         @JvmField val suppress: FqName = fqName("Suppress")
