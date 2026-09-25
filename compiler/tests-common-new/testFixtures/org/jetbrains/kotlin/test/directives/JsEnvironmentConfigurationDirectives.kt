@@ -262,21 +262,34 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Expected total size (in bytes) of JS output files after DCE compilation. The file extension is inferred from the module system.",
         applicability = DirectiveApplicability.Global,
         splitValuesOnSpaces = false,
-        parser = { directiveValue ->
+        parser = expectedOutputSizeParser("JS_DCE_EXPECTED_OUTPUT_SIZE")
+    )
+
+    @OptIn(SensitiveDirectiveAPI::class)
+    val JS_DCE_EXPECTED_OUTPUT_SIZE_SWC by valueDirective(
+        description = "Expected size (in bytes) of the DCE output when the transpilation is delegated to swc. " +
+                "Overrides JS_DCE_EXPECTED_OUTPUT_SIZE for runners with DELEGATE_JS_TRANSPILATION.",
+        applicability = DirectiveApplicability.Global,
+        splitValuesOnSpaces = false,
+        parser = expectedOutputSizeParser("JS_DCE_EXPECTED_OUTPUT_SIZE_SWC")
+    )
+
+    data class JsExpectedOutputSize(val expectedOutputSize: Int, val forTargetBackend: TargetBackend?)
+
+    private fun expectedOutputSizeParser(directiveName: String): (String) -> JsExpectedOutputSize {
+        return { directiveValue ->
             val spaceSeparatedValues = directiveValue.split("\\s+".toRegex())
 
             if (spaceSeparatedValues.size !in 1..2) {
-                throw IllegalArgumentException("JS_DCE_EXPECTED_OUTPUT_SIZE expects either integer number of bytes for generated JS file, or target backend and the expected number of bytes (separated by spaces). The provided value '${directiveValue}' doesn't satisfy this format")
+                throw IllegalArgumentException("$directiveName expects either integer number of bytes for generated JS file, or target backend and the expected number of bytes (separated by spaces). The provided value '${directiveValue}' doesn't satisfy this format")
             }
 
             val size = spaceSeparatedValues.last().filter(Char::isDigit).toInt()
-            val expectedBackend = runIf(size > 1) {
+            val expectedBackend = runIf(spaceSeparatedValues.size > 1) {
                 TargetBackend.valueOf(spaceSeparatedValues.first())
             }
 
             JsExpectedOutputSize(size, expectedBackend)
         }
-    )
-
-    data class JsExpectedOutputSize(val expectedOutputSize: Int, val forTargetBackend: TargetBackend?)
+    }
 }
