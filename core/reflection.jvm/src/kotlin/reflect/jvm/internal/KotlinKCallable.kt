@@ -36,7 +36,7 @@ internal fun KotlinKCallable<*>.computeParameters(
     val callable = this@computeParameters
     if (includeReceiver) {
         val container = container
-        if (container is KClassImpl<*>) {
+        if (container is MemberContainer<*>) {
             if (isConstructor) {
                 if (container.isInner) {
                     add(InstanceParameter(callable, container.java.declaringClass.kotlin))
