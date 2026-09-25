@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.abi.BinariesSource
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.AndroidGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.AndroidTestVersions
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.GradleAndroidTest
 import org.jetbrains.kotlin.gradle.testbase.JdkVersions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
@@ -35,6 +36,12 @@ import org.jetbrains.kotlin.gradle.testbase.source
 
 @AndroidGradlePluginTests
 class AbiValidationAndroidKmpIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            // Snapshot provisioning must not replace a distribution used by another test's Native compilation.
+            konanDataDir = workingDir.resolve(".konan"),
+        )
 
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, additionalVersions = [TestVersions.AGP.AGP_811])
     @GradleAndroidTest

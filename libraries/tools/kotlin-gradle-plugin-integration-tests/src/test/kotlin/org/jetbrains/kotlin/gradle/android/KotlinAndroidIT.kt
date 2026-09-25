@@ -55,7 +55,7 @@ class KotlinAndroidIT : KGPBaseTest() {
                 }
             }
 
-            build("assembleDebug", ":Android:test") {
+            build("assembleDebug", ":Android:test", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 val pattern = ":Android:compile[\\w\\d]+Kotlin".toRegex()
                 assertTasksExecuted(expectedTasks + tasks.map { it.path }.filter { it.matches(pattern) })
                 assertOutputContains("InternalDummyTest PASSED")
@@ -67,7 +67,7 @@ class KotlinAndroidIT : KGPBaseTest() {
             }
 
             // Run the a build second time, assert everything is up-to-date
-            build("assembleDebug") {
+            build("assembleDebug", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksUpToDate(expectedTasks)
                 // Since the configuration cache is already stored, `KotlinGradleBuildServices` will be instantiated only once
                 assertKotlinGradleBuildServicesAreInitialized()
