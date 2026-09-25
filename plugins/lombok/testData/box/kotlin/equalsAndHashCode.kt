@@ -112,6 +112,20 @@ open class UnrelatedCanEqualOverload(val a: Int) {
     fun canEqual(x: Int): Boolean = x == a
 }
 
+// `Any` and `Any?` both erase to `canEqual(Ljava/lang/Object;)Z` on the JVM, so a non-null parameter must be
+// recognized as matching the generated shape too, or a second `canEqual` is generated on top of this one.
+@EqualsAndHashCode
+open class NonNullCanEqual(val a: Int) {
+    open fun canEqual(other: Any): Boolean = other is NonNullCanEqual
+}
+
+// The same erasure gap reached through an unbounded type parameter rather than `Any` directly: `T` erases to
+// `java.lang.Object` just the same.
+@EqualsAndHashCode
+open class TypeParameterCanEqual<T>(val a: Int) {
+    open fun canEqual(other: T): Boolean = other != null
+}
+
 @EqualsAndHashCode
 class WithComputedProperties(val real: String) {
     val computedProp: String get() = "computed"
@@ -253,6 +267,15 @@ fun box(): String {
     assertNotEquals(UnrelatedCanEqualOverload(1), UnrelatedCanEqualOverload(2))
     assertEquals(true, UnrelatedCanEqualOverload(1).canEqual(1))
     assertEquals(false, UnrelatedCanEqualOverload(1).canEqual(2))
+
+    val nonNull1 = NonNullCanEqual(1)
+    val nonNull2 = NonNullCanEqual(1)
+    assertEquals(nonNull1, nonNull2)
+    assertEquals(true, nonNull1.canEqual(nonNull2))
+
+    val typeParam1 = TypeParameterCanEqual<String>(1)
+    val typeParam2 = TypeParameterCanEqual<String>(1)
+    assertEquals(typeParam1, typeParam2)
 
     assertEquals(WithComputedProperties("X"), WithComputedProperties("X"))
 

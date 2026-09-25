@@ -69,6 +69,9 @@ object LombokNames {
     val EQUALS_AND_HASH_CODE_INCLUDE_ID = EQUALS_AND_HASH_CODE_ID.createNestedClassId(INCLUDE_NAME)
     val EQUALS_AND_HASH_CODE_EXCLUDE_ID = EQUALS_AND_HASH_CODE_ID.createNestedClassId(EXCLUDE_NAME)
 
+    // Shared by `AccessorGenerator` (Data/Value's own `canEqual`) and `EqualsAndHashCodeGenerator`.
+    val CAN_EQUAL = Name.identifier("canEqual")
+
     //taken from idea lombok plugin
     val NON_NULL_ANNOTATIONS = listOf(
         "androidx.annotation.NonNull",
