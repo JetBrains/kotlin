@@ -7,3 +7,5 @@ Empty lines are allowed between the title and the directive.
 Patterns go into a code block right after the directive, one pattern per line.
 A single pattern can use the same syntax, or, alternatively, go on the same line as the directive,
 in backticks instead of a code block.
+
+A rule can have at most one `Applies to:` directive. The directive is case- and whitespace-sensitive.
