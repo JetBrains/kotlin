@@ -321,11 +321,16 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             +platformVersionFlags()
             +listOf("-syslibroot", absoluteTargetSysRoot, "-o", executable)
             +objectFiles
-            if (targetTriple.isMacabi) +listOf(
-                "-L$absoluteTargetSysRoot/System/iOSSupport/usr/lib",
-                "-L$absoluteTargetToolchain/lib/swift/maccatalyst",
-                "-F$absoluteTargetSysRoot/System/iOSSupport/System/Library/Frameworks",
-            )
+            if (targetTriple.isMacabi) {
+                +listOf(
+                    "-L$absoluteTargetSysRoot/System/iOSSupport/usr/lib",
+                    "-L$absoluteTargetToolchain/lib/swift/maccatalyst",
+                    "-F$absoluteTargetSysRoot/System/iOSSupport/System/Library/Frameworks",
+                )
+            } else if (target.family == Family.IOS) {
+                val sdkName = if (targetTriple.isSimulator) "iphonesimulator" else "iphoneos"
+                +"-L$swiftLibraryDirectory/$sdkName"
+            }
             if (optimize) +linkerOptimizationFlags
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
