@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: FIR2IR
 // LANGUAGE: +FullValueClasses, +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
@@ -10,6 +10,6 @@ expect abstract value class AbstractValueExpect()
 public abstract value class JavaAbstractVal {}
 
 // FILE: jvm.kt
-actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS!>AbstractValueExpect<!> = JavaAbstractVal
+actual typealias AbstractValueExpect = JavaAbstractVal
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, javaType, primaryConstructor, typeAliasDeclaration, value */

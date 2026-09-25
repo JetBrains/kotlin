@@ -20,9 +20,9 @@ public value class JavaVal {}
 public abstract value class JavaAbstractVal {}
 
 // FILE: jvm.kt
-actual typealias IdentityExpect = JavaVal
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS!>IdentityExpect<!> = JavaVal
 
-actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS!>AbstractValueExpect<!> = JavaAbstractVal
+actual typealias AbstractValueExpect = JavaAbstractVal
 
 actual typealias IdentityExpectForJdk = java.time.LocalDate
 
