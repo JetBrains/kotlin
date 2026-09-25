@@ -13,67 +13,69 @@ package samples.generated.issorted
 
 import samples.*
 import kotlin.math.abs
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class IsSortedFloatArraySamples {
 
     @Sample
     fun isSorted() {
-        assertPrints(floatArrayOf().isSorted(), "true")
-        assertPrints(floatArrayOf(1.0f).isSorted(), "true")
+        assertTrue(floatArrayOf().isSorted())
+        assertTrue(floatArrayOf(1.0f).isSorted())
 
         val sorted = floatArrayOf(1.0f, 2.5f, 3.14f)
-        assertPrints(sorted.isSorted(), "true")
+        assertTrue(sorted.isSorted())
 
         val unsorted = floatArrayOf(2.5f, 1.0f, 3.14f)
-        assertPrints(unsorted.isSorted(), "false")
+        assertFalse(unsorted.isSorted())
     }
 
     @Sample
     fun isSortedDescending() {
-        assertPrints(floatArrayOf().isSortedDescending(), "true")
-        assertPrints(floatArrayOf(3.14f).isSortedDescending(), "true")
+        assertTrue(floatArrayOf().isSortedDescending())
+        assertTrue(floatArrayOf(3.14f).isSortedDescending())
 
         val sorted = floatArrayOf(3.14f, 2.5f, 1.0f)
-        assertPrints(sorted.isSortedDescending(), "true")
+        assertTrue(sorted.isSortedDescending())
 
         val unsorted = floatArrayOf(2.5f, 3.14f, 1.0f)
-        assertPrints(unsorted.isSortedDescending(), "false")
+        assertFalse(unsorted.isSortedDescending())
     }
 
     @Sample
     fun isSortedWith() {
-        assertPrints(floatArrayOf().isSortedWith(naturalOrder()), "true")
-        assertPrints(floatArrayOf(1.0f).isSortedWith(naturalOrder()), "true")
+        assertTrue(floatArrayOf().isSortedWith(naturalOrder()))
+        assertTrue(floatArrayOf(1.0f).isSortedWith(naturalOrder()))
 
         val sorted = floatArrayOf(1.0f, 2.5f, 3.14f)
-        assertPrints(sorted.isSortedWith(naturalOrder()), "true")
-        assertPrints(sorted.isSortedWith(reverseOrder()), "false")
+        assertTrue(sorted.isSortedWith(naturalOrder()))
+        assertFalse(sorted.isSortedWith(reverseOrder()))
 
         val reversed = floatArrayOf(3.14f, 2.5f, 1.0f)
-        assertPrints(reversed.isSortedWith(reverseOrder()), "true")
+        assertTrue(reversed.isSortedWith(reverseOrder()))
     }
 
     @Sample
     fun isSortedBy() {
-        assertPrints(floatArrayOf().isSortedBy { it * it }, "true")
-        assertPrints(floatArrayOf(-0.5f).isSortedBy { it * it }, "true")
+        assertTrue(floatArrayOf().isSortedBy { it * it })
+        assertTrue(floatArrayOf(-0.5f).isSortedBy { it * it })
 
         val values = floatArrayOf(-0.5f, 1.0f, -1.5f, 2.0f)
-        assertPrints(values.isSortedBy { it * it }, "true")
-        assertPrints(values.isSortedBy { abs(it) }, "true")
-        assertPrints(values.isSortedBy { it }, "false")
-        assertPrints(floatArrayOf(1.0f, 2.5f).isSortedBy { if (it == 1.0f) null else it }, "true")
+        assertTrue(values.isSortedBy { it * it })
+        assertTrue(values.isSortedBy { abs(it) })
+        assertFalse(values.isSortedBy { it })
+        assertTrue(floatArrayOf(1.0f, 2.5f).isSortedBy { if (it == 1.0f) null else it })
     }
 
     @Sample
     fun isSortedByDescending() {
-        assertPrints(floatArrayOf().isSortedByDescending { it * it }, "true")
-        assertPrints(floatArrayOf(2.0f).isSortedByDescending { it * it }, "true")
+        assertTrue(floatArrayOf().isSortedByDescending { it * it })
+        assertTrue(floatArrayOf(2.0f).isSortedByDescending { it * it })
 
         val values = floatArrayOf(2.0f, -1.5f, 1.0f, -0.5f)
-        assertPrints(values.isSortedByDescending { it * it }, "true")
-        assertPrints(values.isSortedByDescending { abs(it) }, "true")
-        assertPrints(values.isSortedByDescending { it }, "false")
-        assertPrints(floatArrayOf(2.5f, 1.0f).isSortedByDescending { if (it == 1.0f) null else it }, "true")
+        assertTrue(values.isSortedByDescending { it * it })
+        assertTrue(values.isSortedByDescending { abs(it) })
+        assertFalse(values.isSortedByDescending { it })
+        assertTrue(floatArrayOf(2.5f, 1.0f).isSortedByDescending { if (it == 1.0f) null else it })
     }
 }
