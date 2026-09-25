@@ -368,27 +368,33 @@ class DoubleMathTest {
             if (toZero != 0.0) {
                 assertEquals(value, toZero + toZero.ulp.withSign(toZero))
             }
-
-            assertEquals(Double.POSITIVE_INFINITY, Double.MAX_VALUE.nextUp())
-            assertEquals(Double.MAX_VALUE, Double.POSITIVE_INFINITY.nextDown())
-
-            assertEquals(Double.NEGATIVE_INFINITY, (-Double.MAX_VALUE).nextDown())
-            assertEquals((-Double.MAX_VALUE), Double.NEGATIVE_INFINITY.nextUp())
-
-            assertTrue(Double.NaN.ulp.isNaN())
-            assertTrue(Double.NaN.nextDown().isNaN())
-            assertTrue(Double.NaN.nextUp().isNaN())
-            assertTrue(Double.NaN.nextTowards(0.0).isNaN())
-
-            assertEquals(Double.MIN_VALUE, (0.0).ulp)
-            assertEquals(Double.MIN_VALUE, (-0.0).ulp)
-            assertEquals(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY.ulp)
-            assertEquals(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY.ulp)
-
-            val maxUlp = 2.0.pow(971)
-            assertEquals(maxUlp, Double.MAX_VALUE.ulp)
-            assertEquals(maxUlp, (-Double.MAX_VALUE).ulp)
         }
+
+        assertEquals(Double.POSITIVE_INFINITY, Double.MAX_VALUE.nextUp())
+        assertEquals(Double.MAX_VALUE, Double.POSITIVE_INFINITY.nextDown())
+
+        assertEquals(Double.NEGATIVE_INFINITY, (-Double.MAX_VALUE).nextDown())
+        assertEquals((-Double.MAX_VALUE), Double.NEGATIVE_INFINITY.nextUp())
+
+        assertTrue(Double.NaN.ulp.isNaN())
+        assertTrue(Double.NaN.nextDown().isNaN())
+        assertTrue(Double.NaN.nextUp().isNaN())
+        assertTrue(Double.NaN.nextTowards(0.0).isNaN())
+
+        val customQuietNaN = Double.fromBits(Double.NaN.toBits() or 1L)
+        assertTrue(customQuietNaN.ulp.isNaN())
+
+        val customSignalingNaN = Double.fromBits(Double.NaN.toBits() or (1L shl 63))
+        assertTrue(customSignalingNaN.ulp.isNaN())
+
+        assertEquals(Double.MIN_VALUE, (0.0).ulp)
+        assertEquals(Double.MIN_VALUE, (-0.0).ulp)
+        assertEquals(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY.ulp)
+        assertEquals(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY.ulp)
+
+        val maxUlp = 2.0.pow(971)
+        assertEquals(maxUlp, Double.MAX_VALUE.ulp)
+        assertEquals(maxUlp, (-Double.MAX_VALUE).ulp)
     }
 }
 
