@@ -239,7 +239,7 @@ enum class LanguageFeature(
      *  - preference of a type use annotation to annotation of another type: KT-24392
      *      (if @NotNull has TYPE_USE and METHOD target, then `@NotNull Integer []` -> `Array<Int>..Array<out Int>?` instead of `Array<Int>..Array<out Int>`)
      */
-    TypeEnhancementImprovementsInStrictMode(KOTLIN_1_7, behaviorAfterSinceVersion = CanStillBeDisabledForNow("KT-76100"), issue = NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
+    TypeEnhancementImprovementsInStrictMode(KOTLIN_1_7, issue = NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
     OptInRelease(KOTLIN_1_7, NO_ISSUE_SPECIFIED),
     ProhibitNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_7, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
     UseBuilderInferenceWithoutAnnotation(KOTLIN_1_7, NO_ISSUE_SPECIFIED),
