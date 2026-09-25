@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import kotlin.io.path.moveTo
 import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.milliseconds
 
 @JsBrowserGradlePluginTests
@@ -30,7 +32,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
         super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
-    fun `verify custom custom KotlinJsTest environment variables are used to launch tests`(gradleVersion: GradleVersion) {
+    fun `verify custom KotlinJsTest environment variables are used to launch tests`(gradleVersion: GradleVersion) {
         project(
             "empty",
             gradleVersion = gradleVersion,
@@ -368,6 +370,179 @@ class JsBrowserTestsIT : KGPBaseTest() {
                 ":subprojectB:jsBrowserTest"
             ) {
                 assertOutputContainsExactlyTimes("HTTP server for js tests started at", 1)
+            }
+        }
+    }
+
+    @GradleTest
+    fun `successful wasmJs browser test produces report`(
+        gradleVersion: GradleVersion
+    ) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {
+                                it.chromium()
+                                it.firefox()
+                                it.webkit()
+                            }
+                        }
+                    }
+
+                    val wasmJsTest = sourceSets.getByName("wasmJsTest")
+                    wasmJsTest.dependencies {
+                        implementation(kotlin("test"))
+                    }
+                    wasmJsTest.compileSource(
+                        """
+                        import kotlin.test.*
+
+                        class WasmJsBrowserTest {
+                            @Test
+                            fun assertOk() {
+                                assertTrue(42 == 42)
+                            }
+
+                            @Test
+                            fun assertAnotherOk() {
+                                assertEquals(42, 42)
+                            }
+                        }
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            build(":wasmJsBrowserTest") {
+                assertTasksExecuted(":wasmJsTestBundleAsEsm")
+                assertTasksExecuted(":wasmJsBrowserTest")
+
+                val expectedTestCases = listOf("chromium", "firefox", "webkit").flatMap { browser ->
+                    listOf("assertOk", "assertAnotherOk").map { testName ->
+                        TestCaseResult(
+                            className = "$browser.WasmJsBrowserTest",
+                            name = "$testName[wasmJs, browser, $browser]",
+                        )
+                    }
+                }
+                val actualTestCases = readTestCases("wasmJsBrowserTest")
+                assertEquals(expectedTestCases.toSet(), actualTestCases.toSet())
+                assertEquals(expectedTestCases.size, actualTestCases.size, "Duplicate test cases in wasmJsBrowserTest report")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `allTests runs Playwright browser tests for wasmJs and js`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {
+                                it.chromium()
+                            }
+                        }
+                    }
+                    js {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {
+                                it.chromium()
+                            }
+                        }
+                    }
+
+                    sourceSets.commonTest.dependencies {
+                        implementation(kotlin("test"))
+                    }
+                    sourceSets.commonTest.get().compileSource(
+                        """
+                        import kotlin.test.Test
+
+                        class MixedBrowserTest {
+                            @Test
+                            fun passes() = Unit
+                        }
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            build(":allTests") {
+                assertTasksExecuted(":jsBrowserTest", ":wasmJsBrowserTest")
+                assertOutputContainsExactlyTimes("Task :kotlinInstallPlaywrightChromium", 1)
+                assertEquals(
+                    listOf(TestCaseResult("chromium.MixedBrowserTest", "passes[js, browser, chromium]")),
+                    readTestCases("jsBrowserTest"),
+                )
+                assertEquals(
+                    listOf(TestCaseResult("chromium.MixedBrowserTest", "passes[wasmJs, browser, chromium]")),
+                    readTestCases("wasmJsBrowserTest"),
+                )
+            }
+        }
+    }
+
+    @Disabled("KT-89521: wasmJsTestBundleAsEsm fails instead of being skipped when there are no test sources")
+    @GradleTest
+    fun `allTests succeeds with empty js and wasmJs Playwright test source sets`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {
+                                it.chromium()
+                            }
+                        }
+                    }
+                    wasmJs {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {
+                                it.chromium()
+                            }
+                        }
+                    }
+                }
+            }
+
+            build(":allTests") {
+                assertTasksSkipped(
+                    ":jsBrowserTest",
+                    ":wasmJsTestBundleAsEsm",
+                    ":wasmJsBrowserTest",
+                )
             }
         }
     }
