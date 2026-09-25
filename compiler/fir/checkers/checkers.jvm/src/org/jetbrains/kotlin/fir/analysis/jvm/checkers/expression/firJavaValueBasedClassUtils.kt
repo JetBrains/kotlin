@@ -59,7 +59,7 @@ internal fun ConeKotlinType.isJavaValueClass(visited: MutableSet<FirTypeParamete
         is ConeIntersectionType -> intersectedTypes.any { it.isJavaValueClass(visited) }
         is ConeTypeParameterType ->
             visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.isJavaValueClass(visited) }
-        is ConeClassLikeType -> toRegularClassSymbol()?.isJavaValueClass == true
+        is ConeClassLikeType -> toRegularClassSymbol()?.isJavaValueClass(sessionHolder.session) == true
         is ConeCapturedType, is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping,
         is ConeIntegerLiteralType,
             -> false

@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -103,7 +105,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES,
                     valueModifierPrefix,
                 )
-            } else if (!supertypeSymbol.isFullValueClass && !supertypeSymbol.isJavaValueClass && !supertypeSymbol.classId.isRecordId()) {
+            } else if (!supertypeSymbol.isValueClassSupertype()) {
                 reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES)
             }
         }
@@ -374,4 +376,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     private fun ClassId.isRecordId(): Boolean =
         relativeClassName == recordFqName && packageFqName == javaLangFqName
+
+    context(context: CheckerContext)
+    private fun FirRegularClassSymbol.isValueClassSupertype(): Boolean {
+        if (isFullValueClass || isJavaValueClass(context.session) || classId.isRecordId()) return true
+        val platformClassId = context.session.platformClassMapper.getCorrespondingPlatformClass(classId) ?: return false
+        return (platformClassId.toSymbol() as? FirRegularClassSymbol)?.isJavaValueClass(context.session) == true
+    }
 }
