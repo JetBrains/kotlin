@@ -297,7 +297,9 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
         isGetter -> kmProperty.getterSignature ?: run {
             // If both getter and field signatures are absent, it's a builtin property, so we need to compute the signature and use
             // the accessor only (which must be getter, as there are no builtin mutable properties so far).
-            if (kmProperty.fieldSignature == null) kmProperty.computeJvmSignature(property.container) else null
+            // The signature is computed for the class where the property is declared, because it depends on the class, e.g. the getter
+            // of `Enum.name` is named `name`, but the getter of a property `name` declared in a Kotlin class would be named `getName`.
+            if (kmProperty.fieldSignature == null) kmProperty.computeJvmSignature(property.originalContainer) else null
         }
         else -> kmProperty.setterSignature
     }
