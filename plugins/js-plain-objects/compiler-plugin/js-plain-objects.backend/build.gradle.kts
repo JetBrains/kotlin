@@ -7,6 +7,7 @@ plugins {
 }
 
 dependencies {
+    compileOnly(project(":core:descriptors"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:backend.js"))
     compileOnly(project(":compiler:ir.backend.common"))
