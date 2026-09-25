@@ -199,7 +199,6 @@ class ComposeModuleMetricsTests : AbstractMetricsTransformTest() {
               "composableLambdas": 0,
               "totalLambdas": 0,
               "featureFlags": {
-                "IntrinsicRemember": true,
                 "OptimizeNonSkippingGroups": true,
                 "PausableComposition": true
               }

@@ -102,13 +102,6 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
                 @Suppress("DEPRECATION_ERROR", "DEPRECATION")
                 addAll(
                     composeExtension.featureFlags
-                        .zip(composeExtension.enableIntrinsicRemember) { featureFlags, intrinsicRemember ->
-                            if (!intrinsicRemember && !featureFlags.contains(ComposeFeatureFlag.IntrinsicRemember.disabled())) {
-                                featureFlags + ComposeFeatureFlag.IntrinsicRemember.disabled()
-                            } else {
-                                featureFlags
-                            }
-                        }
                         .zip(composeExtension.enableNonSkippingGroupOptimization) { featureFlags, nonSkippingGroupOptimization ->
                             if (nonSkippingGroupOptimization && !featureFlags.contains(ComposeFeatureFlag.OptimizeNonSkippingGroups)) {
                                 featureFlags + ComposeFeatureFlag.OptimizeNonSkippingGroups

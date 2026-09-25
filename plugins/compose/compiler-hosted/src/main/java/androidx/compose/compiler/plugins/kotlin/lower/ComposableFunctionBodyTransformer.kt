@@ -2995,11 +2995,7 @@ class ComposableFunctionBodyTransformer(
     private fun visitComposableCall(expression: IrCall): IrExpression {
         return when (expression.symbol.owner.kotlinFqName) {
             ComposeFqNames.remember -> {
-                if (FeatureFlag.IntrinsicRemember.enabled) {
-                    visitRememberCall(expression)
-                } else {
-                    visitNormalComposableCall(expression)
-                }
+                visitRememberCall(expression)
             }
             ComposeFqNames.key -> visitKeyCall(expression)
             else -> visitNormalComposableCall(expression)

@@ -225,7 +225,7 @@ class KaptApiTest {
         )
         customCompileTask.configure {
             it.compilerOptions.freeCompilerArgs.addAll(
-                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=true",
+                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=/tmp/compose_reports",
                 "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=/tmp/compose_metrics",
             )
         }
@@ -238,7 +238,8 @@ class KaptApiTest {
 
         val freeArgs = kaptGenerateStubsTask.compilerOptions.freeCompilerArgs.get()
         assertEquals(2, freeArgs.count { it == "-P" })
-        assertEquals(1, freeArgs.count { it == "plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=true" })
+        assertEquals(1, freeArgs.count { it == "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=/tmp/compose_reports" })
+        assertEquals(1, freeArgs.count { it == "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=/tmp/compose_metrics" })
     }
 
     private fun configureKapt(configAction: Kapt.() -> Unit): KaptWithoutKotlincTask {
