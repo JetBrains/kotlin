@@ -578,7 +578,7 @@ public class Uuid private constructor(
          * @see Uuid.generateV4
          * @sample samples.uuid.Uuids.random
          */
-        public fun random(): Uuid = @OptIn(ExperimentalUuidApi::class) generateV4()
+        public fun random(): Uuid = generateV4()
 
         /**
          * Generates a new random [Uuid] instance.
@@ -614,8 +614,8 @@ public class Uuid private constructor(
          *
          * @sample samples.uuid.Uuids.v4
          */
-        @SinceKotlin("2.3")
-        @ExperimentalUuidApi
+        @SinceKotlin("2.5")
+        @WasExperimental(ExperimentalUuidApi::class)
         public fun generateV4(): Uuid = secureRandomUuid()
 
         /**
@@ -665,8 +665,8 @@ public class Uuid private constructor(
          *
          * @sample samples.uuid.Uuids.v7
          */
-        @SinceKotlin("2.3")
-        @ExperimentalUuidApi
+        @SinceKotlin("2.5")
+        @WasExperimental(ExperimentalUuidApi::class)
         public fun generateV7(): Uuid = generateV7(Clock.System)
 
         /**
