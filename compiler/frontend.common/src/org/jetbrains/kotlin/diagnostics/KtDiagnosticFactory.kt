@@ -83,6 +83,19 @@ class KtDiagnosticFactory0(
             context,
         )
     }
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(context),
+            positioningStrategy,
+            context,
+        )
+    }
 }
 
 class KtDiagnosticFactory1<A>(
@@ -106,6 +119,21 @@ class KtDiagnosticFactory1<A>(
             effectiveSeverity,
             this,
             positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        a: A,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(context),
+            a,
+            positioningStrategy,
             context,
         )
     }
@@ -134,6 +162,23 @@ class KtDiagnosticFactory2<A, B>(
             effectiveSeverity,
             this,
             positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        a: A,
+        b: B,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(context),
+            a,
+            b,
+            positioningStrategy,
             context,
         )
     }
@@ -167,6 +212,25 @@ class KtDiagnosticFactory3<A, B, C>(
             context,
         )
     }
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        a: A,
+        b: B,
+        c: C,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(context),
+            a,
+            b,
+            c,
+            positioningStrategy,
+            context,
+        )
+    }
 }
 
 class KtDiagnosticFactory4<A, B, C, D>(
@@ -196,6 +260,28 @@ class KtDiagnosticFactory4<A, B, C, D>(
             effectiveSeverity,
             this,
             positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
+    }
+
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        a: A,
+        b: B,
+        c: C,
+        d: D,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(context),
+            a,
+            b,
+            c,
+            d,
+            positioningStrategy,
             context,
         )
     }
