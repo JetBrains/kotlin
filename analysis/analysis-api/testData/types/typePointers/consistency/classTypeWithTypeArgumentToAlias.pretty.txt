@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+Foo<kotlin.String>
+
+After:
+
+Type pointer restoration failed

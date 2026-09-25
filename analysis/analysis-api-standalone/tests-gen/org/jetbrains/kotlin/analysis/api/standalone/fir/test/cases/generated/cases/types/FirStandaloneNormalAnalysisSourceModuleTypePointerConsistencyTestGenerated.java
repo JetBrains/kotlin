@@ -68,9 +68,99 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
   }
 
   @Test
+  @TestMetadata("annotatedAliasedType.kt")
+  public void testAnnotatedAliasedType() {
+    run("annotatedAliasedType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedCapturedType.kt")
+  public void testAnnotatedCapturedType() {
+    run("annotatedCapturedType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedDefinitelyNotNullType1.kt")
+  public void testAnnotatedDefinitelyNotNullType1() {
+    run("annotatedDefinitelyNotNullType1.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedDefinitelyNotNullType2.kt")
+  public void testAnnotatedDefinitelyNotNullType2() {
+    run("annotatedDefinitelyNotNullType2.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedDynamicType.kt")
+  public void testAnnotatedDynamicType() {
+    run("annotatedDynamicType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedErrorTypeAsArgument.kt")
+  public void testAnnotatedErrorTypeAsArgument() {
+    run("annotatedErrorTypeAsArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedFunctionType.kt")
+  public void testAnnotatedFunctionType() {
+    run("annotatedFunctionType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedFunctionTypeWithContextParameter.kt")
+  public void testAnnotatedFunctionTypeWithContextParameter() {
+    run("annotatedFunctionTypeWithContextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedLibraryType.kt")
+  public void testAnnotatedLibraryType() {
+    run("annotatedLibraryType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedLibraryTypeWithComplexArguments.kt")
+  public void testAnnotatedLibraryTypeWithComplexArguments() {
+    run("annotatedLibraryTypeWithComplexArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedRecursiveType1.kt")
+  public void testAnnotatedRecursiveType1() {
+    run("annotatedRecursiveType1.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedRecursiveType2.kt")
+  public void testAnnotatedRecursiveType2() {
+    run("annotatedRecursiveType2.kt");
+  }
+
+  @Test
   @TestMetadata("annotatedType.kt")
   public void testAnnotatedType() {
     run("annotatedType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeInvalidAnnotation.kt")
+  public void testAnnotatedTypeInvalidAnnotation() {
+    run("annotatedTypeInvalidAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeParameter.kt")
+  public void testAnnotatedTypeParameter() {
+    run("annotatedTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeWithComplexArguments.kt")
+  public void testAnnotatedTypeWithComplexArguments() {
+    run("annotatedTypeWithComplexArguments.kt");
   }
 
   @Test
@@ -197,6 +287,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
   @TestMetadata("functionTypeWithContextParametersAndReceiver.kt")
   public void testFunctionTypeWithContextParametersAndReceiver() {
     run("functionTypeWithContextParametersAndReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypeWithNamedParameters.kt")
+  public void testFunctionTypeWithNamedParameters() {
+    run("functionTypeWithNamedParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypeWithNamedParametersFromLibrary.kt")
+  public void testFunctionTypeWithNamedParametersFromLibrary() {
+    run("functionTypeWithNamedParametersFromLibrary.kt");
   }
 
   @Test

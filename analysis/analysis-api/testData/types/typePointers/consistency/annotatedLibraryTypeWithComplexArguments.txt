@@ -3,10 +3,8 @@ Restored type is the same as the original one
 KaUsualClassType:
   abbreviation: null
   annotations: [
-    Anno()
-      psi: KtAnnotationEntry
-    AnnoWithArgs(x = "")
-      psi: KtAnnotationEntry
+    library/Complex(b = true, c = `c`, classes = [kotlin.Int::class, kotlin.String::class], d = 1.5, e = library.E.B, enums = [library.E.A, library.E.B], i = 3, k = kotlin.collections.List::class, l = 42, nested = library/Nested(i = 7, ), s = "s", strings = ["a", "b"])
+      psi: null
   ]
   classId: kotlin/collections/List
   qualifiers: [
@@ -16,12 +14,7 @@ KaUsualClassType:
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
-          annotations: [
-            Anno()
-              psi: KtAnnotationEntry
-            AnnoWithArgs(x = "")
-              psi: KtAnnotationEntry
-          ]
+          annotations: []
           classId: kotlin/String
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -40,12 +33,7 @@ KaUsualClassType:
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
-      annotations: [
-        Anno()
-          psi: KtAnnotationEntry
-        AnnoWithArgs(x = "")
-          psi: KtAnnotationEntry
-      ]
+      annotations: []
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:
