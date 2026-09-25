@@ -216,35 +216,6 @@ def _is_kotlin_set(value):
     ).unsigned != 0
 
 
-def _type_info(value):
-    """
-    This method checks self-referencing of pointer of first member of TypeInfo
-    including a case when an object has a meta-object pointed by TypeInfo.
-
-    Two lower bits are reserved for memory management needs,
-    see runtime/src/main/cpp/Memory.h.
-    """
-    value_str = f"{_hex(value.unsigned)}"
-    logging.debug("%s: %s", value_str, value.GetTypeName())
-    if value.GetTypeName() != "ObjHeader *":
-        return None
-    result = _evaluate(
-        (
-            f"*(void **)((uintptr_t)(*(void**){value_str}) & ~0x3)"
-            f" == "
-            f"**(void***)((uintptr_t)(*(void**){value_str}) & ~0x3)"
-            f" ? "
-            f"*(void **)((uintptr_t)(*(void**){value_str}) & ~0x3)"
-            f" : "
-            f"(void *)0"
-        )
-    )
-
-    return (
-        result.unsigned if result.IsValid() and result.unsigned != 0 else None
-    )
-
-
 _FACTORY = {}
 _SBVALUE_CACHE = {}
 _SB_VALUE_CACHE_PROCESS_HASH = None
@@ -434,14 +405,24 @@ def _read_pointer(process, target, address):
     return struct.unpack(f"{byte_order}{pointer_format}", raw)[0]
 
 
-def _fast_type_info(value):
+def _type_info(value):
+    """
+    This method checks self-referencing of pointer of first member of TypeInfo
+    including a case when an object has a meta-object pointed by TypeInfo.
+
+    Two lower bits are reserved for memory management needs,
+    see runtime/src/main/cpp/Memory.h.
+    """
     process = value.GetProcess()
-    target = lldb.debugger.GetSelectedTarget()
+    target = value.GetTarget()
     object_address = value.GetValueAsUnsigned()
     if not process.IsValid() or not target.IsValid() or object_address == 0:
         return None
 
-    type_info = _read_pointer(process, target, object_address) & ~0x3
+    type_info_or_meta = _read_pointer(process, target, object_address) & ~0x3
+    if not type_info_or_meta:
+        return None
+    type_info = _read_pointer(process, target, type_info_or_meta)
     return (
         type_info
         if type_info and _read_pointer(process, target, type_info) == type_info
@@ -658,7 +639,7 @@ def _collection_kind(valobj):
 def _select_provider(lldb_val, internal_dict):
     start = time.monotonic()
     value_str = f"{_hex(lldb_val.unsigned)}"
-    tip = _fast_type_info(lldb_val) or _type_info(lldb_val)
+    tip = _type_info(lldb_val)
     logging.debug(
         "%s name:%s tip:%s",
         value_str,
