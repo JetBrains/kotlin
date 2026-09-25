@@ -2300,6 +2300,12 @@ private fun KaDiagnosticConverterBuilder.addConversions48() {
             token,
         )
     }
+    add(FirWebCommonErrors.INAPPLICABLE_EAGER_INITIALIZATION.warningFactory) { firDiagnostic ->
+        InapplicableEagerInitializationWarningImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT) { firDiagnostic ->
         ProjectionOnNonClassTypeArgumentImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -4976,6 +4982,12 @@ private fun KaDiagnosticConverterBuilder.addConversions107() {
 private fun KaDiagnosticConverterBuilder.addConversions108() {
     add(FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER) { firDiagnostic ->
         InterfaceCantCallDefaultMethodViaSuperImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.INAPPLICABLE_EAGER_INITIALIZATION.errorFactory) { firDiagnostic ->
+        InapplicableEagerInitializationErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
