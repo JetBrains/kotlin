@@ -180,6 +180,7 @@ class CinteropIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-89558: link task re-runs when the static library passed in linkerOpts is rebuilt")
+    @OsCondition(supportedOn = [OS.LINUX, OS.MAC], enabledOnCI = [OS.LINUX]) // disabled for Windows because it requires Unix cc and ar
     @GradleTest
     fun cinteropStaticLibraryUTDChecks(gradleVersion: GradleVersion) {
         nativeProject("KT-89558-cinterop-static-library-UTD-checks", gradleVersion = gradleVersion) {
