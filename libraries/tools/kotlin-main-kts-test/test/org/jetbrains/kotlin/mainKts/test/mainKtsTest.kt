@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.nio.file.Files
 import java.util.*
 import kotlin.io.path.createTempDirectory
 import kotlin.script.experimental.api.*
@@ -264,6 +265,62 @@ class MainKtsTest {
     }
 
     @Test
+    fun testCacheInvalidationOnImportedScriptChange() {
+        val tempDir = Files.createTempDirectory("main-kts-cache-test").toFile()
+        val cacheDir = Files.createTempDirectory("main-kts-cache").toFile()
+        try {
+            listOf("cache.invalidation.main.kts", "cache.invalidation.imported.main.kts", "cache.invalidation.kts")
+                .forEach { File("$TEST_DATA_ROOT/$it").copyTo(File(tempDir, it)) }
+            val mainScript = File(tempDir, "cache.invalidation.main.kts")
+
+            assertEquals(
+                listOf("from cache.invalidation.imported.kts version 1", "from cache.invalidation.imported.main.kts version 1"),
+                evalSuccessWithOut(mainScript, cacheDir)
+            )
+
+            File(tempDir, "cache.invalidation.imported.main.kts").writeText(
+                "@file:Import(\"cache.invalidation.kts\")\n\nprintln(\"from cache.invalidation.imported.main.kts version 2\")\n"
+            )
+
+            assertEquals(
+                listOf("from cache.invalidation.imported.kts version 1", "from cache.invalidation.imported.main.kts version 2"),
+                evalSuccessWithOut(mainScript, cacheDir)
+            )
+        } finally {
+            tempDir.deleteRecursively()
+            cacheDir.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun testCacheInvalidationOnTransitiveImportChange() {
+        val tempDir = Files.createTempDirectory("main-kts-cache-test").toFile()
+        val cacheDir = Files.createTempDirectory("main-kts-cache").toFile()
+        try {
+            listOf("cache.invalidation.main.kts", "cache.invalidation.imported.main.kts", "cache.invalidation.kts")
+                .forEach { File("$TEST_DATA_ROOT/$it").copyTo(File(tempDir, it)) }
+            val mainScript = File(tempDir, "cache.invalidation.main.kts")
+
+            assertEquals(
+                listOf("from cache.invalidation.imported.kts version 1", "from cache.invalidation.imported.main.kts version 1"),
+                evalSuccessWithOut(mainScript, cacheDir)
+            )
+
+            File(tempDir, "cache.invalidation.kts").writeText(
+                "println(\"from cache.invalidation.imported.kts version 2\")\n"
+            )
+
+            assertEquals(
+                listOf("from cache.invalidation.imported.kts version 2", "from cache.invalidation.imported.main.kts version 1"),
+                evalSuccessWithOut(mainScript, cacheDir)
+            )
+        } finally {
+            tempDir.deleteRecursively()
+            cacheDir.deleteRecursively()
+        }
+    }
+
+    @Test
     fun testCompilerOptions() {
         val out = captureOut {
             val res = evalFile(File("$TEST_DATA_ROOT/compiler-options.main.kts"))
@@ -418,6 +475,12 @@ class MainKtsTest {
                     ":\n  ${reports.joinToString("\n  ")}"
         )
     }
+
+    private fun evalSuccessWithOut(scriptFile: File, cacheDir: File? = null): List<String> =
+        captureOut {
+            val res = evalFile(scriptFile, cacheDir)
+            assertSucceeded(res)
+        }.lines()
 
     private val regexNonWord = "\\W".toRegex()
     private fun String.containsIgnoringPunctuation(it: String): Boolean {

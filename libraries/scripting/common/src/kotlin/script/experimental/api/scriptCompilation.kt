@@ -140,6 +140,12 @@ val ScriptCompilationConfigurationKeys.defaultImports by PropertiesCollection.ke
 val ScriptCompilationConfigurationKeys.importScripts by PropertiesCollection.key<List<SourceCode>>()
 
 /**
+ * The hashes of the [importScripts] sources as they were at the moment of compilation, keyed by the source location id.
+ * Only the sources backed by a real file are included, so that the hashes could be rechecked later - see [importedScriptHash]
+ */
+val ScriptCompilationConfigurationKeys.importedScriptsHashes by PropertiesCollection.key<Map<String, String>>()
+
+/**
  * The name of the generated script class field to assign the script results to, empty means disabled
  * see also ReplScriptCompilationConfigurationKeys.resultFieldPrefix
  */

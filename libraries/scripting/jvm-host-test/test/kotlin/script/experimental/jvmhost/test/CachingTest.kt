@@ -18,6 +18,7 @@ import java.io.*
 import java.net.URLClassLoader
 import java.security.MessageDigest
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.*
@@ -109,6 +110,54 @@ class CachingTest {
 //        val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
 //
 //        assertEquals(scriptWithImportExpectedOutput, scriptOut)
+        }
+    }
+
+    @Test
+    fun testChangedImportInvalidatesJarCache() {
+        withTempDir("scriptingTestJarCacheImportChange") { dir ->
+            val cache = TestCompiledScriptJarsCache(File(dir, "cache").apply { mkdir() })
+            val importedScript = File(dir, "imported.kts")
+            val script = "println(importedValue)".toScriptSource()
+
+            fun eval(): List<String> {
+                val myHostConfiguration = defaultJvmScriptingHostConfiguration.with {
+                    jvm {
+                        baseClassLoader.replaceOnlyDefault(null)
+                        compilationCache(cache)
+                    }
+                }
+                val compilationConfiguration = ScriptCompilationConfiguration {
+                    updateClasspath(KotlinJars.kotlinScriptStandardJarsWithReflect)
+                    updateClasspath(classpathFromClass<ScriptingHostTest>()) // the lambda below should be in the classpath
+                    refineConfiguration {
+                        // the import should be added to the main script only, otherwise the imported one imports itself
+                        beforeCompiling { ctx ->
+                            if ((ctx.script as? FileBasedScriptSource)?.file?.canonicalFile == importedScript.canonicalFile) {
+                                ctx.compilationConfiguration
+                            } else {
+                                ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                                    importScripts(importedScript.toScriptSource())
+                                }
+                            }.asSuccess()
+                        }
+                    }
+                    hostConfiguration.update { myHostConfiguration }
+                }
+                val host = BasicJvmScriptingHost(
+                    compiler = JvmScriptCompiler(myHostConfiguration),
+                    evaluator = BasicJvmScriptEvaluator()
+                )
+                return captureOut { host.eval(script, compilationConfiguration, null).throwOnFailure() }.lines()
+            }
+
+            importedScript.writeText("val importedValue = \"before\"")
+            assertEquals(listOf("before"), eval())
+            assertEquals(1, cache.storedScripts)
+
+            importedScript.writeText("val importedValue = \"after\"")
+            assertEquals(listOf("after"), eval())
+            assertEquals(2, cache.storedScripts)
         }
     }
 
