@@ -1,3 +1,8 @@
+// LL_FIR_DIVERGENCE
+// LL tests don't have jvmTargetProvider, so JDK classes are not value classes there.
+// See FirJvmPlatformValueClassDeterminer
+// ISSUE: KT-81100
+// LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 28
@@ -26,10 +31,10 @@ import java.util.concurrent.atomic.AtomicReference
 fun <T : JavaAbstractVal> identityEquality(v: JavaVal, date: LocalDate, abstract: JavaAbstractVal, bounded: T, record: Record, any: Any) {
     <!FORBIDDEN_IDENTITY_EQUALS!>v === JavaVal(1)<!>
     <!FORBIDDEN_IDENTITY_EQUALS!>v !== any<!>
-    <!FORBIDDEN_IDENTITY_EQUALS!>date === LocalDate.MIN<!>
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>date<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>LocalDate.MIN<!>
     <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>abstract === any<!>
     <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>bounded === any<!>
-    <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>record === any<!>
+    record === any
 }
 
 fun structuralEquality(v: JavaVal, s: String) {
