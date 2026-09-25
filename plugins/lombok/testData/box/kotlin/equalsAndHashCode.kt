@@ -85,6 +85,47 @@ open class CallSuperBase(val baseProp: Int)
 @EqualsAndHashCode(callSuper = true)
 class CallSuperDerived(val ownProp: String) : CallSuperBase(10)
 
+// KT-89189: `canEqual` must make `equals` symmetric across a hierarchy - a subtype with more state must not
+// compare equal to an instance of its looser supertype, in either direction.
+@EqualsAndHashCode
+open class CanEqualGrandparent(val a: Int)
+
+@EqualsAndHashCode(callSuper = true)
+open class CanEqualParent(a: Int, val b: Int) : CanEqualGrandparent(a)
+
+@EqualsAndHashCode(callSuper = true)
+class CanEqualChild(a: Int, b: Int, val c: Int) : CanEqualParent(a, b)
+
+// A user-declared `canEqual` matching the generated shape must not be duplicated - generating one on top would
+// clash with it on the JVM (CONFLICTING_JVM_DECLARATIONS) - but `equals` must still call it.
+@EqualsAndHashCode
+open class UserDeclaredCanEqual(val a: Int) {
+    open fun canEqual(other: Any?): Boolean = other is UserDeclaredCanEqual
+}
+
+// An unrelated overload sharing the name must never be mistaken for the generated `canEqual`, or the generated
+// `equals` body ends up calling the wrong overload and throws a ClassCastException at runtime. `open`, so
+// `canEqual` is actually generated here (skipped only for a class that is both final and has no non-trivial
+// superclass) and coexists with the unrelated overload, exercising the ambiguous-lookup fix.
+@EqualsAndHashCode
+open class UnrelatedCanEqualOverload(val a: Int) {
+    fun canEqual(x: Int): Boolean = x == a
+}
+
+// `Any` and `Any?` both erase to `canEqual(Ljava/lang/Object;)Z` on the JVM, so a non-null parameter must be
+// recognized as matching the generated shape too, or a second `canEqual` is generated on top of this one.
+@EqualsAndHashCode
+open class NonNullCanEqual(val a: Int) {
+    open fun canEqual(other: Any): Boolean = other is NonNullCanEqual
+}
+
+// The same erasure gap reached through an unbounded type parameter rather than `Any` directly: `T` erases to
+// `java.lang.Object` just the same.
+@EqualsAndHashCode
+open class TypeParameterCanEqual<T>(val a: Int) {
+    open fun canEqual(other: T): Boolean = other != null
+}
+
 @EqualsAndHashCode
 class WithComputedProperties(val real: String) {
     val computedProp: String get() = "computed"
@@ -193,6 +234,48 @@ fun box(): String {
     val cd2 = CallSuperDerived("x")
     assertEquals(cd1, cd2)
     assertEquals(cd1.hashCode(), cd2.hashCode())
+
+    // KT-89189: a `CallSuperBase` and a `CallSuperDerived` sharing the same `baseProp` must not compare equal
+    // in either direction, unlike the bug where the looser supertype's `equals` accepted the stricter subtype.
+    assertEquals(CallSuperBase(10), CallSuperBase(10))
+    val callSuperBase = CallSuperBase(10)
+    val callSuperDerived = CallSuperDerived("x")
+    assertNotEquals(callSuperBase, callSuperDerived)
+    assertNotEquals(callSuperDerived, callSuperBase)
+
+    // Same asymmetry check, one level deeper: the override lookup must walk the whole ancestor chain, not just
+    // the immediate superclass, or one of the three classes below fails to even compile.
+    val grandparent = CanEqualGrandparent(1)
+    val parent = CanEqualParent(1, 2)
+    val child = CanEqualChild(1, 2, 3)
+    assertEquals(CanEqualGrandparent(1), CanEqualGrandparent(1))
+    assertEquals(CanEqualParent(1, 2), CanEqualParent(1, 2))
+    assertEquals(CanEqualChild(1, 2, 3), CanEqualChild(1, 2, 3))
+    assertNotEquals(grandparent, parent)
+    assertNotEquals(parent, grandparent)
+    assertNotEquals(parent, child)
+    assertNotEquals(child, parent)
+    assertNotEquals(grandparent, child)
+    assertNotEquals(child, grandparent)
+
+    val userDeclared1 = UserDeclaredCanEqual(1)
+    val userDeclared2 = UserDeclaredCanEqual(1)
+    assertEquals(userDeclared1, userDeclared2)
+    assertEquals(true, userDeclared1.canEqual(userDeclared2))
+
+    assertEquals(UnrelatedCanEqualOverload(1), UnrelatedCanEqualOverload(1))
+    assertNotEquals(UnrelatedCanEqualOverload(1), UnrelatedCanEqualOverload(2))
+    assertEquals(true, UnrelatedCanEqualOverload(1).canEqual(1))
+    assertEquals(false, UnrelatedCanEqualOverload(1).canEqual(2))
+
+    val nonNull1 = NonNullCanEqual(1)
+    val nonNull2 = NonNullCanEqual(1)
+    assertEquals(nonNull1, nonNull2)
+    assertEquals(true, nonNull1.canEqual(nonNull2))
+
+    val typeParam1 = TypeParameterCanEqual<String>(1)
+    val typeParam2 = TypeParameterCanEqual<String>(1)
+    assertEquals(typeParam1, typeParam2)
 
     assertEquals(WithComputedProperties("X"), WithComputedProperties("X"))
 
