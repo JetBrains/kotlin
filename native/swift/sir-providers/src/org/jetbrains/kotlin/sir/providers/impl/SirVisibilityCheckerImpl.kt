@@ -293,11 +293,9 @@ context(ka: KaSession, sirSession: SirSession)
 private fun hasUnboundInputTypeParameters(
     type: KaType,
     isReturnType: Boolean
-): Boolean = (type.resolveUpperBound()?.fullyExpandedType as? KaClassType)?.let { classType ->
+): Boolean = (type.resolveUpperBound().fullyExpandedType as? KaClassType)?.let { classType ->
     if (sirSession.isTypeSupported(classType)) return@let false
-    // TODO: Make custom typed check generic KT-88831
     if (classType.classId in SirTypeProviderImpl.FLOW_CLASS_IDS) return@let false
-    if (classType.classId in listOf(StandardClassIds.List, StandardClassIds.MutableList)) return@let false
     if (classType is KaFunctionType) {
         return@let buildList {
             addAll(classType.contextParameterTypes)
@@ -311,10 +309,24 @@ private fun hasUnboundInputTypeParameters(
     }
     val typeParameters = classType.symbol.typeParameters
     if (typeParameters.isEmpty()) return@let false
+    val supportedTypeParameters = when (sirSession.collectionsV2) {
+        false -> emptySet()
+        true -> {
+            val types = sequence {
+                val defaultType = classType.symbol.defaultType
+                yield(defaultType)
+                yieldAll(defaultType.allSupertypes)
+            }
+            val listElementTypeParam = types.filterIsInstance<KaClassType>().firstOrNull { it.classId == StandardClassIds.List }
+                ?.typeArguments?.single()?.type?.let { it as? KaTypeParameterType }?.symbol
+            setOfNotNull(listElementTypeParam)
+        }
+    }
     typeParameters.zipIfSizesAreEqual(classType.typeArguments)?.any { [param, arg] ->
         if (param.variance == Variance.IN_VARIANCE) return@any false
-        val upperBound = param.resolveUpperBound() ?: ka.builtinTypes.nullableAny
-        val type = arg.type?.let { it.resolveUpperBound() ?: ka.builtinTypes.nullableAny }
+        if (param in supportedTypeParameters) return@any false
+        val upperBound = param.resolveUpperBound()
+        val type = arg.type?.resolveUpperBound()
         type?.let { it != upperBound } ?: false // .type == null indicates star projection
     } ?: false
 } ?: false

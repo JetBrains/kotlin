@@ -133,3 +133,9 @@ func testMutableArrayOfInt() throws {
     let expected = listOf(elements: Int32(4), 64, 5, 16, 23, 42)
     try assertReversed(reversed: reverseListInt(l: original), original: expected)
 }
+
+@Test
+func testCustomListOfInt() throws {
+    let original = customListOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    try assertReversed(reversed: reverseCustomListInt(l: original), original: original)
+}
