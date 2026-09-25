@@ -822,6 +822,16 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Input
     val extraOpts: List<String> get() = settings.extraOpts
 
+    /**
+     * Static libraries that cinterop embeds into the klib: `staticLibraries` resolved against `libraryPaths`
+     * from the .def file, plus `-staticLibrary` and `-libraryPath` from [extraOpts].
+     * Tracked so that rebuilding a library reruns cinterop (KT-89558).
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal val staticLibraryFiles: FileCollection
+        get() = objectFactory.fileCollection().from(providerFactory.provider { resolveStaticLibraries() })
+
     internal enum class MacroNamesCollectingMode {
         LEGACY,
         LIBCLANGEXT,
@@ -977,5 +987,26 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                 .flatMap { header -> includedDirectories.map { dir -> dir + File.separator + header } }
                 .toTypedArray())
         .filter { file -> file.exists() }
+
+    // Mirrors the cinterop tool (main.kt and resolveLibraries): relative library paths are based on -Xproject-dir
+    // when it is passed, and the first library path that contains the library wins.
+    private fun resolveStaticLibraries(): List<File> {
+        val defFileConfig = definitionFile.orNull?.asFile?.takeIf { it.exists() }?.let { DefFile(it, konanTarget).config }
+        val staticLibraries = defFileConfig?.staticLibraries.orEmpty() + extraOpts.listOptionValues("-staticLibrary")
+        val projectDir = extraOpts.optionValues("-Xproject-dir").lastOrNull()
+        val libraryPaths = (defFileConfig?.libraryPaths.orEmpty() + extraOpts.listOptionValues("-libraryPath")).map { path ->
+            if (projectDir == null || File(path).isAbsolute) File(path) else File(projectDir, path)
+        }
+        return staticLibraries.mapNotNull { library ->
+            libraryPaths.map { it.resolve(library).absoluteFile }.firstOrNull { it.exists() }
+        }
+    }
+
+    private fun List<String>.optionValues(option: String): List<String> =
+        zipWithNext().filter { (name, _) -> name == option }.map { (_, value) -> value }
+
+    // The tool accepts both repeated options and comma-separated values for -staticLibrary and -libraryPath.
+    private fun List<String>.listOptionValues(option: String): List<String> =
+        optionValues(option).flatMap { it.split(',') }
 
 }
