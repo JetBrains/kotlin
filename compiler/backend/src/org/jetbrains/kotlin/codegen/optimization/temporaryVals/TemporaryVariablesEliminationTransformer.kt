@@ -347,11 +347,13 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
                 //      { ... call ... }
 
                 val aLoad1 = insn as VarInsnNode
-                val ifNonNull = insn.next as JumpInsnNode
+                val ifNonNull = insn.nextMeaningful as JumpInsnNode
+                if (InsnSequence(insn.next, ifNonNull).any { it.isIntervening(cfg) }) continue
                 val label1 = ifNonNull.label
                 if (!cfg.hasSinglePredecessor(ifNonNull.label, ifNonNull)) continue
 
-                val label1Next = label1.next ?: continue
+                val label1Next = label1.nextMeaningful ?: continue
+                if (InsnSequence(label1.next, label1Next).any { it.isIntervening(cfg) }) continue
                 if (label1Next.opcode == Opcodes.ALOAD) {
                     val aLoad2 = label1Next as VarInsnNode
                     if (aLoad2.`var` == aLoad1.`var`) {
@@ -375,8 +377,9 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
                         maxStackIncrement = max(maxStackIncrement, 1)
                         continue
                     } else {
-                        val aLoad2Next = aLoad2.next
-                        if (aLoad2Next.opcode == Opcodes.ALOAD) {
+                        val aLoad2Next = aLoad2.nextMeaningful
+                        if (aLoad2Next?.opcode == Opcodes.ALOAD) {
+                            if (InsnSequence(aLoad2.next, aLoad2Next).any { it.isIntervening(cfg) }) continue
                             val aLoad3 = aLoad2Next as VarInsnNode
                             if (aLoad3.`var` == aLoad1.`var`) {
                                 // Rewrite:
@@ -405,7 +408,8 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
                     }
                 } else if (label1Next.matchOpcodes(Opcodes.GETSTATIC, Opcodes.ALOAD)) {
                     val getStaticInsn = label1Next as FieldInsnNode
-                    val aLoad3 = getStaticInsn.next as VarInsnNode
+                    val aLoad3 = getStaticInsn.nextMeaningful as VarInsnNode
+                    if (InsnSequence(getStaticInsn.next, aLoad3).any { it.isIntervening(cfg) }) continue
                     if (Type.getType(getStaticInsn.desc).size == 1 && aLoad3.`var` == aLoad1.`var`) {
                         // Rewrite:
                         //      ALOAD v
@@ -455,10 +459,10 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
                 //  L:
                 //      { ... if null ... }
 
-                val ifNull1 = insn.next as JumpInsnNode
+                val ifNull1 = insn.nextMeaningful as JumpInsnNode
                 val ifNullLabel = ifNull1.label
                 val predecessors = cfg.getAllPredecessors(ifNullLabel)
-                if (predecessors.all { isRewritableSafeCallPart(it) }) {
+                if (predecessors.all { isRewritableSafeCallPart(it, cfg) }) {
                     predecessors.forEach { rewriteSafeCallPart(it, insnList) }
                     insnList.insert(ifNullLabel, InsnNode(Opcodes.POP))
                     maxStackIncrement = max(maxStackIncrement, 1)
@@ -470,20 +474,23 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
         cfg.methodNode.maxStack += maxStackIncrement
     }
 
-    private fun isRewritableSafeCallPart(branchInsn: AbstractInsnNode): Boolean {
-        val start = branchInsn.previous ?: return false
+    private fun isRewritableSafeCallPart(branchInsn: AbstractInsnNode, cfg: ControlFlowGraph): Boolean {
+        val start = branchInsn.previousMeaningful ?: return false
+        if (InsnSequence(start.next, branchInsn).any { it.isIntervening(cfg) }) return false
         //      ALOAD v1        << start
         //      IFNULL L
         //      [ possible first receiver - ALOAD or GETSTATIC ]
         //      ALOAD v1
         if (start.matchOpcodes(Opcodes.ALOAD, Opcodes.IFNULL)) {
             val aLoad1 = start as VarInsnNode
-            val ifNull = start.next as JumpInsnNode
-            val ifNullNext = ifNull.next
+            val ifNull = branchInsn as JumpInsnNode
+            val ifNullNext = ifNull.nextMeaningful ?: return false
+            if (InsnSequence(ifNull.next, ifNullNext).any { it.isIntervening(cfg) }) return false
             if (ifNullNext.opcode == Opcodes.ALOAD) {
                 val aLoad2 = ifNullNext as VarInsnNode
                 if (aLoad2.`var` == aLoad1.`var`) return true
-                val aLoad2Next = aLoad2.next
+                val aLoad2Next = aLoad2.nextMeaningful ?: return false
+                if (InsnSequence(aLoad2.next, aLoad2Next).any { it.isIntervening(cfg) }) return false
                 if (aLoad2Next.opcode == Opcodes.ALOAD) {
                     val aLoad3 = aLoad2Next as VarInsnNode
                     if (aLoad3.`var` == aLoad1.`var`) return true
@@ -491,7 +498,8 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
             } else if (ifNullNext.matchOpcodes(Opcodes.GETSTATIC, Opcodes.ALOAD)) {
                 val getStaticInsn = ifNullNext as FieldInsnNode
                 if (Type.getType(getStaticInsn.desc).size != 1) return false
-                val aLoad2 = getStaticInsn.next as VarInsnNode
+                val aLoad2 = getStaticInsn.nextMeaningful as VarInsnNode
+                if (InsnSequence(getStaticInsn.next, aLoad2).any { it.isIntervening(cfg) }) return false
                 if (aLoad2.`var` == aLoad1.`var`) return true
             }
         }
@@ -499,14 +507,14 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
     }
 
     private fun rewriteSafeCallPart(branchInsn: AbstractInsnNode, insnList: InsnList) {
-        val start = branchInsn.previous
+        val start = branchInsn.previousMeaningful!!
         //      ALOAD v1        << start
         //      IFNULL L
         //      [ possible first receiver - ALOAD or GETSTATIC ]
         //      ALOAD v1
         val aLoad1 = start as VarInsnNode
-        val ifNull = start.next as JumpInsnNode
-        val ifNullNext = ifNull.next
+        val ifNull = start.nextMeaningful as JumpInsnNode
+        val ifNullNext = ifNull.nextMeaningful!!
         if (ifNullNext.opcode == Opcodes.ALOAD) {
             val aLoad2 = ifNullNext as VarInsnNode
             if (aLoad2.`var` == aLoad1.`var`) {
@@ -522,7 +530,7 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
                 insnList.remove(aLoad2)
                 return
             } else {
-                val aLoad3 = aLoad2.next as VarInsnNode
+                val aLoad3 = aLoad2.nextMeaningful as VarInsnNode
                 // Rewrite
                 //      ALOAD v1
                 //      IFNULL L
@@ -551,18 +559,38 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
             //      IFNULL L
             //      GETSTATIC s
             //      SWAP
-            val aLoad2 = ifNullNext.next
+            val aLoad2 = ifNullNext.nextMeaningful!!
             insnList.insertBefore(ifNull, InsnNode(Opcodes.DUP))
             insnList.remove(aLoad2)
             insnList.insert(ifNullNext, InsnNode(Opcodes.SWAP))
         }
     }
 
+    private val AbstractInsnNode.nextMeaningful: AbstractInsnNode?
+        get() {
+            var curr = this.next
+            while (curr != null && !curr.isMeaningful) {
+                curr = curr.next
+            }
+            return curr
+        }
+
+    private val AbstractInsnNode.previousMeaningful: AbstractInsnNode?
+        get() {
+            var curr = this.previous
+            while (curr != null && !curr.isMeaningful) {
+                curr = curr.previous
+            }
+            return curr
+        }
+
     private fun AbstractInsnNode.matchOpcodes(vararg opcodes: Int): Boolean {
-        var insn = this
+        var insn: AbstractInsnNode? = this
         for (i in opcodes.indices) {
-            if (insn.opcode != opcodes[i]) return false
-            insn = insn.next ?: return false
+            if (insn == null || insn.opcode != opcodes[i]) return false
+            if (i < opcodes.lastIndex) {
+                insn = insn.nextMeaningful
+            }
         }
         return true
     }
