@@ -14,20 +14,25 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.*
-import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.LOOKUP_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.ENUM_WHEN_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.EXPECT_ACTUAL_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.FILE_MAPPING_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.IMPORT_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.INLINE_CONST_TRACKER
+import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.LOOKUP_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.incremental.IncrementalCompilationComponentsAdapter
 import org.jetbrains.kotlin.buildtools.internal.jps.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.daemon.common.CompilationOptions
+import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerMode
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.LOOKUP_TRACKER as JPS_LOOKUP_TRACKER
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.LOOKUP_TRACKER as BASE_LOOKUP_TRACKER
 
 /**
  * Marks a client-managed incremental compilation configuration, so that it can be recognized without mentioning any
@@ -42,6 +47,59 @@ import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalComp
  */
 internal interface JvmClientManagedIncrementalCompilationConfiguration : JvmIncrementalCompilationConfiguration
 
+@OptIn(DelicateBuildToolsApi::class)
+internal fun JvmClientManagedIncrementalCompilationConfiguration.getClientManagedIncrementalCompilationOptions(
+    reportCategories: Array<Int>,
+    reportSeverity: Int,
+): CompilationOptions {
+    check(this is JvmJpsManagedIncrementalCompilationConfigurationImpl) {
+        "Unexpected JPS incremental compilation configuration: ${this::class}. It must be an instance of JvmJpsManagedIncrementalCompilationConfigurationImpl."
+    }
+
+    return CompilationOptions(
+        CompilerMode.JPS_COMPILER,
+        CompileService.TargetPlatform.JVM,
+        reportCategories,
+        reportSeverity,
+        requestedCompilationResults = emptyArray()
+    )
+}
+
+@OptIn(DelicateBuildToolsApi::class, InternalBuildToolsApi::class)
+context(operation: JvmCompilationOperationImpl)
+internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerServicesFacadeBase(
+    loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+    compilationCanceledStatus: CompilationCanceledStatus,
+): CompilerServicesFacadeBase {
+    check(this is JvmJpsManagedIncrementalCompilationConfigurationImpl) {
+        "Unexpected JPS incremental compilation configuration: ${this::class}. It must be an instance of JvmJpsManagedIncrementalCompilationConfigurationImpl."
+    }
+
+    val lookupTracker = this[LOOKUP_TRACKER]?.let { tracker ->
+        if (operation[BASE_LOOKUP_TRACKER] != null) {
+            loggerAdapter.kotlinLogger.warn(
+                "A lookup tracker is set both as BaseCompilationOperation.LOOKUP_TRACKER and as " +
+                        "JvmJpsManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER. " +
+                        "The latter takes precedence."
+            )
+        }
+
+        LookupTrackerAdapter(tracker)
+    } ?: operation[BASE_LOOKUP_TRACKER]?.let(::LookupTrackerAdapter)
+
+    return JpsManagedCompilerServicesWithResultsFacade(
+        loggerAdapter,
+        incrementalCompilationComponents = IncrementalCompilationComponentsAdapter(incrementalCompilationComponents),
+        lookupTracker = lookupTracker,
+        expectActualTracker = this[EXPECT_ACTUAL_TRACKER]?.let(::ExpectActualTrackerAdapter),
+        inlineConstTracker = this[INLINE_CONST_TRACKER]?.let(::InlineConstTrackerAdapter),
+        enumWhenTracker = this[ENUM_WHEN_TRACKER]?.let(::EnumWhenTrackerAdapter),
+        importTracker = this[IMPORT_TRACKER]?.let(::ImportTrackerAdapter),
+        icFileMappingTracker = this[FILE_MAPPING_TRACKER]?.let(::FileMappingTrackerAdapter),
+        compilationCanceledStatus = compilationCanceledStatus
+    )
+}
+
 @OptIn(DelicateBuildToolsApi::class, InternalBuildToolsApi::class)
 context(serviceBuilder: Services.Builder, operation: JvmCompilationOperationImpl)
 internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatformServices(logger: KotlinLogger) {
@@ -54,8 +112,8 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
         IncrementalCompilationComponentsAdapter(this.incrementalCompilationComponents),
     )
 
-    this[JPS_LOOKUP_TRACKER]?.let { tracker ->
-        if (operation[LOOKUP_TRACKER] != null) {
+    this[LOOKUP_TRACKER]?.let { tracker ->
+        if (operation[BASE_LOOKUP_TRACKER] != null) {
             logger.warn(
                 "A lookup tracker is set both as BaseCompilationOperation.LOOKUP_TRACKER and as " +
                         "JvmJpsManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER. The latter takes precedence."

@@ -8,22 +8,22 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 
 @DisplayName("The JPS import tracker")
 class ImportTrackerJpsTest : BaseJpsTest() {
 
     @DisplayName("The import tracker reports every resolved import directive")
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-3")
-    @Test
-    fun importsAreReported() {
+    fun importsAreReported(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val fixture = "basic-multimodule-project/module-3"
-        jvmProject(inProcess) {
+        jvmProject(strategyConfig) {
             val module = module(fixture)
             val importTracker = RecordingImportTracker()
             module.compile(compilationConfigAction = { builder ->

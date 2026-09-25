@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.operations.jpsManagedIcConfigurationBuilder
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertExactOutput
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertSame
-import org.junit.jupiter.api.Assertions.assertTrue
 import java.nio.file.Paths
 
 @DisplayName("The JPS-managed incremental compilation configuration")
@@ -93,10 +93,10 @@ class JpsIcConfigurationTest : BaseJpsTest() {
     }
 
     @DisplayName("A JPS-managed compilation succeeds and produces runnable output")
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("kotlin-java-mixed")
-    @Test
-    fun endToEndCompilation() {
-        jvmProject(inProcess) {
+    fun endToEndCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
             val module = module("kotlin-java-mixed", compileJavaSources = true)
             module.compile(compilationConfigAction = { it.withJpsIc() }) {
                 // `assertOutputs` is exact, not containment. `compileJavaSources = true` makes javac emit
@@ -108,28 +108,11 @@ class JpsIcConfigurationTest : BaseJpsTest() {
         }
     }
 
-    @DisplayName("The JPS IC configuration is rejected with the daemon execution policy")
-    @TestMetadata("basic-multimodule-project/module-1")
-    @Test
-    fun rejectedWithDaemon() {
-        jvmProject(toolchain, daemon) {
-            val module = module("basic-multimodule-project/module-1")
-            module.compileAndThrow(compilationConfigAction = { it.withJpsIc() }) { e ->
-                assertTrue(e is IllegalStateException) { "Unexpected exception type: ${e::class}" }
-                assertTrue(
-                    e.message?.contains(
-                        "JvmJpsManagedIncrementalCompilationConfiguration is not supported with the daemon execution policy"
-                    ) == true
-                ) { "Unexpected message: ${e.message}" }
-            }
-        }
-    }
-
     @DisplayName("The operation-level lookup tracker still fires with no incremental compilation configured")
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    @Test
-    fun operationLookupTrackerWithoutIcConfig() {
-        jvmProject(inProcess) {
+    fun operationLookupTrackerWithoutIcConfig(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             val lookupTracker = RecordingLookupTracker()
             module.compile(compilationConfigAction = { builder ->

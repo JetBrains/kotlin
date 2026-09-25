@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerTargetId
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import kotlin.io.path.readBytes
 
 private class RecordingIncrementalCache : EmptyIncrementalCache() {
     val calls: MutableList<String> = mutableListOf()
@@ -33,10 +32,10 @@ private class RecordingIncrementalCache : EmptyIncrementalCache() {
 class IncrementalCacheJpsTest : BaseJpsTest() {
 
     @DisplayName("The compiler asks the JPS components for the cache of the module being compiled")
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-3")
-    @Test
-    fun componentsAreQueried() {
-        jvmProject(inProcess) {
+    fun componentsAreQueried(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-3")
             val cache = RecordingIncrementalCache()
             val components = SingleCacheComponents(cache)
