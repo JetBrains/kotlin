@@ -28,18 +28,24 @@ import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.lombok.AccessorNames
+import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.name.CallableId
@@ -256,6 +262,44 @@ val FirClassSymbol<*>.isPlainClass: Boolean
  */
 val FirCallableSymbol<*>.hasReceiverOrContextParameters: Boolean
     get() = isExtension || hasContextParameters
+
+/**
+ * Whether [this] parameter's type is Object-shaped on the JVM: `Any`, `Any?`, an unbounded (or merely
+ * `Any`/`Any?`-bounded) type parameter - which erases to `java.lang.Object` all the same - or `java.lang.Object`
+ * itself for a Java declaration.
+ *
+ * `Any` is included alongside `Any?`, not just the latter: the whole point of matching this shape is to catch a
+ * clash on the JVM, where `canEqual(Ljava/lang/Object;)Z` is generated regardless of the Kotlin-level nullability
+ * of the parameter Lombok's own `canEqual(other: Any?)` compiles down to - KT-89189's follow-up review.
+ *
+ * A Java parameter's type is still a [FirJavaTypeRef] when the declaring class is a supertype only "peeked
+ * into" - signature enhancement has not run for it - so `resolvedReturnTypeRef` would throw and the type has to
+ * be matched structurally instead. Shared by `@EqualsAndHashCode`'s `equals`/`hashCode` and `canEqual` shape
+ * checks, and by the checker that reports on user-declared members with the same shape.
+ */
+@OptIn(SymbolInternals::class)
+val FirValueParameterSymbol.isAnyOrJavaObjectType: Boolean
+    get() = when (val typeRef = fir.returnTypeRef) {
+        is FirResolvedTypeRef -> typeRef.coneType.erasesToJavaObject
+        is FirJavaTypeRef -> ((typeRef.type as? JavaClassifierType)?.classifier as? JavaClass)?.fqName ==
+                LombokNames.JAVA_OBJECT_ID.asSingleFqName()
+        else -> false
+    }
+
+/**
+ * Whether [this] erases to `java.lang.Object` on the JVM: `Any`/`Any?` themselves, or a type parameter whose
+ * bounds all do (recursively) - an unbounded one included, its implicit bound being `Any?`.
+ *
+ * Every bound is required, not just one: a type parameter's JVM erasure is its *first* bound, but telling that
+ * bound apart from the others isn't worth it here - the cost of under-matching a multi-bounded parameter that
+ * does erase to `Object` is nothing more than a possible duplicate generated member, the same as before this
+ * check existed at all.
+ */
+private val ConeKotlinType.erasesToJavaObject: Boolean
+    get() = when (this) {
+        is ConeTypeParameterType -> lookupTag.typeParameterSymbol.resolvedBounds.all { it.coneType.erasesToJavaObject }
+        else -> isAny || isNullableAny
+    }
 
 /**
  * Whether `@ToString` and `@EqualsAndHashCode` leave [this] property out of what they generate unless it is

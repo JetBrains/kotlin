@@ -16,21 +16,15 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.isNullableAny
-import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CALL_SUPER
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.hasNonTrivialSuperclass
+import org.jetbrains.kotlin.lombok.generators.isAnyOrJavaObjectType
 import org.jetbrains.kotlin.lombok.generators.isEqualsAndHashCode
 import org.jetbrains.kotlin.lombok.generators.isPlainClass
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
@@ -135,20 +129,4 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
         get() = !hasReceiverOrContextParameters &&
                 (name == EQUALS_NAME && valueParameterSymbols.singleOrNull()?.isAnyOrJavaObjectType == true ||
                         name == HASHCODE_NAME && valueParameterSymbols.isEmpty())
-
-    /**
-     * Whether [this] parameter's type is `Any?`, or `java.lang.Object` for a Java declaration.
-     *
-     * A Java parameter's type is still a [FirJavaTypeRef] when the declaring class is a supertype the checker only
-     * peeks into - signature enhancement has not run for it - so `resolvedReturnTypeRef` would throw and the type
-     * has to be matched structurally instead.
-     */
-    @OptIn(SymbolInternals::class)
-    private val FirValueParameterSymbol.isAnyOrJavaObjectType: Boolean
-        get() = when (val typeRef = fir.returnTypeRef) {
-            is FirResolvedTypeRef -> typeRef.coneType.isNullableAny
-            is FirJavaTypeRef -> ((typeRef.type as? JavaClassifierType)?.classifier as? JavaClass)?.fqName ==
-                    LombokNames.JAVA_OBJECT_ID.asSingleFqName()
-            else -> false
-        }
 }
