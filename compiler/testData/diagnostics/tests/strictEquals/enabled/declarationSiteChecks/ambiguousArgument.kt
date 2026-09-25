@@ -22,11 +22,11 @@ import p.*
 import q.*
 
 interface C : p.A, q.A {
-    override fun equals(@EqualityBound(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!NONE_APPLICABLE!>A<!>::class<!>) other: Any?): Boolean
+    override fun equals(@EqualityBound(<!NONE_APPLICABLE!>A<!>::class) other: Any?): Boolean
 }
 
 interface D : p.A {
-    override fun equals(@EqualityBound(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!NONE_APPLICABLE!>A<!>::class<!>) other: Any?): Boolean
+    override fun equals(@EqualityBound(<!NONE_APPLICABLE!>A<!>::class) other: Any?): Boolean
 }
 
 // See KT-88044
