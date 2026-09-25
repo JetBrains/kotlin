@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isEnumEntry
-import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
@@ -88,14 +87,8 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
  *   }
  * }
  * ```
- *
- * @param initializeContainerOfInnerObject When true, access to a nested object inside a class with static initializers will cause
- *  the static_init function of that class to execute. When false, only companion object access would trigger static_init execution.
  */
-abstract class WebStaticInitializersUsageLowering(
-    private val context: JsCommonBackendContext,
-    private val initializeContainerOfInnerObject: Boolean
-) : FileLoweringPass {
+abstract class WebStaticInitializersUsageLowering(private val context: JsCommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildren(object : IrTransformer<IrClass?>() {
             override fun visitClass(declaration: IrClass, data: IrClass?): IrStatement {
@@ -161,17 +154,11 @@ abstract class WebStaticInitializersUsageLowering(
                     if (declaration.dispatchReceiverParameter != null) continue // already initialized when instance was created
                     builder.insertCall(declaration, staticInitFunction)
                 }
-                // If initializeObjectEnumParent is false, only call static_init from getInstance coming from the companion object.
-                // JVM-based behavior, also relevant for Wasm.
-                is IrClass if declaration.isObject -> {
+                is IrClass if declaration.isCompanion -> {
+                    // Accessing companion objects should trigger the initialization of the containing class.
+                    // This is not true for regular nested objects, they are independent of their containing class.
                     val getInstance = declaration.objectGetInstanceFunction ?: continue
-
-                    // If initializeObjectEnumParent is true, call static_init from all objects getInstance
-                    // including nested objects. This behavior is K/JS-only and differs from JVM. Kept for compatibility.
-                    // Please see KT-83337.
-                    if (declaration.isCompanion || initializeContainerOfInnerObject) {
-                        builder.insertCall(getInstance, staticInitFunction)
-                    }
+                    builder.insertCall(getInstance, staticInitFunction)
                 }
             }
         }

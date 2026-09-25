@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.lower.WebStaticInitializersDeclarationLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.WebStaticInitializersUsageLowering
 
-@PhasePrerequisites(WebStaticInitializersDeclarationLowering::class)
-class WasmStaticInitializersUsageLowering(context: JsCommonBackendContext) : WebStaticInitializersUsageLowering(
-    context,
-    initializeContainerOfInnerObject = false
-)
+@PhasePrerequisites(WasmStaticInitializersDeclarationLowering::class)
+class WasmStaticInitializersUsageLowering(context: JsCommonBackendContext) : WebStaticInitializersUsageLowering(context)
