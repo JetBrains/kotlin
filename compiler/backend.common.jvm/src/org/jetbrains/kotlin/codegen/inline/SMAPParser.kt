@@ -82,6 +82,8 @@ object SMAPParser {
         for (line in iterator) {
             when {
                 line == SMAP.LINE_SECTION || line == SMAP.FILE_SECTION -> return null
+                // Old versions of kotlinc and the IDEA plugin have incorrect implementations of SMAPParser: they require
+                // *E between strata, which is not correct syntax according to JSR-045.
                 line == SMAP.END || line.startsWith(SMAP.STRATA_SECTION) -> break
             }
 
@@ -97,7 +99,9 @@ object SMAPParser {
             val source = line.substring(0, fileSeparator).toInt()
             val dest = line.substring(destSeparator + 1, destMultiplierSeparator).toInt()
             val range = when {
-                // These two fields have a different meaning, but for compatibility we treat them the same. See `SMAPBuilder`.
+                // These two fields have a different meaning, but for compatibility we treat them the same. In KotlinDebug, old versions of
+                // kotlinc and the IDEA used `1#2,3:4` to mean "map lines 4..6 to line 1 of #2", when in reality (and in the non-debug stratum)
+                // this maps lines 4..6 to lines 1..3. The correct syntax is `1#2:4,3`.
                 destMultiplierSeparator != line.length -> line.substring(destMultiplierSeparator + 1).toInt()
                 sourceRangeSeparator != destSeparator -> line.substring(sourceRangeSeparator + 1, destSeparator).toInt()
                 else -> 1
