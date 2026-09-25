@@ -110,7 +110,7 @@ fun Test.setUpJsBoxTests() {
         setupNodeJs(nodejsVersion)
     }
 
-    dependsOn(npmInstall)
+    dependsOn(npmCi)
 
     systemProperty(
         "overwrite.output", project.providers.gradleProperty("overwrite.output").orNull ?: "false"
@@ -204,16 +204,19 @@ val prepareNpmTestData = tasks.register<Copy>("prepareNpmTestNpmData") {
     into(node.nodeProjectDir)
 }
 
-val npmInstall = tasks.named("npmInstall", NpmTask::class) {
-    val packageLockFile = project(":js:js.translator").layout.projectDirectory.file("testData/package-lock.json")
-
+// NpmInstallTask checks file existence during configuration, invalidating the configuration cache
+// when prepareNpmTestNpmData creates the lockfile. Use NpmTask with fixed input and output paths instead.
+val npmCi = tasks.register<NpmTask>("npmCi") {
     inputs.file(node.nodeProjectDir.file("package.json"))
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .withPropertyName("packageJson")
 
-    inputs.file(packageLockFile)
+    inputs.file(node.nodeProjectDir.file("package-lock.json"))
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .withPropertyName("packageLockFile")
+
+    outputs.dir(node.nodeProjectDir.dir("node_modules"))
+        .withPropertyName("nodeModules")
 
     workingDir.fileProvider(node.nodeProjectDir.asFile)
     dependsOn(prepareNpmTestData)
