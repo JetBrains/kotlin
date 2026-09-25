@@ -931,6 +931,9 @@ object Generators : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Transformations.zipWithNextToFindDeltas")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.zipWithNextToFindRepeats")
+        }
         returns("List<R>")
         inline()
         body {
@@ -992,6 +995,9 @@ object Generators : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Transformations.zipWithNext")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.zipWithNext")
+        }
         sequenceClassification(intermediate, stateless)
         specialFor(Sequences) { returns("Sequence<Pair<T, T>>") }
         body {

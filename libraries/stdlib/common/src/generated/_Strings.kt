@@ -50,7 +50,7 @@ public inline fun CharSequence.elementAtOrNull(index: Int): Char? {
 /**
  * Returns the first character matching the given [predicate], or `null` if no such character was found.
  * 
- * @sample samples.collections.Collections.Elements.find
+ * @sample samples.text.Strings.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.find(predicate: (Char) -> Boolean): Char? {
@@ -510,7 +510,7 @@ public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, pred
 /**
  * Appends all characters matching the given [predicate] to the given [destination].
  * 
- * @sample samples.collections.Collections.Filtering.filterTo
+ * @sample samples.text.Strings.filterTo
  */
 @IgnorableReturnValue
 public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predicate: (Char) -> Boolean): C {
@@ -1044,7 +1044,7 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(des
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each character in the original char sequence.
  * 
- * @sample samples.collections.Collections.Transformations.mapNotNull
+ * @sample samples.text.Strings.mapNotNull
  */
 public inline fun <R : Any> CharSequence.mapNotNull(transform: (Char) -> R?): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
@@ -2543,7 +2543,7 @@ public inline fun <V> CharSequence.zip(other: CharSequence, transform: (a: Char,
  * 
  * The returned list is empty if this char sequence contains less than two characters.
  * 
- * @sample samples.collections.Collections.Transformations.zipWithNext
+ * @sample samples.text.Strings.zipWithNext
  */
 @SinceKotlin("1.2")
 public fun CharSequence.zipWithNext(): List<Pair<Char, Char>> {
@@ -2556,7 +2556,7 @@ public fun CharSequence.zipWithNext(): List<Pair<Char, Char>> {
  * 
  * The returned list is empty if this char sequence contains less than two characters.
  * 
- * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ * @sample samples.text.Strings.zipWithNextToFindRepeats
  */
 @SinceKotlin("1.2")
 public inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> R): List<R> {
