@@ -578,6 +578,7 @@ enum class LanguageFeature(
     ForbidUselessTypeArgumentsIn26(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-390"),
     EnforceNamedArgumentsOnJavaAnnotationInAccessors(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-418"),
     JsIntegerDivisionCheck(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-17719"),
+    ProhibitVarInJsModuleFile(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-88343"),
 
     // End of 2.* language features --------------------------------------------------
 
