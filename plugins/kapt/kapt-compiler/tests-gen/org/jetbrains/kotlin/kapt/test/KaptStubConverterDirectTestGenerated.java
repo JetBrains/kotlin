@@ -425,6 +425,12 @@ public class KaptStubConverterDirectTestGenerated extends AbstractKaptStubConver
   }
 
   @Test
+  @TestMetadata("intrinsicConstEvaluation.kt")
+  public void testIntrinsicConstEvaluation() {
+    run("intrinsicConstEvaluation.kt");
+  }
+
+  @Test
   @TestMetadata("introducesAt.kt")
   public void testIntroducesAt() {
     run("introducesAt.kt");

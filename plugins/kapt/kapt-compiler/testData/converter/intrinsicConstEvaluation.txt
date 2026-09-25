@@ -1,0 +1,165 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;IC)V
+ *   public constructor(s: kotlin/String, i: kotlin/Int, c: kotlin/Char)
+ *
+ *   // getter: c()C
+ *   public final val c: kotlin/Char
+ *     public final get
+ *
+ *   // getter: i()I
+ *   public final val i: kotlin/Int
+ *     public final get
+ *
+ *   // getter: s()Ljava/lang/String;
+ *   public final val s: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+
+    public abstract java.lang.String s();
+
+    public abstract int i();
+
+    public abstract char c();
+}
+
+////////////////////
+
+
+public class J {
+    public static final String PADDED = "  OK  ";
+    public static final int N = 41;
+}
+
+////////////////////
+
+
+/**
+ * public final object KConsts : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // field: BUMPED:I
+ *   public final const val BUMPED: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: CODE:C
+ *   public final const val CODE: kotlin/Char (* = ... *)
+ *     public final get
+ *
+ *   // field: SECONDS_PER_DAY:I
+ *   public final const val SECONDS_PER_DAY: kotlin/UInt (* = ... *)
+ *     public final get
+ *
+ *   // field: TRIMMED:Ljava/lang/String;
+ *   public final const val TRIMMED: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: UPPERCASED:Ljava/lang/String;
+ *   public final const val UPPERCASED: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class KConsts {
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String TRIMMED = "padded";
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String UPPERCASED = "MIXED";
+    public static final int BUMPED = 42;
+    public static final char CODE = 'A';
+    public static final int SECONDS_PER_DAY = 86400;
+    @org.jetbrains.annotations.NotNull()
+    public static final KConsts INSTANCE = null;
+
+    private KConsts() {
+        super();
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final object KFromJava : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // field: BUMPED:I
+ *   public final const val BUMPED: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: TRIMMED:Ljava/lang/String;
+ *   public final const val TRIMMED: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class KFromJava {
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String TRIMMED = "OK";
+    public static final int BUMPED = 42;
+    @org.jetbrains.annotations.NotNull()
+    public static final KFromJava INSTANCE = null;
+
+    private KFromJava() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@Anno(s = "inline", i = 42, c = 'A')
+/**
+ * @Anno(s = "inline", i = 42, c = 'A')
+ * public final class UsesInlineCalls : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class UsesInlineCalls {
+
+    public UsesInlineCalls() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@Anno(s = "padded", i = 42, c = 'A')
+/**
+ * @Anno(s = "padded", i = 42, c = 'A')
+ * public final class UsesNamedConsts : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class UsesNamedConsts {
+
+    public UsesNamedConsts() {
+        super();
+    }
+}
