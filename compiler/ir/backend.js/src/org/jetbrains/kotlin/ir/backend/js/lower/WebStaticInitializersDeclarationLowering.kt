@@ -13,16 +13,12 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.companionObject
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isReal
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -122,41 +118,29 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             processDeclarationContainer(it)
             if (it.staticInitFunction != null) hasSuperTypeWithStaticInitializer = true
         }
-        val needsStaticInitFunction = container.declarations.any {
-            when (it) {
-                is IrEnumEntry -> it.correspondingField?.isStatic == true
-                is IrField -> it.isStatic && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
-                        it.correspondingPropertySymbol?.owner?.isLateinit == false
-                is IrProperty -> it.backingField?.isStatic == true && !it.isLateinit
-                // A companion object is initialized together with its container, so the container needs
-                // a static_init as soon as the companion has anything observable to initialize. Otherwise, we omit it to
-                // not blow up the bundle size.
-                is IrClass if it.isCompanion && !it.isInitializersFreeObject() -> true
-                else -> false
-            }
-        }
+
+        val isEagerlyInitializedObject = container.objectInstanceField?.initializer != null
+
+        // Lazily initialized objects assign there instance field in their constructor, that's why we always must generate
+        // a static_init function for them.
+        //
+        // Eagerly initialized objects, on the other hand, don't do that, instead their instance field is assigned with
+        // their constructor call.
+        val needsStaticInitFunction =
+            !isEagerlyInitializedObject && (container.isNonCompanionObject || container.hasStaticDeclarationsRequiringInitialization())
 
         if (!needsStaticInitFunction && !hasSuperTypeWithStaticInitializer) return
 
         val initializers = buildList {
+            if (container.isNonCompanionObject) {
+                add(ObjectDeclarationLowering.createObjectConstructorCall(container, context.irBuiltIns))
+                return@buildList
+            }
             for (declaration in container.declarations) {
-                // Special handling of companion objects - if the static_init function is introduced, the Companion$getInstance
-                // body should be moved to the static_init body to preserve the correct order of initialization.
-                // $getInstance then calls static_init instead.
                 if (declaration is IrClass && declaration.isCompanion) {
-                    declaration.objectGetInstanceFunction?.let { getInstance ->
-                        val body = getInstance.body as? IrBlockBody ?: return@let
-                        body.statements.let { statements ->
-                            // Relying on the fact that $getInstance always ends with IrReturn
-                            addAll(statements.dropLast(1))
-                            val irReturn = statements.last()
-                            statements.clear()
-                            statements.add(irReturn)
-                        }
-                    }
+                    add(ObjectDeclarationLowering.createObjectConstructorCall(declaration, context.irBuiltIns))
                     continue
                 }
-
                 val [field, initializerBody] = when (declaration) {
                     is IrEnumEntry -> declaration.correspondingField to declaration.initializerExpression
                     is IrField -> declaration to declaration.initializer
@@ -210,6 +194,20 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         container.staticInitFunction = staticInitFunction
         container.companionObject()?.staticInitFunction = staticInitFunction
         container.declarations.addAll(0, listOf(staticInitStateField, staticInitFunction))
+    }
+
+    private fun IrClass.hasStaticDeclarationsRequiringInitialization(): Boolean = declarations.any {
+        when (it) {
+            is IrEnumEntry -> it.correspondingField?.isStatic == true
+            is IrField -> it.isStatic && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
+                    it.correspondingPropertySymbol?.owner?.isLateinit == false
+            is IrProperty -> it.backingField?.isStatic == true && !it.isLateinit
+            // A companion object is initialized together with its container, so the container needs
+            // a static_init as soon as the companion has anything observable to initialize. Otherwise, we omit it to
+            // not blow up the bundle size.
+            is IrClass if it.isCompanion && !it.isInitializersFreeObject() -> true
+            else -> false
+        }
     }
 
     private fun IrClass.createInitializer(declaration: IrDeclaration, field: IrField, initializer: IrExpression): IrSetField =

@@ -229,7 +229,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::BuiltInsLowering,
 
     ::VirtualDispatchReceiverExtraction,
-    ::InvokeStaticInitializersLowering,
     ::StaticMembersLowering,
 
     // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
