@@ -1,0 +1,38 @@
+FILE: collectionLiteralAsLoopBody.kt
+    public final fun foo(): R|kotlin/Unit| {
+    }
+    public final fun test1(args: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+         {
+            lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/args|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval arg: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
+                 {
+                    Q|kotlin/collections|.R|kotlin/collections/listOf|<R|() -> kotlin/Unit|>(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        R|/foo|()
+                    }
+                    )
+                }
+
+            }
+
+        }
+
+    }
+    public final fun test2(cond: R|() -> kotlin/Boolean|): R|kotlin/Unit| {
+        while(R|<local>/cond|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Boolean|>|()) {
+            Q|kotlin/collections|.R|kotlin/collections/listOf|<R|() -> kotlin/Unit|>(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                R|/foo|()
+            }
+            )
+        }
+
+    }
+    public final fun test3(cond: R|() -> kotlin/Boolean|): R|kotlin/Unit| {
+        do {
+            Q|kotlin/collections|.R|kotlin/collections/listOf|<R|() -> kotlin/Unit|>(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                R|/foo|()
+            }
+            )
+        }
+        while(R|<local>/cond|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Boolean|>|())
+    }
