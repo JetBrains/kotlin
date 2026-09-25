@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.swc
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractEnv
 import java.io.File
 
-internal class SwcEnv(
+@InternalKotlinGradlePluginApi
+class SwcEnv(
     override val download: Boolean,
     override val downloadBaseUrl: String?,
     override val allowInsecureProtocol: Boolean,
