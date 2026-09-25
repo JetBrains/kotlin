@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
@@ -40,7 +39,6 @@ internal class ObjCExportedInterface(
 internal fun produceObjCExportInterface(
     context: NativeBackendPhaseContext,
     moduleDescriptor: ModuleDescriptor,
-    frontendServices: FrontendServices,
 ): ObjCExportedInterface {
     val config = context.config
     require(config.target.family.isAppleFamily)
@@ -62,9 +60,8 @@ internal fun produceObjCExportInterface(
         entryPoints
     }
 
-    @OptIn(K1Deprecation::class)
     val mapper = ObjCExportMapper(
-            frontendServices.deprecationResolver,
+            config.languageVersionSettings,
             unitSuspendFunctionExport = unitSuspendFunctionExport,
             entryPoints = effectiveEntryPoints)
     val objcGenerics = config.configuration.objcGenerics
@@ -197,8 +194,7 @@ internal class ObjCExport(
 
         if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
-        @OptIn(K1Deprecation::class)
-        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
+        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(config.languageVersionSettings, unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
                 setOf(moduleDescriptor),
                 moduleDescriptor.builtIns,
