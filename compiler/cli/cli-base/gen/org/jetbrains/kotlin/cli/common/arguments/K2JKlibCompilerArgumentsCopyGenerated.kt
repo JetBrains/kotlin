@@ -23,6 +23,7 @@ fun copyK2JKlibCompilerArguments(from: K2JKlibCompilerArguments, to: K2JKlibComp
     to.jvmTarget = from.jvmTarget
     to.klibLibraries = from.klibLibraries
     to.klibZipFileAccessorCacheLimit = from.klibZipFileAccessorCacheLimit
+    to.manifestFile = from.manifestFile
     to.moduleName = from.moduleName
     to.noJdk = from.noJdk
     to.noReflect = from.noReflect

@@ -263,6 +263,17 @@ The default value is 'indy'.""",
             field = value
         }
 
+    @Argument(
+        value = "-manifest",
+        valueDescription = "<path>",
+        description = "Provide a manifest addend file.",
+    )
+    var manifestFile: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
     // TODO(KT-87172): Remove if we decide to extend CommonKlibBasedCompilerArguments 
     @Argument(
         value = "-Xklib-zip-file-accessor-cache-limit",
