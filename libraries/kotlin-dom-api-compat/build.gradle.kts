@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.support.serviceOf
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
@@ -49,7 +50,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEa
 val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
     archiveClassifier.set("javadoc")
 }
-
 publishing {
     publications {
         val mavenPublication = register<MavenPublication>("maven") {
@@ -67,5 +67,4 @@ publishing {
         )
     }
 }
-
 configureDefaultPublishing()

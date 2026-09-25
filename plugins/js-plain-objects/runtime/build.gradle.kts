@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.support.serviceOf
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
@@ -13,10 +14,14 @@ plugins {
 
 group = "org.jetbrains.kotlin"
 
+val buildFeatures = serviceOf<BuildFeatures>()
+
 kotlin {
     js {
-        browser()
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            browser()
+            nodejs()
+        }
     }
 
     sourceSets {

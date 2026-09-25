@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 import com.google.gson.GsonBuilder
+import org.gradle.kotlin.dsl.support.serviceOf
 import com.google.gson.JsonObject
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.gradle.api.publish.internal.PublicationInternal
@@ -31,6 +32,7 @@ plugins {
 
 description = "Kotlin Test Library"
 base.archivesName = "kotlin-test"
+val buildFeatures = serviceOf<BuildFeatures>()
 
 jvmToolchains {
     targetBytecodeVersion = JdkMajorVersion.JDK_1_8
@@ -118,11 +120,14 @@ kotlin {
             test.associateWith(getByName("JUnit"))
         }
     }
+
     js {
-        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            browser {}
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            if (!kotlinBuildProperties.isTeamcityBuild.get()) {
+                browser {}
+            }
+            nodejs {}
         }
-        nodejs {}
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.addAll(
                 "-Xir-module-name=$KOTLINTEST_MODULE_NAME",
@@ -133,7 +138,9 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            nodejs()
+        }
         compilerOptions {
             sourceMap = false
             sourceMapEmbedSources.unsetConvention()
@@ -145,7 +152,9 @@ kotlin {
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            nodejs()
+        }
         // cast is necessary because of KT-85971
         // update after bootstrap
         (this as KotlinJsTargetDsl).compilerOptions {
@@ -157,7 +166,6 @@ kotlin {
             compilerOptions.addReturnValueCheckerInfo()
         }
     }
-
     targets.all {
         compilations.all {
             compileTaskProvider.configure {
@@ -240,29 +248,31 @@ kotlin {
                 implementation("org.testng:testng:7.5.1")
             }
         }
-        val jsMain = getByName("jsMain") {
-            dependsOn(assertionsCommonMain)
-            dependsOn(annotationsCommonMain)
-            kotlin.srcDir("js/src/main/kotlin")
-        }
-        val jsTest = getByName("jsTest") {
-            kotlin.srcDir("js/src/test/kotlin")
-        }
-        val wasmCommonMain = create("wasmCommonMain") {
-            dependsOn(assertionsCommonMain)
-            dependsOn(annotationsCommonMain)
-            kotlin.srcDir("wasm/src/main/kotlin")
-        }
-        val wasmJsMain = getByName("wasmJsMain") {
-            dependsOn(wasmCommonMain)
-            kotlin.srcDir("wasm/js/src/main/kotlin")
-        }
-        val wasmJsTest = getByName("wasmJsTest") {
-            kotlin.srcDir("wasm/js/src/test/kotlin")
-        }
-        val wasmWasiMain = getByName("wasmWasiMain") {
-            dependsOn(wasmCommonMain)
-            kotlin.srcDir("wasm/wasi/src/main/kotlin")
+        if (true) {
+            val jsMain = getByName("jsMain") {
+                dependsOn(assertionsCommonMain)
+                dependsOn(annotationsCommonMain)
+                kotlin.srcDir("js/src/main/kotlin")
+            }
+            val jsTest = getByName("jsTest") {
+                kotlin.srcDir("js/src/test/kotlin")
+            }
+            val wasmCommonMain = create("wasmCommonMain") {
+                dependsOn(assertionsCommonMain)
+                dependsOn(annotationsCommonMain)
+                kotlin.srcDir("wasm/src/main/kotlin")
+            }
+            val wasmJsMain = getByName("wasmJsMain") {
+                dependsOn(wasmCommonMain)
+                kotlin.srcDir("wasm/js/src/main/kotlin")
+            }
+            val wasmJsTest = getByName("wasmJsTest") {
+                kotlin.srcDir("wasm/js/src/test/kotlin")
+            }
+            val wasmWasiMain = getByName("wasmWasiMain") {
+                dependsOn(wasmCommonMain)
+                kotlin.srcDir("wasm/wasi/src/main/kotlin")
+            }
         }
     }
 }
@@ -303,17 +313,19 @@ tasks {
             }
         }
     }
-    val jsJar = named("jsJar", Jar::class) {
-        manifestAttributes(manifest, "Test")
-        manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
-    }
-    val wasmJsJar = named("wasmJsJar", Jar::class) {
-        manifestAttributes(manifest, "Test")
-        manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
-    }
-    val wasmWasiJar = named("wasmWasiJar", Jar::class) {
-        manifestAttributes(manifest, "Test")
-        manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
+    if (true) {
+        val jsJar = named("jsJar", Jar::class) {
+            manifestAttributes(manifest, "Test")
+            manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
+        }
+        val wasmJsJar = named("wasmJsJar", Jar::class) {
+            manifestAttributes(manifest, "Test")
+            manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
+        }
+        val wasmWasiJar = named("wasmWasiJar", Jar::class) {
+            manifestAttributes(manifest, "Test")
+            manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
+        }
     }
     val assemble = named("assemble") {
         dependsOn(jvmJarTasks)
@@ -343,30 +355,31 @@ tasks {
     val allTests = named("allTests") {
         dependsOn(jvmTestTasks)
     }
+    if (true) {
+        val generateProjectStructureMetadata = named("generateProjectStructureMetadata", GenerateProjectStructureMetadata::class) {
+            val outputTestFile = file("kotlin-project-structure-metadata.beforePatch.json")
+            val patchedFile = file("kotlin-project-structure-metadata.json")
 
-    val generateProjectStructureMetadata = named("generateProjectStructureMetadata", GenerateProjectStructureMetadata::class) {
-        val outputTestFile = file("kotlin-project-structure-metadata.beforePatch.json")
-        val patchedFile = file("kotlin-project-structure-metadata.json")
+            inputs.file(patchedFile)
+            inputs.file(outputTestFile)
 
-        inputs.file(patchedFile)
-        inputs.file(outputTestFile)
+            doLast {
+                /*
+                Check that the generated 'outputFile' by default matches our expectations stored in the .beforePatch file
+                This will fail if the kotlin-project-structure-metadata.json file would change unnoticed (w/o updating our patched file)
+                 */
+                run {
+                    val outputFileText = resultFile.readText().trim()
+                    val expectedFileContent = outputTestFile.readText().trim()
+                    if (outputFileText != expectedFileContent)
+                        error(
+                            "${resultFile.path} file content does not match expected content\n\n" +
+                                    "expected:\n\n$expectedFileContent\n\nactual:\n\n$outputFileText"
+                        )
+                }
 
-        doLast {
-            /*
-            Check that the generated 'outputFile' by default matches our expectations stored in the .beforePatch file
-            This will fail if the kotlin-project-structure-metadata.json file would change unnoticed (w/o updating our patched file)
-             */
-            run {
-                val outputFileText = resultFile.readText().trim()
-                val expectedFileContent = outputTestFile.readText().trim()
-                if (outputFileText != expectedFileContent)
-                    error(
-                        "${resultFile.path} file content does not match expected content\n\n" +
-                                "expected:\n\n$expectedFileContent\n\nactual:\n\n$outputFileText"
-                    )
+                patchedFile.copyTo(resultFile, overwrite = true)
             }
-
-            patchedFile.copyTo(resultFile, overwrite = true)
         }
     }
 }
