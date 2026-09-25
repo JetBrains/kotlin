@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.diagnostics.requireNotNull
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -59,7 +58,7 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
         val actualAnnotationTargetSourceElement = (incompatibility.actualAnnotationTargetElement as FirSourceElement).element
 
         reporter.reportOn(
-            actualSymbol.source.requireNotNull(),
+            actualSymbol.source,
             FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
             incompatibility.expectSymbol as FirBasedSymbol<*>,
             incompatibility.actualSymbol as FirBasedSymbol<*>,

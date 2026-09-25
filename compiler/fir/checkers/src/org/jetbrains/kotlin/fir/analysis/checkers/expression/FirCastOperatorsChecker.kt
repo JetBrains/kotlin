@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -214,7 +214,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         rType: ConeKotlinType,
         areBothTypesNullable: Boolean,
         expression: FirTypeOperatorCall,
-    ): KtDiagnosticWithSource? = when {
+    ): KtDiagnostic? = when {
         LanguageFeature.EnableDfaWarningsInK2.isDisabled() -> null
         areBothTypesNullable -> when (expression.operation) {
             FirOperation.SAFE_AS -> FirErrors.SAFE_CAST_RELYING_ON_NULL.createOn(expression.source, context.session)
@@ -232,7 +232,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         l: ArgumentInfo,
         rType: ConeKotlinType,
         expression: FirTypeOperatorCall
-    ): KtDiagnosticWithSource? = when {
+    ): KtDiagnostic? = when {
         LanguageFeature.EnableDfaWarningsInK2.isDisabled() -> null
         l.argument.hasIntegerLiteralTypeAmbiguity() -> FirErrors.INTEGER_LITERAL_CAST_INSTEAD_OF_TO_CALL
             .createOn(expression.source, rType, context.session)
@@ -244,7 +244,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         forceWarning: Boolean,
         areBothTypesNullable: Boolean,
         expression: FirTypeOperatorCall,
-    ): KtDiagnosticWithSource? {
+    ): KtDiagnostic? {
         val isAlwaysTrue = expression.operation != FirOperation.IS
 
         val valueToWarnAbout = when {

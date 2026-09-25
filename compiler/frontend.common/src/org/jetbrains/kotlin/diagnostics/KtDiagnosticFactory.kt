@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.KtMissingSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -83,6 +84,27 @@ class KtDiagnosticFactory0(
             context,
         )
     }
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(
+                KtSimpleDiagnostic(
+                    KtMissingSourceElement,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
+            positioningStrategy,
+            context,
+        )
+    }
 }
 
 class KtDiagnosticFactory1<A>(
@@ -106,6 +128,30 @@ class KtDiagnosticFactory1<A>(
             effectiveSeverity,
             this,
             positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        a: A,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(
+                KtDiagnosticWithParameters1(
+                    KtMissingSourceElement,
+                    a,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
+            a,
+            positioningStrategy,
             context,
         )
     }
@@ -134,6 +180,33 @@ class KtDiagnosticFactory2<A, B>(
             effectiveSeverity,
             this,
             positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        a: A,
+        b: B,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(
+                KtDiagnosticWithParameters2(
+                    KtMissingSourceElement,
+                    a,
+                    b,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
+            a,
+            b,
+            positioningStrategy,
             context,
         )
     }
@@ -167,6 +240,36 @@ class KtDiagnosticFactory3<A, B, C>(
             context,
         )
     }
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        a: A,
+        b: B,
+        c: C,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(
+                KtDiagnosticWithParameters3(
+                    KtMissingSourceElement,
+                    a,
+                    b,
+                    c,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
+            a,
+            b,
+            c,
+            positioningStrategy,
+            context,
+        )
+    }
 }
 
 class KtDiagnosticFactory4<A, B, C, D>(
@@ -196,6 +299,40 @@ class KtDiagnosticFactory4<A, B, C, D>(
             effectiveSeverity,
             this,
             positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
+    }
+
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        a: A,
+        b: B,
+        c: C,
+        d: D,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(
+                KtDiagnosticWithParameters4(
+                    KtMissingSourceElement,
+                    a,
+                    b,
+                    c,
+                    d,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
+            a,
+            b,
+            c,
+            d,
+            positioningStrategy,
             context,
         )
     }

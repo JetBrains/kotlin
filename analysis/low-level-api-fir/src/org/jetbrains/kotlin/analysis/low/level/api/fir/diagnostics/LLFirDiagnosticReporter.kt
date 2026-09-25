@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLDiagnostic
@@ -12,6 +13,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.psi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.utils.exceptions.logErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 /**
  * Collects diagnostics reported by compiler checkers.
@@ -41,13 +44,18 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
         // So as a temporary solution we filter out related diagnostics here.
         if (diagnostic.isAboutImplicitImport()) return
 
-        val psiDiagnostic = when (diagnostic) {
-            is KtDiagnosticWithSource -> diagnostic
-            else -> error("Unknown diagnostic type ${diagnostic::class.simpleName}")
+        if (diagnostic !is KtDiagnosticWithSource) {
+            LOG.logErrorWithAttachment("Unexpected diagnostic type") {
+                withEntry("type", diagnostic.javaClass.name)
+                withEntry("message", diagnostic.renderMessage())
+                withEntry("path", context.containingFilePath)
+                withPsiEntry("file", (context.containingFile as? KtPsiSourceFile)?.psiFile)
+            }
+            return
         }
 
-        val pendingDiagnostic = PendingDiagnostic(psiDiagnostic, isSuppressed = context.isDiagnosticSuppressed(diagnostic))
-        pendingDiagnostics.addValueFor(psiDiagnostic.psi, pendingDiagnostic)
+        val pendingDiagnostic = PendingDiagnostic(diagnostic, isSuppressed = context.isDiagnosticSuppressed(diagnostic))
+        pendingDiagnostics.addValueFor(diagnostic.psi, pendingDiagnostic)
     }
 
     override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext, commitEverything: Boolean) {
@@ -74,6 +82,8 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
 
     private class PendingDiagnostic(val diagnostic: KtDiagnosticWithSource, var isSuppressed: Boolean)
 }
+
+private val LOG = Logger.getInstance(LLFirDiagnosticReporter::class.java)
 
 /**
  * PSI ancestry is checked instead of text range containment, as walking the parent chain is cheaper than computing text ranges:
