@@ -169,17 +169,12 @@ class AnonymousObjectTransformer(
                 rewriteAssertionsDisabledFieldInitialization(next, inliningContext.root.callSiteInfo.ownerClassName)
             }
 
-            val funResult = inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false)
-
-            val returnType = Type.getReturnType(next.desc)
-            if (!AsmUtil.isPrimitive(returnType)) {
-                val oldFunReturnType = returnType.internalName
-                val newFunReturnType = funResult.getChangedTypes()[oldFunReturnType]
-                if (newFunReturnType != null) {
-                    inliningContext.typeRemapper.addAdditionalMappings(oldFunReturnType, newFunReturnType)
-                }
-            }
+            inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false)
             deferringMethods.add(deferringVisitor)
+        }
+
+        for ([oldType, newType] in transformationResult.getChangedTypes()) {
+            inliningContext.typeRemapper.addAdditionalMappings(oldType, newType)
         }
 
         deferringMethods.forEach { method ->
@@ -319,11 +314,10 @@ class AnonymousObjectTransformer(
         next: MethodNode,
         allCapturedParamBuilder: ParametersBuilder,
         isConstructor: Boolean
-    ): InlineResult {
+    ) {
         val funResult = inlineMethod(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, isConstructor)
         transformationResult.merge(funResult)
         transformationResult.reifiedTypeParametersUsages.mergeAll(funResult.reifiedTypeParametersUsages)
-        return funResult
     }
 
     private fun inlineMethod(
