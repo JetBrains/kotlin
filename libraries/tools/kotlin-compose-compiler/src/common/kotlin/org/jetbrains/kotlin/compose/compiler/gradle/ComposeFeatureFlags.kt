@@ -63,7 +63,6 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
      *   3) In a subsequent version remove the enum entry and the @JvmField field.
      */
     private enum class Feature(val flag: String) {
-        IntrinsicRemember("IntrinsicRemember"),
         OptimizeNonSkippingGroups("OptimizeNonSkippingGroups"),
         PausableComposition("PausableComposition"),
     }
@@ -72,27 +71,6 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
      * Contains currently available [ComposeFeatureFlag]s.
      */
     companion object {
-        /**
-         * Enable the intrinsic remember performance optimization.
-         *
-         * Intrinsic Remember is an optimization mode which improves the runtime performance of your application by inlining `remember`
-         * invocations and replacing `.equals` comparison (for keys) with comparisons of the `$changed` meta parameter when possible. This
-         * results in fewer slots being used and fewer comparisons being done at runtime.
-         *
-         * This feature is enabled by default. To disable, provide this feature flag in a [disabled] state:
-         * ```
-         * composeCompiler {
-         *     featureFlags = setOf(ComposeFeatureFlag.IntrinsicRemember.disabled())
-         * }
-         * ```
-         */
-        @Deprecated(
-            message = "This flag is now enabled by default and will be removed with Kotlin 2.5.0.",
-            level = DeprecationLevel.ERROR
-        )
-        @JvmField
-        val IntrinsicRemember: ComposeFeatureFlag = Enabled(Feature.IntrinsicRemember)
-
         /**
          * Remove groups around non-skipping composable functions.
          *

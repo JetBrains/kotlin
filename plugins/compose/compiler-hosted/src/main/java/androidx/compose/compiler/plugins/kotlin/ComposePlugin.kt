@@ -50,6 +50,9 @@ object ComposeConfiguration {
         CompilerConfigurationKey<String>("Directory to save compose build metrics")
     val REPORTS_DESTINATION_KEY =
         CompilerConfigurationKey<String>("Directory to save compose build reports")
+    // TODO(b/485865131): This key must be deleted once `com.android.tools.compose.aa` no longer
+    //  relies on it.
+    @Suppress("unused")
     val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable optimization to treat remember as an intrinsic")
     val NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY =
@@ -153,15 +156,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = true
         )
-        val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION = CliOption(
-            "intrinsicRemember",
-            "<true|false>",
-            "Include source information in generated code. Deprecated. Use ${
-                useFeatureFlagInsteadMessage(FeatureFlag.IntrinsicRemember)
-            }",
-            required = false,
-            allowMultipleOccurrences = false
-        )
         val NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION = CliOption(
             optionName = "nonSkippingGroupOptimization",
             valueDescription = "<true|false>",
@@ -226,7 +220,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         SOURCE_INFORMATION_ENABLED_OPTION,
         METRICS_DESTINATION_OPTION,
         REPORTS_DESTINATION_OPTION,
-        INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION,
         NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION,
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION,
         DECOYS_ENABLED_OPTION,
@@ -279,17 +272,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.REPORTS_DESTINATION_KEY,
             value
         )
-        INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION -> {
-            oldOptionDeprecationWarning(
-                configuration,
-                INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION,
-                FeatureFlag.IntrinsicRemember
-            )
-            configuration.put(
-                ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-                value == "true"
-            )
-        }
         NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION -> {
             oldOptionDeprecationWarning(
                 configuration,
@@ -373,7 +355,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
  * @param default True if the feature is enabled by default or false if it is not.
  */
 enum class FeatureFlag(val featureName: String, val default: Boolean) {
-    IntrinsicRemember("IntrinsicRemember", default = true),
     OptimizeNonSkippingGroups("OptimizeNonSkippingGroups", default = true),
     PausableComposition("PausableComposition", default = true),
     ;
@@ -601,10 +582,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             val sourceInformationEnabled = configuration.getBoolean(
                 ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
             )
-            val intrinsicRememberEnabled = configuration.get(
-                ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-                FeatureFlag.IntrinsicRemember.default
-            )
             val nonSkippingGroupOptimizationEnabled = configuration.get(
                 ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY,
                 FeatureFlag.OptimizeNonSkippingGroups.default
@@ -643,7 +620,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
 
             // Compatibility with older features configuration options
             // New features should not create a explicit option
-            featureFlags.setFeature(FeatureFlag.IntrinsicRemember, intrinsicRememberEnabled)
             featureFlags.setFeature(
                 FeatureFlag.OptimizeNonSkippingGroups,
                 nonSkippingGroupOptimizationEnabled

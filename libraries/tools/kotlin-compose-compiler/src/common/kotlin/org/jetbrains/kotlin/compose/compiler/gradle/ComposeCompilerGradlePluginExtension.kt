@@ -101,28 +101,6 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
     abstract val reportsDestination: DirectoryProperty
 
     /**
-     * Enable intrinsic remember performance optimization.
-     *
-     * Intrinsic Remember is an optimization mode which improves the runtime performance of your application by inlining `remember`
-     * invocations and replacing `.equals` comparison (for keys) with comparisons of the `$changed` meta parameter when possible. This
-     * results in fewer slots being used and fewer comparisons being done at runtime.
-     *
-     * It is enabled by default.
-     *
-     * To change the default value, use the following code:
-     * ```
-     * composeCompiler {
-     *     enableIntrinsicRemember.set(false)
-     * }
-     * ```
-     */
-    @Deprecated(
-        message = "Use the featureFlags option instead. Will be removed in Kotlin 2.5.0",
-        level = DeprecationLevel.ERROR
-    )
-    val enableIntrinsicRemember: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
-
-    /**
      * Remove groups around non-skipping composable functions.
      *
      * Removing groups around non-skipping composables is an experimental mode which improves the runtime performance of your application
@@ -220,12 +198,9 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
         .setProperty(ComposeFeatureFlag::class.java)
         .convention(
             // Add features that used to be added by deprecated options. No other features should be added this way.
-            enableIntrinsicRemember.zip(enableNonSkippingGroupOptimization) { intrinsicRemember, nonSkippingGroupsOptimization ->
-                setOfNotNull(
-                    if (!intrinsicRemember) ComposeFeatureFlag.IntrinsicRemember.disabled() else null,
-                    if (nonSkippingGroupsOptimization) ComposeFeatureFlag.OptimizeNonSkippingGroups else null
-                )
-            }
+            setOfNotNull(
+                if (enableNonSkippingGroupOptimization.get()) ComposeFeatureFlag.OptimizeNonSkippingGroups else null
+            )
         )
 
     /**

@@ -27,18 +27,13 @@ import org.junit.jupiter.params.ParameterizedClass
 import org.junit.jupiter.params.provider.ValueSource
 import java.io.File
 
-@ParameterizedClass(name = "intrinsicRemember = {0}")
-@ValueSource(booleans = [false, true])
-class StrongSkippingModeTransformTests(
-    private val intrinsicRememberEnabled: Boolean,
-) : AbstractIrTransformTest() {
+class StrongSkippingModeTransformTests : AbstractIrTransformTest() {
 
     override fun CompilerConfiguration.updateConfiguration() {
         put(
             ComposeConfiguration.FEATURE_FLAGS,
             listOf(
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
-                FeatureFlag.IntrinsicRemember.name(intrinsicRememberEnabled)
             )
         )
     }

@@ -20,7 +20,6 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
@@ -45,7 +44,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.Name
@@ -314,13 +312,6 @@ class ComposerLambdaMemoization(
 
     private val rememberComposableLambdaNFunction by guardedLazy {
         getTopLevelFunctions(ComposeCallableIds.rememberComposableLambdaN).singleOrNull()
-    }
-
-    private val useNonSkippingGroupOptimization by guardedLazy {
-        // Uses `rememberComposableLambda` as a indication that the runtime supports
-        // generating remember after call as it was added at the same time as the slot table was
-        // modified to support remember after call.
-        FeatureFlag.OptimizeNonSkippingGroups.enabled && rememberComposableLambdaFunction != null
     }
 
     private fun getOrCreateComposableSingletonsClass(): IrClass {
@@ -625,7 +616,7 @@ class ComposerLambdaMemoization(
                         captures
                     )
                 }
-            } else if (argumentsAreNull) {
+            } else {
                 return rememberExpression(functionContext, expression, captures)
             }
         }
@@ -1096,62 +1087,10 @@ class ComposerLambdaMemoization(
             singleton = false
         )
 
-        return if (!FeatureFlag.IntrinsicRemember.enabled) {
-            // generate cache directly only if strong skipping is enabled without intrinsic remember
-            // otherwise, generated memoization won't benefit from capturing changed values
-            irCache(captureExpressions, expression, fileContainingExpression = functionContext.declaration.fileOrNull)
-        } else {
-            irRemember(captureExpressions, expression)
-        }.patchDeclarationParents(functionContext.declaration)
+        return irRemember(captureExpressions, expression)
+            .patchDeclarationParents(functionContext.declaration)
     }
 
-    private fun irCache(
-        captures: List<IrExpression>,
-        expression: IrExpression,
-        fileContainingExpression: IrFile?,
-    ): IrExpression {
-        val invalidExpr = captures
-            .map { irChanged(it, fileContainingValue = fileContainingExpression) }
-            .reduceOrNull { acc, changed -> irBooleanOr(acc, changed) }
-            ?: irConst(false)
-
-        val calculation = irLambdaExpression(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            returnType = expression.type
-        ) { fn ->
-            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                +irReturn(expression)
-            }
-        }
-
-        val cache = irCache(
-            irCurrentComposer(),
-            expression.startOffset,
-            expression.endOffset,
-            expression.type,
-            invalidExpr,
-            calculation
-        )
-
-        return if (useNonSkippingGroupOptimization) {
-            cache
-        } else {
-            // If the non-skipping group optimization is disabled then we need to wrap
-            // the call to `cache` in a replaceable group.
-            val fqName = currentFunctionContext?.declaration?.kotlinFqName?.asString()
-            val key = fqName.hashCode() + expression.startOffset
-            val cacheTmpVar = irTemporary(cache, "tmpCache")
-            cacheTmpVar.wrap(
-                type = expression.type,
-                before = listOf(irStartReplaceGroup(irCurrentComposer(), irConst(key))),
-                after = listOf(
-                    irEndReplaceGroup(irCurrentComposer()),
-                    irGet(cacheTmpVar)
-                )
-            )
-        }
-    }
 
     private fun irRemember(
         captures: List<IrExpression>,
@@ -1217,15 +1156,6 @@ class ComposerLambdaMemoization(
                 }
         }
     }
-
-    private fun irChanged(value: IrExpression, fileContainingValue: IrFile?): IrExpression = irChanged(
-        irCurrentComposer(),
-        value,
-        fileContainingValue,
-        inferredStable = false,
-        compareInstanceForFunctionTypes = false,
-        compareInstanceForUnstableValues = true
-    )
 
     private fun IrValueDeclaration.isVar(): Boolean =
         (this as? IrVariable)?.isVar == true
