@@ -146,10 +146,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         flow.assignmentIndex[variable] = index
     }
 
-    fun isSameValueIn(a: PersistentFlow, b: PersistentFlow, variable: RealVariable): Boolean =
-        a.assignmentIndex[variable] == b.assignmentIndex[variable]
-
-    fun isSameValueIn(a: PersistentFlow, b: MutableFlow, variable: RealVariable): Boolean {
+    fun isSameValueIn(a: Flow, b: Flow, variable: RealVariable): Boolean {
         return a.assignmentIndex[variable] == b.assignmentIndex[variable]
     }
 
