@@ -151,7 +151,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         // TODO: KT-89415
         when (module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)) {
             FirParser.Psi -> configuration.useLightTree = false
-            FirParser.LightTree, FirParser.MultiplatformParsing -> configuration.useLightTree = true
+            FirParser.LightTree, FirParser.KmpTree -> configuration.useLightTree = true
             null -> {}
         }
         configuration.allowNoSourceFiles = true
