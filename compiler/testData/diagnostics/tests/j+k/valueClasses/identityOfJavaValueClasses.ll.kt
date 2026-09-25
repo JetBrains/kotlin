@@ -51,9 +51,9 @@ fun identitySensitiveOperations(v: JavaVal, abstract: JavaAbstractVal) {
 }
 
 fun <T : JavaAbstractVal> identitySensitiveOperationsThroughBounds(bounded: T) {
-    System.identityHashCode(bounded)
-    WeakReference(bounded)
-    IdentityHashMap<T, String>()
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>bounded<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>bounded<!>)
+    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>T<!>, String>()
 }
 
 fun atomicReference(ref: AtomicReference<JavaVal>, v: JavaVal, abstractRef: AtomicReference<JavaAbstractVal>, abstract: JavaAbstractVal) {

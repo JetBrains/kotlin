@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.fir.types.ConeUnionType
 import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.name.ClassId
 
 private val jdkInternalValueBasedAnnotationClassId = ClassId.fromString("jdk/internal/ValueBased")
@@ -46,24 +47,37 @@ internal fun ConeKotlinType.isJavaValueBasedClassAndWarningsEnabled(): Boolean {
 context(sessionHolder: SessionHolder)
 internal fun ConeKotlinType.isValueTypeAndWarningsEnabled(): Boolean {
     if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives() &&
-        (this.isPrimitiveOrNullablePrimitive || this.isValueClass(sessionHolder.session) || this.isFlexiblePrimitive())
+        (this.isFlexiblePrimitive() || this.isValueClassOrPrimitive())
     ) return true
     return this.isJavaValueBasedClassAndWarningsEnabled()
 }
 
+// Like javac, this includes type parameters and captured types bounded by a primitive or a value class. A flexible primitive type like
+// `Int!` is its Java box, like `java.lang.Integer`.
+context(sessionHolder: SessionHolder)
+internal fun ConeKotlinType.isValueClassOrPrimitive(): Boolean =
+    if (isFlexiblePrimitive()) isJavaValueClass()
+    else anyBound { it.isPrimitiveOrNullablePrimitive || it.isValueClass(sessionHolder.session) }
+
 // Like javac, this includes type parameters and captured types bounded by a Java value class. A flexible primitive type like `Int!` is
 // its Java box, like `java.lang.Integer`.
 context(sessionHolder: SessionHolder)
-internal fun ConeKotlinType.isJavaValueClass(visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf()): Boolean =
+internal fun ConeKotlinType.isJavaValueClass(): Boolean =
+    if (isFlexiblePrimitive()) lowerBoundIfFlexible().toRegularClassSymbol()?.isMappedToJavaValueClass(sessionHolder.session) == true
+    else anyBound { it.toRegularClassSymbol()?.isJavaValueClass(sessionHolder.session) == true }
+
+private fun ConeKotlinType.anyBound(
+    visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
+    predicate: (ConeClassLikeType) -> Boolean,
+): Boolean =
     when (this) {
-        is ConeFlexibleType -> lowerBound.isJavaValueClass(visited) ||
-                isFlexiblePrimitive() && lowerBound.toRegularClassSymbol()?.isMappedToJavaValueClass(sessionHolder.session) == true
-        is ConeDefinitelyNotNullType -> original.isJavaValueClass(visited)
-        is ConeIntersectionType -> intersectedTypes.any { it.isJavaValueClass(visited) }
+        is ConeFlexibleType -> lowerBound.anyBound(visited, predicate)
+        is ConeDefinitelyNotNullType -> original.anyBound(visited, predicate)
+        is ConeIntersectionType -> intersectedTypes.any { it.anyBound(visited, predicate) }
         is ConeTypeParameterType ->
-            visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.isJavaValueClass(visited) }
-        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.isJavaValueClass(visited) }
-        is ConeClassLikeType -> toRegularClassSymbol()?.isJavaValueClass(sessionHolder.session) == true
+            visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.anyBound(visited, predicate) }
+        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.anyBound(visited, predicate) }
+        is ConeClassLikeType -> predicate(this)
         is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
             -> false
     }
