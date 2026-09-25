@@ -1,5 +1,4 @@
 // ISSUE: KT-89956
-// IGNORE_BACKEND: JVM
 // WITH_REFLECT
 
 import kotlin.reflect.KClass
