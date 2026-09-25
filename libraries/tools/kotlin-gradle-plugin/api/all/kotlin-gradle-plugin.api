@@ -366,6 +366,21 @@ public final class org/jetbrains/kotlin/gradle/logging/GradleErrorMessageCollect
 	public fun report (Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSeverity;Ljava/lang/String;Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSourceLocation;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/npm/KotlinNpmDependency {
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getScope ()Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public abstract fun getVersion ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope : java/lang/Enum {
+	public static final field DEV Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static final field NORMAL Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static final field OPTIONAL Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static final field PEER Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
 	public fun <init> ()V
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
@@ -3730,25 +3745,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scop
 	public static final field PEER Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclaration : java/io/Serializable {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;Ljava/lang/String;Ljava/lang/String;)V
-	public final fun component1 ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Ljava/lang/String;
-	public final fun copy (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclaration;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclaration;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclaration;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getName ()Ljava/lang/String;
-	public final fun getScope ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;
-	public final fun getVersion ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclarationKt {
-	public static final fun uniqueRepresentation (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyDeclaration;)Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyExtension : org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmDependencyExtension, org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependencyWithExternalsExtension, org/jetbrains/kotlin/gradle/targets/js/npm/NpmDirectoryDependencyExtension, org/jetbrains/kotlin/gradle/targets/js/npm/NpmDirectoryDependencyWithExternalsExtension {

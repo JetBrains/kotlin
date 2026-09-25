@@ -10,6 +10,9 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import java.io.File
 
 /**
@@ -343,14 +346,18 @@ interface KotlinDependencyHandler : HasProject {
     fun project(notation: Map<String, Any?>): ProjectDependency
 
     /**
-     * Creates a dependency on the [NPM](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies) module.
+     * Declares a dependency on the [NPM](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies) module.
      *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * Calling [npm] automatically adds the dependency to the enclosing dependency collector:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     implementation(npm("is-odd-even", "1.0.0"))
+     *     npm("is-odd-even", "1.0.0")
      * }
      * ```
+     *
+     * NPM dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Passing the returned dependency to them, as in `implementation(npm("is-odd-even", "1.0.0"))`, is deprecated -
+     * the returned value is only kept for backward compatibility.
      *
      * The version will be parsed by node-semver.
      * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
@@ -359,6 +366,7 @@ interface KotlinDependencyHandler : HasProject {
      *
      * @param name The NPM dependency name
      * @param version The NPM dependency version
+     * @return The declared NPM dependency, kept for backward compatibility; it must not be passed to a Gradle dependency scope.
      */
     fun npm(
         name: String,
@@ -366,20 +374,26 @@ interface KotlinDependencyHandler : HasProject {
     ): Dependency
 
     /**
-     * Creates a dependency on the [NPM](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies) module.
+     * Declares a dependency on the [NPM](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies) module
+     * located in a local [directory].
      *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * Calling [npm] automatically adds the dependency to the enclosing dependency collector:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     implementation(npm("is-odd-even", project.file("npm/is-odd-even")))
+     *     npm("is-odd-even", project.file("npm/is-odd-even"))
      * }
      * ```
+     *
+     * NPM dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Passing the returned dependency to them, as in `implementation(npm("is-odd-even", project.file("npm/is-odd-even")))`,
+     * is deprecated - the returned value is only kept for backward compatibility.
      *
      * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
      * @param name The NPM dependency name.
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) keyword)
+     * @return The declared NPM dependency, kept for backward compatibility; it must not be passed to a Gradle dependency scope.
      */
     fun npm(
         name: String,
@@ -387,33 +401,38 @@ interface KotlinDependencyHandler : HasProject {
     ): Dependency
 
     /**
-     * Creates a dependency on the [NPM](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies) module.
-     * The name of the dependency is derived either from the `package.json` file located in the [directory] or the [directory] name itself.
-     *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * **Deprecated** - deriving the NPM dependency name from the [directory] is deprecated.
+     * Declare the name explicitly instead:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     implementation(npm(project.file("npm/is-odd-even")))
+     *     npm("is-odd-even", project.file("npm/is-odd-even"))
      * }
      * ```
      *
-     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     * Scheduled for removal in Kotlin 2.7.
      *
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) keyword)
+     * @return The declared NPM dependency, kept for backward compatibility; it must not be passed to a Gradle dependency scope.
      */
+    @Deprecated(
+        message = "Deriving the NPM dependency name from the directory is deprecated, declare the name explicitly",
+        replaceWith = ReplaceWith("""npm("dependency-name", directory)"""),
+        level = DeprecationLevel.WARNING,
+    )
     fun npm(
         directory: File,
     ): Dependency
 
     /**
-     * Creates a dependency to a NPM module that is added
-     * to [devDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#devdependencies).
+     * Declares a dependency on a NPM module that is added to [devDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#devdependencies).
      *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * NPM dev dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Calling [npmDev] will automatically add it to the enclosing dependency collector.
+     *
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     implementation(devNpm("is-odd-even", "1.1.0"))
+     *     npmDev("is-odd-even", "1.1.0")
      * }
      * ```
      *
@@ -425,140 +444,438 @@ interface KotlinDependencyHandler : HasProject {
      * @param name The NPM dependency name
      * @param version The NPM dependency version
      */
+    fun npmDev(
+        name: String,
+        version: String,
+    )
+
+    /**
+     * Declares a dependency on a NPM module that is added to [devDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#devdependencies).
+     *
+     * NPM dev dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Calling [npmDev] will automatically add it to the enclosing dependency collector.
+     *
+     * [version] is resolved lazily, so it may be provided by a value
+     * that is not yet known when the declaration is made:
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmDev(
+     *         "is-odd-even",
+     *         project.providers.gradleProperty("isOddEvenVersion"),
+     *     )
+     * }
+     * ```
+     *
+     * If [version] has no value, then the build fails when the declaration is used.
+     *
+     * The version will be parsed by node-semver.
+     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     *
+     * @param name The NPM dependency name
+     * @param version The provider of the NPM dependency version
+     */
+    fun npmDev(
+        name: String,
+        version: Provider<String>,
+    )
+
+    /**
+     * Declares a dependency on a NPM module located in a local [directory]
+     * that is added to [devDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#devdependencies).
+     *
+     * NPM dev dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Calling [npmDev] will automatically add it to the enclosing dependency collector.
+     *
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmDev("is-odd-even", project.file("npm/is-odd-even"))
+     * }
+     * ```
+     *
+     * The dependency is declared with the NPM
+     * [local path](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) notation
+     * using the absolute path of the [directory].
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     *
+     * @param name The NPM dependency name
+     * @param directory The directory where dependency files are located
+     */
+    fun npmDev(
+        name: String,
+        directory: File,
+    )
+
+    /**
+     * Declares a dependency on a NPM module located in a local [directory]
+     * that is added to [devDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#devdependencies).
+     *
+     * NPM dev dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Calling [npmDevDirectory] will automatically add it to the enclosing dependency collector.
+     *
+     * [directory] is resolved lazily, so it may be provided by a value
+     * that are not yet known when the declaration is made:
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmDev("is-odd-even", project.layout.buildDirectory.dir("npm/is-odd-even"))
+     * }
+     * ```
+     *
+     * If [directory] has no value, then the build fails when the declaration is used.
+     *
+     * The dependency is declared with the NPM
+     * [local path](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) notation
+     * using the absolute path of the [directory].
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     *
+     * @param name The NPM dependency name
+     * @param directory The provider of the directory where dependency files are located
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun npmDevDirectory(
+        name: String,
+        directory: Provider<Directory>,
+    )
+
+    /**
+     * Declares a dependency on a NPM module that is added to [optionalDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#optionaldependencies).
+     *
+     * NPM optional dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Calling [npmOptional] will automatically add it to the enclosing dependency collector.
+     *
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmOptional("is-odd-even", "1.1.0")
+     * }
+     * ```
+     *
+     * The version will be parsed by node-semver.
+     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     *
+     * @param name The NPM dependency name
+     * @param version The NPM dependency version
+     */
+    fun npmOptional(
+        name: String,
+        version: String,
+    )
+
+    /**
+     * Declares a dependency on a NPM module that is added to [optionalDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#optionaldependencies).
+     *
+     * NPM optional dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Calling [npmOptional] will automatically add it to the enclosing dependency collector.
+     *
+     * [version] is resolved lazily, so it may be provided by a value
+     * that is not yet known when the declaration is made:
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmOptional(
+     *         "is-odd-even",
+     *         project.providers.gradleProperty("isOddEvenVersion"),
+     *     )
+     * }
+     * ```
+     *
+     * If [version] has no value, then the build fails when the declaration is used.
+     *
+     * The version will be parsed by node-semver.
+     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     *
+     * @param name The NPM dependency name
+     * @param version The provider of the NPM dependency version
+     */
+    fun npmOptional(
+        name: String,
+        version: Provider<String>,
+    )
+
+    /**
+     * Declares a dependency on a NPM module located in a local [directory]
+     * that is added to [optionalDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#optionaldependencies).
+     *
+     * NPM optional dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Calling [npmOptional] will automatically add it to the enclosing dependency collector.
+     *
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmOptional("is-odd-even", project.file("npm/is-odd-even"))
+     * }
+     * ```
+     *
+     * The dependency is declared with the NPM
+     * [local path](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) notation
+     * using the absolute path of the [directory].
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     *
+     * @param name The NPM dependency name
+     * @param directory The directory where dependency files are located
+     */
+    fun npmOptional(
+        name: String,
+        directory: File,
+    )
+
+    /**
+     * Declares a dependency on a NPM module located in a local [directory]
+     * that is added to [optionalDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#optionaldependencies).
+     *
+     * NPM optional dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Calling [npmOptionalDirectory] will automatically add it to the enclosing dependency collector.
+     *
+     * [directory] is resolved lazily, so it may be provided by a value
+     * that are not yet known when the declaration is made:
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmOptional("is-odd-even", project.layout.buildDirectory.dir("npm/is-odd-even"))
+     * }
+     * ```
+     *
+     * If [directory] has no value, then the build fails when the declaration is used.
+     *
+     * The dependency is declared with the NPM
+     * [local path](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) notation
+     * using the absolute path of the [directory].
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     *
+     * @param name The NPM dependency name
+     * @param directory The provider of the directory where dependency files are located
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun npmOptionalDirectory(
+        name: String,
+        directory: Provider<Directory>,
+    )
+
+    /**
+     * Declares a dependency on a NPM module that is added to [peerDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#peerdependencies).
+     *
+     * NPM peer dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Calling [npmPeer] will automatically add it to the enclosing dependency collector.
+     *
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmPeer("is-odd-even", "1.1.0")
+     * }
+     * ```
+     *
+     * The version will be parsed by node-semver.
+     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     *
+     * @param name The NPM dependency name
+     * @param version The NPM dependency version
+     */
+    fun npmPeer(
+        name: String,
+        version: String,
+    )
+
+    /**
+     * Declares a dependency on a NPM module that is added to [peerDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#peerdependencies).
+     *
+     * NPM peer dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
+     * Calling [npmPeer] will automatically add it to the enclosing dependency collector.
+     *
+     * [version] is resolved lazily, so it may be provided by a value
+     * that is not yet known when the declaration is made:
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmPeer(
+     *         "is-odd-even",
+     *         project.providers.gradleProperty("isOddEvenVersion"),
+     *     )
+     * }
+     * ```
+     *
+     * If [version] has no value, then the build fails when the declaration is used.
+     *
+     * The version will be parsed by node-semver.
+     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     *
+     * @param name The NPM dependency name
+     * @param version The provider of the NPM dependency version
+     */
+    fun npmPeer(
+        name: String,
+        version: Provider<String>,
+    )
+
+    /**
+     * **Deprecated** - wrapping npm dependencies in `implementation(devNpm(...))` is deprecated.
+     * Declare them with [npmDev] instead, as a standalone statement:
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmDev("is-odd-even", "1.1.0")
+     * }
+     * ```
+     *
+     * Scheduled for removal in Kotlin 2.7.
+     *
+     * @param name The NPM dependency name
+     * @param version The NPM dependency version
+     */
+    @Deprecated(
+        message = "Deprecated in favor of npmDev",
+        replaceWith = ReplaceWith("npmDev(name, version) /* must not be passed to the implementation(...) or api(...) calls */"),
+        level = DeprecationLevel.WARNING,
+    )
     fun devNpm(
         name: String,
         version: String,
     ): Dependency
 
     /**
-     * Creates a dependency to a NPM module that is added
-     * to [devDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#devdependencies).
-     *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * **Deprecated** - wrapping npm dependencies in `implementation(devNpm(...))` is deprecated.
+     * Declare them with [npmDev] instead, as a standalone statement:
      * ```
-     * kotlin.sourceSets.jsMain.dependencies {
-     *     implementation(devNpm("is-odd-even", project.file("npm/is-odd-even")))
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmDev("is-odd-even", project.file("npm/is-odd-even"))
      * }
      * ```
      *
-     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     * Scheduled for removal in Kotlin 2.7.
      *
      * @param name The NPM dependency name
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) keyword)
      */
+    @Deprecated(
+        message = "Deprecated in favor of npmDev",
+        replaceWith = ReplaceWith("npmDev(name, directory) /* must not be passed to the implementation(...) or api(...) calls */"),
+        level = DeprecationLevel.WARNING,
+    )
     fun devNpm(
         name: String,
         directory: File,
     ): Dependency
 
     /**
-     * Creates a dependency to a NPM module that is added
-     * to [devDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#devdependencies).
-     * The name of the dependency is derived either from the `package.json` file located in the [directory] or the [directory] name itself.
-     *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * **Deprecated** - wrapping npm dependencies in `implementation(devNpm(...))` is deprecated.
+     * Declare them with [npmDev] instead, as a standalone statement with an explicit dependency name:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     implementation(devNpm(project.file("npm/is-odd-even")))
+     *     npmDev("is-odd-even", project.file("npm/is-odd-even"))
      * }
      * ```
      *
-     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     * Scheduled for removal in Kotlin 2.7.
      *
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#repository) keyword)
      */
+    @Deprecated(
+        message = "Deprecated in favor of npmDev",
+        replaceWith = ReplaceWith("""npmDev("dependency-name", directory) /* must not be passed to the implementation(...) or api(...) calls */"""),
+        level = DeprecationLevel.WARNING,
+    )
     fun devNpm(
         directory: File,
     ): Dependency
 
     /**
-     * Creates a dependency to a NPM module that is added
-     * to [optionalDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#optionaldependencies).
-     *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * **Deprecated** - wrapping npm dependencies in `implementation(optionalNpm(...))` is deprecated.
+     * Declare them with [npmOptional] instead, as a standalone statement:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     implementation(optionalNpm("is-odd-even", "1.0.0"))
+     *     npmOptional("is-odd-even", "1.1.0")
      * }
      * ```
      *
-     * The version will be parsed by node-semver.
-     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
-     *
-     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     * Scheduled for removal in Kotlin 2.7.
      *
      * @param name The NPM dependency name
      * @param version The NPM dependency version
      */
+    @Deprecated(
+        message = "Deprecated in favor of npmOptional",
+        replaceWith = ReplaceWith("npmOptional(name, version) /* must not be passed to the implementation(...) or api(...) calls */"),
+        level = DeprecationLevel.WARNING,
+    )
     fun optionalNpm(
         name: String,
         version: String,
     ): Dependency
 
     /**
-     * Creates a dependency to a NPM module that is added
-     * to [optionalDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#optionaldependencies).
-     *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * **Deprecated** - wrapping npm dependencies in `implementation(optionalNpm(...))` is deprecated.
+     * Declare them with [npmOptional] instead, as a standalone statement:
      * ```
-     * kotlin.sourceSets.jsMain.dependencies {
-     *     implementation(optionalNpm("is-odd-even", project.file("npm/is-odd-even")))
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npmOptional("is-odd-even", project.file("npm/is-odd-even"))
      * }
      * ```
      *
-     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     * Scheduled for removal in Kotlin 2.7.
      *
      * @param name The NPM dependency name
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) keyword)
      */
+    @Deprecated(
+        message = "Deprecated in favor of npmOptional",
+        replaceWith = ReplaceWith("npmOptional(name, directory) /* must not be passed to the implementation(...) or api(...) calls */"),
+        level = DeprecationLevel.WARNING,
+    )
     fun optionalNpm(
         name: String,
         directory: File,
     ): Dependency
 
     /**
-     * Creates a dependency to a NPM module that is added
-     * to [optionalDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#optionaldependencies).
-     * The name of the dependency is derived either from the `package.json` file located in the [directory] or the [directory] name itself.
-     *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * **Deprecated** - wrapping npm dependencies in `implementation(optionalNpm(...))` is deprecated.
+     * Declare them with [npmOptional] instead, as a standalone statement with an explicit dependency name:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     implementation(optionalNpm(project.file("npm/is-odd-even")))
+     *     npmOptional("is-odd-even", project.file("npm/is-odd-even"))
      * }
      * ```
      *
-     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     * Scheduled for removal in Kotlin 2.7.
      *
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) keyword)
      */
+    @Deprecated(
+        message = "Deprecated in favor of npmOptional",
+        replaceWith = ReplaceWith("""npmOptional("dependency-name", directory) /* must not be passed to the implementation(...) or api(...) calls */"""),
+        level = DeprecationLevel.WARNING,
+    )
     fun optionalNpm(
         directory: File,
     ): Dependency
 
     /**
-     * Creates a dependency to a NPM module that is added
-     * to [peerDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#peerdependencies).
-     *
-     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * **Deprecated** - wrapping npm dependencies in `implementation(peerNpm(...))` is deprecated.
+     * Declare them with [npmPeer] instead, as a standalone statement:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     implementation(peerNpm("is-odd-even", "1.0.0"))
+     *     npmPeer("is-odd-even", "1.1.0")
      * }
      * ```
      *
-     * The version will be parsed by node-semver.
-     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
-     *
-     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     * Scheduled for removal in Kotlin 2.7.
      *
      * @param name The NPM dependency name
      * @param version The NPM dependency version
      */
+    @Deprecated(
+        message = "Deprecated in favor of npmPeer",
+        replaceWith = ReplaceWith("npmPeer(name, version) /* must not be passed to the implementation(...) or api(...) calls */"),
+        level = DeprecationLevel.WARNING,
+    )
     fun peerNpm(
         name: String,
         version: String,

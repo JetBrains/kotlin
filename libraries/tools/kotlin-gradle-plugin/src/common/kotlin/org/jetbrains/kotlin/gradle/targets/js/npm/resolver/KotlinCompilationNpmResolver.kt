@@ -208,6 +208,7 @@ class KotlinCompilationNpmResolver(
 
         private val visitedDependencies = mutableSetOf<ResolvedDependency>()
 
+        @Suppress("DEPRECATION")
         fun visit(configuration: Configuration) {
             configuration.resolvedConfiguration.firstLevelModuleDependencies.forEach {
                 visitDependency(it)

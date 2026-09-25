@@ -15,6 +15,14 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_J
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import java.io.File
 
+@Suppress("DEPRECATION")
+internal typealias NpmDependencyDeprecated = NpmDependency
+
+@Suppress("DEPRECATION")
+internal typealias NpmDependencyScopeDeprecated = NpmDependency.Scope
+
+@Deprecated("Use KotlinNpmDependency instead")
+@Suppress("DEPRECATION") // the deprecated Scope is a part of this deprecated class
 data class NpmDependency(
     val objectFactory: ObjectFactory,
     val scope: Scope = Scope.NORMAL,
@@ -23,6 +31,7 @@ data class NpmDependency(
 ) : FileCollectionDependency,
     SelfResolvingDependencyInternal {
 
+    @Deprecated("Use KotlinNpmDependency.Scope instead")
     enum class Scope {
         NORMAL,
         DEV,
@@ -51,6 +60,7 @@ data class NpmDependency(
     override fun getReason(): String? = reason
 }
 
+@Suppress("DEPRECATION")
 internal fun directoryNpmDependency(
     objectFactory: ObjectFactory,
     scope: NpmDependency.Scope,

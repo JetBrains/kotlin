@@ -984,6 +984,16 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDepende
 	public abstract fun npm (Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun npm (Ljava/lang/String;Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun npm (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun npmDev (Ljava/lang/String;Ljava/io/File;)V
+	public abstract fun npmDev (Ljava/lang/String;Ljava/lang/String;)V
+	public abstract fun npmDev (Ljava/lang/String;Lorg/gradle/api/provider/Provider;)V
+	public abstract fun npmDevDirectory (Ljava/lang/String;Lorg/gradle/api/provider/Provider;)V
+	public abstract fun npmOptional (Ljava/lang/String;Ljava/io/File;)V
+	public abstract fun npmOptional (Ljava/lang/String;Ljava/lang/String;)V
+	public abstract fun npmOptional (Ljava/lang/String;Lorg/gradle/api/provider/Provider;)V
+	public abstract fun npmOptionalDirectory (Ljava/lang/String;Lorg/gradle/api/provider/Provider;)V
+	public abstract fun npmPeer (Ljava/lang/String;Ljava/lang/String;)V
+	public abstract fun npmPeer (Ljava/lang/String;Lorg/gradle/api/provider/Provider;)V
 	public abstract fun optionalNpm (Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun optionalNpm (Ljava/lang/String;Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun optionalNpm (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;

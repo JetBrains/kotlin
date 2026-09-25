@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.tasks.Input
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import java.io.Serializable
 
+@InternalKotlinGradlePluginApi
 data class NpmDependencyDeclaration(
     @Input
+    @Suppress("DEPRECATION")
     val scope: NpmDependency.Scope,
     @Input
     val name: String,
@@ -17,9 +20,11 @@ data class NpmDependencyDeclaration(
     val version: String
 ) : Serializable
 
+@InternalKotlinGradlePluginApi
 fun NpmDependencyDeclaration.uniqueRepresentation() =
     "$scope $name:$version"
 
+@Suppress("DEPRECATION")
 internal fun NpmDependency.toDeclaration(): NpmDependencyDeclaration =
     NpmDependencyDeclaration(
         scope = this.scope,

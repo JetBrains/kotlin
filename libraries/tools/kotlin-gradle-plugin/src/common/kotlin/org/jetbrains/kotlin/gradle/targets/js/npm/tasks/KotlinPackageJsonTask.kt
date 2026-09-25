@@ -16,6 +16,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
@@ -67,6 +69,10 @@ abstract class KotlinPackageJsonTask :
 
     @get:Input
     internal abstract val toolsNpmDependencies: ListProperty<String>
+
+    // TODO: KT-89214 pass to the package.json task that will be published to root project
+    @get:Input
+    internal abstract val declaredNpmDependencies: ListProperty<String>
 
     /**
      * Contains `package.json` files from Kotlin/JS projects (not external dependencies) that the current project depends on.
@@ -175,6 +181,14 @@ abstract class KotlinPackageJsonTask :
                             .sorted()
                     }
                 ).disallowChanges()
+
+                compilation.allKotlinSourceSets.forAll { sourceSet ->
+                    task.declaredNpmDependencies.addAll(
+                        sourceSet.internal.npmDependenciesCollector.npmDependencies.map { dependencies ->
+                            dependencies.map { "${it.scope} ${it.name}:${it.version}" }
+                        }
+                    )
+                }
 
                 task.onlyIf {
                     it as KotlinPackageJsonTask
