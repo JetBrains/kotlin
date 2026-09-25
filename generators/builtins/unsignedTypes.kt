@@ -574,7 +574,10 @@ class UnsignedRangeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
 import kotlin.internal.*
 
 /**
- * A range of values of type `$elementType`.
+ * An iterable range of values of type `$elementType`.
+ * 
+ * The range `${elementType}Range` is a special case of increasing [${elementType}Progression] with the step equal to 1.
+ * When being iterated, the range `${elementType}Range` produces all values from [start] to [endInclusive].
  */
 @SinceKotlin("1.5")
 public class ${elementType}Range(start: $elementType, endInclusive: $elementType) : ${elementType}Progression(start, endInclusive, 1), ClosedRange<${elementType}>, OpenEndRange<${elementType}> {
@@ -593,17 +596,18 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
 
     /** 
      * Checks if the range is empty.
-     
+     *
      * The range is empty if its start value is greater than the end value.
      */
     override fun isEmpty(): Boolean = first > last
-
-    override fun equals(other: Any?): Boolean =
-        other is ${elementType}Range && (isEmpty() && other.isEmpty() ||
-                first == other.first && last == other.last)
-
-    override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * ${hashCodeConversion("first")}.toInt() + ${hashCodeConversion("last")}.toInt())
+    
+    /**
+     * Checks if this range is equal to the specified [other] value.
+     *
+     * The [other] value is considered equal to `this` if [other] is [${elementType}Progression] 
+     * and they are both [empty][isEmpty] or have the same first element [first], last element [last], and [step].
+     */
+    override fun equals(other: Any?): Boolean = super.equals(other)
 
     override fun toString(): String = "${'$'}first..${'$'}last"
 
@@ -614,7 +618,13 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
 }
 
 /**
- * A progression of values of type `$elementType`.
+ * An iterable progression of values of type `$elementType`.
+ * 
+ * A progression is defined by its first element [first], last element [last], and [step].
+ * It produces elements starting from the first element and incrementing by the step until the last element is reached.
+ * If the [step] is positive, the progression is increasing; if negative, the progression is decreasing.
+ * 
+ * A progression doesn't store all its elements in memory. Instead, it calculates elements on-the-fly as they are requested.
  */
 @SinceKotlin("1.5")
 @Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
@@ -648,12 +658,18 @@ internal constructor(
 
     /** 
      * Checks if the progression is empty.
-     
+     *
      * Progression with a positive step is empty if its first element is greater than the last element.
      * Progression with a negative step is empty if its first element is less than the last element.
      */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
+    /**
+     * Checks if the progression is equal to the specified [other].
+     *
+     * `${elementType}Progression` is considered equal to another `${elementType}Progression` if they are both [empty][isEmpty] 
+     * or have the same first element [first], last element [last], and [step].
+     */
     override fun equals(other: Any?): Boolean =
         other is ${elementType}Progression && (isEmpty() && other.isEmpty() ||
                 first == other.first && last == other.last && step == other.step)
@@ -666,7 +682,7 @@ internal constructor(
     public companion object {
         /**
          * Creates ${elementType}Progression within the specified bounds of a closed range.
-
+         *
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
          *
