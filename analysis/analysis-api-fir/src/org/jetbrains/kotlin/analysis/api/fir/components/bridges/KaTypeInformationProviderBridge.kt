@@ -53,7 +53,6 @@ internal class KaTypeInformationProviderBridge(
     override val KaType.isFunctionalInterface: Boolean
         get() = context(analysisSession) { isFunctionalInterfaceEndpoint }
 
-    @KaExperimentalApi
     override val KaType.functionTypeFamily: KaFunctionTypeFamily?
         get() = context(analysisSession) { functionTypeFamilyEndpoint as KaFunctionTypeFamily? }
 
@@ -196,7 +195,6 @@ internal class KaTypeInformationProviderBridge(
     override val KaType.defaultInitializer: String?
         get() = context(analysisSession) { defaultInitializerEndpoint }
 
-    @KaExperimentalApi
     override val builtinFunctionTypeFamilies: KaBuiltinFunctionTypeFamilies
         get() = context(analysisSession) { builtinFunctionTypeFamiliesEndpoint as KaBuiltinFunctionTypeFamilies }
 }
