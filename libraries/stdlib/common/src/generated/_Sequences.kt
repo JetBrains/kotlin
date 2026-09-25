@@ -2995,7 +2995,8 @@ public inline fun <T> Sequence<T>.sumOf(selector: (T) -> ULong): ULong {
 }
 
 /**
- * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
+ * Returns a sequence containing all the elements of this sequence, each guaranteed to be non-`null`.
+ * Throws an [IllegalArgumentException] if a `null` element is encountered while iterating the returned sequence.
  *
  * The operation is _intermediate_ and _stateless_.
  */

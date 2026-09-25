@@ -15,6 +15,14 @@ object Guards : TemplateGroupBase() {
         include(Iterables, Sequences, InvariantArraysOfObjects, Lists)
     } builder {
         doc { "Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements." }
+        specialFor(Sequences) {
+            doc {
+                """
+                Returns a sequence containing all the elements of this sequence, each guaranteed to be non-`null`.
+                Throws an [IllegalArgumentException] if a `null` element is encountered while iterating the returned sequence.
+                """
+            }
+        }
         sequenceClassification(intermediate, stateless)
         typeParam("T : Any")
         toNullableT = true
