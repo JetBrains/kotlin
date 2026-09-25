@@ -296,7 +296,10 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
         isGetter -> kmProperty.getterSignature ?: run {
             // If both getter and field signatures are absent, it's a builtin property, so we need to compute the signature and use
             // the accessor only (which must be getter, as there are no builtin mutable properties so far).
-            if (kmProperty.fieldSignature == null) kmProperty.computeJvmSignature(property.container) else null
+            // The signature is computed for the class where the property is declared, because the property type may refer to type
+            // parameters of that class (e.g. `Map.Entry.key` has type `K`), which are not resolvable in a subclass where the property
+            // is inherited as a fake override.
+            if (kmProperty.fieldSignature == null) kmProperty.computeJvmSignature(property.originalContainer) else null
         }
         else -> kmProperty.setterSignature
     }
