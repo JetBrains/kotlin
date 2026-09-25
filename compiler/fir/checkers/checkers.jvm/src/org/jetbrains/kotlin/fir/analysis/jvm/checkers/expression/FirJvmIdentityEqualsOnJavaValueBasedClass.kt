@@ -26,6 +26,8 @@ internal object FirJvmIdentityEqualsOnJavaValueBasedClass : FirEqualityOperatorC
         require(arguments.size == 2) { "Expected arguments of size 2" }
 
         if (arguments.any { it.resolvedType.isNullableNothing }) return
+        // Identity comparisons of value classes are reported by `FirEqualityCompatibilityChecker`.
+        if (arguments.any { it.resolvedType.isJavaValueClass() }) return
         for (arg in arguments) {
             val type = arg.resolvedType
             if (type.isJavaValueBasedClass()) {
