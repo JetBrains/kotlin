@@ -446,7 +446,7 @@ public inline fun String.filter(predicate: (Char) -> Boolean): String {
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  * 
- * @sample samples.collections.Collections.Filtering.filterIndexed
+ * @sample samples.text.Strings.filterIndexed
  */
 public inline fun CharSequence.filterIndexed(predicate: (index: Int, Char) -> Boolean): CharSequence {
     return filterIndexedTo(StringBuilder(), predicate)
@@ -457,7 +457,7 @@ public inline fun CharSequence.filterIndexed(predicate: (index: Int, Char) -> Bo
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  * 
- * @sample samples.collections.Collections.Filtering.filterIndexed
+ * @sample samples.text.Strings.filterIndexed
  */
 public inline fun String.filterIndexed(predicate: (index: Int, Char) -> Boolean): String {
     return filterIndexedTo(StringBuilder(), predicate).toString()
@@ -468,7 +468,7 @@ public inline fun String.filterIndexed(predicate: (index: Int, Char) -> Boolean)
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  * 
- * @sample samples.collections.Collections.Filtering.filterIndexedTo
+ * @sample samples.text.Strings.filterIndexedTo
  */
 @IgnorableReturnValue
 public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C {
