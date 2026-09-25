@@ -146,7 +146,12 @@ class CrossModuleDependenciesResolver(private val moduleKind: ModuleKind, privat
                         continue
                     }
                     val name = header.nameBindings[tag] ?: "<unknown name>"
-                    error("Internal error: cannot find external signature '$tag' for name '$name' in module ${header.moduleName}")
+                    error(
+                        """
+                        Internal error: cannot find external signature '$tag' for name '$name' in module ${header.moduleName}.
+                        It is likely that the declaration with this signature has been removed by DCE while there still were usages, which often indicates that the DCE logic is too aggressive and needs adjustment.
+                        """.trimIndent()
+                    )
                 }
 
                 builder.imports += CrossModuleRef(fromModuleBuilder, tag)

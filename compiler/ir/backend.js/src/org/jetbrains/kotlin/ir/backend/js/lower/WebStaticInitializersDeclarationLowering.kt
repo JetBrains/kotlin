@@ -10,15 +10,9 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.correspondingField
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
@@ -137,7 +131,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
                 // A companion object is initialized together with its container, so the container needs
                 // a static_init as soon as the companion has anything observable to initialize. Otherwise, we omit it to
                 // not blow up the bundle size.
-                is IrClass if it.isCompanion && !it.isInitializersFreeClass() -> true
+                is IrClass if it.isCompanion && !it.isInitializersFreeObject() -> true
                 else -> false
             }
         }
@@ -275,13 +269,17 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         is IrProperty if isReal && modality != Modality.ABSTRACT && (getter ?: setter)?.dispatchReceiverParameter != null -> true
         else -> false // nested classes, companion object, fields, etc. don't count
     }
+}
 
-    private fun IrClass.isInitializersFreeClass(): Boolean {
-        return when {
-            superTypes.any { !it.isAny() } -> false
-            declarations.any { it is IrField } -> false
-            declarations.any { it is IrAnonymousInitializer } -> false
-            else -> true
-        }
+/**
+ * A conservative estimate of whether it is safe to make this object eagerly initialized.
+ */
+internal fun IrClass.isInitializersFreeObject(): Boolean {
+    // TODO: use a smarter heuristic, like in PurifyObjectInstanceGettersLowering
+    return when {
+        superTypes.any { !it.isAny() } -> false
+        declarations.any { it is IrField && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE } -> false
+        declarations.any { it is IrAnonymousInitializer } -> false
+        else -> true
     }
 }
