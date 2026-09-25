@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.konan.ir.annotations.BindReverseBridgeToMeth
 import org.jetbrains.kotlin.backend.konan.ir.annotations.allBindReverseBridgeToMethod
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmCallable
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedObjCReverseBridge
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdapter
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdapter.Companion.KotlinToObjCMethodAdapter
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
@@ -25,18 +27,36 @@ import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.utils.addToStdlib.takeIfNotEmpty
 
 /**
+ * A resolved `@BindReverseBridgeToMethod` annotation: the place of the overridden method in the class layout,
+ * plus the bridge function to dispatch to.
+ */
+internal class ReverseBridgeAdapter(
+        val selector: String,
+        val itablePlace: ClassLayoutBuilder.InterfaceTablePlace,
+        val vtableIndex: Int,
+        val kotlinImpl: LlvmCallable,
+)
+
+internal fun CodeGenerator.KotlinToObjCMethodAdapter(adapter: ReverseBridgeAdapter) = KotlinToObjCMethodAdapter(
+        selector = adapter.selector,
+        itablePlace = adapter.itablePlace,
+        vtableIndex = adapter.vtableIndex,
+        kotlinImpl = adapter.kotlinImpl.toConstPointer(),
+)
+
+/**
  * Collects `@BindReverseBridgeToMethod` annotations from the given file,
- * grouped by target class, and resolves each to a [KotlinToObjCMethodAdapter]
+ * grouped by target class, and resolves each to a [ReverseBridgeAdapter]
  * containing the vtable index and bridge function pointer.
  *
  * The result is used by [processBindClassToObjCNameAnnotations] to create
  * combined type adapters with both class binding and reverse bridges.
  */
-internal fun CodeGenerator.collectReverseBridgeAdapters(file: IrFile): Map<IrClass, List<KotlinToObjCMethodAdapter>> {
+internal fun CodeGenerator.collectReverseBridgeAdapters(file: IrFile): Map<IrClass, List<ReverseBridgeAdapter>> {
     val bridgesByClass = file.allBindReverseBridgeToMethod.groupBy { it.targetClass }
     return bridgesByClass.mapValues { [irClass, bridges] ->
         val layoutBuilder = generationState.context.getLayoutBuilder(irClass)
-        bridges.mapNotNull { bridge ->
+        bridges.map { bridge ->
             resolveReverseBridgeAdapter(irClass, layoutBuilder, bridge) ?: error(
                     "Cannot bind ${bridge.bridgeFunction.render()} to '${bridge.targetMethod}'"
             )
@@ -48,7 +68,7 @@ private fun CodeGenerator.resolveReverseBridgeAdapter(
         irClass: IrClass,
         layoutBuilder: ClassLayoutBuilder,
         bridge: BindReverseBridgeToMethod,
-): KotlinToObjCMethodAdapter? {
+): ReverseBridgeAdapter? {
     val candidates = irClass.simpleFunctions()
             .filter { it.name.asString() == bridge.targetMethod }
             .map { with(layoutBuilder) { it.getLoweredVersion() } }
@@ -73,11 +93,11 @@ private fun CodeGenerator.resolveReverseBridgeAdapter(
         ClassLayoutBuilder.InterfaceTablePlace.INVALID
     }
 
-    return KotlinToObjCMethodAdapter(
+    return ReverseBridgeAdapter(
             selector = bridge.targetMethod,
             itablePlace = itablePlace,
             vtableIndex = vtableIndex,
-            kotlinImpl = getLlvmFunctionFrom(bridge.bridgeFunction).toConstPointer(),
+            kotlinImpl = getLlvmFunctionFrom(bridge.bridgeFunction),
     )
 }
 
