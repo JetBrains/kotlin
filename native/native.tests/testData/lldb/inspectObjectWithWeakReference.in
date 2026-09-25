@@ -1,0 +1,9 @@
+b main.kt:18
+r
+fr var box
+fr var -A -P 5 box
+field_type box
+field_type box.payload
+fr var string
+fr var -A -P 5 string
+q
