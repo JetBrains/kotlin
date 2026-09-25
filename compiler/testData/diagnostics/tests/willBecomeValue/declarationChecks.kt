@@ -29,6 +29,7 @@ class A(
 @WillBecomeValue
 object O {
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>val field<!> = 3
+    override fun toString(): String = "O"
 }
 
 @WillBecomeValue

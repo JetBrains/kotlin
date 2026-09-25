@@ -36,6 +36,8 @@ object FirWillBecomeValueDeclarationChecker : FirRegularClassChecker(MppCheckerK
         OperatorNameConventions.TO_STRING,
     )
 
+    private val identityBasedObjectMemberNames = listOf(OperatorNameConventions.TO_STRING)
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val annotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.WillBecomeValue, context.session) ?: return
@@ -54,16 +56,20 @@ object FirWillBecomeValueDeclarationChecker : FirRegularClassChecker(MppCheckerK
      * inherits the identity-based implementations from 'Any' would silently change behavior. 'Any.toString' is
      * identity-based as well: it renders the identity hash code.
      *
-     * Only final classes are checked. An abstract or sealed value class has no 'equals'/'hashCode' of its own; they come
-     * from its concrete subclasses. And for an object there is a single instance, so identity comparison already
-     * coincides with the structural one.
+     * Only final classes and objects are checked. An abstract or sealed value class has no 'equals'/'hashCode' of its
+     * own; they come from its concrete subclasses. And for an object there is a single instance, so the identity-based
+     * 'equals'/'hashCode' already coincide with the structural ones, and only 'toString' is checked.
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkIdentityBasedMembers(declaration: FirRegularClass) {
-        if (declaration.classKind != ClassKind.CLASS || !declaration.isFinal) return
+        val memberNames = when (declaration.classKind) {
+            ClassKind.CLASS if declaration.isFinal -> identityBasedMemberNames
+            ClassKind.OBJECT -> identityBasedObjectMemberNames
+            else -> return
+        }
 
         val classScope = declaration.unsubstitutedScope()
-        for (name in identityBasedMemberNames) {
+        for (name in memberNames) {
             var isInheritedFromAny = false
             classScope.processFunctionsByName(name) {
                 if (!it.isMethodOfAny) return@processFunctionsByName
