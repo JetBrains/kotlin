@@ -9,7 +9,7 @@ public class Owner(val a: Int)
 
 // FILE: test.kt
 fun usage() {
-    val builder = Owner.<!INVISIBLE_REFERENCE!>OwnerBuilder<!>()
+    val builder = Owner.OwnerBuilder()
     builder.a(1).build()
     val justBuilder: Owner.OwnerBuilder? = null
     justBuilder?.a(2)?.build()

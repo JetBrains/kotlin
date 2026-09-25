@@ -156,7 +156,7 @@ public fun FirExtension.createDefaultPrivateConstructor(
     generateDelegatedNoArgConstructorCall: Boolean = true
 ): FirConstructor {
     return createConstructor(owner, key, isPrimary = true, generateDelegatedNoArgConstructorCall) {
-        visibility = Visibilities.Private
+        visibility = Visibilities.Public
     }
 }
 
