@@ -196,7 +196,6 @@ class BtaReplCompiler(
         operation.compilerArguments.let { arguments ->
             arguments[JvmCompilerArguments.CLASSPATH] = additionalClasspath + priorOutputDirs
             arguments[CommonCompilerArguments.X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = true
-            arguments[CommonCompilerArguments.X_USE_FIR_LT] = false // TODO: remove after finishing KT-77583
             arguments[CommonCompilerArguments.X_SUPPRESS_VERSION_WARNINGS] = true
             arguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(scriptingPlugin(configurationFile))
         }
