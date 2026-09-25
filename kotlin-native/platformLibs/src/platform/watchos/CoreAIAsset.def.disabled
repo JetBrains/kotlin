@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.CoreAIAsset
+
+modules = CoreAIAsset
+compilerOpts = -framework CoreAIAsset
+linkerOpts = -framework CoreAIAsset
+#Disabled: Unavailable

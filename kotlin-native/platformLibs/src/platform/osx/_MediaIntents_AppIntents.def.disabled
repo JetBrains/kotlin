@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._MediaIntents_AppIntents
+
+modules = _MediaIntents_AppIntents
+compilerOpts = -framework _MediaIntents_AppIntents
+linkerOpts = -framework _MediaIntents_AppIntents
+#Disabled: Unavailable

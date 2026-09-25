@@ -16,7 +16,7 @@ headers = alloca.h ar.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.
 compilerOpts.macos_x64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -D_DARWIN_C_SOURCE -D__CCT_ENABLE_USER_SPACE
 compilerOpts.macos_arm64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_C_SOURCE -D__CCT_ENABLE_USER_SPACE
 # -D_ANSI_SOURCE, sigh, breaks user_addr_t
-excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN add_profil             \
+excludedFunctions = getumask fchflagsat dup3 pipe2 KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN add_profil             \
                     addrsel_policy_init                                             \
 		    in6addr_linklocal_allv2routers                                  \
 		    pfctlinput regwnexec_l res_send_setqhook res_send_setrhook      \
