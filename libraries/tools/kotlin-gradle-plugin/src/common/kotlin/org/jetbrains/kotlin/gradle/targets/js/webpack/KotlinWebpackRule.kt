@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.json.JsonElement
 import org.gradle.api.Named
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
+import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import java.io.StringWriter
 import javax.inject.Inject
 
 /**
@@ -140,9 +141,7 @@ constructor(
         )
     }
 
-    protected fun json(obj: Any) = StringWriter().also {
-        GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
-    }.toString()
+    protected fun json(obj: Any): String = KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
 
     @Internal
     override fun getName(): String = name
@@ -169,7 +168,7 @@ constructor(
          */
         val loader: String,
         /**
-         * Loader options map if any. Will be converted to JSON object via Gson.
+         * Loader options map if any. Will be converted to a JSON object.
          */
         val options: Map<String, Any?> = mapOf(),
         /**
@@ -178,3 +177,4 @@ constructor(
         val prerequisites: List<String> = listOf(),
     )
 }
+
