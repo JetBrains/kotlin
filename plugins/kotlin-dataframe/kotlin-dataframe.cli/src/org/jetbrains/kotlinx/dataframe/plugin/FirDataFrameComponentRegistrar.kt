@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlinx.dataframe.plugin.DataFrameConfigurationKeys.DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES
 import org.jetbrains.kotlinx.dataframe.plugin.DataFrameConfigurationKeys.DATAFRAME_PATH
+import org.jetbrains.kotlinx.dataframe.plugin.DataFrameConfigurationKeys.DATAFRAME_POLYMORPHIC_DATA_SCHEMAS
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.*
 
 class FirDataFrameExtensionRegistrar(
@@ -23,6 +24,7 @@ class FirDataFrameExtensionRegistrar(
     val dumpSchemas: Boolean,
     val disableTopLevelExtensionsGenerator: Boolean = false,
     val contextReader: ImportedSchemasData.Reader?,
+    val polymorphicDataSchemas: Boolean = false,
 ) : FirExtensionRegistrar() {
     @OptIn(FirExtensionApiInternals::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
@@ -31,10 +33,13 @@ class FirDataFrameExtensionRegistrar(
         }
         +::ReturnTypeBasedReceiverInjector
         +{ it: FirSession ->
-            FunctionCallTransformer(it, isTest)
+            FunctionCallTransformer(it, isTest, polymorphicDataSchemas)
         }
         +::TokenContentGenerator
         +::DataRowSchemaSupertype
+        if (polymorphicDataSchemas) {
+            +::PolymorphicDataSchemasService
+        }
         +{ it: FirSession ->
             ExpressionAnalysisAdditionalChecker(it, isTest, dumpSchemas)
         }
@@ -67,7 +72,8 @@ class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
                 isTest = false,
                 dumpSchemas = true,
                 configuration[DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES] == true,
-                contextReader = ImportedSchemasData.getReader(path)
+                contextReader = ImportedSchemasData.getReader(path),
+                polymorphicDataSchemas = configuration[DATAFRAME_POLYMORPHIC_DATA_SCHEMAS] == true,
             )
         )
 
@@ -87,6 +93,10 @@ object DataFrameConfigurationKeys {
     // Path to the directory with schemas JSON.
     val DATAFRAME_PATH: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create("DATAFRAME_PATH")
+
+    // Add compatible @DataSchema interfaces of the module as supertypes of the generated schema markers.
+    val DATAFRAME_POLYMORPHIC_DATA_SCHEMAS: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("DATAFRAME_POLYMORPHIC_DATA_SCHEMAS")
 }
 
 class DataFrameCommandLineProcessor : CommandLineProcessor {
@@ -104,12 +114,20 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
             "Path to a directory with dataframe schema JSON files. Should match output directory of the schema generator",
             required = false, allowMultipleOccurrences = false
         )
+
+        val POLYMORPHIC_DATA_SCHEMAS_OPTION = CliOption(
+            "polymorphicDataSchemas",
+            "true/false",
+            "Experimental: add every compatible @DataSchema interface of the module as a supertype of the generated schema markers",
+            required = false, allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId: String
         get() = DataFramePluginNames.PLUGIN_ID
 
-    override val pluginOptions: Collection<AbstractCliOption> = listOf(DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES_OPTION, SCHEMAS_OPTION)
+    override val pluginOptions: Collection<AbstractCliOption> =
+        listOf(DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES_OPTION, SCHEMAS_OPTION, POLYMORPHIC_DATA_SCHEMAS_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         return when (option) {
@@ -118,6 +136,7 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
                 value == "true"
             )
             SCHEMAS_OPTION -> configuration.put(DATAFRAME_PATH, value)
+            POLYMORPHIC_DATA_SCHEMAS_OPTION -> configuration.put(DATAFRAME_POLYMORPHIC_DATA_SCHEMAS, value == "true")
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }

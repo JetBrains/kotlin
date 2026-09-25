@@ -82,7 +82,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.DataFrameScope
@@ -101,6 +100,7 @@ import kotlin.math.abs
 class FunctionCallTransformer(
     session: FirSession,
     override val isTest: Boolean,
+    private val polymorphicDataSchemas: Boolean = false,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     companion object {
         const val DEFAULT_NAME = "DataFrameType"
@@ -223,6 +223,7 @@ class FunctionCallTransformer(
 
             val tokenFir = token.toRegularClassSymbol()!!.fir
             tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol }, rootSchemaSymbol)
+            addCompatibleDataSchemaSupertypes(tokenFir, dataFrameSchema)
 
             return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir)) { tokenFir.generatedClasses = it }
         }
@@ -293,6 +294,25 @@ class FunctionCallTransformer(
                 keyToken.generatedClasses = it
             }
         }
+    }
+
+    /**
+     * Proof of concept for [KDF#2097](https://github.com/Kotlin/dataframe/issues/2097).
+     *
+     * Adds every `@DataSchema` interface of the module that [schema] is compatible with as a supertype of the local
+     * [marker] class generated for the refined call. Only the marker itself is touched, the schema and scope classes
+     * behind it keep their original supertypes.
+     *
+     * @see PolymorphicDataSchemasService
+     */
+    private fun addCompatibleDataSchemaSupertypes(marker: FirRegularClass, schema: PluginDataFrameSchema?) {
+        if (!polymorphicDataSchemas || schema == null) return
+        val newSupertypes = session.polymorphicDataSchemasService.compatibleDataSchemas(schema)
+        if (newSupertypes.isEmpty()) return
+        val resolvedNewSuperTypes = newSupertypes.map { buildResolvedTypeRef { coneType = it } }
+        marker.replaceSuperTypeRefs(
+            marker.superTypeRefs + resolvedNewSuperTypes
+        )
     }
 
     private fun buildNewTypeArgument(argument: ConeTypeProjection?, name: Name, hash: String, callSite: FirElement): FirRegularClass {
