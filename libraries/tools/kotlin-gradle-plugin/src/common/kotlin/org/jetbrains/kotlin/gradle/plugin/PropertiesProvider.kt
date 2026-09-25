@@ -158,6 +158,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val incrementalWasm: Boolean
         get() = booleanProperty("kotlin.incremental.wasm") ?: true
 
+    /**
+     * Enables the metadata-based TypeScript declaration generator for Kotlin/JS.
+     */
+    val jsRichTypeScriptGenerator: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_JS_RICH_TYPESCRIPT_GENERATOR) ?: true
+
     val incrementalNative: Boolean?
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_INCREMENTAL_COMPILATION)
 
@@ -875,6 +881,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = property("kotlin.mpp.enableOptimisticNumberCommonization")
         val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = property("kotlin.mpp.enablePlatformIntegerCommonization")
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
+        val KOTLIN_JS_RICH_TYPESCRIPT_GENERATOR = property("kotlin.js.rich-typescript-generator")
         val KOTLIN_PLAYWRIGHT_BROWSERS_PATH = property("kotlin.gradle.playwright.browsers.path")
         val KOTLIN_JS_NODEJS_TOOLCHAIN = property("kotlin.js.nodejs.toolchain")
         val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_INSTALL_PATH = property("kotlin.js.nodejs.toolchain.default.install.path")
