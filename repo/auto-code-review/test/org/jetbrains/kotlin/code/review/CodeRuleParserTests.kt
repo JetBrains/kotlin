@@ -171,10 +171,26 @@ class CodeRuleParserTests {
     }
 
     @Test
+    fun `rule without label is rejected`() {
+        val text = """
+            # Rule
+            
+            Rule text
+        """.trimIndent()
+
+        assertRuleIsRejected(
+            text,
+            "expected `Applies to:` right after the rule name", "Rule text"
+        )
+    }
+
+    @Test
     fun `label after rule text is rejected`() {
         val text = """
             # Rule
             
+            Applies to: `test`
+
             Rule text
             
             Applies to: `src`
