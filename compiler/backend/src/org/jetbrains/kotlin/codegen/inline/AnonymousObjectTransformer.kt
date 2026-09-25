@@ -46,6 +46,7 @@ class AnonymousObjectTransformer(
         val innerClassNodes = ArrayList<InnerClassNode>()
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
         val methodsToTransform = ArrayList<MethodNode>()
+        val fieldsToTransform = ArrayList<FieldNode>()
         val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
         lateinit var superClassName: String
         var debugFileName: String? = null
@@ -106,11 +107,8 @@ class AnonymousObjectTransformer(
 
             override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
                 addUniqueField(name)
-                return if (isCapturedFieldName(name)) {
-                    null
-                } else {
-                    classBuilder.newField(null, access, name, desc, signature, value)
-                }
+                if (isCapturedFieldName(name)) return null
+                return FieldNode(access, name, desc, signature, value).also { fieldsToTransform.add(it) }
             }
 
             override fun visitSource(source: String, debug: String?) {
@@ -175,6 +173,13 @@ class AnonymousObjectTransformer(
 
         for ([oldType, newType] in transformationResult.getChangedTypes()) {
             inliningContext.typeRemapper.addAdditionalMappings(oldType, newType)
+        }
+
+        for (field in fieldsToTransform) {
+            field.accept(object : ClassVisitor(Opcodes.API_VERSION) {
+                override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?) =
+                    classBuilder.newField(null, access, name, desc, signature, value)
+            })
         }
 
         deferringMethods.forEach { method ->
