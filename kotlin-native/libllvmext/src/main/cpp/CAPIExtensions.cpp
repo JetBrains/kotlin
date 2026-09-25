@@ -20,17 +20,34 @@ static TargetMachine *unwrap(LLVMTargetMachineRef P) {
   return reinterpret_cast<TargetMachine *>(P);
 }
 
-void LLVMKotlinInitializeTargets() {
+namespace {
+
+class KotlinTargetInitializer {
+public:
+  KotlinTargetInitializer() {
 #define INIT_LLVM_TARGET(TargetName)                                           \
   LLVMInitialize##TargetName##TargetInfo();                                    \
   LLVMInitialize##TargetName##Target();                                        \
   LLVMInitialize##TargetName##TargetMC();
 
-  INIT_LLVM_TARGET(AArch64)
-  INIT_LLVM_TARGET(ARM)
-  INIT_LLVM_TARGET(X86)
+    INIT_LLVM_TARGET(AArch64)
+    INIT_LLVM_TARGET(ARM)
+    INIT_LLVM_TARGET(X86)
 
 #undef INIT_LLVM_TARGET
+  }
+
+  ~KotlinTargetInitializer() = default;
+
+  KotlinTargetInitializer(const KotlinTargetInitializer &) = delete;
+  KotlinTargetInitializer& operator=(const KotlinTargetInitializer &) = delete;
+};
+
+}
+
+void LLVMKotlinInitializeTargets() {
+  static KotlinTargetInitializer ensureInitialized;
+  // We only want the `KotlinTargetInitializer` to be called once.
 }
 
 void LLVMKotlinSetNoTailCall(LLVMValueRef Call) {
