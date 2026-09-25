@@ -1,0 +1,44 @@
+FILE fqName:<root> fileName:/main.kt
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:container type:<root>.IdContainer [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.IdContainer' type=<root>.IdContainer origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:id type:kotlin.Int visibility:public/*package*/ declared in <root>.IdContainer' type=kotlin.Unit superQualifierSymbol=<root>.IdContainer origin=EQ
+        receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+        value: CONST Int type=kotlin.Int value=123
+      VAR name:i type:kotlin.Int [val]
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:id type:kotlin.Int visibility:public/*package*/ declared in <root>.IdContainer' type=kotlin.Int superQualifierSymbol=<root>.IdContainer origin=null
+          receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:publicId type:kotlin.Int visibility:public declared in <root>.IdContainer' type=kotlin.Unit superQualifierSymbol=<root>.IdContainer origin=EQ
+        receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+        value: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:id type:kotlin.Int visibility:public/*package*/ declared in <root>.IdContainer' type=kotlin.Int superQualifierSymbol=<root>.IdContainer origin=null
+          receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:id type:kotlin.Int visibility:public/*package*/ declared in <root>.IdContainer' type=kotlin.Unit superQualifierSymbol=<root>.IdContainer origin=EQ
+        receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+        value: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:publicId type:kotlin.Int visibility:public declared in <root>.IdContainer' type=kotlin.Int superQualifierSymbol=<root>.IdContainer origin=null
+          receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+      VAR name:s type:kotlin.String [val]
+        CALL 'public open fun toString (): kotlin.String declared in <root>.IdContainer' type=kotlin.String origin=null
+          ARG <this>: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        WHEN type=kotlin.String origin=IF
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: GET_VAR 'val i: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+                  ARG arg1: CONST Int type=kotlin.Int value=123
+                then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: GET_VAR 'val s: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+                  ARG arg1: CONST String type=kotlin.String value="IdContainer(id=123, publicId=123)"
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CONST String type=kotlin.String value="OK"
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="i = "
+              GET_VAR 'val i: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+              CONST String type=kotlin.String value=" s = "
+              GET_VAR 'val s: kotlin.String declared in <root>.box' type=kotlin.String origin=null
