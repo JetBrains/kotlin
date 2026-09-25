@@ -565,19 +565,23 @@ public actual fun Double.withSign(sign: Int): Double = withSign(sign.toDouble())
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
+ *   - `Double.MAX_VALUE.ulp` is `2^971`
  *
  * @sample samples.math.MathSamples.Doubles.ulp
  * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public actual val Double.ulp: Double
-    get() = when {
-        isNaN() -> Double.NaN
-        isInfinite() -> Double.POSITIVE_INFINITY
-        this == Double.MAX_VALUE || this == -Double.MAX_VALUE -> 2.0.pow(971)
-        else -> {
-            val d = absoluteValue
-            d.nextUp() - d
+    get() {
+        val magnitude = abs(this)
+        val bits = magnitude.toRawBits()
+        // Check the exponent for +Inf & NaNs
+        return if (bits shr 52 != 0x7FFL) {
+            // If Double.MAX_VALUE return 2^971, otherwise the difference between nextDouble(magnitude) & magnitude
+            if (bits == 0x7fefffffffffffff) 2.0.pow(971) else Double.fromBits(bits + 1) - magnitude
+        } else {
+            // +Inf, -Inf & NaNs
+            magnitude
         }
     }
 
@@ -1239,7 +1243,8 @@ public actual fun Float.withSign(sign: Int): Float = withSign(sign.toFloat())
  * Special cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
- *   - `0.0.ulp` is `Float.MIN_VALUE`
+ *   - `0.0f.ulp` is `Float.MIN_VALUE`
+ *   - `Float.MAX_VALUE.ulp` is `2^104`
  *
  * @see nextUp
  * @see nextDown
@@ -1249,13 +1254,16 @@ public actual fun Float.withSign(sign: Int): Float = withSign(sign.toFloat())
  */
 @SinceKotlin("1.2")
 public val Float.ulp: Float
-    get() = when {
-        isNaN() -> Float.NaN
-        isInfinite() -> Float.POSITIVE_INFINITY
-        this == Float.MAX_VALUE || this == -Float.MAX_VALUE -> 2.0f.pow(104)
-        else -> {
-            val d = absoluteValue
-            d.nextUp() - d
+    get() {
+        val magnitude = abs(this)
+        val bits = magnitude.toRawBits()
+        // check the exponent for +Inf & NaNs
+        return if (bits shr 23 != 0xff) {
+            // if Float.MAX_VALUE return 2^104, otherwise the difference between nextFloat(magnitude) & magnitude
+            if (bits == 0x7f7fffff) 2.0f.pow(104) else Float.fromBits(bits + 1) - magnitude
+        } else {
+            // +Inf, -Inf & NaNs
+            magnitude
         }
     }
 
