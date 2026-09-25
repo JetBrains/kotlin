@@ -14,6 +14,9 @@
 
 LLVM_C_EXTERN_C_BEGIN
 
+/// Initialize all needed targets.
+///
+/// Thread-safe. And makes sure that they are initialized at most once.
 void LLVMKotlinInitializeTargets(void);
 
 void LLVMKotlinSetNoTailCall(LLVMValueRef Call);
