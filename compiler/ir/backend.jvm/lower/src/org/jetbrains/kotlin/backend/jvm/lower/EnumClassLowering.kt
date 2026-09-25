@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -78,11 +77,10 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
 
     override fun lower(irClass: IrClass) {
         if (!irClass.isEnumClass) return
-        // Also protected by API version check as it relies on EnumEntries in standard library
-        EnumClassTransformer(irClass, context.config.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)).run()
+        EnumClassTransformer(irClass).run()
     }
 
-    private inner class EnumClassTransformer(private val irClass: IrClass, private val supportsEnumEntries: Boolean) {
+    private inner class EnumClassTransformer(private val irClass: IrClass) {
         private val loweredEnumConstructors = hashMapOf<IrConstructorSymbol, IrConstructor>()
         private val loweredEnumConstructorParameters = hashMapOf<IrValueParameterSymbol, IrValueParameter>()
         private val enumEntryOrdinals = hashMapOf<IrEnumEntry, Int>()
@@ -106,18 +104,8 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
             // Construct the synthetic $VALUES field, which contains an array of all enum entries by calling $values()
             val valuesField = buildValuesField(valuesHelperFunction)
 
-            val entriesField = when {
-                !irClass.hasGetEntriesFunction -> {
-                    null
-                }
-                !supportsEnumEntries -> {
-                    error("The frontend must have checked if the feature is supported while emitting the IR")
-                }
-                else -> {
-                    // Add synthetic $ENTRIES field and bind its initializer to `EnumEntries($VALUES)`.
-                    buildEntriesField(valuesField)
-                }
-            }
+            // Add synthetic $ENTRIES field and bind its initializer to `EnumEntries($VALUES)`.
+            val entriesField = if (irClass.hasGetEntriesFunction) buildEntriesField(valuesField) else null
 
             // Add synthetic parameters to enum constructors and implement the values and valueOf functions
             irClass.transformChildrenVoid(EnumClassDeclarationsTransformer(valuesField, entriesField))

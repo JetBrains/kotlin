@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.ir.addJavaLangDeprecatedAnnotation
-import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGetField
@@ -53,16 +49,6 @@ internal class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweri
         } else {
             with(context.createIrBuilder(publicInstanceField.symbol)) {
                 publicInstanceField.initializer = irExprBody(irCall(constructor.symbol))
-            }
-        }
-
-        // Mark object instance field as deprecated if the object visibility is private or protected,
-        // and ProperVisibilityForCompanionObjectInstanceField language feature is not enabled.
-        if (!context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
-            (irClass.visibility == DescriptorVisibilities.PRIVATE || irClass.visibility == DescriptorVisibilities.PROTECTED)
-        ) {
-            with(context.createJvmIrBuilder(irClass.symbol)) {
-                publicInstanceField.addJavaLangDeprecatedAnnotation()
             }
         }
 
