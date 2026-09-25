@@ -12,31 +12,33 @@ package samples.generated.alldistinct
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllDistinctDoubleArraySamples {
 
     @Sample
     fun allDistinct() {
-        assertPrints(doubleArrayOf().allDistinct(), "true")
-        assertPrints(doubleArrayOf(1.0).allDistinct(), "true")
+        assertTrue(doubleArrayOf().allDistinct())
+        assertTrue(doubleArrayOf(1.0).allDistinct())
 
         val distinctValues = doubleArrayOf(1.0, 2.0, 3.0)
-        assertPrints(distinctValues.allDistinct(), "true")
+        assertTrue(distinctValues.allDistinct())
 
         val duplicateValues = doubleArrayOf(1.0, 2.0, 1.0)
-        assertPrints(duplicateValues.allDistinct(), "false")
+        assertFalse(duplicateValues.allDistinct())
 
-        assertPrints(doubleArrayOf(Double.NaN, Double.NaN).allDistinct(), "false")
-        assertPrints(doubleArrayOf(0.0, -0.0).allDistinct(), "true")
+        assertFalse(doubleArrayOf(Double.NaN, Double.NaN).allDistinct())
+        assertTrue(doubleArrayOf(0.0, -0.0).allDistinct())
     }
 
     @Sample
     fun allDistinctBy() {
-        assertPrints(doubleArrayOf().allDistinctBy { it * it }, "true")
-        assertPrints(doubleArrayOf(1.0).allDistinctBy { it * it }, "true")
+        assertTrue(doubleArrayOf().allDistinctBy { it * it })
+        assertTrue(doubleArrayOf(1.0).allDistinctBy { it * it })
 
         val values = doubleArrayOf(1.0, -1.0, 2.0)
-        assertPrints(values.allDistinctBy { it * it }, "false")
-        assertPrints(values.allDistinctBy { it }, "true")
+        assertFalse(values.allDistinctBy { it * it })
+        assertTrue(values.allDistinctBy { it })
     }
 }

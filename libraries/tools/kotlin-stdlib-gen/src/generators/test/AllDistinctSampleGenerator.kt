@@ -39,15 +39,15 @@ object AllDistinctSampleGenerator {
         val typeName = primitive.name
         val suffix = if (primitive == PrimitiveType.Float) "f" else ""
         return "\n\n" +
-                "        assertPrints(${receiverFactory("$typeName.NaN", "$typeName.NaN")}.allDistinct(), \"false\")\n" +
-                "        assertPrints(${receiverFactory("0.0$suffix", "-0.0$suffix")}.allDistinct(), \"true\")"
+                "        assertFalse(${receiverFactory("$typeName.NaN", "$typeName.NaN")}.allDistinct())\n" +
+                "        assertTrue(${receiverFactory("0.0$suffix", "-0.0$suffix")}.allDistinct())"
     }
 
     private fun charSequenceShowcase(family: Family): String {
         if (family != CharSequences) return ""
         return "\n" +
                 "        // 😱 and 😲 are represented by pairs of UTF-16 characters with the same first character, thus they are not all distinct\n" +
-                "        assertPrints(\"😱😲\".allDistinct(), \"false\")"
+                "        assertFalse(\"😱😲\".allDistinct())"
     }
 
     private fun BufferedWriter.writeAllDistinctSample(
@@ -65,10 +65,10 @@ object AllDistinctSampleGenerator {
             """
     @Sample
     fun allDistinct() {
-        assertPrints(${receiverFactory()}.allDistinct(), "true")
-        assertPrints(${receiverFactory(single)}.allDistinct(), "true")
-$distinctDecl        assertPrints($distinctRef.allDistinct(), "true")
-$duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$showcase
+        assertTrue(${receiverFactory()}.allDistinct())
+        assertTrue(${receiverFactory(single)}.allDistinct())
+$distinctDecl        assertTrue($distinctRef.allDistinct())
+$duplicateDecl        assertFalse($duplicateRef.allDistinct())$showcase
     }"""
         )
     }
@@ -83,14 +83,15 @@ $duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$showcas
         val firstSelector = config.sampleSelectorAssertions.first().first
         val [valuesDecl, valuesRef] = valOrInline(inlineReceivers, "values", receiverFactory(selectorValues))
         val assertionLines = config.sampleSelectorAssertions.joinToString("\n") { [selector, expected] ->
-            "        assertPrints($valuesRef.allDistinctBy { $selector }, \"$expected\")"
+            val assertion = if (expected) "assertTrue" else "assertFalse"
+            "        $assertion($valuesRef.allDistinctBy { $selector })"
         }
         appendLine(
             """
     @Sample
     fun allDistinctBy() {
-        assertPrints(${receiverFactory()}.allDistinctBy { $firstSelector }, "true")
-        assertPrints(${receiverFactory(singleElement)}.allDistinctBy { $firstSelector }, "true")
+        assertTrue(${receiverFactory()}.allDistinctBy { $firstSelector })
+        assertTrue(${receiverFactory(singleElement)}.allDistinctBy { $firstSelector })
 $valuesDecl$assertionLines
     }"""
         )

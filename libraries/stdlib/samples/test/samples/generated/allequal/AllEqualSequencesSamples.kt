@@ -12,22 +12,24 @@ package samples.generated.allequal
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllEqualSequencesSamples {
 
     @Sample
     fun allEqual() {
-        assertPrints(sequenceOf<String>().allEqual(), "true")
-        assertPrints(sequenceOf("apple").allEqual(), "true")
-        assertPrints(sequenceOf("apple", "apple", "apple").allEqual(), "true")
-        assertPrints(sequenceOf("apple", "apple", "orange").allEqual(), "false")
+        assertTrue(sequenceOf<String>().allEqual())
+        assertTrue(sequenceOf("apple").allEqual())
+        assertTrue(sequenceOf("apple", "apple", "apple").allEqual())
+        assertFalse(sequenceOf("apple", "apple", "orange").allEqual())
     }
 
     @Sample
     fun allEqualBy() {
-        assertPrints(sequenceOf<String>().allEqualBy { it.length }, "true")
-        assertPrints(sequenceOf("apple").allEqualBy { it.length }, "true")
-        assertPrints(sequenceOf("apple", "mango", "peach").allEqualBy { it.length }, "true")
-        assertPrints(sequenceOf("apple", "mango", "peach").allEqualBy { it }, "false")
+        assertTrue(sequenceOf<String>().allEqualBy { it.length })
+        assertTrue(sequenceOf("apple").allEqualBy { it.length })
+        assertTrue(sequenceOf("apple", "mango", "peach").allEqualBy { it.length })
+        assertFalse(sequenceOf("apple", "mango", "peach").allEqualBy { it })
     }
 }

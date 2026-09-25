@@ -38,7 +38,7 @@ object AllEqualSampleGenerator {
         if (family != CharSequences) return ""
         return "\n" +
                 "        // 😲 is represented by a pair of different UTF-16 characters, thus the characters of \"😲😲\" are not all equal\n" +
-                "        assertPrints(\"😲😲\".allEqual(), \"false\")"
+                "        assertFalse(\"😲😲\".allEqual())"
     }
 
     private fun BufferedWriter.writeAllEqualSample(
@@ -55,10 +55,10 @@ object AllEqualSampleGenerator {
             """
     @Sample
     fun allEqual() {
-        assertPrints(${receiverFactory()}.allEqual(), "true")
-        assertPrints(${receiverFactory(equal)}.allEqual(), "true")
-$sameDecl        assertPrints($sameRef.allEqual(), "true")
-$mixedDecl        assertPrints($mixedRef.allEqual(), "false")${charSequenceShowcase(family)}
+        assertTrue(${receiverFactory()}.allEqual())
+        assertTrue(${receiverFactory(equal)}.allEqual())
+$sameDecl        assertTrue($sameRef.allEqual())
+$mixedDecl        assertFalse($mixedRef.allEqual())${charSequenceShowcase(family)}
     }"""
         )
     }
@@ -73,14 +73,15 @@ $mixedDecl        assertPrints($mixedRef.allEqual(), "false")${charSequenceShowc
         val firstSelector = config.sampleSelectorAssertions.first().first
         val [valuesDecl, valuesRef] = valOrInline(inlineReceivers, "values", receiverFactory(selectorValues))
         val assertionLines = config.sampleSelectorAssertions.joinToString("\n") { [selector, expected] ->
-            "        assertPrints($valuesRef.allEqualBy { $selector }, \"$expected\")"
+            val assertion = if (expected) "assertTrue" else "assertFalse"
+            "        $assertion($valuesRef.allEqualBy { $selector })"
         }
         appendLine(
             """
     @Sample
     fun allEqualBy() {
-        assertPrints(${receiverFactory()}.allEqualBy { $firstSelector }, "true")
-        assertPrints(${receiverFactory(singleElement)}.allEqualBy { $firstSelector }, "true")
+        assertTrue(${receiverFactory()}.allEqualBy { $firstSelector })
+        assertTrue(${receiverFactory(singleElement)}.allEqualBy { $firstSelector })
 $valuesDecl$assertionLines
     }"""
         )

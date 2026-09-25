@@ -57,6 +57,8 @@ fun BufferedWriter.writeSampleHeader(packageName: String, generator: String, cla
     if (needsAbsImport) {
         appendLine("import kotlin.math.abs")
     }
+    appendLine("import kotlin.test.assertFalse")
+    appendLine("import kotlin.test.assertTrue")
     appendLine()
     appendLine("class $className {")
 }

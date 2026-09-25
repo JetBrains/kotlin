@@ -12,28 +12,30 @@ package samples.generated.alldistinct
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllDistinctArraySamples {
 
     @Sample
     fun allDistinct() {
-        assertPrints(arrayOf<String>().allDistinct(), "true")
-        assertPrints(arrayOf("apple").allDistinct(), "true")
+        assertTrue(arrayOf<String>().allDistinct())
+        assertTrue(arrayOf("apple").allDistinct())
 
         val distinctValues = arrayOf("apple", "mango", "peach")
-        assertPrints(distinctValues.allDistinct(), "true")
+        assertTrue(distinctValues.allDistinct())
 
         val duplicateValues = arrayOf("apple", "mango", "apple")
-        assertPrints(duplicateValues.allDistinct(), "false")
+        assertFalse(duplicateValues.allDistinct())
     }
 
     @Sample
     fun allDistinctBy() {
-        assertPrints(arrayOf<String>().allDistinctBy { it.length }, "true")
-        assertPrints(arrayOf("apple").allDistinctBy { it.length }, "true")
+        assertTrue(arrayOf<String>().allDistinctBy { it.length })
+        assertTrue(arrayOf("apple").allDistinctBy { it.length })
 
         val values = arrayOf("apple", "mango", "peach")
-        assertPrints(values.allDistinctBy { it.length }, "false")
-        assertPrints(values.allDistinctBy { it }, "true")
+        assertFalse(values.allDistinctBy { it.length })
+        assertTrue(values.allDistinctBy { it })
     }
 }

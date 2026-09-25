@@ -12,24 +12,26 @@ package samples.generated.alldistinct
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllDistinctCharSequencesSamples {
 
     @Sample
     fun allDistinct() {
-        assertPrints("".allDistinct(), "true")
-        assertPrints("a".allDistinct(), "true")
-        assertPrints("abc".allDistinct(), "true")
-        assertPrints("aba".allDistinct(), "false")
+        assertTrue("".allDistinct())
+        assertTrue("a".allDistinct())
+        assertTrue("abc".allDistinct())
+        assertFalse("aba".allDistinct())
         // 😱 and 😲 are represented by pairs of UTF-16 characters with the same first character, thus they are not all distinct
-        assertPrints("😱😲".allDistinct(), "false")
+        assertFalse("😱😲".allDistinct())
     }
 
     @Sample
     fun allDistinctBy() {
-        assertPrints("".allDistinctBy { it.uppercaseChar() }, "true")
-        assertPrints("a".allDistinctBy { it.uppercaseChar() }, "true")
-        assertPrints("aAb".allDistinctBy { it.uppercaseChar() }, "false")
-        assertPrints("aAb".allDistinctBy { it }, "true")
+        assertTrue("".allDistinctBy { it.uppercaseChar() })
+        assertTrue("a".allDistinctBy { it.uppercaseChar() })
+        assertFalse("aAb".allDistinctBy { it.uppercaseChar() })
+        assertTrue("aAb".allDistinctBy { it })
     }
 }

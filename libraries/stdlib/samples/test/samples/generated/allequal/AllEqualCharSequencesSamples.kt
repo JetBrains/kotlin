@@ -12,25 +12,27 @@ package samples.generated.allequal
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllEqualCharSequencesSamples {
 
     @Sample
     fun allEqual() {
-        assertPrints("".allEqual(), "true")
-        assertPrints("a".allEqual(), "true")
-        assertPrints("aaa".allEqual(), "true")
-        assertPrints("aab".allEqual(), "false")
+        assertTrue("".allEqual())
+        assertTrue("a".allEqual())
+        assertTrue("aaa".allEqual())
+        assertFalse("aab".allEqual())
         // 😲 is represented by a pair of different UTF-16 characters, thus the characters of "😲😲" are not all equal
-        assertPrints("😲😲".allEqual(), "false")
+        assertFalse("😲😲".allEqual())
     }
 
     @Sample
     fun allEqualBy() {
-        assertPrints("".allEqualBy { it.uppercaseChar() }, "true")
-        assertPrints("a".allEqualBy { it.uppercaseChar() }, "true")
-        assertPrints("aAa".allEqualBy { it.uppercaseChar() }, "true")
-        assertPrints("aAa".allEqualBy { it.lowercaseChar() }, "true")
-        assertPrints("aAa".allEqualBy { it }, "false")
+        assertTrue("".allEqualBy { it.uppercaseChar() })
+        assertTrue("a".allEqualBy { it.uppercaseChar() })
+        assertTrue("aAa".allEqualBy { it.uppercaseChar() })
+        assertTrue("aAa".allEqualBy { it.lowercaseChar() })
+        assertFalse("aAa".allEqualBy { it })
     }
 }
