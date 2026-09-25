@@ -13,67 +13,69 @@ package samples.generated.issorted
 
 import samples.*
 import kotlin.math.abs
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class IsSortedByteArraySamples {
 
     @Sample
     fun isSorted() {
-        assertPrints(byteArrayOf().isSorted(), "true")
-        assertPrints(byteArrayOf(1).isSorted(), "true")
+        assertTrue(byteArrayOf().isSorted())
+        assertTrue(byteArrayOf(1).isSorted())
 
         val sorted = byteArrayOf(1, 2, 3, 4, 5)
-        assertPrints(sorted.isSorted(), "true")
+        assertTrue(sorted.isSorted())
 
         val unsorted = byteArrayOf(2, 1, 3, 4, 5)
-        assertPrints(unsorted.isSorted(), "false")
+        assertFalse(unsorted.isSorted())
     }
 
     @Sample
     fun isSortedDescending() {
-        assertPrints(byteArrayOf().isSortedDescending(), "true")
-        assertPrints(byteArrayOf(5).isSortedDescending(), "true")
+        assertTrue(byteArrayOf().isSortedDescending())
+        assertTrue(byteArrayOf(5).isSortedDescending())
 
         val sorted = byteArrayOf(5, 4, 3, 2, 1)
-        assertPrints(sorted.isSortedDescending(), "true")
+        assertTrue(sorted.isSortedDescending())
 
         val unsorted = byteArrayOf(4, 5, 3, 2, 1)
-        assertPrints(unsorted.isSortedDescending(), "false")
+        assertFalse(unsorted.isSortedDescending())
     }
 
     @Sample
     fun isSortedWith() {
-        assertPrints(byteArrayOf().isSortedWith(naturalOrder()), "true")
-        assertPrints(byteArrayOf(1).isSortedWith(naturalOrder()), "true")
+        assertTrue(byteArrayOf().isSortedWith(naturalOrder()))
+        assertTrue(byteArrayOf(1).isSortedWith(naturalOrder()))
 
         val sorted = byteArrayOf(1, 2, 3, 4, 5)
-        assertPrints(sorted.isSortedWith(naturalOrder()), "true")
-        assertPrints(sorted.isSortedWith(reverseOrder()), "false")
+        assertTrue(sorted.isSortedWith(naturalOrder()))
+        assertFalse(sorted.isSortedWith(reverseOrder()))
 
         val reversed = byteArrayOf(5, 4, 3, 2, 1)
-        assertPrints(reversed.isSortedWith(reverseOrder()), "true")
+        assertTrue(reversed.isSortedWith(reverseOrder()))
     }
 
     @Sample
     fun isSortedBy() {
-        assertPrints(byteArrayOf().isSortedBy { it * it }, "true")
-        assertPrints(byteArrayOf(1).isSortedBy { it * it }, "true")
+        assertTrue(byteArrayOf().isSortedBy { it * it })
+        assertTrue(byteArrayOf(1).isSortedBy { it * it })
 
         val values = byteArrayOf(1, -2, 3, -4, 5)
-        assertPrints(values.isSortedBy { it * it }, "true")
-        assertPrints(values.isSortedBy { abs(it.toInt()) }, "true")
-        assertPrints(values.isSortedBy { it }, "false")
-        assertPrints(byteArrayOf(1, 2).isSortedBy { if (it.toInt() == 1) null else it }, "true")
+        assertTrue(values.isSortedBy { it * it })
+        assertTrue(values.isSortedBy { abs(it.toInt()) })
+        assertFalse(values.isSortedBy { it })
+        assertTrue(byteArrayOf(1, 2).isSortedBy { if (it.toInt() == 1) null else it })
     }
 
     @Sample
     fun isSortedByDescending() {
-        assertPrints(byteArrayOf().isSortedByDescending { it * it }, "true")
-        assertPrints(byteArrayOf(5).isSortedByDescending { it * it }, "true")
+        assertTrue(byteArrayOf().isSortedByDescending { it * it })
+        assertTrue(byteArrayOf(5).isSortedByDescending { it * it })
 
         val values = byteArrayOf(5, -4, 3, -2, 1)
-        assertPrints(values.isSortedByDescending { it * it }, "true")
-        assertPrints(values.isSortedByDescending { abs(it.toInt()) }, "true")
-        assertPrints(values.isSortedByDescending { it }, "false")
-        assertPrints(byteArrayOf(2, 1).isSortedByDescending { if (it.toInt() == 1) null else it }, "true")
+        assertTrue(values.isSortedByDescending { it * it })
+        assertTrue(values.isSortedByDescending { abs(it.toInt()) })
+        assertFalse(values.isSortedByDescending { it })
+        assertTrue(byteArrayOf(2, 1).isSortedByDescending { if (it.toInt() == 1) null else it })
     }
 }

@@ -12,67 +12,69 @@ package samples.generated.issorted
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class IsSortedCharArraySamples {
 
     @Sample
     fun isSorted() {
-        assertPrints(charArrayOf().isSorted(), "true")
-        assertPrints(charArrayOf('a').isSorted(), "true")
+        assertTrue(charArrayOf().isSorted())
+        assertTrue(charArrayOf('a').isSorted())
 
         val sorted = charArrayOf('a', 'b', 'c')
-        assertPrints(sorted.isSorted(), "true")
+        assertTrue(sorted.isSorted())
 
         val unsorted = charArrayOf('b', 'a', 'c')
-        assertPrints(unsorted.isSorted(), "false")
+        assertFalse(unsorted.isSorted())
     }
 
     @Sample
     fun isSortedDescending() {
-        assertPrints(charArrayOf().isSortedDescending(), "true")
-        assertPrints(charArrayOf('c').isSortedDescending(), "true")
+        assertTrue(charArrayOf().isSortedDescending())
+        assertTrue(charArrayOf('c').isSortedDescending())
 
         val sorted = charArrayOf('c', 'b', 'a')
-        assertPrints(sorted.isSortedDescending(), "true")
+        assertTrue(sorted.isSortedDescending())
 
         val unsorted = charArrayOf('b', 'c', 'a')
-        assertPrints(unsorted.isSortedDescending(), "false")
+        assertFalse(unsorted.isSortedDescending())
     }
 
     @Sample
     fun isSortedWith() {
-        assertPrints(charArrayOf().isSortedWith(naturalOrder()), "true")
-        assertPrints(charArrayOf('a').isSortedWith(naturalOrder()), "true")
+        assertTrue(charArrayOf().isSortedWith(naturalOrder()))
+        assertTrue(charArrayOf('a').isSortedWith(naturalOrder()))
 
         val sorted = charArrayOf('a', 'b', 'c')
-        assertPrints(sorted.isSortedWith(naturalOrder()), "true")
-        assertPrints(sorted.isSortedWith(reverseOrder()), "false")
+        assertTrue(sorted.isSortedWith(naturalOrder()))
+        assertFalse(sorted.isSortedWith(reverseOrder()))
 
         val reversed = charArrayOf('c', 'b', 'a')
-        assertPrints(reversed.isSortedWith(reverseOrder()), "true")
+        assertTrue(reversed.isSortedWith(reverseOrder()))
     }
 
     @Sample
     fun isSortedBy() {
-        assertPrints(charArrayOf().isSortedBy { it.uppercaseChar() }, "true")
-        assertPrints(charArrayOf('A').isSortedBy { it.uppercaseChar() }, "true")
+        assertTrue(charArrayOf().isSortedBy { it.uppercaseChar() })
+        assertTrue(charArrayOf('A').isSortedBy { it.uppercaseChar() })
 
         val values = charArrayOf('A', 'b', 'C')
-        assertPrints(values.isSortedBy { it.uppercaseChar() }, "true")
-        assertPrints(values.isSortedBy { it.lowercaseChar() }, "true")
-        assertPrints(values.isSortedBy { it }, "false")
-        assertPrints(charArrayOf('a', 'b').isSortedBy { if (it == 'a') null else it }, "true")
+        assertTrue(values.isSortedBy { it.uppercaseChar() })
+        assertTrue(values.isSortedBy { it.lowercaseChar() })
+        assertFalse(values.isSortedBy { it })
+        assertTrue(charArrayOf('a', 'b').isSortedBy { if (it == 'a') null else it })
     }
 
     @Sample
     fun isSortedByDescending() {
-        assertPrints(charArrayOf().isSortedByDescending { it.uppercaseChar() }, "true")
-        assertPrints(charArrayOf('C').isSortedByDescending { it.uppercaseChar() }, "true")
+        assertTrue(charArrayOf().isSortedByDescending { it.uppercaseChar() })
+        assertTrue(charArrayOf('C').isSortedByDescending { it.uppercaseChar() })
 
         val values = charArrayOf('C', 'b', 'A')
-        assertPrints(values.isSortedByDescending { it.uppercaseChar() }, "true")
-        assertPrints(values.isSortedByDescending { it.lowercaseChar() }, "true")
-        assertPrints(values.isSortedByDescending { it }, "false")
-        assertPrints(charArrayOf('b', 'a').isSortedByDescending { if (it == 'a') null else it }, "true")
+        assertTrue(values.isSortedByDescending { it.uppercaseChar() })
+        assertTrue(values.isSortedByDescending { it.lowercaseChar() })
+        assertFalse(values.isSortedByDescending { it })
+        assertTrue(charArrayOf('b', 'a').isSortedByDescending { if (it == 'a') null else it })
     }
 }

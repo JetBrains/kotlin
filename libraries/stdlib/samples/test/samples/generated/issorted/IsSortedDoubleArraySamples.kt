@@ -13,67 +13,69 @@ package samples.generated.issorted
 
 import samples.*
 import kotlin.math.abs
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class IsSortedDoubleArraySamples {
 
     @Sample
     fun isSorted() {
-        assertPrints(doubleArrayOf().isSorted(), "true")
-        assertPrints(doubleArrayOf(1.0).isSorted(), "true")
+        assertTrue(doubleArrayOf().isSorted())
+        assertTrue(doubleArrayOf(1.0).isSorted())
 
         val sorted = doubleArrayOf(1.0, 2.5, 3.14)
-        assertPrints(sorted.isSorted(), "true")
+        assertTrue(sorted.isSorted())
 
         val unsorted = doubleArrayOf(2.5, 1.0, 3.14)
-        assertPrints(unsorted.isSorted(), "false")
+        assertFalse(unsorted.isSorted())
     }
 
     @Sample
     fun isSortedDescending() {
-        assertPrints(doubleArrayOf().isSortedDescending(), "true")
-        assertPrints(doubleArrayOf(3.14).isSortedDescending(), "true")
+        assertTrue(doubleArrayOf().isSortedDescending())
+        assertTrue(doubleArrayOf(3.14).isSortedDescending())
 
         val sorted = doubleArrayOf(3.14, 2.5, 1.0)
-        assertPrints(sorted.isSortedDescending(), "true")
+        assertTrue(sorted.isSortedDescending())
 
         val unsorted = doubleArrayOf(2.5, 3.14, 1.0)
-        assertPrints(unsorted.isSortedDescending(), "false")
+        assertFalse(unsorted.isSortedDescending())
     }
 
     @Sample
     fun isSortedWith() {
-        assertPrints(doubleArrayOf().isSortedWith(naturalOrder()), "true")
-        assertPrints(doubleArrayOf(1.0).isSortedWith(naturalOrder()), "true")
+        assertTrue(doubleArrayOf().isSortedWith(naturalOrder()))
+        assertTrue(doubleArrayOf(1.0).isSortedWith(naturalOrder()))
 
         val sorted = doubleArrayOf(1.0, 2.5, 3.14)
-        assertPrints(sorted.isSortedWith(naturalOrder()), "true")
-        assertPrints(sorted.isSortedWith(reverseOrder()), "false")
+        assertTrue(sorted.isSortedWith(naturalOrder()))
+        assertFalse(sorted.isSortedWith(reverseOrder()))
 
         val reversed = doubleArrayOf(3.14, 2.5, 1.0)
-        assertPrints(reversed.isSortedWith(reverseOrder()), "true")
+        assertTrue(reversed.isSortedWith(reverseOrder()))
     }
 
     @Sample
     fun isSortedBy() {
-        assertPrints(doubleArrayOf().isSortedBy { it * it }, "true")
-        assertPrints(doubleArrayOf(-0.5).isSortedBy { it * it }, "true")
+        assertTrue(doubleArrayOf().isSortedBy { it * it })
+        assertTrue(doubleArrayOf(-0.5).isSortedBy { it * it })
 
         val values = doubleArrayOf(-0.5, 1.0, -1.5, 2.0)
-        assertPrints(values.isSortedBy { it * it }, "true")
-        assertPrints(values.isSortedBy { abs(it) }, "true")
-        assertPrints(values.isSortedBy { it }, "false")
-        assertPrints(doubleArrayOf(1.0, 2.5).isSortedBy { if (it == 1.0) null else it }, "true")
+        assertTrue(values.isSortedBy { it * it })
+        assertTrue(values.isSortedBy { abs(it) })
+        assertFalse(values.isSortedBy { it })
+        assertTrue(doubleArrayOf(1.0, 2.5).isSortedBy { if (it == 1.0) null else it })
     }
 
     @Sample
     fun isSortedByDescending() {
-        assertPrints(doubleArrayOf().isSortedByDescending { it * it }, "true")
-        assertPrints(doubleArrayOf(2.0).isSortedByDescending { it * it }, "true")
+        assertTrue(doubleArrayOf().isSortedByDescending { it * it })
+        assertTrue(doubleArrayOf(2.0).isSortedByDescending { it * it })
 
         val values = doubleArrayOf(2.0, -1.5, 1.0, -0.5)
-        assertPrints(values.isSortedByDescending { it * it }, "true")
-        assertPrints(values.isSortedByDescending { abs(it) }, "true")
-        assertPrints(values.isSortedByDescending { it }, "false")
-        assertPrints(doubleArrayOf(2.5, 1.0).isSortedByDescending { if (it == 1.0) null else it }, "true")
+        assertTrue(values.isSortedByDescending { it * it })
+        assertTrue(values.isSortedByDescending { abs(it) })
+        assertFalse(values.isSortedByDescending { it })
+        assertTrue(doubleArrayOf(2.5, 1.0).isSortedByDescending { if (it == 1.0) null else it })
     }
 }

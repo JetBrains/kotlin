@@ -12,75 +12,77 @@ package samples.generated.issorted
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class IsSortedIterablesSamples {
 
     @Sample
     fun isSorted() {
-        assertPrints(listOf<String>().isSorted(), "true")
-        assertPrints(listOf("apple").isSorted(), "true")
+        assertTrue(listOf<String>().isSorted())
+        assertTrue(listOf("apple").isSorted())
 
         val sorted = listOf("apple", "banana", "cherry")
-        assertPrints(sorted.isSorted(), "true")
+        assertTrue(sorted.isSorted())
 
         val unsorted = listOf("banana", "apple", "cherry")
-        assertPrints(unsorted.isSorted(), "false")
+        assertFalse(unsorted.isSorted())
     }
 
     @Sample
     fun isSortedDescending() {
-        assertPrints(listOf<String>().isSortedDescending(), "true")
-        assertPrints(listOf("cherry").isSortedDescending(), "true")
+        assertTrue(listOf<String>().isSortedDescending())
+        assertTrue(listOf("cherry").isSortedDescending())
 
         val sorted = listOf("cherry", "banana", "apple")
-        assertPrints(sorted.isSortedDescending(), "true")
+        assertTrue(sorted.isSortedDescending())
 
         val unsorted = listOf("banana", "cherry", "apple")
-        assertPrints(unsorted.isSortedDescending(), "false")
+        assertFalse(unsorted.isSortedDescending())
     }
 
     @Sample
     fun isSortedWith() {
-        assertPrints(listOf<String>().isSortedWith(naturalOrder()), "true")
-        assertPrints(listOf("apple").isSortedWith(naturalOrder()), "true")
+        assertTrue(listOf<String>().isSortedWith(naturalOrder()))
+        assertTrue(listOf("apple").isSortedWith(naturalOrder()))
 
         val sorted = listOf("apple", "banana", "cherry")
-        assertPrints(sorted.isSortedWith(naturalOrder()), "true")
-        assertPrints(sorted.isSortedWith(reverseOrder()), "false")
+        assertTrue(sorted.isSortedWith(naturalOrder()))
+        assertFalse(sorted.isSortedWith(reverseOrder()))
 
         val reversed = listOf("cherry", "banana", "apple")
-        assertPrints(reversed.isSortedWith(reverseOrder()), "true")
+        assertTrue(reversed.isSortedWith(reverseOrder()))
 
         val caseInsensitive = listOf("Apple", "banana", "Cherry")
-        assertPrints(caseInsensitive.isSortedWith(String.CASE_INSENSITIVE_ORDER), "true")
+        assertTrue(caseInsensitive.isSortedWith(String.CASE_INSENSITIVE_ORDER))
 
         val withNulls = listOf(null, "apple", "banana")
-        assertPrints(withNulls.isSortedWith(nullsFirst(naturalOrder())), "true")
-        assertPrints(withNulls.isSortedWith(nullsLast(naturalOrder())), "false")
+        assertTrue(withNulls.isSortedWith(nullsFirst(naturalOrder())))
+        assertFalse(withNulls.isSortedWith(nullsLast(naturalOrder())))
     }
 
     @Sample
     fun isSortedBy() {
-        assertPrints(listOf<String>().isSortedBy { it.length }, "true")
-        assertPrints(listOf("c").isSortedBy { it.length }, "true")
+        assertTrue(listOf<String>().isSortedBy { it.length })
+        assertTrue(listOf("c").isSortedBy { it.length })
 
         val values = listOf("c", "bb", "aaa")
-        assertPrints(values.isSortedBy { it.length }, "true")
-        assertPrints(values.isSortedBy { it }, "false")
-        assertPrints(listOf("a", "b").isSortedBy { if (it == "a") null else it }, "true")
-        assertPrints(listOf(null, "a", "b").isSortedBy { it }, "true")
-        assertPrints(listOf(null, "c", "bb").isSortedBy { it?.length }, "true")
+        assertTrue(values.isSortedBy { it.length })
+        assertFalse(values.isSortedBy { it })
+        assertTrue(listOf("a", "b").isSortedBy { if (it == "a") null else it })
+        assertTrue(listOf(null, "a", "b").isSortedBy { it })
+        assertTrue(listOf(null, "c", "bb").isSortedBy { it?.length })
     }
 
     @Sample
     fun isSortedByDescending() {
-        assertPrints(listOf<String>().isSortedByDescending { it.length }, "true")
-        assertPrints(listOf("aaa").isSortedByDescending { it.length }, "true")
+        assertTrue(listOf<String>().isSortedByDescending { it.length })
+        assertTrue(listOf("aaa").isSortedByDescending { it.length })
 
         val values = listOf("aaa", "bb", "c")
-        assertPrints(values.isSortedByDescending { it.length }, "true")
-        assertPrints(values.isSortedByDescending { it }, "false")
-        assertPrints(listOf("b", "a").isSortedByDescending { if (it == "a") null else it }, "true")
-        assertPrints(listOf("aaa", "bb", null).isSortedByDescending { it?.length }, "true")
+        assertTrue(values.isSortedByDescending { it.length })
+        assertFalse(values.isSortedByDescending { it })
+        assertTrue(listOf("b", "a").isSortedByDescending { if (it == "a") null else it })
+        assertTrue(listOf("aaa", "bb", null).isSortedByDescending { it?.length })
     }
 }
