@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.JS_DCE_EXPECTED_OUTPUT_SIZE
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.JS_DCE_EXPECTED_OUTPUT_SIZE_SWC
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.finalizePath
@@ -25,8 +28,7 @@ class JsSizeHandler(testServices: TestServices) : AbstractJsArtifactsCollector(t
     }
 
     private fun checkExpectedDceOutputSize() {
-        val (expectedOutputSize) = testServices.moduleStructure.allDirectives[JsEnvironmentConfigurationDirectives.JS_DCE_EXPECTED_OUTPUT_SIZE]
-            .firstOrNull { it.forTargetBackend == null || it.forTargetBackend == testServices.defaultsProvider.targetBackend } ?: return
+        val expectedOutputSize = getExpectedOutputSize() ?: return
 
         val mainModule = JsEnvironmentConfigurator.getMainModule(testServices)
         val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, mainModule)
@@ -50,6 +52,23 @@ class JsSizeHandler(testServices: TestServices) : AbstractJsArtifactsCollector(t
                         " Diff: $diff (${diff * 100 / expectedOutputSize}%)"
             )
         }
+    }
+
+    private fun getExpectedOutputSize(): Int? {
+        fun Iterable<JsEnvironmentConfigurationDirectives.JsExpectedOutputSize>.findExpectedTargetBackendSize() =
+            firstOrNull { it.forTargetBackend == null || it.forTargetBackend == testServices.defaultsProvider.targetBackend }
+                ?.expectedOutputSize
+
+        if (DELEGATE_JS_TRANSPILATION in testServices.moduleStructure.allDirectives)
+            testServices.moduleStructure.allDirectives[JS_DCE_EXPECTED_OUTPUT_SIZE_SWC]
+                .findExpectedTargetBackendSize()
+                ?.let { return it }
+
+        testServices.moduleStructure.allDirectives[JS_DCE_EXPECTED_OUTPUT_SIZE]
+            .findExpectedTargetBackendSize()
+            ?.let { return it }
+
+        return null
     }
 }
 
