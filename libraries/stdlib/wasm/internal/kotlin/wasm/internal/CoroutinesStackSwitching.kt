@@ -60,12 +60,12 @@ internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsicStackSwit
     if (coroutineImpl.resumedWhileRunning) {
         // `block` resumed the continuation itself, the result is already here -- do not park.
         coroutineImpl.resumedWhileRunning = false
+        coroutineImpl.exception?.let { throw it }
     } else {
         coroutineImpl.isRunning = false
         suspendIntrinsic(coroutineImpl.wasmContBox)
     }
 
-    coroutineImpl.exception?.let { throw it }
     return coroutineImpl.result as T
 }
 
