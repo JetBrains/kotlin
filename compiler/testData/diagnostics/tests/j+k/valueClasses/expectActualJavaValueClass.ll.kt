@@ -1,3 +1,8 @@
+// LL_FIR_DIVERGENCE
+// LL tests don't have jvmTargetProvider, so JDK classes are not value classes there.
+// See FirJvmPlatformValueClassDeterminer
+// ISSUE: KT-81100
+// LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +FullValueClasses, +MultiPlatformProjects
 // JVM_TARGET: 28
@@ -24,6 +29,6 @@ actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS!>IdentityExpect<!>
 
 actual typealias AbstractValueExpect = JavaAbstractVal
 
-actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS!>IdentityExpectForJdk<!> = java.time.LocalDate
+actual typealias IdentityExpectForJdk = java.time.LocalDate
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, javaType, primaryConstructor, typeAliasDeclaration, value */
