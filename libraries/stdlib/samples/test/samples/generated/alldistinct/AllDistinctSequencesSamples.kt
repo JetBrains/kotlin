@@ -12,25 +12,24 @@ package samples.generated.alldistinct
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllDistinctSequencesSamples {
 
     @Sample
     fun allDistinct() {
-        assertPrints(sequenceOf<String>().allDistinct(), "true")
-        assertPrints(sequenceOf("apple").allDistinct(), "true")
-
-        assertPrints(sequenceOf("apple", "mango", "peach").allDistinct(), "true")
-
-        assertPrints(sequenceOf("apple", "mango", "apple").allDistinct(), "false")
+        assertTrue(sequenceOf<String>().allDistinct())
+        assertTrue(sequenceOf("apple").allDistinct())
+        assertTrue(sequenceOf("apple", "mango", "peach").allDistinct())
+        assertFalse(sequenceOf("apple", "mango", "apple").allDistinct())
     }
 
     @Sample
     fun allDistinctBy() {
-        assertPrints(sequenceOf<String>().allDistinctBy { it.length }, "true")
-        assertPrints(sequenceOf("apple").allDistinctBy { it.length }, "true")
-
-        assertPrints(sequenceOf("apple", "mango", "peach").allDistinctBy { it.length }, "false")
-        assertPrints(sequenceOf("apple", "mango", "peach").allDistinctBy { it }, "true")
+        assertTrue(sequenceOf<String>().allDistinctBy { it.length })
+        assertTrue(sequenceOf("apple").allDistinctBy { it.length })
+        assertFalse(sequenceOf("apple", "mango", "peach").allDistinctBy { it.length })
+        assertTrue(sequenceOf("apple", "mango", "peach").allDistinctBy { it })
     }
 }

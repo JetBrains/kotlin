@@ -12,28 +12,30 @@ package samples.generated.allequal
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllEqualULongArraySamples {
 
     @Sample
     fun allEqual() {
-        assertPrints(ulongArrayOf().allEqual(), "true")
-        assertPrints(ulongArrayOf(1uL).allEqual(), "true")
+        assertTrue(ulongArrayOf().allEqual())
+        assertTrue(ulongArrayOf(1uL).allEqual())
 
         val sameValues = ulongArrayOf(1uL, 1uL, 1uL)
-        assertPrints(sameValues.allEqual(), "true")
+        assertTrue(sameValues.allEqual())
 
         val mixedValues = ulongArrayOf(1uL, 1uL, 2uL)
-        assertPrints(mixedValues.allEqual(), "false")
+        assertFalse(mixedValues.allEqual())
     }
 
     @Sample
     fun allEqualBy() {
-        assertPrints(ulongArrayOf().allEqualBy { it % 2uL }, "true")
-        assertPrints(ulongArrayOf(1uL).allEqualBy { it % 2uL }, "true")
+        assertTrue(ulongArrayOf().allEqualBy { it % 2uL })
+        assertTrue(ulongArrayOf(1uL).allEqualBy { it % 2uL })
 
         val values = ulongArrayOf(1uL, 3uL, 5uL)
-        assertPrints(values.allEqualBy { it % 2uL }, "true")
-        assertPrints(values.allEqualBy { it }, "false")
+        assertTrue(values.allEqualBy { it % 2uL })
+        assertFalse(values.allEqualBy { it })
     }
 }

@@ -13,29 +13,31 @@ package samples.generated.allequal
 
 import samples.*
 import kotlin.math.abs
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllEqualIntArraySamples {
 
     @Sample
     fun allEqual() {
-        assertPrints(intArrayOf().allEqual(), "true")
-        assertPrints(intArrayOf(1).allEqual(), "true")
+        assertTrue(intArrayOf().allEqual())
+        assertTrue(intArrayOf(1).allEqual())
 
         val sameValues = intArrayOf(1, 1, 1)
-        assertPrints(sameValues.allEqual(), "true")
+        assertTrue(sameValues.allEqual())
 
         val mixedValues = intArrayOf(1, 1, 2)
-        assertPrints(mixedValues.allEqual(), "false")
+        assertFalse(mixedValues.allEqual())
     }
 
     @Sample
     fun allEqualBy() {
-        assertPrints(intArrayOf().allEqualBy { it * it }, "true")
-        assertPrints(intArrayOf(1).allEqualBy { it * it }, "true")
+        assertTrue(intArrayOf().allEqualBy { it * it })
+        assertTrue(intArrayOf(1).allEqualBy { it * it })
 
         val values = intArrayOf(1, -1, 1)
-        assertPrints(values.allEqualBy { it * it }, "true")
-        assertPrints(values.allEqualBy { abs(it) }, "true")
-        assertPrints(values.allEqualBy { it * it * it }, "false")
+        assertTrue(values.allEqualBy { it * it })
+        assertTrue(values.allEqualBy { abs(it) })
+        assertFalse(values.allEqualBy { it * it * it })
     }
 }

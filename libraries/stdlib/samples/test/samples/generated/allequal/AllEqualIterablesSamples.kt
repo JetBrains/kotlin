@@ -12,28 +12,30 @@ package samples.generated.allequal
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllEqualIterablesSamples {
 
     @Sample
     fun allEqual() {
-        assertPrints(listOf<String>().allEqual(), "true")
-        assertPrints(listOf("apple").allEqual(), "true")
+        assertTrue(listOf<String>().allEqual())
+        assertTrue(listOf("apple").allEqual())
 
         val sameValues = listOf("apple", "apple", "apple")
-        assertPrints(sameValues.allEqual(), "true")
+        assertTrue(sameValues.allEqual())
 
         val mixedValues = listOf("apple", "apple", "orange")
-        assertPrints(mixedValues.allEqual(), "false")
+        assertFalse(mixedValues.allEqual())
     }
 
     @Sample
     fun allEqualBy() {
-        assertPrints(listOf<String>().allEqualBy { it.length }, "true")
-        assertPrints(listOf("apple").allEqualBy { it.length }, "true")
+        assertTrue(listOf<String>().allEqualBy { it.length })
+        assertTrue(listOf("apple").allEqualBy { it.length })
 
         val values = listOf("apple", "mango", "peach")
-        assertPrints(values.allEqualBy { it.length }, "true")
-        assertPrints(values.allEqualBy { it }, "false")
+        assertTrue(values.allEqualBy { it.length })
+        assertFalse(values.allEqualBy { it })
     }
 }

@@ -11,13 +11,13 @@ import java.io.BufferedWriter
 object AllDistinctTestGenerator {
     fun generate() {
         forEachCollectionFamily { family, primitive -> generate(family, primitive) }
+        generate(Family.CharSequences, PrimitiveType.Char)
     }
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {
         val collectionClass = collectionClassName(family, primitive)
-        val ctor = constructorName(family, primitive)
+        val receiverFactory = ReceiverFactory(family, primitive)
         val config = allDistinctConfigFor(primitive)
-        val emptyCollection = emptyCollectionExpr(ctor, primitive)
         val fpTypes = when (primitive) {
             null -> PrimitiveType.floatingPointPrimitives.toList()
             in PrimitiveType.floatingPointPrimitives -> listOf(primitive)
@@ -27,16 +27,19 @@ object AllDistinctTestGenerator {
         val className = "AllDistinct${collectionClass}Test"
         writeGeneratedFile("libraries/stdlib/test/generated/alldistinct/$className.kt") {
             writeHeader(className)
-            writeAllDistinctTest(ctor, config, emptyCollection)
-            writeAllDistinctByTest(ctor, config, emptyCollection)
+            writeAllDistinctTest(receiverFactory, config)
+            writeAllDistinctByTest(receiverFactory, config)
+            if (family == Family.CharSequences) {
+                writeStringBuilderTest(receiverFactory, config)
+            }
             if (primitive == PrimitiveType.Boolean) {
                 writeBooleanCasesTest()
             }
             valueDomainSize(primitive)?.let { domainSize ->
-                writeValueDomainBoundsTest(collectionClass, primitive!!, domainSize)
+                writeValueDomainBoundsTest(receiverFactory, primitive!!, domainSize)
             }
             for (fpType in fpTypes) {
-                writeFpTests(ctor, fpType)
+                writeFpTests(receiverFactory, fpType)
             }
             appendLine("}")
         }
@@ -54,42 +57,59 @@ object AllDistinctTestGenerator {
         appendLine("class $className {")
     }
 
-    private fun BufferedWriter.writeAllDistinctTest(ctor: String, config: AllDistinctTypeConfig, emptyCollection: String) {
+    private fun BufferedWriter.writeAllDistinctTest(receiverFactory: ReceiverFactory, config: AllDistinctTypeConfig) {
         val v1 = config.value1
         val v2 = config.value2
         appendLine(
             """
     @Test
     fun allDistinct() {
-        assertTrue($emptyCollection.allDistinct())
-        assertTrue($ctor($v1).allDistinct())
-        assertTrue($ctor($v1, $v2).allDistinct())
-        assertFalse($ctor($v1, $v1).allDistinct())
-        assertFalse($ctor($v2, $v2).allDistinct())
-        assertFalse($ctor($v1, $v2, $v1).allDistinct())
-        assertFalse($ctor($v2, $v1, $v2).allDistinct())
+        assertTrue(${receiverFactory()}.allDistinct())
+        assertTrue(${receiverFactory(v1)}.allDistinct())
+        assertTrue(${receiverFactory(v1, v2)}.allDistinct())
+        assertFalse(${receiverFactory(v1, v1)}.allDistinct())
+        assertFalse(${receiverFactory(v2, v2)}.allDistinct())
+        assertFalse(${receiverFactory(v1, v2, v1)}.allDistinct())
+        assertFalse(${receiverFactory(v2, v1, v2)}.allDistinct())
     }"""
         )
     }
 
-    private fun BufferedWriter.writeAllDistinctByTest(ctor: String, config: AllDistinctTypeConfig, emptyCollection: String) {
+    private fun BufferedWriter.writeAllDistinctByTest(receiverFactory: ReceiverFactory, config: AllDistinctTypeConfig) {
         val selectorExpr = config.selectorExpr
-        val distinctArgs = config.valuesWithDistinctKeys.joinToString()
-        val duplicateArgs = config.valuesWithDuplicateKeys.joinToString()
-        val firstDistinct = config.valuesWithDistinctKeys.first()
+        val distinctKeyValues = receiverFactory(config.valuesWithDistinctKeys)
+        val duplicateKeyValues = receiverFactory(config.valuesWithDuplicateKeys)
+        val firstDistinct = receiverFactory(config.valuesWithDistinctKeys.first())
         val v1 = config.value1
         val v2 = config.value2
         appendLine(
             """
     @Test
     fun allDistinctBy() {
-        assertTrue($emptyCollection.allDistinctBy { $selectorExpr })
-        assertTrue($ctor($firstDistinct).allDistinctBy { $selectorExpr })
-        assertTrue($ctor($firstDistinct).allDistinctBy { error("should not be called") })
-        assertTrue($ctor($distinctArgs).allDistinctBy { $selectorExpr })
-        assertFalse($ctor($duplicateArgs).allDistinctBy { $selectorExpr })
-        assertFalse($ctor($v1, $v2).allDistinctBy { 0 })
-        assertFalse($ctor($v1, $v2).allDistinctBy { null })
+        assertTrue(${receiverFactory()}.allDistinctBy { $selectorExpr })
+        assertTrue($firstDistinct.allDistinctBy { $selectorExpr })
+        assertTrue($firstDistinct.allDistinctBy { error("should not be called") })
+        assertTrue($distinctKeyValues.allDistinctBy { $selectorExpr })
+        assertFalse($duplicateKeyValues.allDistinctBy { $selectorExpr })
+        assertFalse(${receiverFactory(v1, v2)}.allDistinctBy { 0 })
+        assertFalse(${receiverFactory(v1, v2)}.allDistinctBy { null })
+    }"""
+        )
+    }
+
+    private fun BufferedWriter.writeStringBuilderTest(receiverFactory: ReceiverFactory, config: AllDistinctTypeConfig) {
+        val v1 = config.value1
+        val v2 = config.value2
+        val selectorExpr = config.selectorExpr
+        appendLine(
+            """
+    @Test
+    fun allDistinctStringBuilder() {
+        assertTrue(StringBuilder().allDistinct())
+        assertTrue(StringBuilder(${receiverFactory(v1, v2)}).allDistinct())
+        assertFalse(StringBuilder(${receiverFactory(v1, v2, v1)}).allDistinct())
+        assertTrue(StringBuilder(${receiverFactory(config.valuesWithDistinctKeys)}).allDistinctBy { $selectorExpr })
+        assertFalse(StringBuilder(${receiverFactory(config.valuesWithDuplicateKeys)}).allDistinctBy { $selectorExpr })
     }"""
         )
     }
@@ -114,7 +134,7 @@ object AllDistinctTestGenerator {
         )
     }
 
-    private fun BufferedWriter.writeValueDomainBoundsTest(collectionClass: String, primitive: PrimitiveType, domainSize: Int) {
+    private fun BufferedWriter.writeValueDomainBoundsTest(receiverFactory: ReceiverFactory, primitive: PrimitiveType, domainSize: Int) {
         val name = primitive.name
         val byteBitsetCases = if (primitive == PrimitiveType.Byte)
             """
@@ -125,9 +145,9 @@ object AllDistinctTestGenerator {
             """
     @Test
     fun allDistinctValueDomainBounds() {
-        assertTrue($collectionClass($domainSize) { it.to$name() }.allDistinct())
-        assertFalse($collectionClass($domainSize) { (it / 2).to$name() }.allDistinct())
-        assertFalse($collectionClass(${domainSize + 1}) { it.to$name() }.allDistinct())$byteBitsetCases
+        assertTrue(${receiverFactory.sized(domainSize, "it.to$name()")}.allDistinct())
+        assertFalse(${receiverFactory.sized(domainSize, "(it / 2).to$name()")}.allDistinct())
+        assertFalse(${receiverFactory.sized(domainSize + 1, "it.to$name()")}.allDistinct())$byteBitsetCases
     }"""
         )
     }
@@ -138,7 +158,7 @@ object AllDistinctTestGenerator {
         else -> null
     }
 
-    private fun BufferedWriter.writeFpTests(ctor: String, fpType: PrimitiveType) {
+    private fun BufferedWriter.writeFpTests(receiverFactory: ReceiverFactory, fpType: PrimitiveType) {
         val typeName = fpType.name
         val suffix = if (fpType == PrimitiveType.Float) "f" else ""
         val nanVal = "$typeName.NaN"
@@ -154,47 +174,47 @@ object AllDistinctTestGenerator {
             """
     @Test
     fun allDistinctNaN$typeName() {
-        assertTrue($ctor($nanVal).allDistinct())
-        assertTrue($ctor($nanVal, $finite).allDistinct())
-        assertFalse($ctor($nanVal, $nanVal).allDistinct())
-        assertFalse($ctor($nanVal, $nanVal, $nanVal).allDistinct())
-        assertFalse($ctor($nanVal, $finite, $nanVal).allDistinct())
+        assertTrue(${receiverFactory(nanVal)}.allDistinct())
+        assertTrue(${receiverFactory(nanVal, finite)}.allDistinct())
+        assertFalse(${receiverFactory(nanVal, nanVal)}.allDistinct())
+        assertFalse(${receiverFactory(nanVal, nanVal, nanVal)}.allDistinct())
+        assertFalse(${receiverFactory(nanVal, finite, nanVal)}.allDistinct())
     }
 
     @Test
     fun allDistinctNegativeZero$typeName() {
-        assertTrue($ctor($zeroPos, $zeroNeg).allDistinct())
-        assertFalse($ctor($zeroPos, $zeroPos).allDistinct())
-        assertFalse($ctor($zeroNeg, $zeroNeg).allDistinct())
+        assertTrue(${receiverFactory(zeroPos, zeroNeg)}.allDistinct())
+        assertFalse(${receiverFactory(zeroPos, zeroPos)}.allDistinct())
+        assertFalse(${receiverFactory(zeroNeg, zeroNeg)}.allDistinct())
     }
 
     @Test
     fun allDistinctByNaN$typeName() {
-        assertTrue($ctor($nanVal, $finite).allDistinctBy { it })
-        assertFalse($ctor($nanVal, $nanVal).allDistinctBy { it })
-        assertFalse($ctor($nanVal, $finite, $nanVal).allDistinctBy { it })
+        assertTrue(${receiverFactory(nanVal, finite)}.allDistinctBy { it })
+        assertFalse(${receiverFactory(nanVal, nanVal)}.allDistinctBy { it })
+        assertFalse(${receiverFactory(nanVal, finite, nanVal)}.allDistinctBy { it })
     }
 
     @Test
     fun allDistinctByNegativeZero$typeName() {
-        assertTrue($ctor($zeroPos, $zeroNeg).allDistinctBy { it })
-        assertFalse($ctor($zeroPos, $zeroPos).allDistinctBy { it })
+        assertTrue(${receiverFactory(zeroPos, zeroNeg)}.allDistinctBy { it })
+        assertFalse(${receiverFactory(zeroPos, zeroPos)}.allDistinctBy { it })
     }
 
     @Test
     fun allDistinctDifferentNaNBits$typeName() {
-        assertFalse($ctor($nanVal, $negNaN).allDistinct())
-        assertFalse($ctor($nanVal, $negNaN, $mantissaNaN).allDistinct())
-        assertFalse($ctor($mantissaNaN, $negNaN, $nanVal).allDistinct())
-        assertTrue($ctor($nanVal, $finite).allDistinct())
-        assertTrue($ctor($zeroPos, $finite).allDistinct())
+        assertFalse(${receiverFactory(nanVal, negNaN)}.allDistinct())
+        assertFalse(${receiverFactory(nanVal, negNaN, mantissaNaN)}.allDistinct())
+        assertFalse(${receiverFactory(mantissaNaN, negNaN, nanVal)}.allDistinct())
+        assertTrue(${receiverFactory(nanVal, finite)}.allDistinct())
+        assertTrue(${receiverFactory(zeroPos, finite)}.allDistinct())
     }
 
     @Test
     fun allDistinctByDifferentNaNBits$typeName() {
-        assertFalse($ctor($nanVal, $negNaN).allDistinctBy { it })
-        assertFalse($ctor($nanVal, $negNaN, $mantissaNaN).allDistinctBy { it })
-        assertTrue($ctor($nanVal, $finite).allDistinctBy { it })
+        assertFalse(${receiverFactory(nanVal, negNaN)}.allDistinctBy { it })
+        assertFalse(${receiverFactory(nanVal, negNaN, mantissaNaN)}.allDistinctBy { it })
+        assertTrue(${receiverFactory(nanVal, finite)}.allDistinctBy { it })
     }"""
         )
     }

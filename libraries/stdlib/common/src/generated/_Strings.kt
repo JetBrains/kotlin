@@ -1094,6 +1094,124 @@ public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
+ * Returns `true` if all characters in the char sequence are distinct from each other,
+ * that is, no two characters are equal.
+ * 
+ * Returns `true` for an empty char sequence.
+ * 
+ * The characters are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate character is found.
+ * 
+ * The char sequence is treated as a sequence of [Char]s. It implies that the result may not correspond to
+ * the printed graphemes: a grapheme may consist of several [Char]s, for example, a UTF-16 surrogate pair
+ * that encodes a Unicode code point not representable by a single [Char], or a letter followed by a combining mark.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctCharSequencesSamples.allDistinct
+ */
+@SinceKotlin("2.5")
+@ExperimentalStdlibApi
+public fun CharSequence.allDistinct(): Boolean {
+    if (length < 2) return true
+    // more than 65536 values force a duplicate
+    if (length > (1 shl Char.SIZE_BITS)) return false
+    val seen = HashSet<Char>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * characters in the char sequence are distinct from each other.
+ * 
+ * Returns `true` for an empty char sequence.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * The char sequence is treated as a sequence of [Char]s. It implies that the result may not correspond to
+ * the printed graphemes: a grapheme may consist of several [Char]s, for example, a UTF-16 surrogate pair
+ * that encodes a Unicode code point not representable by a single [Char], or a letter followed by a combining mark.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctCharSequencesSamples.allDistinctBy
+ */
+@SinceKotlin("2.5")
+@ExperimentalStdlibApi
+public inline fun <K> CharSequence.allDistinctBy(selector: (Char) -> K): Boolean {
+    if (length < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all characters in the char sequence are equal to each other.
+ * 
+ * Returns `true` for an empty char sequence.
+ * 
+ * The characters are compared sequentially using structural equality (`==`),
+ * and all characters are considered equal if the first character equals
+ * every subsequent character.
+ * 
+ * The char sequence is treated as a sequence of [Char]s. It implies that the result may not correspond to
+ * the printed graphemes: a grapheme may consist of several [Char]s, for example, a UTF-16 surrogate pair
+ * that encodes a Unicode code point not representable by a single [Char], or a letter followed by a combining mark.
+ * 
+ * @sample samples.generated.allequal.AllEqualCharSequencesSamples.allEqual
+ */
+@SinceKotlin("2.5")
+@ExperimentalStdlibApi
+public fun CharSequence.allEqual(): Boolean {
+    if (length < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all characters in the char sequence yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty char sequence.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all characters are considered equal by the [selector] value if the [selector]
+ * value of the first character equals the [selector] value of every subsequent character.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * The char sequence is treated as a sequence of [Char]s. It implies that the result may not correspond to
+ * the printed graphemes: a grapheme may consist of several [Char]s, for example, a UTF-16 surrogate pair
+ * that encodes a Unicode code point not representable by a single [Char], or a letter followed by a combining mark.
+ * 
+ * @sample samples.generated.allequal.AllEqualCharSequencesSamples.allEqualBy
+ */
+@SinceKotlin("2.5")
+@ExperimentalStdlibApi
+public inline fun <K> CharSequence.allEqualBy(selector: (Char) -> K): Boolean {
+    if (length < 2) return true
+    var firstKey: K? = null
+    for (i in indices) {
+        val key = selector(this[i])
+        if (i == 0) {
+            firstKey = key
+        } else if (firstKey != key) {
+            return false
+        }
+    }
+    return true
+}
+
+/**
  * Returns `true` if char sequence has at least one character.
  * 
  * @sample samples.text.Strings.any
