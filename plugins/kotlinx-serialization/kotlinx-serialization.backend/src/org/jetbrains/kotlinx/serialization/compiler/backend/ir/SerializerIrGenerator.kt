@@ -641,7 +641,7 @@ open class SerializerIrGenerator(
             context: SerializationPluginContext,
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass) ?: return
-            if (irClass.isFromPlugin()) {
+            if (irClass.isFromPlugin(context.afterK2)) {
                 irClass.copyTypeParameterBoundsFrom(serializableDesc)
             }
             val generator = when {
