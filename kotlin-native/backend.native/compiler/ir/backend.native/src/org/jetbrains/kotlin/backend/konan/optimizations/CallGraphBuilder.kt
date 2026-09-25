@@ -21,7 +21,7 @@ internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.Functi
         buildSet {
             for (callSite in callSites) {
                 if (callSite !is CallSite.Static) continue
-                for (callee in callSite.callees) {
+                callSite.forEachCallee { callee ->
                     if (callee is DataFlowIR.FunctionSymbol.Declared && graph.directEdges.containsKey(callee))
                         add(callee)
                 }
@@ -39,11 +39,32 @@ internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.Functi
     ) {
         class Virtual(call: DataFlowIR.Node.Call, node: DataFlowIR.Node, val callee: DataFlowIR.FunctionSymbol) : CallSite(call, node)
 
-        // A call site unfolded to several possible callees (a devirtualized one, or a virtual one unfolded by the type hierarchy)
-        // is represented as a single instance listing all of them in [callees].
-        class Static(
-                call: DataFlowIR.Node.Call, node: DataFlowIR.Node, val callees: List<DataFlowIR.FunctionSymbol>
-        ) : CallSite(call, node)
+        sealed class Static(call: DataFlowIR.Node.Call, node: DataFlowIR.Node) : CallSite(call, node) {
+            // Most sites have just one target. Store it directly instead of allocating a singleton list.
+            class Single(call: DataFlowIR.Node.Call, node: DataFlowIR.Node, val callee: DataFlowIR.FunctionSymbol) : Static(call, node)
+
+            class Multiple(
+                    call: DataFlowIR.Node.Call, node: DataFlowIR.Node, val callees: List<DataFlowIR.FunctionSymbol>,
+            ) : Static(call, node)
+
+            val calleeCount: Int
+                get() = when (this) {
+                    is Single -> 1
+                    is Multiple -> callees.size
+                }
+
+            inline fun forEachCallee(block: (DataFlowIR.FunctionSymbol) -> Unit) = when (this) {
+                is Single -> block(callee)
+                is Multiple -> for (i in callees.indices) block(callees[i])
+            }
+
+            companion object {
+                fun create(call: DataFlowIR.Node.Call, node: DataFlowIR.Node, callees: List<DataFlowIR.FunctionSymbol>): Static {
+                    require(callees.isNotEmpty())
+                    return if (callees.size == 1) Single(call, node, callees[0]) else Multiple(call, node, callees)
+                }
+            }
+        }
     }
 
     val callSites = mutableListOf<CallSite>()
@@ -240,8 +261,12 @@ internal class CallGraphBuilder(
             callees: List<DataFlowIR.FunctionSymbol>,
     ) {
         if (callees.isEmpty()) return
-        callGraph.addEdge(caller, CallGraphNode.CallSite.Static(call, node, callees))
-        for (callee in callees) {
+        staticCall(caller, CallGraphNode.CallSite.Static.create(call, node, callees))
+    }
+
+    private fun staticCall(caller: DataFlowIR.FunctionSymbol.Declared, callSite: CallGraphNode.CallSite.Static) {
+        callGraph.addEdge(caller, callSite)
+        callSite.forEachCallee { callee ->
             val function = moduleDFG.functions[callee]
             if (function != null)
                 functionStack.push(caller, function)
@@ -263,12 +288,15 @@ internal class CallGraphBuilder(
         body.forEachCallSite { call, node ->
             val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.irCallSite?.devirtualizedCallSite
             when {
-                call !is DataFlowIR.Node.VirtualCall -> staticCall(symbol, call, node, listOf(call.callee))
+                call !is DataFlowIR.Node.VirtualCall -> staticCall(symbol, CallGraphNode.CallSite.Static.Single(call, node, call.callee))
 
                 devirtualizedCallSite != null -> {
-                    if (devirtualizedCallSite.possibleCallees.size <= devirtualizedCallSitesUnfoldFactor)
-                        staticCall(symbol, call, node, devirtualizedCallSite.possibleCallees.map { it.callee })
-                    else {
+                    if (devirtualizedCallSite.possibleCallees.size <= devirtualizedCallSitesUnfoldFactor) {
+                        if (devirtualizedCallSite.possibleCallees.size == 1)
+                            staticCall(symbol, CallGraphNode.CallSite.Static.Single(call, node, devirtualizedCallSite.possibleCallees[0].callee))
+                        else
+                            staticCall(symbol, call, node, devirtualizedCallSite.possibleCallees.map { it.callee })
+                    } else {
                         val callSite = CallGraphNode.CallSite.Virtual(call, node, call.callee)
                         callGraph.addEdge(symbol, callSite)
 

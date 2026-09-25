@@ -73,10 +73,13 @@ internal class PreCodegenInliner(
         while (stack.isNotEmpty()) {
             val functionSymbol = stack.peek()!!
             val color = nodeColors[functionSymbol]!!
-            val callees = callGraph.directEdges[functionSymbol]!!.callSites
-                    .filterIsInstance<CallGraphNode.CallSite.Static>()
-                    .flatMap { it.callees }
-                    .filter { callGraph.directEdges.containsKey(it) }
+            val callees = buildList {
+                for (callSite in callGraph.directEdges[functionSymbol]!!.callSites) {
+                    (callSite as? CallGraphNode.CallSite.Static)?.forEachCallee {
+                        if (callGraph.directEdges.containsKey(it)) add(it)
+                    }
+                }
+            }
             when (color) {
                 NodeColor.WHITE -> {
                     nodeColors[functionSymbol] = NodeColor.GRAY
