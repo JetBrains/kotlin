@@ -105,8 +105,6 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
-
 fun Test.setUpJsBoxTests() {
     with(nodeJsKotlinBuild) {
         setupNodeJs(nodejsVersion)
@@ -154,7 +152,7 @@ projectTests {
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsES6Test", tag = "es6", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsES6Test", tag = "es6", skipInLocalBuild = false) {
         setUpJsBoxTests()
     }
 
@@ -199,19 +197,15 @@ projectTests {
 
 testsJar {}
 
-val testJsFile = testDataDir.resolve("test.js")
-val packageJsonFile = testDataDir.resolve("package.json")
-val packageLockJsonFile = testDataDir.resolve("package-lock.json")
-
 val prepareNpmTestData = tasks.register<Copy>("prepareNpmTestNpmData") {
-    from(testJsFile)
-    from(packageJsonFile)
-    from(packageLockJsonFile)
+    from(project(":js:js.translator").layout.projectDirectory.file("testData/test.js"))
+    from(project(":js:js.translator").layout.projectDirectory.file("testData/package.json"))
+    from(project(":js:js.translator").layout.projectDirectory.file("testData/package-lock.json"))
     into(node.nodeProjectDir)
 }
 
 val npmInstall = tasks.named("npmInstall", NpmTask::class) {
-    val packageLockFile = testDataDir.resolve("package-lock.json")
+    val packageLockFile = project(":js:js.translator").layout.projectDirectory.file("testData/package-lock.json")
 
     inputs.file(node.nodeProjectDir.file("package.json"))
         .withPathSensitivity(PathSensitivity.RELATIVE)
@@ -220,7 +214,6 @@ val npmInstall = tasks.named("npmInstall", NpmTask::class) {
     inputs.file(packageLockFile)
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .withPropertyName("packageLockFile")
-    outputs.upToDateWhen { packageLockFile.exists() }
 
     workingDir.fileProvider(node.nodeProjectDir.asFile)
     dependsOn(prepareNpmTestData)
