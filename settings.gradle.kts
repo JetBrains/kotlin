@@ -687,6 +687,8 @@ if (buildProperties.isInIdeaSync.get()) {
 include(
     ":native:swift:sir",
     ":native:swift:sir:tree-generator",
+    ":native:swift:kir",
+    ":native:swift:kir:tree-generator",
     ":native:swift:sir-light-classes",
     ":native:swift:sir-printer",
     ":native:swift:sir-providers",
