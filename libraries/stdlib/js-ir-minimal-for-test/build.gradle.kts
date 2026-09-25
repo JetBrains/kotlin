@@ -9,10 +9,15 @@ plugins {
 }
 
 val buildFeatures = serviceOf<BuildFeatures>()
+val jsIrMainSources = configurations.create("jsIrMainSources")
+
+dependencies {
+    jsIrMainSources(project(":kotlin-stdlib", configuration = "jsIrMainSources"))
+}
 
 kotlin {
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        js {
+    js {
+        if (!buildFeatures.isolatedProjects.active.get()) {
             nodejs()
         }
     }
@@ -130,9 +135,8 @@ val commonJsAndWasmJsSources = tasks.register<Sync>("commonJsAndWasmJsSources") 
 
     into(layout.buildDirectory.dir("commonJsAndWasmJsSources"))
 }
-val jsMainSources = if (!buildFeatures.isolatedProjects.active.get()) {
+val jsMainSources =
     tasks.register<Sync>("jsMainSources") {
-        dependsOn(":kotlin-stdlib:prepareJsIrMainSources")
         val jsDir = file("$rootDir/libraries/stdlib/js")
 
         from("$jsDir/src") {
@@ -167,10 +171,7 @@ val jsMainSources = if (!buildFeatures.isolatedProjects.active.get()) {
                 "kotlin/uuid/UuidJs.kt",
             )
         }
-        from {
-            val fullJsMainSources = tasks.getByPath(":kotlin-stdlib:prepareJsIrMainSources") as Sync
-            fullJsMainSources.destinationDir
-        }
+        from(jsIrMainSources)
         from("$jsDir/runtime") {
             exclude("collectionsHacks.kt")
             exclude("collectionsInterop.kt")
@@ -183,7 +184,7 @@ val jsMainSources = if (!buildFeatures.isolatedProjects.active.get()) {
 
         into(layout.buildDirectory.dir("jsMainSources"))
     }
-} else null
+
 kotlin {
     sourceSets {
         val commonMain = getByName("commonMain") {
@@ -195,7 +196,7 @@ kotlin {
             dependsOn(commonMain)
             kotlin.srcDir(files(commonNonJvmMainSources.map { it.destinationDir }))
         }
-        if (!buildFeatures.isolatedProjects.active.get()) {
+        if (true) {
             val commonJsAndWasmJs = create("commonJsAndWasmJs") {
                 dependsOn(commonMain)
                 kotlin.srcDir(files(commonJsAndWasmJsSources.map { it.destinationDir }))
@@ -234,7 +235,7 @@ tasks {
     compileKotlinMetadata {
         enabled = false
     }
-    if (!buildFeatures.isolatedProjects.active.get()) {
+    if (true) {
         named<KotlinCompilationTask<*>>("compileKotlinJs") {
             compilerOptions {
                 freeCompilerArgs.addAll(

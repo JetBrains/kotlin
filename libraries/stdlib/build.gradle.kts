@@ -268,51 +268,51 @@ kotlin {
             }
         }
     }
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        js {
-            val testCompilation = compilations.getByName("test")
-            val mainCompilation = compilations.getByName("main") {
-                compileTaskProvider.configure {
-                    compilerOptions.mainCompilationOptions()
-                    compilerOptions.freeCompilerArgs.addAll(
-                        listOfNotNull(
-                            "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
-                            diagnosticNamesArg,
-                        )
+    js {
+        val testCompilation = compilations.getByName("test")
+        val mainCompilation = compilations.getByName("main") {
+            compileTaskProvider.configure {
+                compilerOptions.mainCompilationOptions()
+                compilerOptions.freeCompilerArgs.addAll(
+                    listOfNotNull(
+                        "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
+                        diagnosticNamesArg,
                     )
-                }
+                )
             }
+        }
 
-            val latestJsCompilation = compilations.create("latestJsTest") {
-                associateWith(mainCompilation)
-                // Sources are configured in the `sourceSets` block below (see `jsLatestJsTest`).
-                // Don't `dependsOn(jsTest)` here: that would make `jsTest` a shared (non-leaf) source set
-                // and break its dependency resolution (e.g., kotlin.test) in the IDE.
-                binaries.executable(this)
-                binaries.configureEach {
-                    linkTask.configure {
-                        compilerOptions {
-                            target.set("es2020")
-                            moduleKind.set(JsModuleKind.MODULE_COMMONJS) // Mocha adapter doesn't support ES modules yet
-                        }
+        val latestJsCompilation = compilations.create("latestJsTest") {
+            associateWith(mainCompilation)
+            // Sources are configured in the `sourceSets` block below (see `jsLatestJsTest`).
+            // Don't `dependsOn(jsTest)` here: that would make `jsTest` a shared (non-leaf) source set
+            // and break its dependency resolution (e.g., kotlin.test) in the IDE.
+            binaries.executable(this)
+            binaries.configureEach {
+                linkTask.configure {
+                    compilerOptions {
+                        target.set("es2020")
+                        moduleKind.set(JsModuleKind.MODULE_COMMONJS) // Mocha adapter doesn't support ES modules yet
                     }
                 }
             }
+        }
 
-            fun KotlinJsSubTargetDsl.latestTargetRunRegistering(): KotlinJsPlatformTestRun {
-                return testRuns.create("latestTarget") {
-                    setExecutionSourceFrom(latestJsCompilation)
-                    executionTask.configure {
-                        val devBinary = latestJsCompilation.binaries
-                            .matching { it.mode == KotlinJsBinaryMode.DEVELOPMENT }
-                            .single()
+        fun KotlinJsSubTargetDsl.latestTargetRunRegistering(): KotlinJsPlatformTestRun {
+            return testRuns.create("latestTarget") {
+                setExecutionSourceFrom(latestJsCompilation)
+                executionTask.configure {
+                    val devBinary = latestJsCompilation.binaries
+                        .matching { it.mode == KotlinJsBinaryMode.DEVELOPMENT }
+                        .single()
 
-                        inputFileProperty.set(devBinary.mainFileSyncPath)
-                    }
+                    inputFileProperty.set(devBinary.mainFileSyncPath)
                 }
             }
+        }
 
 
+        if(!buildFeatures.isolatedProjects.active.get()) {
             if (!kotlinBuildProperties.isTeamcityBuild.get()) {
                 browser {
                     val latestJsRun = latestTargetRunRegistering()
@@ -332,18 +332,19 @@ kotlin {
                     }
                 }
             }
-
-            compilerOptions {
-                freeCompilerArgs.addAll(
-                    listOf(
-                        "-Xallow-kotlin-package",
-                        "-Xexpect-actual-classes",
-                    )
-                )
-            }
-
         }
+
+        compilerOptions {
+            freeCompilerArgs.addAll(
+                listOf(
+                    "-Xallow-kotlin-package",
+                    "-Xexpect-actual-classes",
+                )
+            )
+        }
+
     }
+
     fun <T> T.commonWasmTargetConfiguration()
             where T : KotlinTargetWithNodeJsDsl,
                   T : KotlinWasmTargetDsl {
@@ -352,7 +353,9 @@ kotlin {
         // KT-85971
         this as KotlinJsTargetDsl
         if (this.wasmTargetType == KotlinWasmTargetType.JS) {
-            nodejs()
+            if(!buildFeatures.isolatedProjects.active.get()) {
+                nodejs()
+            }
         } else {
             this as KotlinWasmWasiTargetDsl
             @OptIn(ExperimentalWasmDsl::class)
@@ -378,16 +381,16 @@ kotlin {
             }
         }
     }
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmJs {
-            commonWasmTargetConfiguration()
-        }
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmWasi {
-            commonWasmTargetConfiguration()
-        }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        commonWasmTargetConfiguration()
     }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmWasi {
+        commonWasmTargetConfiguration()
+    }
+
     // FIXME: KT-85818 Avoid using isInIdeaSync in stdlib/build.gradle.kts in kotlin.git
     if (kotlinBuildProperties.isInIdeaSync.get()) {
         val hostOs = System.getProperty("os.name")
@@ -498,50 +501,50 @@ kotlin {
                 srcDir("common-js-wasmjs/src")
             }
         }
-        if (!buildFeatures.isolatedProjects.active.get()) {
-            val jsMain = getByName("jsMain") {
-                dependsOn(webMain)
-                dependsOn(commonNonJvmMain)
-                val prepareJsIrMainSources = tasks.register("prepareJsIrMainSources", Sync::class)
-                kotlin {
-                    srcDir(prepareJsIrMainSources.requiredForImport())
-                    srcDir("$jsDir/builtins")
-                    srcDir("$jsDir/runtime")
-                    srcDir("$jsDir/src").apply {
-                        exclude("kotlin/browser")
-                        exclude("kotlin/dom")
-                        exclude("kotlinx")
-                        exclude("org.w3c")
-                    }
-                }
 
-                prepareJsIrMainSources.configure {
-                    val ignoredFileNames = setOf("Atomics.kt", "AtomicArrays.kt")
-                    val jsBuiltins: FileCollection = layout.projectDirectory.dir("js/builtins").asFileTree
-                    val jvmBuiltins: FileCollection = layout.projectDirectory.dir("jvm/builtins").asFileTree
-                    val jsBuiltinsSrcDirFile = layout.buildDirectory.dir("src/js-builtin-sources")
-
-                    into(jsBuiltinsSrcDirFile)
-                    from(jvmBuiltins) {
-                        into("kotlin")
-                        ignoredFileNames.forEach {
-                            exclude(it)
-                        }
-                        jsBuiltins.files.forEach {
-                            exclude(it.name)
-                        }
-                    }
+        val jsMain = getByName("jsMain") {
+            dependsOn(webMain)
+            dependsOn(commonNonJvmMain)
+            val prepareJsIrMainSources = tasks.register("prepareJsIrMainSources", Sync::class)
+            kotlin {
+                srcDir(prepareJsIrMainSources.requiredForImport())
+                srcDir("$jsDir/builtins")
+                srcDir("$jsDir/runtime")
+                srcDir("$jsDir/src").apply {
+                    exclude("kotlin/browser")
+                    exclude("kotlin/dom")
+                    exclude("kotlinx")
+                    exclude("org.w3c")
                 }
             }
-            val jsTest = getByName("jsTest") {
-                kotlin.srcDir("${jsDir}/test")
-            }
 
-            named("jsLatestJsTest") {
-                dependsOn(commonTest.get())
-                kotlin.srcDirs(jsTest.kotlin.srcDirs)
+            prepareJsIrMainSources.configure {
+                val ignoredFileNames = setOf("Atomics.kt", "AtomicArrays.kt")
+                val jsBuiltins: FileCollection = layout.projectDirectory.dir("js/builtins").asFileTree
+                val jvmBuiltins: FileCollection = layout.projectDirectory.dir("jvm/builtins").asFileTree
+                val jsBuiltinsSrcDirFile = layout.buildDirectory.dir("src/js-builtin-sources")
+
+                into(jsBuiltinsSrcDirFile)
+                from(jvmBuiltins) {
+                    into("kotlin")
+                    ignoredFileNames.forEach {
+                        exclude(it)
+                    }
+                    jsBuiltins.files.forEach {
+                        exclude(it.name)
+                    }
+                }
             }
         }
+        val jsTest = getByName("jsTest") {
+            kotlin.srcDir("${jsDir}/test")
+        }
+
+        named("jsLatestJsTest") {
+            dependsOn(commonTest.get())
+            kotlin.srcDirs(jsTest.kotlin.srcDirs)
+        }
+
         val nativeWasmMain = create("nativeWasmMain") {
             dependsOn(commonNonJvmMain)
             kotlin.srcDir("native-wasm/src")
@@ -598,42 +601,42 @@ kotlin {
                 srcDir("wasm/test")
             }
         }
-        if (!buildFeatures.isolatedProjects.active.get()) {
-            val wasmJsMain = getByName("wasmJsMain") {
-                dependsOn(webMain)
-                dependsOn(wasmCommonMain)
-                kotlin {
-                    srcDir("wasm/js/builtins")
-                    srcDir("wasm/js/internal")
-                    srcDir("wasm/js/src")
-                }
-            }
-            val wasmJsTest = getByName("wasmJsTest") {
-                dependsOn(wasmCommonTest)
-                kotlin {
-                    srcDir("wasm/js/test")
-                }
-            }
-            val wasmWasiMain = getByName("wasmWasiMain") {
-                dependsOn(wasmCommonMain)
-                dependsOn(nativeWasmWasiMain)
-                kotlin {
-                    srcDir("wasm/wasi/builtins")
-                    srcDir("wasm/wasi/internal")
-                    srcDir("wasm/wasi/src")
-                }
-                languageSettings {
-                    optIn("kotlin.wasm.unsafe.UnsafeWasmMemoryApi")
-                    optIn("kotlin.wasm.ExperimentalWasmInterop")
-                }
-            }
-            val wasmWasiTest = getByName("wasmWasiTest") {
-                dependsOn(wasmCommonTest)
-                kotlin {
-                    srcDir("wasm/wasi/test")
-                }
+
+        val wasmJsMain = getByName("wasmJsMain") {
+            dependsOn(webMain)
+            dependsOn(wasmCommonMain)
+            kotlin {
+                srcDir("wasm/js/builtins")
+                srcDir("wasm/js/internal")
+                srcDir("wasm/js/src")
             }
         }
+        val wasmJsTest = getByName("wasmJsTest") {
+            dependsOn(wasmCommonTest)
+            kotlin {
+                srcDir("wasm/js/test")
+            }
+        }
+        val wasmWasiMain = getByName("wasmWasiMain") {
+            dependsOn(wasmCommonMain)
+            dependsOn(nativeWasmWasiMain)
+            kotlin {
+                srcDir("wasm/wasi/builtins")
+                srcDir("wasm/wasi/internal")
+                srcDir("wasm/wasi/src")
+            }
+            languageSettings {
+                optIn("kotlin.wasm.unsafe.UnsafeWasmMemoryApi")
+                optIn("kotlin.wasm.ExperimentalWasmInterop")
+            }
+        }
+        val wasmWasiTest = getByName("wasmWasiTest") {
+            dependsOn(wasmCommonTest)
+            kotlin {
+                srcDir("wasm/wasi/test")
+            }
+        }
+
         if (kotlinBuildProperties.isInIdeaSync.get()) {
             val nativeKotlinTestCommon = create("nativeKotlinTestCommon") {
                 dependsOn(commonMain.get())
@@ -795,74 +798,73 @@ tasks {
         ownPackages.set(listOf("kotlin"))
     }
 
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        val jsJar = named("jsJar", Jar::class) {
-            manifestAttributes(manifest, "Main")
-            manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
+    val jsJar = named("jsJar", Jar::class) {
+        manifestAttributes(manifest, "Main")
+        manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
+    }
+
+    val jsJarForTests = register("jsJarForTests", Copy::class) {
+        from(jsJar)
+        rename { _ -> "full-runtime.klib" }
+        // some tests expect stdlib-js klib in this location
+        into(rootProject.isolated.projectDirectory.dir("build/js-ir-runtime"))
+    }
+
+    val jsRearrangedSourcesJar = register("jsRearrangedSourcesJar", Jar::class) {
+        archiveClassifier.set("js-sources")
+        archiveVersion.set("")
+        destinationDirectory.set(layout.buildDirectory.dir("lib"))
+
+        includeEmptyDirs = false
+        duplicatesStrategy = DuplicatesStrategy.FAIL
+
+        into("commonMain") {
+            from(kotlin.sourceSets.commonMain.get().kotlin)
         }
-
-        val jsJarForTests = register("jsJarForTests", Copy::class) {
-            from(jsJar)
-            rename { _ -> "full-runtime.klib" }
-            // some tests expect stdlib-js klib in this location
-            into(rootProject.isolated.projectDirectory.dir("build/js-ir-runtime"))
-        }
-
-        val jsRearrangedSourcesJar = register("jsRearrangedSourcesJar", Jar::class) {
-            archiveClassifier.set("js-sources")
-            archiveVersion.set("")
-            destinationDirectory.set(layout.buildDirectory.dir("lib"))
-
-            includeEmptyDirs = false
-            duplicatesStrategy = DuplicatesStrategy.FAIL
-
-            into("commonMain") {
-                from(kotlin.sourceSets.commonMain.get().kotlin)
+        into("jsMain") {
+            from(kotlin.sourceSets["jsMain"].kotlin) {
+                // just to depend on source-generating tasks
+                exclude("**")
             }
-            into("jsMain") {
-                from(kotlin.sourceSets["jsMain"].kotlin) {
-                    // just to depend on source-generating tasks
-                    exclude("**")
-                }
-                from(jvmBuiltinsDir) {
-                    into("kotlin")
-                    include("Comparable.kt")
-                    include("Enum.kt")
-                }
-                from("$jsBuiltinsSrcDir/libraries/stdlib/jvm") {
-                    exclude("builtins/Comparable.kt")
-                }
-                from("$jsBuiltinsSrcDir/libraries/stdlib/js/src")
-                from("$jsDir/builtins") {
-                    into("kotlin")
-                    exclude("Enum.kt")
-                }
-                from("$jsDir/runtime") {
-                    into("runtime")
-                }
-                from("$jsDir/src") {
-                    include("**/*.kt")
-                }
+            from(jvmBuiltinsDir) {
+                into("kotlin")
+                include("Comparable.kt")
+                include("Enum.kt")
             }
-        }
-
-        val jsSourcesJar = named("jsSourcesJar", Jar::class) {
-            val jsSourcesJarFile = jsRearrangedSourcesJar.get().archiveFile
-            inputs.file(jsSourcesJarFile)
-            doLast {
-                jsSourcesJarFile.get().asFile.toPath().copyTo(archiveFile.get().asFile.toPath(), overwrite = true)
+            from("$jsBuiltinsSrcDir/libraries/stdlib/jvm") {
+                exclude("builtins/Comparable.kt")
             }
-        }
-
-        val wasmJsJar = named("wasmJsJar", Jar::class) {
-            manifestAttributes(manifest, "Main")
-            manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-js"))
-        }
-        val wasmWasiJar = named("wasmWasiJar", Jar::class) {
-            manifestAttributes(manifest, "Main")
-            manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-wasi"))
+            from("$jsBuiltinsSrcDir/libraries/stdlib/js/src")
+            from("$jsDir/builtins") {
+                into("kotlin")
+                exclude("Enum.kt")
+            }
+            from("$jsDir/runtime") {
+                into("runtime")
+            }
+            from("$jsDir/src") {
+                include("**/*.kt")
+            }
         }
     }
+
+    val jsSourcesJar = named("jsSourcesJar", Jar::class) {
+        val jsSourcesJarFile = jsRearrangedSourcesJar.get().archiveFile
+        inputs.file(jsSourcesJarFile)
+        doLast {
+            jsSourcesJarFile.get().asFile.toPath().copyTo(archiveFile.get().asFile.toPath(), overwrite = true)
+        }
+    }
+
+    val wasmJsJar = named("wasmJsJar", Jar::class) {
+        manifestAttributes(manifest, "Main")
+        manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-js"))
+    }
+    val wasmWasiJar = named("wasmWasiJar", Jar::class) {
+        manifestAttributes(manifest, "Main")
+        manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-wasi"))
+    }
+
     artifacts {
         val distJsJar = configurations.create("distJsJar")
         val distJsSourcesJar = configurations.create("distJsSourcesJar")
@@ -871,19 +873,15 @@ tasks {
         val distWasmWasiKlib = configurations.create("distWasmWasiKlib")
         val commonMainMetadataElements = configurations.create("commonMainMetadataElements")
         val webMainMetadataElements = configurations.create("webMainMetadataElements")
+        val jsIrMainSources = configurations.create("jsIrMainSources")
 
-        if (!buildFeatures.isolatedProjects.active.get()) {
-            val jsSourcesJar = project.tasks.named("jsSourcesJar")
-            val jsJar = project.tasks.named("jsJar")
-            val wasmJsJar = project.tasks.named("wasmJsJar")
-            val wasmWasiJar = project.tasks.named("wasmWasiJar")
-            add(distJsSourcesJar.name, jsSourcesJar)
-            add(distJsKlib.name, jsJar)
-            add(distWasmJsKlib.name, wasmJsJar)
-            add(distWasmWasiKlib.name, wasmWasiJar)
-        }
+        add(distJsSourcesJar.name, jsSourcesJar)
+        add(distJsKlib.name, jsJar)
+        add(distWasmJsKlib.name, wasmJsJar)
+        add(distWasmWasiKlib.name, wasmWasiJar)
         add(webMainMetadataElements.name, webMetadataJar)
         add(commonMainMetadataElements.name, commonMetadataJar)
+        add(jsIrMainSources.name, project.tasks.named("prepareJsIrMainSources"))
     }
 
 
@@ -912,15 +910,16 @@ tasks {
     if (project.hasProperty("kotlin.stdlib.test.long.running")) {
         check.configure { dependsOn(jvmLongRunningTest) }
     }
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        listOf("Js", "Wasi").forEach { wasmTarget ->
-            named("compileTestKotlinWasm$wasmTarget", AbstractKotlinCompile::class) {
-                // TODO: fix all warnings, enable -Werror
-                compilerOptions.suppressWarnings = true
-                // exclusions due to KT-51647
-                exclude("generated/minmax/*")
-                exclude("collections/MapTest.kt")
-            }
+
+    listOf("Js", "Wasi").forEach { wasmTarget ->
+        named("compileTestKotlinWasm$wasmTarget", AbstractKotlinCompile::class) {
+            // TODO: fix all warnings, enable -Werror
+            compilerOptions.suppressWarnings = true
+            // exclusions due to KT-51647
+            exclude("generated/minmax/*")
+            exclude("collections/MapTest.kt")
+        }
+        if (!buildFeatures.isolatedProjects.active.get()) {
             named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
                 compilerOptions.freeCompilerArgs.add("-Xwasm-enable-array-range-checks")
                 compilerOptions.freeCompilerArgs.add("-Xwasm-enable-asserts")
@@ -1092,9 +1091,7 @@ publishing {
         val rootModule = named("rootModule", MavenPublication::class)
         val jsModule = named("jsModule", MavenPublication::class)
         configureSbom("Main", "kotlin-stdlib", setOf("jvmRuntimeClasspath"), rootModule)
-        if (!buildFeatures.isolatedProjects.active.get()) {
-            configureSbom("Js", "kotlin-stdlib-js", setOf("jsRuntimeClasspath"), jsModule)
-        }
+        configureSbom("Js", "kotlin-stdlib-js", setOf("jsRuntimeClasspath"), jsModule)
 
         val wasmJsModule = named("wasmJsModule", MavenPublication::class)
         val wasmWasiModule = named("wasmWasiModule", MavenPublication::class)

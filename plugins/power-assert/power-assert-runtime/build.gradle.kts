@@ -65,19 +65,23 @@ kotlin {
     jvm()
 
     val buildFeatures = serviceOf<BuildFeatures>()
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        js {
+    js {
+        if (!buildFeatures.isolatedProjects.active.get()) {
             browser()
             nodejs()
         }
+    }
 
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmJs {
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        if (!buildFeatures.isolatedProjects.active.get()) {
             nodejs()
         }
+    }
 
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmWasi {
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmWasi {
+        if (!buildFeatures.isolatedProjects.active.get()) {
             nodejs()
         }
     }

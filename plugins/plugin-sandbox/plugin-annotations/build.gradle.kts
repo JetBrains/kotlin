@@ -12,14 +12,17 @@ plugins {
 val buildFeatures = serviceOf<BuildFeatures>()
 kotlin {
     jvm()
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        js {
-            binaries.executable()
-        }
-        wasmJs {
+    js {
+        if (!buildFeatures.isolatedProjects.active.get()) {
             binaries.executable()
         }
     }
+    wasmJs {
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            binaries.executable()
+        }
+    }
+
     if (kotlinBuildProperties.isInIdeaSync.get()) {
         // this magic is needed because of explicit dependency of common
         // source set on the stdlib
@@ -54,9 +57,5 @@ sourceSets {
 }
 
 tasks.register("distAnnotations") {
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        dependsOn("jvmJar", "jsJar", "wasmJsJar")
-    } else {
-        dependsOn("jvmJar")
-    }
+    dependsOn("jvmJar", "jsJar", "wasmJsJar")
 }

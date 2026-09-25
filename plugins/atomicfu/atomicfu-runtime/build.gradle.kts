@@ -17,17 +17,17 @@ group = "org.jetbrains.kotlin"
 val buildFeatures = serviceOf<BuildFeatures>()
 
 kotlin {
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        js {
+    js {
+        if (!buildFeatures.isolatedProjects.active.get()) {
             browser()
             nodejs()
         }
+    }
 
-        sourceSets {
-            jsMain {
-                dependencies {
-                    compileOnly(project(":kotlin-stdlib"))
-                }
+    sourceSets {
+        jsMain {
+            dependencies {
+                compileOnly(project(":kotlin-stdlib"))
             }
         }
     }
@@ -36,17 +36,15 @@ kotlin {
 val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
     archiveClassifier.set("javadoc")
 }
-if (!buildFeatures.isolatedProjects.active.get()) {
-    publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                // FIXME: Remove customized publication in KT-83065
-                from(kotlin.js().components.single())
-                configureKotlinPomAttributes(project, "Runtime library for the Atomicfu compiler plugin", packaging = "klib")
-            }
-            withType<MavenPublication> {
-                artifact(emptyJavadocJar)
-            }
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            // FIXME: Remove customized publication in KT-83065
+            from(kotlin.js().components.single())
+            configureKotlinPomAttributes(project, "Runtime library for the Atomicfu compiler plugin", packaging = "klib")
+        }
+        withType<MavenPublication> {
+            artifact(emptyJavadocJar)
         }
     }
 }

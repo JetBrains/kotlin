@@ -17,17 +17,17 @@ group = "org.jetbrains.kotlin"
 val buildFeatures = serviceOf<BuildFeatures>()
 
 kotlin {
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        js {
+    js {
+        if (!buildFeatures.isolatedProjects.active.get()) {
             browser()
             nodejs()
         }
+    }
 
-        sourceSets {
-            jsMain {
-                dependencies {
-                    compileOnly(project(":kotlin-stdlib"))
-                }
+    sourceSets {
+        jsMain {
+            dependencies {
+                compileOnly(project(":kotlin-stdlib"))
             }
         }
     }

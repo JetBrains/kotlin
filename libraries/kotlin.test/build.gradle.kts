@@ -120,45 +120,50 @@ kotlin {
             test.associateWith(getByName("JUnit"))
         }
     }
-    if (!buildFeatures.isolatedProjects.active.get()) {
-        js {
+
+    js {
+        if (!buildFeatures.isolatedProjects.active.get()) {
             if (!kotlinBuildProperties.isTeamcityBuild.get()) {
                 browser {}
             }
             nodejs {}
-            compilations["main"].compileTaskProvider.configure {
-                compilerOptions.freeCompilerArgs.addAll(
-                    "-Xir-module-name=$KOTLINTEST_MODULE_NAME",
-                )
-                compilerOptions.addReturnValueCheckerInfo()
-            }
         }
+        compilations["main"].compileTaskProvider.configure {
+            compilerOptions.freeCompilerArgs.addAll(
+                "-Xir-module-name=$KOTLINTEST_MODULE_NAME",
+            )
+            compilerOptions.addReturnValueCheckerInfo()
+        }
+    }
 
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmJs {
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        if (!buildFeatures.isolatedProjects.active.get()) {
             nodejs()
-            compilerOptions {
-                sourceMap = false
-                sourceMapEmbedSources.unsetConvention()
-            }
-            compilations["main"].compileTaskProvider.configure {
-                compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
-                compilerOptions.addReturnValueCheckerInfo()
-            }
         }
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmWasi {
+        compilerOptions {
+            sourceMap = false
+            sourceMapEmbedSources.unsetConvention()
+        }
+        compilations["main"].compileTaskProvider.configure {
+            compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
+            compilerOptions.addReturnValueCheckerInfo()
+        }
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmWasi {
+        if (!buildFeatures.isolatedProjects.active.get()) {
             nodejs()
-            // cast is necessary because of KT-85971
-            // update after bootstrap
-            (this as KotlinJsTargetDsl).compilerOptions {
-                sourceMap = false
-                sourceMapEmbedSources.unsetConvention()
-            }
-            compilations["main"].compileTaskProvider.configure {
-                compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
-                compilerOptions.addReturnValueCheckerInfo()
-            }
+        }
+        // cast is necessary because of KT-85971
+        // update after bootstrap
+        (this as KotlinJsTargetDsl).compilerOptions {
+            sourceMap = false
+            sourceMapEmbedSources.unsetConvention()
+        }
+        compilations["main"].compileTaskProvider.configure {
+            compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
+            compilerOptions.addReturnValueCheckerInfo()
         }
     }
     targets.all {
@@ -243,7 +248,7 @@ kotlin {
                 implementation("org.testng:testng:7.5.1")
             }
         }
-        if (!buildFeatures.isolatedProjects.active.get()) {
+        if (true) {
             val jsMain = getByName("jsMain") {
                 dependsOn(assertionsCommonMain)
                 dependsOn(annotationsCommonMain)
@@ -308,7 +313,7 @@ tasks {
             }
         }
     }
-    if (!buildFeatures.isolatedProjects.active.get()) {
+    if (true) {
         val jsJar = named("jsJar", Jar::class) {
             manifestAttributes(manifest, "Test")
             manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
@@ -350,7 +355,7 @@ tasks {
     val allTests = named("allTests") {
         dependsOn(jvmTestTasks)
     }
-    if (!buildFeatures.isolatedProjects.active.get()) {
+    if (true) {
         val generateProjectStructureMetadata = named("generateProjectStructureMetadata", GenerateProjectStructureMetadata::class) {
             val outputTestFile = file("kotlin-project-structure-metadata.beforePatch.json")
             val patchedFile = file("kotlin-project-structure-metadata.json")
