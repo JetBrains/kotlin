@@ -120,18 +120,22 @@ abstract class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, 
 
         abstract fun getText(context: Context): String
 
-        fun writeMetadataIfNeeded(forSource: File, report: ((File) -> Unit)? = null) {
-            if (kaptMetadata == null) {
-                return
-            }
+        fun metadataToWrite(forSource: File): Pair<File, ByteArray>? {
+            if (kaptMetadata == null) return null
 
             val metadataFile = File(
                 forSource.parentFile,
                 forSource.nameWithoutExtension + KaptStubLineInformation.KAPT_METADATA_EXTENSION
             )
 
+            return metadataFile to kaptMetadata
+        }
+
+        fun writeMetadataIfNeeded(forSource: File, report: ((File) -> Unit)? = null) {
+            val [metadataFile, metadata] = metadataToWrite(forSource) ?: return
+
             report?.invoke(metadataFile)
-            metadataFile.writeBytes(kaptMetadata)
+            metadataFile.writeBytes(metadata)
         }
     }
 
