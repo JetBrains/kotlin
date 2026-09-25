@@ -28,4 +28,4 @@ fun box(): String {
     return "OK"
 }
 
-// 0 ATTRIBUTE LoadableDescriptors
+// 1 ATTRIBUTE LoadableDescriptors : LJavaVal;, Ljava/time/LocalDate;, Ljava/lang/Integer;\n
