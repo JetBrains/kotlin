@@ -554,8 +554,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
      * @see FirAnalysisHandlerExtension.isApplicable
      * @see FirAnalysisHandlerExtension.doAnalysis
      */
-
-    fun runAnalysisHandlerExtensions(project: Project, configuration: CompilerConfiguration): Boolean? {
+    private fun runAnalysisHandlerExtensions(project: Project, configuration: CompilerConfiguration): Boolean? {
         val extensions = configuration.getCompilerExtensions(FirAnalysisHandlerExtension)
             .filter { it.isApplicable(configuration) }
             .takeIf { it.isNotEmpty() }

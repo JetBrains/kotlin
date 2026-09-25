@@ -16,6 +16,7 @@ dependencies {
     testImplementation(project(":core:descriptors.jvm"))
     testImplementation(project(":compiler:util"))
     testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:cli-jvm"))
     testImplementation(project(":compiler:frontend"))
     testImplementation(project(":compiler:backend"))
 
@@ -30,7 +31,6 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.core.jvm)
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
 
