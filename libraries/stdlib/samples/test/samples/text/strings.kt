@@ -595,6 +595,19 @@ class Strings {
         // The string does not contain 'z'
         assertFalse('z' in text)
     }
+
+    @Sample
+    fun first() {
+        val string = "Kotlin 1.4.0"
+        assertPrints(string.first(), "K")
+        assertPrints(string.first { it.isDigit() }, "1")
+        assertPrints(string.firstOrNull { it > 'z' }, "null")
+        assertFailsWith<NoSuchElementException> { string.first { it > 'z' } }
+
+        val emptyString = ""
+        assertPrints(emptyString.firstOrNull(), "null")
+        assertFailsWith<NoSuchElementException> { emptyString.first() }
+    }
     
     @Sample
     fun last() {

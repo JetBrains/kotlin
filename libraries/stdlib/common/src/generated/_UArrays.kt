@@ -564,6 +564,8 @@ public inline fun UShortArray.findLast(predicate: (UShort) -> Boolean): UShort? 
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -576,6 +578,8 @@ public inline fun UIntArray.first(): UInt {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -588,6 +592,8 @@ public inline fun ULongArray.first(): ULong {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -600,6 +606,8 @@ public inline fun UByteArray.first(): UByte {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -611,6 +619,8 @@ public inline fun UShortArray.first(): UShort {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -623,6 +633,8 @@ public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -635,6 +647,8 @@ public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -647,6 +661,8 @@ public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
