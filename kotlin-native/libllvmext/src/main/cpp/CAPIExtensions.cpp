@@ -13,6 +13,8 @@
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Error.h"
 
+#include <mutex>
+
 using namespace llvm;
 using namespace llvm::kotlin;
 
@@ -20,17 +22,20 @@ static TargetMachine *unwrap(LLVMTargetMachineRef P) {
   return reinterpret_cast<TargetMachine *>(P);
 }
 
+static std::once_flag TargetsInitializedFlag;
+
 void LLVMKotlinInitializeTargets() {
+  std::call_once(TargetsInitializedFlag, [] {
 #define INIT_LLVM_TARGET(TargetName)                                           \
   LLVMInitialize##TargetName##TargetInfo();                                    \
   LLVMInitialize##TargetName##Target();                                        \
   LLVMInitialize##TargetName##TargetMC();
-
-  INIT_LLVM_TARGET(AArch64)
-  INIT_LLVM_TARGET(ARM)
-  INIT_LLVM_TARGET(X86)
+    INIT_LLVM_TARGET(AArch64)
+    INIT_LLVM_TARGET(ARM)
+    INIT_LLVM_TARGET(X86)
 
 #undef INIT_LLVM_TARGET
+  });
 }
 
 void LLVMKotlinSetNoTailCall(LLVMValueRef Call) {
