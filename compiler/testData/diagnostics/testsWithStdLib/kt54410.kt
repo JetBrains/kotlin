@@ -4,7 +4,7 @@
 import kotlin.io.path.OnErrorResult
 
 fun fun0 (): Unit {
-    val something1 = <!API_NOT_AVAILABLE, OPT_IN_USAGE_ERROR!>OnErrorResult<!>.<!OPT_IN_USAGE_ERROR!>TERMINATE<!>
+    val something1 = <!UNRESOLVED_REFERENCE!>OnErrorResult<!>.<!UNRESOLVED_REFERENCE!>TERMINATE<!>
     val something2 = kotlin.io.path.<!API_NOT_AVAILABLE, OPT_IN_USAGE_ERROR!>OnErrorResult<!>.<!OPT_IN_USAGE_ERROR!>TERMINATE<!>
 }
 

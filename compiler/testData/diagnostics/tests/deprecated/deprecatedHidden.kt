@@ -4,12 +4,12 @@
 @Deprecated("", level = DeprecationLevel.HIDDEN)
 open class Foo
 
-fun test(f: <!DEPRECATION_ERROR!>Foo<!>) {
+fun test(f: <!UNRESOLVED_REFERENCE!>Foo<!>) {
     f.toString()
-    val g: <!DEPRECATION_ERROR!>Foo<!>? = <!DEPRECATION_ERROR!>Foo<!>()
+    val g: <!UNRESOLVED_REFERENCE!>Foo<!>? = <!UNRESOLVED_REFERENCE!>Foo<!>()
 }
 
-class Bar : <!DEPRECATION_ERROR!>Foo<!>()
+class Bar : <!UNRESOLVED_REFERENCE!>Foo<!>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, propertyDeclaration,
 stringLiteral */

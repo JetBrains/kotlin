@@ -20,7 +20,7 @@ public class ClassWithMembers {
 }
 
 // FILE: main.kt
-fun check(j: <!DEPRECATION_ERROR!>JavaClass<!>) {
+fun check(j: <!UNRESOLVED_REFERENCE!>JavaClass<!>) {
     <!UNRESOLVED_REFERENCE!>JavaClass<!>()
 
     ClassWithMembers.<!UNRESOLVED_REFERENCE!>function<!>()

@@ -7,7 +7,7 @@ class Outer {
         <!DEPRECATION!>IW<!>()
         <!DEPRECATION_ERROR!>IE1<!>()
         <!DEPRECATION_ERROR!>IE2<!>()
-        <!INTERFACE_AS_FUNCTION!>IH1<!>()
+        <!UNRESOLVED_REFERENCE!>IH1<!>()
         <!UNRESOLVED_REFERENCE!>IH2<!>()
         IH3()
         IH4()
