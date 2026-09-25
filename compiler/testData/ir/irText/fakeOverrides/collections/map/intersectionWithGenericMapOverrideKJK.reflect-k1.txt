@@ -1,0 +1,78 @@
+KClass: abstract class A : SortedMap, Map, Any
+  constructors:
+    public final <T> fun `<init>`(): A<T>
+  members:
+    public abstract fun A<T>.clear(): kotlin.Unit
+    public abstract fun A<T>.comparator(): java.util.Comparator<in T!>!
+    public open fun A<T>.compute(T!, java.util.function.BiFunction<in T!, in T?, out T?>): T?
+    public open fun A<T>.computeIfAbsent(T!, java.util.function.Function<in T!, out T!>): T!
+    public open fun A<T>.computeIfPresent(T!, java.util.function.BiFunction<in T!, in T, out T?>): T?
+    public abstract fun A<T>.containsKey(T!): kotlin.Boolean
+    public abstract fun A<T>.containsValue(T!): kotlin.Boolean
+    public open operator fun A<T>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun A<T>.firstKey(): T!
+    public open fun A<T>.forEach(java.util.function.BiConsumer<in T!, in T!>): kotlin.Unit
+    public abstract operator fun A<T>.get(T!): T?
+    public open fun A<T>.getOrDefault(T, T): T
+    public open fun A<T>.hashCode(): kotlin.Int
+    public abstract fun A<T>.headMap(T!): java.util.SortedMap<T!, T!>!
+    public abstract fun A<T>.isEmpty(): kotlin.Boolean
+    public abstract fun A<T>.lastKey(): T!
+    public open fun A<T>.merge(T!, T, java.util.function.BiFunction<in T, in T, out T?>): T?
+    public abstract fun A<T>.put(T!, T!): T?
+    public abstract fun A<T>.putAll(kotlin.collections.Map<out T!, T!>): kotlin.Unit
+    public open fun A<T>.putIfAbsent(T!, T!): T?
+    public abstract fun A<T>.remove(T!): T?
+    public open fun A<T>.remove(T!, T!): kotlin.Boolean
+    public open fun A<T>.replace(T!, T!): T?
+    public open fun A<T>.replace(T!, T!, T!): kotlin.Boolean
+    public open fun A<T>.replaceAll(java.util.function.BiFunction<in T!, in T!, out T!>): kotlin.Unit
+    public abstract fun A<T>.subMap(T!, T!): java.util.SortedMap<T!, T!>!
+    public abstract fun A<T>.tailMap(T!): java.util.SortedMap<T!, T!>!
+    public open fun A<T>.toString(): kotlin.String
+    public abstract val A<T>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T!, T!>>
+    public abstract val A<T>.keys: kotlin.collections.MutableSet<T!>
+    public abstract val A<T>.size: kotlin.Int
+    public abstract val A<T>.values: kotlin.collections.MutableCollection<T!>
+  declaredMembers:
+KClass: abstract class B : SortedMap, Map, Any
+  constructors:
+    public final <T> fun `<init>`(): B<T>
+  members:
+    public abstract fun B<T>.clear(): kotlin.Unit
+    public abstract fun B<T>.comparator(): java.util.Comparator<in T!>!
+    public open fun B<T>.compute(T!, java.util.function.BiFunction<in T!, in T?, out T?>): T?
+    public open fun B<T>.computeIfAbsent(T!, java.util.function.Function<in T!, out T!>): T!
+    public open fun B<T>.computeIfPresent(T!, java.util.function.BiFunction<in T!, in T, out T?>): T?
+    public abstract fun B<T>.containsKey(T!): kotlin.Boolean
+    public abstract fun B<T>.containsValue(T!): kotlin.Boolean
+    public open operator fun B<T>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun B<T>.firstKey(): T!
+    public open fun B<T>.forEach(java.util.function.BiConsumer<in T!, in T!>): kotlin.Unit
+    public abstract operator fun B<T>.get(T!): T?
+    public open fun B<T>.getOrDefault(T, T): T
+    public open fun B<T>.hashCode(): kotlin.Int
+    public abstract fun B<T>.headMap(T!): java.util.SortedMap<T!, T!>!
+    public abstract fun B<T>.isEmpty(): kotlin.Boolean
+    public abstract fun B<T>.lastKey(): T!
+    public open fun B<T>.merge(T!, T, java.util.function.BiFunction<in T, in T, out T?>): T?
+    public open fun B<T>.put(T, T): T
+    public abstract fun B<T>.putAll(kotlin.collections.Map<out T!, T!>): kotlin.Unit
+    public open fun B<T>.putIfAbsent(T!, T!): T?
+    public open fun B<T>.remove(T!, T!): kotlin.Boolean
+    public open fun B<T>.remove(T): T
+    public open fun B<T>.replace(T!, T!): T?
+    public open fun B<T>.replace(T!, T!, T!): kotlin.Boolean
+    public open fun B<T>.replaceAll(java.util.function.BiFunction<in T!, in T!, out T!>): kotlin.Unit
+    public abstract fun B<T>.subMap(T!, T!): java.util.SortedMap<T!, T!>!
+    public abstract fun B<T>.tailMap(T!): java.util.SortedMap<T!, T!>!
+    public open fun B<T>.toString(): kotlin.String
+    public abstract val B<T>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T!, T!>>
+    public abstract val B<T>.keys: kotlin.collections.MutableSet<T!>
+    public abstract val B<T>.size: kotlin.Int
+    public abstract val B<T>.values: kotlin.collections.MutableCollection<T!>
+  declaredMembers:
+    public open fun B<T>.put(T, T): T
+    public open fun B<T>.remove(T): T
+KPackage: _1Kt
+  public final fun test(A<kotlin.Boolean>, B<kotlin.Boolean?>): kotlin.Unit

@@ -6,6 +6,12 @@ import kotlin.reflect.KFunction2
 import kotlin.test.assertEquals
 
 fun box(): String {
+    // References to members of mutable collection classes are not supported by the legacy (K1-based) reflection implementation.
+    val systemProperties = Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+    if (systemProperties.getMethod("getUseK1Implementation").invoke(null) == true ||
+        systemProperties.getMethod("getUseK1ImplementationForMembers").invoke(null) == true
+    ) return "OK"
+
     val list = arrayListOf("a")
     val add: KFunction2<MutableList<String>, String, Boolean> = MutableList<String>::add
     assertEquals("fun kotlin.collections.MutableList<E>.add(E): kotlin.Boolean", add.toString())

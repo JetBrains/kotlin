@@ -3,6 +3,10 @@
 // FULL_JDK
 // WITH_STDLIB
 
+// K1 kotlin-reflect drops the definitely non-nullable marker (`V & Any`) from the predefined enhancement of `java.util.Map.merge`
+// and `computeIfPresent`, while the new implementation matches the compiler
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: 1.kt
 import java.util.SortedMap
 

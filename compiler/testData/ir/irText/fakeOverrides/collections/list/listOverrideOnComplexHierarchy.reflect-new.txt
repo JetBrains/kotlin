@@ -1,0 +1,611 @@
+KClass: abstract class A : LinkedList, Java2, Collection
+  constructors:
+    public final fun `<init>`(): A
+  members:
+    public open fun A.add(kotlin.Int): kotlin.Boolean
+    public open fun A.add(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun A.addAll(kotlin.Int, kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun A.addAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun A.addFirst(kotlin.Int!): kotlin.Unit
+    public open fun A.addLast(kotlin.Int!): kotlin.Unit
+    public open fun A.clear(): kotlin.Unit
+    public open fun A.clone(): kotlin.Any
+    public open operator fun A.contains(kotlin.Int): kotlin.Boolean
+    public open fun A.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun A.descendingIterator(): kotlin.collections.(Mutable)Iterator<kotlin.Int!>!
+    public open fun A.element(): kotlin.Int!
+    public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open operator fun A.get(kotlin.Int): kotlin.Int
+    public open fun A.getFirst(): kotlin.Int!
+    public open fun A.getLast(): kotlin.Int!
+    public open fun A.hashCode(): kotlin.Int
+    public open fun A.indexOf(kotlin.Int): kotlin.Int
+    public open fun A.isEmpty(): kotlin.Boolean
+    public open operator fun A.iterator(): kotlin.collections.MutableIterator<kotlin.Int>
+    public open fun A.lastIndexOf(kotlin.Int): kotlin.Int
+    public open fun A.listIterator(): kotlin.collections.MutableListIterator<kotlin.Int>
+    public open fun A.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<kotlin.Int>
+    public open fun A.offer(kotlin.Int!): kotlin.Boolean
+    public open fun A.offerFirst(kotlin.Int!): kotlin.Boolean
+    public open fun A.offerLast(kotlin.Int!): kotlin.Boolean
+    public open fun A.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    public open fun A.peek(): kotlin.Int!
+    public open fun A.peekFirst(): kotlin.Int!
+    public open fun A.peekLast(): kotlin.Int!
+    public open fun A.poll(): kotlin.Int!
+    public open fun A.pollFirst(): kotlin.Int!
+    public open fun A.pollLast(): kotlin.Int!
+    public open fun A.pop(): kotlin.Int!
+    public open fun A.push(kotlin.Int!): kotlin.Unit
+    public open fun A.remove(): kotlin.Int!
+    public open fun A.remove(kotlin.Int): kotlin.Boolean
+    public abstract fun A.remove(kotlin.Int): kotlin.Boolean!
+    public open fun A.removeAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun A.removeAt(kotlin.Int): kotlin.Int
+    public open fun A.removeFirst(): kotlin.Int!
+    public open fun A.removeFirstOccurrence(kotlin.Any!): kotlin.Boolean
+    public open fun A.removeIf(java.util.function.Predicate<in kotlin.Int>): kotlin.Boolean
+    public open fun A.removeLast(): kotlin.Int!
+    public open fun A.removeLastOccurrence(kotlin.Any!): kotlin.Boolean
+    open fun A.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun A.replaceAll(java.util.function.UnaryOperator<kotlin.Int>): kotlin.Unit
+    public open fun A.retainAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open operator fun A.set(kotlin.Int, kotlin.Int): kotlin.Int
+    public open fun A.sort(java.util.Comparator<in kotlin.Int!>!): kotlin.Unit
+    public open fun A.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun A.stream(): java.util.stream.Stream<kotlin.Int>
+    public open fun A.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<kotlin.Int>
+    public open fun A.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open <T> fun A.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
+    public open fun A.toString(): kotlin.String
+    public open val A.size: kotlin.Int
+    final var A.modCount: kotlin.Int
+  declaredMembers:
+KClass: class B : A
+  constructors:
+    public final fun `<init>`(): B
+  members:
+    public open fun B.add(kotlin.Int): kotlin.Boolean
+    public open fun B.add(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun B.addAll(kotlin.Int, kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun B.addAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun B.addFirst(kotlin.Int!): kotlin.Unit
+    public open fun B.addLast(kotlin.Int!): kotlin.Unit
+    public open fun B.clear(): kotlin.Unit
+    public open fun B.clone(): kotlin.Any
+    public open operator fun B.contains(kotlin.Int): kotlin.Boolean
+    public open fun B.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun B.descendingIterator(): kotlin.collections.(Mutable)Iterator<kotlin.Int!>!
+    public open fun B.element(): kotlin.Int!
+    public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    public open fun B.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open operator fun B.get(kotlin.Int): kotlin.Int
+    public open fun B.getFirst(): kotlin.Int!
+    public open fun B.getLast(): kotlin.Int!
+    public open fun B.hashCode(): kotlin.Int
+    public open fun B.indexOf(kotlin.Int): kotlin.Int
+    public open fun B.isEmpty(): kotlin.Boolean
+    public open operator fun B.iterator(): kotlin.collections.MutableIterator<kotlin.Int>
+    public open fun B.lastIndexOf(kotlin.Int): kotlin.Int
+    public open fun B.listIterator(): kotlin.collections.MutableListIterator<kotlin.Int>
+    public open fun B.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<kotlin.Int>
+    public open fun B.offer(kotlin.Int!): kotlin.Boolean
+    public open fun B.offerFirst(kotlin.Int!): kotlin.Boolean
+    public open fun B.offerLast(kotlin.Int!): kotlin.Boolean
+    public open fun B.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    public open fun B.peek(): kotlin.Int!
+    public open fun B.peekFirst(): kotlin.Int!
+    public open fun B.peekLast(): kotlin.Int!
+    public open fun B.poll(): kotlin.Int!
+    public open fun B.pollFirst(): kotlin.Int!
+    public open fun B.pollLast(): kotlin.Int!
+    public open fun B.pop(): kotlin.Int!
+    public open fun B.push(kotlin.Int!): kotlin.Unit
+    public open fun B.remove(): kotlin.Int!
+    public open fun B.remove(kotlin.Int): kotlin.Boolean
+    public open fun B.removeAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun B.removeAt(kotlin.Int): kotlin.Int
+    public open fun B.removeFirst(): kotlin.Int!
+    public open fun B.removeFirstOccurrence(kotlin.Any!): kotlin.Boolean
+    public open fun B.removeIf(java.util.function.Predicate<in kotlin.Int>): kotlin.Boolean
+    public open fun B.removeLast(): kotlin.Int!
+    public open fun B.removeLastOccurrence(kotlin.Any!): kotlin.Boolean
+    open fun B.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun B.replaceAll(java.util.function.UnaryOperator<kotlin.Int>): kotlin.Unit
+    public open fun B.retainAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open operator fun B.set(kotlin.Int, kotlin.Int): kotlin.Int
+    public open fun B.sort(java.util.Comparator<in kotlin.Int!>!): kotlin.Unit
+    public open fun B.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun B.stream(): java.util.stream.Stream<kotlin.Int>
+    public open fun B.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<kotlin.Int>
+    public open fun B.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open <T> fun B.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
+    public open fun B.toString(): kotlin.String
+    public open val B.size: kotlin.Int
+    final var B.modCount: kotlin.Int
+  declaredMembers:
+    public open fun B.remove(kotlin.Int): kotlin.Boolean
+KClass: abstract class C : LinkedList, KotlinInterface, Collection
+  constructors:
+    public final fun `<init>`(): C
+  members:
+    public open fun C.add(kotlin.Int): kotlin.Boolean
+    public open fun C.add(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun C.addAll(kotlin.Int, kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun C.addAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun C.addFirst(kotlin.Int!): kotlin.Unit
+    public open fun C.addLast(kotlin.Int!): kotlin.Unit
+    public open fun C.clear(): kotlin.Unit
+    public open fun C.clone(): kotlin.Any
+    public open operator fun C.contains(kotlin.Int): kotlin.Boolean
+    public open fun C.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun C.descendingIterator(): kotlin.collections.(Mutable)Iterator<kotlin.Int!>!
+    public open fun C.element(): kotlin.Int!
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public open fun C.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open operator fun C.get(kotlin.Int): kotlin.Int
+    public open fun C.getFirst(): kotlin.Int!
+    public open fun C.getLast(): kotlin.Int!
+    public open fun C.hashCode(): kotlin.Int
+    public open fun C.indexOf(kotlin.Int): kotlin.Int
+    public open fun C.isEmpty(): kotlin.Boolean
+    public open operator fun C.iterator(): kotlin.collections.MutableIterator<kotlin.Int>
+    public open fun C.lastIndexOf(kotlin.Int): kotlin.Int
+    public open fun C.listIterator(): kotlin.collections.MutableListIterator<kotlin.Int>
+    public open fun C.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<kotlin.Int>
+    public open fun C.offer(kotlin.Int!): kotlin.Boolean
+    public open fun C.offerFirst(kotlin.Int!): kotlin.Boolean
+    public open fun C.offerLast(kotlin.Int!): kotlin.Boolean
+    public open fun C.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    public open fun C.peek(): kotlin.Int!
+    public open fun C.peekFirst(): kotlin.Int!
+    public open fun C.peekLast(): kotlin.Int!
+    public open fun C.poll(): kotlin.Int!
+    public open fun C.pollFirst(): kotlin.Int!
+    public open fun C.pollLast(): kotlin.Int!
+    public open fun C.pop(): kotlin.Int!
+    public open fun C.push(kotlin.Int!): kotlin.Unit
+    public open fun C.remove(): kotlin.Int!
+    public abstract fun C.remove(kotlin.Int): kotlin.Boolean
+    public open fun C.remove(kotlin.Int): kotlin.Boolean
+    public open fun C.removeAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun C.removeAt(kotlin.Int): kotlin.Int
+    public open fun C.removeFirst(): kotlin.Int!
+    public open fun C.removeFirstOccurrence(kotlin.Any!): kotlin.Boolean
+    public open fun C.removeIf(java.util.function.Predicate<in kotlin.Int>): kotlin.Boolean
+    public open fun C.removeLast(): kotlin.Int!
+    public open fun C.removeLastOccurrence(kotlin.Any!): kotlin.Boolean
+    open fun C.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun C.replaceAll(java.util.function.UnaryOperator<kotlin.Int>): kotlin.Unit
+    public open fun C.retainAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open operator fun C.set(kotlin.Int, kotlin.Int): kotlin.Int
+    public open fun C.sort(java.util.Comparator<in kotlin.Int!>!): kotlin.Unit
+    public open fun C.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun C.stream(): java.util.stream.Stream<kotlin.Int>
+    public open fun C.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<kotlin.Int>
+    public open fun C.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open <T> fun C.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
+    public open fun C.toString(): kotlin.String
+    public open val C.size: kotlin.Int
+    final var C.modCount: kotlin.Int
+  declaredMembers:
+KClass: class D : C
+  constructors:
+    public final fun `<init>`(): D
+  members:
+    public open fun D.add(kotlin.Int): kotlin.Boolean
+    public open fun D.add(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun D.addAll(kotlin.Int, kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun D.addAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun D.addFirst(kotlin.Int!): kotlin.Unit
+    public open fun D.addLast(kotlin.Int!): kotlin.Unit
+    public open fun D.clear(): kotlin.Unit
+    public open fun D.clone(): kotlin.Any
+    public open operator fun D.contains(kotlin.Int): kotlin.Boolean
+    public open fun D.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun D.descendingIterator(): kotlin.collections.(Mutable)Iterator<kotlin.Int!>!
+    public open fun D.element(): kotlin.Int!
+    public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
+    public open fun D.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open operator fun D.get(kotlin.Int): kotlin.Int
+    public open fun D.getFirst(): kotlin.Int!
+    public open fun D.getLast(): kotlin.Int!
+    public open fun D.hashCode(): kotlin.Int
+    public open fun D.indexOf(kotlin.Int): kotlin.Int
+    public open fun D.isEmpty(): kotlin.Boolean
+    public open operator fun D.iterator(): kotlin.collections.MutableIterator<kotlin.Int>
+    public open fun D.lastIndexOf(kotlin.Int): kotlin.Int
+    public open fun D.listIterator(): kotlin.collections.MutableListIterator<kotlin.Int>
+    public open fun D.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<kotlin.Int>
+    public open fun D.offer(kotlin.Int!): kotlin.Boolean
+    public open fun D.offerFirst(kotlin.Int!): kotlin.Boolean
+    public open fun D.offerLast(kotlin.Int!): kotlin.Boolean
+    public open fun D.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    public open fun D.peek(): kotlin.Int!
+    public open fun D.peekFirst(): kotlin.Int!
+    public open fun D.peekLast(): kotlin.Int!
+    public open fun D.poll(): kotlin.Int!
+    public open fun D.pollFirst(): kotlin.Int!
+    public open fun D.pollLast(): kotlin.Int!
+    public open fun D.pop(): kotlin.Int!
+    public open fun D.push(kotlin.Int!): kotlin.Unit
+    public open fun D.remove(): kotlin.Int!
+    public open fun D.remove(kotlin.Int): kotlin.Boolean
+    public open fun D.removeAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun D.removeAt(kotlin.Int): kotlin.Int
+    public open fun D.removeFirst(): kotlin.Int!
+    public open fun D.removeFirstOccurrence(kotlin.Any!): kotlin.Boolean
+    public open fun D.removeIf(java.util.function.Predicate<in kotlin.Int>): kotlin.Boolean
+    public open fun D.removeLast(): kotlin.Int!
+    public open fun D.removeLastOccurrence(kotlin.Any!): kotlin.Boolean
+    open fun D.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun D.replaceAll(java.util.function.UnaryOperator<kotlin.Int>): kotlin.Unit
+    public open fun D.retainAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open operator fun D.set(kotlin.Int, kotlin.Int): kotlin.Int
+    public open fun D.sort(java.util.Comparator<in kotlin.Int!>!): kotlin.Unit
+    public open fun D.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun D.stream(): java.util.stream.Stream<kotlin.Int>
+    public open fun D.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<kotlin.Int>
+    public open fun D.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open <T> fun D.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
+    public open fun D.toString(): kotlin.String
+    public open val D.size: kotlin.Int
+    final var D.modCount: kotlin.Int
+  declaredMembers:
+    public open fun D.remove(kotlin.Int): kotlin.Boolean
+KClass: abstract class E : Java1, Java2
+  constructors:
+    public final fun `<init>`(): E
+  members:
+    public open fun E.add(kotlin.Any?): kotlin.Boolean
+    public abstract fun E.add(kotlin.Int, kotlin.Any?): kotlin.Unit
+    public open fun E.addAll(kotlin.Int, kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public open fun E.addAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public open fun E.clear(): kotlin.Unit
+    public open operator fun E.contains(kotlin.Any?): kotlin.Boolean
+    public open fun E.containsAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
+    public open fun E.forEach(java.util.function.Consumer<(raw) kotlin.Any!>): kotlin.Unit
+    public abstract operator fun E.get(kotlin.Int): kotlin.Any?
+    public open fun E.hashCode(): kotlin.Int
+    public open fun E.indexOf(kotlin.Any?): kotlin.Int
+    public open fun E.isEmpty(): kotlin.Boolean
+    public open operator fun E.iterator(): kotlin.collections.MutableIterator<(raw) kotlin.Any?>
+    public open fun E.lastIndexOf(kotlin.Any?): kotlin.Int
+    public open fun E.listIterator(): kotlin.collections.MutableListIterator<(raw) kotlin.Any?>
+    public open fun E.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<(raw) kotlin.Any?>
+    public open fun E.parallelStream(): java.util.stream.Stream<(raw) kotlin.Any!>
+    public open fun E.remove(kotlin.Any?): kotlin.Boolean
+    public abstract fun E.remove(kotlin.Int): kotlin.Boolean!
+    public open fun E.removeAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public abstract fun E.removeAt(kotlin.Int): kotlin.Any?
+    public open fun E.removeIf(java.util.function.Predicate<(raw) kotlin.Any!>): kotlin.Boolean
+    open fun E.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun E.replaceAll(java.util.function.UnaryOperator<(raw) kotlin.Any!>): kotlin.Unit
+    public open fun E.retainAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public abstract operator fun E.set(kotlin.Int, kotlin.Any?): kotlin.Any?
+    public open fun E.sort(java.util.Comparator<(raw) kotlin.Any!>): kotlin.Unit
+    public open fun E.spliterator(): java.util.Spliterator<(raw) kotlin.Any!>
+    public open fun E.stream(): java.util.stream.Stream<(raw) kotlin.Any!>
+    public open fun E.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public open fun E.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open <T> fun E.toArray(kotlin.Array<(out) kotlin.Any!>!): kotlin.Array<(out) kotlin.Any!>! where T : kotlin.Any!
+    public open fun E.toString(): kotlin.String
+    public abstract val E.size: kotlin.Int
+    final var E.modCount: kotlin.Int
+  declaredMembers:
+KClass: abstract class F : E
+  constructors:
+    public final fun `<init>`(): F
+  members:
+    public open fun F.add(kotlin.Any?): kotlin.Boolean
+    public abstract fun F.add(kotlin.Int, kotlin.Any?): kotlin.Unit
+    public open fun F.addAll(kotlin.Int, kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public open fun F.addAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public open fun F.clear(): kotlin.Unit
+    public open operator fun F.contains(kotlin.Any?): kotlin.Boolean
+    public open fun F.containsAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public open operator fun F.equals(kotlin.Any?): kotlin.Boolean
+    public open fun F.forEach(java.util.function.Consumer<(raw) kotlin.Any!>): kotlin.Unit
+    public abstract operator fun F.get(kotlin.Int): kotlin.Any?
+    public open fun F.hashCode(): kotlin.Int
+    public open fun F.indexOf(kotlin.Any?): kotlin.Int
+    public open fun F.isEmpty(): kotlin.Boolean
+    public open operator fun F.iterator(): kotlin.collections.MutableIterator<(raw) kotlin.Any?>
+    public open fun F.lastIndexOf(kotlin.Any?): kotlin.Int
+    public open fun F.listIterator(): kotlin.collections.MutableListIterator<(raw) kotlin.Any?>
+    public open fun F.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<(raw) kotlin.Any?>
+    public open fun F.parallelStream(): java.util.stream.Stream<(raw) kotlin.Any!>
+    public open fun F.remove(kotlin.Any?): kotlin.Boolean
+    public open fun F.remove(kotlin.Int): kotlin.Boolean
+    public open fun F.removeAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public abstract fun F.removeAt(kotlin.Int): kotlin.Any?
+    public open fun F.removeIf(java.util.function.Predicate<(raw) kotlin.Any!>): kotlin.Boolean
+    open fun F.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun F.replaceAll(java.util.function.UnaryOperator<(raw) kotlin.Any!>): kotlin.Unit
+    public open fun F.retainAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public abstract operator fun F.set(kotlin.Int, kotlin.Any?): kotlin.Any?
+    public open fun F.sort(java.util.Comparator<(raw) kotlin.Any!>): kotlin.Unit
+    public open fun F.spliterator(): java.util.Spliterator<(raw) kotlin.Any!>
+    public open fun F.stream(): java.util.stream.Stream<(raw) kotlin.Any!>
+    public open fun F.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public open fun F.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open <T> fun F.toArray(kotlin.Array<(out) kotlin.Any!>!): kotlin.Array<(out) kotlin.Any!>! where T : kotlin.Any!
+    public open fun F.toString(): kotlin.String
+    public abstract val F.size: kotlin.Int
+    final var F.modCount: kotlin.Int
+  declaredMembers:
+    public open fun F.remove(kotlin.Int): kotlin.Boolean
+KClass: abstract class G : KotlinInterface2, Java2, Any
+  constructors:
+    public final fun `<init>`(): G
+  members:
+    public abstract fun G.add(kotlin.Int): kotlin.Boolean
+    public abstract fun G.addAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public abstract fun G.clear(): kotlin.Unit
+    public abstract operator fun G.contains(kotlin.Int): kotlin.Boolean
+    public abstract fun G.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open operator fun G.equals(kotlin.Any?): kotlin.Boolean
+    public open fun G.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open fun G.hashCode(): kotlin.Int
+    public abstract fun G.isEmpty(): kotlin.Boolean
+    public abstract operator fun G.iterator(): kotlin.collections.MutableIterator<kotlin.Int>
+    public open fun G.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    public abstract fun G.remove(kotlin.Int): kotlin.Boolean
+    public abstract fun G.remove(kotlin.Int): kotlin.Boolean!
+    public abstract fun G.removeAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun G.removeIf(java.util.function.Predicate<in kotlin.Int>): kotlin.Boolean
+    public abstract fun G.retainAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun G.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun G.stream(): java.util.stream.Stream<kotlin.Int>
+    public open fun G.toString(): kotlin.String
+    public abstract val G.size: kotlin.Int
+  declaredMembers:
+KClass: abstract class H : G
+  constructors:
+    public final fun `<init>`(kotlin.Int): H
+  members:
+    public abstract fun H.add(kotlin.Int): kotlin.Boolean
+    public abstract fun H.addAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public abstract fun H.clear(): kotlin.Unit
+    public open operator fun H.contains(kotlin.Int): kotlin.Boolean
+    public abstract fun H.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open operator fun H.equals(kotlin.Any?): kotlin.Boolean
+    public open fun H.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open fun H.hashCode(): kotlin.Int
+    public abstract fun H.isEmpty(): kotlin.Boolean
+    public abstract operator fun H.iterator(): kotlin.collections.MutableIterator<kotlin.Int>
+    public open fun H.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    public open fun H.remove(kotlin.Int): kotlin.Boolean
+    public abstract fun H.removeAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun H.removeIf(java.util.function.Predicate<in kotlin.Int>): kotlin.Boolean
+    public abstract fun H.retainAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun H.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun H.stream(): java.util.stream.Stream<kotlin.Int>
+    public open fun H.toString(): kotlin.String
+    public open val H.size: kotlin.Int
+  declaredMembers:
+    public open operator fun H.contains(kotlin.Int): kotlin.Boolean
+    public open fun H.remove(kotlin.Int): kotlin.Boolean
+    public open val H.size: kotlin.Int
+KClass: abstract class I : KotlinInterface3, Java3, Any
+  constructors:
+    public final fun `<init>`(): I
+  members:
+    public abstract operator fun I.contains(kotlin.Int): kotlin.Boolean
+    public abstract fun I.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open operator fun I.equals(kotlin.Any?): kotlin.Boolean
+    public open fun I.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public abstract operator fun I.get(kotlin.Int): kotlin.Int
+    public open fun I.hashCode(): kotlin.Int
+    public abstract fun I.indexOf(kotlin.Int): kotlin.Int
+    public abstract fun I.isEmpty(): kotlin.Boolean
+    public abstract operator fun I.iterator(): kotlin.collections.Iterator<kotlin.Int>
+    public abstract fun I.lastIndexOf(kotlin.Int): kotlin.Int
+    public abstract fun I.listIterator(): kotlin.collections.ListIterator<kotlin.Int>
+    public abstract fun I.listIterator(kotlin.Int): kotlin.collections.ListIterator<kotlin.Int>
+    public open fun I.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    public abstract fun I.remove(kotlin.Int): kotlin.Int!
+    public open fun I.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun I.stream(): java.util.stream.Stream<kotlin.Int>
+    public abstract fun I.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<kotlin.Int>
+    public open fun I.toString(): kotlin.String
+    public abstract val I.size: kotlin.Int
+  declaredMembers:
+KClass: abstract class J : Java3, Java4
+  constructors:
+    public final fun `<init>`(): J
+  members:
+    public open fun J.add(kotlin.Int!): kotlin.Boolean
+    public open fun J.add(kotlin.Int, kotlin.Int!): kotlin.Unit
+    public open fun J.addAll(kotlin.Int, kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    public open fun J.addAll(kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    public open fun J.clear(): kotlin.Unit
+    public open fun J.clone(): kotlin.Any
+    public open operator fun J.contains(kotlin.Int!): kotlin.Boolean
+    public open fun J.containsAll(kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    public open fun J.ensureCapacity(kotlin.Int): kotlin.Unit
+    public open operator fun J.equals(kotlin.Any?): kotlin.Boolean
+    public open fun J.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open operator fun J.get(kotlin.Int): kotlin.Int!
+    public open fun J.hashCode(): kotlin.Int
+    public open fun J.indexOf(kotlin.Int!): kotlin.Int
+    public open fun J.isEmpty(): kotlin.Boolean
+    public open operator fun J.iterator(): kotlin.collections.MutableIterator<kotlin.Int!>
+    public open fun J.lastIndexOf(kotlin.Int!): kotlin.Int
+    public open fun J.listIterator(): kotlin.collections.MutableListIterator<kotlin.Int!>
+    public open fun J.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<kotlin.Int!>
+    public open fun J.parallelStream(): java.util.stream.Stream<kotlin.Int!>
+    public open fun J.remove(kotlin.Int!): kotlin.Boolean
+    public abstract fun J.remove(kotlin.Int): kotlin.Int!
+    public open fun J.removeAll(kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    public open fun J.removeAt(kotlin.Int): kotlin.Int!
+    public open fun J.removeIf(java.util.function.Predicate<in kotlin.Int!>): kotlin.Boolean
+    open fun J.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun J.replaceAll(java.util.function.UnaryOperator<kotlin.Int!>): kotlin.Unit
+    public open fun J.retainAll(kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    public open operator fun J.set(kotlin.Int, kotlin.Int!): kotlin.Int!
+    public open fun J.sort(java.util.Comparator<in kotlin.Int!>!): kotlin.Unit
+    public open fun J.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun J.stream(): java.util.stream.Stream<kotlin.Int!>
+    public open fun J.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<kotlin.Int!>
+    public open fun J.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open <T> fun J.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
+    public open fun J.toString(): kotlin.String
+    public open fun J.trimToSize(): kotlin.Unit
+    public open val J.size: kotlin.Int
+    final var J.modCount: kotlin.Int
+  declaredMembers:
+KClass: abstract class Java1 : AbstractMutableList
+  constructors:
+    public final fun `<init>`(): Java1
+  members:
+    public open fun Java1.add(kotlin.Any?): kotlin.Boolean
+    public abstract fun Java1.add(kotlin.Int, kotlin.Any?): kotlin.Unit
+    public open fun Java1.addAll(kotlin.Int, kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public open fun Java1.addAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public open fun Java1.clear(): kotlin.Unit
+    public open operator fun Java1.contains(kotlin.Any?): kotlin.Boolean
+    public open fun Java1.containsAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public open operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java1.forEach(java.util.function.Consumer<(raw) kotlin.Any!>): kotlin.Unit
+    public abstract operator fun Java1.get(kotlin.Int): kotlin.Any?
+    public open fun Java1.hashCode(): kotlin.Int
+    public open fun Java1.indexOf(kotlin.Any?): kotlin.Int
+    public open fun Java1.isEmpty(): kotlin.Boolean
+    public open operator fun Java1.iterator(): kotlin.collections.MutableIterator<(raw) kotlin.Any?>
+    public open fun Java1.lastIndexOf(kotlin.Any?): kotlin.Int
+    public open fun Java1.listIterator(): kotlin.collections.MutableListIterator<(raw) kotlin.Any?>
+    public open fun Java1.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<(raw) kotlin.Any?>
+    public open fun Java1.parallelStream(): java.util.stream.Stream<(raw) kotlin.Any!>
+    public open fun Java1.remove(kotlin.Any?): kotlin.Boolean
+    public open fun Java1.removeAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public abstract fun Java1.removeAt(kotlin.Int): kotlin.Any?
+    public open fun Java1.removeIf(java.util.function.Predicate<(raw) kotlin.Any!>): kotlin.Boolean
+    open fun Java1.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun Java1.replaceAll(java.util.function.UnaryOperator<(raw) kotlin.Any!>): kotlin.Unit
+    public open fun Java1.retainAll(kotlin.collections.Collection<(raw) kotlin.Any?>): kotlin.Boolean
+    public abstract operator fun Java1.set(kotlin.Int, kotlin.Any?): kotlin.Any?
+    public open fun Java1.sort(java.util.Comparator<(raw) kotlin.Any!>): kotlin.Unit
+    public open fun Java1.spliterator(): java.util.Spliterator<(raw) kotlin.Any!>
+    public open fun Java1.stream(): java.util.stream.Stream<(raw) kotlin.Any!>
+    public open fun Java1.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public open fun Java1.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open <T> fun Java1.toArray(kotlin.Array<(out) kotlin.Any!>!): kotlin.Array<(out) kotlin.Any!>! where T : kotlin.Any!
+    public open fun Java1.toString(): kotlin.String
+    public abstract val Java1.size: kotlin.Int
+    final var Java1.modCount: kotlin.Int
+  declaredMembers:
+KClass: abstract interface Java2 : Any
+  members:
+    public open operator fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java2.hashCode(): kotlin.Int
+    public abstract fun Java2.remove(kotlin.Int): kotlin.Boolean!
+    public open fun Java2.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun Java2.remove(kotlin.Int): kotlin.Boolean!
+KClass: abstract interface Java3 : Any
+  members:
+    public open operator fun Java3.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java3.hashCode(): kotlin.Int
+    public abstract fun Java3.remove(kotlin.Int): kotlin.Int!
+    public open fun Java3.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun Java3.remove(kotlin.Int): kotlin.Int!
+KClass: class Java4 : ArrayList
+  constructors:
+    public final fun `<init>`(): Java4
+  members:
+    public open fun Java4.add(kotlin.Int!): kotlin.Boolean
+    public open fun Java4.add(kotlin.Int, kotlin.Int!): kotlin.Unit
+    public open fun Java4.addAll(kotlin.Int, kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    public open fun Java4.addAll(kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    public open fun Java4.clear(): kotlin.Unit
+    public open fun Java4.clone(): kotlin.Any
+    public open operator fun Java4.contains(kotlin.Int!): kotlin.Boolean
+    public open fun Java4.containsAll(kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    public open fun Java4.ensureCapacity(kotlin.Int): kotlin.Unit
+    public open operator fun Java4.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java4.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open operator fun Java4.get(kotlin.Int): kotlin.Int!
+    public open fun Java4.hashCode(): kotlin.Int
+    public open fun Java4.indexOf(kotlin.Int!): kotlin.Int
+    public open fun Java4.isEmpty(): kotlin.Boolean
+    public open operator fun Java4.iterator(): kotlin.collections.MutableIterator<kotlin.Int!>
+    public open fun Java4.lastIndexOf(kotlin.Int!): kotlin.Int
+    public open fun Java4.listIterator(): kotlin.collections.MutableListIterator<kotlin.Int!>
+    public open fun Java4.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<kotlin.Int!>
+    public open fun Java4.parallelStream(): java.util.stream.Stream<kotlin.Int!>
+    public open fun Java4.remove(kotlin.Int!): kotlin.Boolean
+    public open fun Java4.removeAll(kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    public open fun Java4.removeAt(kotlin.Int): kotlin.Int!
+    public open fun Java4.removeIf(java.util.function.Predicate<in kotlin.Int!>): kotlin.Boolean
+    open fun Java4.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun Java4.replaceAll(java.util.function.UnaryOperator<kotlin.Int!>): kotlin.Unit
+    public open fun Java4.retainAll(kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    public open operator fun Java4.set(kotlin.Int, kotlin.Int!): kotlin.Int!
+    public open fun Java4.sort(java.util.Comparator<in kotlin.Int!>!): kotlin.Unit
+    public open fun Java4.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun Java4.stream(): java.util.stream.Stream<kotlin.Int!>
+    public open fun Java4.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<kotlin.Int!>
+    public open fun Java4.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open <T> fun Java4.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
+    public open fun Java4.toString(): kotlin.String
+    public open fun Java4.trimToSize(): kotlin.Unit
+    public open val Java4.size: kotlin.Int
+    final var Java4.modCount: kotlin.Int
+  declaredMembers:
+KClass: abstract interface KotlinInterface : Any
+  members:
+    public open operator fun KotlinInterface.equals(kotlin.Any?): kotlin.Boolean
+    public open fun KotlinInterface.hashCode(): kotlin.Int
+    public abstract fun KotlinInterface.remove(kotlin.Int): kotlin.Boolean
+    public open fun KotlinInterface.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun KotlinInterface.remove(kotlin.Int): kotlin.Boolean
+KClass: abstract interface KotlinInterface2 : Collection, Any
+  members:
+    public abstract fun KotlinInterface2.add(kotlin.Int): kotlin.Boolean
+    public abstract fun KotlinInterface2.addAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public abstract fun KotlinInterface2.clear(): kotlin.Unit
+    public abstract operator fun KotlinInterface2.contains(kotlin.Int): kotlin.Boolean
+    public abstract fun KotlinInterface2.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open operator fun KotlinInterface2.equals(kotlin.Any?): kotlin.Boolean
+    public open fun KotlinInterface2.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open fun KotlinInterface2.hashCode(): kotlin.Int
+    public abstract fun KotlinInterface2.isEmpty(): kotlin.Boolean
+    public abstract operator fun KotlinInterface2.iterator(): kotlin.collections.MutableIterator<kotlin.Int>
+    public open fun KotlinInterface2.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    public abstract fun KotlinInterface2.remove(kotlin.Int): kotlin.Boolean
+    public abstract fun KotlinInterface2.removeAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun KotlinInterface2.removeIf(java.util.function.Predicate<in kotlin.Int>): kotlin.Boolean
+    public abstract fun KotlinInterface2.retainAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun KotlinInterface2.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun KotlinInterface2.stream(): java.util.stream.Stream<kotlin.Int>
+    public open fun KotlinInterface2.toString(): kotlin.String
+    public abstract val KotlinInterface2.size: kotlin.Int
+  declaredMembers:
+KClass: abstract interface KotlinInterface3 : List, Any
+  members:
+    public abstract operator fun KotlinInterface3.contains(kotlin.Int): kotlin.Boolean
+    public abstract fun KotlinInterface3.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open operator fun KotlinInterface3.equals(kotlin.Any?): kotlin.Boolean
+    public open fun KotlinInterface3.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public abstract operator fun KotlinInterface3.get(kotlin.Int): kotlin.Int
+    public open fun KotlinInterface3.hashCode(): kotlin.Int
+    public abstract fun KotlinInterface3.indexOf(kotlin.Int): kotlin.Int
+    public abstract fun KotlinInterface3.isEmpty(): kotlin.Boolean
+    public abstract operator fun KotlinInterface3.iterator(): kotlin.collections.Iterator<kotlin.Int>
+    public abstract fun KotlinInterface3.lastIndexOf(kotlin.Int): kotlin.Int
+    public abstract fun KotlinInterface3.listIterator(): kotlin.collections.ListIterator<kotlin.Int>
+    public abstract fun KotlinInterface3.listIterator(kotlin.Int): kotlin.collections.ListIterator<kotlin.Int>
+    public open fun KotlinInterface3.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    public open fun KotlinInterface3.spliterator(): java.util.Spliterator<kotlin.Int!>
+    public open fun KotlinInterface3.stream(): java.util.stream.Stream<kotlin.Int>
+    public abstract fun KotlinInterface3.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<kotlin.Int>
+    public open fun KotlinInterface3.toString(): kotlin.String
+    public abstract val KotlinInterface3.size: kotlin.Int
+  declaredMembers:
+KPackage: _1Kt
+  public final fun test(A, B, C, D, E, F, G, H, I, J): kotlin.Unit

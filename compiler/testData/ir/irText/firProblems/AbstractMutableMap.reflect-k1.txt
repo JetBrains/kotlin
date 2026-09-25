@@ -1,0 +1,34 @@
+KClass: class MyMap : AbstractMutableMap
+  constructors:
+    public final <K, V> fun `<init>`(): MyMap<K, V> where K : kotlin.Any, V : kotlin.Any
+  members:
+    public open fun MyMap<K, V>.clear(): kotlin.Unit
+    open fun MyMap<K, V>.clone(): kotlin.Any!
+    public open fun MyMap<K, V>.compute(K, java.util.function.BiFunction<in K, in V?, out V?>): V?
+    public open fun MyMap<K, V>.computeIfAbsent(K, java.util.function.Function<in K, out V>): V
+    public open fun MyMap<K, V>.computeIfPresent(K, java.util.function.BiFunction<in K, in V, out V?>): V?
+    public open fun MyMap<K, V>.containsKey(K): kotlin.Boolean
+    public open fun MyMap<K, V>.containsValue(V): kotlin.Boolean
+    public open operator fun MyMap<K, V>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun MyMap<K, V>.forEach(java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+    public open operator fun MyMap<K, V>.get(K): V?
+    public open fun MyMap<K, V>.getOrDefault(K, V): V
+    public open fun MyMap<K, V>.hashCode(): kotlin.Int
+    public open fun MyMap<K, V>.isEmpty(): kotlin.Boolean
+    public open fun MyMap<K, V>.merge(K, V, java.util.function.BiFunction<in V, in V, out V?>): V?
+    public open fun MyMap<K, V>.put(K, V): V?
+    public open fun MyMap<K, V>.putAll(kotlin.collections.Map<out K, V>): kotlin.Unit
+    public open fun MyMap<K, V>.putIfAbsent(K, V): V?
+    public open fun MyMap<K, V>.remove(K): V?
+    public open fun MyMap<K, V>.remove(K, V): kotlin.Boolean
+    public open fun MyMap<K, V>.replace(K, V): V?
+    public open fun MyMap<K, V>.replace(K, V, V): kotlin.Boolean
+    public open fun MyMap<K, V>.replaceAll(java.util.function.BiFunction<in K, in V, out V>): kotlin.Unit
+    public open fun MyMap<K, V>.toString(): kotlin.String
+    public open val MyMap<K, V>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
+    public open val MyMap<K, V>.keys: kotlin.collections.MutableSet<K>
+    public open val MyMap<K, V>.size: kotlin.Int
+    public open val MyMap<K, V>.values: kotlin.collections.MutableCollection<V>
+  declaredMembers:
+    public open fun MyMap<K, V>.put(K, V): V?
+    public open val MyMap<K, V>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>

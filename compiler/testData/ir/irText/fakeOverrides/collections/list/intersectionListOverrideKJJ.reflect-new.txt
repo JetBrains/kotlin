@@ -1,0 +1,68 @@
+KClass: abstract class A : LinkedList, List
+  constructors:
+    public final fun `<init>`(): A
+  members:
+    public open fun A.add(kotlin.Int): kotlin.Boolean
+    public open fun A.add(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun A.addAll(kotlin.Int, kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun A.addAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun A.addFirst(kotlin.Int!): kotlin.Unit
+    public open fun A.addLast(kotlin.Int!): kotlin.Unit
+    public open fun A.clear(): kotlin.Unit
+    public open fun A.clone(): kotlin.Any
+    public open operator fun A.contains(kotlin.Int): kotlin.Boolean
+    public open fun A.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun A.descendingIterator(): kotlin.collections.(Mutable)Iterator<kotlin.Int!>!
+    public open fun A.element(): kotlin.Int!
+    public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open operator fun A.get(kotlin.Int): kotlin.Int
+    public open fun A.getFirst(): kotlin.Int!
+    public open fun A.getLast(): kotlin.Int!
+    public open fun A.hashCode(): kotlin.Int
+    public open fun A.indexOf(kotlin.Int): kotlin.Int
+    public open fun A.isEmpty(): kotlin.Boolean
+    public open operator fun A.iterator(): kotlin.collections.MutableIterator<kotlin.Int>
+    public open fun A.lastIndexOf(kotlin.Int): kotlin.Int
+    public open fun A.listIterator(): kotlin.collections.MutableListIterator<kotlin.Int>
+    public open fun A.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<kotlin.Int>
+    public open fun A.offer(kotlin.Int!): kotlin.Boolean
+    public open fun A.offerFirst(kotlin.Int!): kotlin.Boolean
+    public open fun A.offerLast(kotlin.Int!): kotlin.Boolean
+    public open fun A.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    public open fun A.peek(): kotlin.Int!
+    public open fun A.peekFirst(): kotlin.Int!
+    public open fun A.peekLast(): kotlin.Int!
+    public open fun A.poll(): kotlin.Int!
+    public open fun A.pollFirst(): kotlin.Int!
+    public open fun A.pollLast(): kotlin.Int!
+    public open fun A.pop(): kotlin.Int!
+    public open fun A.push(kotlin.Int!): kotlin.Unit
+    public open fun A.remove(): kotlin.Int!
+    public open fun A.remove(kotlin.Int): kotlin.Boolean
+    public open fun A.removeAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open fun A.removeAt(kotlin.Int): kotlin.Int
+    public open fun A.removeFirst(): kotlin.Int!
+    public open fun A.removeFirstOccurrence(kotlin.Any!): kotlin.Boolean
+    public open fun A.removeIf(java.util.function.Predicate<in kotlin.Int>): kotlin.Boolean
+    public open fun A.removeLast(): kotlin.Int!
+    public open fun A.removeLastOccurrence(kotlin.Any!): kotlin.Boolean
+    open fun A.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    public open fun A.replaceAll(java.util.function.UnaryOperator<kotlin.Int>): kotlin.Unit
+    public open fun A.retainAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open operator fun A.set(kotlin.Int, kotlin.Int): kotlin.Int
+    public open fun A.sort(kotlin.Comparator<in kotlin.Int>? /* = java.util.Comparator<in kotlin.Int>? */): kotlin.Unit
+    public open fun A.spliterator(): java.util.Spliterator<kotlin.Int>
+    public open fun A.stream(): java.util.stream.Stream<kotlin.Int>
+    public open fun A.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<kotlin.Int>
+    public open fun A.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open <T> fun A.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
+    public open fun A.toString(): kotlin.String
+    public open val A.size: kotlin.Int
+    final var A.modCount: kotlin.Int
+  declaredMembers:
+    public open fun A.replaceAll(java.util.function.UnaryOperator<kotlin.Int>): kotlin.Unit
+    public open fun A.sort(kotlin.Comparator<in kotlin.Int>? /* = java.util.Comparator<in kotlin.Int>? */): kotlin.Unit
+    public open fun A.spliterator(): java.util.Spliterator<kotlin.Int>
+KPackage: _1Kt
+  public final fun test(A): kotlin.Unit

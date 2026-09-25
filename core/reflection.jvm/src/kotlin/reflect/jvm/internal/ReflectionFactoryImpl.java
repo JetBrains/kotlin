@@ -96,7 +96,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 KmFunction kmFunction = container.findFunctionMetadata(name, signature);
                 return new KotlinKNamedFunction(container, signature, boundReceiver, boundContextArguments, kmFunction, KCallableOverriddenStorage.EMPTY);
             }
-            else if (container instanceof KClassImpl<?> && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass() &&
+            else if (container instanceof KClassImpl<?> &&
                      (!SystemPropertiesKt.getUseK1ImplementationForMembers() || isJavaClass(container))) {
                 ReflectKFunction result = (ReflectKFunction) findMember(
                         (KClassImpl<?>) container, name,
@@ -184,8 +184,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                     KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKProperty1(container, signature, boundReceiver, boundContextArguments, kmProperty, KCallableOverriddenStorage.EMPTY);
                 }
-                else if (!SystemPropertiesKt.getUseK1ImplementationForMembers() &&
-                         container instanceof KClassImpl && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
+                else if (!SystemPropertiesKt.getUseK1ImplementationForMembers() && container instanceof KClassImpl) {
                     return findProperty((KClassImpl<?>) container, name, signature, boundReceiver, boundContextArguments);
                 }
                 return new DescriptorKProperty1(container, name, signature, boundReceiver, boundContextArguments);
@@ -207,8 +206,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                     KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKMutableProperty1(container, signature, boundReceiver, boundContextArguments, kmProperty, KCallableOverriddenStorage.EMPTY);
                 }
-                else if (!SystemPropertiesKt.getUseK1ImplementationForMembers() &&
-                         container instanceof KClassImpl && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
+                else if (!SystemPropertiesKt.getUseK1ImplementationForMembers() && container instanceof KClassImpl) {
                     return findProperty((KClassImpl<?>) container, name, signature, boundReceiver, boundContextArguments);
                 }
                 return new DescriptorKMutableProperty1(container, name, signature, boundReceiver, boundContextArguments);
