@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.fir.analysis.checkers.isFlexiblePrimitive
-import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.isValueClassOrPrimitive
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
 
 context(sessionHolder: SessionHolder)
 internal fun ConeKotlinType.isJavaValueBasedClass(): Boolean {
@@ -30,7 +29,7 @@ internal fun ConeKotlinType.isJavaValueBasedClassAndWarningsEnabled(): Boolean {
 context(sessionHolder: SessionHolder)
 internal fun ConeKotlinType.isValueTypeAndWarningsEnabled(): Boolean {
     if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives() &&
-        (this.isPrimitiveOrNullablePrimitive || this.isValueClass(sessionHolder.session) || this.isFlexiblePrimitive())
+        (this.isFlexiblePrimitive() || this.isValueClassOrPrimitive())
     ) return true
     return this.isJavaValueBasedClassAndWarningsEnabled()
 }
