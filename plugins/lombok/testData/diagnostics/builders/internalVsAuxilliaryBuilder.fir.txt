@@ -1,0 +1,5 @@
+FILE: test.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lval internalBuilder: R|TestJava.TestJavaBuilder| = Q|TestJava|.R|/TestJava.internalBuilder*s|()
+        lval builder: R|TestJavaBuilder!| = Q|TestJava|.R|/TestJava.builder*s|(Int(1))
+    }
