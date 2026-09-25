@@ -740,12 +740,6 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
     }
 
     @Test
-    @TestMetadata("CompanionBlockWithLateinit.kt")
-    public void testCompanionBlockWithLateinit() {
-      run("CompanionBlockWithLateinit.kt");
-    }
-
-    @Test
     @TestMetadata("CompanionBlockWithReceiver.kt")
     public void testCompanionBlockWithReceiver() {
       run("CompanionBlockWithReceiver.kt");

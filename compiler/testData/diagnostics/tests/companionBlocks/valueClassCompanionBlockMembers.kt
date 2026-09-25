@@ -19,7 +19,7 @@ value class Foo(val x: Int) {
         @JvmField
         val a3 = 0
 
-        lateinit var a4: String
+        <!COMPANION_BLOCK_LATEINIT!>lateinit<!> var a4: String
 
         val a5 by lazy { 0 }
 

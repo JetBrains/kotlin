@@ -740,12 +740,6 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
-    @TestMetadata("CompanionBlockWithLateinit.kt")
-    public void testCompanionBlockWithLateinit() {
-      run("CompanionBlockWithLateinit.kt");
-    }
-
-    @Test
     @TestMetadata("CompanionBlockWithReceiver.kt")
     public void testCompanionBlockWithReceiver() {
       run("CompanionBlockWithReceiver.kt");

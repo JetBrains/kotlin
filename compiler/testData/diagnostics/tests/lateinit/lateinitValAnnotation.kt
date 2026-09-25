@@ -56,33 +56,6 @@ class Foo {
 
     lateinit val h: String
         @Ann set
-
-    companion {
-        <!WRONG_ANNOTATION_TARGET!>@FieldAnn<!>
-        @Ann
-        lateinit val a: String
-
-        @set:Ann
-        lateinit val b: String
-
-        @setparam:Ann
-        lateinit val c: String
-
-        @get:Ann
-        lateinit val d: String
-
-        <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
-        lateinit val e: String
-
-        @property:Ann
-        lateinit val f: String
-
-        lateinit val g: String
-            @Ann get
-
-        lateinit val h: String
-            @Ann set
-    }
 }
 
 

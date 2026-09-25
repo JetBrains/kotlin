@@ -8301,6 +8301,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CompanionBlockLateinit : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<CompanionBlockLateinit>
+            get() = CompanionBlockLateinit::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface PrivateConstInInterface : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<PrivateConstInInterface>
             get() = PrivateConstInInterface::class
