@@ -41,7 +41,7 @@ class CodeRuleRepositoryTests {
         val todoRule = rule(
             name = "TODOs",
             text = "If a TODO is added to the code, it should be accompanied by a YouTrack issue number.",
-            patterns = listOf(),
+            patterns = listOf("*"),
             source = "code-rules.md"
         )
 
@@ -65,7 +65,7 @@ class CodeRuleRepositoryTests {
         val nativeSpecificRule = rule(
             name = "Native-specific code location",
             text = "Use native/ and kotlin-native/ only for Kotlin/Native-specific files.",
-            patterns = listOf(),
+            patterns = listOf("*"),
             source = "native/code-rules.md"
         )
 
@@ -81,6 +81,8 @@ class CodeRuleRepositoryTests {
                 todoRule.source,
                 """
                     # ${todoRule.name}
+                    
+                    Applies to: `${todoRule.patterns.patterns.single()}`
                     
                     ${todoRule.text}
                 """.trimIndent()
@@ -108,6 +110,8 @@ class CodeRuleRepositoryTests {
                 nativeSpecificRule.source,
                 """
                     # ${nativeSpecificRule.name}
+                    
+                    Applies to: `${nativeSpecificRule.patterns.patterns.single()}`
                     
                     ${nativeSpecificRule.text}
                 """.trimIndent()
@@ -173,10 +177,26 @@ class CodeRuleRepositoryTests {
     fun `include doesn't include files in enclosing directories`() = runBlocking {
         val ruleRepo = CodeRuleRepository(
             projectOf(
-                "lib/code-rules.md" to "# Lib rule",
-                "lib/sub/code-rules.md" to "# Lib sub rule",
-                "lib/shared.md" to "# Lib shared rule",
-                "lib/sub/shared.md" to "# Lib sub shared rule",
+                "lib/code-rules.md" to """
+                    # Lib rule
+                    
+                    Applies to: `*`
+                """.trimIndent(),
+                "lib/sub/code-rules.md" to """
+                    # Lib sub rule
+                    
+                    Applies to: `*`
+                """.trimIndent(),
+                "lib/shared.md" to """
+                    # Lib shared rule
+                    
+                    Applies to: `*`
+                """.trimIndent(),
+                "lib/sub/shared.md" to """
+                    # Lib sub shared rule
+                    
+                    Applies to: `*`
+                """.trimIndent(),
                 "app/code-rules.md" to """
                     @/lib/sub/code-rules.md
                     @/lib/sub/shared.md

@@ -24,8 +24,9 @@ class CodeRulePatternsTests {
     }
 
     @Test
-    fun `matches when no patterns`() {
-        assertMatches("sub/dir/file.kt")
+    fun `star matches any file`() {
+        assertMatches("file.kt", "*")
+        assertMatches("sub/dir/file.kt", "*")
     }
 
     @Test

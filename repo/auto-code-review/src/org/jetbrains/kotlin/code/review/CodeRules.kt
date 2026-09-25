@@ -24,6 +24,10 @@ data class CodeRule(
 }
 
 data class CodeRulePatterns(val patterns: List<String>) {
+    init {
+        require(patterns.isNotEmpty()) { "A rule must have at least one pattern" }
+    }
+
     // Use JGit as the implementation detail:
     private val fastIgnoreRules = patterns.map { FastIgnoreRule(it) }
 
@@ -39,7 +43,7 @@ data class CodeRulePatterns(val patterns: List<String>) {
     }
 
     fun match(path: String): Boolean {
-        if (fastIgnoreRules.isEmpty()) return true
+        check(fastIgnoreRules.isNotEmpty())
 
         // Reverse to match the `.gitignore` behavior.
         fastIgnoreRules.reversed().forEach {
@@ -175,11 +179,15 @@ internal object CodeRuleParser {
 
         lines.dropFirstBlankLines()
 
-        val patterns = if (lines.firstOrNull()?.startsWith(APPLIES_TO_LABEL) == true) {
-            parseAppliesTo(lines, ruleLocation).also { lines.dropFirstBlankLines() }
-        } else {
-            emptyList()
+        check(lines.firstOrNull()?.startsWith(APPLIES_TO_LABEL) == true) {
+            """
+                |In $ruleLocation,
+                |expected `$APPLIES_TO_LABEL` right after the rule name, but got:
+                |${lines.firstOrNull().orEmpty()}
+            """.trimMargin()
         }
+        val patterns = parseAppliesTo(lines, ruleLocation)
+        lines.dropFirstBlankLines()
 
         lines.forEach {
             check(!it.startsWith(APPLIES_TO_LABEL)) {

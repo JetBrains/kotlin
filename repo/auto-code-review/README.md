@@ -110,10 +110,10 @@ The includes are transitive.
 
 ### File patterns
 
-Apart from name and description, each rule can have optional file patterns.
+Apart from name and description, each rule must have file patterns.
 Only files matching those patterns will be checked.
 
-The patterns are defined with the `Applies to:` directive right after the rule name.
+The patterns are defined with the mandatory `Applies to:` directive right after the rule name.
 A single pattern can be put on the same line, in backticks:
 
 ```markdown
@@ -158,6 +158,8 @@ Applies to:
 ````
 
 mean that the rule applies to all Kotlin files except those inside directories named `test`.
+
+To make a rule apply to all files, use ``Applies to: `*` ``.
 
 ### Patterns in included rules
 
