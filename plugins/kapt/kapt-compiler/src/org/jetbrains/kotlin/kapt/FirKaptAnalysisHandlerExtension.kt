@@ -264,17 +264,20 @@ open class FirKaptAnalysisHandlerExtension(
                 val metadata = kaptStub.metadataToWrite(forSource = sourceFile)
                 metadata?.let { reportStubsOutputForIC(it.first) }
                 pendingWrites += PendingStubWrite(sourceFile, kaptStub.getText(kaptContext.context), metadata)
-                continue
+            } else {
+                sourceFile.writeText(kaptStub.getText(kaptContext.context))
+
+                kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
             }
-
-            sourceFile.writeText(kaptStub.getText(kaptContext.context))
-
-            kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
         }
 
         if (pendingWrites != null) {
-            val [writeTime] = measureTimeMillis { writeStubsInParallel(pendingWrites, options.stubWriterThreads) }
-            logger.info { "Parallel stub file writing took $writeTime ms" }
+            val [writeTime, usedThreads] = measureTimeMillis { writeStubsInParallel(pendingWrites, options.stubWriterThreads) }
+            if (usedThreads > 1) {
+                logger.info { "Parallel stub file writing took $writeTime ms on $usedThreads threads" }
+            } else {
+                logger.info { "Stub file writing took $writeTime ms (fewer than $MIN_STUBS_FOR_PARALLEL_WRITES stubs, written sequentially)" }
+            }
         }
 
         logger.info { "Source files: ${sourceFiles}" }
@@ -287,13 +290,14 @@ open class FirKaptAnalysisHandlerExtension(
         }
     }
 
-    private fun writeStubsInParallel(writes: List<PendingStubWrite>, requestedThreads: Int) {
-        val threadCount = minOf(requestedThreads, writes.size)
+    // Returns 1 when writes stay on the caller thread; otherwise the worker count.
+    private fun writeStubsInParallel(writes: List<PendingStubWrite>, requestedThreads: Int): Int {
+        val threadCount = if (writes.size < MIN_STUBS_FOR_PARALLEL_WRITES) 1 else minOf(requestedThreads, writes.size)
         if (threadCount <= 1) {
             for (stub in writes) {
                 stub.write()
             }
-            return
+            return 1
         }
 
         val threadIndex = AtomicInteger()
@@ -301,10 +305,13 @@ open class FirKaptAnalysisHandlerExtension(
             Thread(runnable, "kapt-stub-writer-${threadIndex.incrementAndGet()}").apply { isDaemon = true }
         }
         try {
-            // One task per thread, each writing every `threadCount`-th stub, to avoid dispatching thousands of tiny tasks.
-            val futures = (0 until threadCount).map { start ->
+            // Contiguous ranges keep package-clustered stubs in distinct directories.
+            // Strided ranges tend to make all workers contend for the same directory.
+            val futures = (0 until threadCount).map { index ->
+                val from = (writes.size.toLong() * index / threadCount).toInt()
+                val to = (writes.size.toLong() * (index + 1) / threadCount).toInt()
                 executor.submit {
-                    for (i in start until writes.size step threadCount) {
+                    for (i in from until to) {
                         writes[i].write()
                     }
                 }
@@ -313,6 +320,11 @@ open class FirKaptAnalysisHandlerExtension(
             for (future in futures) {
                 try {
                     future.get()
+                } catch (e: InterruptedException) {
+                    // Restore the flag the throw cleared, so callers up the stack can still see the interruption.
+                    // The `finally` below shuts the pool down, which interrupts the writers that are still running.
+                    Thread.currentThread().interrupt()
+                    throw e
                 } catch (e: ExecutionException) {
                     val cause = e.cause ?: e
                     val firstFailure = failure
@@ -326,6 +338,7 @@ open class FirKaptAnalysisHandlerExtension(
         } finally {
             executor.shutdownNow()
         }
+        return threadCount
     }
 
     protected open fun saveIncrementalData(kaptContext: KaptContextForStubGeneration) {
@@ -386,5 +399,10 @@ open class FirKaptAnalysisHandlerExtension(
         val start = System.currentTimeMillis()
         val result = block()
         return Pair(System.currentTimeMillis() - start, result)
+    }
+
+    private companion object {
+        // Tiny batches are faster on the caller thread than through the writer pool.
+        private const val MIN_STUBS_FOR_PARALLEL_WRITES = 16
     }
 }

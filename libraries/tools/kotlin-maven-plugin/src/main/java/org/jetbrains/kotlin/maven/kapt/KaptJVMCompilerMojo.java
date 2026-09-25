@@ -144,7 +144,12 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         options.add(new KaptOption("stubGenerationScheme", stubGenerationScheme.name()));
         options.add(new KaptOption("processors", annotationProcessors));
 
-        if (stubWriterThreads != 1) {
+        if (stubWriterThreads < 1) {
+            // Warn and fall back rather than failing later in the compiler, and name the parameter the user set.
+            getLog().warn(
+                    "Option <stubWriterThreads> (-Dkapt.stub.writer.threads) was set to an invalid value: "
+                            + stubWriterThreads + ". Using default value 1 instead.");
+        } else if (stubWriterThreads != 1) {
             options.add(new KaptOption("stubWriterThreads", String.valueOf(stubWriterThreads)));
         }
 

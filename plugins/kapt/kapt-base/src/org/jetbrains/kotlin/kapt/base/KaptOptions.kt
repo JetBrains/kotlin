@@ -207,7 +207,11 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
 
     appendLine("Annotation processing mode: ${mode.stringValue}")
     appendLine("Memory leak detection mode: ${detectMemoryLeaks.stringValue}")
-    appendLine("Stub writer threads: $stubWriterThreads")
+    appendLine("Stub generation scheme: ${stubGenerationScheme.stringValue}")
+    // Only DIRECT writes stubs on the writer pool, so the thread count is noise under any other scheme.
+    if (stubGenerationScheme == StubGenerationScheme.DIRECT) {
+        appendLine("Stub writer threads: $stubWriterThreads")
+    }
     for (flag in KaptFlag.entries) {
         appendLine(flag.description + ": " + get(flag))
     }

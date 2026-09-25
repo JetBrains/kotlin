@@ -28,6 +28,7 @@ ap/Processor.kt
 -Kapt-stub-writer-threads=4
 -d output/classes
 -cp output/ap:%KOTLIN_STDLIB%
+Extra.kt
 Test.kt
 
 # kapt
@@ -39,12 +40,14 @@ Test.kt
 -Kapt-processors=apt.SampleApt
 -d output/classes
 -cp output/ap:%KOTLIN_STDLIB%
+Extra.kt
 Test.kt
 
 # kotlinc
 -d output/classes
 -cp output/ap:%KOTLIN_STDLIB%
 output/sources
+Extra.kt
 Test.kt
 
 # javac
