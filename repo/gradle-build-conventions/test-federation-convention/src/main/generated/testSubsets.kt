@@ -4,7 +4,6 @@
 package org.jetbrains.kotlin.testFederation
 
 enum class TestSubset {
-    AllTests,
     PlainTests,
     SmokeTests,
     ContractTestsForCompilerInfrastructure,
