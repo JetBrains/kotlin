@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.abi.internal
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import java.io.File
 
 /**
  * Finalizes the configuration of the report variant for the Kotlin Multiplatform Gradle Plugin.
@@ -32,20 +30,17 @@ import java.io.File
 internal fun AbiValidationExtension.finalizeMultiplatformVariant(
     project: Project,
     targets: NamedDomainObjectCollection<KotlinTarget>,
-    keepLocallyUnsupportedTargets: Provider<Boolean>
+    abiConfiguration: AbiValidationConfiguration,
 ) {
-    val taskSet = AbiValidationTaskSet(project)
-    taskSet.keepLocallyUnsupportedTargets(keepLocallyUnsupportedTargets)
-
-    project.processJvmKindTargets(binariesSource.get(), targets, taskSet)
-    project.processNonJvmTargets(binariesSource.get(), targets, taskSet)
+    project.processJvmKindTargets(binariesSource.get(), targets, abiConfiguration)
+    project.processNonJvmTargets(binariesSource.get(), targets, abiConfiguration)
 }
 
 
 private fun Project.processJvmKindTargets(
     binariesSource: BinariesSource,
     targets: Iterable<KotlinTarget>,
-    abiValidationTaskSet: AbiValidationTaskSet,
+    abiConfiguration: AbiValidationConfiguration
 ) {
     // if there is only one JVM target then we will follow the shortcut
     val singleJvmTarget = targets.singleOrNull { target -> target.platformType == KotlinPlatformType.jvm && target is KotlinJvmTarget }
@@ -56,11 +51,11 @@ private fun Project.processJvmKindTargets(
     if (singleJvmTarget != null && !hasAnyAndroidTarget) {
         addJvmInputs(
             binariesSource,
-            abiValidationTaskSet,
             singleJvmTarget.targetName,
             true,
             singleJvmTarget.compilations,
-            KotlinCompilation.MAIN_COMPILATION_NAME
+            KotlinCompilation.MAIN_COMPILATION_NAME,
+            abiConfiguration
         )
         return
     }
@@ -71,11 +66,11 @@ private fun Project.processJvmKindTargets(
         .forEach { target ->
             addJvmInputs(
                 binariesSource,
-                abiValidationTaskSet,
                 target.targetName,
                 false,
                 target.compilations,
-                KotlinCompilation.MAIN_COMPILATION_NAME
+                KotlinCompilation.MAIN_COMPILATION_NAME,
+                abiConfiguration
             )
         }
 
@@ -90,11 +85,11 @@ private fun Project.processJvmKindTargets(
 
             addJvmInputs(
                 binariesSource,
-                abiValidationTaskSet,
                 target.targetName,
                 false,
                 target.compilations,
-                ANDROID_RELEASE_BUILD_TYPE
+                ANDROID_RELEASE_BUILD_TYPE,
+                abiConfiguration
             )
         }
 
@@ -114,11 +109,11 @@ private fun Project.processJvmKindTargets(
 
             addJvmInputs(
                 binariesSource,
-                abiValidationTaskSet,
                 target.targetName,
                 false,
                 target.compilations,
-                KotlinCompilation.MAIN_COMPILATION_NAME
+                KotlinCompilation.MAIN_COMPILATION_NAME,
+                abiConfiguration
             )
         }
 }
@@ -127,7 +122,7 @@ private fun Project.processJvmKindTargets(
 private fun Project.processNonJvmTargets(
     binariesSource: BinariesSource,
     targets: Iterable<KotlinTarget>,
-    abiValidationTaskSet: AbiValidationTaskSet
+    abiConfiguration: AbiValidationConfiguration
 ) {
     val bannedInTests = bannedCanonicalTargetsInTest()
     targets
@@ -139,12 +134,12 @@ private fun Project.processNonJvmTargets(
                 if (target.targetIsSupported() && klibTarget.customizedName !in bannedInTests) {
                     addKlibInputs(
                         binariesSource,
-                        abiValidationTaskSet,
                         klibTarget,
-                        target.compilations
+                        target.compilations,
+                        abiConfiguration
                     )
                 } else {
-                    abiValidationTaskSet.unsupportedTarget(klibTarget)
+                    abiConfiguration.unsupportedTargets.add(klibTarget)
                 }
             }
         }
@@ -153,23 +148,23 @@ private fun Project.processNonJvmTargets(
 
 private fun Project.addKlibInputs(
     binariesSource: BinariesSource,
-    abiValidationTaskSet: AbiValidationTaskSet,
     klibTarget: KlibTargetId,
     compilations: NamedDomainObjectContainer<out KotlinCompilation<out Any>>,
+    abiConfiguration: AbiValidationConfiguration,
 ) {
     when (binariesSource) {
         BinariesSource.MAVEN_PUBLICATIONS -> {
-            analyzeMavenPublicationForKlib(klibTarget, abiValidationTaskSet)
+            analyzeMavenPublicationForKlib(klibTarget, abiConfiguration)
         }
         BinariesSource.MAIN_COMPILATION -> {
             compilations.withCompilationIfExists(KotlinCompilation.MAIN_COMPILATION_NAME) {
-                abiValidationTaskSet.addKlibTarget(klibTarget, output.classesDirs)
+                abiConfiguration.addKlibTarget(klibTarget, output.classesDirs)
             }
         }
         BinariesSource.NON_TEST_COMPILATIONS -> {
             compilations.configureEach { compilation ->
                 if (!compilation.compilationName.contains("test", ignoreCase = true)) {
-                    abiValidationTaskSet.addKlibTarget(klibTarget, compilation.output.classesDirs)
+                    abiConfiguration.addKlibTarget(klibTarget, compilation.output.classesDirs)
                 }
             }
         }
@@ -178,21 +173,21 @@ private fun Project.addKlibInputs(
 
 private fun Project.addJvmInputs(
     binariesSource: BinariesSource,
-    abiValidationTaskSet: AbiValidationTaskSet,
     targetName: String,
     singleTarget: Boolean,
     compilations: NamedDomainObjectContainer<out KotlinCompilation<out Any>>,
     mainCompilationName: String,
+    abiConfiguration: AbiValidationConfiguration
 ) {
     val classfiles = files()
     if (singleTarget) {
-        abiValidationTaskSet.addSingleJvmTarget(classfiles)
+        abiConfiguration.addJvmDump(classfiles)
     } else {
-        abiValidationTaskSet.addJvmTarget(targetName, classfiles)
+        abiConfiguration.addJvmDump(targetName, classfiles)
     }
     when (binariesSource) {
         BinariesSource.MAVEN_PUBLICATIONS -> {
-            analyzeMavenPublicationForJvm(abiValidationTaskSet, classfiles)
+            analyzeMavenPublicationForJvm(classfiles)
         }
         BinariesSource.MAIN_COMPILATION -> {
             compilations.withCompilationIfExists(mainCompilationName) {
@@ -221,7 +216,10 @@ private fun Project.bannedCanonicalTargetsInTest(): Set<String> {
     return prop.split(",").map { it.trim() }.toSet()
 }
 
-internal fun Project.analyzeMavenPublicationForKlib(target: KlibTargetId, taskSet: AbiValidationTaskSet) {
+internal fun Project.analyzeMavenPublicationForKlib(
+    target: KlibTargetId,
+    abiConfiguration: AbiValidationConfiguration,
+) {
     val publishingExtension = extensions.findByType(PublishingExtension::class.java)
     if (publishingExtension == null) {
         reportDiagnostic(KotlinToolingDiagnostics.AbiValidationNoPublishPlugin())
@@ -231,8 +229,10 @@ internal fun Project.analyzeMavenPublicationForKlib(target: KlibTargetId, taskSe
         if (publication is MavenPublication && publication.name == target.customizedName) {
             publication.artifacts.configureEach { artifact ->
                 if (artifact.classifier == null) {
-                    taskSet.addKlibTarget(target, files(artifact.file))
-                    taskSet.addDependencies(artifact.buildDependencies)
+                    abiConfiguration.addKlibTarget(
+                        target,
+                        files(artifact.file).builtBy(artifact.buildDependencies)
+                    )
                 }
             }
         }

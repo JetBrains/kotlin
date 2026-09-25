@@ -28,20 +28,33 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
     when {
         kotlinJvmExtensionOrNull != null -> {
             val extension = kotlinJvmExtension
+            val abiConfiguration = extension.abiValidationConfiguration
+            if (!abiConfiguration.useAutoconfigure.get()) return@KotlinProjectSetupCoroutine
+
             val target = extension.target
-            extension.abiValidation.finalizeJvmVariant(this, target)
+            extension.abiValidation.finalizeJvmVariant(this, target, abiConfiguration)
         }
 
         kotlinAndroidExtensionOrNull != null -> {
             val extension = kotlinAndroidExtension
+            val abiConfiguration = extension.abiValidationConfiguration
+            if (!abiConfiguration.useAutoconfigure.get()) return@KotlinProjectSetupCoroutine
+
             val target = extension.target
-            extension.abiValidation.finalizeAndroidVariant(this, target)
+            extension.abiValidation.finalizeAndroidVariant(this, target, abiConfiguration)
         }
 
         multiplatformExtensionOrNull != null -> {
             val extension = multiplatformExtension
+            val abiConfiguration = extension.abiValidationConfiguration
+            if (!abiConfiguration.useAutoconfigure.get()) return@KotlinProjectSetupCoroutine
+
             val targets = extension.awaitTargets()
-            extension.abiValidation.finalizeMultiplatformVariant(this, targets, abiValidation.keepLocallyUnsupportedTargets)
+            extension.abiValidation.finalizeMultiplatformVariant(
+                this,
+                targets,
+                abiConfiguration
+            )
         }
     }
 }

@@ -12,6 +12,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.abi.utils.*
 import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.assertDumpsEqual
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
+import kotlin.test.assertFalse
 
 @JvmGradlePluginTests
 class AbiValidationJvmIT : KGPBaseTest() {
@@ -293,6 +295,84 @@ class AbiValidationJvmIT : KGPBaseTest() {
             }
         }
     }
+
+    @OptIn(DelicateKotlinGradlePluginApi::class)
+    @GradleTest
+    fun testDisableAutoconfigure(
+        gradleVersion: GradleVersion,
+    ) {
+        jvmProject(gradleVersion) {
+            kotlinSourcesDir().source("SimpleClass.kt") { AbiValidationTestDumps.SIMPLE_CLASS }
+
+            abiValidationConfig {
+                useAutoconfigure.set(false)
+            }
+            // enable abi validation
+            abiValidation()
+            // create the reference dumps to check
+            build("updateKotlinAbi")
+
+            assertFalse(referenceJvmDumpFile().exists())
+        }
+    }
+
+    @OptIn(DelicateKotlinGradlePluginApi::class)
+    @GradleTest
+    fun testManualConfig(
+        gradleVersion: GradleVersion,
+    ) {
+        jvmProject(gradleVersion) {
+            kotlinSourcesDir().source("SimpleClass.kt") { AbiValidationTestDumps.SIMPLE_CLASS }
+
+            buildScriptInjection {
+                val compilation = kotlinJvm.target.compilations.findByName("main")!!
+
+                val files = compilation.output.classesDirs
+                kotlinJvm.abiValidationConfiguration.useAutoconfigure.set(false)
+                kotlinJvm.abiValidationConfiguration.addJvmDump(files)
+
+                // enable abi validation and add dependency on the compilation task
+                kotlinJvm.abiValidation.updateTaskProvider.configure {
+                    it.dependsOn(compilation.compileJavaTaskProvider)
+                }
+
+            }
+            // create the reference dumps to check
+            build("updateKotlinAbi")
+
+            assertDumpsEqual(AbiValidationTestDumps.SIMPLE_DUMP_JVM, referenceJvmDumpFile())
+        }
+    }
+
+    @OptIn(DelicateKotlinGradlePluginApi::class)
+    @GradleTest
+    fun testManualConfigNamed(
+        gradleVersion: GradleVersion,
+    ) {
+        val dumpName = "named"
+        jvmProject(gradleVersion) {
+            kotlinSourcesDir().source("SimpleClass.kt") { AbiValidationTestDumps.SIMPLE_CLASS }
+
+            buildScriptInjection {
+                val compilation = kotlinJvm.target.compilations.findByName("main")!!
+
+                val files = compilation.output.classesDirs
+                kotlinJvm.abiValidationConfiguration.useAutoconfigure.set(false)
+                kotlinJvm.abiValidationConfiguration.addJvmDump(dumpName, files)
+
+                // enable abi validation and add dependency on the compilation task
+                kotlinJvm.abiValidation.updateTaskProvider.configure {
+                    it.dependsOn(compilation.compileJavaTaskProvider)
+                }
+
+            }
+            // create the reference dumps to check
+            build("updateKotlinAbi")
+
+            assertDumpsEqual(AbiValidationTestDumps.SIMPLE_DUMP_JVM, referenceJvmDumpFile(dir = "api/$dumpName"))
+        }
+    }
+
 
 }
 

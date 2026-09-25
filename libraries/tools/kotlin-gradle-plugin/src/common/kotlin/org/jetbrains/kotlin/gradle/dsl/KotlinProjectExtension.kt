@@ -15,12 +15,15 @@ import org.gradle.api.provider.Property
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApiKind
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationConfiguration
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationExtensionImpl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.isCalledOutsideKotlinOrAndroidPlugins
@@ -174,6 +177,12 @@ abstract class KotlinProjectExtension @Inject constructor(
         project.objects.propertyWithConvention(project.getKotlinPluginVersion()).chainedFinalizeValueOnRead()
 
     internal val abiValidationInternal: AbiValidationExtensionImpl = project.AbiValidationExtensionImpl()
+
+    @DelicateKotlinGradlePluginApi(DelicateKotlinGradlePluginApiKind.ABI_VALIDATION)
+    val abiValidationConfiguration: AbiValidationConfiguration
+        get() {
+            return abiValidationInternal
+        }
 
     @ExperimentalAbiValidation
     override val abiValidation: AbiValidationExtension
