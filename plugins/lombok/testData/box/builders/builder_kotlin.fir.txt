@@ -45,7 +45,7 @@ FILE: builder_kotlin.kt
                 private get(): R|kotlin/String?|
                 private set(value: R|kotlin/String?|): R|kotlin/Unit|
 
-            private constructor(): R|User.UserBuilder| {
+            internal constructor(): R|User.UserBuilder| {
                 super<R|kotlin/Any|>()
             }
 
@@ -86,7 +86,7 @@ FILE: builder_kotlin.kt
                 private get(): R|kotlin/Int|
                 private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-            private constructor(): R|AccessLevelPrivate.AccessLevelPrivateBuilder| {
+            internal constructor(): R|AccessLevelPrivate.AccessLevelPrivateBuilder| {
                 super<R|kotlin/Any|>()
             }
 

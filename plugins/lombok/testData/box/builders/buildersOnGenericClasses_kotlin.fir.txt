@@ -34,7 +34,7 @@ FILE: buildersOnGenericClasses_kotlin.kt
                 private get(): R|kotlin/collections/List<T>|
                 private set(value: R|kotlin/collections/List<T>|): R|kotlin/Unit|
 
-            private constructor<T>(): R|GenericBuilder.GenericBuilderBuilder<T>| {
+            internal constructor<T>(): R|GenericBuilder.GenericBuilderBuilder<T>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -72,7 +72,7 @@ FILE: buildersOnGenericClasses_kotlin.kt
                     private get(): R|T|
                     private set(value: R|T|): R|kotlin/Unit|
 
-                private constructor<T>(): R|Outer.Nested.NestedBuilder<T>| {
+                internal constructor<T>(): R|Outer.Nested.NestedBuilder<T>| {
                     super<R|kotlin/Any|>()
                 }
 

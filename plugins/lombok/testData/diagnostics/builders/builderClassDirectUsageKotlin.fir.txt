@@ -25,7 +25,7 @@ FILE: Owner.kt
                 private get(): R|kotlin/Int|
                 private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-            private constructor(): R|Owner.OwnerBuilder| {
+            internal constructor(): R|Owner.OwnerBuilder| {
                 super<R|kotlin/Any|>()
             }
 
@@ -34,7 +34,7 @@ FILE: Owner.kt
     }
 FILE: test.kt
     public final fun usage(): R|kotlin/Unit| {
-        lval builder: R|Owner.OwnerBuilder| = Q|Owner|.R|/Owner.OwnerBuilder<HIDDEN: /Owner.OwnerBuilder is invisible>#|()
+        lval builder: R|Owner.OwnerBuilder| = Q|Owner|.R|/Owner.OwnerBuilder|()
         R|<local>/builder|.R|/Owner.OwnerBuilder.a|(Int(1)).R|/Owner.OwnerBuilder.build|()
         lval justBuilder: R|Owner.OwnerBuilder?| = Null(null)
         R|<local>/justBuilder|?.{ $subj$.R|/Owner.OwnerBuilder.a|(Int(2)) }?.{ $subj$.R|/Owner.OwnerBuilder.build|() }
