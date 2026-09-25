@@ -82,7 +82,10 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
         visibility === DescriptorVisibilities.LOCAL -> Opcodes.ACC_PUBLIC
         else -> getVisibilityAccessFlag()
     }
-    val isIdentity = context.writesIdentityFlags &&
+    // `ACC_IDENTITY` (JEP 401) is only meaningful in preview class files of JVM target 28 or later. There, identity classes need it in
+    // their `InnerClasses` entries too: the JVM rejects a non-final, non-abstract class without it, and reflection reads a nested
+    // class's identity from its `InnerClasses` entry.
+    val isIdentity = context.isJvmTargetValhallaCompatible &&
             !isInterface &&
             !isAnnotationClass &&
             !isKotlinValhallaValueClass(context.config.languageVersionSettings) &&
@@ -95,10 +98,7 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
 }
 
 
-// `ACC_IDENTITY` (JEP 401) is only meaningful in preview class files of JVM target 28 or later. There, identity classes need it in
-// their `InnerClasses` entries too: the JVM rejects a non-final, non-abstract class without it, and reflection reads a nested
-// class's identity from its `InnerClasses` entry.
-private val JvmBackendContext.writesIdentityFlags: Boolean
+internal val JvmBackendContext.isJvmTargetValhallaCompatible: Boolean
     get() = isJvmTargetValhallaCompatible(config.target, configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW))
 
 private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
