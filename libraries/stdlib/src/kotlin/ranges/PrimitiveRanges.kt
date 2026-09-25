@@ -40,7 +40,7 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
      * Checks if this range is equal to the specified [other] value.
      *
      * The [other] value is considered equal to `this` if [other] is [CharProgression] 
-     * and they are both [empty][isEmpty] or have the same first element, last element, and step.
+     * and they are both [empty][isEmpty] or have the same first element [first], last element [last], and [step].
      */
     override fun equals(other: Any?): Boolean = super.equals(other)
 
@@ -83,7 +83,7 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
      * Checks if this range is equal to the specified [other] value.
      *
      * The [other] value is considered equal to `this` if [other] is [IntProgression] 
-     * and they are both [empty][isEmpty] or have the same first element, last element, and step.
+     * and they are both [empty][isEmpty] or have the same first element [first], last element [last], and [step].
      */
     override fun equals(other: Any?): Boolean = super.equals(other)
 
@@ -126,7 +126,7 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
      * Checks if this range is equal to the specified [other] value.
      *
      * The [other] value is considered equal to `this` if [other] is [LongProgression] 
-     * and they are both [empty][isEmpty] or have the same first element, last element, and step.
+     * and they are both [empty][isEmpty] or have the same first element [first], last element [last], and [step].
      */
     override fun equals(other: Any?): Boolean = super.equals(other)
 

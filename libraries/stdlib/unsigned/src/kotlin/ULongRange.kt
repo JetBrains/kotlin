@@ -44,7 +44,7 @@ public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(st
      * Checks if this range is equal to the specified [other] value.
      *
      * The [other] value is considered equal to `this` if [other] is [ULongProgression] 
-     * and they are both [empty][isEmpty] or have the same first element, last element, and step.
+     * and they are both [empty][isEmpty] or have the same first element [first], last element [last], and [step].
      */
     override fun equals(other: Any?): Boolean = super.equals(other)
 
