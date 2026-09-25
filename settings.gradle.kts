@@ -388,6 +388,7 @@ include(
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
     ":kotlin-gradle-plugin-dsl-codegen",
     ":kotlin-gradle-statistics",
+    ":kotlin-gradle-statistics:metric-helpers-generator",
     ":kotlin-gradle-build-metrics",
     ":kotlin-gradle-plugin",
     ":gradle:kotlin-gradle-ecosystem-plugin",
@@ -925,6 +926,8 @@ project(":kotlin-gradle-plugin-idea-for-compatibility-tests").projectDir =
     File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests")
 project(":kotlin-gradle-plugin-dsl-codegen").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen")
 project(":kotlin-gradle-statistics").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-statistics")
+project(":kotlin-gradle-statistics:metric-helpers-generator").projectDir =
+    File("$rootDir/libraries/tools/kotlin-gradle-statistics/metric-helpers-generator")
 project(":kotlin-gradle-build-metrics").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-build-metrics")
 project(":kotlin-gradle-plugin").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin")
 project(":gradle:kotlin-gradle-ecosystem-plugin").projectDir = File("$rootDir/libraries/tools/gradle/kotlin-gradle-ecosystem-plugin")

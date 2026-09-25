@@ -96,6 +96,33 @@ enum class StringListMetrics(
         CONCAT,
         AllowedListAnonymizer(listOf("exposed", "hidden", "moduleName", "rootPackage", "settings"))
     ),
+
+    // CLI arguments
+    CLI_MANUALLY_CONFIGURED_LANGUAGE_FEATURES(
+        CONCAT,
+        AllowedListAnonymizer(languageFeatureNames.map { """\+$it""" } + languageFeatureNames.map { "-$it" }),
+    ),
+
+    CLI_JSR305_NULLABILITY_ANNOTATIONS_MODE(
+        CONCAT,
+        AllowedListAnonymizer("ignore", "strict", "warn", "under-migration:ignore", "under-migration:strcit", "under-migration:warn"),
+    ),
+    CLI_METADATA_TARGET_PLATFORM(
+        CONCAT,
+        AllowedListAnonymizer("JVM", "JS", "WasmJs", "WasmWasi", "Native"),
+    ),
+    CLI_NATIVE_MANIFEST_TARGETS(
+        CONCAT,
+        AllowedListAnonymizer(
+            "android_x64", "android_x86", "android_arm32", "android_arm64",
+            "ios_arm64", "ios_x64", "ios_simulator_arm64",
+            "watchos_arm64", "watchos_x64", "watchos_simulator_arm64", "watchos_device_arm64",
+            "tvos_arm64", "tvos_x64", "tvos_simulator_arm64",
+            "linux_x64", "mingw_x64",
+            "macos_x64", "macos_arm64",
+            "linux_arm64", "linux_arm32_hfp",
+        )
+    )
     ;
 
 
