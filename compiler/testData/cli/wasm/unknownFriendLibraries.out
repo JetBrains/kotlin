@@ -1,0 +1,2 @@
+warning: there are libraries in -Xfriend-modules CLI argument that are not included in -libraries CLI argument: $TMP_DIR$/main_unknown.klib
+OK

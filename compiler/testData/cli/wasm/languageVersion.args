@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/languageVersion.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-language-version
+2.1
+-libraries
+$STDLIB_WASM_JS$
