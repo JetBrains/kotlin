@@ -5,29 +5,32 @@
 
 package org.jetbrains.kotlin.build.swc
 
-import SystemPropertyClasspathProvider
+import kotlinBuildProperties
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.newInstance
-import org.jetbrains.kotlin.gradle.targets.js.swc.SwcEnvSpec
 
 abstract class SwcExtension(
     private val project: Project,
-    private val swc: SwcEnvSpec,
+    // Actually `org.jetbrains.kotlin.gradle.targets.js.swc.SwcEnvSpec`, see `SwcBridge` for the reason it is untyped here
+    private val swc: Any,
 ) {
     val swcVersion: String
-        get() = kotlinBuildProperties.versionsProperty("swc").get()
+        get() = project.kotlinBuildProperties.versionsProperty("swc").get()
 
-    val swcExecutablePath: Provider<String> = swc.executable.also {
+    // val swcExecutablePath: Provider<String> = swc.executable.also {
+    // TODO KT-82969: Remove a line below after bootstrap in favor of the above commented code
+    val swcExecutablePath: Provider<String> = SwcBridge.getExecutable(swc).also {
         project.extra["swc.path"] = it
     }
 
     fun Test.setupSwc() {
-        with(swc) {
-            dependsOn(project.swcSetupTaskProvider)
-        }
+//        with(swc) {
+//            dependsOn(project.swcSetupTaskProvider)
+//        }
+        // TODO KT-82969: Remove after bootstrap in favor of the above commented code
+        dependsOn(SwcBridge.getSetupTaskProvider(project, swc))
 
         val swcExecutablePath = swcExecutablePath
 

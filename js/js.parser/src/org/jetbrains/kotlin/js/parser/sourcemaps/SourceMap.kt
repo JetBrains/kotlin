@@ -74,9 +74,12 @@ class SourceMap(val sourceContentResolver: (String) -> Reader?) {
         @Throws(IOException::class, SourceMapSourceReplacementException::class)
         fun replaceSources(sourceMapFile: File, mapping: (String) -> String): Boolean {
             val content = sourceMapFile.readText()
-            return sourceMapFile.writer().buffered().use {
-                mapSources(content, it, mapping)
-            }
+            // The result is built in memory first: opening the file for writing truncates it, so writing it directly
+            // would leave an empty file behind whenever there is nothing to replace or the content is malformed.
+            val replacedContent = StringWriter()
+            if (!mapSources(content, replacedContent, mapping)) return false
+            sourceMapFile.writeText(replacedContent.toString())
+            return true
         }
 
         @Throws(IOException::class, SourceMapSourceReplacementException::class)

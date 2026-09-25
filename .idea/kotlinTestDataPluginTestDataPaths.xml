@@ -11,7 +11,7 @@
         <entry key="$PROJECT_DIR$/compiler/testData/codegen/box">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{box,boxWithInlineAnonymousFunctions,es6Box,es6BoxWithInlineAnonymousFunctions}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{box,boxWithInlineAnonymousFunctions,es6Box,es6BoxWithInlineAnonymousFunctions,swcBox}/$TEST_DATA_FILE$_v5.js" />
               <option value="$PROJECT_DIR$/js/js.translator/testData/out/codegen/wasmBox/$TEST_DATA_FILE$.wat" />
             </array>
           </value>
@@ -19,7 +19,7 @@
         <entry key="$PROJECT_DIR$/compiler/testData/codegen/boxInline">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{boxInline,boxInlineWithInlineAnonymousFunctions,es6BoxInline,es6BoxInlineWithInlineAnonymousFunctions}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{boxInline,boxInlineWithInlineAnonymousFunctions,es6BoxInline,es6BoxInlineWithInlineAnonymousFunctions,swcBoxInline}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
@@ -40,7 +40,7 @@
         <entry key="$PROJECT_DIR$/js/js.translator/testData/box">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{box,psiBox,lightTreeBox,boxWithInlineAnonymousFunctions,es6Box,es6BoxWithInlineAnonymousFunctions}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{box,psiBox,lightTreeBox,boxWithInlineAnonymousFunctions,es6Box,es6BoxWithInlineAnonymousFunctions,swcBox}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
