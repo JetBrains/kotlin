@@ -18,17 +18,29 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
+import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.CallerImpl
 import kotlin.reflect.jvm.internal.types.AbstractKType
 
+/**
+ * @param kotlinName the Kotlin name of the function if it differs from the name of the Java method, e.g. `removeAt` for `remove(int)` in a
+ *   Java implementation of `MutableList`, see `addOverriddenSpecialMethods`.
+ * @param erasedValueParameterTypesFrom the built-in function whose value parameter types this function has, if this Java method overrides
+ *   a built-in function with erased value parameters in Java, e.g. `contains(E)` for `contains(Object)` in a Java implementation of
+ *   `Collection`. The built-in function is substituted to the type parameters of the class containing this function.
+ */
 internal class JavaKNamedFunction(
     container: KDeclarationContainerImpl,
     method: Method,
     rawBoundReceiver: Any?,
     overriddenStorage: KCallableOverriddenStorage,
     private val kotlinName: String? = null,
+    val erasedValueParameterTypesFrom: ReflectKFunction? = null,
 ) : JavaKFunction(container, method, rawBoundReceiver, overriddenStorage) {
+    override val valueParameterTypesOverride: List<KType>?
+        get() = erasedValueParameterTypesFrom?.valueParameters?.map { it.type }
+
     override val originalParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters()
     }
@@ -125,10 +137,10 @@ internal class JavaKNamedFunction(
     override val callerWithDefaults: Caller<*>? get() = null
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
-        JavaKNamedFunction(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage, kotlinName)
+        JavaKNamedFunction(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage, kotlinName, erasedValueParameterTypesFrom)
 
     override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<Any?> {
         require(boundContextArguments.isEmpty()) { "Java methods cannot have bound context arguments: $this" }
-        return JavaKNamedFunction(container, jMethod, boundReceiver, overriddenStorage, kotlinName)
+        return JavaKNamedFunction(container, jMethod, boundReceiver, overriddenStorage, kotlinName, erasedValueParameterTypesFrom)
     }
 }

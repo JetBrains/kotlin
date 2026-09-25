@@ -32,12 +32,13 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
 import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.MemberBelonginess.INHERITED
+import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
+import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.isFlexible
 import kotlin.reflect.jvm.internal.types.areEqualKTypes
 import java.lang.Deprecated as JavaLangDeprecated
 
@@ -48,7 +49,7 @@ internal fun MemberContainer<*>.computeDeclaredMembers(): Collection<ReflectKCal
 
 internal fun MemberContainer<*>.computeAllMembers(): Collection<ReflectKCallable<*>> {
     val names: Collection<String> =
-        if (this is KClassImpl<*> && (useK1Implementation || isComplicatedBuiltinSubclass)) {
+        if (this is KClassImpl<*> && useK1Implementation) {
             getMemberNamesFromDescriptors()
         } else buildSet {
             // All member names of this class are the _declared_ member names of this class plus declared member names of all its direct and
@@ -73,7 +74,7 @@ private fun MemberContainer<*>.collectDeclaredMemberNamesTransitively(
 
 internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> = buildList {
     val kClass = this@computeDeclaredMembersByName
-    if (useK1Implementation || isComplicatedBuiltinSubclass || (useK1ImplementationForMembers && kmClass != null)) {
+    if (useK1Implementation || (useK1ImplementationForMembers && kmClass != null)) {
         addAll(getDescriptorBasedFunctions(memberScope, DECLARED, name))
         addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
         addAll(getDescriptorBasedFunctions(staticScope, DECLARED, name))
@@ -164,7 +165,7 @@ internal fun MemberContainer<*>.computeDeclaredMembersFromMetadata(name: String)
 }
 
 internal fun MemberContainer<*>.computeMembersByName(name: String): Collection<ReflectKCallable<*>> =
-    if (this is KClassImpl<*> && (useK1Implementation || isComplicatedBuiltinSubclass)) {
+    if (this is KClassImpl<*> && useK1Implementation) {
         buildList {
             addAll(getDeclaredMembersByName(name))
             addAll(getDescriptorBasedFunctions(memberScope, INHERITED, name))
@@ -183,7 +184,7 @@ internal fun MemberContainer<*>.computeMembersByName(name: String): Collection<R
     }
 
 internal fun KClassImpl<*>.computeDeclaredMemberNames(): Set<String> =
-    if (useK1Implementation || isComplicatedBuiltinSubclass) {
+    if (useK1Implementation) {
         getMemberNamesFromDescriptors()
     } else if (kmClass != null) {
         computeDeclaredMemberNamesFromMetadata()
@@ -261,15 +262,15 @@ internal fun MemberContainer<*>.isVisibleAsFunctionInCurrentClass(function: Java
                     if (function.name == accessorName)
                         listOf(function)
                     else {
-                        // K1 code also searched in supertypes (see searchMethodsInSupertypesWithoutBuiltinMagic), but it seems useful
-                        // only for mapped builtins and their subtypes, so will be handled separately in KT-85727.
+                        // K1 code also searched in supertypes (see searchMethodsInSupertypesWithoutBuiltinMagic), but it doesn't seem to
+                        // affect any observable behavior, since the property found in a supertype would be inherited anyway.
                         getDeclaredNonStaticMethodsFromJavaClass(accessorName)
                     }
                 } && (property is KMutableProperty<*> || !JvmAbi.isSetterName(function.name))
             }
         }) return false
 
-    return !doesOverrideRenamedBuiltins(function)
+    return !doesOverrideRenamedBuiltins(function) && !shouldBeVisibleAsOverrideOfBuiltinWithErasedValueParameters(function)
 }
 
 private fun MemberContainer<*>.getDeclaredNonStaticMethodsFromJavaClass(name: String? = null): List<JavaKNamedFunction> {
@@ -311,15 +312,104 @@ private fun MemberContainer<*>.obtainOverrideForBuiltinWithDifferentJvmName(meth
     return renamed.takeIf { it.overridden.any { overridden -> overridden.doesOverrideBuiltinWithDifferentJvmName(method.name) } }
 }
 
+// Adds Java methods declared in this class which override built-in functions whose signatures differ in Java: functions with different JVM
+// names (e.g. `remove(int)` overriding `MutableList.removeAt`), and functions with erased value parameters (e.g. `contains(Object)` overriding
+// `Collection.contains(E)`). See `addOverriddenSpecialMethods` in `LazyJavaClassMemberScope` in the compiler.
 private fun MemberContainer<*>.addOverriddenSpecialMethods(name: String, result: MutableCollection<ReflectKCallable<*>>) {
-    if (Name.identifier(name) !in SpecialGenericSignatures.ORIGINAL_SHORT_NAMES) return
-    val jvmNamesFromSupertypes = getFunctionsFromSupertypes(name).mapTo(HashSet()) { it.jvmName }.apply { remove(name) }
-    if (jvmNamesFromSupertypes.isEmpty()) return
-    for (method in jClass.declaredMethods) {
-        if (method.name !in jvmNamesFromSupertypes || Modifier.isStatic(method.modifiers) || method.isSynthetic) continue
-        obtainOverrideForBuiltinWithDifferentJvmName(method, name)?.let(result::add)
+    if (Name.identifier(name) in SpecialGenericSignatures.ORIGINAL_SHORT_NAMES) {
+        val jvmNamesFromSupertypes = getFunctionsFromSupertypes(name).mapTo(HashSet()) { it.jvmName }.apply { remove(name) }
+        for (method in jClass.declaredMethods) {
+            if (method.name !in jvmNamesFromSupertypes || Modifier.isStatic(method.modifiers) || method.isSynthetic) continue
+            obtainOverrideForBuiltinWithDifferentJvmName(method, name)?.let(result::add)
+        }
+    }
+
+    if (Name.identifier(name) in SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES) {
+        for (method in jClass.declaredMethods) {
+            if (method.name != name || Modifier.isStatic(method.modifiers) || method.isSynthetic) continue
+            val function = obtainOverrideForBuiltinWithErasedValueParameters(method) ?: continue
+            if (isVisibleAsFunctionInCurrentClass(function)) {
+                result.add(function)
+            }
+        }
     }
 }
+
+/**
+ * If the given Java [method] overrides a built-in function with erased value parameters in Java (e.g. `contains(Object)` overrides
+ * `Collection.contains(E)`), returns the function which has the value parameter types of the built-in function (`contains(E)`).
+ * Otherwise, returns null.
+ *
+ * See `createOverrideForBuiltinFunctionWithErasedParameterIfNeeded` in `LazyJavaClassMemberScope` in the compiler.
+ */
+private fun MemberContainer<*>.obtainOverrideForBuiltinWithErasedValueParameters(method: Method): JavaKNamedFunction? {
+    val function = JavaKNamedFunction(this, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY)
+    val candidates = getBuiltinsWithErasedValueParametersFromSupertypes(method.name).filter { candidate ->
+        function.hasSameJvmDescriptorButDoesNotOverride(candidate)
+    }
+    if (candidates.isEmpty()) return null
+    // If the built-in function is inherited through several supertypes with different flexibility of type arguments (e.g. `AbstractList<E!>`
+    // and the purely implemented `MutableList<E>` in `java.util.ArrayList`), the compiler prefers the non-flexible types.
+    val candidate = candidates.firstOrNull { c -> c.valueParameters.none { (it.type as AbstractKType).isFlexible() } } ?: candidates.first()
+    return JavaKNamedFunction(this, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY, erasedValueParameterTypesFrom = candidate)
+}
+
+/**
+ * Checks if the given Java [function] declared in this class is a valid override of the JDK analogue of a built-in function with erased
+ * value parameters (e.g. `Map.containsKey(K)`), in which case it's not visible as a function itself, and the function with the built-in
+ * parameter types is loaded instead (see `obtainOverrideForBuiltinWithErasedValueParameters`).
+ *
+ * Examples:
+ * - `boolean containsKey(Object key)` -> true
+ * - `boolean containsKey(K key)` -> false (wrong JDK method override, while it's a valid Kotlin built-in override)
+ */
+private fun MemberContainer<*>.shouldBeVisibleAsOverrideOfBuiltinWithErasedValueParameters(function: JavaKNamedFunction): Boolean {
+    if (Name.identifier(function.name) !in SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES) return false
+    return getBuiltinsWithErasedValueParametersFromSupertypes(function.name).any { candidate ->
+        function.hasSameJvmDescriptorButDoesNotOverride(candidate)
+    }
+}
+
+// Functions with the given name inherited by this class from its supertypes, which override built-in functions with erased value parameters
+// in Java (e.g. `Collection.contains(E)`), substituted to the type parameters of this class. Since they have the same signature as the
+// built-in functions they override, they are used as the source of value parameter types for Java methods overriding these built-ins.
+private fun MemberContainer<*>.getBuiltinsWithErasedValueParametersFromSupertypes(name: String): List<ReflectKFunction> =
+    supertypes.flatMap { supertype ->
+        val supertypeKClass = supertype.memberContainer ?: return@flatMap emptyList()
+        val substitutor = KTypeSubstitutor.create(supertype)
+        supertypeKClass.getFakeOverrideMembersByName(name).values.mapNotNull { member ->
+            if (member !is ReflectKFunction || member.overriddenBuiltinWithErasedValueParameters() == null) return@mapNotNull null
+            member.createFakeOverride(this, substitutor) as ReflectKFunction
+        }
+    }
+
+// Finds a built-in function with erased value parameters in Java (e.g. `Collection.contains(E)`) among this function and the functions it
+// overrides, or null if there's none. See `getOverriddenBuiltinFunctionWithErasedValueParametersInJava` in the compiler.
+internal fun ReflectKFunction.overriddenBuiltinWithErasedValueParameters(): ReflectKFunction? {
+    if (hasErasedValueParametersInJava) return this
+    for (overridden in overridden) {
+        overridden.overriddenBuiltinWithErasedValueParameters()?.let { return it }
+    }
+    return null
+}
+
+private val ReflectKFunction.hasErasedValueParametersInJava: Boolean
+    get() {
+        val container = originalContainer as? MemberContainer<*> ?: return false
+        if (!container.isMappedBuiltin || container.jClass.isArray) return false
+        val javaAnalogue = container.jClass.wrapperByPrimitive ?: container.jClass
+        return SignatureBuildingComponents.signature(javaAnalogue.classId.internalName, signature) in
+                SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SIGNATURES
+    }
+
+// See `hasSameJvmDescriptorButDoesNotOverride` in `LazyJavaClassMemberScope` in the compiler.
+private fun JavaKNamedFunction.hasSameJvmDescriptorButDoesNotOverride(builtinWithErasedParameters: ReflectKFunction): Boolean =
+    jvmDescriptorWithoutReturnType == builtinWithErasedParameters.jvmDescriptorWithoutReturnType &&
+            toEquatableCallableSignature(EqualityMode.KotlinSignature) !=
+            builtinWithErasedParameters.toEquatableCallableSignature(EqualityMode.KotlinSignature)
+
+private val ReflectKFunction.jvmDescriptorWithoutReturnType: String
+    get() = signature.substringBeforeLast(')')
 
 private fun MemberContainer<*>.getFunctionsFromSupertypes(name: String): List<ReflectKFunction> =
     supertypes.flatMap { supertype ->

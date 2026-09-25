@@ -112,6 +112,13 @@ internal abstract class JavaKFunction(
         val returnType: KType?,
     )
 
+    /**
+     * If not null, the types of value parameters of this function, which are used instead of the types computed from [genericParameterTypes].
+     * This is needed for Java methods overriding built-in functions with erased value parameters, see `erasedValueParameterTypesFrom` in
+     * [JavaKNamedFunction].
+     */
+    open val valueParameterTypesOverride: List<KType>? get() = null
+
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
         val allParameters = allParameters
         if (!isReceiverBound) return@lazy allParameters
@@ -155,6 +162,7 @@ internal fun JavaKFunction.computeParameters(): List<KParameter> = buildList {
     val isEnumValuesValueOfMethod = member.isEnumValuesValueOfMethod()
     val unsubstitutedParameterKTypes =
         overriddenCallableToInheritSignature?.parameters?.filter { it.kind == KParameter.Kind.VALUE }?.map { it.type }
+            ?: valueParameterTypesOverride
             ?: genericParameterTypes.map { type ->
                 val nullability = if (isEnumValuesValueOfMethod) TypeNullability.NOT_NULL else TypeNullability.FLEXIBLE
                 type.toKType(knownTypeParameters, nullability)

@@ -7,6 +7,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
@@ -42,8 +43,17 @@ private object CovariantOverrideComparator : Comparator<ReflectKCallable<*>> {
     }
 }
 
-internal typealias MembersJavaSignatureMap = Map<EquatableCallableSignature<EqualityMode.JavaSignature>, ReflectKCallable<*>>
-private typealias MutableMembersJavaSignatureMap = MutableMap<EquatableCallableSignature<EqualityMode.JavaSignature>, ReflectKCallable<*>>
+/**
+ * Members of a class with a given name, keyed by their signatures. Normally, the key is the Java signature of the member
+ * ([EquatableCallableSignature] with [EqualityMode.JavaSignature]), but it can also be the Kotlin signature ([KotlinSignatureKey]) for
+ * overrides of built-in functions with erased value parameters in Java, see [computeFakeOverrideMembersForName].
+ * The keys are only used to group inherited members while computing the map, the users of the map should only rely on its values.
+ */
+internal typealias MembersJavaSignatureMap = Map<Any, ReflectKCallable<*>>
+private typealias MutableMembersJavaSignatureMap = MutableMap<Any, ReflectKCallable<*>>
+
+// A wrapper is needed so that the key never compares equal to a Java signature key, see `EquatableCallableSignature.equals`.
+private data class KotlinSignatureKey(val signature: EquatableCallableSignature<EqualityMode.KotlinSignature>)
 
 private fun ReflectKCallable<*>.isStaticMethodInInterface(kClass: MemberContainer<*>): Boolean =
     isStatic && kClass.classKind == ClassKind.INTERFACE && !isJavaField
@@ -70,6 +80,10 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
         if (kClass.isKotlin) declaredMembers.mapTo(HashSet()) { it.toEquatableCallableSignature(EqualityMode.KotlinSignature) }
         else emptySet()
     val result: MutableMembersJavaSignatureMap = HashMap()
+    // Keys in `result` of inherited members by their Kotlin signatures, needed to handle overrides of built-in functions with erased value
+    // parameters (see below). Only needed for Kotlin classes.
+    val keysByKotlinSignature: MutableMap<EquatableCallableSignature<EqualityMode.KotlinSignature>, Any>? =
+        if (kClass.isKotlin && Name.identifier(name) in SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES) HashMap() else null
     for (supertype in kClass.supertypes) {
         val supertypeKClass = supertype.memberContainer
             ?: error(
@@ -82,9 +96,34 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
             val kotlinSignature = member.toEquatableCallableSignature(EqualityMode.KotlinSignature)
             if (kotlinSignature in declaredKotlinSignatures) continue
             // Inherited signatures are always compared by the JvmSignatures. Even for kotlin classes.
-            val javaSignature = kotlinSignature.withEqualityMode(EqualityMode.JavaSignature)
-            val existingMember = result[javaSignature]
-            result[javaSignature] = if (existingMember == null) member else createIntersectionOverride(existingMember, member)
+            var key: Any = kotlinSignature.withEqualityMode(EqualityMode.JavaSignature)
+            if (keysByKotlinSignature != null) {
+                // The exception is an override of a built-in function with erased value parameters in Java (e.g. `MutableCollection.remove(E)`
+                // itself, or `remove(Object)` in a Java class overriding it, which is loaded with the value parameter types of the built-in
+                // function: `remove(E)`). In a Kotlin class, such member is compared with other inherited members by the Kotlin signature,
+                // just like the compiler does. For example, `remove(E)` is merged with `remove(Integer)` from another Java supertype even
+                // though their Java signatures differ, and it's not merged with `remove(Object)` from another Java supertype even though
+                // their Java signatures are the same. Note that it's still not merged with `remove(int)`, because a Java method with a
+                // primitive parameter cannot override a method with a non-primitive parameter, see
+                // `JavaIncompatibilityRulesOverridabilityCondition.doesJavaOverrideHaveIncompatibleValueParameterKinds` in the compiler.
+                val existingKey = keysByKotlinSignature[kotlinSignature]
+                if (existingKey != null) {
+                    val existingSignature = (existingKey as? KotlinSignatureKey)?.signature ?: existingKey as EquatableCallableSignature<*>
+                    if ((member.isOverrideOfBuiltinWithErasedValueParameters ||
+                                result[existingKey]?.isOverrideOfBuiltinWithErasedValueParameters == true) &&
+                        kotlinSignature.hasSameValueParameterKinds(existingSignature)
+                    ) {
+                        key = existingKey
+                    }
+                } else {
+                    if (member.isOverrideOfBuiltinWithErasedValueParameters) {
+                        key = KotlinSignatureKey(kotlinSignature)
+                    }
+                    keysByKotlinSignature[kotlinSignature] = key
+                }
+            }
+            val existingMember = result[key]
+            result[key] = if (existingMember == null) member else createIntersectionOverride(existingMember, member)
         }
     }
     for (member in declaredMembers) {
@@ -92,6 +131,9 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
     }
     return result
 }
+
+private val ReflectKCallable<*>.isOverrideOfBuiltinWithErasedValueParameters: Boolean
+    get() = this is ReflectKFunction && overriddenBuiltinWithErasedValueParameters() != null
 
 internal fun ReflectKCallable<*>.createFakeOverride(subclass: MemberContainer<*>, substitutor: KTypeSubstitutor): ReflectKCallable<*> =
     shallowCopy(
@@ -391,6 +433,13 @@ internal class EquatableCallableSignature<T : EqualityMode>(
             isStatic,
             equalityMode
         )
+
+    // Whether the corresponding value parameters of this and [other] signatures are both primitive or both non-primitive in Java.
+    fun hasSameValueParameterKinds(other: EquatableCallableSignature<*>): Boolean =
+        javaErasedParameterTypes.size == other.javaErasedParameterTypes.size &&
+                javaErasedParameterTypes.indices.all {
+                    javaErasedParameterTypes[it].isPrimitive == other.javaErasedParameterTypes[it].isPrimitive
+                }
 
     override fun hashCode(): Int =
         arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, if (isJavaFunctionSignature) javaNameIfFunction ?: "" else name)
