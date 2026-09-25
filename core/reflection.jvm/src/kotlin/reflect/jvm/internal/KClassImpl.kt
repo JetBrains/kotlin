@@ -430,7 +430,7 @@ internal class KClassImpl<T : Any>(
         internal val inlineClassUnderlyingType: KType? by lazy(PUBLICATION) {
             val kmClass = kmClass
             when {
-                kmClass == null || !kmClass.isValue ->
+                kmClass?.inlineClassUnderlyingPropertyName == null ->
                     null
                 kmClass.inlineClassUnderlyingType != null ->
                     kmClass.inlineClassUnderlyingType?.toKType(jClass.safeClassLoader, typeParameterTable)
