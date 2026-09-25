@@ -28,7 +28,6 @@ import kotlin.metadata.KmClass
 import kotlin.metadata.KmClassifier
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.kind
-import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubtypeOf
@@ -36,6 +35,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.MemberBelonginess.INHERITED
+import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.areEqualKTypes
 import java.lang.Deprecated as JavaLangDeprecated
 
@@ -65,7 +65,7 @@ private fun MemberContainer<*>.collectDeclaredMemberNamesTransitively(
     if (!visited.add(this)) return
     result.addAll(declaredMemberNames)
     for (supertype in supertypes) {
-        (supertype.classifier as? MemberContainer<*>)?.collectDeclaredMemberNamesTransitively(result, visited)
+        supertype.memberContainer?.collectDeclaredMemberNamesTransitively(result, visited)
     }
 }
 
@@ -197,7 +197,7 @@ internal fun KClassImpl<*>.computeDeclaredMemberNames(): Set<String> =
             // Declared method `getX` in a Java class won't be loaded as a KFunction if it overrides a property getter from the base Kotlin
             // class (see `isVisibleAsFunctionInCurrentClass`), it will be loaded as a property getter instead. We cannot deduce the name
             // of the property from the name of the getter (`getX` -> `x` or `X`?), so we get all property names from supertypes.
-            (supertype.classifier as? MemberContainer<*>)?.collectDeclaredMemberNamesTransitively(this, visited)
+            supertype.memberContainer?.collectDeclaredMemberNamesTransitively(this, visited)
         }
         if (jClass.isEnum) {
             add(ENUM_ENTRIES_PROPERTY_NAME)
@@ -280,7 +280,7 @@ private fun MemberContainer<*>.getDeclaredNonStaticMethodsFromJavaClass(name: St
 }
 
 private fun MemberContainer<*>.getPropertiesFromSupertypes(name: String): List<KProperty1<*, *>> =
-    supertypes.flatMap { supertype -> (supertype.classifier as? KClass<*>)?.memberProperties?.filter { it.name == name }.orEmpty() }
+    supertypes.flatMap { supertype -> supertype.memberContainer?.memberProperties?.filter { it.name == name }.orEmpty() }
 
 private val ReflectKFunction.jvmName: String
     get() = signature.substringBeforeLast('(')
@@ -311,8 +311,7 @@ private fun MemberContainer<*>.addOverriddenSpecialMethods(name: String, result:
 
 private fun MemberContainer<*>.getFunctionsFromSupertypes(name: String): List<ReflectKFunction> =
     supertypes.flatMap { supertype ->
-        (supertype.classifier as? MemberContainer<*>)?.getFakeOverrideMembersByName(name)?.values?.filterIsInstance<ReflectKFunction>()
-            .orEmpty()
+        supertype.memberContainer?.getFakeOverrideMembersByName(name)?.values?.filterIsInstance<ReflectKFunction>().orEmpty()
     }
 
 private fun doesClassOverrideProperty(
@@ -362,36 +361,41 @@ private fun KProperty1<*, *>.findSetterOverride(
 internal fun MemberContainer<*>.getAdditionalFunctions(): List<ReflectKFunction> {
     if (!isMappedBuiltin || this == Any::class) return emptyList()
     val kmClass = kmClass ?: return emptyList()
+    val isMutable = this is MutableCollectionKClass<*>
 
     val javaAnalogue = jClass.wrapperByPrimitive ?: jClass
+
+    // Names of properties declared in this class's metadata, and JVM signatures of functions declared in this class's metadata.
+    // For collection classes, these also include members of the whole Kotlin collection hierarchy, see `collectMembersOfCollectionHierarchy`.
+    val propertyNames = kmClass.properties.mapTo(HashSet()) { it.name }
+    val declaredJvmSignatures = kmClass.functions.mapTo(HashSet()) {
+        it.computeJvmSignature(this).toString()
+    }
+    collectMembersOfCollectionHierarchy(kmClass, propertyNames, declaredJvmSignatures)
 
     // Property accessors must not be loaded as functions; the compiler filters them out because they override the corresponding
     // property accessors declared in this class. Unlike functions (handled below), reflection keeps properties and functions separate,
     // so they are not deduplicated against each other automatically.
     val getterLikeNames = HashSet<String>()   // matched against 0-arg methods, e.g. Enum.name()/ordinal() and Throwable.getMessage()
     val setterLikeNames = HashSet<String>()   // matched against 1-arg methods
-    for (property in kmClass.properties) {
-        getterLikeNames += property.name
-        getterLikeNames += JvmAbi.getterName(property.name)
-        setterLikeNames += JvmAbi.setterName(property.name)
+    for (propertyName in propertyNames) {
+        getterLikeNames += propertyName
+        getterLikeNames += JvmAbi.getterName(propertyName)
+        // Getters of some builtin properties have special JVM names, e.g. `keySet` for `Map.keys`.
+        getBuiltinSpecialPropertyGetterName(propertyName, this)?.let(getterLikeNames::add)
+        setterLikeNames += JvmAbi.setterName(propertyName)
     }
-
-    // JVM signatures of functions declared in this class's metadata, used to avoid replacing a Kotlin function (which has proper
-    // Kotlin types) with a Java method (which has flexible types), e.g. `Enum.clone`.
-    val declaredJvmSignatures = kmClass.functions.mapTo(HashSet()) {
-        it.computeJvmSignature(this).toString()
-    }
-
-    collectJvmSignaturesOfMutableCounterpart(declaredJvmSignatures)
 
     return javaAnalogue.declaredMethods.mapNotNull { method ->
         if (Modifier.isStatic(method.modifiers) || method.isSynthetic) return@mapNotNull null
         if (!Modifier.isPublic(method.modifiers) && !Modifier.isProtected(method.modifiers)) return@mapNotNull null
         if (method.isAnnotationPresent(JavaLangDeprecated::class.java)) return@mapNotNull null
 
-        if (SignatureBuildingComponents.signature(javaAnalogue.classId.internalName, method.jvmSignature)
-            in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES
-        ) return@mapNotNull null
+        // Methods which mutate the collection belong to the mutable collection class only, and all other methods belong to the read-only
+        // class only (the mutable class inherits them). This mirrors `JvmBuiltInsCustomizer.isMutabilityViolation`.
+        val isMutableMethod = SignatureBuildingComponents.signature(javaAnalogue.classId.internalName, method.jvmSignature) in
+                JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES
+        if (isMutableMethod != isMutable) return@mapNotNull null
 
         val parameterCount = method.parameterTypes.size
         if (parameterCount == 0 && method.name in getterLikeNames) return@mapNotNull null
@@ -419,19 +423,30 @@ internal fun MemberContainer<*>.getAdditionalFunctions(): List<ReflectKFunction>
     }
 }
 
-// Collects JVM signatures of all functions of the mutable counterpart of this read-only collection class (e.g. `MutableIterator` for
-// `Iterator`), including functions inherited from its supertypes. Does nothing if this class has no mutable counterpart.
-private fun MemberContainer<*>.collectJvmSignaturesOfMutableCounterpart(result: MutableSet<String>) {
-    val mutableKmClass = getMutableCollectionKClass(this)?.mutableKmClass ?: return
+// For a collection class, collects names of properties and JVM signatures of functions of the whole Kotlin collection hierarchy: for a
+// mutable class (e.g. `MutableList`), all its supertypes (`List`, `MutableCollection`, `Collection`, ...); for a read-only class
+// (e.g. `List`), its mutable counterpart and all its supertypes. Java methods of the Java analogue corresponding to these members must not
+// be added as additional functions: they are either inherited by the Kotlin class from its supertypes (e.g. `size` and `remove` in
+// `MutableList`), or belong to the mutable counterpart of the read-only class (e.g. `add` in `List`, see the `kotlinVersions` check in
+// `JvmBuiltInsCustomizer.getAdditionalFunctions`). Does nothing if this class is not a collection class.
+private fun MemberContainer<*>.collectMembersOfCollectionHierarchy(
+    kmClass: KmClass,
+    propertyNames: MutableSet<String>,
+    functionJvmSignatures: MutableSet<String>,
+) {
+    val root = if (this is MutableCollectionKClass<*>) kmClass else (getMutableCollectionKClass(this)?.mutableKmClass ?: return)
     val visited = HashSet<String>()
-    val queue = ArrayDeque<KmClass>().apply { add(mutableKmClass) }
+    val queue = ArrayDeque<KmClass>().apply { add(root) }
     while (queue.isNotEmpty()) {
         val klass = queue.removeFirst()
         if (!visited.add(klass.name)) continue
+        for (property in klass.properties) {
+            propertyNames.add(property.name)
+        }
         for (function in klass.functions) {
             val mapped = function.mapSignature(klass)
             val jvmName = getBuiltinSpecialFunctionJvmName(function.name, mapped.descriptor, this) ?: mapped.name
-            result.add(JvmMethodSignature(jvmName, mapped.descriptor).toString())
+            functionJvmSignatures.add(JvmMethodSignature(jvmName, mapped.descriptor).toString())
         }
         for (supertype in klass.supertypes) {
             val superClassId = (supertype.classifier as? KmClassifier.Class)?.name?.toClassId() ?: continue

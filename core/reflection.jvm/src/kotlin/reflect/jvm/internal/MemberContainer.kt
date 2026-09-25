@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import kotlin.metadata.ClassKind
 import kotlin.metadata.KmClass
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.jvm.internal.types.AbstractKType
 
 /**
  * A class-like declaration container which has members: declared members (functions and properties loaded from metadata or Java
@@ -47,3 +49,11 @@ internal abstract class MemberContainer<T : Any> : KDeclarationContainerImpl(), 
 
 internal val MemberContainer<*>.isKotlin: Boolean
     get() = kmClass != null
+
+/**
+ * The container of members of this type's class, when the type is used as a supertype. For mutable collection types (e.g. `MutableList<E>`
+ * or the mutability-flexible `(Mutable)List<E!>`), it's the mutable collection class, whose members differ from the members of the
+ * read-only class which is the [KType.classifier] of such types.
+ */
+internal val KType.memberContainer: MemberContainer<*>?
+    get() = (this as? AbstractKType)?.mutableCollectionClass as? MemberContainer<*> ?: classifier as? MemberContainer<*>

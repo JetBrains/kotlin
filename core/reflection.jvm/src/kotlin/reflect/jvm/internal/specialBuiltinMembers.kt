@@ -33,7 +33,7 @@ private fun KDeclarationContainerImpl.findBuiltinSpecialPropertyFqName(propertyN
     val fqName = klass.classId.asSingleFqName().child(Name.identifier(propertyName))
     if (fqName in BuiltinSpecialProperties.SPECIAL_FQ_NAMES) return fqName
     for (supertype in klass.supertypes) {
-        (supertype.classifier as? MemberContainer<*>)?.findBuiltinSpecialPropertyFqName(propertyName)?.let { return it }
+        supertype.memberContainer?.findBuiltinSpecialPropertyFqName(propertyName)?.let { return it }
     }
     return null
 }
@@ -56,7 +56,7 @@ private fun MemberContainer<*>.findBuiltinSpecialFunctionJvmName(nameAndDescript
     val signature = SignatureBuildingComponents.signature(javaAnalogue.classId.internalName, nameAndDescriptor)
     SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME[signature]?.let { return it }
     for (supertype in supertypes) {
-        val superclass = supertype.classifier as? MemberContainer<*> ?: continue
+        val superclass = supertype.memberContainer ?: continue
         if (!superclass.isMappedBuiltin) continue
         superclass.findBuiltinSpecialFunctionJvmName(nameAndDescriptor)?.let { return it }
     }

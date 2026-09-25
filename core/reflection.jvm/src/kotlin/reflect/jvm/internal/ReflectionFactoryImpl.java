@@ -8,6 +8,7 @@ package kotlin.reflect.jvm.internal;
 
 import kotlin.Metadata;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import kotlin.jvm.internal.*;
 import kotlin.metadata.KmConstructor;
 import kotlin.metadata.KmFunction;
@@ -15,8 +16,10 @@ import kotlin.metadata.KmProperty;
 import kotlin.reflect.*;
 import kotlin.reflect.full.KClassifiers;
 import kotlin.reflect.jvm.ReflectLambdaKt;
+import kotlin.reflect.jvm.internal.types.MutableCollectionKClass;
 import kotlin.reflect.jvm.internal.types.TypeOfImplKt;
 import kotlin.text.MatchResult;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -95,8 +98,8 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
             }
             else if (container instanceof KClassImpl<?> && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass() &&
                      (!SystemPropertiesKt.getUseK1ImplementationForMembers() || isJavaClass(container))) {
-                ReflectKFunction result = (ReflectKFunction) CollectionsKt.firstOrNull(
-                        ((KClassImpl<?>) container).getData().getValue().getMembersByName(name),
+                ReflectKFunction result = (ReflectKFunction) findMember(
+                        (KClassImpl<?>) container, name,
                         it -> it instanceof ReflectKFunction && ((ReflectKFunction) it).getSignature().equals(signature)
                 );
                 if (result == null) {
@@ -240,8 +243,8 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     }
 
     private static ReflectKProperty<?> findProperty(KClassImpl<?> container, String name, String signature, Object boundReceiver, List<?> boundContextArguments) {
-        ReflectKProperty<?> result = (ReflectKProperty<?>) CollectionsKt.firstOrNull(
-                container.getData().getValue().getMembersByName(name),
+        ReflectKProperty<?> result = (ReflectKProperty<?>) findMember(
+                container, name,
                 it -> it instanceof ReflectKProperty<?> && ((ReflectKProperty<?>) it).getSignature().equals(signature)
         );
         if (result == null) {
@@ -250,6 +253,23 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
             );
         }
         return (ReflectKProperty<?>) ReflectKCallableKt.bind(result, boundReceiver, boundContextArguments);
+    }
+
+    @Nullable
+    private static ReflectKCallable<?> findMember(
+            KClassImpl<?> container, String name, Function1<ReflectKCallable<?>, Boolean> predicate
+    ) {
+        ReflectKCallable<?> result = CollectionsKt.firstOrNull(container.getMembersByName(name), predicate);
+        if (result != null) return result;
+
+        // The owner of a callable reference to a member of a mutable collection class (e.g. `MutableList<String>::add`) is the Java class
+        // (`java.util.List`), which is represented by the KClass of the read-only collection class (`kotlin.collections.List`). Members
+        // declared in the mutable class are not members of the read-only class, so we need to look for them in the mutable class as well.
+        MutableCollectionKClass<?> mutableCollectionClass = BuiltinsKt.getMutableCollectionKClass(container);
+        if (mutableCollectionClass instanceof MemberContainer<?>) {
+            return CollectionsKt.firstOrNull(((MemberContainer<?>) mutableCollectionClass).getMembersByName(name), predicate);
+        }
+        return null;
     }
 
     // typeOf

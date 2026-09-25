@@ -25,6 +25,7 @@ import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*
 import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
+import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.allTypeParameters
 
 /**
@@ -70,10 +71,19 @@ val KClass<*>.companionObjectInstance: Any?
 val KClass<*>.defaultType: KType
     get() = createDefaultType()
 
-internal fun KClass<*>.createDefaultType(computeJavaType: Lazy<Type>? = null): KType =
-    createTypeImpl(allTypeParameters().map { typeParameter ->
+internal fun KClass<*>.createDefaultType(computeJavaType: Lazy<Type>? = null): KType {
+    val arguments = allTypeParameters().map { typeParameter ->
         KTypeProjection(KVariance.INVARIANT, typeParameter.createType())
-    }, computeJavaType = computeJavaType)
+    }
+    // Mutable collection classes are not exposed as classifiers of types, the read-only class is used instead (see KT-11754).
+    val mutableCollectionClass = this as? MutableCollectionKClass<*>
+    if (mutableCollectionClass != null) {
+        return mutableCollectionClass.readonlyClass.createTypeImpl(
+            arguments, mutableCollectionClass = mutableCollectionClass, computeJavaType = computeJavaType,
+        )
+    }
+    return createTypeImpl(arguments, computeJavaType = computeJavaType)
+}
 
 
 /**

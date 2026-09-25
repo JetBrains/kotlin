@@ -177,10 +177,22 @@ internal class KTypeSubstitutor(
             check(typeParameters.size == arguments.size) {
                 "Params vs args count mismatch (${typeParameters.size} != ${arguments.size}) for class '$klass' with args: ${arguments.joinToString()}"
             }
+            // Identity mappings (`T -> T`) are dropped. They appear for example in the supertype `List<E>` of `MutableList<E>`, because type
+            // parameters of a mutable collection class are the same as type parameters of its read-only counterpart (see
+            // `MutableCollectionKClassImpl.typeParameterTable`). Otherwise, such substitutor would fail with intersecting keys when chained
+            // with a substitutor of the mutable class (e.g. `E -> Int` for a subclass of `MutableList<Int>`).
+            val substitution = typeParameters.zip(arguments).filterNot { it.second.isIdentityProjectionOf(it.first) }
             return when {
-                typeParameters.isEmpty() -> EMPTY.copy(isRaw)
-                else -> KTypeSubstitutor(typeParameters.zip(arguments).toMap(), eraseToUpperBoundsAfterSubstitution = isRaw)
+                substitution.isEmpty() -> EMPTY.copy(isRaw)
+                else -> KTypeSubstitutor(substitution.toMap(), eraseToUpperBoundsAfterSubstitution = isRaw)
             }
+        }
+
+        private fun KTypeProjection.isIdentityProjectionOf(parameter: KTypeParameter): Boolean {
+            if (variance != KVariance.INVARIANT) return false
+            val type = type as? AbstractKType ?: return false
+            return type.classifier == parameter && !type.isMarkedNullable && !type.isDefinitelyNotNullType &&
+                    type.lowerBoundIfFlexible() == null && type.annotations.isEmpty()
         }
     }
 }

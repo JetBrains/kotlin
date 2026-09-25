@@ -71,7 +71,7 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
         else emptySet()
     val result: MutableMembersJavaSignatureMap = HashMap()
     for (supertype in kClass.supertypes) {
-        val supertypeKClass = supertype.classifier as? MemberContainer<*>
+        val supertypeKClass = supertype.memberContainer
             ?: error(
                 "Non-denotable supertypes are not possible. " +
                         "Supertype '$supertype' appears non-denotable in class '$kClass'"
@@ -184,7 +184,7 @@ internal fun computeOverriddenFunctions(
 ): Collection<ReflectKFunction> {
     val result = mutableListOf<ReflectKFunction>()
     for (supertype in container.supertypes) {
-        val supertypeKClass = supertype.classifier as? MemberContainer<*> ?: continue
+        val supertypeKClass = supertype.memberContainer ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
         for (supertypeMember in getSupertypeMembersByName(supertype, supertypeKClass, signature.name)) {
             if (supertypeMember !is ReflectKFunction) continue
