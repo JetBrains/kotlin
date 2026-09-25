@@ -11,6 +11,6 @@ class Foo
 // MODULE: m2(m1)
 package kotlin.io
 
-fun foo(f: <!UNRESOLVED_REFERENCE!>Foo<!>) {}
+fun foo(f: Foo) {}
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

@@ -8,7 +8,7 @@ FILE: interface.kt
             Q|IW|.R|/IW.invoke*s|()
             Q|IE1|.R|/IE1.Companion.invoke|()
             Q|IE2|.R|/IE2.Companion.invoke|()
-            <Resolution to classifier>#()
+            <Unresolved name: IH1>#()
             <HIDDEN: /Outer.IH2.Companion.invoke is deprecated with DeprecationLevel.HIDDEN>#()
             R|/IH3|()
             R|/IH4|()

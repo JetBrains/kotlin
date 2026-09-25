@@ -42,10 +42,10 @@ class CompanionObjectExtension2 private constructor() {
 
 fun test() {
     <!UNRESOLVED_REFERENCE!>Object0<!>()
-    <!DEPRECATION_ERROR, INVISIBLE_REFERENCE!>CompanionBlock<!>()
-    <!DEPRECATION_ERROR, INVISIBLE_REFERENCE!>CompanionObject<!>()
+    <!UNRESOLVED_REFERENCE!>CompanionBlock<!>()
+    <!UNRESOLVED_REFERENCE!>CompanionObject<!>()
     <!INVISIBLE_REFERENCE!>CompanionObject2<!>()
-    <!DEPRECATION_ERROR, INVISIBLE_REFERENCE!>CompanionObjectExtension<!>()
+    <!UNRESOLVED_REFERENCE!>CompanionObjectExtension<!>()
     <!INVISIBLE_REFERENCE!>CompanionObjectExtension2<!>()
 }
 

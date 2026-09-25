@@ -6,7 +6,7 @@ import kotlinx.serialization.*
 class A
 
 fun foo() {
-    A.<!DEPRECATION_ERROR!>`$serializer`<!>
-    A.<!DEPRECATION_ERROR!>`$serializer`<!>.descriptor
+    A.<!UNRESOLVED_REFERENCE!>`$serializer`<!>
+    A.<!UNRESOLVED_REFERENCE!>`$serializer`<!>.<!UNRESOLVED_REFERENCE!>descriptor<!>
     A(<!TOO_MANY_ARGUMENTS!>0<!>, <!TOO_MANY_ARGUMENTS!>null<!>)
 }

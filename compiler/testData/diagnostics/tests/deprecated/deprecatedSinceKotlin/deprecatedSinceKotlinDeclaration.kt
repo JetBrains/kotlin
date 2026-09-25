@@ -49,6 +49,6 @@ fun fooEqual() {}
 @DeprecatedSinceKotlin("1.1", "1.1", "1.1")
 class Foo
 
-val foo: <!DEPRECATION_ERROR!>Foo<!> = <!DEPRECATION_ERROR!>Foo<!>()
+val foo: <!UNRESOLVED_REFERENCE!>Foo<!> = <!UNRESOLVED_REFERENCE!>Foo<!>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration, stringLiteral */

@@ -1,3 +1,4 @@
+// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 //  ^ ignored in K1
 // LANGUAGE: +NestedTypeAliases
@@ -8,9 +9,9 @@
 object Impl
 
 class C {
-    typealias Obj = <!DEPRECATION_ERROR!>Impl<!>
+    typealias Obj = <!UNRESOLVED_REFERENCE!>Impl<!>
 
-    val obj = Obj
+    val obj = <!NO_COMPANION_OBJECT!>Obj<!>
 }
 
 object Obj

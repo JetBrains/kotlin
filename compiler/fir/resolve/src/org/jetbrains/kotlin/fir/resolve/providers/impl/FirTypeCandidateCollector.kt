@@ -84,6 +84,10 @@ class FirTypeCandidateCollector(
     }
 
     fun getResult(): TypeResolutionResult {
+        if (applicability == HIDDEN) {
+            return Unresolved
+        }
+
         filterOutAmbiguousTypealiases(candidates)
 
         val candidateCount = candidates.size

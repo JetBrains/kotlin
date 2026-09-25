@@ -29,7 +29,7 @@ fun funNext() {}
 val valNext = Unit
 
 fun usage() {
-    <!DEPRECATION_ERROR!>ClassCur<!>()
+    <!UNRESOLVED_REFERENCE!>ClassCur<!>()
     <!UNRESOLVED_REFERENCE!>funCur<!>()
     <!UNRESOLVED_REFERENCE!>valCur<!>
 

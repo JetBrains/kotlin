@@ -16,7 +16,7 @@ val String.TopLevel get() = 42
 
 fun test() {
     with("") {
-        Obj.<!UNRESOLVED_REFERENCE!>Nested<!>
+        Obj.<!DEPRECATION_ERROR!>Nested<!>
         TopLevel
     }
 }

@@ -33,7 +33,7 @@ class A {
 fun test() {
     A.<!DEPRECATION!>Obj<!>()
     A.<!DEPRECATION_ERROR!>CompanionBlock<!>()
-    A.<!INTERFACE_AS_FUNCTION!>CompanionObject1<!>()
+    A.<!UNRESOLVED_REFERENCE!>CompanionObject1<!>()
     A.<!UNRESOLVED_REFERENCE!>CompanionObject2<!>()
 }
 

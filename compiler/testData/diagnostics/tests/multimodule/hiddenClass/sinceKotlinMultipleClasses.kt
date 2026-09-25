@@ -30,7 +30,7 @@ import p1.*
 import p2.A
 import p3.*
 
-fun test(a: <!NONE_APPLICABLE!>A<!>) {
+fun test(a: <!UNRESOLVED_REFERENCE!>A<!>) {
     a.<!UNRESOLVED_REFERENCE!>v1<!>
     a.<!UNRESOLVED_REFERENCE!>v2<!>
     a.<!UNRESOLVED_REFERENCE!>v3<!>
@@ -41,7 +41,7 @@ import p1.*
 import p2.*
 import p3.*
 
-fun test(a: <!NONE_APPLICABLE!>A<!>) {
+fun test(a: <!UNRESOLVED_REFERENCE!>A<!>) {
     a.<!UNRESOLVED_REFERENCE!>v1<!>
     a.<!UNRESOLVED_REFERENCE!>v2<!>
     a.<!UNRESOLVED_REFERENCE!>v3<!>
