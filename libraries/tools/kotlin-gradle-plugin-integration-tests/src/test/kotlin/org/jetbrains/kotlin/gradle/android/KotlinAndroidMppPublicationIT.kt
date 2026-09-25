@@ -501,6 +501,10 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
         }
     }
 
+    /**
+     * This highly dynamic test combines two producer AGP versions with many consumer AGP versions.
+     * It uses test project templates and dynamic sharding to manage this version matrix and distribute the consumer tests.
+     */
     @DisplayName("produced artifacts are consumable by projects with various AGP versions")
     @TestFactory
     @DynamicTestSharding
@@ -508,19 +512,20 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
     fun testAndroidMultiplatformPublicationAGPCompatibility(
         @TempDir tempDir: Path,
     ): List<DynamicContainer> {
-        val gradleVersionFilter = System.getProperty("gradle.integration.tests.gradle.version.filter")
-            ?.let { GradleVersion.version(it) }
+        val producerVersions = listOf(TestVersions.AGP.MIN_SUPPORTED, TestVersions.AGP.MAX_SUPPORTED)
+            .filter { agp ->
+                gradleTestVersionFilter == null || AgpCompatibilityMatrix.fromVersion(agp).minSupportedGradleVersion == gradleTestVersionFilter
+            }
 
         val checkedConsumerAGPVersions = AgpCompatibilityMatrix.entries
             .filter { agp ->
                 AgpCompatibilityMatrix.fromVersion(agp.version) < AgpCompatibilityMatrix.fromVersion(TestVersions.AGP.MAX_SUPPORTED)
             }
-            .filter { agp -> gradleVersionFilter == null || agp.minSupportedGradleVersion == gradleVersionFilter }
             .shardTestsBy { agp -> agp.version }
 
         if (checkedConsumerAGPVersions.isEmpty()) return emptyList()
 
-        return setOf(TestVersions.AGP.MIN_SUPPORTED, TestVersions.AGP.MAX_SUPPORTED).map { agpVersion ->
+        return producerVersions.map { agpVersion ->
             val producerAgpVersion = AgpCompatibilityMatrix.fromVersion(agpVersion)
             val gradleVersion = producerAgpVersion.minSupportedGradleVersion
             val localRepoDir = tempDir.resolve(agpVersion)

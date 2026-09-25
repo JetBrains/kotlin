@@ -75,6 +75,13 @@ annotation class GradleTestExtraStringArguments(
 @ArgumentsSource(GradleArgumentsProvider::class)
 annotation class GradleTest
 
+/**
+ * Set by version-specific TeamCity test tasks via `gradle.integration.tests.gradle.version.filter`.
+ * Use it to restrict test cases to the selected Gradle version; `null` means no version filtering.
+ */
+val gradleTestVersionFilter: GradleVersion? = System.getProperty("gradle.integration.tests.gradle.version.filter")
+    ?.let { GradleVersion.version(it) }
+
 inline fun <reified T : Annotation> findAnnotationOrNull(context: ExtensionContext): T? {
     var nextSuperclass: Class<*>? = context.testClass.get().superclass
     val superClassSequence = if (nextSuperclass != null) {
@@ -114,9 +121,7 @@ open class GradleParameterResolver : ParameterResolver {
     }
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any? {
-        val versionFilter = extensionContext.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
-            .map { GradleVersion.version(it) }
-        return if (versionFilter.isPresent) versionFilter.get() else null
+        return gradleTestVersionFilter
     }
 }
 
@@ -126,14 +131,11 @@ open class GradleArgumentsProvider : ArgumentsProvider {
         context: ExtensionContext,
     ): Stream<out Arguments> {
         val gradleVersions = gradleVersions(context)
-        val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
-            .map { GradleVersion.version(it) }
-
         val extraArguments = extraArguments(context) ?: emptyArray()
 
         return gradleVersions
             .asSequence()
-            .filter { gradleVersion -> versionFilter.map { gradleVersion == it }.orElse(true) }
+            .filter { gradleVersion -> gradleTestVersionFilter?.let { gradleVersion == it } ?: true }
             .flatMap { gradleVersion ->
                 if (extraArguments.isNotEmpty()) {
                     extraArguments.asSequence().map { extraArgument -> Arguments.of(gradleVersion, extraArgument) }
@@ -221,8 +223,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
             }
 
         val gradleVersions = gradleVersions(context)
-        val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
-            .map { GradleVersion.version(it) }
+        val versionFilter = Optional.ofNullable(gradleTestVersionFilter)
 
         return providedJdks
             .flatMap { providedJdk ->
@@ -352,8 +353,7 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
         }
 
         val gradleVersions = gradleVersions(context)
-        val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
-            .map { GradleVersion.version(it) }
+        val versionFilter = Optional.ofNullable(gradleTestVersionFilter)
 
         return agpVersions
             .flatMap { version ->
@@ -401,8 +401,7 @@ class DisabledIfNoArgumentsProvided : ExecutionCondition {
             return ConditionEvaluationResult.enabled("The execution condition is only applicable to test methods")
         }
 
-        val gradleVersionFilterParameter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
-        if (!gradleVersionFilterParameter.isPresent) {
+        if (gradleTestVersionFilter == null) {
             return ConditionEvaluationResult.enabled("No Gradle version filter provided")
         }
 
@@ -432,7 +431,9 @@ class DisabledIfNoArgumentsProvided : ExecutionCondition {
         return object : ParameterDeclarations {
             override fun getAll(): List<ParameterDeclaration> = declarations
             override fun getFirst(): Optional<ParameterDeclaration> = Optional.ofNullable(declarations.firstOrNull())
-            override fun get(parameterIndex: Int): Optional<ParameterDeclaration> = Optional.ofNullable(declarations.getOrNull(parameterIndex))
+            override fun get(parameterIndex: Int): Optional<ParameterDeclaration> =
+                Optional.ofNullable(declarations.getOrNull(parameterIndex))
+
             override fun getSourceElement() = source
             override fun getSourceElementDescription(): String = source.toGenericString()
         }
