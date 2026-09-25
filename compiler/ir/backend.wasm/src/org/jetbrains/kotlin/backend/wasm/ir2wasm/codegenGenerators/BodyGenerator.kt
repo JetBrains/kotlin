@@ -886,6 +886,17 @@ class BodyGenerator(
             }
         }
 
+        // Resume intrinsics generate their arguments themselves:
+        // the exception argument of `resume_throw` has to be converted before the continuation argument is on the stack.
+        if (call.symbol == wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic) {
+            generateResumeWith(call, location)
+            return
+        }
+        if (call.symbol == wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeThrowIntrinsic) {
+            generateResumeThrow(call, location)
+            return
+        }
+
         call.arguments.forEach { generateExpression(it!!) }
 
         val callFunction = call.symbol.owner
@@ -1065,29 +1076,63 @@ class BodyGenerator(
         body.buildStructGet(typeCodegenContext.referenceVTableGcType(irBuiltIns.anyClass), VTABLE_SPECIAL_ITABLE_FIELD_ID, location)
     }
 
-    private fun generateResumeIntrinsicsEpilogue(wasmContinuation: WasmLocal, location: SourceLocation) {
-        body.buildSetLocal(wasmContinuation, location)
-
-        // cast to WasmContinuationBox
-        val wasmContBoxTypeSymbol =
-            wasmSymbols.coroutinesStackSwitchingIntrinsics!!.suspendIntrinsic
-                .owner.parameters[0].type.getRuntimeClass(irBuiltIns).symbol
-        val wasmContBoxGcType = typeCodegenContext.referenceGcType(wasmContBoxTypeSymbol)
-        val wasmContBoxHeapType = typeCodegenContext.referenceHeapType(wasmContBoxTypeSymbol)
-        body.buildRefCastStatic(wasmContBoxHeapType, location)
-        body.buildGetLocal(wasmContinuation, location)
-
-        // store contref in WasmContinuationBox
-        body.buildStructSet(wasmContBoxGcType, 4, location)
-
-        // return COROUTINE_SUSPENDED
-        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutineSuspendedGetter), location)
+    private fun generateResumeOrReturn(
+        blockParams: List<WasmType>,
+        location: SourceLocation,
+        buildResumeInstr: (contHandle: WasmImmediate.ContHandle) -> Unit,
+    ) {
+        val blockType = typeCodegenContext.referenceWasmFunctionType(
+            WasmFunctionType(blockParams, listOf(WasmRefNullType(Synthetics.HeapTypes.boundContType)))
+        )
+        body.buildFunctionTypedBlock("on_suspend", blockType) { level ->
+            buildResumeInstr(body.createNewContHandle(contTagId, level))
+            body.buildInstr(WasmOp.RETURN, location)
+        }
     }
 
-    private fun referenceContSuspendHandlerBlockType(): WasmImmediate.TypeIdx {
-        val anyRefNull = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-        val cont0RefNull = WasmRefNullType(Synthetics.HeapTypes.boundContType)
-        return typeCodegenContext.referenceWasmFunctionType(WasmFunctionType(emptyList(), listOf(anyRefNull, cont0RefNull)))
+    /**
+     * <continuation>
+     * block (param (ref null continuation)) (result (ref null continuation))
+     *     resume continuation 1 (on 1 0)
+     *     return // not suspended - return result from the enclosing function
+     * end
+     * ;; suspended - new contref on the stack
+     */
+    private fun generateResumeWith(call: IrFunctionAccessExpression, location: SourceLocation) {
+        generateExpression(call.arguments.single()!!)
+        generateResumeOrReturn(listOf(WasmRefNullType(Synthetics.HeapTypes.boundContType)), location) { contHandle ->
+            body.buildResume(Synthetics.GcTypes.boundContType, contHandle, location)
+        }
+    }
+
+    /**
+     * <exception>
+     * call $kotlin.wasm.internal.getJsError  ;; JS only
+     * <continuation>
+     * block (param exceptionTagPayload (ref null continuation)) (result (ref null continuation))
+     *     resume_throw continuation 0 1 (on 1 0)
+     *     return // not suspended - return result from the enclosing function
+     * end
+     * ;; suspended - new contref on the stack
+     */
+    private fun generateResumeThrow(call: IrFunctionAccessExpression, location: SourceLocation) {
+        val exceptionParameter = call.symbol.owner.parameters.first()
+        val [exception, continuation] = call.arguments
+
+        generateExpression(exception!!)
+        val exceptionTagPayloadType = if (backendContext.isWasmJsTarget) {
+            // JS tag carries the JS error
+            val getJsError = wasmSymbols.jsRelatedSymbols.getJsError
+            body.buildCall(declarationCodegenContext.referenceFunction(getJsError), location)
+            wasmModuleTypeTransformer.transformType(getJsError.owner.returnType)
+        } else {
+            wasmModuleTypeTransformer.transformValueParameterType(exceptionParameter)
+        }
+        generateExpression(continuation!!)
+
+        generateResumeOrReturn(listOf(exceptionTagPayloadType, WasmRefNullType(Synthetics.HeapTypes.boundContType)), location) { contHandle ->
+            body.buildResumeThrow(Synthetics.GcTypes.boundContType, exceptionTagId, contHandle, location)
+        }
     }
 
     // `invokeArity` is N in `SuspendFunctionN`, the lowered `invoke` takes N + 2 parameters:
@@ -1344,73 +1389,12 @@ class BodyGenerator(
                 body.buildSuspend(contTagId, location)
             }
 
-            /**
-             * block (result (ref null Any) (ref null continuation))
-             *     local.get $exceptionToResume
-             *     call $kotlin.wasm.internal.getJsError
-             *     local.get $cont
-             *     resume_throw continuation 0 1 (on 1 0)
-             *     return // not suspended - return result
-             * end
-             * local.set $cont
-             * ref.cast WasmContinuationBox
-             * local.get $cont
-             * struct.set (type WasmContinuationBox) 4 // store contref, obtained after resume, in WasmContinuationBox
-             * call $kotlin.coroutines.intrinsics.<get-COROUTINE_SUSPENDED> // was suspended
-             */
-            wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeThrowIntrinsic -> {
-                val exceptionToResume = functionContext.referenceLocal(0)
-                val wasmContinuation = functionContext.referenceLocal(1)
-
-                val boundContType = Synthetics.GcTypes.boundContType
-
-                body.buildFunctionTypedBlock("on_suspend", referenceContSuspendHandlerBlockType()) { idx ->
-                    // Throwable
-                    body.buildGetLocal(exceptionToResume, location)
-                    if (backendContext.isWasmJsTarget) {
-                        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
-                    }
-
-                    body.buildGetLocal(wasmContinuation, location)
-                    val contHandle = body.createNewContHandle(contTagId, idx)
-                    body.buildResumeThrow(boundContType, exceptionTagId, contHandle, location)
-                    body.buildInstr(WasmOp.RETURN, location)
-                }
-                generateResumeIntrinsicsEpilogue(wasmContinuation, location)
-            }
-
             // Emits a null value of type contref?.
-            // Used as a placeholder to be stored in WasmContinuationBox.wasmContinuation.
+            // Used as a placeholder to be stored in CoroutineImplStackSwitching.wasmContinuation.
             // Substituted by the actual wasm continuation, when the coroutine suspends.
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.nullContrefIntrinsic -> {
                 val boundContType = Synthetics.GcTypes.boundContType
                 body.buildInstr(WasmOp.REF_NULL, location, boundContType)
-            }
-
-            /**
-             * block (result (ref null continuation))
-             *     local.get $wasmContinuation
-             *     resume continuation 1 (on 1 0)
-             *     return // not suspended - return result
-             * end
-             * local.set $wasmContinuation
-             * ref.cast WasmContinuationBox
-             * local.get $wasmContinuation
-             * struct.set (type WasmContinuationBox) 4 // store contref, obtained after resume, in WasmContinuationBox
-             * call $kotlin.coroutines.intrinsics.<get-COROUTINE_SUSPENDED>___fun_1138
-             */
-            wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic -> {
-                val wasmContinuation = functionContext.referenceLocal(0)
-
-                val boundContType = Synthetics.GcTypes.boundContType
-
-                body.buildFunctionTypedBlock("on_suspend", referenceContSuspendHandlerBlockType()) { idx ->
-                    body.buildGetLocal(wasmContinuation, location)
-                    val contHandle = body.createNewContHandle(contTagId, idx)
-                    body.buildResume(boundContType, contHandle, location)
-                    body.buildInstr(WasmOp.RETURN, location)
-                }
-                generateResumeIntrinsicsEpilogue(wasmContinuation, location)
             }
 
             // interface lookup for `kotlin.coroutines.SuspendFunction(0|1|2).invoke`
