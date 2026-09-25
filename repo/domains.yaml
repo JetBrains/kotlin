@@ -204,8 +204,6 @@ CompilerPlugins:
 DocumentationModel:
   include:
     - "libraries/tools/kotlin-documentation-model"
-  fullyAffectedBy:
-    - AnalysisApi
 
 Gradle:
   include:
