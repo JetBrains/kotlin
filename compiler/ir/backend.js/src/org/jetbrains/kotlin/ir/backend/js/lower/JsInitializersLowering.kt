@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.InitializersCleanupLowering
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
 
 @PhasePrerequisites(
     EnumClassConstructorLowering::class,
@@ -21,12 +22,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 )
 internal class JsInitializersLowering(context: JsIrBackendContext) : InitializersLowering(context)
 
-@PhasePrerequisites(JsInitializersLowering::class)
-internal class JsInitializersCleanupLowering(context: CommonBackendContext) : InitializersCleanupLowering(
-    context,
-    shouldEraseFieldInitializer = {
-        it.correspondingPropertySymbol?.owner?.isConst != true
-                && it.origin != WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER // We need to preserve initializers for `static_init_state` fields (KT-89144).
-                && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE // Keep the initializer for eagerly initialized objects
+abstract class WebInitializersCleanupLowering(context: JsCommonBackendContext) : InitializersCleanupLowering(context) {
+    override fun shouldEraseFieldInitializer(field: IrField): Boolean {
+        return super.shouldEraseFieldInitializer(field)
+                && field.origin != WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER // We need to preserve initializers for `static_init_state` fields (KT-89144).
+                && field.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE // Keep the initializer for eagerly initialized objects
     }
-)
+}
+
+@PhasePrerequisites(JsInitializersLowering::class)
+internal class JsInitializersCleanupLowering(context: JsIrBackendContext) : WebInitializersCleanupLowering(context)
