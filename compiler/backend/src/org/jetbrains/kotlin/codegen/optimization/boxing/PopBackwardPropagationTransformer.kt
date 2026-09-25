@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.inline.operationKind
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor
 import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.isLoadOperation
@@ -23,9 +25,13 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.peekWords
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
+import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.InsnNode
+import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
@@ -48,6 +54,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
         private val REPLACE_WITH_POP2: Transformation = { insnList.set(it, InsnNode(Opcodes.POP2)) }
         private val INSERT_POP1_AFTER: Transformation = { insnList.insert(it, InsnNode(Opcodes.POP)) }
         private val INSERT_POP2_AFTER: Transformation = { insnList.insert(it, InsnNode(Opcodes.POP2)) }
+        private val REMOVE_REIFIED_OPERATION: Transformation = { insnList.removeReifiedOperation(it) }
 
         private val insnList = methodNode.instructions
         private val insns = insnList.toArray()
@@ -147,6 +154,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
 
         private fun AbstractInsnNode.combineWithPop(frames: Array<out Frame<SourceValue>?>, resultSize: Int): Transformation =
             when {
+                isReifiedOperationPlaceholderConstant() -> REMOVE_REIFIED_OPERATION
                 isPurePush() -> REPLACE_WITH_NOP
                 isPrimitiveBoxing() || isPrimitiveTypeConversion() -> {
                     val index = insnList.indexOf(this)
@@ -182,3 +190,23 @@ fun AbstractInsnNode.isUnitInstance() =
 
 fun AbstractInsnNode.isPrimitiveTypeConversion() =
     opcode in Opcodes.I2L..Opcodes.I2S
+
+fun AbstractInsnNode.isLdcForReifiedJavaClass(): Boolean {
+    val marker = (previous as? MethodInsnNode)?.takeIf { ReifiedTypeInliner.isOperationReifiedMarker(it) } ?: return false
+    return opcode == Opcodes.LDC && this is LdcInsnNode && this.cst is Type && marker.operationKind == ReifiedTypeInliner.OperationKind.JAVA_CLASS
+}
+
+fun AbstractInsnNode.isNullForReifiedTypeOf(): Boolean {
+    val marker = (previous as? MethodInsnNode)?.takeIf { ReifiedTypeInliner.isOperationReifiedMarker(it) } ?: return false
+    return opcode == Opcodes.ACONST_NULL && marker.operationKind == ReifiedTypeInliner.OperationKind.TYPE_OF
+}
+
+fun AbstractInsnNode.isReifiedOperationPlaceholderConstant(): Boolean =
+    isLdcForReifiedJavaClass() || isNullForReifiedTypeOf()
+
+fun InsnList.removeReifiedOperation(placeholderConstant: AbstractInsnNode) {
+    set(placeholderConstant.previous.previous.previous, InsnNode(Opcodes.NOP)) // operation kind
+    set(placeholderConstant.previous.previous, InsnNode(Opcodes.NOP)) // type argument
+    set(placeholderConstant.previous, InsnNode(Opcodes.NOP)) // marker
+    set(placeholderConstant, InsnNode(Opcodes.NOP)) // placeholder constant
+}
