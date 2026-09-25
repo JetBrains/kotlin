@@ -105,7 +105,14 @@ class KaptCommandLineProcessor : CommandLineProcessor {
             DUMP_FILE_READ_HISTORY -> fileReadHistoryReportFile = File(value)
             INCLUDE_COMPILE_CLASSPATH -> setFlag(KaptFlag.INCLUDE_COMPILE_CLASSPATH, value)
 
-            DETECT_MEMORY_LEAKS_OPTION -> setSelector(enumValues<DetectMemoryLeaksMode>(), value) { detectMemoryLeaks = it }
+            DETECT_MEMORY_LEAKS_OPTION -> {
+                if (value == "default") {
+                    detectMemoryLeaks = DetectMemoryLeaksMode.STANDARD
+                    usedDefaultDetectMemoryLeaks = true
+                } else {
+                    setSelector(enumValues<DetectMemoryLeaksMode>(), value) { detectMemoryLeaks = it }
+                }
+            }
             APT_MODE_OPTION -> setSelector(enumValues<AptMode>(), value) { mode = it }
 
             APT_OPTIONS_OPTION -> processingOptions.putAll(decodeMap(value))
