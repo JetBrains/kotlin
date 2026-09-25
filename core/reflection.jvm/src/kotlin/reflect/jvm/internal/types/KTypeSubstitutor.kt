@@ -202,6 +202,24 @@ private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(
     with(type as AbstractKType) {
         val arguments = arguments
         if (arguments.isEmpty()) return type
+        val classifier =
+            classifier ?: error("Error inside type '$seedTypeOfTheRecursionForDebug'. The current type '$type' is not denotable")
+
+        // Array types are not converted to raw types, only their element types are erased, see `RawSubstitution` in K1 and
+        // `ConeRawType`/`eraseToUpperBound` in K2.
+        if (classifier is KClass<*> && classifier.java.isArray) {
+            val lowerBound = lowerBoundIfFlexible()
+            val upperBound = upperBoundIfFlexible()
+            if (lowerBound == null || upperBound == null) {
+                return eraseArrayElementType(seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections)
+            }
+            return createPlatformKType(
+                lowerBound.eraseArrayElementType(seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections),
+                upperBound.eraseArrayElementType(seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections),
+                isRawType,
+            )
+        }
+
         val parameters = with(ReflectTypeSystemContext) {
             val classifier = type.typeConstructor()
             List(classifier.parametersCount()) { classifier.getParameter(it) as KTypeParameter }
@@ -226,12 +244,29 @@ private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(
             }
         }
 
-        val classifier =
-            classifier ?: error("Error inside type '$seedTypeOfTheRecursionForDebug'. The current type '$type' is not denotable")
-        val lower = classifier.createTypeImpl(arguments = newLowerBoundArguments, nullable = isMarkedNullable)
-        val upper = classifier.createTypeImpl(arguments = List(parameters.size) { KTypeProjection.STAR }, nullable = true)
+        // Each bound of a flexible type keeps its own mutability, e.g. `(Mutable)List<E!>!` becomes `(Mutable)List<(raw) Any?>!`.
+        val lower = classifier.createTypeImpl(
+            arguments = newLowerBoundArguments, nullable = isMarkedNullable,
+            mutableCollectionClass = (lowerBoundIfFlexible() ?: this).mutableCollectionClass,
+        )
+        val upper = classifier.createTypeImpl(
+            arguments = List(parameters.size) { KTypeProjection.STAR }, nullable = true,
+            mutableCollectionClass = (upperBoundIfFlexible() ?: this).mutableCollectionClass,
+        )
         return createPlatformKType(lower, upper, isRawType = !replaceArgumentsWithStarProjections)
     }
+}
+
+private fun AbstractKType.eraseArrayElementType(
+    seedTypeOfTheRecursionForDebug: KType, replaceArgumentsWithStarProjections: Boolean,
+): KType {
+    val argument = arguments.single()
+    val argumentType = argument.type ?: return this
+    val erasedArgument = KTypeProjection(
+        argument.variance,
+        argumentType.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections),
+    )
+    return classifier!!.createTypeImpl(listOf(erasedArgument), isMarkedNullable, annotations)
 }
 
 /**
