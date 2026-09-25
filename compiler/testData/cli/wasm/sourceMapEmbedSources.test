@@ -1,0 +1,5 @@
+// KT-87734: Kotlin/Wasm cannot embed sources into the source map, so
+// -source-map-embed-sources values that request embedding are rejected
+// instead of being silently ignored.
+// ABSENT: out.wasm
+// ABSENT: out.wasm.map

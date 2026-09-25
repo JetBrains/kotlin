@@ -87,6 +87,16 @@ object CommonWasmConfigurationUpdater : CommonWebConfigurationUpdater<KotlinWasm
         configuration.sourceMapIncludeMappingsFromUnavailableFiles = arguments.includeUnavailableSourcesIntoSourceMap
         configuration.dumpReachabilityInfoToFile = arguments.irDceDumpReachabilityInfoToFile
 
+        // 'never' stays accepted: the Kotlin Gradle plugin passes it by default for wasm targets.
+        val sourceMapEmbedSourcesMode = arguments.sourceMapEmbedSources?.let(sourceMapContentEmbeddingMap::get)
+        if (sourceMapEmbedSourcesMode != null && sourceMapEmbedSourcesMode != SourceMapSourceEmbedding.NEVER) {
+            configuration.report(
+                WEB_ARGUMENT_ERROR,
+                "Embedding sources into the source map is not supported for Kotlin/Wasm. " +
+                        "Remove the ${CommonJsAndWasmCompilerArguments::sourceMapEmbedSources.cliArgument} argument " +
+                        "or set it to '${K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER}'."
+            )
+        }
     }
 
 }
