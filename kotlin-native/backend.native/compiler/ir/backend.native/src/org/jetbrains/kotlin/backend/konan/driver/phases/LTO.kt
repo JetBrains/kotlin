@@ -182,14 +182,10 @@ internal val RemoveRedundantCallsToStaticInitializersPhase = createSimpleNamedCo
                     context,
                     input.irModule,
                     moduleDFG,
-                    devirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE,
-                    nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE
+                    devirtualizedCallSitesUnfoldFactor = DevirtualizationUnfoldFactors.DFG_DEVIRTUALIZED_CALL,
+                    nonDevirtualizedCallSitesUnfoldFactor = DevirtualizationUnfoldFactors.DFG_NON_DEVIRTUALIZED_CALL,
             ).build()
 
-            val rootSet = DevirtualizationAnalysis.computeRootSet(context, input.irModule, moduleDFG)
-                    .mapNotNull { it.irFunction }
-                    .toSet()
-
-            StaticInitializersOptimization.removeRedundantCalls(generationState, input.irModule, moduleDFG, callGraph, rootSet)
+            StaticInitializersOptimization.removeRedundantCalls(generationState, input.irModule, moduleDFG, callGraph)
         }
 )
