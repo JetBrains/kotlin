@@ -56,7 +56,8 @@ internal inline fun startCoroutineStackSwitching(
     wasmContinuation: typedcontref<(Any?) -> Unit>,
     completion: CoroutineImplStackSwitching<*, *>,
 ): Any? {
-    val result = resumeWithImpl(wasmContinuation)
+    completion.wasmContinuation = wasmContinuation
+    val result = completion.doResume()
     if (result !== COROUTINE_SUSPENDED) completion.isRunning = false
     return result
 }
