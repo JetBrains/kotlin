@@ -1,5 +1,4 @@
 // ISSUE: KT-76529
-// IGNORE_BACKEND: JVM
 // DUMP_IR
 // FILE: IdContainer.java
 

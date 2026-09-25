@@ -3,19 +3,19 @@ FILE fqName:<root> fileName:/main.kt
     BLOCK_BODY
       VAR name:container type:<root>.IdContainer [val]
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.IdContainer' type=<root>.IdContainer origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:id type:kotlin.Int visibility:public/*package*/ declared in <root>.IdContainer' type=kotlin.Unit superQualifierSymbol=<root>.IdContainer origin=EQ
-        receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
-        value: CONST Int type=kotlin.Int value=123
+      CALL 'public open fun setId (id: kotlin.Int): kotlin.Unit declared in <root>.IdContainer' type=kotlin.Unit origin=EQ
+        ARG <this>: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+        ARG id: CONST Int type=kotlin.Int value=123
       VAR name:i type:kotlin.Int [val]
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:id type:kotlin.Int visibility:public/*package*/ declared in <root>.IdContainer' type=kotlin.Int superQualifierSymbol=<root>.IdContainer origin=null
-          receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+        CALL 'public open fun getId (): kotlin.Int declared in <root>.IdContainer' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
       SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:publicId type:kotlin.Int visibility:public declared in <root>.IdContainer' type=kotlin.Unit superQualifierSymbol=<root>.IdContainer origin=EQ
         receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
-        value: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:id type:kotlin.Int visibility:public/*package*/ declared in <root>.IdContainer' type=kotlin.Int superQualifierSymbol=<root>.IdContainer origin=null
-          receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:id type:kotlin.Int visibility:public/*package*/ declared in <root>.IdContainer' type=kotlin.Unit superQualifierSymbol=<root>.IdContainer origin=EQ
-        receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
-        value: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:publicId type:kotlin.Int visibility:public declared in <root>.IdContainer' type=kotlin.Int superQualifierSymbol=<root>.IdContainer origin=null
+        value: CALL 'public open fun getId (): kotlin.Int declared in <root>.IdContainer' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+      CALL 'public open fun setId (id: kotlin.Int): kotlin.Unit declared in <root>.IdContainer' type=kotlin.Unit origin=EQ
+        ARG <this>: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
+        ARG id: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:publicId type:kotlin.Int visibility:public declared in <root>.IdContainer' type=kotlin.Int superQualifierSymbol=<root>.IdContainer origin=null
           receiver: GET_VAR 'val container: <root>.IdContainer declared in <root>.box' type=<root>.IdContainer origin=null
       VAR name:s type:kotlin.String [val]
         CALL 'public open fun toString (): kotlin.String declared in <root>.IdContainer' type=kotlin.String origin=null

@@ -107,6 +107,8 @@ object LombokConfigNames {
     const val NO_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.noArgsConstructor.flagUsage"
     const val ALL_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.allArgsConstructor.flagUsage"
     const val REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.requiredArgsConstructor.flagUsage"
+
+    const val FIELD_DEFAULTS_PRIVATE = "lombok.fieldDefaults.defaultPrivate"
 }
 
 enum class FlagUsageValue {
