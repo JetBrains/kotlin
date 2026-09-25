@@ -1141,4 +1141,26 @@ class Strings {
         assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
     }
 
+    @Sample
+    fun asSequence() {
+        val string = "Kotlin knowledge"
+        assertPrints(string.asSequence().toList(), "[K, o, t, l, i, n,  , k, n, o, w, l, e, d, g, e]")
+
+        // lazily take chars from sequence until space character is reached
+        val firstWord = string.asSequence().takeWhile { it != ' ' }.joinToString("")
+        assertPrints(firstWord, "Kotlin")
+
+        val emptyString = ""
+        assertPrints(emptyString.asSequence().toList(), "[]")
+    }
+
+    @Sample
+    fun asIterable() {
+        val string = "Kotlin"
+        assertPrints(string.asIterable().toList(), "[K, o, t, l, i, n]")
+
+        val emptyString = ""
+        assertPrints(emptyString.asIterable().toList(), "[]")
+    }
+
 }
