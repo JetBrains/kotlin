@@ -101,7 +101,7 @@ internal fun createCloneableKmClass(): KmClass = KmClass().apply {
     })
 }
 
-internal fun createEnumValuesKmFunction(klass: KClassImpl<*>): KmFunction = KmFunction("values").apply {
+internal fun createEnumValuesKmFunction(klass: MemberContainer<*>): KmFunction = KmFunction("values").apply {
     returnType = KmType().apply {
         classifier = KmClassifier.Class("kotlin/Array")
         arguments += KmTypeProjection(KmVariance.INVARIANT, KmType().apply {
@@ -116,7 +116,7 @@ internal fun createEnumValuesKmFunction(klass: KClassImpl<*>): KmFunction = KmFu
     signature = JvmMethodSignature("values", "()[L${klass.classId.asString().replace('.', '$')};")
 }
 
-internal fun createEnumValueOfKmFunction(klass: KClassImpl<*>): KmFunction = KmFunction("valueOf").apply {
+internal fun createEnumValueOfKmFunction(klass: MemberContainer<*>): KmFunction = KmFunction("valueOf").apply {
     returnType = KmType().apply {
         classifier = KmClassifier.Class(klass.classId.asString())
     }
@@ -133,7 +133,7 @@ internal fun createEnumValueOfKmFunction(klass: KClassImpl<*>): KmFunction = KmF
     signature = JvmMethodSignature("valueOf", "(Ljava/lang/String;)L${klass.classId.asString().replace('.', '$')};")
 }
 
-internal fun createEnumEntriesKmProperty(klass: KClassImpl<*>): KmProperty = KmProperty("entries").apply {
+internal fun createEnumEntriesKmProperty(klass: MemberContainer<*>): KmProperty = KmProperty("entries").apply {
     returnType = KmType().apply {
         classifier = KmClassifier.Class("kotlin/enums/EnumEntries")
         arguments += KmTypeProjection(KmVariance.INVARIANT, KmType().apply {

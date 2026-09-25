@@ -47,7 +47,7 @@ internal abstract class JavaKFunction(
 
         // Callables in Kotlin classes (even fake overrides of Java methods) are not enhanced from supertypes/nullability annotations.
         // Only the predefined enhancement of additional built-in members applies to them (see `getAdditionalFunctions`).
-        val isKotlinContainer = (container as KClassImpl<*>).kmClass != null
+        val isKotlinContainer = (container as MemberContainer<*>).isKotlin
         if (isKotlinContainer && predefinedEnhancementInfo == null) return@lazy null
 
         val overridden = (if (isKotlinContainer) emptyList() else computeOverriddenFunctionsForEnhancement())
@@ -160,7 +160,7 @@ internal fun JavaKFunction.computeParameters(): List<KParameter> = buildList {
     if (isInnerClassConstructor) {
         add(InstanceParameter(function, member.declaringClass.declaringClass.kotlin))
     } else if (member is Method && !Modifier.isStatic(member.modifiers)) {
-        add(InstanceParameter(function, container as KClassImpl<*>))
+        add(InstanceParameter(function, container as MemberContainer<*>))
     }
 
     val names = Java8ParameterNamesLoader.loadParameterNames(member)
@@ -201,7 +201,7 @@ internal val JavaKFunction.overriddenCallableToInheritSignature: ReflectKCallabl
     get() {
         if (!overriddenStorage.isFakeOverride) return null
         val overridden = overriddenStorage.overridden
-        return if (overridden.size == 1 || (container as KClassImpl<*>).isKotlin) overridden.firstOrNull() else null
+        return if (overridden.size == 1 || (container as MemberContainer<*>).isKotlin) overridden.firstOrNull() else null
     }
 
 private val Class<*>.isInner: Boolean

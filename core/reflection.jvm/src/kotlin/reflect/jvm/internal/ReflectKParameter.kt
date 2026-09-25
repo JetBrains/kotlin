@@ -62,7 +62,7 @@ internal class InstanceParameter(override val callable: ReflectKCallable<*>, kla
 }
 
 private val ReflectKCallable<*>.isMappedBuiltinMember: Boolean
-    get() = this is KotlinKCallable<*> && (container as? KClassImpl<*>)?.isMappedBuiltin == true
+    get() = this is KotlinKCallable<*> && (container as? MemberContainer<*>)?.isMappedBuiltin == true
 
 private fun ReflectKParameter.loadAnnotationsFromMetadata(): List<Annotation> {
     if (this !is KotlinKParameter) return emptyList()

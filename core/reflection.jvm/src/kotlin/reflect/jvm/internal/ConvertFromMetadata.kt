@@ -302,7 +302,7 @@ internal fun Visibility.toKVisibility(): KVisibility? = when (this) {
 
 internal fun KmProperty.computeJvmSignature(container: KDeclarationContainerImpl): JvmMethodSignature {
     getterSignature?.let { return it }
-    val fieldSignature = mapSignature((container as? KClassImpl<*>)?.kmClass)
+    val fieldSignature = mapSignature((container as? MemberContainer<*>)?.kmClass)
     val getterName = getBuiltinSpecialPropertyGetterName(name, container)
         ?: (JvmAbi.getterName(fieldSignature.name) + getManglingSuffix(container))
     return JvmMethodSignature(getterName, "()" + fieldSignature.descriptor)
@@ -330,7 +330,7 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
         property.isStatic -> 0
         else ->
             (if (property.receiverParameterType != null) 1 else 0) +
-                    (if (container is KClassImpl<*>) 1 else 0)
+                    (if (container is MemberContainer<*>) 1 else 0)
     }
     val signature = property.computeJvmSignature(container).toString()
     val boundReceiver = CallableReference.NO_RECEIVER
@@ -355,7 +355,7 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
 }
 
 internal fun KmFunction.computeJvmSignature(container: KDeclarationContainerImpl): JvmMethodSignature {
-    val mapped = mapSignature((container as? KClassImpl<*>)?.kmClass)
+    val mapped = mapSignature((container as? MemberContainer<*>)?.kmClass)
     // When builtins metadata is read by kotlin-metadata-jvm, JVM signatures are computed and stored by
     // `JvmMetadataExtensions.readFunctionExtensions`, but this happens only in the case when they can be easily computed
     // (see `JvmProtoBufUtil.getJvmMethodSignature`). This lightweight computation doesn't support special builtin names, so it uses,

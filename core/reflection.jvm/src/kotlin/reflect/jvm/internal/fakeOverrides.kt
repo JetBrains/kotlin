@@ -45,13 +45,13 @@ private object CovariantOverrideComparator : Comparator<ReflectKCallable<*>> {
 internal typealias MembersJavaSignatureMap = Map<EquatableCallableSignature<EqualityMode.JavaSignature>, ReflectKCallable<*>>
 private typealias MutableMembersJavaSignatureMap = MutableMap<EquatableCallableSignature<EqualityMode.JavaSignature>, ReflectKCallable<*>>
 
-private fun ReflectKCallable<*>.isStaticMethodInInterface(kClass: KClassImpl<*>): Boolean =
+private fun ReflectKCallable<*>.isStaticMethodInInterface(kClass: MemberContainer<*>): Boolean =
     isStatic && kClass.classKind == ClassKind.INTERFACE && !isJavaField
 
 /**
  * Non-transitive members don't inherit transitively but appear in the 'members' list of the immediate KClass
  */
-internal fun isNonTransitiveMember(kClass: KClassImpl<*>, member: ReflectKCallable<*>): Boolean =
+internal fun isNonTransitiveMember(kClass: MemberContainer<*>, member: ReflectKCallable<*>): Boolean =
     member.visibility == KVisibility.PRIVATE ||
             // static methods (but not fields) in interfaces are never inherited (neither in Java nor in Kotlin)
             member.isStaticMethodInInterface(kClass)
@@ -64,14 +64,14 @@ internal fun isNonTransitiveMember(kClass: KClassImpl<*>, member: ReflectKCallab
  * By "transitive" we mean that the map of every inheritor class/interface is a strict superset
  * of their parent classes' maps.
  */
-internal fun computeFakeOverrideMembersForName(kClass: KClassImpl<*>, name: String): MembersJavaSignatureMap {
-    val declaredMembers = kClass.data.value.getDeclaredMembersByName(name).filterNot { isNonTransitiveMember(kClass, it) }
+internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name: String): MembersJavaSignatureMap {
+    val declaredMembers = kClass.getDeclaredMembersByName(name).filterNot { isNonTransitiveMember(kClass, it) }
     val declaredKotlinSignatures =
         if (kClass.isKotlin) declaredMembers.mapTo(HashSet()) { it.toEquatableCallableSignature(EqualityMode.KotlinSignature) }
         else emptySet()
     val result: MutableMembersJavaSignatureMap = HashMap()
     for (supertype in kClass.supertypes) {
-        val supertypeKClass = supertype.classifier as? KClassImpl<*>
+        val supertypeKClass = supertype.classifier as? MemberContainer<*>
             ?: error(
                 "Non-denotable supertypes are not possible. " +
                         "Supertype '$supertype' appears non-denotable in class '$kClass'"
@@ -93,7 +93,7 @@ internal fun computeFakeOverrideMembersForName(kClass: KClassImpl<*>, name: Stri
     return result
 }
 
-private fun ReflectKCallable<*>.createFakeOverride(subclass: KClassImpl<*>, substitutor: KTypeSubstitutor): ReflectKCallable<*> =
+private fun ReflectKCallable<*>.createFakeOverride(subclass: MemberContainer<*>, substitutor: KTypeSubstitutor): ReflectKCallable<*> =
     shallowCopy(
         subclass,
         overriddenStorage.withChainedClassTypeParametersSubstitutor(substitutor).copy(
@@ -173,18 +173,18 @@ internal fun computeOverriddenFunctions(callable: ReflectKFunction): Collection<
         return callable.overriddenStorage.overridden.map { it as ReflectKFunction }
     }
 
-    val container = callable.container as? KClassImpl<*> ?: return emptyList()
+    val container = callable.container as? MemberContainer<*> ?: return emptyList()
     val thisKotlinSignature = callable.toEquatableCallableSignature(EqualityMode.KotlinSignature)
     return computeOverriddenFunctions(container, thisKotlinSignature)
 }
 
 internal fun computeOverriddenFunctions(
-    container: KClassImpl<*>,
+    container: MemberContainer<*>,
     signature: EquatableCallableSignature<EqualityMode.KotlinSignature>,
 ): Collection<ReflectKFunction> {
     val result = mutableListOf<ReflectKFunction>()
     for (supertype in container.supertypes) {
-        val supertypeKClass = supertype.classifier as? KClassImpl<*> ?: continue
+        val supertypeKClass = supertype.classifier as? MemberContainer<*> ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
         for (supertypeMember in getSupertypeMembersByName(supertype, supertypeKClass, signature.name)) {
             if (supertypeMember !is ReflectKFunction) continue
@@ -198,7 +198,11 @@ internal fun computeOverriddenFunctions(
     return result
 }
 
-private fun getSupertypeMembersByName(supertype: KType, supertypeKClass: KClassImpl<*>, name: String): Collection<ReflectKCallable<*>> {
+private fun getSupertypeMembersByName(
+    supertype: KType,
+    supertypeKClass: MemberContainer<*>,
+    name: String,
+): Collection<ReflectKCallable<*>> {
     // There are no KClass instances for suspend function types before KT-79225, so we create suspend invoke manually.
     if (name == "invoke" && (supertype as? AbstractKType)?.isSuspendFunctionType == true) {
         val functionKmClass = supertypeKClass.kmClass
@@ -278,9 +282,6 @@ private fun <T> List<T>.dropContinuationIfSuspend(isSuspend: Boolean): List<T> =
 
 internal val Class<*>.isKotlinClassOrPackage: Boolean
     get() = getAnnotation(Metadata::class.java) != null
-
-internal val KClassImpl<*>.isKotlin: Boolean
-    get() = kmClass != null
 
 internal fun List<KTypeParameter>.substitutedWith(arguments: List<KTypeParameter>): KTypeSubstitutor? {
     if (size != arguments.size) return null

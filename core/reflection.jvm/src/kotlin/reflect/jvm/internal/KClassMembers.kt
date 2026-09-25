@@ -41,12 +41,12 @@ import java.lang.Deprecated as JavaLangDeprecated
 
 private const val ENUM_ENTRIES_PROPERTY_NAME = "entries"
 
-internal fun KClassImpl<*>.computeDeclaredMembers(): Collection<ReflectKCallable<*>> =
-    data.value.declaredMemberNames.flatMap(data.value::getDeclaredMembersByName)
+internal fun MemberContainer<*>.computeDeclaredMembers(): Collection<ReflectKCallable<*>> =
+    declaredMemberNames.flatMap(this::getDeclaredMembersByName)
 
-internal fun KClassImpl<*>.computeAllMembers(): Collection<ReflectKCallable<*>> {
+internal fun MemberContainer<*>.computeAllMembers(): Collection<ReflectKCallable<*>> {
     val names: Collection<String> =
-        if (useK1Implementation || isComplicatedBuiltinSubclass) {
+        if (this is KClassImpl<*> && (useK1Implementation || isComplicatedBuiltinSubclass)) {
             getMemberNamesFromDescriptors()
         } else buildSet {
             // All member names of this class are the _declared_ member names of this class plus declared member names of all its direct and
@@ -55,14 +55,17 @@ internal fun KClassImpl<*>.computeAllMembers(): Collection<ReflectKCallable<*>> 
             // Java static method inherited through a Kotlin class).
             collectDeclaredMemberNamesTransitively(this, hashSetOf())
         }
-    return names.flatMap(data.value::getMembersByName)
+    return names.flatMap(this::getMembersByName)
 }
 
-private fun KClassImpl<*>.collectDeclaredMemberNamesTransitively(result: MutableSet<String>, visited: MutableSet<KClassImpl<*>>) {
+private fun MemberContainer<*>.collectDeclaredMemberNamesTransitively(
+    result: MutableSet<String>,
+    visited: MutableSet<MemberContainer<*>>,
+) {
     if (!visited.add(this)) return
-    result.addAll(data.value.declaredMemberNames)
+    result.addAll(declaredMemberNames)
     for (supertype in supertypes) {
-        (supertype.classifier as? KClassImpl<*>)?.collectDeclaredMemberNamesTransitively(result, visited)
+        (supertype.classifier as? MemberContainer<*>)?.collectDeclaredMemberNamesTransitively(result, visited)
     }
 }
 
@@ -74,25 +77,7 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
         addAll(getDescriptorBasedFunctions(staticScope, DECLARED, name))
         addAll(getDescriptorBasedProperties(staticScope, DECLARED, name))
     } else if (kmClass != null) {
-        val kmClass = kmClass!!
-        for (function in kmClass.functions) {
-            if (function.name == name) {
-                add(createUnboundFunction(function, kClass))
-            }
-        }
-        for (property in kmClass.properties) {
-            if (property.name == name) {
-                add(createUnboundProperty(property, kClass))
-            }
-        }
-        if (kmClass.kind == ClassKind.ENUM_CLASS) {
-            when (name) {
-                StandardNames.ENUM_VALUES.asString() -> add(createUnboundFunction(createEnumValuesKmFunction(kClass), kClass))
-                StandardNames.ENUM_VALUE_OF.asString() -> add(createUnboundFunction(createEnumValueOfKmFunction(kClass), kClass))
-                StandardNames.ENUM_ENTRIES.asString() -> add(createUnboundProperty(createEnumEntriesKmProperty(kClass), kClass))
-            }
-        }
-        data.value.additionalFunctions.filterTo(this) { it.name == name }
+        addAll(computeDeclaredMembersFromMetadata(name))
     } else {
         getDeclaredNonStaticMethodsFromJavaClass(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
         addOverriddenSpecialMethods(name, this)
@@ -153,10 +138,33 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
     }
 }
 
-internal fun KClassImpl<*>.computeMembersByName(name: String): Collection<ReflectKCallable<*>> =
-    if (useK1Implementation || isComplicatedBuiltinSubclass) {
+internal fun MemberContainer<*>.computeDeclaredMembersFromMetadata(name: String): Collection<ReflectKCallable<*>> = buildList {
+    val kClass = this@computeDeclaredMembersFromMetadata
+    val kmClass = kmClass ?: throw KotlinReflectionInternalError("Should be called only for Kotlin classes: $kClass")
+    for (function in kmClass.functions) {
+        if (function.name == name) {
+            add(createUnboundFunction(function, kClass))
+        }
+    }
+    for (property in kmClass.properties) {
+        if (property.name == name) {
+            add(createUnboundProperty(property, kClass))
+        }
+    }
+    if (kmClass.kind == ClassKind.ENUM_CLASS) {
+        when (name) {
+            StandardNames.ENUM_VALUES.asString() -> add(createUnboundFunction(createEnumValuesKmFunction(kClass), kClass))
+            StandardNames.ENUM_VALUE_OF.asString() -> add(createUnboundFunction(createEnumValueOfKmFunction(kClass), kClass))
+            StandardNames.ENUM_ENTRIES.asString() -> add(createUnboundProperty(createEnumEntriesKmProperty(kClass), kClass))
+        }
+    }
+    additionalFunctions.filterTo(this) { it.name == name }
+}
+
+internal fun MemberContainer<*>.computeMembersByName(name: String): Collection<ReflectKCallable<*>> =
+    if (this is KClassImpl<*> && (useK1Implementation || isComplicatedBuiltinSubclass)) {
         buildList {
-            addAll(data.value.getDeclaredMembersByName(name))
+            addAll(getDeclaredMembersByName(name))
             addAll(getDescriptorBasedFunctions(memberScope, INHERITED, name))
             addAll(getDescriptorBasedProperties(memberScope, INHERITED, name))
             addAll(getDescriptorBasedFunctions(staticScope, INHERITED, name))
@@ -169,26 +177,14 @@ internal fun KClassImpl<*>.computeMembersByName(name: String): Collection<Reflec
             (isKotlin && member.isStatic && member.overriddenStorage.isFakeOverride) ||
                     (member.isPackagePrivate && member.originalContainer.jClass.`package` != java.`package`)
         }
-        members.values + data.value.getDeclaredMembersByName(name).filter { isNonTransitiveMember(this, it) }
+        members.values + getDeclaredMembersByName(name).filter { isNonTransitiveMember(this, it) }
     }
 
 internal fun KClassImpl<*>.computeDeclaredMemberNames(): Set<String> =
     if (useK1Implementation || isComplicatedBuiltinSubclass) {
         getMemberNamesFromDescriptors()
-    } else if (kmClass != null) buildSet {
-        val kmClass = kmClass!!
-        for (function in kmClass.functions) {
-            add(function.name)
-        }
-        for (property in kmClass.properties) {
-            add(property.name)
-        }
-        if (kmClass.kind == ClassKind.ENUM_CLASS) {
-            add(StandardNames.ENUM_VALUES.asString())
-            add(StandardNames.ENUM_VALUE_OF.asString())
-            add(StandardNames.ENUM_ENTRIES.asString())
-        }
-        data.value.additionalFunctions.mapTo(this, ReflectKCallable<*>::name)
+    } else if (kmClass != null) {
+        computeDeclaredMemberNamesFromMetadata()
     } else buildSet {
         for (method in jClass.declaredMethods) {
             if (!method.isSynthetic) add(method.name)
@@ -196,17 +192,33 @@ internal fun KClassImpl<*>.computeDeclaredMemberNames(): Set<String> =
         for (field in jClass.declaredFields) {
             if (!field.isEnumConstant && !field.isSynthetic) add(field.name)
         }
-        val visited = hashSetOf<KClassImpl<*>>()
+        val visited = hashSetOf<MemberContainer<*>>()
         for (supertype in supertypes) {
             // Declared method `getX` in a Java class won't be loaded as a KFunction if it overrides a property getter from the base Kotlin
             // class (see `isVisibleAsFunctionInCurrentClass`), it will be loaded as a property getter instead. We cannot deduce the name
             // of the property from the name of the getter (`getX` -> `x` or `X`?), so we get all property names from supertypes.
-            (supertype.classifier as? KClassImpl<*>)?.collectDeclaredMemberNamesTransitively(this, visited)
+            (supertype.classifier as? MemberContainer<*>)?.collectDeclaredMemberNamesTransitively(this, visited)
         }
         if (jClass.isEnum) {
             add(ENUM_ENTRIES_PROPERTY_NAME)
         }
     }
+
+internal fun MemberContainer<*>.computeDeclaredMemberNamesFromMetadata(): Set<String> = buildSet {
+    val kmClass = kmClass ?: throw KotlinReflectionInternalError("Should be called only for Kotlin classes: $this")
+    for (function in kmClass.functions) {
+        add(function.name)
+    }
+    for (property in kmClass.properties) {
+        add(property.name)
+    }
+    if (kmClass.kind == ClassKind.ENUM_CLASS) {
+        add(StandardNames.ENUM_VALUES.asString())
+        add(StandardNames.ENUM_VALUE_OF.asString())
+        add(StandardNames.ENUM_ENTRIES.asString())
+    }
+    additionalFunctions.mapTo(this, ReflectKCallable<*>::name)
+}
 
 private fun KClassImpl<*>.getMemberNamesFromDescriptors(): Set<String> = buildSet {
     memberScope.getFunctionNames().mapTo(this, Name::asString)
@@ -240,7 +252,7 @@ private enum class MemberBelonginess {
         member.kind.isReal == (this == DECLARED)
 }
 
-internal fun KClassImpl<*>.isVisibleAsFunctionInCurrentClass(function: JavaKNamedFunction): Boolean {
+internal fun MemberContainer<*>.isVisibleAsFunctionInCurrentClass(function: JavaKNamedFunction): Boolean {
     if (getPropertyNamesCandidatesByAccessorName(Name.identifier(function.name)).any { propertyName ->
             getPropertiesFromSupertypes(propertyName.asString()).any { property ->
                 doesClassOverrideProperty(property) { accessorName ->
@@ -258,7 +270,7 @@ internal fun KClassImpl<*>.isVisibleAsFunctionInCurrentClass(function: JavaKName
     return !doesOverrideRenamedBuiltins(function)
 }
 
-private fun KClassImpl<*>.getDeclaredNonStaticMethodsFromJavaClass(name: String? = null): List<JavaKNamedFunction> {
+private fun MemberContainer<*>.getDeclaredNonStaticMethodsFromJavaClass(name: String? = null): List<JavaKNamedFunction> {
     require(kmClass == null) { "Should be called only for Java classes: $this" }
     if (jClass.isAnnotation) return emptyList()
     return jClass.declaredMethods.mapNotNull { method ->
@@ -267,7 +279,7 @@ private fun KClassImpl<*>.getDeclaredNonStaticMethodsFromJavaClass(name: String?
     }
 }
 
-private fun KClassImpl<*>.getPropertiesFromSupertypes(name: String): List<KProperty1<*, *>> =
+private fun MemberContainer<*>.getPropertiesFromSupertypes(name: String): List<KProperty1<*, *>> =
     supertypes.flatMap { supertype -> (supertype.classifier as? KClass<*>)?.memberProperties?.filter { it.name == name }.orEmpty() }
 
 private val ReflectKFunction.jvmName: String
@@ -276,18 +288,18 @@ private val ReflectKFunction.jvmName: String
 private fun ReflectKFunction.doesOverrideBuiltinWithDifferentJvmName(jvmName: String): Boolean =
     this.jvmName == jvmName || overridden.any { it.doesOverrideBuiltinWithDifferentJvmName(jvmName) }
 
-private fun KClassImpl<*>.doesOverrideRenamedBuiltins(function: JavaKNamedFunction): Boolean {
+private fun MemberContainer<*>.doesOverrideRenamedBuiltins(function: JavaKNamedFunction): Boolean {
     val method = function.jMethod
     val builtinName = SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(Name.identifier(method.name)) ?: return false
     return obtainOverrideForBuiltinWithDifferentJvmName(method, builtinName.asString()) != null
 }
 
-private fun KClassImpl<*>.obtainOverrideForBuiltinWithDifferentJvmName(method: Method, kotlinName: String): JavaKNamedFunction? {
+private fun MemberContainer<*>.obtainOverrideForBuiltinWithDifferentJvmName(method: Method, kotlinName: String): JavaKNamedFunction? {
     val renamed = JavaKNamedFunction(this, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY, kotlinName)
     return renamed.takeIf { it.overridden.any { overridden -> overridden.doesOverrideBuiltinWithDifferentJvmName(method.name) } }
 }
 
-private fun KClassImpl<*>.addOverriddenSpecialMethods(name: String, result: MutableCollection<ReflectKCallable<*>>) {
+private fun MemberContainer<*>.addOverriddenSpecialMethods(name: String, result: MutableCollection<ReflectKCallable<*>>) {
     if (Name.identifier(name) !in SpecialGenericSignatures.ORIGINAL_SHORT_NAMES) return
     val jvmNamesFromSupertypes = getFunctionsFromSupertypes(name).mapTo(HashSet()) { it.jvmName }.apply { remove(name) }
     if (jvmNamesFromSupertypes.isEmpty()) return
@@ -297,9 +309,10 @@ private fun KClassImpl<*>.addOverriddenSpecialMethods(name: String, result: Muta
     }
 }
 
-private fun KClassImpl<*>.getFunctionsFromSupertypes(name: String): List<ReflectKFunction> =
+private fun MemberContainer<*>.getFunctionsFromSupertypes(name: String): List<ReflectKFunction> =
     supertypes.flatMap { supertype ->
-        (supertype.classifier as? KClassImpl<*>)?.getFakeOverrideMembersByName(name)?.values?.filterIsInstance<ReflectKFunction>().orEmpty()
+        (supertype.classifier as? MemberContainer<*>)?.getFakeOverrideMembersByName(name)?.values?.filterIsInstance<ReflectKFunction>()
+            .orEmpty()
     }
 
 private fun doesClassOverrideProperty(
@@ -346,7 +359,7 @@ private fun KProperty1<*, *>.findSetterOverride(
 
 // Additional functions are the Java methods of a built-in class's Java analogue that should be visible on the Kotlin class but are not
 // declared in its metadata. This is the reflection counterpart of `JvmBuiltInsCustomizer.getAdditionalFunctions`.
-internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
+internal fun MemberContainer<*>.getAdditionalFunctions(): List<ReflectKFunction> {
     if (!isMappedBuiltin || this == Any::class) return emptyList()
     val kmClass = kmClass ?: return emptyList()
 
@@ -408,7 +421,7 @@ internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
 
 // Collects JVM signatures of all functions of the mutable counterpart of this read-only collection class (e.g. `MutableIterator` for
 // `Iterator`), including functions inherited from its supertypes. Does nothing if this class has no mutable counterpart.
-private fun KClassImpl<*>.collectJvmSignaturesOfMutableCounterpart(result: MutableSet<String>) {
+private fun MemberContainer<*>.collectJvmSignaturesOfMutableCounterpart(result: MutableSet<String>) {
     val mutableKmClass = getMutableCollectionKClass(this)?.mutableKmClass ?: return
     val visited = HashSet<String>()
     val queue = ArrayDeque<KmClass>().apply { add(mutableKmClass) }
@@ -450,7 +463,7 @@ private fun Method.getJdkMethodStatus(startClass: Class<*>): JdkMemberStatus {
     return JdkMemberStatus.NOT_CONSIDERED
 }
 
-private fun KClassImpl<*>.addPropertyOverrideByMethod(
+private fun MemberContainer<*>.addPropertyOverrideByMethod(
     propertiesFromSupertypes: List<KProperty1<*, *>>,
     result: MutableCollection<ReflectKCallable<*>>,
     handledProperties: MutableSet<KProperty1<*, *>>?,
@@ -466,7 +479,7 @@ private fun KClassImpl<*>.addPropertyOverrideByMethod(
     }
 }
 
-private fun KClassImpl<*>.createPropertyByMethods(
+private fun MemberContainer<*>.createPropertyByMethods(
     overriddenProperty: KProperty1<*, *>,
     functions: (String) -> Collection<ReflectKFunction>,
 ): ReflectKProperty<*>? {

@@ -56,7 +56,7 @@ internal class JavaKNamedFunction(
     override fun computeOverriddenFunctionsForEnhancement(): Collection<ReflectKFunction>? {
         if (Modifier.isStatic(jMethod.modifiers)) return emptyList()
         val signature = toEquatableCallableSignature(EqualityMode.KotlinSignature)
-        val overridden = computeOverriddenFunctions(container as KClassImpl<*>, signature)
+        val overridden = computeOverriddenFunctions(container as MemberContainer<*>, signature)
         if (overriddenStorage.isFakeOverride && overridden.size == 1) return null
         return overridden
     }

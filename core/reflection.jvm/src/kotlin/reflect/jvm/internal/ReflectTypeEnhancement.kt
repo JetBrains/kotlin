@@ -53,7 +53,7 @@ internal class ReflectSignatureParts(
         get() = null
     override val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
         get() = (this as AbstractKType).mutableCollectionClass?.qualifiedName?.let(::FqNameUnsafe)
-            ?: (classifier as? KClassImpl<*>)?.classId?.asSingleFqName()?.toUnsafe()
+            ?: (classifier as? MemberContainer<*>)?.classId?.asSingleFqName()?.toUnsafe()
 
     override fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean =
         areEqualKTypes(this as KType, other as KType)
@@ -93,11 +93,11 @@ private object ReflectAnnotationTypeQualifierResolver : AbstractAnnotationTypeQu
 
 private fun KTypeParameterImpl.isFromJava(): Boolean {
     val containingClass = when (val container = container) {
-        is KClassImpl<*> -> container
-        is ReflectKCallable<*> -> container.container as? KClassImpl<*>
+        is MemberContainer<*> -> container
+        is ReflectKCallable<*> -> container.container as? MemberContainer<*>
         else -> null
     }
-    return containingClass != null && containingClass.kmClass == null
+    return containingClass != null && !containingClass.isKotlin
 }
 
 internal fun AbstractKType.enhance(qualifiers: IndexedJavaTypeQualifiers, isSuperTypesEnhancement: Boolean = false): AbstractKType {
