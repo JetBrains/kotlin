@@ -194,7 +194,7 @@ internal val ReflectKCallable<*>.originalContainer: KDeclarationContainerImpl
 
 internal val ReflectKCallable<*>.isStatic: Boolean
     get() = overriddenStorage.isStatic ?: run {
-        val parameters = (this as? JavaKNamedFunction)?.originalParameters ?: allParameters
+        val parameters = (this as? JavaKFunction)?.originalParameters ?: allParameters
         parameters.firstOrNull()?.kind != KParameter.Kind.INSTANCE
     }
 
@@ -202,7 +202,7 @@ private val ReflectKCallable<*>.isJavaField: Boolean
     get() = this is KProperty<*> && this.javaField?.declaringClass?.isKotlinClassOrPackage == false
 
 internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature(equalityMode: T): EquatableCallableSignature<T> {
-    val parameters = (this as? JavaKNamedFunction)?.originalParameters ?: allParameters
+    val parameters = (this as? JavaKFunction)?.originalParameters ?: allParameters
     val kotlinParameterTypes = parameters.filter { it.kind != KParameter.Kind.INSTANCE }.map { it.type }
     val kind = when {
         isJavaField -> SignatureKind.FIELD_IN_JAVA_CLASS
