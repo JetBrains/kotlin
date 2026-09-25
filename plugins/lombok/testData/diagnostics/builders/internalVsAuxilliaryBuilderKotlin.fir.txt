@@ -1,0 +1,43 @@
+FILE: Owner.kt
+    @R|lombok/Builder|(builderMethodName = String(internalBuilder) [evaluated = String(internalBuilder)]) public final class Owner : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun builder(a: R|kotlin/Int|): R|Owner.OwnerBuilder| {
+                ^builder this@R|/Owner.Companion|.R|/Owner.Companion.internalBuilder|().R|/Owner.OwnerBuilder.a|(Int(1))
+            }
+
+            @R|kotlin/jvm/JvmStatic|() public final fun internalBuilder(): R|Owner.OwnerBuilder|
+
+        }
+
+        public open class OwnerBuilder : R|kotlin/Any| {
+            public open fun build(): R|Owner|
+
+            public open fun a(a: R|kotlin/Int|): R|Owner.OwnerBuilder|
+
+            private final var a: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            private constructor(): R|Owner.OwnerBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: test.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lval internalBuilder: R|Owner.OwnerBuilder| = Q|Owner|.R|/Owner.Companion.internalBuilder|()
+        lval builder: R|Owner.OwnerBuilder| = Q|Owner|.R|/Owner.Companion.builder|(Int(1))
+    }
