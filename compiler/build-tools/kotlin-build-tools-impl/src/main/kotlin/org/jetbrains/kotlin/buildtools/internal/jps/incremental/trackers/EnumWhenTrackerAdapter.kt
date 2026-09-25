@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.buildtools.internal.jps.incremental.trackers
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerEnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
+import kotlin.io.path.Path
 
 @OptIn(InternalBuildToolsApi::class)
 internal class EnumWhenTrackerAdapter(private val tracker: CompilerEnumWhenTracker) : EnumWhenTracker {
     override fun report(whenExpressionFilePath: String, enumClassFqName: String) {
-        tracker.report(whenExpressionFilePath, enumClassFqName)
+        tracker.report(Path(whenExpressionFilePath), enumClassFqName)
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
+import java.nio.file.Path
 
 /**
  * A tracker that will be informed which source files an `expect` declaration and its `actual` counterpart live in.
@@ -23,7 +24,7 @@ public interface CompilerExpectActualTracker {
      * @param expectFilePath the source file containing the `expect` declaration
      * @param actualFilePath the source file containing the matching `actual` declaration
      */
-    public fun report(expectFilePath: String, actualFilePath: String)
+    public fun report(expectFilePath: Path, actualFilePath: Path)
 
     /**
      * A callback that will be invoked when an `expect` declaration has no `actual` counterpart and the compiler
@@ -35,5 +36,5 @@ public interface CompilerExpectActualTracker {
      *
      * @param expectFilePath the source file containing the `expect` declaration
      */
-    public fun reportExpectOfLenientStub(expectFilePath: String)
+    public fun reportExpectOfLenientStub(expectFilePath: Path)
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
+import java.nio.file.Path
 
 /**
  * A tracker that will be informed whenever the compiler encounters a `when` expression over a Java enum.
@@ -24,5 +25,5 @@ public interface CompilerEnumWhenTracker {
      * @param enumClassFqName fully qualified name of the enum class, with nested classes separated by `$`
      *   (for example, `com.example.Outer$Color`)
      */
-    public fun report(whenExpressionFilePath: String, enumClassFqName: String)
+    public fun report(whenExpressionFilePath: Path, enumClassFqName: String)
 }
