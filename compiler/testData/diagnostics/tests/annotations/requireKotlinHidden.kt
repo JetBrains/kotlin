@@ -9,6 +9,6 @@ class Foo
 // MODULE: m2(m1)
 package kotlin.io
 
-fun foo(f: <!VERSION_REQUIREMENT_DEPRECATION_ERROR!>Foo<!>) {}
+fun foo(f: <!UNRESOLVED_REFERENCE!>Foo<!>) {}
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

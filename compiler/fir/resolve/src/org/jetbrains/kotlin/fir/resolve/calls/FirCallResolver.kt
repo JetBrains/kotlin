@@ -972,7 +972,7 @@ class FirCallResolver(
                     ConeFunctionCallExpectedError(name, hasValueParameters, candidates, diagnosticOrNull())
                 }
                 else -> {
-                    val singleExpectedCandidate = expectedCandidates?.singleOrNull()
+                    val singleExpectedCandidate = expectedCandidates?.singleOrNull()?.takeUnless { it.applicability == HIDDEN }
                     var symbol = singleExpectedCandidate?.symbol
                     if (symbol is FirTypeAliasSymbol) symbol = symbol.fullyExpandedClass(session) ?: symbol
 

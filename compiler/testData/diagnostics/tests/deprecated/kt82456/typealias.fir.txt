@@ -8,7 +8,7 @@ FILE: typealias.kt
             Q|TObj|.R|/Obj.invoke|()
             Q|TCompanionObj|.R|/CompanionObj.Companion.invoke|()
             Q|TInterface|.R|/Interface.Companion.invoke|()
-            <Resolution to classifier>#()
+            <Unresolved name: TIH1>#()
             <HIDDEN: /Outer.IH2.Companion.invoke is deprecated with DeprecationLevel.HIDDEN>#()
             R|/TIH3|()
             R|/TIH4|()
