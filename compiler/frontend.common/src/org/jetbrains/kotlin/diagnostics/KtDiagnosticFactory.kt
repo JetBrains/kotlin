@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.KtMissingSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -91,7 +92,15 @@ class KtDiagnosticFactory0(
         context: DiagnosticBaseContext,
     ): KtDiagnostic? {
         return on(
-            element ?: return createFallbackDiagnostic(context),
+            element ?: return createFallbackDiagnostic(
+                KtSimpleDiagnostic(
+                    KtMissingSourceElement,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
             positioningStrategy,
             context,
         )
@@ -131,7 +140,16 @@ class KtDiagnosticFactory1<A>(
         context: DiagnosticBaseContext,
     ): KtDiagnostic? {
         return on(
-            element ?: return createFallbackDiagnostic(context),
+            element ?: return createFallbackDiagnostic(
+                KtDiagnosticWithParameters1(
+                    KtMissingSourceElement,
+                    a,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
             a,
             positioningStrategy,
             context,
@@ -175,7 +193,17 @@ class KtDiagnosticFactory2<A, B>(
         context: DiagnosticBaseContext,
     ): KtDiagnostic? {
         return on(
-            element ?: return createFallbackDiagnostic(context),
+            element ?: return createFallbackDiagnostic(
+                KtDiagnosticWithParameters2(
+                    KtMissingSourceElement,
+                    a,
+                    b,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
             a,
             b,
             positioningStrategy,
@@ -223,7 +251,18 @@ class KtDiagnosticFactory3<A, B, C>(
         context: DiagnosticBaseContext,
     ): KtDiagnostic? {
         return on(
-            element ?: return createFallbackDiagnostic(context),
+            element ?: return createFallbackDiagnostic(
+                KtDiagnosticWithParameters3(
+                    KtMissingSourceElement,
+                    a,
+                    b,
+                    c,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
             a,
             b,
             c,
@@ -276,7 +315,19 @@ class KtDiagnosticFactory4<A, B, C, D>(
         context: DiagnosticBaseContext,
     ): KtDiagnostic? {
         return on(
-            element ?: return createFallbackDiagnostic(context),
+            element ?: return createFallbackDiagnostic(
+                KtDiagnosticWithParameters4(
+                    KtMissingSourceElement,
+                    a,
+                    b,
+                    c,
+                    d,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
             a,
             b,
             c,

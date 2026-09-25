@@ -26,17 +26,17 @@ object FallbackDiagnostics : KtDiagnosticsContainer() {
         override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("FallbackDiagnostics") { map ->
             map.put(
                 FALLBACK_ERROR,
-                "An error with the ID ''{0}'' was reported on an element without source. This is a bug, please report an issue: https://kotl.in/issue"
+                "{0}\n\nThis error was reported on an element without source. This is a bug, please report an issue: https://kotl.in/issue"
             )
             map.put(
                 FALLBACK_WARNING,
-                "A warning with the ID ''{0}'' was reported on an element without source. This is a bug, please report an issue: https://kotl.in/issue"
+                "{0}\n\nThis warning was reported on an element without source. This is a bug, please report an issue: https://kotl.in/issue"
             )
         }
     }
 }
 
-fun AbstractKtDiagnosticFactory.createFallbackDiagnostic(context: DiagnosticBaseContext): KtDiagnosticWithoutSource? {
+internal fun AbstractKtDiagnosticFactory.createFallbackDiagnostic(original: KtDiagnostic): KtDiagnosticWithoutSource? {
     val factory = if (severity.isError) FallbackDiagnostics.FALLBACK_ERROR else FallbackDiagnostics.FALLBACK_WARNING
-    return factory.create(name, null, context)
+    return factory.create(original.renderMessage(), null, original.context)
 }
