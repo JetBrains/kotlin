@@ -13,18 +13,18 @@ import java.io.File
 @OptIn(InternalBuildToolsApi::class)
 internal class FileMappingTrackerAdapter(private val tracker: CompilerFileMappingTracker) : ICFileMappingTracker {
     override fun recordSourceFilesToOutputFileMapping(sourceFiles: Collection<File>, outputFile: File) {
-        tracker.recordSourceFilesToOutputFileMapping(sourceFiles.map { it.path }, outputFile.path)
+        tracker.recordSourceFilesToOutputFileMapping(sourceFiles.map { it.toPath() }, outputFile.toPath())
     }
 
     override fun recordSourceReferencedByCompilerPlugin(sourceFile: File) {
-        tracker.recordSourceReferencedByCompilerPlugin(sourceFile.path)
+        tracker.recordSourceReferencedByCompilerPlugin(sourceFile.toPath())
     }
 
     override fun recordOutputFileGeneratedForPlugin(outputFile: File) {
-        tracker.recordOutputFileGeneratedForPlugin(outputFile.path)
+        tracker.recordOutputFileGeneratedForPlugin(outputFile.toPath())
     }
 
     override fun recordSourceFileGeneratedForPlugin(sourceFile: File) {
-        tracker.recordSourceFileGeneratedForPlugin(sourceFile.path)
+        tracker.recordSourceFileGeneratedForPlugin(sourceFile.toPath())
     }
 }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.Path
 
 @DisplayName("The JPS inline constant tracker")
 class InlineConstTrackerJpsTest : BaseJpsTest() {
@@ -35,10 +36,10 @@ class InlineConstTrackerJpsTest : BaseJpsTest() {
                 assertTrue(inlineConstTracker.reports.isNotEmpty()) { "Inline const tracker didn't produce any output" }
                 // a set: the FIR and the IR path may both report the same constant
                 val actual = inlineConstTracker.reports
-                    .map { it.copy(filePath = it.filePath.relativeToModule(fixture)) }
+                    .map { it.copy(filePath = Path(it.filePath.relativeToModule(fixture))) }
                     .toSet()
                 assertEquals(
-                    setOf(RecordingInlineConstTracker.Report("/src/usage.kt", "JavaConstants", "VERSION", "String")),
+                    setOf(RecordingInlineConstTracker.Report(Path("/src/usage.kt"), "JavaConstants", "VERSION", "String")),
                     actual,
                 )
             }

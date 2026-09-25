@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.extension
 
 @DisplayName("The JPS file mapping tracker")
 class FileMappingTrackerJpsTest : BaseJpsTest() {
@@ -33,7 +34,7 @@ class FileMappingTrackerJpsTest : BaseJpsTest() {
                 }
             }) {
                 val classMappings = fileMappingTracker.sourcesToOutput
-                    .filter { [_, output] -> output.endsWith(".class") }
+                    .filter { [_, output] -> output.extension == "class" }
                     .associate { [sources, output] ->
                         output.relativeToModule(fixture) to sources.map { it.relativeToModule(fixture) }.sorted()
                     }
@@ -49,7 +50,7 @@ class FileMappingTrackerJpsTest : BaseJpsTest() {
 
                 // the module mapping is also reported; its source list is an implementation detail
                 assertTrue(
-                    fileMappingTracker.sourcesToOutput.any { [_, output] -> output.endsWith(".kotlin_module") }
+                    fileMappingTracker.sourcesToOutput.any { [_, output] -> output.extension == "kotlin_module" }
                 ) { "The .kotlin_module output was not reported" }
 
                 // no compiler plugins take part in this compilation

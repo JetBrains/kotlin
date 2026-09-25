@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+import java.nio.file.Path
 
 abstract class BaseJpsTest : BaseCompilationTest() {
     protected companion object {
@@ -35,6 +36,8 @@ abstract class BaseJpsTest : BaseCompilationTest() {
  */
 internal fun String.relativeToModule(fixtureName: String): String =
     replace('\\', '/').substringAfter(fixtureName.replace('\\', '/'))
+
+internal fun Path.relativeToModule(fixtureName: String): String = toString().relativeToModule(fixtureName)
 
 /** A cache that records nothing and knows nothing; the default for tracker-only tests. */
 internal open class EmptyIncrementalCache : CompilerIncrementalCache {
@@ -69,64 +72,64 @@ internal fun JvmCompilationOperation.Builder.withJpsIc(
 }
 
 internal class RecordingImportTracker : CompilerImportTracker {
-    val reports: MutableList<Pair<String, String>> = mutableListOf()
+    val reports: MutableList<Pair<Path, String>> = mutableListOf()
 
-    override fun report(filePath: String, importedFqName: String) {
+    override fun report(filePath: Path, importedFqName: String) {
         reports += filePath to importedFqName
     }
 }
 
 internal class RecordingEnumWhenTracker : CompilerEnumWhenTracker {
-    val reports: MutableList<Pair<String, String>> = mutableListOf()
+    val reports: MutableList<Pair<Path, String>> = mutableListOf()
 
-    override fun report(whenExpressionFilePath: String, enumClassFqName: String) {
+    override fun report(whenExpressionFilePath: Path, enumClassFqName: String) {
         reports += whenExpressionFilePath to enumClassFqName
     }
 }
 
 internal class RecordingInlineConstTracker : CompilerInlineConstTracker {
-    data class Report(val filePath: String, val owner: String, val name: String, val constType: String)
+    data class Report(val filePath: Path, val owner: String, val name: String, val constType: String)
 
     val reports: MutableList<Report> = mutableListOf()
 
-    override fun report(filePath: String, owner: String, name: String, constType: String) {
+    override fun report(filePath: Path, owner: String, name: String, constType: String) {
         reports += Report(filePath, owner, name, constType)
     }
 }
 
 internal class RecordingExpectActualTracker : CompilerExpectActualTracker {
-    val matched: MutableList<Pair<String, String>> = mutableListOf()
-    val lenientStubs: MutableList<String> = mutableListOf()
+    val matched: MutableList<Pair<Path, Path>> = mutableListOf()
+    val lenientStubs: MutableList<Path> = mutableListOf()
 
-    override fun report(expectFilePath: String, actualFilePath: String) {
+    override fun report(expectFilePath: Path, actualFilePath: Path) {
         matched += expectFilePath to actualFilePath
     }
 
-    override fun reportExpectOfLenientStub(expectFilePath: String) {
-        lenientStubs += expectFilePath
+    override fun reportExpectOfLenientStub(expectFilePath: Path) {
+        lenientStubs.add(expectFilePath)
     }
 }
 
 internal class RecordingFileMappingTracker : CompilerFileMappingTracker {
-    val sourcesToOutput: MutableList<Pair<List<String>, String>> = mutableListOf()
-    val pluginReferencedSources: MutableList<String> = mutableListOf()
-    val pluginGeneratedOutputs: MutableList<String> = mutableListOf()
-    val pluginGeneratedSources: MutableList<String> = mutableListOf()
+    val sourcesToOutput: MutableList<Pair<List<Path>, Path>> = mutableListOf()
+    val pluginReferencedSources: MutableList<Path> = mutableListOf()
+    val pluginGeneratedOutputs: MutableList<Path> = mutableListOf()
+    val pluginGeneratedSources: MutableList<Path> = mutableListOf()
 
-    override fun recordSourceFilesToOutputFileMapping(sourceFilePaths: Collection<String>, outputFilePath: String) {
+    override fun recordSourceFilesToOutputFileMapping(sourceFilePaths: Collection<Path>, outputFilePath: Path) {
         sourcesToOutput += sourceFilePaths.toList() to outputFilePath
     }
 
-    override fun recordSourceReferencedByCompilerPlugin(sourceFilePath: String) {
-        pluginReferencedSources += sourceFilePath
+    override fun recordSourceReferencedByCompilerPlugin(sourceFilePath: Path) {
+        pluginReferencedSources.add(sourceFilePath)
     }
 
-    override fun recordOutputFileGeneratedForPlugin(outputFilePath: String) {
-        pluginGeneratedOutputs += outputFilePath
+    override fun recordOutputFileGeneratedForPlugin(outputFilePath: Path) {
+        pluginGeneratedOutputs.add(outputFilePath)
     }
 
-    override fun recordSourceFileGeneratedForPlugin(sourceFilePath: String) {
-        pluginGeneratedSources += sourceFilePath
+    override fun recordSourceFileGeneratedForPlugin(sourceFilePath: Path) {
+        pluginGeneratedSources.add(sourceFilePath)
     }
 }
 
