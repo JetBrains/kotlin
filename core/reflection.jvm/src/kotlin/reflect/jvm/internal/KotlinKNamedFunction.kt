@@ -36,7 +36,7 @@ internal class KotlinKNamedFunction(
     override val hasAnnotationsInBytecode: Boolean get() = kmFunction.hasAnnotationsInBytecode
 
     private val _typeParameterTable: Lazy<TypeParameterTable> = lazy(PUBLICATION) {
-        val parent = ((overriddenStorage.originalContainerIfFakeOverride ?: container) as? KClassImpl<*>)?.typeParameterTable
+        val parent = ((overriddenStorage.originalContainerIfFakeOverride ?: container) as? MemberContainer<*>)?.typeParameterTable
         TypeParameterTable.create(kmFunction.typeParameters, parent, this, container.jClass.safeClassLoader)
     }
 
@@ -61,7 +61,7 @@ internal class KotlinKNamedFunction(
 
     @OptIn(ExperimentalCompanionBlocks::class)
     override val isCompanionBlockMember: Boolean
-        get() = container is KClassImpl<*> && kmFunction.isCompanionBlockMember
+        get() = container is MemberContainer<*> && kmFunction.isCompanionBlockMember
 
     override val overridden: Collection<ReflectKFunction> by lazy(PUBLICATION) {
         computeOverriddenFunctions(this)

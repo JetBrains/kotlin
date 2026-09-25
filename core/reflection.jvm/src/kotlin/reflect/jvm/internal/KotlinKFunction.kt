@@ -54,7 +54,7 @@ internal abstract class KotlinKFunction(
     override val annotations: List<Annotation>
         get() {
             if (!hasAnnotationsInBytecode) return emptyList()
-            if ((container as? KClassImpl<*>)?.isMappedBuiltin == true) {
+            if ((container as? MemberContainer<*>)?.isMappedBuiltin == true) {
                 return metadataAnnotations.map { it.toAnnotation(container.jClass.safeClassLoader) }
             }
             val member = caller.member as? AnnotatedElement ?: return emptyList()

@@ -29,11 +29,11 @@ internal fun getBuiltinSpecialPropertyGetterName(propertyName: String, container
 }
 
 private fun KDeclarationContainerImpl.findBuiltinSpecialPropertyFqName(propertyName: String): FqName? {
-    val klass = this as? KClassImpl<*> ?: return null
+    val klass = this as? MemberContainer<*> ?: return null
     val fqName = klass.classId.asSingleFqName().child(Name.identifier(propertyName))
     if (fqName in BuiltinSpecialProperties.SPECIAL_FQ_NAMES) return fqName
     for (supertype in klass.supertypes) {
-        (supertype.classifier as? KClassImpl<*>)?.findBuiltinSpecialPropertyFqName(propertyName)?.let { return it }
+        (supertype.classifier as? MemberContainer<*>)?.findBuiltinSpecialPropertyFqName(propertyName)?.let { return it }
     }
     return null
 }
@@ -45,18 +45,18 @@ private fun KDeclarationContainerImpl.findBuiltinSpecialPropertyFqName(propertyN
  */
 internal fun getBuiltinSpecialFunctionJvmName(functionName: String, descriptor: String, container: KDeclarationContainerImpl): String? {
     if (Name.identifier(functionName) !in SpecialGenericSignatures.ORIGINAL_SHORT_NAMES) return null
-    val klass = container as? KClassImpl<*> ?: return null
+    val klass = container as? MemberContainer<*> ?: return null
     if (!klass.isMappedBuiltin) return null
     return klass.findBuiltinSpecialFunctionJvmName(functionName + descriptor)?.asString()
 }
 
-private fun KClassImpl<*>.findBuiltinSpecialFunctionJvmName(nameAndDescriptor: String): Name? {
+private fun MemberContainer<*>.findBuiltinSpecialFunctionJvmName(nameAndDescriptor: String): Name? {
     if (jClass.isArray) return null
     val javaAnalogue = jClass.wrapperByPrimitive ?: jClass
     val signature = SignatureBuildingComponents.signature(javaAnalogue.classId.internalName, nameAndDescriptor)
     SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME[signature]?.let { return it }
     for (supertype in supertypes) {
-        val superclass = supertype.classifier as? KClassImpl<*> ?: continue
+        val superclass = supertype.classifier as? MemberContainer<*> ?: continue
         if (!superclass.isMappedBuiltin) continue
         superclass.findBuiltinSpecialFunctionJvmName(nameAndDescriptor)?.let { return it }
     }
