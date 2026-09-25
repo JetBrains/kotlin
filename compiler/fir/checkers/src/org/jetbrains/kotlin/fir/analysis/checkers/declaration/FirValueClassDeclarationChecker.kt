@@ -103,7 +103,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES,
                     valueModifierPrefix,
                 )
-            } else if (!supertypeSymbol.isFullValueClass && !supertypeSymbol.isJavaValueClass && !supertypeSymbol.classId.isRecordId()) {
+            } else if (!supertypeSymbol.isValueClassSupertype()) {
                 reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES)
             }
         }
@@ -374,4 +374,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     private fun ClassId.isRecordId(): Boolean =
         relativeClassName == recordFqName && packageFqName == javaLangFqName
+
+    context(context: CheckerContext)
+    private fun FirRegularClassSymbol.isValueClassSupertype(): Boolean =
+        isFullValueClass || isJavaValueClass(context.session) || classId.isRecordId() || isMappedToJavaValueClass(context.session)
 }
