@@ -38,6 +38,8 @@ class JsManifestWritingTest : TestCaseWithTmpdir() {
 
     @Test
     fun testEnableAndDisableLanguageFeatures() {
+        val a = "1"
+
         jsStdlib?.let { lib ->
             val poisoningFeature =
                 LanguageFeature.entries.first { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) }
