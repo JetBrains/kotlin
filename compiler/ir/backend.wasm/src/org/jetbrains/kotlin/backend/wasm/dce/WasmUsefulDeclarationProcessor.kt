@@ -6,17 +6,24 @@
 package org.jetbrains.kotlin.backend.wasm.dce
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.forEachEffectiveValueParameters
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.backend.wasm.lower.WasmCallableReferenceLowering.Companion.STATIC_FUNCTION_REFERENCE
-import org.jetbrains.kotlin.backend.wasm.utils.*
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmArrayAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmOpAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.hasWasmNoOpCastAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.hasWasmPrimitiveConstructorAnnotation
 import org.jetbrains.kotlin.ir.backend.js.dce.UsefulDeclarationProcessor
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
+import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceField
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal class WasmUsefulDeclarationProcessor(
@@ -47,12 +54,6 @@ internal class WasmUsefulDeclarationProcessor(
                 .firstOrNull { it.hasWasmPrimitiveConstructorAnnotation() }
                 ?.enqueue(data, "implicit vararg constructor")
             super.visitVararg(expression, data)
-        }
-
-        override fun visitSetField(expression: IrSetField, data: IrDeclaration) {
-            if (!expression.symbol.owner.isObjectInstanceField()) {
-                super.visitSetField(expression, data)
-            }
         }
 
         override fun visitGetField(expression: IrGetField, data: IrDeclaration) {
