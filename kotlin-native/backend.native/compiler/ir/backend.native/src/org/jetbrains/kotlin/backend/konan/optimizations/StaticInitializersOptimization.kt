@@ -108,6 +108,7 @@ internal object StaticInitializersOptimization {
             }
 
             val functions = buildSet {
+                addAll(rootSet)
                 callGraph.directEdges.values.forEach {
                     add(it.symbol.irFunction)
                     it.callSites.forEach { callSite -> add(callSite.actualCallee.irFunction) }
@@ -129,12 +130,9 @@ internal object StaticInitializersOptimization {
 
             // Each function from the root set can be called as the first one, so pessimistically assume that
             // none of the files has been initialized yet.
-            for (node in callGraph.directEdges.values) {
-                val function = node.symbol.irFunction ?: continue
-                if (function in rootSet) {
-                    initializedFiles.beforeCallGlobal[function] = BitSet()
-                    initializedFiles.beforeCallThreadLocal[function] = BitSet()
-                }
+            for (function in rootSet) {
+                initializedFiles.beforeCallGlobal[function] = BitSet()
+                initializedFiles.beforeCallThreadLocal[function] = BitSet()
             }
 
             for (multiNode in condensation.topologicalOrder)
@@ -483,13 +481,17 @@ internal object StaticInitializersOptimization {
                         return data
                     if (!expression.isVirtualCall)
                         return processCall(expression, expression.actualCallee, data)
-                    val devirtualizedCallSite = virtualCallSites[expression] ?: return data
                     val arguments = expression.getArgumentsWithIr()
                     val argumentsResult = arguments.fold(data) { set, arg -> arg.second.accept(this, set) }
+                    // Opaque calls add no initialization guarantees. Their targets are analyzed as roots,
+                    // but receiver and argument evaluation must still contribute to the current state.
+                    val devirtualizedCallSite = virtualCallSites[expression] ?: return argumentsResult
+                    if (devirtualizedCallSite.firstOrNull()?.isVirtual != false) return argumentsResult
                     var callResult = BitSet()
                     var first = true
                     for (callSite in devirtualizedCallSite) {
                         val callee = callSite.actualCallee.irFunction ?: error("No IR for: ${callSite.actualCallee}")
+                        check(!callSite.isVirtual) { "Non-devirtualized call site must be singular for a particular IrCall" }
                         updateResultForFunction(callee, argumentsResult)
                         if (first) {
                             callResult = getResultAfterCall(callee, BitSet())
@@ -515,9 +517,12 @@ internal object StaticInitializersOptimization {
             irModule: IrModuleFragment,
             moduleDFG: ModuleDFG,
             callGraph: CallGraph,
-            rootSet: Set<IrSimpleFunction>
     ) {
         val context = generationState.context
+        val rootSet = buildSet {
+            callGraph.rootSet.mapNotNullTo(this) { it.irFunction }
+            callGraph.rootExternalFunctions.mapNotNullTo(this) { it.irFunction }
+        }
         val analysisResult = InterproceduralAnalysis(context, callGraph, rootSet).analyze()
 
         var numberOfFunctionsWithGlobalInitializerCall = 0
