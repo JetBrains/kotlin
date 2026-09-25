@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.platform
 
 abstract class WasmPlatform(platformName: String) : SimplePlatform(platformName), PotentiallyWebPlatform {
     override val oldFashionedDescription: String
-        get() = "Wasm "
+        get() = toString() + " "
 
     override val isWeb: Boolean
         get() = true
 }
 
-fun TargetPlatform?.isWasm(): Boolean = this?.singleOrNull() is WasmPlatform
+fun TargetPlatform?.isWasm(): Boolean = this != null && this.size > 0 && all { it is WasmPlatform }
