@@ -8,22 +8,23 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 
 @DisplayName("The JPS enum-when tracker")
 class EnumWhenTrackerJpsTest : BaseJpsTest() {
 
     @DisplayName("A `when` expression over a Java enum is reported")
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("jps-enum-when")
-    @Test
-    fun whenOverJavaEnumIsReported() {
+    fun whenOverJavaEnumIsReported(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val fixture = "jps-enum-when"
-        jvmProject(inProcess) {
+        jvmProject(strategyConfig) {
             val module = module(fixture)
             val enumWhenTracker = RecordingEnumWhenTracker()
             module.compile(compilationConfigAction = { builder ->

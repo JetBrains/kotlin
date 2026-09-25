@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
@@ -18,22 +17,10 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.operations.jpsManagedIcConfigurationBuilder
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 
 abstract class BaseJpsTest : BaseCompilationTest() {
-
-    /**
-     * The JPS-managed incremental compilation configuration is only supported with the in-process execution
-     * policy for now; see `JvmCompilationOperationImpl.checkSupportedWithDaemon`.
-     */
-    protected val inProcess: CompilerExecutionStrategyConfiguration
-        get() = toolchain to toolchain.createInProcessExecutionPolicy()
-
-    protected val daemon: ExecutionPolicy
-        get() = toolchain.daemonExecutionPolicyBuilder().build()
-
     protected companion object {
         val toolchain: KotlinToolchains
             get() = KotlinToolchains.loadImplementation(btaClassloader)
