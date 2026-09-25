@@ -363,7 +363,7 @@ internal object EscapeAnalysis {
                         when (callSite) {
                             is CallGraphNode.CallSite.Virtual ->
                                 +"        CALLS VIRTUAL ${callSite.callee}"
-                            is CallGraphNode.CallSite.Static -> callSite.callees.forEach {
+                            is CallGraphNode.CallSite.Static -> callSite.forEachCallee {
                                 val label = when {
                                     callGraph.directEdges.containsKey(it) -> "LOCAL"
                                     else -> "EXTERNAL"
@@ -398,7 +398,7 @@ internal object EscapeAnalysis {
                                             if (callGraph.directEdges.containsKey(callSite.callee))
                                                 +"            CALLS ${callSite.callee}"
                                         }
-                                        is CallGraphNode.CallSite.Static -> callSite.callees.forEach { callee ->
+                                        is CallGraphNode.CallSite.Static -> callSite.forEachCallee { callee ->
                                             if (callGraph.directEdges.containsKey(callee))
                                                 +"            CALLS $callee"
                                         }
@@ -475,7 +475,7 @@ internal object EscapeAnalysis {
                                 +"   from $from"
                                 +"   to ${callSite.callee}"
                             }
-                            is CallGraphNode.CallSite.Static -> callSite.callees.forEach { to ->
+                            is CallGraphNode.CallSite.Static -> callSite.forEachCallee { to ->
                                 +"CALL"
                                 +"   from $from"
                                 +"   to $to"
@@ -584,13 +584,13 @@ internal object EscapeAnalysis {
                     ComputationState.NEW -> {
                         computationStates[function] = ComputationState.PENDING
                         for (callSite in callSites) {
-                            (callSite as? CallGraphNode.CallSite.Static)?.callees?.forEach { callee ->
+                            (callSite as? CallGraphNode.CallSite.Static)?.forEachCallee { callee ->
                                 val calleeComputationState = computationStates[callee]
                                 if (callee !is DataFlowIR.FunctionSymbol.Declared // An external call.
                                         || calleeComputationState == null // A call to a function from other component.
                                         || calleeComputationState == ComputationState.DONE // Already analyzed.
                                 ) {
-                                    return@forEach
+                                    return@forEachCallee
                                 }
 
                                 if (calleeComputationState == ComputationState.PENDING) {
@@ -698,7 +698,7 @@ internal object EscapeAnalysis {
                                 actualCallee = callSite.callee,
                                 calleeEscapeAnalysisResult = getExternalFunctionEAResult(callSite, callSite.callee)
                         )
-                    is CallGraphNode.CallSite.Static -> callSite.callees.forEach { callee ->
+                    is CallGraphNode.CallSite.Static -> callSite.forEachCallee { callee ->
                         pointsToGraph.processCall(
                                 callSite = callSite,
                                 actualCallee = callee,

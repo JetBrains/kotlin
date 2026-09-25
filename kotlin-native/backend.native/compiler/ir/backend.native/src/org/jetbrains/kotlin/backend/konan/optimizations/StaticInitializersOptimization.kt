@@ -72,7 +72,7 @@ internal object StaticInitializersOptimization {
                         when (callSite) {
                             is CallGraphNode.CallSite.Virtual ->
                                 +"        CALLS VIRTUAL ${callSite.callee}"
-                            is CallGraphNode.CallSite.Static -> callSite.callees.forEach {
+                            is CallGraphNode.CallSite.Static -> callSite.forEachCallee {
                                 val label = when {
                                     callGraph.directEdges.containsKey(it) -> "LOCAL"
                                     else -> "EXTERNAL"
@@ -107,7 +107,7 @@ internal object StaticInitializersOptimization {
                                             if (callGraph.directEdges.containsKey(callSite.callee))
                                                 +"            CALLS ${callSite.callee}"
                                         }
-                                        is CallGraphNode.CallSite.Static -> callSite.callees.forEach { callee ->
+                                        is CallGraphNode.CallSite.Static -> callSite.forEachCallee { callee ->
                                             if (callGraph.directEdges.containsKey(callee))
                                                 +"            CALLS $callee"
                                         }
@@ -125,10 +125,8 @@ internal object StaticInitializersOptimization {
                     add(it.symbol.irFunction)
                     it.callSites.forEach { callSite ->
                         when (callSite) {
-                            is CallGraphNode.CallSite.Virtual ->
-                                add(callSite.callee.irFunction)
-                            is CallGraphNode.CallSite.Static ->
-                                callSite.callees.forEach { callee -> add(callee.irFunction) }
+                            is CallGraphNode.CallSite.Static -> callSite.forEachCallee { callee -> add(callee.irFunction) }
+                            is CallGraphNode.CallSite.Virtual -> add(callSite.callee.irFunction)
                         }
                     }
                 }
@@ -223,7 +221,7 @@ internal object StaticInitializersOptimization {
                                 +"   from $from"
                                 +"   to ${callSite.callee}"
                             }
-                            is CallGraphNode.CallSite.Static -> callSite.callees.forEach { to ->
+                            is CallGraphNode.CallSite.Static -> callSite.forEachCallee { to ->
                                 +"CALL"
                                 +"   from $from"
                                 +"   to $to"
@@ -525,7 +523,7 @@ internal object StaticInitializersOptimization {
                     val callSite = virtualCallSites[expression] as? CallGraphNode.CallSite.Static ?: return argumentsResult
                     var callResult = CustomBitSet()
                     var first = true
-                    for (actualCallee in callSite.callees) {
+                    callSite.forEachCallee { actualCallee ->
                         val callee = actualCallee.irFunction ?: error("No IR for: $actualCallee")
                         updateResultForFunction(callee, argumentsResult)
                         if (first) {
