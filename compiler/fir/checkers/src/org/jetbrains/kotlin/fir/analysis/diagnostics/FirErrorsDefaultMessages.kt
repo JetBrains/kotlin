@@ -2546,7 +2546,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(WILL_BECOME_VALUE_NOT_APPLICABLE, "''@WillBecomeValue'' is not applicable to {0}.", STRING)
         map.put(
             IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS,
-            "Class annotated with ''@WillBecomeValue'' must override identity-based ''{0}'': it will become structural once the class becomes a value class.",
+            "Declaration annotated with ''@WillBecomeValue'' must override ''{0}'': the identity-based implementation inherited from ''Any'' changes behavior once the declaration gets the ''value'' modifier.",
             STRING,
         )
         map.put(

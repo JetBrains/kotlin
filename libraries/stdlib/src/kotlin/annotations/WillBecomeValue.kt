@@ -23,6 +23,8 @@ package kotlin
  *
  * A final annotated class also has to override `equals`, `hashCode` and `toString`, because the identity-based
  * implementations inherited from [Any] would silently turn structural once the class becomes a `value class`.
+ * An annotated object has to override only `toString`: having a single instance, it already compares and hashes
+ * the same way a `value object` would.
  *
  * The annotation can be applied to final classes, to `abstract`/`sealed` classes intended as base types,
  * and to object declarations. It cannot be applied to `value class`es, interfaces, enums, or `open` classes.

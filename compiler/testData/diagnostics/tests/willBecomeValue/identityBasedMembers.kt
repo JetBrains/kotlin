@@ -4,20 +4,20 @@
 // 'Any.equals'/'Any.hashCode' compare and hash by identity, and 'Any.toString' renders the identity hash code, so all
 // three change behavior once the class becomes a value class and must be overridden.
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS!>class NoOverrides<!>(val x: Int)
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("hashCode"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("toString")!>class NoOverrides<!>(val x: Int)
 
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS!>class OnlyEquals<!>(val x: Int) {
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("hashCode"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("toString")!>class OnlyEquals<!>(val x: Int) {
     override fun equals(other: Any?): Boolean = other is OnlyEquals && other.x == x
 }
 
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS!>class OnlyHashCode<!>(val x: Int) {
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("toString")!>class OnlyHashCode<!>(val x: Int) {
     override fun hashCode(): Int = x
 }
 
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS!>class OnlyToString<!>(val x: Int) {
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("hashCode")!>class OnlyToString<!>(val x: Int) {
     override fun toString(): String = "OnlyToString($x)"
 }
 
@@ -52,13 +52,21 @@ class DelegatingToSuper(val x: Int) {
 abstract class AbstractNoOverrides
 
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS!>class InheritedNoOverrides<!>(val x: Int) : AbstractNoOverrides()
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("hashCode"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("toString")!>class InheritedNoOverrides<!>(val x: Int) : AbstractNoOverrides()
 
 @WillBecomeValue
 sealed class SealedNoOverrides
 
 @WillBecomeValue
-object ObjectNoOverrides
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS("toString")!>object ObjectNoOverrides<!>
+
+@WillBecomeValue
+object ObjectWithToString {
+    override fun toString(): String = "ObjectWithToString"
+}
+
+@WillBecomeValue
+data object DataObject
 
 /* GENERATED_FIR_TAGS: andExpression, classDeclaration, data, equalityExpression, functionDeclaration, integerLiteral,
 isExpression, nullableType, objectDeclaration, operator, override, primaryConstructor, propertyDeclaration, sealed,

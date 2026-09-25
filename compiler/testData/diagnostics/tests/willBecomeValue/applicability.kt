@@ -16,7 +16,9 @@ abstract class AbstractBase
 sealed class SealedBase
 
 @WillBecomeValue
-object Obj
+object Obj {
+    override fun toString(): String = "Obj"
+}
 
 @WillBecomeValue
 data class Data(val x: Int)
