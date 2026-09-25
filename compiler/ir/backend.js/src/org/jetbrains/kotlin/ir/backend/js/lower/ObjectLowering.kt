@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -17,10 +16,10 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
-import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irGetField
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -52,36 +51,21 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
 
         val getInstanceFun = getOrCreateGetInstanceFunction(declaration)
         val instanceField = getOrCreateInstanceField(declaration)
-        val constructorCall = createObjectConstructorCall(declaration, context.irBuiltIns)
         val shouldBeEagerlyInitialized = declaration.isInitializersFreeObject()
         if (shouldBeEagerlyInitialized) {
-            instanceField.initializer = context.irFactory.createExpressionBody(constructorCall)
+            instanceField.initializer = context.irFactory.createExpressionBody(createObjectConstructorCall(declaration, context.irBuiltIns))
         }
         declaration.declarations.addAll(0, listOf(instanceField, getInstanceFun))
 
         getInstanceFun.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += context.createIrBuilder(getInstanceFun.symbol).irBlockBody(getInstanceFun) {
-                if (!shouldBeEagerlyInitialized) {
-                    +irIfThen(
-                        irNullabilityCheck(instanceField),
-                        // Instance field initialized inside constructor
-                        constructorCall
-                    )
-                }
+                // The call to the object's static initializer (if there is one) will be inserted later in
+                // the WebStaticInitializersUsageLowering.
                 +irReturn(irGetField(null, instanceField))
             }.statements
         }
 
         return null
-    }
-
-    private fun IrBuilderWithScope.irNullabilityCheck(instanceField: IrField): IrExpression {
-        val context = this@ObjectDeclarationLowering.context
-        return if (context is JsIrBackendContext && context.es6mode) {
-            irEqeqeqWithoutBox(irGetField(null, instanceField), context.getVoid())
-        } else {
-            irEqualsNull(irGetField(null, instanceField))
-        }
     }
 }
 
@@ -94,6 +78,7 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
         val functionContainer = container.takeIf { it is IrConstructor && it.isPrimary }
         val irClass = functionContainer?.parentAsClass
 
+        // TODO: Move assigning the instance field to static_init
         val instanceField = irClass?.objectInstanceField
         if (instanceField != null && instanceField.initializer == null && (!context.es6mode || irClass.superClass != null)) {
             val thisReceiver = irClass.thisReceiver!!
