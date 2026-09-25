@@ -1135,6 +1135,247 @@ class SwiftExportIT : KGPBaseTest() {
     }
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
+    @DisplayName("KT-80632: a dependency's SwiftPM-import cinterop klib is reexported through Swift Export")
+    @GradleTest
+    @Suppress("DEPRECATION")
+    fun testDependencySwiftPMImportCinteropIsReexportedThroughSwiftExport(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        // Use emptyxcode so that swiftPMDependencies can resolve the local Swift package via xcodebuild.
+        project("emptyxcode", gradleVersion) {
+            val localPackageDir = projectPath.resolve("localSwiftPackage")
+            val targetName = "LocalSwiftPackage"
+            createLocalSwiftPackage(localPackageDir, packageName = targetName)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+
+            // A library that imports the Swift package and exposes its Objective-C type in its public API,
+            // like a published KMP library built on top of its own SwiftPM import.
+            val producerProject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.group = "org.test"
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+
+                        sourceSets.appleMain.get().compileSource(
+                            """
+                                @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                                package producer
+                                import swiftPMImport.org.test.producer.LocalHelper
+                                fun roundTrip(helper: LocalHelper): LocalHelper = helper
+                            """.trimIndent()
+                        )
+
+                        with(swiftImport) {
+                            localSwiftPackage(
+                                directory = project.layout.projectDirectory.dir("../localSwiftPackage"),
+                                products = listOf(targetName),
+                            )
+                        }
+                    }
+                }
+            }
+            include(producerProject, "producer", useSymlink = false)
+
+            // The exported module has no swiftPMDependencies of its own: the Swift package only reaches it transitively,
+            // through the producer, whose cinterop klib Swift Export has to reexport.
+            buildScriptInjection {
+                val producerDependency = project.dependencies.project(mapOf("path" to ":producer"))
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    sourceSets.appleMain.get().compileSource(
+                        """
+                            @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                            package consumer
+                            import swiftPMImport.org.test.producer.LocalHelper
+                            fun consumerRoundTrip(helper: LocalHelper): LocalHelper = producer.roundTrip(helper)
+                        """.trimIndent()
+                    )
+                    sourceSets.appleMain.get().dependencies {
+                        api(project(":producer"))
+                    }
+                    with(swiftExport) {
+                        export(producerDependency)
+                    }
+                }
+            }
+
+            val iosAppXcodeProj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val pbxproj = iosAppXcodeProj.resolve("project.pbxproj")
+            pbxproj.writeText(pbxproj.readText().replace(":embedAndSignAppleFrameworkForXcode", ":embedSwiftExportForXcode"))
+
+            val envVars = swiftExportEmbedAndSignEnvVariables(
+                testBuildDir,
+                customVariables = mapOf(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            )
+
+            // Both the producer's and the consumer's API reference the imported Objective-C type. A declaration using
+            // an unsupported type isn't exported at all, so the app only compiles if the type is reexported.
+            projectPath.resolve("iosApp/iosApp/iOSApp.swift").writeText(
+                """
+                    import $targetName
+                    import Producer
+                    import Shared
+
+                    @main
+                    struct iOSApp {
+                        static func main() {
+                            let helper = LocalHelper()
+                            let _: LocalHelper = ExportedKotlinPackages.producer.roundTrip(helper: helper)
+                            let _: LocalHelper = ExportedKotlinPackages.consumer.consumerRoundTrip(helper: helper)
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            build(
+                ":integrateLinkagePackage",
+                environmentVariables = envVars
+            )
+
+            buildXcodeProject(
+                xcodeproj = iosAppXcodeProj,
+                action = XcodeBuildAction.Build,
+                destination = "generic/platform=iOS Simulator",
+                buildSettingOverrides = mapOf(
+                    "ARCHS" to "arm64",
+                ),
+                derivedDataPath = projectPath.resolve("iosApp/iosApp.derivedData"),
+            )
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
+    @DisplayName("KT-80632: a SwiftPM-import cinterop klib of a dependency that is not exported is reexported when its API leaks")
+    @GradleTest
+    fun testLeakedDependencySwiftPMImportCinteropIsReexportedThroughSwiftExport(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        // Use emptyxcode so that swiftPMDependencies can resolve the local Swift package via xcodebuild.
+        project("emptyxcode", gradleVersion) {
+            val localPackageDir = projectPath.resolve("localSwiftPackage")
+            val targetName = "LocalSwiftPackage"
+            createLocalSwiftPackage(localPackageDir, packageName = targetName)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+
+            val producerProject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.group = "org.test"
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+
+                        sourceSets.appleMain.get().compileSource(
+                            """
+                                @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                                package producer
+                                import swiftPMImport.org.test.producer.LocalHelper
+                                class Holder {
+                                    fun helper(): LocalHelper = LocalHelper()
+                                }
+                            """.trimIndent()
+                        )
+
+                        with(swiftImport) {
+                            localSwiftPackage(
+                                directory = project.layout.projectDirectory.dir("../localSwiftPackage"),
+                                products = listOf(targetName),
+                            )
+                        }
+                    }
+                }
+            }
+            include(producerProject, "producer", useSymlink = false)
+
+            // The producer is an implementation dependency that is neither exported nor exposed, so it is only
+            // translated transitively. The exported module never names the imported type: it only reaches the Swift
+            // API through the producer's leaked Holder.
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    sourceSets.appleMain.get().compileSource(
+                        """
+                            package consumer
+                            fun holder(): producer.Holder = producer.Holder()
+                        """.trimIndent()
+                    )
+                    sourceSets.appleMain.get().dependencies {
+                        implementation(project(":producer"))
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration()
+                }
+            }
+
+            val iosAppXcodeProj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val pbxproj = iosAppXcodeProj.resolve("project.pbxproj")
+            pbxproj.writeText(pbxproj.readText().replace(":embedAndSignAppleFrameworkForXcode", ":embedSwiftExportForXcode"))
+
+            val envVars = swiftExportEmbedAndSignEnvVariables(
+                testBuildDir,
+                customVariables = mapOf(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            )
+
+            // A declaration using an unsupported type isn't exported at all, so the app only compiles if the type is
+            // reexported.
+            projectPath.resolve("iosApp/iosApp/iOSApp.swift").writeText(
+                """
+                    import $targetName
+                    import Shared
+
+                    @main
+                    struct iOSApp {
+                        static func main() {
+                            let _: LocalHelper = ExportedKotlinPackages.consumer.holder().helper()
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            build(
+                ":integrateLinkagePackage",
+                environmentVariables = envVars
+            )
+
+            buildXcodeProject(
+                xcodeproj = iosAppXcodeProj,
+                action = XcodeBuildAction.Build,
+                destination = "generic/platform=iOS Simulator",
+                buildSettingOverrides = mapOf(
+                    "ARCHS" to "arm64",
+                ),
+                derivedDataPath = projectPath.resolve("iosApp/iosApp.derivedData"),
+            )
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-80632: Swift Export without swiftPMDependencies emits no cinterop package dependency")
     @GradleTest
     @Suppress("DEPRECATION") // Tests the deprecated legacy Swift Export DSL on purpose.

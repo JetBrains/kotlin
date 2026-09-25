@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportClasspathResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.whenSwiftPMImportAvailable
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMImportProductsOrNull
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.whenSwiftPMImportCinteropAvailable
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
@@ -133,12 +134,16 @@ internal fun Project.registerSwiftExportTask(
         mergeLibrariesTask = mergeLibrariesTask
     )
 
-    target.whenSwiftPMImportAvailable { products ->
+    target.whenSwiftPMImportCinteropAvailable { cinterop ->
         swiftExportTask.configure { task ->
-            task.cinteropModuleName.set(products.cinteropModuleName)
-            task.cinteropModuleArtifact.fileProvider(products.cinteropKlib)
+            task.cinteropModuleName.set(cinterop.moduleName)
+            task.cinteropModuleArtifact.fileProvider(cinterop.klib)
         }
+    }
+
+    swiftPMImportProductsOrNull()?.let { products ->
         packageGenerationTask.configure { task ->
+            task.swiftPMImportHasDependencies.set(products.hasDependencies)
             task.swiftPMImportProductName.set(products.umbrellaProductName)
             task.swiftPMImportPackageRoot.set(products.syntheticPackageLocalRoot)
             task.swiftPMImportFingerprint.set(products.syntheticPackageFingerprint)
@@ -146,6 +151,7 @@ internal fun Project.registerSwiftExportTask(
             task.dependsOn(products.fetchTask)
         }
         packageBuild.configure { task ->
+            task.swiftPMImportHasDependencies.set(products.hasDependencies)
             task.swiftPMImportPackageRoot.set(products.syntheticPackageLocalRoot)
             task.swiftPMImportCheckout.set(products.swiftPMLocalCheckout)
             task.swiftPMImportFingerprint.set(products.syntheticPackageFingerprint)
