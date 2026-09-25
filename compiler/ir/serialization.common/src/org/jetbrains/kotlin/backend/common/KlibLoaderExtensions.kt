@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.duplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.io.canonicalPathString
+import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_WITHOUT_DEPRECATION_COMPILER_VERSION
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.hasAbi
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
@@ -72,6 +75,46 @@ fun KlibLoaderResult.eliminateLibrariesWithDuplicatedUniqueNames(configuration: 
     } else {
         this
     }
+}
+
+/**
+ * Checks for soft-deprecated ABI versions among successfully loaded Klibs in [KlibLoaderResult.librariesStdlibFirst]:
+ * If there is a library with the ABI version <= [KotlinAbiVersion.FIRST_SUPPORTED_WITHOUT_DEPRECATION] then
+ * a warning diagnostic is reported.
+ *
+ * Note: It's assumed that all Klibs having ABI version < [KotlinAbiVersion.FIRST_SUPPORTED] are already filtered out
+ * and counted as problematic in [KlibLoaderResult.problematicLibraries].
+ */
+fun KlibLoaderResult.warnAboutSoftDeprecatedAbiVersions(configuration: CompilerConfiguration): KlibLoaderResult {
+    if (KotlinAbiVersion.FIRST_SUPPORTED_WITHOUT_DEPRECATION == KotlinAbiVersion.FIRST_SUPPORTED) return this
+
+    val librariesToWarnAbout: List<Triple<Path, KotlinAbiVersion, String?>> = librariesStdlibFirst.mapNotNull { library ->
+        if (!library.hasAbi) return@mapNotNull null
+
+        val libraryAbiVersion = library.versions.abiVersion ?: return@mapNotNull null
+        if (libraryAbiVersion.isAtLeast(KotlinAbiVersion.FIRST_SUPPORTED_WITHOUT_DEPRECATION)) return@mapNotNull null
+
+        Triple(library.path, libraryAbiVersion, library.versions.compilerVersion)
+    }
+
+    if (librariesToWarnAbout.isEmpty()) return this
+
+    val warningMessage = buildString {
+        appendLine("Legacy ABI version warning.")
+        appendLine()
+        appendLine("There are libraries with ABI versions that will no longer be supported by future compiler versions:")
+        librariesToWarnAbout.forEach { [path, libraryAbiVersion, compilerVersion] ->
+            append("- $path, ABI version $libraryAbiVersion")
+            if (compilerVersion != null) append(" (produced by compiler $compilerVersion)")
+            appendLine()
+        }
+        appendLine()
+        appendLine("We recommend updating your project settings to use newer library versions compatible with Kotlin compiler $FIRST_SUPPORTED_WITHOUT_DEPRECATION_COMPILER_VERSION or later (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED_WITHOUT_DEPRECATION} or later).")
+    }
+
+    configuration.report(SerializationErrors.KLIB_LOADING_WARNING, warningMessage)
+
+    return this
 }
 
 /**
