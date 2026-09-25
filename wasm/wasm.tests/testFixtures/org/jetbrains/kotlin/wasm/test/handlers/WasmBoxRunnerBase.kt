@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.wasm.test.tools.WasiComponentizer
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
@@ -63,7 +64,7 @@ abstract class WasmBoxRunnerBase(
                         console.log = print;
                     }
                     try {
-                        await jsModule.startUnitTests();
+                        await jsModule.startunittests();
                         const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
                                             (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
                         if (hasFailures) {
@@ -97,7 +98,7 @@ abstract class WasmBoxRunnerBase(
                     }
                     let actualResult;
                     try {
-                        ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
+                        ${if (startUnitTests) "jsModule.startunittests();" else ""}
                         actualResult = jsModule.box();
                     } catch(e) {
                         console.log('Failed with exception!')
@@ -206,6 +207,8 @@ internal fun WasmVM.runWithCaughtExceptions(
     jsFilePaths: List<String>,
     workingDirectory: File,
     outputCollector: MutableList<String>? = null,
+    // HACK (KT-87723): which export the WASI VMs invoke, see WasiComponentizer
+    wasiEntryPoint: String = WasiComponentizer.BOX_ENTRY_POINT,
 ): Throwable? {
     try {
         if (debugMode >= DebugMode.DEBUG) {
@@ -217,6 +220,7 @@ internal fun WasmVM.runWithCaughtExceptions(
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
             useStackSwitching = useStackSwitching,
+            wasiEntryPoint = wasiEntryPoint,
         )
         outputCollector?.add(str)
         if (debugMode >= DebugMode.DEBUG) {
