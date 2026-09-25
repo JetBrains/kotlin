@@ -221,9 +221,25 @@ fun main(args: Array<String>) {
                         model(cinterfaceMode.key, pattern = "^([^_](.+))$", recursive = false)
                     }
                 }
+                // IR-based discovery variant, over the same test data
+                testClass<AbstractNativeCExportIrTest>(
+                    "FirCExport${binaryKind.key}InterfaceV1IrTestGenerated",
+                    annotations = listOf(
+                        binaryKind.value,
+                        cinterfaceMode("V1"),
+                    )
+                ) {
+                    model("InterfaceV1", pattern = "^([^_](.+))$", recursive = false)
+                }
             }
             testClass<AbstractNativeCExportInterfaceV1HeaderTest>(
                 "CExportInterfaceV1HeaderTestGenerated",
+            ) {
+                model("InterfaceV1HeaderTests")
+            }
+            // Same goldens, but produced by the IR-based discovery (must be byte-identical to the K1 mode).
+            testClass<AbstractNativeCExportInterfaceV1HeaderIrTest>(
+                "CExportInterfaceV1HeaderIrTestGenerated",
             ) {
                 model("InterfaceV1HeaderTests")
             }
