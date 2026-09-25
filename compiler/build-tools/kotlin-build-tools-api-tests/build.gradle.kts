@@ -249,7 +249,10 @@ testing {
                             taskName = testTask.name,
                             javaLauncher = JdkMajorVersion.JDK_1_8,
                             skipInLocalBuild = false,
-                            garbageCollector = GarbageCollector.Parallel
+                            garbageCollector = GarbageCollector.Parallel,
+                            defineJDKEnvVariables = listOf(
+                                JdkMajorVersion.JDK_11_0, // for tests with JPMS
+                            ),
                         ) {
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
@@ -280,7 +283,10 @@ testing {
                             taskName = testTask.name,
                             javaLauncher = JdkMajorVersion.JDK_17_0,
                             skipInLocalBuild = false,
-                            garbageCollector = GarbageCollector.Parallel
+                            garbageCollector = GarbageCollector.Parallel,
+                            defineJDKEnvVariables = listOf(
+                                JdkMajorVersion.JDK_11_0, // for tests with JPMS
+                            ),
                         ) {
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
 

@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findRea
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasses
 import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
 import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
+import org.jetbrains.kotlin.incremental.storage.LinkedHashMapExternalizer
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
+import org.jetbrains.kotlin.incremental.storage.LongExternalizer
 import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
+import org.jetbrains.kotlin.incremental.storage.StringExternalizer
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.jetbrains.kotlin.name.ClassId
 
@@ -293,6 +296,18 @@ internal fun shrinkAndSaveClasspathSnapshot(
             ListExternalizer(AccessibleClassSnapshotExternalizer).saveToFile(
                 classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
                 shrunkCurrentClasspath!!
+            )
+        }
+        reporter.measure(SAVE_CURRENT_MODULE_INFO_HASHES) {
+            ListExternalizer(LongExternalizer).saveToFile(
+                classpathChanges.classpathSnapshotFiles.previousModuleInfoHashesFile,
+                lazyClasspathSnapshot.getCurrentModuleInfoHashes(LazySnapshotLoadingMetrics.AssertThatDataIsAlreadyComputed).toList()
+            )
+        }
+        reporter.measure(SAVE_CURRENT_PACKAGE_INFO_HASHES) {
+            LinkedHashMapExternalizer(StringExternalizer, LongExternalizer).saveToFile(
+                classpathChanges.classpathSnapshotFiles.previousPackageInfoHashesFile,
+                LinkedHashMap(lazyClasspathSnapshot.getCurrentPackageInfoHashes(LazySnapshotLoadingMetrics.AssertThatDataIsAlreadyComputed))
             )
         }
     }
