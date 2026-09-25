@@ -140,6 +140,33 @@ class WithDoNotUseGettersTrue(val x: Int)
 @EqualsAndHashCode(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
 class WithDoNotUseGettersFalse(val x: Int)
 
+// A user-declared `canEqual` matching the generated shape is not duplicated, so it must not trigger
+// CONFLICTING_JVM_DECLARATIONS or any other diagnostic here.
+@EqualsAndHashCode
+class WithUserDeclaredCanEqual(val a: Int) {
+    fun canEqual(other: Any?): Boolean = other is WithUserDeclaredCanEqual
+}
+
+// An unrelated overload sharing the name is not mistaken for `canEqual`, so `@EqualsAndHashCode` still generates
+// its own, without conflict.
+@EqualsAndHashCode
+class WithUnrelatedCanEqualOverload(val a: Int) {
+    fun canEqual(x: Int): Boolean = x == a
+}
+
+// `Any` and `Any?` both erase to `canEqual(Ljava/lang/Object;)Z` on the JVM, so this must be recognized as
+// matching too - same as the `Any?` case above - or a duplicate `canEqual` is generated on top of it.
+@EqualsAndHashCode
+class WithNonNullCanEqual(val a: Int) {
+    fun canEqual(other: Any): Boolean = other is WithNonNullCanEqual
+}
+
+// The same erasure gap reached through an unbounded type parameter rather than `Any` directly.
+@EqualsAndHashCode
+class WithTypeParameterCanEqual<T>(val a: Int) {
+    fun canEqual(other: T): Boolean = other != null
+}
+
 @EqualsAndHashCode(
     exclude = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
     of = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
