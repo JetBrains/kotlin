@@ -2145,6 +2145,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("tailrec.args")
+    public void testTailrec() {
+      run("tailrec.args");
+    }
+
+    @Test
     @TestMetadata("twoDiagnosticsOnSingleElement.args")
     public void testTwoDiagnosticsOnSingleElement() {
       run("twoDiagnosticsOnSingleElement.args");
@@ -2639,6 +2645,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("tailrec.args")
+    public void testTailrec() {
+      run("tailrec.args");
+    }
+
+    @Test
     @TestMetadata("unknownFriendLibraries.args")
     public void testUnknownFriendLibraries() {
       run("unknownFriendLibraries.args");
@@ -2728,6 +2740,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportPerfLowerings.args")
     public void testReportPerfLowerings() {
       run("reportPerfLowerings.args");
+    }
+
+    @Test
+    @TestMetadata("tailrec.args")
+    public void testTailrec() {
+      run("tailrec.args");
     }
 
     @Test

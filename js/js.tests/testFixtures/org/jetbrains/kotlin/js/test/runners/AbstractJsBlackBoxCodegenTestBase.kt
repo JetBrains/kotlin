@@ -278,6 +278,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
 
     configureLoweredIrHandlersStep {
         commonIrHandlersForCodegenTest()
+        useHandlers(::IrDiagnosticsHandler)
     }
 
     configureKlibArtifactsHandlersStep {

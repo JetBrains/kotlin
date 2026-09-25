@@ -54,7 +54,7 @@ tailrec fun foo7_return() {
     }
 }
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo8() {
+tailrec fun foo8() {
     while (true) {
         <!NON_TAIL_RECURSIVE_CALL!>foo8<!>()
         throw Exception()

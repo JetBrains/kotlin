@@ -151,6 +151,13 @@
       "time": {
         "nanos": $UINT$
       }
+    },
+    {
+      "parentPhaseType": IrPreLowering,
+      "name": "TailrecCheckerLowering",
+      "time": {
+        "nanos": $UINT$
+      }
     }
   ],
   "klibElementStats": [
