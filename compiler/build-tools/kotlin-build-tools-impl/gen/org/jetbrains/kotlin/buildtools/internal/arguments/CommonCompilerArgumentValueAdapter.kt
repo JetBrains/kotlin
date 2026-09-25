@@ -37,9 +37,9 @@ internal object CommonCompilerArgumentValueAdapter {
     is InternalArgumentsEnumsAnnotationDefaultTargetMode -> value.toApiEnum<ApiArgumentsEnumsAnnotationDefaultTargetMode>()
     is InternalArgumentsEnumsHeaderMode -> value.toApiEnum<ApiArgumentsEnumsHeaderMode>()
     is InternalArgumentsEnumsNameBasedDestructuringMode -> value.toApiEnum<ApiArgumentsEnumsNameBasedDestructuringMode>()
-    is InternalArgumentsEnumsReturnValueCheckerMode -> value.toApiEnum<ApiArgumentsEnumsReturnValueCheckerMode>()
     is InternalArgumentsEnumsVerifyIrMode -> value.toApiEnum<ApiArgumentsEnumsVerifyIrMode>()
     is InternalArgumentsEnumsKotlinVersion -> value.toApiEnum<ApiArgumentsEnumsKotlinVersion>()
+    is InternalArgumentsEnumsReturnValueCheckerMode -> value.toApiEnum<ApiArgumentsEnumsReturnValueCheckerMode>()
     else -> value
   }
 
@@ -49,9 +49,9 @@ internal object CommonCompilerArgumentValueAdapter {
     is ApiArgumentsEnumsAnnotationDefaultTargetMode -> value.toImplEnum<InternalArgumentsEnumsAnnotationDefaultTargetMode>()
     is ApiArgumentsEnumsHeaderMode -> value.toImplEnum<InternalArgumentsEnumsHeaderMode>()
     is ApiArgumentsEnumsNameBasedDestructuringMode -> value.toImplEnum<InternalArgumentsEnumsNameBasedDestructuringMode>()
-    is ApiArgumentsEnumsReturnValueCheckerMode -> value.toImplEnum<InternalArgumentsEnumsReturnValueCheckerMode>()
     is ApiArgumentsEnumsVerifyIrMode -> value.toImplEnum<InternalArgumentsEnumsVerifyIrMode>()
     is ApiArgumentsEnumsKotlinVersion -> value.toImplEnum<InternalArgumentsEnumsKotlinVersion>()
+    is ApiArgumentsEnumsReturnValueCheckerMode -> value.toImplEnum<InternalArgumentsEnumsReturnValueCheckerMode>()
     else -> value
   }
 }

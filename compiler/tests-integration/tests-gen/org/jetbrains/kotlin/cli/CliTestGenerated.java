@@ -637,6 +637,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("deprecated.args")
+    public void testDeprecated() {
+      run("deprecated.args");
+    }
+
+    @Test
     @TestMetadata("full.args")
     public void testFull() {
       run("full.args");
@@ -646,6 +652,18 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("lv24.args")
     public void testLv24() {
       run("lv24.args");
+    }
+
+    @Test
+    @TestMetadata("unknownValueForDeprecatedFlag.args")
+    public void testUnknownValueForDeprecatedFlag() {
+      run("unknownValueForDeprecatedFlag.args");
+    }
+
+    @Test
+    @TestMetadata("unknownValueForStableFlag.args")
+    public void testUnknownValueForStableFlag() {
+      run("unknownValueForStableFlag.args");
     }
   }
 

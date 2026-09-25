@@ -51,6 +51,7 @@ val jvmTestFrameworks = JvmTestFramework.values().toList()
 
 fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
     freeCompilerArgs.add("-Xreturn-value-checker=full")
+    allWarningsAsErrors = false // TODO(KT-89534): after bootstrap, rename Xreturn-value-checker and remove this line
 }
 
 kotlin {

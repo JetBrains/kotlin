@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompile
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.OPT_IN
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.P
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.PROGRESSIVE
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.RETURN_VALUE_CHECKER
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.SCRIPT
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.XX_DEBUG_LEVEL_COMPILER_CHECKS
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.XX_EXPLICIT_RETURN_TYPES
@@ -88,7 +89,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompile
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_REPORT_ALL_WARNINGS
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_REPORT_OUTPUT_FILES
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_REPORT_PERF
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_RETURN_VALUE_CHECKER
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_SEPARATE_KMP_COMPILATION
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_SKIP_METADATA_VERSION_CHECK
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_SKIP_PRERELEASE_CHECK
@@ -229,7 +229,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { if (X_REPORT_ALL_WARNINGS in this) { arguments.reportAllWarnings = get(X_REPORT_ALL_WARNINGS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPORT_ALL_WARNINGS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
     if (X_REPORT_OUTPUT_FILES in this) { arguments.reportOutputFiles = get(X_REPORT_OUTPUT_FILES)}
     if (X_REPORT_PERF in this) { arguments.reportPerf = get(X_REPORT_PERF)}
-    try { if (X_RETURN_VALUE_CHECKER in this) { arguments.returnValueChecker = get(X_RETURN_VALUE_CHECKER).stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_RETURN_VALUE_CHECKER. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     try { if (X_SEPARATE_KMP_COMPILATION in this) { arguments.separateKmpCompilationScheme = get(X_SEPARATE_KMP_COMPILATION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SEPARATE_KMP_COMPILATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
     if (X_SKIP_METADATA_VERSION_CHECK in this) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK)}
     if (X_SKIP_PRERELEASE_CHECK in this) { arguments.skipPrereleaseCheck = get(X_SKIP_PRERELEASE_CHECK)}
@@ -251,6 +250,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     if (LANGUAGE_VERSION in this) { arguments.languageVersion = get(LANGUAGE_VERSION)?.stringValue}
     if (OPT_IN in this) { arguments.optIn = get(OPT_IN).toTypedArray()}
     if (PROGRESSIVE in this) { arguments.progressiveMode = get(PROGRESSIVE)}
+    try { if (RETURN_VALUE_CHECKER in this) { arguments.returnValueChecker = get(RETURN_VALUE_CHECKER).stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: RETURN_VALUE_CHECKER. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     if (SCRIPT in this) { arguments.script = get(SCRIPT)}
     try { if (X_WARNING_LEVEL in this) { arguments.applyWarningLevels(get(X_WARNING_LEVEL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_WARNING_LEVEL. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     return arguments
@@ -319,7 +319,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_OUTPUT_FILES] = arguments.reportOutputFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_PERF] = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
-    try { this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_SEPARATE_KMP_COMPILATION] = arguments.separateKmpCompilationScheme } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_METADATA_VERSION_CHECK] = arguments.skipMetadataVersionCheck } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_PRERELEASE_CHECK] = arguments.skipPrereleaseCheck } catch (_: NoSuchMethodError) {  }
@@ -341,6 +340,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[OPT_IN] = arguments.optIn.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[PROGRESSIVE] = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
+    try { this[RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -return-value-checker value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[SCRIPT] = arguments.script } catch (_: NoSuchMethodError) {  }
     try { this[X_WARNING_LEVEL] = applyWarningLevels(if(X_WARNING_LEVEL in this) this[X_WARNING_LEVEL] else emptyList<WarningLevel>(), arguments) } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
@@ -532,9 +532,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val X_REPORT_PERF: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_REPORT_PERF")
 
-    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
-        CommonCompilerArgument("X_RETURN_VALUE_CHECKER")
-
     public val X_SEPARATE_KMP_COMPILATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_SEPARATE_KMP_COMPILATION")
 
@@ -595,6 +592,9 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val OPT_IN: CommonCompilerArgument<List<String>> = CommonCompilerArgument("OPT_IN")
 
     public val PROGRESSIVE: CommonCompilerArgument<Boolean> = CommonCompilerArgument("PROGRESSIVE")
+
+    public val RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
+        CommonCompilerArgument("RETURN_VALUE_CHECKER")
 
     public val SCRIPT: CommonCompilerArgument<Boolean> = CommonCompilerArgument("SCRIPT")
 

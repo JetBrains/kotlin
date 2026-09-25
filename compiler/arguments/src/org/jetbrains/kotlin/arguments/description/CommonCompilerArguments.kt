@@ -649,7 +649,8 @@ Use the 'warning' level to issue warnings instead of errors.""".asReleaseDepende
 
 
     compilerArgument {
-        name = "Xreturn-value-checker"
+        name = "return-value-checker"
+        deprecatedName = "Xreturn-value-checker"
         val oldMessage =
             "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion."
         description = ReleaseDependent(
@@ -668,6 +669,7 @@ Use the 'warning' level to issue warnings instead of errors.""".asReleaseDepende
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
+            stabilizedVersion = KotlinReleaseVersion.v2_5_0
         )
     }
 

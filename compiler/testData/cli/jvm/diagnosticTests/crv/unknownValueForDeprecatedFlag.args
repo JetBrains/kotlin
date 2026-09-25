@@ -1,4 +1,4 @@
 $TESTDATA_DIR$/checker.kt
 -d
 $TEMP_DIR$
--return-value-checker=check
+-Xreturn-value-checker=chek

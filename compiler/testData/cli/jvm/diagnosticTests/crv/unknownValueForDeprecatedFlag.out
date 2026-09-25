@@ -1,0 +1,3 @@
+warning: argument -Xreturn-value-checker is deprecated. Please use -return-value-checker instead
+error: unknown value for parameter -return-value-checker: 'chek'. Value should be one of {disable, check, full}
+COMPILATION_ERROR
