@@ -1425,6 +1425,16 @@ class Collections {
         }
 
         @Sample
+        fun first() {
+            val list = listOf(1, 2, 3)
+            assertPrints(list.first(), "1")
+            assertPrints(list.first { it > 1 }, "2")
+            assertFailsWith<NoSuchElementException> { list.first { it > 3 } }
+
+            assertFailsWith<NoSuchElementException> { emptyList<Int>().first() }
+        }
+
+        @Sample
         fun getOrElse() {
             val list = listOf(1, 2, 3)
             assertPrints(list.getOrElse(0) { 42 }, "1")
