@@ -343,10 +343,8 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
 
 #include <dlfcn.h>
 
-extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize, ptrdiff_t &resultOffset) {
+bool AddressToSymbolWithDlInfo(const void* address, const Dl_info& info, char* resultBuffer, size_t resultBufferSize, ptrdiff_t& resultOffset) {
     if (address == nullptr) return false;
-    Dl_info info;
-    if (dladdr(address, &info) == 0) return false;
     const char *result = nullptr;
     char symbuf[20];
 
@@ -370,6 +368,13 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
         resultBuffer[resultBufferSize - 1] = '\0';
         return true;
     }
+}
+
+extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize, ptrdiff_t &resultOffset) {
+    if (address == nullptr) return false;
+    Dl_info info;
+    if (dladdr(address, &info) == 0) return false;
+    return AddressToSymbolWithDlInfo(address, info, resultBuffer, resultBufferSize, resultOffset);
 }
 
 #else
