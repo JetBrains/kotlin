@@ -7,9 +7,22 @@ package org.jetbrains.kotlin.code.review
 
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class CodeRuleRepositoryTests {
+    private fun projectOf(vararg files: Pair<String, String>): Project {
+        val pathToText = files.associate { [path, text] -> ProjectFilePath(path) to text }
+        return projectOf(pathToText)
+    }
+
+    private fun projectOf(files: Map<ProjectFilePath, String>): Project = object : Project {
+        override suspend fun readLines(path: ProjectFilePath): List<String>? =
+            files[path]?.lines()
+
+        override suspend fun fileExists(path: ProjectFilePath): Boolean = path in files
+    }
 
     @Test
     fun `smoke test`() = runBlocking {
@@ -28,7 +41,7 @@ class CodeRuleRepositoryTests {
         val todoRule = rule(
             name = "TODOs",
             text = "If a TODO is added to the code, it should be accompanied by a YouTrack issue number.",
-            patterns = listOf(),
+            patterns = listOf("*"),
             source = "code-rules.md"
         )
 
@@ -52,7 +65,7 @@ class CodeRuleRepositoryTests {
         val nativeSpecificRule = rule(
             name = "Native-specific code location",
             text = "Use native/ and kotlin-native/ only for Kotlin/Native-specific files.",
-            patterns = listOf(),
+            patterns = listOf("*"),
             source = "native/code-rules.md"
         )
 
@@ -69,6 +82,8 @@ class CodeRuleRepositoryTests {
                 """
                     # ${todoRule.name}
                     
+                    Applies to: `${todoRule.patterns.patterns.single()}`
+                    
                     ${todoRule.text}
                 """.trimIndent()
             )
@@ -78,13 +93,13 @@ class CodeRuleRepositoryTests {
                 """
                     |# ${irNodeRule.name}
                     |
-                    |Pattern: ${irNodeRule.patterns.patterns.single()}
+                    |Applies to: `${irNodeRule.patterns.patterns.single()}`
                     |
                     |${irNodeRule.text}
                     |
                     |# ${irTestRule.name}
                     |
-                    |Pattern:${irTestRule.patterns.patterns.single()}
+                    |Applies to:`${irTestRule.patterns.patterns.single()}`
                     |
                     |
                     |${irTestRule.text}
@@ -95,6 +110,8 @@ class CodeRuleRepositoryTests {
                 nativeSpecificRule.source,
                 """
                     # ${nativeSpecificRule.name}
+                    
+                    Applies to: `${nativeSpecificRule.patterns.patterns.single()}`
                     
                     ${nativeSpecificRule.text}
                 """.trimIndent()
@@ -109,9 +126,11 @@ class CodeRuleRepositoryTests {
                     
                     
                     # ${kotlinNativeRule.name}
-                    Pattern: ${kotlinNativeRule.patterns.patterns.first()}
-                    
-                    Pattern: ${kotlinNativeRule.patterns.patterns.last()}
+                    Applies to:
+                    ```
+                    ${kotlinNativeRule.patterns.patterns.first()}
+                    ${kotlinNativeRule.patterns.patterns.last()}
+                    ```
                     
                     ${kotlinNativeRule.text}
                 """.trimIndent()
@@ -123,14 +142,7 @@ class CodeRuleRepositoryTests {
             )
         }
 
-        val project = object : Project {
-            override suspend fun readLines(path: ProjectFilePath): List<String>? =
-                files[path]?.lines()
-
-            override suspend fun fileExists(path: ProjectFilePath): Boolean = path in files
-        }
-
-        val ruleRepo = CodeRuleRepository(project)
+        val ruleRepo = CodeRuleRepository(projectOf(files))
 
         assertEquals(
             setOf(irNodeRule, todoRule),
@@ -155,6 +167,148 @@ class CodeRuleRepositoryTests {
         assertEquals(
             setOf(irTestRule, todoRule),
             ruleRepo.getRules(ProjectFilePath("js/js.ir/test/baz.kt"))
+        )
+    }
+
+    private suspend fun CodeRuleRepository.getRuleNames(path: String): Set<String> =
+        getRules(ProjectFilePath(path)).mapTo(mutableSetOf()) { it.name }
+
+    @Test
+    fun `include doesn't include files in enclosing directories`() = runBlocking {
+        val ruleRepo = CodeRuleRepository(
+            projectOf(
+                "lib/code-rules.md" to """
+                    # Lib rule
+                    
+                    Applies to: `*`
+                """.trimIndent(),
+                "lib/sub/code-rules.md" to """
+                    # Lib sub rule
+                    
+                    Applies to: `*`
+                """.trimIndent(),
+                "lib/shared.md" to """
+                    # Lib shared rule
+                    
+                    Applies to: `*`
+                """.trimIndent(),
+                "lib/sub/shared.md" to """
+                    # Lib sub shared rule
+                    
+                    Applies to: `*`
+                """.trimIndent(),
+                "app/code-rules.md" to """
+                    @/lib/sub/code-rules.md
+                    @/lib/sub/shared.md
+                """.trimIndent(),
+            )
+        )
+
+        assertEquals(setOf("Lib rule", "Lib sub rule"), ruleRepo.getRuleNames("lib/sub/foo.kt"))
+        assertEquals(setOf("Lib sub rule", "Lib sub shared rule"), ruleRepo.getRuleNames("app/foo.kt"))
+    }
+
+    @Test
+    fun `patterns are relative to the rule file directory`() = runBlocking {
+        val ruleRepo = CodeRuleRepository(
+            projectOf(
+                "code-rules.md" to """
+                    # Root rule
+
+                    Applies to: `/app/src`
+                """.trimIndent(),
+                "app/code-rules.md" to """
+                    # App rule
+
+                    Applies to: `src/main`
+                """.trimIndent(),
+            )
+        )
+
+        assertEquals(setOf("Root rule", "App rule"), ruleRepo.getRuleNames("app/src/main/foo.kt"))
+        assertEquals(setOf("Root rule"), ruleRepo.getRuleNames("app/src/foo.kt"))
+        assertEquals(emptySet(), ruleRepo.getRuleNames("app/sub/app/src/main/foo.kt"))
+    }
+
+    @Test
+    fun `included rule patterns are relative to the including file directory`() = runBlocking {
+        val ruleRepo = CodeRuleRepository(
+            projectOf(
+                "lib/code-rules.md" to """
+                    # Lib rule
+
+                    Applies to: `src`
+                """.trimIndent(),
+                "app/code-rules.md" to "@/lib/code-rules.md",
+                "src/app/code-rules.md" to "@/lib/code-rules.md",
+            )
+        )
+
+        assertEquals(setOf("Lib rule"), ruleRepo.getRuleNames("lib/src/foo.kt"))
+        assertEquals(emptySet(), ruleRepo.getRuleNames("lib/test/foo.kt"))
+
+        assertEquals(setOf("Lib rule"), ruleRepo.getRuleNames("app/src/foo.kt"))
+        assertEquals(emptySet(), ruleRepo.getRuleNames("app/test/foo.kt"))
+
+        // Enclosing directories of the including file don't matter:
+        assertEquals(emptySet(), ruleRepo.getRuleNames("src/app/foo.kt"))
+        assertEquals(setOf("Lib rule"), ruleRepo.getRuleNames("src/app/src/foo.kt"))
+    }
+
+    @Test
+    fun `included rule with anchored pattern is rejected`() = runBlocking {
+        val ruleRepo = CodeRuleRepository(
+            projectOf(
+                "lib/code-rules.md" to """
+                    # Lib rule
+
+                    Applies to:
+                    ```
+                    *.kt
+                    src/main
+                    ```
+                """.trimIndent(),
+                "app/code-rules.md" to "@/lib/code-rules.md",
+            )
+        )
+
+        assertEquals(setOf("Lib rule"), ruleRepo.getRuleNames("lib/src/main/foo.kt"))
+
+        val exception = assertFailsWith<IllegalStateException> { ruleRepo.getRuleNames("app/src/main/foo.kt") }
+        assertEquals(
+            """
+                Rule "Lib rule" in lib/code-rules.md applies to files in app/
+                because app/code-rules.md includes it (directly or transitively).
+                Rules included from another directory can have only unanchored patterns:
+                without `/` except a trailing one, or starting with `**/`. But the rule has:
+                src/main
+            """.trimIndent(),
+            exception.message
+        )
+    }
+
+    @Test
+    fun `rule included from the same directory can have anchored patterns`() = runBlocking {
+        val ruleRepo = CodeRuleRepository(
+            projectOf(
+                "lib/shared.md" to """
+                    # Shared rule
+
+                    Applies to: `src/main`
+                """.trimIndent(),
+                "lib/code-rules.md" to "@shared.md",
+                "app/code-rules.md" to "@/lib/code-rules.md",
+            )
+        )
+
+        assertEquals(setOf("Shared rule"), ruleRepo.getRuleNames("lib/src/main/foo.kt"))
+        assertEquals(emptySet(), ruleRepo.getRuleNames("lib/sub/src/main/foo.kt"))
+
+        // But not if included transitively from another directory:
+        val exception = assertFailsWith<IllegalStateException> { ruleRepo.getRuleNames("app/src/main/foo.kt") }
+        assertContains(
+            exception.message.orEmpty(),
+            """Rule "Shared rule" in lib/shared.md applies to files in app/"""
         )
     }
 }

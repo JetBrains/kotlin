@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.code.review
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -23,8 +24,9 @@ class CodeRulePatternsTests {
     }
 
     @Test
-    fun `matches when no patterns`() {
-        assertMatches("sub/dir/file.kt")
+    fun `star matches any file`() {
+        assertMatches("file.kt", "*")
+        assertMatches("sub/dir/file.kt", "*")
     }
 
     @Test
@@ -59,5 +61,20 @@ class CodeRulePatternsTests {
         assertMatches("compiler/ir/backend.jvm/src/foo.kt", "compiler/**/src/**/*.kt")
         assertMatches("compiler/ir/backend.jvm/src/pkg/foo.kt", "compiler/**/src/**/*.kt")
         assertMatches("compiler/ir/backend.jvm/src/pkg/sub/foo.kt", "compiler/**/src/**/*.kt")
+    }
+
+    @Test
+    fun `leading double wildcard matches at any depth`() {
+        assertMatches("src/foo.kt", "**/src/*.kt")
+        assertMatches("sub/dir/src/foo.kt", "**/src/*.kt")
+        assertDoesNotMatch("sub/dir/src/pkg/foo.kt", "**/src/*.kt")
+    }
+
+    @Test
+    fun `anchored patterns`() {
+        val unanchoredPatterns = listOf("src", "*.kt", "test/", "!test", "!test/", "**/src/**/*.kt", "!**/a/b", "**")
+        val anchoredPatterns = listOf("/src", "src/main", "src/**", "*/src", "!/test", "!a/b", "a/b/")
+
+        assertEquals(anchoredPatterns, CodeRulePatterns(unanchoredPatterns + anchoredPatterns).anchoredPatterns)
     }
 }
