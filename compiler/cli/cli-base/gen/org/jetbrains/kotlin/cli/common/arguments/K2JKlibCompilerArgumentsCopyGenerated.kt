@@ -17,6 +17,7 @@ fun copyK2JKlibCompilerArguments(from: K2JKlibCompilerArguments, to: K2JKlibComp
     to.friendModules = from.friendModules
     to.friendPaths = from.friendPaths?.copyOf()
     to.inheritMultifileParts = from.inheritMultifileParts
+    to.irInlinerBeforeKlibSerialization = from.irInlinerBeforeKlibSerialization
     to.jspecifyAnnotations = from.jspecifyAnnotations
     to.jsr305 = from.jsr305?.copyOf()
     to.jvmDefault = from.jvmDefault

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -33,6 +35,15 @@ annotation class InternalIrInlineDeserializerAPI
 class NonLinkingIrInlineFunctionDeserializer(
     private val irBuiltIns: IrBuiltIns,
     private val signatureComputer: PublicIdSignatureComputer,
+    /**
+     * Resolves a public [IdSignature] referenced from a deserialized inline function body to a symbol
+     * of the compilation that is running, or returns `null` to fall back to the default behavior.
+     *
+     * By default, such references are left unbound (see [detachedSymbolTable]), on the assumption that
+     * the IR is going to be serialized into a KLIB and linked by the consumer of that KLIB. Backends
+     * that consume the inlined IR directly can pass a resolver here to get fully linked bodies instead.
+     */
+    private val symbolResolver: ((IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol?)? = null,
 ) {
     private val irInterner = IrInterningService()
 
@@ -76,6 +87,7 @@ class NonLinkingIrInlineFunctionDeserializer(
                     anyNType = irBuiltIns.anyNType,
                     unitType = irBuiltIns.unitType,
                     nothingType = irBuiltIns.nothingType,
+                    symbolResolver = symbolResolver,
                 )
             }
         } ?: return null
@@ -98,6 +110,7 @@ class NonLinkingIrInlineFunctionDeserializer(
         anyNType: IrType,
         unitType: IrType,
         nothingType: IrType,
+        symbolResolver: ((IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol?)? = null,
     ) {
         private data class DeserializationInfo(val index: Int, val deserializer: FileDeserializer)
 
@@ -117,7 +130,8 @@ class NonLinkingIrInlineFunctionDeserializer(
                     irFactory = irFactory,
                     anyNType = anyNType,
                     unitType = unitType,
-                    nothingType = nothingType
+                    nothingType = nothingType,
+                    symbolResolver = symbolResolver,
                 )
             }
 
@@ -167,6 +181,7 @@ class NonLinkingIrInlineFunctionDeserializer(
         anyNType: IrType,
         unitType: IrType,
         nothingType: IrType,
+        symbolResolver: ((IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol?)?,
     ) {
         private val dummyFileSymbol = IrFileImpl(
             fileEntry = object : IrFileEntry {
@@ -191,12 +206,13 @@ class NonLinkingIrInlineFunctionDeserializer(
             enqueueLocalTopLevelDeclaration = {},
             irInterner,
             deserializePublicSymbolWithOwnerInUnknownFile = { signature, symbolKind ->
-                referenceDeserializedSymbol(
-                    detachedSymbolTable,
-                    fileSymbol = null,
-                    symbolKind,
-                    signature
-                )
+                symbolResolver?.invoke(signature, symbolKind)
+                    ?: referenceDeserializedSymbol(
+                        detachedSymbolTable,
+                        fileSymbol = null,
+                        symbolKind,
+                        signature
+                    )
             }
         )
 
