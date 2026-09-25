@@ -57,27 +57,27 @@ digraph safeCallAndEqualityToBool_kt {
                     21 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     22 [label="Exit when branch condition"];
                 }
+                23 [label="Enter when branch result"];
                 subgraph cluster_8 {
                     color=blue
-                    23 [label="Enter when branch condition else"];
-                    24 [label="Exit when branch condition"];
+                    24 [label="Enter block"];
+                    25 [label="Access variable R|<local>/s|"];
+                    26 [label="Smart cast: R|<local>/s|"];
+                    27 [label="Access variable R|kotlin/String.length|"];
+                    28 [label="Exit block"];
                 }
-                25 [label="Enter when branch result"];
+                29 [label="Exit when branch result"];
                 subgraph cluster_9 {
                     color=blue
-                    26 [label="Enter block"];
-                    27 [label="Access variable R|<local>/s|"];
-                    28 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
-                    29 [label="Exit block"];
+                    30 [label="Enter when branch condition else"];
+                    31 [label="Exit when branch condition"];
                 }
-                30 [label="Exit when branch result"];
-                31 [label="Enter when branch result"];
+                32 [label="Enter when branch result"];
                 subgraph cluster_10 {
                     color=blue
-                    32 [label="Enter block"];
-                    33 [label="Access variable R|<local>/s|"];
-                    34 [label="Smart cast: R|<local>/s|"];
-                    35 [label="Access variable R|kotlin/String.length|"];
+                    33 [label="Enter block"];
+                    34 [label="Access variable R|<local>/s|"];
+                    35 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     36 [label="Exit block"];
                 }
                 37 [label="Exit when branch result"];
@@ -100,15 +100,16 @@ digraph safeCallAndEqualityToBool_kt {
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    22 -> {23 31};
+    22 -> {23 30};
     23 -> {24};
     24 -> {25};
     25 -> {26};
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {30};
-    30 -> {38};
+    29 -> {38};
+    29 -> {30} [color=blue];
+    30 -> {31};
     31 -> {32};
     32 -> {33};
     33 -> {34};
@@ -145,27 +146,27 @@ digraph safeCallAndEqualityToBool_kt {
                     53 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     54 [label="Exit when branch condition"];
                 }
+                55 [label="Enter when branch result"];
                 subgraph cluster_16 {
                     color=blue
-                    55 [label="Enter when branch condition else"];
-                    56 [label="Exit when branch condition"];
+                    56 [label="Enter block"];
+                    57 [label="Access variable R|<local>/s|"];
+                    58 [label="Smart cast: R|<local>/s|"];
+                    59 [label="Access variable R|kotlin/String.length|"];
+                    60 [label="Exit block"];
                 }
-                57 [label="Enter when branch result"];
+                61 [label="Exit when branch result"];
                 subgraph cluster_17 {
                     color=blue
-                    58 [label="Enter block"];
-                    59 [label="Access variable R|<local>/s|"];
-                    60 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
-                    61 [label="Exit block"];
+                    62 [label="Enter when branch condition else"];
+                    63 [label="Exit when branch condition"];
                 }
-                62 [label="Exit when branch result"];
-                63 [label="Enter when branch result"];
+                64 [label="Enter when branch result"];
                 subgraph cluster_18 {
                     color=blue
-                    64 [label="Enter block"];
-                    65 [label="Access variable R|<local>/s|"];
-                    66 [label="Smart cast: R|<local>/s|"];
-                    67 [label="Access variable R|kotlin/String.length|"];
+                    65 [label="Enter block"];
+                    66 [label="Access variable R|<local>/s|"];
+                    67 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     68 [label="Exit block"];
                 }
                 69 [label="Exit when branch result"];
@@ -188,15 +189,16 @@ digraph safeCallAndEqualityToBool_kt {
     51 -> {52};
     52 -> {53};
     53 -> {54};
-    54 -> {55 63};
+    54 -> {55 62};
     55 -> {56};
     56 -> {57};
     57 -> {58};
     58 -> {59};
     59 -> {60};
     60 -> {61};
-    61 -> {62};
-    62 -> {70};
+    61 -> {70};
+    61 -> {62} [color=blue];
+    62 -> {63};
     63 -> {64};
     64 -> {65};
     65 -> {66};
@@ -233,27 +235,27 @@ digraph safeCallAndEqualityToBool_kt {
                     85 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     86 [label="Exit when branch condition"];
                 }
+                87 [label="Enter when branch result"];
                 subgraph cluster_24 {
                     color=blue
-                    87 [label="Enter when branch condition else"];
-                    88 [label="Exit when branch condition"];
+                    88 [label="Enter block"];
+                    89 [label="Access variable R|<local>/s|"];
+                    90 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
+                    91 [label="Exit block"];
                 }
-                89 [label="Enter when branch result"];
+                92 [label="Exit when branch result"];
                 subgraph cluster_25 {
                     color=blue
-                    90 [label="Enter block"];
-                    91 [label="Access variable R|<local>/s|"];
-                    92 [label="Smart cast: R|<local>/s|"];
-                    93 [label="Access variable R|kotlin/String.length|"];
-                    94 [label="Exit block"];
+                    93 [label="Enter when branch condition else"];
+                    94 [label="Exit when branch condition"];
                 }
-                95 [label="Exit when branch result"];
-                96 [label="Enter when branch result"];
+                95 [label="Enter when branch result"];
                 subgraph cluster_26 {
                     color=blue
-                    97 [label="Enter block"];
-                    98 [label="Access variable R|<local>/s|"];
-                    99 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
+                    96 [label="Enter block"];
+                    97 [label="Access variable R|<local>/s|"];
+                    98 [label="Smart cast: R|<local>/s|"];
+                    99 [label="Access variable R|kotlin/String.length|"];
                     100 [label="Exit block"];
                 }
                 101 [label="Exit when branch result"];
@@ -276,16 +278,17 @@ digraph safeCallAndEqualityToBool_kt {
     83 -> {84};
     84 -> {85};
     85 -> {86};
-    86 -> {87 96};
+    86 -> {87 93};
     87 -> {88};
     88 -> {89};
     89 -> {90};
     90 -> {91};
     91 -> {92};
-    92 -> {93};
+    92 -> {102};
+    92 -> {93} [color=blue];
     93 -> {94};
     94 -> {95};
-    95 -> {102};
+    95 -> {96};
     96 -> {97};
     97 -> {98};
     98 -> {99};
@@ -321,27 +324,27 @@ digraph safeCallAndEqualityToBool_kt {
                     117 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     118 [label="Exit when branch condition"];
                 }
+                119 [label="Enter when branch result"];
                 subgraph cluster_32 {
                     color=blue
-                    119 [label="Enter when branch condition else"];
-                    120 [label="Exit when branch condition"];
+                    120 [label="Enter block"];
+                    121 [label="Access variable R|<local>/s|"];
+                    122 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
+                    123 [label="Exit block"];
                 }
-                121 [label="Enter when branch result"];
+                124 [label="Exit when branch result"];
                 subgraph cluster_33 {
                     color=blue
-                    122 [label="Enter block"];
-                    123 [label="Access variable R|<local>/s|"];
-                    124 [label="Smart cast: R|<local>/s|"];
-                    125 [label="Access variable R|kotlin/String.length|"];
-                    126 [label="Exit block"];
+                    125 [label="Enter when branch condition else"];
+                    126 [label="Exit when branch condition"];
                 }
-                127 [label="Exit when branch result"];
-                128 [label="Enter when branch result"];
+                127 [label="Enter when branch result"];
                 subgraph cluster_34 {
                     color=blue
-                    129 [label="Enter block"];
-                    130 [label="Access variable R|<local>/s|"];
-                    131 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
+                    128 [label="Enter block"];
+                    129 [label="Access variable R|<local>/s|"];
+                    130 [label="Smart cast: R|<local>/s|"];
+                    131 [label="Access variable R|kotlin/String.length|"];
                     132 [label="Exit block"];
                 }
                 133 [label="Exit when branch result"];
@@ -364,16 +367,17 @@ digraph safeCallAndEqualityToBool_kt {
     115 -> {116};
     116 -> {117};
     117 -> {118};
-    118 -> {119 128};
+    118 -> {119 125};
     119 -> {120};
     120 -> {121};
     121 -> {122};
     122 -> {123};
     123 -> {124};
-    124 -> {125};
+    124 -> {134};
+    124 -> {125} [color=blue];
     125 -> {126};
     126 -> {127};
-    127 -> {134};
+    127 -> {128};
     128 -> {129};
     129 -> {130};
     130 -> {131};

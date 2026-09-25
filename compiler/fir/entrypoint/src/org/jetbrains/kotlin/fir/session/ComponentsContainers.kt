@@ -242,6 +242,7 @@ fun FirSession.registerResolveComponents(
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerCliCompilerOnlyResolveComponents() {
     register(FirNameConflictsTracker::class, FirNameConflictsTrackerImpl())
+    register(FirAssignmentKeyFactory::class, FirAssignmentKeyFactoryImpl())
 
     // The Analysis API uses `LLCheckersFactory`.
     register(CheckersComponent::class, CheckersComponent())
