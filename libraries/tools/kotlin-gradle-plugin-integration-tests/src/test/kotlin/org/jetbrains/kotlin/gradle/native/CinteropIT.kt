@@ -124,6 +124,33 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-89558: cinterop checks content of embedded static libraries for up-to-date checks")
+    @GradleTest
+    fun cinteropStaticLibrariesUTDChecks(gradleVersion: GradleVersion) {
+        nativeProject("KT-89558-cinterop-static-libraries-UTD-checks", gradleVersion = gradleVersion) {
+            build(":cinteropCinteropNative") {
+                assertTasksExecuted(":cinteropCinteropNative")
+            }
+            build(":cinteropCinteropNative") {
+                assertConfigurationCacheReused()
+                assertTasksUpToDate(":cinteropCinteropNative")
+            }
+
+            // staticLibraries + libraryPaths from the .def file, and a comma-separated -staticLibrary from extraOpts
+            for (library in listOf("defLibs/libFromDefFile.a", "libs/libA.a", "libs/libB.a")) {
+                projectPath.resolve(library).toFile().appendText("v2\n")
+                build(":cinteropCinteropNative") {
+                    assertConfigurationCacheReused()
+                    assertTasksExecuted(":cinteropCinteropNative")
+                }
+            }
+
+            build(":cinteropCinteropNative") {
+                assertTasksUpToDate(":cinteropCinteropNative")
+            }
+        }
+    }
+
     @DisplayName("KT-62800: validation fails if neither definitionFile nor packageName was specified")
     @GradleTest
     fun cinteropWithoutDefinitionFileAndPackageName(gradleVersion: GradleVersion) {
