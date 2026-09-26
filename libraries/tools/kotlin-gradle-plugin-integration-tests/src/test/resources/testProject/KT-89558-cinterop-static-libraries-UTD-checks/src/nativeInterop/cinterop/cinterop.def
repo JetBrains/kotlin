@@ -1,0 +1,4 @@
+headers = dummy.h
+compilerOpts = -Iinclude
+staticLibraries = libFromDefFile.a
+libraryPaths = defLibs
