@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.ir.backend.js.originalCallableReferenceClass
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.functionReferenceReflectedName
@@ -371,7 +371,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     ): IrSimpleFunction {
         if (!context.compileSuspendAsJsGenerator || !lambdaDeclaration.isSuspend) return lambdaDeclaration
 
-        val innerLambda = context.irFactory.buildFun {
+        val innerLambda = context.irFactory.buildSimpleFunction {
             startOffset = lambdaDeclaration.startOffset
             endOffset = lambdaDeclaration.endOffset
             returnType = lambdaDeclaration.returnType
@@ -690,7 +690,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         superInvokeFun: IrSimpleFunction
     ): IrSimpleFunction {
         val anyNType = context.irBuiltIns.anyNType
-        val lambdaDeclaration = context.irFactory.buildFun {
+        val lambdaDeclaration = context.irFactory.buildSimpleFunction {
             startOffset = invokeFun.startOffset
             endOffset = invokeFun.endOffset
             // Since box/unbox is done on declaration side in case of suspend function use the specified type
@@ -728,7 +728,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val constructor = lambdaInfo.lambdaClass.constructors.single()
 
         val factoryDeclaration = context.irFactory.stageController.restrictTo(lambdaInfo.lambdaClass) {
-            context.irFactory.buildFun {
+            context.irFactory.buildSimpleFunction {
                 startOffset = lambdaInfo.lambdaClass.startOffset
                 endOffset = lambdaInfo.lambdaClass.endOffset
                 visibility = lambdaInfo.lambdaClass.visibility

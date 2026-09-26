@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isInstantiableEnum
 import org.jetbrains.kotlin.ir.backend.js.utils.parentEnumClassOrNull
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isArray
@@ -372,7 +372,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
         irClass: IrClass, enumEntry: IrEnumEntry,
     ): IrSimpleFunction =
         enumEntry::getInstanceFun.getOrSetIfNull {
-            context.irFactory.buildFun {
+            context.irFactory.buildSimpleFunction {
                 name = Name.identifier(createEntryAccessorName(enumEntry))
                 returnType = enumEntry.getType(irClass)
                 origin = JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION

@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PROPERTY_REFERENCE_FOR_DELEGATE
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl

@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -279,7 +279,7 @@ class ComposerParamTransformer(
             type = expression.type,
             origin = if (isAdapter) IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE else null,
             statements = buildList {
-                val adapterFn = context.irFactory.buildFun {
+                val adapterFn = context.irFactory.buildSimpleFunction {
                     origin = if (isAdapter) IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE else origin
                     name = transformedFn.name
                     visibility = DescriptorVisibilities.LOCAL

@@ -47,10 +47,20 @@ class LeafBuilder<Field, Element, Implementation>(
         where Field : AbstractField<Field>,
               Element : AbstractElement<Element, Field, Implementation>,
               Implementation : AbstractImplementation<Implementation, Element, Field> {
-    override val typeName: String
-        get() = (implementation.name ?: implementation.element.typeName) + "Builder"
+    /**
+     * The name that this builder and its `buildX` function are derived from, when the implementation's own name is not what the
+     * generated API should be called after. `IrFunctionImpl`, the single implementation of `IrSimpleFunction`, is one such case:
+     * its builder should be `IrSimpleFunctionBuilder`, not `IrFunctionImplBuilder`.
+     */
+    var nameOverride: String? = null
 
-    override val allFields: List<Field> by lazy { implementation.fieldsInConstructor }
+    override val typeName: String
+        get() = builderBaseName + "Builder"
+
+    val builderBaseName: String
+        get() = nameOverride ?: implementation.name ?: implementation.element.typeName
+
+    override val allFields: List<Field> by lazy { implementation.fieldsForBuilder }
 
     override val uselessFields: List<Field> by lazy {
         val fieldsFromParents = parents.flatMap { it.allFields }.map { it.name }.toSet()

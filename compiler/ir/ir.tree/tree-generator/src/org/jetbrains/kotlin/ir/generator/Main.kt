@@ -42,8 +42,12 @@ private fun TreeGenerator.printIrTree(model: Model<Element>, generationPath: Fil
         .configureInterfacesAndAbstractClasses()
     model.addPureAbstractElement(elementBaseType)
 
+    val builderConfigurator = BuilderConfigurator(model)
+    builderConfigurator.configureBuilders()
+
     printElements(model, ::ElementPrinter)
     printElementImplementations(implementations, ::ImplementationPrinter)
+    printElementBuilders(implementations.mapNotNull { it.builder } + builderConfigurator.intermediateBuilders, ::BuilderPrinter)
     printVisitors(
         model,
         listOf(

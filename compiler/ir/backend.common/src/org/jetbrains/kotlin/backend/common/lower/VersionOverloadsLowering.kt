@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -116,16 +116,20 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
         original: IrFunction,
         version: MavenComparableVersion?,
         includedParams: BooleanArray
-    ): IrFunction = with(irFactory) {
-        val builder = when (original) {
-            is IrConstructor -> ::buildConstructor
-            else -> ::buildFun
-        }
-        return builder {
-            updateFrom(original)
-            name = original.name
-            origin = IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
-            if (original is IrConstructor) isPrimary = false
+    ): IrFunction {
+        // A `when` rather than the function reference this used to be: `buildConstructor` takes an
+        // `IrConstructorBuilder` and `buildSimpleFunction` an `IrSimpleFunctionBuilder`, so the two entry points no
+        // longer share a builder type.
+        return when (original) {
+            is IrConstructor -> irFactory.buildConstructor {
+                updateFrom(original)
+                origin = IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
+                isPrimary = false
+            }
+            is IrSimpleFunction -> irFactory.buildSimpleFunction {
+                updateFrom(original)
+                origin = IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
+            }
         }.apply {
             with(irFactory) { declarationCreated() }
             parent = original.parent

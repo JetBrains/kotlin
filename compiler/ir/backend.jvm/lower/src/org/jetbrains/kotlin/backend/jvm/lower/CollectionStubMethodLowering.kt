@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.overridesWithoutStubs
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -157,7 +157,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         stubReturnType: IrType,
         stubOrigin: IrDeclarationOrigin
     ): IrSimpleFunction {
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             name = Name.identifier("remove")
             returnType = stubReturnType
             visibility = removeAtStub.visibility
@@ -179,7 +179,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         irClass: IrClass,
         substitutionMap: Map<IrTypeParameterSymbol, IrType>
     ): IrSimpleFunction {
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             name = function.name
             returnType = liftStubMethodReturnType(function).substitute(substitutionMap)
             visibility = function.visibility
@@ -290,7 +290,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             name = parameter.name
             type = substituteType(parameter.type)
             varargElementType = parameter.varargElementType?.let { substituteType(it) }
-            isCrossInline = parameter.isCrossinline
+            isCrossinline = parameter.isCrossinline
             isNoinline = parameter.isNoinline
         }
     }

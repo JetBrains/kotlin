@@ -3,8 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+// The deprecated `buildX {}` entry points below are built on the deprecated `IrFactory.create*` calls, so the file opts in
+// wholesale rather than annotating each use.
+//
+// Deprecated here: the `buildX {}` entry points that the generated builders in `org.jetbrains.kotlin.ir.declarations.builder`
+// supersede one-for-one. NOT deprecated: the `addX` / `buildReceiverParameter` / `buildTypeParameter(parent) {}` helpers,
+// which also wire a declaration into its container, and the positional `buildVariable(...)`. They keep using the builder
+// classes below, which is why those classes are not annotated either -- an annotated receiver type would warn at every call
+// site of a helper that is not deprecated. They move over in a follow-up, and the file goes away as a whole afterwards.
+@file:OptIn(DeprecatedCompilerApi::class)
+
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -47,6 +59,11 @@ internal fun IrFactory.buildClass(builder: IrClassBuilder): IrClass = with(build
     )
 }
 
+@DeprecatedCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_5_20,
+    message = "Use IrFactory.buildClass {} from org.jetbrains.kotlin.ir.declarations.builder instead (note the word order: that package, not org.jetbrains.kotlin.ir.builders.declarations).",
+    replaceWith = "IrFactory.buildClass {}",
+)
 inline fun IrFactory.buildClass(builder: IrClassBuilder.() -> Unit) =
     IrClassBuilder().run {
         builder()
@@ -71,6 +88,11 @@ internal fun IrFactory.buildField(builder: IrFieldBuilder): IrField = with(build
     }
 }
 
+@DeprecatedCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_5_20,
+    message = "Use IrFactory.buildField {} from org.jetbrains.kotlin.ir.declarations.builder instead (note the word order: that package, not org.jetbrains.kotlin.ir.builders.declarations).",
+    replaceWith = "IrFactory.buildField {}",
+)
 inline fun IrFactory.buildField(builder: IrFieldBuilder.() -> Unit) =
     IrFieldBuilder().run {
         builder()
@@ -118,6 +140,11 @@ internal fun IrFactory.buildProperty(builder: IrPropertyBuilder): IrProperty = w
     )
 }
 
+@DeprecatedCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_5_20,
+    message = "Use IrFactory.buildProperty {} from org.jetbrains.kotlin.ir.declarations.builder instead (note the word order: that package, not org.jetbrains.kotlin.ir.builders.declarations).",
+    replaceWith = "IrFactory.buildProperty {}",
+)
 inline fun IrFactory.buildProperty(builder: IrPropertyBuilder.() -> Unit) =
     IrPropertyBuilder().run {
         builder()
@@ -265,6 +292,11 @@ internal fun IrFactory.buildConstructor(builder: IrFunctionBuilder): IrConstruct
     )
 }
 
+@DeprecatedCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_5_20,
+    message = "Use IrFactory.buildSimpleFunction {} from org.jetbrains.kotlin.ir.declarations.builder instead (note the word order: that package, not org.jetbrains.kotlin.ir.builders.declarations).",
+    replaceWith = "IrFactory.buildSimpleFunction {}",
+)
 inline fun IrFactory.buildFun(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
     IrFunctionBuilder().run {
         builder()
@@ -311,6 +343,11 @@ fun IrClass.addFunction(
         }
     }
 
+@DeprecatedCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_5_20,
+    message = "Use IrFactory.buildConstructor {} from org.jetbrains.kotlin.ir.declarations.builder instead (note the word order: that package, not org.jetbrains.kotlin.ir.builders.declarations).",
+    replaceWith = "IrFactory.buildConstructor {}",
+)
 inline fun IrFactory.buildConstructor(builder: IrFunctionBuilder.() -> Unit): IrConstructor =
     IrFunctionBuilder().run {
         builder()
@@ -337,6 +374,11 @@ inline fun <D> D.buildReceiverParameter(builder: IrValueParameterBuilder.() -> U
         factory.buildValueParameter(this, this@buildReceiverParameter)
     }
 
+@DeprecatedCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_5_20,
+    message = "Use IrFactory.buildValueParameter {} from org.jetbrains.kotlin.ir.declarations.builder instead (note the word order: that package, not org.jetbrains.kotlin.ir.builders.declarations).",
+    replaceWith = "IrFactory.buildValueParameter {}",
+)
 fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =
     with(builder) {
         return createValueParameter(
@@ -426,6 +468,10 @@ fun IrTypeParametersContainer.addTypeParameter(name: String, upperBound: IrType,
         this.superTypes.add(upperBound)
     }
 
+/**
+ * Not deprecated: unlike the builders above this takes its properties positionally and accepts a nullable parent, which the
+ * generated `buildVariable {}` does not offer. It is migrated separately.
+ */
 fun buildVariable(
     parent: IrDeclarationParent?,
     startOffset: Int,

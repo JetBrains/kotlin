@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -324,7 +326,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 }
 
                 if (capturesCrossinline || function.isInline) {
-                    result += context.irFactory.buildFun {
+                    result += context.irFactory.buildSimpleFunction {
                         containerSource = view.containerSource
                         name = Name.identifier(context.defaultMethodSignatureMapper.mapFunctionName(view) + FOR_INLINE_SUFFIX)
                         modality = view.modality
@@ -413,7 +415,7 @@ private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContex
 
 private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContext): IrSimpleFunction {
     require(this.isSuspend)
-    return factory.buildFun {
+    return factory.buildSimpleFunction {
         updateFrom(this@createSuspendFunctionStub)
         name = this@createSuspendFunctionStub.name
         origin = this@createSuspendFunctionStub.origin

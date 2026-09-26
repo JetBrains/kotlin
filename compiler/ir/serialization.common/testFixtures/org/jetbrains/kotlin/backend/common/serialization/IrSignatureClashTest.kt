@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.TestIrBuiltins
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -64,14 +64,14 @@ abstract class IrSignatureClashTest {
     fun `signature clashes are detected correctly`() {
         val file = createIrFile()
 
-        val func1 = IrFactoryImpl.buildFun {
+        val func1 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
             startOffset = 0
             endOffset = 10
         }.apply { parent = file }
 
-        val func2 = IrFactoryImpl.buildFun {
+        val func2 = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
             startOffset = 20
@@ -110,14 +110,14 @@ abstract class IrSignatureClashTest {
             createThisReceiverParameter()
         }
 
-        val memberFunctionWithoutDispatchReceiver = IrFactoryImpl.buildFun {
+        val memberFunctionWithoutDispatchReceiver = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("memberFunction")
             returnType = TestIrBuiltins.unitType
             startOffset = 0
             endOffset = 10
         }.apply { parent = klass }
 
-        val memberFunctionWithDispatchReceiver = IrFactoryImpl.buildFun {
+        val memberFunctionWithDispatchReceiver = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("memberFunction")
             returnType = TestIrBuiltins.unitType
             startOffset = 20
@@ -169,7 +169,7 @@ abstract class IrSignatureClashTest {
             endOffset = 30
         }.apply {
             parent = klass
-            getter = IrFactoryImpl.buildFun {
+            getter = IrFactoryImpl.buildSimpleFunction {
                 name = Name.special("<get-memberProperty>")
                 returnType = TestIrBuiltins.intType
                 startOffset = 20
@@ -182,7 +182,7 @@ abstract class IrSignatureClashTest {
                     type = klass.defaultType
                 }.apply { kind = IrParameterKind.DispatchReceiver }
             }
-            setter = IrFactoryImpl.buildFun {
+            setter = IrFactoryImpl.buildSimpleFunction {
                 name = Name.special("<set-memberProperty>")
                 returnType = TestIrBuiltins.unitType
                 startOffset = 20
@@ -207,7 +207,7 @@ abstract class IrSignatureClashTest {
             endOffset = 30
         }.apply {
             parent = klass
-            getter = IrFactoryImpl.buildFun {
+            getter = IrFactoryImpl.buildSimpleFunction {
                 name = Name.special("<get-memberProperty>")
                 returnType = TestIrBuiltins.intType
                 startOffset = 20
@@ -216,7 +216,7 @@ abstract class IrSignatureClashTest {
                 it.correspondingPropertySymbol = this.symbol
                 it.parent = klass
             }
-            setter = IrFactoryImpl.buildFun {
+            setter = IrFactoryImpl.buildSimpleFunction {
                 name = Name.special("<set-memberProperty>")
                 returnType = TestIrBuiltins.unitType
                 startOffset = 20

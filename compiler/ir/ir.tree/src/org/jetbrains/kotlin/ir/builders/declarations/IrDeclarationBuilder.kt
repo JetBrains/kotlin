@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -14,6 +16,10 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.name.Name
 
+@DeprecatedCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_5_20,
+    message = "Use IrDeclarationBuilder from org.jetbrains.kotlin.ir.declarations.builder instead (note the word order: that package, not org.jetbrains.kotlin.ir.builders.declarations).",
+)
 abstract class IrDeclarationBuilder : IrElementBuilder() {
     var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     var visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC

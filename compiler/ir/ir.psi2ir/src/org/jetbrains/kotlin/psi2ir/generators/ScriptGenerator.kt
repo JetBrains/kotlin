@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.declarations.DelicateIrParameterIndexSetter
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -168,24 +168,13 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                 irScript.providedPropertiesParameters = params
             }
 
-            irScript.constructor = with(IrFunctionBuilder().apply {
+            // The deprecated `IrFunctionBuilder` was only a bag of defaults here, read straight back
+            // out into the `createConstructor` call below it; those defaults are the generated
+            // builder's own.
+            irScript.constructor = irScript.factory.buildConstructor {
                 isPrimary = true
                 returnType = irScript.thisReceiver!!.type as IrSimpleType
-            }) {
-                irScript.factory.createConstructor(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = SpecialNames.INIT,
-                    visibility = visibility,
-                    isInline = isInline,
-                    isExpect = isExpect,
-                    returnType = returnType,
-                    symbol = context.symbolTable.descriptorExtension.referenceConstructor(descriptor.unsubstitutedPrimaryConstructor),
-                    isPrimary = isPrimary,
-                    isExternal = isExternal,
-                    containerSource = containerSource
-                )
+                symbol = context.symbolTable.descriptorExtension.referenceConstructor(descriptor.unsubstitutedPrimaryConstructor)
             }.also { irConstructor ->
                 irConstructor.parameters = buildList {
                     addIfNotNull(irScript.earlierScriptsParameter)

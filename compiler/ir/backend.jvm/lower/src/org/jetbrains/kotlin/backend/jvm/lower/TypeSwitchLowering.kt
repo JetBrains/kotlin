@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -219,7 +219,7 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
             val bootstrapMethod = jdkTypeSwitchHandle
             val bootstrapMethodArguments = typeSwitchData.orderedCheckedTypes.map(::kClassReference)
 
-            val dynamicTypeSwitchFunc = context.irFactory.buildFun {
+            val dynamicTypeSwitchFunc = context.irFactory.buildSimpleFunction {
                 name = Name.identifier("typeSwitch")
                 returnType = context.irBuiltIns.intType
                 origin = JvmLoweredDeclarationOrigin.INVOKEDYNAMIC_CALL_TARGET

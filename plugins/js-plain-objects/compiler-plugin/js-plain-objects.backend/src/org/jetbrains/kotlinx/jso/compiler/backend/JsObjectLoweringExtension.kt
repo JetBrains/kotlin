@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -105,7 +105,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
     }
 
     private fun createFunctionContainingTheLogic(originalFunction: IrSimpleFunction, parent: IrClass): IrSimpleFunction {
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             updateFrom(originalFunction)
             name = originalFunction.makeUniqueName(parent)
             returnType = originalFunction.returnType

@@ -5,10 +5,16 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
 
+@DeprecatedCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_5_20,
+    message = "Use IrClassBuilder from org.jetbrains.kotlin.ir.declarations.builder instead (note the word order: that package, not org.jetbrains.kotlin.ir.builders.declarations). It is normally not referenced directly — obtain it via IrFactory.buildClass {}.",
+)
 class IrClassBuilder : IrDeclarationBuilder() {
     var kind: ClassKind = ClassKind.CLASS
     var modality: Modality = Modality.FINAL

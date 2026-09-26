@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.konan.llvm.StaticData
 import org.jetbrains.kotlin.backend.konan.llvm.constValue
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
 import org.jetbrains.kotlin.ir.irAttribute
@@ -69,7 +69,7 @@ internal fun NativeLoweringContext.getBoxFunction(inlinedClass: IrClass): IrSimp
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
 
-    irFactory.buildFun {
+    irFactory.buildSimpleFunction {
         startOffset = inlinedClass.startOffset
         endOffset = inlinedClass.endOffset
         origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
@@ -93,7 +93,7 @@ internal fun NativeLoweringContext.getUnboxFunction(inlinedClass: IrClass): IrSi
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
 
-    irFactory.buildFun {
+    irFactory.buildSimpleFunction {
         startOffset = inlinedClass.startOffset
         endOffset = inlinedClass.endOffset
         origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
@@ -117,7 +117,7 @@ internal fun NativeLoweringContext.getInlineClassFieldSetter(inlinedClass: IrCla
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
 
-    irFactory.buildFun {
+    irFactory.buildSimpleFunction {
         startOffset = inlinedClass.startOffset
         endOffset = inlinedClass.endOffset
         origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION

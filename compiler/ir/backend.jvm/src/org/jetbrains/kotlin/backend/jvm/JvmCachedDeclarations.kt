@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOT
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
@@ -109,7 +112,7 @@ class JvmCachedDeclarations(
             if (jvmStaticFunction.isExternal) {
                 // We move external functions to the enclosing class and potentially add accessors there.
                 // The JVM backend also adds accessors in the companion object, but these are superfluous.
-                val staticExternal = context.irFactory.buildFun {
+                val staticExternal = context.irFactory.buildSimpleFunction {
                     updateFrom(jvmStaticFunction)
                     name = jvmStaticFunction.name
                 }.apply {
@@ -128,7 +131,7 @@ class JvmCachedDeclarations(
         }
 
     private fun IrClass.makeProxy(target: IrSimpleFunction, isStatic: Boolean) =
-        context.irFactory.buildFun {
+        context.irFactory.buildSimpleFunction {
             setSourceRange(target)
             returnType = target.returnType
             origin = JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
