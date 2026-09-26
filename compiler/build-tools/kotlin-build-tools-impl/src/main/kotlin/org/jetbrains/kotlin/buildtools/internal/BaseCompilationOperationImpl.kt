@@ -112,7 +112,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         reportSeverity: Int,
         requestedCompilationResults: Array<Int>,
         arguments: CompilerArgs,
-    ): IncrementalCompilationOptions?
+    ): CompilationOptions?
 
     private fun toDaemonCompilationOptions(isDebugLoggingEnabled: Boolean, arguments: CompilerArgs): CompilationOptions {
         // TODO: KT-79976 automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
@@ -154,7 +154,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         executionContext: ExecutionContext,
     ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
-        checkSupportedWithDaemon()
         val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
 
         val daemonLogOptions = DaemonLogOptions(
@@ -224,7 +223,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 sessionId,
                 arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
                 daemonCompileOptions,
-                BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
+                createCompilerServicesFacade(loggerAdapter),
                 DaemonCompilationResults(
                     loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
                 ),
@@ -256,8 +255,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
     }
 
-    //TODO: Will be removed with daemon support for JPS
-    protected open fun checkSupportedWithDaemon() {}
+    protected open fun createCompilerServicesFacade(loggerAdapter: KotlinLoggerMessageCollectorAdapter): CompilerServicesFacadeBase =
+        BaseCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER))
 
     protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>) {
         if (this[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
@@ -364,11 +363,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 }
 
-private class BtaCompilerServicesWithResultsFacade(
+private class BaseCompilerServicesWithResultsFacade(
     loggerAdapter: KotlinLoggerMessageCollectorAdapter,
     val lookupTracker: CompilerLookupTracker? = null,
-) :
-    BasicCompilerServicesWithResultsFacadeServer(loggerAdapter) {
+) : BasicCompilerServicesWithResultsFacadeServer(loggerAdapter) {
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         when (category) {
             ReportCategory.COMPILER_LOOKUP.code -> {

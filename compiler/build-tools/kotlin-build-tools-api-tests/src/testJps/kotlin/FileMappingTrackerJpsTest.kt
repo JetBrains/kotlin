@@ -8,22 +8,23 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 
 @DisplayName("The JPS file mapping tracker")
 class FileMappingTrackerJpsTest : BaseJpsTest() {
 
     @DisplayName("Every produced class file is reported together with the sources it was generated from")
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-3")
-    @Test
-    fun outputsAreMappedToSources() {
+    fun outputsAreMappedToSources(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val fixture = "basic-multimodule-project/module-3"
-        jvmProject(inProcess) {
+        jvmProject(strategyConfig) {
             val module = module(fixture)
             val fileMappingTracker = RecordingFileMappingTracker()
             module.compile(compilationConfigAction = { builder ->
