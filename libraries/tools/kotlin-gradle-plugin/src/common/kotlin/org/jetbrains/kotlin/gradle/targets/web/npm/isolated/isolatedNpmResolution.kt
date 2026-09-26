@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.web.npm.isolated
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.web.npm.NpmResolutionMode
 
 /**
  * `true` when the Isolated Projects compatible NPM resolution must be used
  * instead of the legacy root-project based one.
- *
- * This is the only place where the condition is evaluated.
- *
- * @see PropertiesProvider.isolatedNpmResolution
  */
 internal val Project.isIsolatedNpmResolutionEnabled: Boolean
-    get() = PropertiesProvider(this).isolatedNpmResolution.get()
+    get() = PropertiesProvider(this).npmResolutionMode.get() == NpmResolutionMode.ISOLATED_PROJECTS

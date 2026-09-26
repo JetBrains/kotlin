@@ -179,6 +179,7 @@ data class BuildOptions(
         val incrementalJsIr: Boolean? = null,
         val yarn: Boolean? = null,
         val nodeJsToolchainMode: String? = null,
+        val npmResolutionMode: String? = null,
     )
 
     @Suppress("EXPOSED_PARAMETER_TYPE")
@@ -290,6 +291,7 @@ data class BuildOptions(
         jsOptions.incrementalJsIr?.let { arguments.add("-Pkotlin.incremental.js.ir=$it") }
         jsOptions.yarn?.let { arguments.add("-Pkotlin.js.yarn=$it") }
         jsOptions.nodeJsToolchainMode?.let { arguments.add("-Pkotlin.js.nodejs.toolchain=$it") }
+        jsOptions.npmResolutionMode?.let { arguments.add("-Pkotlin.npmResolutionMode=$it") }
 
         wasmOptions?.compilationMode?.let { arguments.add("-Pkotlin.wasm.compilationMode=${it.toArgument()}") }
 
