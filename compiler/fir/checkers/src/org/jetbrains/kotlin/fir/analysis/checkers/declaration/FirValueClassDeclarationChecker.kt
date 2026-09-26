@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
@@ -66,22 +70,73 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        if (!declaration.symbol.isInlineOrValue) {
+        val isWillBecomeValueClass = !declaration.symbol.isInlineOrValue && declaration.symbol.willBecomeKotlinValueClass(context.session)
+        if (!declaration.symbol.isInlineOrValue && !isWillBecomeValueClass) {
             return
         }
         val supportsFullValueClasses = LanguageFeature.FullValueClasses.isEnabled()
-        if (declaration.classKind != ClassKind.CLASS && !(declaration.classKind == ClassKind.OBJECT && supportsFullValueClasses)) {
+        val valueObjectsAllowed = supportsFullValueClasses || isWillBecomeValueClass
+        if (declaration.classKind != ClassKind.CLASS && !(declaration.classKind == ClassKind.OBJECT && valueObjectsAllowed)) {
             return
         }
+        val kind = ValueClassKind(
+            isWillBecomeValueClass = isWillBecomeValueClass,
+            isFullValueClass = declaration.symbol.isFullValueClass || isWillBecomeValueClass,
+            supportsFullValueClasses = supportsFullValueClasses,
+        )
 
-        val valueModifierPrefix = if (supportsFullValueClasses) "@JvmInline value" else "Value"
-        val isFullValueClass = declaration.symbol.isFullValueClass
+        checkPlacement(declaration, kind)
+        checkModality(declaration, kind)
+        checkSupertypes(declaration, kind)
 
-        if (declaration.isInner || declaration.isLocal) {
-            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL)
+        val primaryConstructor = declaration.constructors(context.session).firstOrNull { it.isPrimary }
+        val primaryConstructorParametersByName = primaryConstructor?.valueParameterSymbols.orEmpty().associateBy { it.name }
+        val primaryConstructorPropertiesByName = checkMembers(declaration, kind, primaryConstructorParametersByName)
+        checkInterfaceDelegation(declaration, kind, primaryConstructorParametersByName.values.toSet())
+        checkReservedMembers(declaration, kind)
+
+        if (!checkPrimaryConstructor(declaration, kind, primaryConstructor, primaryConstructorParametersByName)) return
+        checkPrimaryConstructorParameters(
+            declaration, kind, primaryConstructorParametersByName, primaryConstructorPropertiesByName,
+        )
+
+        if (!kind.isFullValueClass && LanguageFeature.CustomEqualsInValueClasses.isEnabled()) {
+            checkCustomEquals(declaration)
         }
+    }
 
-        if (isFullValueClass) {
+    /**
+     * What kind of value class is being checked, and the prefixes its diagnostics refer to it with.
+     */
+    private class ValueClassKind(
+        val isWillBecomeValueClass: Boolean,
+        val isFullValueClass: Boolean,
+        val supportsFullValueClasses: Boolean,
+    ) {
+        val valueModifierPrefix: String
+            get() = if (supportsFullValueClasses) "@JvmInline value" else "Value"
+
+        val finalOrInlineClassPrefix: String
+            get() = when {
+                !supportsFullValueClasses -> "value"
+                isFullValueClass -> "final value"
+                else -> "@JvmInline value"
+            }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkPlacement(declaration: FirRegularClass, kind: ValueClassKind) {
+        if (declaration.isInner || declaration.isLocal) {
+            reportOn(
+                declaration.source, kind.isWillBecomeValueClass,
+                FirErrors.VALUE_CLASS_NOT_TOP_LEVEL, FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL,
+            )
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkModality(declaration: FirRegularClass, kind: ValueClassKind) {
+        if (kind.isFullValueClass) {
             if (declaration.modality == Modality.OPEN) {
                 reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_OPEN)
             }
@@ -89,52 +144,60 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             reporter.reportOn(
                 declaration.source,
                 FirErrors.VALUE_CLASS_NOT_FINAL,
-                valueModifierPrefix,
+                kind.valueModifierPrefix,
             )
         }
+    }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkSupertypes(declaration: FirRegularClass, kind: ValueClassKind) {
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
             val supertypeSymbol = supertypeEntry.toRegularClassSymbol(context.session) ?: continue
             if (supertypeSymbol.isInterface) continue
-            if (!isFullValueClass) {
+            if (!kind.isFullValueClass) {
                 reporter.reportOn(
                     supertypeEntry.source,
                     FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES,
-                    valueModifierPrefix,
+                    kind.valueModifierPrefix,
                 )
-            } else if (!supertypeSymbol.isFullValueClass && !supertypeSymbol.classId.isRecordId()) {
-                reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES)
+            } else if (!supertypeSymbol.isFullValueClass && !supertypeSymbol.classId.isRecordId() &&
+                !(kind.isWillBecomeValueClass && supertypeSymbol.willBecomeKotlinOrJdkValueClass(context.session))
+            ) {
+                reportOn(
+                    supertypeEntry.source, kind.isWillBecomeValueClass,
+                    FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES,
+                    FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES,
+                )
             }
         }
 
         if (declaration.isSubtypeOfCloneable(context.session)) {
-            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE)
+            reportOn(
+                declaration.source, kind.isWillBecomeValueClass,
+                FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE, FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE,
+            )
         }
+    }
 
-        var primaryConstructor: FirConstructorSymbol? = null
-        var primaryConstructorParametersByName = mapOf<Name, FirValueParameterSymbol>()
+    /**
+     * Checks the nested classes and properties, and returns the properties declared by the primary constructor parameters.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkMembers(
+        declaration: FirRegularClass,
+        kind: ValueClassKind,
+        primaryConstructorParametersByName: Map<Name, FirValueParameterSymbol>,
+    ): Map<Name, FirPropertySymbol> {
         val primaryConstructorPropertiesByName = hashMapOf<Name, FirPropertySymbol>()
-        var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
-        val isCustomEqualsSupported = !isFullValueClass && LanguageFeature.CustomEqualsInValueClasses.isEnabled()
-
-        declaration.constructors(context.session).forEach { innerDeclaration ->
-            when {
-                innerDeclaration.isPrimary -> {
-                    primaryConstructor = innerDeclaration
-                    primaryConstructorParametersByName = innerDeclaration.valueParameterSymbols.associateBy { it.name }
-                    primaryConstructorParametersSymbolsSet = primaryConstructorParametersByName.values.toSet()
-                }
-            }
-        }
         declaration.processAllDeclarations(context.session) { innerDeclaration ->
             when (innerDeclaration) {
                 is FirRegularClassSymbol -> {
-                    if (innerDeclaration.isInner && !isFullValueClass) {
+                    if (innerDeclaration.isInner && !kind.isFullValueClass) {
                         reporter.reportOn(
                             innerDeclaration.source,
                             FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS,
-                            valueModifierPrefix,
+                            kind.valueModifierPrefix,
                         )
                     }
                 }
@@ -148,15 +211,18 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     }
 
                     innerDeclaration.delegate != null ->
-                        reporter.reportOn(
-                            innerDeclaration.delegate!!.source,
-                            FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS
+                        reportOn(
+                            innerDeclaration.delegate!!.source, kind.isWillBecomeValueClass,
+                            FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS,
+                            FirErrors.DELEGATED_PROPERTY_INSIDE_WILL_BECOME_VALUE_CLASS,
                         )
 
                     innerDeclaration.hasBackingField &&
                             innerDeclaration.source?.kind !is KtFakeSourceElementKind -> {
-                        reporter.reportOn(
-                            innerDeclaration.source, FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS
+                        reportOn(
+                            innerDeclaration.source, kind.isWillBecomeValueClass,
+                            FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS,
+                            FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS,
                         )
                     }
                 }
@@ -164,24 +230,39 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 else -> {}
             }
         }
-        // Separate handling of delegate fields
+        return primaryConstructorPropertiesByName
+    }
+
+    /**
+     * Interface delegation is only allowed to a primary constructor parameter, whose value is already stored in the class.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkInterfaceDelegation(
+        declaration: FirRegularClass,
+        kind: ValueClassKind,
+        primaryConstructorParameters: Set<FirValueParameterSymbol>,
+    ) {
         @OptIn(DirectDeclarationsAccess::class)
         declaration.declarations.forEach { innerDeclaration ->
             if (innerDeclaration !is FirField || !innerDeclaration.isSynthetic) return@forEach
             val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol(context.session)
-            if (symbol != null && symbol in primaryConstructorParametersSymbolsSet) {
+            if (symbol != null && symbol in primaryConstructorParameters) {
                 return@forEach
             }
             val delegatedTypeRefSource = (innerDeclaration.returnTypeRef as FirResolvedTypeRef).delegatedTypeRef?.source
-            reporter.reportOn(
-                delegatedTypeRefSource,
-                FirErrors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION
+            reportOn(
+                delegatedTypeRefSource, kind.isWillBecomeValueClass,
+                FirErrors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION,
+                FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION,
             )
         }
+    }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkReservedMembers(declaration: FirRegularClass, kind: ValueClassKind) {
         val reservedNames = when {
-            isFullValueClass -> emptySet()
-            isCustomEqualsSupported -> boxAndUnboxNames
+            kind.isFullValueClass -> emptySet()
+            LanguageFeature.CustomEqualsInValueClasses.isEnabled() -> boxAndUnboxNames
             else -> boxAndUnboxNames + equalsAndHashCodeNames
         }
         val classScope = declaration.unsubstitutedScope()
@@ -208,23 +289,33 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 }
             }
         }
+    }
 
-        val finalOrInlineClassPrefix = when {
-            !supportsFullValueClasses -> "value"
-            isFullValueClass -> "final value"
-            else -> "@JvmInline value"
-        }
+    /**
+     * Checks that the primary constructor exists and has an acceptable number of parameters.
+     *
+     * Returns 'false' if it does not, so that its parameters and the rest of the class are not checked any further.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkPrimaryConstructor(
+        declaration: FirRegularClass,
+        kind: ValueClassKind,
+        primaryConstructor: FirConstructorSymbol?,
+        primaryConstructorParametersByName: Map<Name, FirValueParameterSymbol>,
+    ): Boolean {
         if (declaration.classKind == ClassKind.OBJECT) {
             // A value object has no primary constructor, and nothing is required from it.
-        } else if (primaryConstructor?.source?.kind is KtRealSourceElementKind) {
-            if (isFullValueClass) {
+            return true
+        }
+        if (primaryConstructor?.source?.kind is KtRealSourceElementKind) {
+            if (kind.isFullValueClass) {
                 if (primaryConstructorParametersByName.isEmpty() && declaration.isFinal) {
-                    reporter.reportOn(
-                        primaryConstructor.source,
-                        FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR,
-                        finalOrInlineClassPrefix.capitalizeAsciiOnly(),
+                    reportOn(
+                        primaryConstructor.source, kind.isWillBecomeValueClass,
+                        FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR, kind.finalOrInlineClassPrefix.capitalizeAsciiOnly(),
+                        FirErrors.WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR,
                     )
-                    return
+                    return false
                 }
             } else if (primaryConstructorParametersByName.size != 1) {
                 val jvmInlineAnnotation = context.session.annotationPlatformSupport.jvmInlineAnnotationClassId
@@ -236,54 +327,72 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     )
                 } else {
                     reporter.reportOn(
-                        primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, valueModifierPrefix
+                        primaryConstructor.source,
+                        FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE,
+                        kind.valueModifierPrefix,
                     )
                 }
-                return
+                return false
             }
-        } else if (!isFullValueClass || declaration.isFinal) {
+            return true
+        }
+        if (!kind.isFullValueClass || declaration.isFinal) {
             if (!declaration.isExpect || LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor.isDisabled()) {
-                reporter.reportOn(
-                    declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, finalOrInlineClassPrefix
+                reportOn(
+                    declaration.source, kind.isWillBecomeValueClass,
+                    FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, kind.finalOrInlineClassPrefix,
+                    FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS,
                 )
             } else {
                 declaration.constructors(context.session).filter { !it.isPrimary }.forEach { constructor ->
-                    reporter.reportOn(
-                        constructor.source,
-                        FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY,
-                        finalOrInlineClassPrefix,
+                    reportOn(
+                        constructor.source, kind.isWillBecomeValueClass,
+                        FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY, kind.finalOrInlineClassPrefix,
+                        FirErrors.EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY,
                     )
                 }
             }
-            return
+            return false
         }
+        return true
+    }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkPrimaryConstructorParameters(
+        declaration: FirRegularClass,
+        kind: ValueClassKind,
+        primaryConstructorParametersByName: Map<Name, FirValueParameterSymbol>,
+        primaryConstructorPropertiesByName: Map<Name, FirPropertySymbol>,
+    ) {
         for ([name, primaryConstructorParameter] in primaryConstructorParametersByName) {
             val parameterTypeRef = primaryConstructorParameter.resolvedReturnTypeRef
             val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType(context.session)
             when {
                 declaration.isFinal && primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
-                    reporter.reportOn(
-                        primaryConstructorParameter.source,
+                    reportOn(
+                        primaryConstructorParameter.source, kind.isWillBecomeValueClass,
                         FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-                        if (supportsFullValueClasses) "Final value" else "Value",
+                        if (kind.supportsFullValueClasses) "Final value" else "Value",
+                        FirErrors.WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
                     )
-                isFullValueClass && declaration.isAbstract && primaryConstructorPropertiesByName[name] != null -> reporter.reportOn(
-                    primaryConstructorParameter.source,
-                    FirErrors.ABSTRACT_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER
+                kind.isFullValueClass && declaration.isAbstract && primaryConstructorPropertiesByName[name] != null -> reportOn(
+                    primaryConstructorParameter.source, kind.isWillBecomeValueClass,
+                    FirErrors.ABSTRACT_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
+                    FirErrors.ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
                 )
 
-                isFullValueClass && declaration.isSealed && primaryConstructorPropertiesByName[name] != null -> reporter.reportOn(
-                    primaryConstructorParameter.source,
-                    FirErrors.SEALED_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER
+                kind.isFullValueClass && declaration.isSealed && primaryConstructorPropertiesByName[name] != null -> reportOn(
+                    primaryConstructorParameter.source, kind.isWillBecomeValueClass,
+                    FirErrors.SEALED_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
+                    FirErrors.SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
                 )
 
-                !isFullValueClass && parameterTypeRef.isInapplicableParameterType(context.session) -> {
+                !kind.isFullValueClass && parameterTypeRef.isInapplicableParameterType(context.session) -> {
                     reporter.reportOn(
                         parameterTypeRef.source,
                         FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
                         parameterTypeRef.coneType,
-                        valueModifierPrefix,
+                        kind.valueModifierPrefix,
                     )
                 }
 
@@ -292,47 +401,100 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 // Also, there appears a minor inconsistency between unconstructible value and non-value classes in Kotlin.
                 // Neither of the issues affects any meaningful code.
                 recursionType != null -> when (recursionType) {
-                    Plain -> reporter.reportOn(parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE)
-                    ViaTypeParameters -> reporter.reportOn(
-                        parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS,
+                    Plain -> reportOn(
+                        parameterTypeRef.source, kind.isWillBecomeValueClass,
+                        FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE, FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE,
+                    )
+                    ViaTypeParameters -> reportOn(
+                        parameterTypeRef.source, kind.isWillBecomeValueClass,
+                        FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS,
+                        FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS,
                     )
                 }
             }
         }
+    }
 
-        if (isCustomEqualsSupported) {
-            val [equalsFromAnyOverriding, typedEquals] = run {
-                var equalsFromAnyOverriding: FirNamedFunctionSymbol? = null
-                var typedEquals: FirNamedFunctionSymbol? = null
-                declaration.processAllDeclarations(context.session) {
-                    if (it !is FirNamedFunctionSymbol) {
-                        return@processAllDeclarations
-                    }
-                    if (it.isEquals(context.session)) equalsFromAnyOverriding = it
-                    if (it.isTypedEqualsInValueClass(context.session)) typedEquals = it
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkCustomEquals(declaration: FirRegularClass) {
+        val [equalsFromAnyOverriding, typedEquals] = run {
+            var equalsFromAnyOverriding: FirNamedFunctionSymbol? = null
+            var typedEquals: FirNamedFunctionSymbol? = null
+            declaration.processAllDeclarations(context.session) {
+                if (it !is FirNamedFunctionSymbol) {
+                    return@processAllDeclarations
                 }
-                equalsFromAnyOverriding to typedEquals
+                if (it.isEquals(context.session)) equalsFromAnyOverriding = it
+                if (it.isTypedEqualsInValueClass(context.session)) typedEquals = it
             }
-            if (typedEquals != null) {
-                if (typedEquals.typeParameterSymbols.isNotEmpty()) {
-                    reporter.reportOn(
-                        typedEquals.source,
-                        FirErrors.TYPE_PARAMETERS_NOT_ALLOWED
-                    )
-                }
-                val singleParameterReturnTypeRef = typedEquals.valueParameterSymbols.single().resolvedReturnTypeRef
-                if (singleParameterReturnTypeRef.coneType.typeArguments.any { !it.isStarProjection }) {
-                    reporter.reportOn(singleParameterReturnTypeRef.source, FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS)
-                }
-            }
-
-            if (equalsFromAnyOverriding != null && typedEquals == null) {
+            equalsFromAnyOverriding to typedEquals
+        }
+        if (typedEquals != null) {
+            if (typedEquals.typeParameterSymbols.isNotEmpty()) {
                 reporter.reportOn(
-                    equalsFromAnyOverriding.source,
-                    FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
-                    declaration.defaultType().replaceArgumentsWithStarProjections()
+                    typedEquals.source,
+                    FirErrors.TYPE_PARAMETERS_NOT_ALLOWED
                 )
             }
+            val singleParameterReturnTypeRef = typedEquals.valueParameterSymbols.single().resolvedReturnTypeRef
+            if (singleParameterReturnTypeRef.coneType.typeArguments.any { !it.isStarProjection }) {
+                reporter.reportOn(singleParameterReturnTypeRef.source, FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS)
+            }
+        }
+
+        if (equalsFromAnyOverriding != null && typedEquals == null) {
+            reporter.reportOn(
+                equalsFromAnyOverriding.source,
+                FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
+                declaration.defaultType().replaceArgumentsWithStarProjections()
+            )
+        }
+    }
+
+    /**
+     * A class annotated with '@WillBecomeValue' is not a value class yet, so the value class restrictions are only
+     * deprecation warnings for it until [LanguageFeature.StabilizeWillBecomeValueRestrictions] turns them into errors.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportOn(
+        source: KtSourceElement?,
+        isWillBecomeValueClass: Boolean,
+        valueClassFactory: KtDiagnosticFactory0,
+        willBecomeValueClassFactory: KtDiagnosticFactoryForDeprecation0,
+    ) {
+        if (isWillBecomeValueClass) {
+            reporter.reportOn(source, willBecomeValueClassFactory)
+        } else {
+            reporter.reportOn(source, valueClassFactory)
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun <A> reportOn(
+        source: KtSourceElement?,
+        isWillBecomeValueClass: Boolean,
+        valueClassFactory: KtDiagnosticFactory1<A>,
+        valueClassArgument: A,
+        willBecomeValueClassFactory: KtDiagnosticFactoryForDeprecation0,
+    ) {
+        if (isWillBecomeValueClass) {
+            reporter.reportOn(source, willBecomeValueClassFactory)
+        } else {
+            reporter.reportOn(source, valueClassFactory, valueClassArgument)
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportOn(
+        source: KtSourceElement?,
+        isWillBecomeValueClass: Boolean,
+        valueClassFactory: KtDiagnosticFactoryForDeprecation0,
+        willBecomeValueClassFactory: KtDiagnosticFactoryForDeprecation0,
+    ) {
+        if (isWillBecomeValueClass) {
+            reporter.reportOn(source, willBecomeValueClassFactory)
+        } else {
+            reporter.reportOn(source, valueClassFactory)
         }
     }
 

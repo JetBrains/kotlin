@@ -2133,6 +2133,188 @@ internal class ValueClassCannotBeCloneableImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassCannotBeCloneable
 
+internal class WillBecomeValueNotApplicableErrorImpl(
+    override val target: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueNotApplicableError
+
+internal class WillBecomeValueNotApplicableWarningImpl(
+    override val target: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueNotApplicableWarning
+
+internal class IdentityBasedMemberInWillBecomeValueClassErrorImpl(
+    override val memberName: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.IdentityBasedMemberInWillBecomeValueClassError
+
+internal class IdentityBasedMemberInWillBecomeValueClassWarningImpl(
+    override val memberName: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.IdentityBasedMemberInWillBecomeValueClassWarning
+
+internal class IdentitySensitiveOperationOnWillBecomeValueClassImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationOnWillBecomeValueClass
+
+internal class IdentitySensitiveOperationInsideWillBecomeValueClassErrorImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationInsideWillBecomeValueClassError
+
+internal class IdentitySensitiveOperationInsideWillBecomeValueClassWarningImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationInsideWillBecomeValueClassWarning
+
+internal class WillBecomeValueClassNotTopLevelErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassNotTopLevelError
+
+internal class WillBecomeValueClassNotTopLevelWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassNotTopLevelWarning
+
+internal class AbsenceOfPrimaryConstructorForWillBecomeValueClassErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.AbsenceOfPrimaryConstructorForWillBecomeValueClassError
+
+internal class AbsenceOfPrimaryConstructorForWillBecomeValueClassWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.AbsenceOfPrimaryConstructorForWillBecomeValueClassWarning
+
+internal class ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryError
+
+internal class ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryWarning
+
+internal class WillBecomeValueClassEmptyConstructorErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassEmptyConstructorError
+
+internal class WillBecomeValueClassEmptyConstructorWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassEmptyConstructorWarning
+
+internal class WillBecomeValueClassConstructorNotFinalReadOnlyParameterErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassConstructorNotFinalReadOnlyParameterError
+
+internal class WillBecomeValueClassConstructorNotFinalReadOnlyParameterWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassConstructorNotFinalReadOnlyParameterWarning
+
+internal class AbstractWillBecomeValueClassConstructorPropertyParameterErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.AbstractWillBecomeValueClassConstructorPropertyParameterError
+
+internal class AbstractWillBecomeValueClassConstructorPropertyParameterWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.AbstractWillBecomeValueClassConstructorPropertyParameterWarning
+
+internal class SealedWillBecomeValueClassConstructorPropertyParameterErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.SealedWillBecomeValueClassConstructorPropertyParameterError
+
+internal class SealedWillBecomeValueClassConstructorPropertyParameterWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.SealedWillBecomeValueClassConstructorPropertyParameterWarning
+
+internal class PropertyWithBackingFieldInsideWillBecomeValueClassErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KaFirDiagnostic.PropertyWithBackingFieldInsideWillBecomeValueClassError
+
+internal class PropertyWithBackingFieldInsideWillBecomeValueClassWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KaFirDiagnostic.PropertyWithBackingFieldInsideWillBecomeValueClassWarning
+
+internal class DelegatedPropertyInsideWillBecomeValueClassErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DelegatedPropertyInsideWillBecomeValueClassError
+
+internal class DelegatedPropertyInsideWillBecomeValueClassWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DelegatedPropertyInsideWillBecomeValueClassWarning
+
+internal class WillBecomeValueClassCannotImplementInterfaceByDelegationErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotImplementInterfaceByDelegationError
+
+internal class WillBecomeValueClassCannotImplementInterfaceByDelegationWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotImplementInterfaceByDelegationWarning
+
+internal class WillBecomeValueClassCannotExtendIdentityClassesErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotExtendIdentityClassesError
+
+internal class WillBecomeValueClassCannotExtendIdentityClassesWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotExtendIdentityClassesWarning
+
+internal class WillBecomeValueClassCannotBeRecursiveErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotBeRecursiveError
+
+internal class WillBecomeValueClassCannotBeRecursiveWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotBeRecursiveWarning
+
+internal class WillBecomeValueClassCannotBeRecursiveViaTypeParametersErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotBeRecursiveViaTypeParametersError
+
+internal class WillBecomeValueClassCannotBeRecursiveViaTypeParametersWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotBeRecursiveViaTypeParametersWarning
+
+internal class WillBecomeValueClassCannotBeCloneableErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotBeCloneableError
+
+internal class WillBecomeValueClassCannotBeCloneableWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotBeCloneableWarning
+
 internal class NoneApplicableImpl(
     override val candidates: List<Pair<KaSymbol, List<String>>>,
     firDiagnostic: KtDiagnosticWithSource,
@@ -6229,6 +6411,16 @@ internal class SynchronizedOnValueClassWarningImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.SynchronizedOnValueClassWarning
+
+internal class SynchronizedOnWillBecomeValueClassErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.SynchronizedOnWillBecomeValueClassError
+
+internal class SynchronizedOnWillBecomeValueClassWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.SynchronizedOnWillBecomeValueClassWarning
 
 internal class SynchronizedOnSuspendErrorImpl(
     firDiagnostic: KtDiagnosticWithSource,
