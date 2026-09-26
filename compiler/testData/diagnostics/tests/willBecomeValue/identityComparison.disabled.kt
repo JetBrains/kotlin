@@ -9,7 +9,7 @@ class Wrapper(val x: Int) {
     override fun hashCode(): Int = x
     override fun toString(): String = "Wrapper($x)"
 
-    fun isSame(other: Wrapper): Boolean = <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS_ERROR!>this<!> === <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS_ERROR!>other<!>
+    fun isSame(other: Wrapper): Boolean = <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS_WARNING!>this<!> === <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS_WARNING!>other<!>
 
     fun isSameAsNull(): Boolean = <!SENSELESS_COMPARISON!>this === null<!>
 }
