@@ -229,6 +229,11 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                     // Split here
                     val dependenciesTrackingResult = generationStateEngine.collectAndMaybeSerializeDependencies()
                     val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
+                    // External compilation consumes serialized bitcode, so LLVM state is no longer needed.
+                    generationState.dispose()
+                    if (config.optimizationsEnabled && !config.produce.isCache) {
+                        System.gc()
+                    }
                     generationStateEngine.compileAndLink(
                             moduleCompilationOutput,
                             outputFiles.mainFileName,
