@@ -2169,6 +2169,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("valhallaValueClassesJvmTarget27.args")
+    public void testValhallaValueClassesJvmTarget27() {
+      run("valhallaValueClassesJvmTarget27.args");
+    }
+
+    @Test
     @TestMetadata("version.args")
     public void testVersion() {
       run("version.args");
