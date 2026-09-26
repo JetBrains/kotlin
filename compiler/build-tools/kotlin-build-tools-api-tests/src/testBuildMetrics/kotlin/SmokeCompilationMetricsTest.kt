@@ -34,15 +34,19 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             val module1 = module("basic-multimodule-project/module-1")
 
             val expectedNames = when (this) {
-                is MetadataProject -> Common.nonIncrementalMetricNames + Metadata.compilerTranslationMetrics
-                is JvmProject -> Common.nonIncrementalMetricNames + Jvm.compilerTranslationMetrics
-                else -> Common.nonIncrementalMetricNames + Klib.compilerTranslationMetrics
+                is MetadataProject -> Metadata.nonIncrementalMetricNames
+                is JvmProject -> Jvm.nonIncrementalMetricNames
+                else -> Klib.nonIncrementalMetricNames
             } + maybeGetDaemonMetricNames()
 
             module1.compileWithMetrics { metrics ->
-                val actualNames = metrics.all().map { it.name }.toSet()
-                assertTrue(actualNames.containsAll(expectedNames)) {
-                    "Missing expected metrics.\n\nMissing: ${expectedNames - actualNames}\nGot: $actualNames"
+                val allNames = metrics.all().map { it.name }.toSet()
+                val actualNames = allNames.withoutNestedPreLoweringMetrics()
+                assertEquals(expectedNames, actualNames) {
+                    "Unexpected set of metric names for module1 non-incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
+                }
+                if (IR_PRE_LOWERING in expectedNames) {
+                    assertNestedPreLoweringMetricsReported(allNames)
                 }
             }
         }
@@ -94,10 +98,12 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                     }
                     assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
                 } else {
-                    val expectedNames = Klib.incrementalMetricNames + maybeGetDaemonMetricNames()
-                    assertTrue(actualNames.containsAll(expectedNames)) {
-                        "Missing expected incremental metrics for module1.\n\nMissing: ${expectedNames - actualNames}\nGot: $actualNames"
+                    val expectedNames = Klib.incrementalRecompilationMetricNames + maybeGetDaemonMetricNames()
+                    val klibActualNames = actualNames.withoutNestedPreLoweringMetrics()
+                    assertEquals(expectedNames, klibActualNames) {
+                        "Unexpected set of metric names for module1 incremental build.\n\nMissing: ${expectedNames - klibActualNames}\nUnexpected: ${klibActualNames - expectedNames}"
                     }
+                    assertNestedPreLoweringMetricsReported(actualNames)
                 }
             }
             module2.compileIncrementallyWithMetrics(SourcesChanges.ToBeCalculated) { metrics ->
@@ -109,10 +115,12 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                     }
                     assertOutputs("AKt.class", "BKt.class")
                 } else {
-                    val expectedNames = Klib.incrementalMetricNames + maybeGetDaemonMetricNames()
-                    assertTrue(actualNames.containsAll(expectedNames)) {
-                        "Missing expected incremental metrics for module2.\n\nMissing: ${expectedNames - actualNames}\nGot: $actualNames"
+                    val expectedNames = Klib.incrementalRecompilationMetricNames + maybeGetDaemonMetricNames()
+                    val klibActualNames = actualNames.withoutNestedPreLoweringMetrics()
+                    assertEquals(expectedNames, klibActualNames) {
+                        "Unexpected set of metric names for module2 incremental build.\n\nMissing: ${expectedNames - klibActualNames}\nUnexpected: ${klibActualNames - expectedNames}"
                     }
+                    assertNestedPreLoweringMetricsReported(actualNames)
                 }
             }
         }
@@ -231,21 +239,33 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             assertCompiledSources("useAInAppMain.kt")
 
             val expectedNames = Klib.crossModuleIncrementalMetricNames + maybeGetDaemonMetricNames()
-            val actualNames = metrics.all().map { it.name }.toSet()
-            assertTrue(actualNames.containsAll(expectedNames)) {
-                "Missing expected cross-module incremental metrics for the app module.\n\nMissing: ${expectedNames - actualNames}\nGot: $actualNames"
+            val allNames = metrics.all().map { it.name }.toSet()
+            val actualNames = allNames.withoutNestedPreLoweringMetrics()
+            assertEquals(expectedNames, actualNames) {
+                "Unexpected set of metric names for the app module cross-module incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
             }
+            assertNestedPreLoweringMetricsReported(allNames)
         }
     }
 
     companion object {
         private const val SOURCES_ROUND_COMPILER_TIME = "Run compilation -> Sources compilation round -> Compiler time"
+        private const val IR_PRE_LOWERING = "$SOURCES_ROUND_COMPILER_TIME -> Compiler IR pre-lowering"
+        private const val KLIB_DIRECTORY_SIZE = "KLIB directory cumulative size"
+        private const val KLIB_IR_DIRECTORY_SIZE = "$KLIB_DIRECTORY_SIZE/IR (main)"
 
         object Common {
-            val nonIncrementalMetricNames = setOf(
+            val gcMetricNames = setOf(
+                "PS MarkSweep",
+                "PS Scavenge",
+            )
+
+            val nonIncrementalMetricNames = gcMetricNames + setOf(
                 "$SOURCES_ROUND_COMPILER_TIME -> Compiler code analysis",
                 "$SOURCES_ROUND_COMPILER_TIME -> Compiler initialization time",
                 "Total compiler iteration",
+                "Total compiler iteration -> Analysis lines per second",
+                "Total compiler iteration -> Number of lines analyzed",
             )
 
             val incrementalMetricNames = setOf(
@@ -263,28 +283,13 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
         }
 
         object Jvm {
-            val gcMetricNames = setOf(
-                "PS MarkSweep",
-                "PS Scavenge",
-            )
-
-            val compilerTranslationMetrics = setOf(
-                "$SOURCES_ROUND_COMPILER_TIME -> Compiler translation to IR",
-                "$SOURCES_ROUND_COMPILER_TIME -> Compiler Klib metadata writing",
-            )
-
-            val nonIncrementalMetricNames = gcMetricNames + setOf(
-                "$SOURCES_ROUND_COMPILER_TIME -> Compiler code analysis",
+            val nonIncrementalMetricNames = Common.nonIncrementalMetricNames + setOf(
                 "$SOURCES_ROUND_COMPILER_TIME -> Compiler Klib metadata writing",
                 "$SOURCES_ROUND_COMPILER_TIME -> Compiler code generation -> Compiler IR lowering",
                 "$SOURCES_ROUND_COMPILER_TIME -> Compiler code generation -> Compiler backend",
                 "$SOURCES_ROUND_COMPILER_TIME -> Compiler code generation",
-                "$SOURCES_ROUND_COMPILER_TIME -> Compiler initialization time",
                 "$SOURCES_ROUND_COMPILER_TIME -> Compiler translation to IR",
-                "Total compiler iteration",
-                "Total compiler iteration -> Analysis lines per second",
                 "Total compiler iteration -> Code generation lines per second",
-                "Total compiler iteration -> Number of lines analyzed",
             )
 
             val daemonMetricNames = setOf(
@@ -342,15 +347,39 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
         }
 
         object Klib {
-            val compilerTranslationMetrics = setOf(
+            val metadataDirectorySizeMetricNames = setOf(
+                KLIB_DIRECTORY_SIZE,
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_DIRECTORY_SIZE/Manifest file",
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_DIRECTORY_SIZE/Metadata",
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_DIRECTORY_SIZE/Resources",
+            )
+
+            val directorySizeMetricNames = metadataDirectorySizeMetricNames + setOf(
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE",
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE/IR bodies",
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE/IR declarations",
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE/IR file entries",
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE/IR files",
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE/IR signatures",
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE/IR signatures (debug info)",
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE/IR strings",
+                "$KLIB_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE -> $KLIB_IR_DIRECTORY_SIZE/IR types",
+            )
+
+            val nonIncrementalMetricNames = Common.nonIncrementalMetricNames + directorySizeMetricNames + setOf(
                 "$SOURCES_ROUND_COMPILER_TIME -> Compiler translation to IR",
+                IR_PRE_LOWERING,
+                "$SOURCES_ROUND_COMPILER_TIME -> Compiler IR Serialization",
                 "$SOURCES_ROUND_COMPILER_TIME -> Compiler Klib writing",
             )
 
-            val incrementalMetricNames = Common.incrementalMetricNames + setOf(
+            val incrementalMetricNames = Common.incrementalMetricNames + nonIncrementalMetricNames + setOf(
                 "Run compilation -> Write history file",
-                "$SOURCES_ROUND_COMPILER_TIME -> Compiler translation to IR",
-                "$SOURCES_ROUND_COMPILER_TIME -> Compiler Klib writing",
+            )
+
+            val incrementalRecompilationMetricNames = incrementalMetricNames + setOf(
+                "Build history file not found (Rebuild reason)",
+                "Run compilation -> Clear outputs on rebuild",
             )
 
             val crossModuleIncrementalMetricNames = incrementalMetricNames + setOf(
@@ -360,7 +389,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
         }
 
         object Metadata {
-            val compilerTranslationMetrics = setOf(
+            val nonIncrementalMetricNames = Common.nonIncrementalMetricNames + Klib.metadataDirectorySizeMetricNames + setOf(
                 "$SOURCES_ROUND_COMPILER_TIME -> Compiler Klib metadata writing",
             )
         }
@@ -375,4 +404,13 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
 
     private fun AbstractProject<out BaseCompilationOperation, out BaseCompilationOperation.Builder, out BaseIncrementalCompilationConfiguration.Builder>.maybeGetDaemonMetricNames(): Set<String> =
         if (this.defaultStrategyConfig is ExecutionPolicy.WithDaemon) daemonMetricNames else emptySet()
+
+    private fun Set<String>.withoutNestedPreLoweringMetrics(): Set<String> =
+        filterNot { it.startsWith("$IR_PRE_LOWERING -> ") }.toSet()
+
+    private fun assertNestedPreLoweringMetricsReported(actualNames: Set<String>) {
+        assertTrue(actualNames.any { it.startsWith("$IR_PRE_LOWERING -> ") }) {
+            "Expected nested metrics under '$IR_PRE_LOWERING', but got none.\n\nGot: $actualNames"
+        }
+    }
 }
