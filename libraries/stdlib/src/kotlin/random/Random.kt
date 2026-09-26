@@ -274,8 +274,6 @@ public abstract class Random {
      * @sample samples.random.Randoms.defaultRandom
      */
     public companion object Default : Random(), Serializable {
-        private val defaultRandom: Random = defaultPlatformRandom()
-
         private object Serialized : Serializable {
             private const val serialVersionUID = 0L
 
@@ -319,7 +317,7 @@ public abstract class Random {
  * *Note:* Future versions of Kotlin may change the algorithm of this seeded number generator so that it will return
  * a sequence of values different from the current one for a given seed.
  *
- * On JVM the returned generator is NOT thread-safe. Do not invoke it from multiple threads without proper synchronization.
+ * The returned generator is NOT thread-safe. Do not invoke it from multiple threads without proper synchronization.
  *
  * @sample samples.random.Randoms.seededRandom
  */
@@ -334,7 +332,7 @@ public fun Random(seed: Int): Random = XorWowRandom(seed, seed.shr(31))
  * *Note:* Future versions of Kotlin may change the algorithm of this seeded number generator so that it will return
  * a sequence of values different from the current one for a given seed.
  *
- * On JVM the returned generator is NOT thread-safe. Do not invoke it from multiple threads without proper synchronization.
+ * The returned generator is NOT thread-safe. Do not invoke it from multiple threads without proper synchronization.
  *
  * @sample samples.random.Randoms.seededRandom
  */
@@ -374,8 +372,12 @@ public fun Random.nextLong(range: LongRange): Long = when {
     else -> nextLong()
 }
 
-
-internal expect fun defaultPlatformRandom(): Random
+/**
+ * An expectation for a platform-provided implementation of [Random.Default]. Actual value can be annotated with
+ * [kotlin.native.concurrent.ThreadLocal], meaning that this value should always be read explicitly and should never be cached in
+ * properties, global variables and whatnot.
+ */
+internal expect val defaultRandom: Random
 internal expect fun doubleFromParts(hi26: Int, low27: Int): Double
 
 internal fun fastLog2(value: Int): Int = 31 - value.countLeadingZeroBits()
