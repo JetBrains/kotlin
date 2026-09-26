@@ -153,6 +153,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val SYNCHRONIZED_IN_ANNOTATION by deprecationError<KtAnnotationEntry>(ForbidJvmAnnotationsOnAnnotationParameters)
         val SYNCHRONIZED_ON_INLINE by warning<KtAnnotationEntry>()
         val SYNCHRONIZED_ON_VALUE_CLASS by deprecationError<KtAnnotationEntry>(ProhibitSynchronizationByValueClassesAndPrimitives)
+        val SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS by deprecationError<KtAnnotationEntry>(StabilizeWillBecomeValueRestrictions)
         val SYNCHRONIZED_ON_SUSPEND_ERROR by error<KtAnnotationEntry>()
         val OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS by warning<KtAnnotationEntry>()
         val OVERLOADS_ABSTRACT by error<KtAnnotationEntry>()

@@ -2998,18 +2998,36 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface WillBecomeValueNotApplicable : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass: KClass<WillBecomeValueNotApplicable>
-            get() = WillBecomeValueNotApplicable::class
+    public interface WillBecomeValueNotApplicableError : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass: KClass<WillBecomeValueNotApplicableError>
+            get() = WillBecomeValueNotApplicableError::class
 
         public val target: String
     }
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface IdentityBasedMemberInWillBecomeValueClass : KaFirDiagnostic<KtDeclaration> {
-        override val diagnosticClass: KClass<IdentityBasedMemberInWillBecomeValueClass>
-            get() = IdentityBasedMemberInWillBecomeValueClass::class
+    public interface WillBecomeValueNotApplicableWarning : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass: KClass<WillBecomeValueNotApplicableWarning>
+            get() = WillBecomeValueNotApplicableWarning::class
+
+        public val target: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IdentityBasedMemberInWillBecomeValueClassError : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<IdentityBasedMemberInWillBecomeValueClassError>
+            get() = IdentityBasedMemberInWillBecomeValueClassError::class
+
+        public val memberName: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IdentityBasedMemberInWillBecomeValueClassWarning : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<IdentityBasedMemberInWillBecomeValueClassWarning>
+            get() = IdentityBasedMemberInWillBecomeValueClassWarning::class
 
         public val memberName: String
     }
@@ -3025,11 +3043,216 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface IdentitySensitiveOperationOnWillBecomeValueClassError : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<IdentitySensitiveOperationOnWillBecomeValueClassError>
-            get() = IdentitySensitiveOperationOnWillBecomeValueClassError::class
+    public interface IdentitySensitiveOperationInsideWillBecomeValueClassError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IdentitySensitiveOperationInsideWillBecomeValueClassError>
+            get() = IdentitySensitiveOperationInsideWillBecomeValueClassError::class
 
         public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IdentitySensitiveOperationInsideWillBecomeValueClassWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IdentitySensitiveOperationInsideWillBecomeValueClassWarning>
+            get() = IdentitySensitiveOperationInsideWillBecomeValueClassWarning::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassNotTopLevelError : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<WillBecomeValueClassNotTopLevelError>
+            get() = WillBecomeValueClassNotTopLevelError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassNotTopLevelWarning : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<WillBecomeValueClassNotTopLevelWarning>
+            get() = WillBecomeValueClassNotTopLevelWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface AbsenceOfPrimaryConstructorForWillBecomeValueClassError : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<AbsenceOfPrimaryConstructorForWillBecomeValueClassError>
+            get() = AbsenceOfPrimaryConstructorForWillBecomeValueClassError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface AbsenceOfPrimaryConstructorForWillBecomeValueClassWarning : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<AbsenceOfPrimaryConstructorForWillBecomeValueClassWarning>
+            get() = AbsenceOfPrimaryConstructorForWillBecomeValueClassWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryError : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryError>
+            get() = ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryWarning : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryWarning>
+            get() = ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassEmptyConstructorError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassEmptyConstructorError>
+            get() = WillBecomeValueClassEmptyConstructorError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassEmptyConstructorWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassEmptyConstructorWarning>
+            get() = WillBecomeValueClassEmptyConstructorWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassConstructorNotFinalReadOnlyParameterError : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass: KClass<WillBecomeValueClassConstructorNotFinalReadOnlyParameterError>
+            get() = WillBecomeValueClassConstructorNotFinalReadOnlyParameterError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassConstructorNotFinalReadOnlyParameterWarning : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass: KClass<WillBecomeValueClassConstructorNotFinalReadOnlyParameterWarning>
+            get() = WillBecomeValueClassConstructorNotFinalReadOnlyParameterWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface AbstractWillBecomeValueClassConstructorPropertyParameterError : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass: KClass<AbstractWillBecomeValueClassConstructorPropertyParameterError>
+            get() = AbstractWillBecomeValueClassConstructorPropertyParameterError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface AbstractWillBecomeValueClassConstructorPropertyParameterWarning : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass: KClass<AbstractWillBecomeValueClassConstructorPropertyParameterWarning>
+            get() = AbstractWillBecomeValueClassConstructorPropertyParameterWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface SealedWillBecomeValueClassConstructorPropertyParameterError : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass: KClass<SealedWillBecomeValueClassConstructorPropertyParameterError>
+            get() = SealedWillBecomeValueClassConstructorPropertyParameterError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface SealedWillBecomeValueClassConstructorPropertyParameterWarning : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass: KClass<SealedWillBecomeValueClassConstructorPropertyParameterWarning>
+            get() = SealedWillBecomeValueClassConstructorPropertyParameterWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface PropertyWithBackingFieldInsideWillBecomeValueClassError : KaFirDiagnostic<KtProperty> {
+        override val diagnosticClass: KClass<PropertyWithBackingFieldInsideWillBecomeValueClassError>
+            get() = PropertyWithBackingFieldInsideWillBecomeValueClassError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface PropertyWithBackingFieldInsideWillBecomeValueClassWarning : KaFirDiagnostic<KtProperty> {
+        override val diagnosticClass: KClass<PropertyWithBackingFieldInsideWillBecomeValueClassWarning>
+            get() = PropertyWithBackingFieldInsideWillBecomeValueClassWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface DelegatedPropertyInsideWillBecomeValueClassError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<DelegatedPropertyInsideWillBecomeValueClassError>
+            get() = DelegatedPropertyInsideWillBecomeValueClassError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface DelegatedPropertyInsideWillBecomeValueClassWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<DelegatedPropertyInsideWillBecomeValueClassWarning>
+            get() = DelegatedPropertyInsideWillBecomeValueClassWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassCannotImplementInterfaceByDelegationError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassCannotImplementInterfaceByDelegationError>
+            get() = WillBecomeValueClassCannotImplementInterfaceByDelegationError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassCannotImplementInterfaceByDelegationWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassCannotImplementInterfaceByDelegationWarning>
+            get() = WillBecomeValueClassCannotImplementInterfaceByDelegationWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassCannotExtendIdentityClassesError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassCannotExtendIdentityClassesError>
+            get() = WillBecomeValueClassCannotExtendIdentityClassesError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassCannotExtendIdentityClassesWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassCannotExtendIdentityClassesWarning>
+            get() = WillBecomeValueClassCannotExtendIdentityClassesWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassCannotBeRecursiveError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassCannotBeRecursiveError>
+            get() = WillBecomeValueClassCannotBeRecursiveError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassCannotBeRecursiveWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassCannotBeRecursiveWarning>
+            get() = WillBecomeValueClassCannotBeRecursiveWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassCannotBeRecursiveViaTypeParametersError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassCannotBeRecursiveViaTypeParametersError>
+            get() = WillBecomeValueClassCannotBeRecursiveViaTypeParametersError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassCannotBeRecursiveViaTypeParametersWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassCannotBeRecursiveViaTypeParametersWarning>
+            get() = WillBecomeValueClassCannotBeRecursiveViaTypeParametersWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassCannotBeCloneableError : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<WillBecomeValueClassCannotBeCloneableError>
+            get() = WillBecomeValueClassCannotBeCloneableError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassCannotBeCloneableWarning : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<WillBecomeValueClassCannotBeCloneableWarning>
+            get() = WillBecomeValueClassCannotBeCloneableWarning::class
     }
 
     @KaUnstableDiagnosticApi
@@ -8851,6 +9074,20 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface SynchronizedOnValueClassWarning : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass: KClass<SynchronizedOnValueClassWarning>
             get() = SynchronizedOnValueClassWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface SynchronizedOnWillBecomeValueClassError : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass: KClass<SynchronizedOnWillBecomeValueClassError>
+            get() = SynchronizedOnWillBecomeValueClassError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface SynchronizedOnWillBecomeValueClassWarning : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass: KClass<SynchronizedOnWillBecomeValueClassWarning>
+            get() = SynchronizedOnWillBecomeValueClassWarning::class
     }
 
     @KaUnstableDiagnosticApi

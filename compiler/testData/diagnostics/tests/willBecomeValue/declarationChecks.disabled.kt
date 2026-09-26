@@ -17,19 +17,19 @@ abstract class ValueBase
 
 @WillBecomeValue
 class A(
-    <!WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER_ERROR!>var x: Int<!>,
-    val y: <!WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_ERROR!>A<!>,
-    <!WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER_ERROR!>z: Int<!>,
-) : <!WILL_BECOME_VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES_ERROR!>IdentityBase<!>(), <!WILL_BECOME_VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION_ERROR!>I<!> by IImpl() {
+    <!WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER_WARNING!>var x: Int<!>,
+    val y: <!WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_WARNING!>A<!>,
+    <!WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER_WARNING!>z: Int<!>,
+) : <!WILL_BECOME_VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES_WARNING!>IdentityBase<!>(), <!WILL_BECOME_VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION_WARNING!>I<!> by IImpl() {
     override fun equals(other: Any?): Boolean = other is A && other.x == x
     override fun hashCode(): Int = x
     override fun toString(): String = "A"
-    <!PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS_ERROR!>val field<!> = 3
+    <!PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS_WARNING!>val field<!> = 3
 }
 
 @WillBecomeValue
 object O {
-    <!PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS_ERROR!>val field<!> = 3
+    <!PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS_WARNING!>val field<!> = 3
     override fun toString(): String = "O"
 }
 
@@ -42,7 +42,7 @@ class Ok(val x: Int, val y: String) : ValueBase(), I {
 }
 
 @WillBecomeValue
-class <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS_ERROR!>WithoutPrimaryConstructor<!> {
+class <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS_WARNING!>WithoutPrimaryConstructor<!> {
     constructor(x: Int)
 
     override fun equals(other: Any?): Boolean = other is WithoutPrimaryConstructor
@@ -52,7 +52,7 @@ class <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS_ERROR!>Withou
 
 class Outer {
     @WillBecomeValue
-    inner class <!WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL_ERROR!>Inner<!>(val x: Int) {
+    inner class <!WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL_WARNING!>Inner<!>(val x: Int) {
         override fun equals(other: Any?): Boolean = other is Inner && other.x == x
         override fun hashCode(): Int = x
         override fun toString(): String = "Inner"
@@ -61,32 +61,32 @@ class Outer {
 
 fun local() {
     @WillBecomeValue
-    data class <!WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL_ERROR!>Local<!>(val x: Int)
+    data class <!WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL_WARNING!>Local<!>(val x: Int)
 }
 
 @WillBecomeValue
-class EmptyConstructor<!WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR_ERROR!>()<!> {
+class EmptyConstructor<!WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR_WARNING!>()<!> {
     override fun equals(other: Any?): Boolean = other is EmptyConstructor
     override fun hashCode(): Int = 0
     override fun toString(): String = "EmptyConstructor"
 }
 
 @WillBecomeValue
-abstract class AbstractWithProperty(<!ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER_ERROR!>val x: Int<!>)
+abstract class AbstractWithProperty(<!ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER_WARNING!>val x: Int<!>)
 
 @WillBecomeValue
-sealed class SealedWithProperty(<!SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER_ERROR!>val x: Int<!>)
+sealed class SealedWithProperty(<!SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER_WARNING!>val x: Int<!>)
 
 @WillBecomeValue
 data class WithDelegatedProperty(val x: Int) {
-    val y by <!DELEGATED_PROPERTY_INSIDE_WILL_BECOME_VALUE_CLASS_ERROR!>lazy { x }<!>
+    val y by <!DELEGATED_PROPERTY_INSIDE_WILL_BECOME_VALUE_CLASS_WARNING!>lazy { x }<!>
 }
 
 @WillBecomeValue
-data class <!WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE_ERROR!>WithCloneable<!>(val x: Int) : Cloneable
+data class <!WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE_WARNING!>WithCloneable<!>(val x: Int) : Cloneable
 
 @WillBecomeValue
-data class RecursiveViaTypeParameter<T : RecursiveViaTypeParameter<T>>(val x: <!WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T<!>)
+data class RecursiveViaTypeParameter<T : RecursiveViaTypeParameter<T>>(val x: <!WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>)
 
 /* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, equalityExpression,
 functionDeclaration, inheritanceDelegation, inner, integerLiteral, interfaceDeclaration, isExpression, lambdaLiteral,

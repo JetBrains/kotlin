@@ -16,9 +16,10 @@ package kotlin
  * 3. **Is a candidate for future migration to a `value class`,** so the annotation is expected
  *    to be dropped once the migration is complete.
  *
- * The compiler applies every declaration check of a `value class` to the annotated class,
- * reporting errors just as it would for a real `value class`. Identity-sensitive **usages**,
- * however, are only reported as warnings outside of the annotated class itself,
+ * The compiler applies every declaration check of a `value class` to the annotated class.
+ * Violations of these checks, as well as identity-sensitive **usages** inside the annotated class itself,
+ * are reported as warnings before Kotlin 2.6 and as errors since Kotlin 2.6.
+ * Identity-sensitive usages outside of the annotated class are only reported as warnings,
  * which gives downstream users time to migrate before the class actually becomes a `value class`.
  *
  * A final annotated class also has to override `equals`, `hashCode` and `toString`, because the identity-based

@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.sugg
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABBREVIATED_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABBREVIATED_NOTHING_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS
@@ -77,6 +78,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_WITH_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS
@@ -218,6 +220,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTRACT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_INSIDE_WILL_BECOME_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ESCAPING_CAPTURED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTOR_DELEGATION_CALL
@@ -357,6 +360,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_PROPERTY_W
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_EXTENSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_INTERFACE
@@ -385,6 +389,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_IN_CLAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_SHADOWED_BY_MEMBER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_COLLECTION_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_SUPERTYPE
@@ -413,7 +420,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_COMPANION_BLOCK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_COMPANION_BLOCK_MEMBER
@@ -956,6 +962,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WHEN_GUARD_WITHOUT_SUBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRAPPED_LHS_IN_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
@@ -2555,9 +2569,59 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE,
         )
         map.put(
-            IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS_ERROR,
+            IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS,
             "Identity-sensitive operation on ''{0}'', which is annotated with ''@WillBecomeValue''. It will be forbidden once the class becomes a value class.",
             RENDER_TYPE,
+        )
+        map.put(WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL, "Class annotated with '@WillBecomeValue' cannot be local or inner.")
+        map.put(
+            ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS,
+            "Primary constructor is required for final classes annotated with '@WillBecomeValue'."
+        )
+        map.put(
+            EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY,
+            "Expect final class annotated with '@WillBecomeValue' without primary constructor cannot have secondary constructors."
+        )
+        map.put(
+            WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR,
+            "Final class annotated with '@WillBecomeValue' must have at least one primary constructor parameter."
+        )
+        map.put(
+            WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
+            "Primary constructor of a final class annotated with '@WillBecomeValue' must only have final read-only ('val') property parameters."
+        )
+        map.put(
+            ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
+            "Primary constructor of an abstract class annotated with '@WillBecomeValue' cannot have property parameters."
+        )
+        map.put(
+            SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
+            "Primary constructor of a sealed class annotated with '@WillBecomeValue' cannot have property parameters."
+        )
+        map.put(
+            PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS,
+            "Declaration annotated with '@WillBecomeValue' cannot have properties with backing fields."
+        )
+        map.put(
+            DELEGATED_PROPERTY_INSIDE_WILL_BECOME_VALUE_CLASS,
+            "Declaration annotated with '@WillBecomeValue' cannot have delegated properties."
+        )
+        map.put(
+            WILL_BECOME_VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION,
+            "Declaration annotated with '@WillBecomeValue' cannot implement an interface by delegation."
+        )
+        map.put(
+            WILL_BECOME_VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES,
+            "Declaration annotated with '@WillBecomeValue' cannot extend identity classes."
+        )
+        map.put(WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE, "Class annotated with '@WillBecomeValue' cannot be recursive.")
+        map.put(
+            WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS,
+            "Class annotated with '@WillBecomeValue' cannot be recursive."
+        )
+        map.put(
+            WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE,
+            "Declaration annotated with '@WillBecomeValue' cannot be 'Cloneable'."
         )
         map.put(
             INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,

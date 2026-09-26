@@ -5,20 +5,20 @@
 // 'Any.equals'/'Any.hashCode' compare and hash by identity, and 'Any.toString' renders the identity hash code, so all
 // three change behavior once the class becomes a value class and must be overridden.
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("hashCode"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("toString")!>class NoOverrides<!>(val x: Int)
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("hashCode"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("toString")!>class NoOverrides<!>(val x: Int)
 
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("hashCode"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("toString")!>class OnlyEquals<!>(val x: Int) {
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("hashCode"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("toString")!>class OnlyEquals<!>(val x: Int) {
     override fun equals(other: Any?): Boolean = other is OnlyEquals && other.x == x
 }
 
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("toString")!>class OnlyHashCode<!>(val x: Int) {
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("toString")!>class OnlyHashCode<!>(val x: Int) {
     override fun hashCode(): Int = x
 }
 
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("hashCode")!>class OnlyToString<!>(val x: Int) {
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("hashCode")!>class OnlyToString<!>(val x: Int) {
     override fun toString(): String = "OnlyToString($x)"
 }
 
@@ -53,13 +53,13 @@ class DelegatingToSuper(val x: Int) {
 abstract class AbstractNoOverrides
 
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("hashCode"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("toString")!>class InheritedNoOverrides<!>(val x: Int) : AbstractNoOverrides()
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("equals"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("hashCode"), IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("toString")!>class InheritedNoOverrides<!>(val x: Int) : AbstractNoOverrides()
 
 @WillBecomeValue
 sealed class SealedNoOverrides
 
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_ERROR("toString")!>object ObjectNoOverrides<!>
+<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS_WARNING("toString")!>object ObjectNoOverrides<!>
 
 @WillBecomeValue
 object ObjectWithToString {
