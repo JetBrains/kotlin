@@ -53,21 +53,21 @@ internal class UppercaseMappingsWriter(private val strategy: RangesWritingStrate
     """.trimIndent()
 
     private fun uppercaseCodePoint(): String = """
-        internal fun Int.uppercaseCodePoint(): Int {
-            if (this in 0x61..0x7a) {
-                return this - 32
+        internal fun uppercaseCodePoint(code: Int): Int {
+            if (code in 0x61..0x7a) {
+                return code - 32
             }
-            if (this < 0x80) {
-                return this
+            if (code < 0x80) {
+                return code
             }
-            val index = binarySearchRange(rangeStart, this)
-            return equalDistanceMapping(this, rangeStart[index], rangeLength[index])
+            val index = binarySearchRange(rangeStart, code)
+            return equalDistanceMapping(code, rangeStart[index], rangeLength[index])
         }
     """.trimIndent()
 
     private fun uppercaseCharImpl(): String = """
         internal fun Char.uppercaseCharImpl(): Char {
-            return code.uppercaseCodePoint().toChar()
+            return uppercaseCodePoint(code).toChar()
         }
     """.trimIndent()
 }

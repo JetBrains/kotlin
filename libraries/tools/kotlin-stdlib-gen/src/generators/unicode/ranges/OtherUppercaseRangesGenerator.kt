@@ -20,9 +20,6 @@ internal class OtherUppercaseRangesGenerator(
     private val otherUpperRanges = mutableListOf<IntRange>()
 
     fun appendLine(line: PropertyLine) {
-        // In Native the Other_Uppercase code points are also used to perform String.lowercase()
-        if (target != KotlinTarget.Native && line.rangeStart.hexToInt() > 0xFFFF) return
-
         if (line.property == "Other_Uppercase") {
             otherUpperRanges.add(line.intRange())
         }
@@ -44,11 +41,11 @@ internal class OtherUppercaseRangesGenerator(
             if (i != 0) {
                 builder.appendLine().append(indent).append("|| ")
             }
-            builder.append(otherUpperRanges[i].rangeCheck("this", indent))
+            builder.append(otherUpperRanges[i].rangeCheck("code", indent))
         }
 
         return """
-        internal fun Int.isOtherUppercase(): Boolean {
+        internal actual fun isOtherUppercase(code: Int): Boolean {
             return $builder
         }
         """.trimIndent()

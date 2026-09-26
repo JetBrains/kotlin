@@ -39,7 +39,7 @@ internal abstract class RangesBuilder {
      * Returns a [Triple] containing lists of range starts, ends and categories in that particular order.
      */
     fun build(): Triple<List<Int>, List<Int>, List<Int>> {
-        for (code in lastAppendedCharCode + 1..0xffff) {
+        for (code in lastAppendedCharCode + 1..0x10ffff) {
             appendSingleChar(code, unassignedCategoryId)
         }
 
