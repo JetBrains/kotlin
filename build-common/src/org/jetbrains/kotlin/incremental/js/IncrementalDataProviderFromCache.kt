@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.js
 
 import org.jetbrains.kotlin.incremental.IncrementalJsCache
+import org.jetbrains.kotlin.name.CallableId
 import java.io.File
 
 class IncrementalDataProviderFromCache(private val cache: IncrementalJsCache) : IncrementalDataProvider {
@@ -17,4 +18,7 @@ class IncrementalDataProviderFromCache(private val cache: IncrementalJsCache) : 
 
     override val serializedIrInlineFiles: Map<File, IrTranslationResultValue>
         get() = cache.nonDirtyIrInlineParts()
+
+    override val serializedIrInlineIds: Map<File, List<CallableId>>
+        get() = cache.nonDirtyIrInlineIds()
 }

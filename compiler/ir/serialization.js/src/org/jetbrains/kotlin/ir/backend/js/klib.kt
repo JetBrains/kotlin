@@ -297,10 +297,11 @@ fun serializeModuleIntoKlib(
                     )
                 }
 
-                { ioFile, compiledFile ->
+                { ioFile, compiledFile, inlineIds ->
                     icConsumer.processPackagePart(ioFile, compiledFile.metadata)
                     compiledFile.irData!!.processIrFile(ioFile, icConsumer::processIrFile)
                     compiledFile.irInlineData?.processIrFile(ioFile, icConsumer::processIrInlineFile)
+                    icConsumer.processIrInlineIds(ioFile, inlineIds)
                 }
             },
         )
@@ -341,7 +342,7 @@ fun serializeModuleIntoKlib(
                 )
                 customProperties { this += properties }
             }
-            includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
+            includeMetadata(serializerOutput.serializedMetadata)
             includeIr(fullSerializedIr)
         }.writeTo(klibPath)
     }

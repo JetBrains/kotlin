@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental.js
 
+import org.jetbrains.kotlin.name.CallableId
 import java.io.File
 
 interface IncrementalResultsConsumer {
@@ -46,6 +47,11 @@ interface IncrementalResultsConsumer {
         fqn: ByteArray,
         debugInfo: ByteArray?,
         fileEntries: ByteArray?,
+    )
+
+    fun processIrInlineIds(
+        sourceFile: File,
+        ids: List<CallableId>,
     )
 }
 
@@ -101,5 +107,15 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         irInlineFileData[sourceFile] = IrTranslationResultValue(
             fileData, types, signatures, strings, declarations, bodies, fqn, debugInfo, fileEntries
         )
+    }
+
+    val irInlineIds: Map<File, List<CallableId>>
+        field = hashMapOf<File, List<CallableId>>()
+
+    override fun processIrInlineIds(
+        sourceFile: File,
+        ids: List<CallableId>,
+    ) {
+        irInlineIds[sourceFile] = ids
     }
 }

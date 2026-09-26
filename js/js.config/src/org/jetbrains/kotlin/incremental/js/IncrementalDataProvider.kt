@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.js
 
+import org.jetbrains.kotlin.name.CallableId
 import java.io.File
 
 // byte arrays are used to simplify passing to different classloaders
@@ -14,4 +15,5 @@ interface IncrementalDataProvider {
 
     val serializedIrFiles: Map<File, IrTranslationResultValue>
     val serializedIrInlineFiles: Map<File, IrTranslationResultValue>
+    val serializedIrInlineIds: Map<File, List<CallableId>>
 }
