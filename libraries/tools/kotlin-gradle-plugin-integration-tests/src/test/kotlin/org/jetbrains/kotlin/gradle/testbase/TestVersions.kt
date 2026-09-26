@@ -25,6 +25,7 @@ interface TestVersions {
         const val G_9_5 = "9.5.1"
         const val G_9_6 = "9.6.1"
         const val G_9_7 = "9.7.0"
+        const val G_9_8 = "9.8.0-rc-2"
 
         /**
          * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
@@ -33,7 +34,7 @@ interface TestVersions {
 
         // Should be the same as GradleCompatibilityCheck.minSupportedGradleVersion
         const val MIN_SUPPORTED = MINIMALLY_SUPPORTED_GRADLE_VERSION
-        const val MAX_SUPPORTED = G_9_7
+        const val MAX_SUPPORTED = G_9_8
     }
 
     object Kotlin {
@@ -55,11 +56,12 @@ interface TestVersions {
         const val AGP_91 = "9.1.1"
         const val AGP_92 = "9.2.1"
         const val AGP_93 = "9.3.2"
-        const val AGP_94 = "9.4.0"
+        const val AGP_94 = "9.4.1"
+        const val AGP_95 = "9.5.0-alpha06"
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
         const val MIN_SUPPORTED = AGP_88 // AgpCompatibilityCheck.minimalSupportedAgpVersion
-        const val MAX_SUPPORTED = AGP_94 // Update once the Gradle MAX_SUPPORTED version is bumped
+        const val MAX_SUPPORTED = AGP_95 // Update once the Gradle MAX_SUPPORTED version is bumped
     }
 
     enum class AgpCompatibilityMatrix(
@@ -79,6 +81,7 @@ interface TestVersions {
         AGP_92(AGP.AGP_92, GradleVersion.version(Gradle.G_9_4), GradleVersion.version(Gradle.G_9_5), JavaVersion.VERSION_17),
         AGP_93(AGP.AGP_93, GradleVersion.version(Gradle.G_9_5), GradleVersion.version(Gradle.G_9_7), JavaVersion.VERSION_17),
         AGP_94(AGP.AGP_94, GradleVersion.version(Gradle.G_9_6), GradleVersion.version(Gradle.G_9_7), JavaVersion.VERSION_17),
+        AGP_95(AGP.AGP_95, GradleVersion.version(Gradle.G_9_7), GradleVersion.version(Gradle.G_9_8), JavaVersion.VERSION_17),
         ;
 
         companion object {
