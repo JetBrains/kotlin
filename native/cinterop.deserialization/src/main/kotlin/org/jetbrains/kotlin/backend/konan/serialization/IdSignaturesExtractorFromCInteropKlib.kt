@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.library.metadataVersion
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.filterToSetOrEmpty
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import kotlin.metadata.ClassName
 import kotlin.metadata.KmAnnotation
@@ -125,10 +126,17 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
             pkg.properties.forEach(transformer::transformTopLevelProperty)
         }
 
+        // Get all signatures of declarations contained in the library.
+        val allDeclaredSignatures: Map<IdSignature, IrDeclaration> = transformer.declarationTracker.deserializedDeclarations
+
         val importedSignatures = (onlyTopLevelReferencedClasses - declaredTopLevelClasses).mapToSetOrEmpty { it.computeSignature() }
 
+        // Exclude any non-top-level signatures that might happen for accessors of top-level properties, for example.
+        val onlyPublicTopLevelDeclaredSignatures = allDeclaredSignatures.keys
+            .filterToSetOrEmpty { it.isPublicTopLevelSignature() }
+
         return ExtractedSignatures(
-            declaredSignatures = transformer.declarationTracker.deserializedDeclarations.keys + declaredTopLevelClasses.mapToSetOrEmpty { it.computeSignature() },
+            declaredSignatures = onlyPublicTopLevelDeclaredSignatures + declaredTopLevelClasses.mapToSetOrEmpty { it.computeSignature() },
             importedSignatures = importedSignatures,
         )
     }
@@ -171,6 +179,8 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
         // and create the appropriate signature.
         return toCInteropSignature(isCInterop = !definitelyNotFromCInterop())
     }
+
+    private fun IdSignature.isPublicTopLevelSignature(): Boolean = this is IdSignature.CommonSignature && '.' !in declarationFqName
 
     private class MetadataLibraryProviderImpl(library: KotlinLibrary) : KlibModuleMetadata.MetadataLibraryProvider {
         private val metadata: KlibMetadataComponent = library.metadata

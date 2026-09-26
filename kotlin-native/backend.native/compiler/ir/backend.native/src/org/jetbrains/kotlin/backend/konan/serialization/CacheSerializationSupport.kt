@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.library.impl.IrArrayReader
 import org.jetbrains.kotlin.library.impl.IrArrayWriter
-import org.jetbrains.kotlin.library.impl.IrStringWriter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.io.Reader
@@ -410,26 +409,21 @@ internal abstract class IdSignatureAwareSerializer<T : FileAwareSerializedData> 
     ): T
 
     fun serialize(items: List<T>): ByteArray {
-        val protoStringMap = hashMapOf<String, Int>()
-        val protoStringArray = arrayListOf<String>()
+        val stringSerializer = IrStringSerializer()
+
         val protoIdSignatureMap = mutableMapOf<IdSignature, Int>()
         val protoIdSignatureArray = arrayListOf<ProtoIdSignature>()
 
-        fun serializeString(value: String): Int = protoStringMap.getOrPut(value) {
-            protoStringArray.add(value)
-            protoStringArray.size - 1
-        }
-
         val idSignatureSerializer = IdSignatureSerializer(
-            ::serializeString,
-            ::serializeString,
+            stringSerializer = stringSerializer,
+            debugInfoSerializer = stringSerializer,
             protoIdSignatureMap,
             protoIdSignatureArray,
         )
         items.forEach { idSignatureSerializer.protoIdSignature(signatureOf(it)) }
 
         val signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, false).writeIntoMemory()
-        val signatureStrings = IrStringWriter(protoStringArray, false).writeIntoMemory()
+        val signatureStrings = stringSerializer.toIrStringWriter(false).writeIntoMemory()
         val stringTable = buildStringTable {
             items.forEach { writeStrings(it, this) }
         }
