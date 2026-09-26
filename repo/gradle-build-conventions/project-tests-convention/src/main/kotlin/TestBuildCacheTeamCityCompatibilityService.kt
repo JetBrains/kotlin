@@ -42,8 +42,16 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
         if (!result.isFromCache && !result.isUpToDate) return
 
         val replay = TestExecutionsReplay(taskPath) { message, failure -> log.warn(message, failure) }
+        var count = 0
         for (message in replay.messagesFor(executionsFile)) {
             println("##teamcity[$message]")
+            count++
         }
+
+        // Through the same 'println' the messages go through, and last, so that a log missing it is
+        // a log whose replay was cut short - which TeamCity does to the tail of a large one.
+        // Never block this thread to wait for TeamCity: Gradle stops the listener executor when the
+        // build finishes and fails the build if it cannot, see the 5 s sleep tried on 2026-10-03.
+        println("TestReplay: $count messages of $taskPath emitted")
     }
 }
