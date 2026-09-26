@@ -358,7 +358,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 }
             }
 
-            if (equalsFromAnyOverriding != null && typedEquals == null && !isWillBecomeValueClass) {
+            if (equalsFromAnyOverriding != null && typedEquals == null) {
                 reporter.reportOn(
                     equalsFromAnyOverriding.source,
                     FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
