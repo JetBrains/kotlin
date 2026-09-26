@@ -47,6 +47,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         testSteppingFromObjcToKotlin(
             """
             > b ${CLANG_FILE_NAME}:4
+            > env KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS=1
             > run
             > thread step-in
             [..] stop reason = step in
@@ -132,6 +133,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             """
             > b ${KOTLIN_FILE_NAME}:2
             > settings set target.enable-trampoline-support false
+            > env KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS=1
             > run
             > thread step-out
             [..] stop reason = step out
@@ -172,6 +174,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             """
             > b ${KOTLIN_FILE_NAME}:3
             > settings set target.enable-trampoline-support false
+            > env KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS=1
             > run
             > thread step-over
             [..] stop reason = step over
