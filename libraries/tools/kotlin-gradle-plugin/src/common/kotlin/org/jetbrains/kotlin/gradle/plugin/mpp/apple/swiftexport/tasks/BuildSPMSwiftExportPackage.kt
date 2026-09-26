@@ -76,6 +76,9 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     @get:Internal
     abstract val swiftPMImportPackageRoot: DirectoryProperty
 
+    @get:Input
+    val swiftPMImportHasDependencies: Property<Boolean> = objectFactory.property<Boolean>().convention(false)
+
     @get:InputFile
     @get:Optional
     @get:PathSensitive(PathSensitivity.NONE)
@@ -167,9 +170,11 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
 
         val derivedData = packageDerivedData.getFile()
 
-        val effectiveCheckout = swiftPMImportFingerprint.orNull?.asFile
-            ?.let { swiftPMImportCoordinationService.get().sharedCheckoutFor(it) }
-            ?: swiftPMImportCheckout.orNull?.asFile
+        val effectiveCheckout = if (!swiftPMImportHasDependencies.get()) null else {
+            swiftPMImportFingerprint.orNull?.asFile
+                ?.let { swiftPMImportCoordinationService.get().sharedCheckoutFor(it) }
+                ?: swiftPMImportCheckout.orNull?.asFile
+        }
         val checkoutArguments = effectiveCheckout?.let {
             listOf(FetchSyntheticImportProjectPackages.XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER, it.absolutePath)
         } ?: emptyList()
@@ -229,7 +234,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     }
 
     private fun ownTargetNames(): Set<String>? {
-        if (!swiftPMImportPackageRoot.isPresent) return null
+        if (!swiftPMImportHasDependencies.get() || !swiftPMImportPackageRoot.isPresent) return null
         val sources = packageRootPath.resolve(GenerateSPMPackageFromSwiftExport.SOURCES_DIRECTORY)
         val targetDirectories = sources.listFiles { file -> file.isDirectory }
             ?: error("Expected the generated package's target sources at $sources")
