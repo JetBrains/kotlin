@@ -137,24 +137,6 @@ class ExtensionConfigurationTest {
         }
     }
 
-    @Suppress("DEPRECATION_ERROR")
-    @Test
-    fun testStabilityConfigurationFile() {
-        testComposeOptions(
-            { extension, project ->
-                extension.stabilityConfigurationFile.value(
-                    project.layout.projectDirectory.file("compose.conf")
-                )
-            }
-        ) { options, project ->
-            assertTrue(
-                options.contains(
-                    "stabilityConfigurationPath" to project.layout.projectDirectory.file("compose.conf").asFile.path
-                )
-            )
-        }
-    }
-
     @Test
     fun testStabilityConfigurationFiles() {
         testComposeOptions(
@@ -208,14 +190,6 @@ class ExtensionConfigurationTest {
     }
 
     @Test
-    fun enableNonSkippingGroupOptimizationCompatibility() {
-        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups")) { extension ->
-            @Suppress("DEPRECATION_ERROR")
-            extension.enableNonSkippingGroupOptimization.value(true)
-        }
-    }
-
-    @Test
     fun enableMultipleFlags() {
         @Suppress("DEPRECATION_ERROR", "DEPRECATION")
         testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups", "-PausableComposition")) { extension ->
@@ -225,36 +199,6 @@ class ExtensionConfigurationTest {
                     ComposeFeatureFlag.OptimizeNonSkippingGroups
                 )
             )
-        }
-    }
-
-    @Test
-    fun enableMultipleFlagsCompatibilityDefaults() {
-        @Suppress("DEPRECATION_ERROR")
-        testComposeFeatureFlags(emptyList()) { extension ->
-            extension.enableNonSkippingGroupOptimization.value(false)
-        }
-    }
-
-    @Test
-    fun combineDeprecatedPropertiesWithFeatureFlags() {
-        @Suppress("DEPRECATION_ERROR", "DEPRECATION")
-        val project = buildProjectWithJvm {
-            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
-            composeExtension.featureFlags.addAll(ComposeFeatureFlag.PausableComposition)
-            composeExtension.enableNonSkippingGroupOptimization.set(true)
-        }
-
-        project.evaluate()
-
-        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
-        val composeOptions = jvmTask.composeOptions()
-
-        listOf(
-            "PausableComposition",
-            "OptimizeNonSkippingGroups"
-        ).forEach { flag ->
-            composeOptions.assertFeature(flag)
         }
     }
 
