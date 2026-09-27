@@ -46,6 +46,10 @@ PERFORMANCE_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() n
     auto pauseTimeMicros = konan::getTimeMicros() - pauseStartTimeMicros_;
     RuntimeLogInfo({logging::Tag::kPause}, "Resuming mutation after %" PRIu64 " microseconds of suspension (%s)", pauseTimeMicros, reason_);
     resumed = true;
+    if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
+        threadData_.popStackMapAnchor();
+    }
+
 }
 
 kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadState newState) noexcept {
@@ -66,9 +70,6 @@ kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadSta
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
-        if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
-            threadData_.pushLastStackMapAnchor();
-        }
         auto pauseHandle = pauseMutationInScope(internal::gSuspensionRequestReason.load(std::memory_order_relaxed));
 
         threadData_.gc().OnSuspendForGC();
@@ -77,9 +78,6 @@ NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequeste
 
         // Must return to running state under the lock.
         pauseHandle.resume();
-        if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
-            threadData_.popStackMapAnchor();
-        }
     }
 }
 
@@ -93,6 +91,9 @@ void mm::ThreadSuspensionData::requestThreadsSuspension(const char* reason) noex
 
 PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(
         const char* reason) noexcept {
+    if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
+        threadData_.pushLastStackMapAnchor();
+    }
     return MutatorPauseHandle(reason, threadData_);
 }
 

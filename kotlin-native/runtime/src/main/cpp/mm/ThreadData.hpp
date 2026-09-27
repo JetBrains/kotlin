@@ -91,15 +91,18 @@ public:
     }
 
     void pushStackMapAnchor(uint64_t* fp, uint64_t* pc) noexcept {
+        RuntimeLogInfo({logging::Tag::kLogging}, "Pushing new anchor: fp=%p pc=%p", fp, pc);
         frameAnchors_.emplace_back(fp, pc);
     }
 
     void pushLastStackMapAnchor() noexcept {
         RuntimeAssert(lastFrame_.fp != nullptr, "Trying push last anchor, but last anchor is not initialized");
+        RuntimeLogInfo({logging::Tag::kLogging}, "Pushing last frame anchor: fp=%p pc=%p", lastFrame_.fp, lastFrame_.pc);
         frameAnchors_.emplace_back(lastFrame_);
     }
 
     void popStackMapAnchor() noexcept {
+        RuntimeLogInfo({logging::Tag::kLogging}, "Poping last anchor: fp=%p pc=%p", frameAnchors_.end()->fp, frameAnchors_.end()->pc);
         frameAnchors_.pop_back();
     }
 
@@ -108,6 +111,7 @@ public:
     }
 
     void setLastFrame(KotlinFrameAnchor anchor) noexcept {
+        RuntimeLogInfo({logging::Tag::kLogging}, "Setting last frame anchor: fp=%p pc=%p", anchor.fp, anchor.pc);
         lastFrame_ = anchor;
     }
 

@@ -166,7 +166,8 @@ extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRe
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
-    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain) return
+    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain)
+        return;
     UpdateStackRef(returnSlot, object);
 }
 
@@ -225,7 +226,14 @@ extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
 }
 
 extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
+    if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
+        mm::KotlinFrameAnchor anchor = mm::KotlinFrameAnchor::getKotlinFrameAnchor();
+        mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(anchor.fp, anchor.pc);
+    }
     mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+    if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
+        mm::ThreadRegistry::Instance().CurrentThreadData()->popStackMapAnchor();
+    }
 }
 
 extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {

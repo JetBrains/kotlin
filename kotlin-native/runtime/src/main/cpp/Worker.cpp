@@ -26,12 +26,15 @@
 #include <pthread.h>
 #include "PthreadUtils.h"
 
+#include "CompilerConstants.hpp"
 #include "Exceptions.h"
 #include "ExternalRCRef.hpp"
 #include "KAssert.h"
 #include "Memory.h"
 #include "Natives.h"
 #include "Runtime.h"
+#include "mm/ThreadData.hpp"
+#include "mm/ThreadRegistry.hpp"
 #include "Types.h"
 #include "Worker.h"
 #include "objc_support/AutoreleasePool.hpp"
@@ -203,7 +206,16 @@ THREAD_LOCAL_VARIABLE Worker* g_worker = nullptr;
 
 void waitInNativeState(pthread_cond_t* cond, pthread_mutex_t* mutex) {
     kotlin::compactObjectPoolInCurrentThread();
+    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain) {
+        uint64_t* fp = reinterpret_cast<uint64_t*>(__builtin_frame_address(0));
+        mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(
+                reinterpret_cast<uint64_t*>(fp[0]), reinterpret_cast<uint64_t*>(fp[1]));
+    }
+
     CallWithThreadState<ThreadState::kNative>(pthread_cond_wait, cond, mutex);
+    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain) {
+        mm::ThreadRegistry::Instance().CurrentThreadData()->popStackMapAnchor();
+    }
 }
 
 void waitInNativeState(pthread_cond_t* cond,
