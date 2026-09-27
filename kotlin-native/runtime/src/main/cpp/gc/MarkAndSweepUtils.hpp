@@ -145,19 +145,21 @@ void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueu
 
         int i = 0;
         while (i < maxHopAmount
-               && (stackMapBuilder.pc2RootsInfo().find((uintptr_t) pc) == stackMapBuilder.pc2RootsInfo().end())) {
+               && stackMapBuilder.pc2RootsInfo().find((uintptr_t) pc) == stackMapBuilder.pc2RootsInfo().end()
+               && fp != 0) {
             pc = (uint64_t*) (*(fp + 1));
             fp = (uint64_t*)(*fp);
             RuntimeLogDebug({logging::Tag::kGC}, "Hop one frame up pc=%p fp=%p", pc, fp);
             i++;
         }
 
-        if (stackMapBuilder.pc2RootsInfo().find((uintptr_t) pc) == stackMapBuilder.pc2RootsInfo().end()) {
+        if (stackMapBuilder.pc2RootsInfo().find((uintptr_t) pc) == stackMapBuilder.pc2RootsInfo().end()
+            || fp == 0 || pc == 0) {
             RuntimeLogDebug({logging::Tag::kGC}, "Could not find live kotlin frame");
-
         }
 
-        while (stackMapBuilder.pc2RootsInfo().find((uintptr_t) pc) != stackMapBuilder.pc2RootsInfo().end()) {
+        while (fp != 0
+               && stackMapBuilder.pc2RootsInfo().find((uintptr_t) pc) != stackMapBuilder.pc2RootsInfo().end()) {
             RuntimeLogDebug({logging::Tag::kGC}, "Start new frame pc=%p fp=%p", pc, fp);
             for (auto pair : stackMapBuilder.pc2RootsInfo().at((uintptr_t)pc).base2Derived_) {
                 stackMap::RootLocation rootsInfo = pair.first;
