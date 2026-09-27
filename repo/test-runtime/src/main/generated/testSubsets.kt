@@ -4,6 +4,7 @@
 package org.jetbrains.kotlin.testFederation
 
 enum class TestSubset {
+    AllTests,
     PlainTests,
     SmokeTests,
     ContractTestsForCompilerInfrastructure,
@@ -27,6 +28,7 @@ enum class TestSubset {
 }
 
 fun contractTagOf(subset: TestSubset): String? = when (subset) {
+    TestSubset.AllTests -> null
     TestSubset.PlainTests -> null
     TestSubset.SmokeTests -> null
     TestSubset.ContractTestsForCompilerInfrastructure -> "contract:CompilerInfrastructure"
@@ -47,3 +49,25 @@ fun contractTagOf(subset: TestSubset): String? = when (subset) {
     TestSubset.ContractTestsForBuildInfrastructure -> "contract:BuildInfrastructure"
     TestSubset.ContractTestsForUnknown -> "contract:Unknown"
 }
+
+fun contractSubsetFromTag(tag: String): TestSubset? =
+    when (tag) {
+        "contract:CompilerInfrastructure" -> TestSubset.ContractTestsForCompilerInfrastructure
+        "contract:Frontend" -> TestSubset.ContractTestsForFrontend
+        "contract:CommonBackend" -> TestSubset.ContractTestsForCommonBackend
+        "contract:Jvm" -> TestSubset.ContractTestsForJvm
+        "contract:Wasm" -> TestSubset.ContractTestsForWasm
+        "contract:Js" -> TestSubset.ContractTestsForJs
+        "contract:Native" -> TestSubset.ContractTestsForNative
+        "contract:CoreLibs" -> TestSubset.ContractTestsForCoreLibs
+        "contract:AnalysisApi" -> TestSubset.ContractTestsForAnalysisApi
+        "contract:BuildToolsApi" -> TestSubset.ContractTestsForBuildToolsApi
+        "contract:SwiftExport" -> TestSubset.ContractTestsForSwiftExport
+        "contract:CompilerPlugins" -> TestSubset.ContractTestsForCompilerPlugins
+        "contract:Gradle" -> TestSubset.ContractTestsForGradle
+        "contract:Maven" -> TestSubset.ContractTestsForMaven
+        "contract:IntelliJ" -> TestSubset.ContractTestsForIntelliJ
+        "contract:BuildInfrastructure" -> TestSubset.ContractTestsForBuildInfrastructure
+        "contract:Unknown" -> TestSubset.ContractTestsForUnknown
+        else -> null
+    }

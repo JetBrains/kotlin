@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.testFederation
 
-import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.TestTemplate
-import org.junit.platform.commons.support.AnnotationSupport
+import org.jetbrains.kotlin.testFederation.TestSubset.*
 import org.junit.platform.engine.FilterResult
 import org.junit.platform.engine.FilterResult.excluded
 import org.junit.platform.engine.FilterResult.included
 import org.junit.platform.engine.TestDescriptor
+import org.junit.platform.engine.TestTag
 import org.junit.platform.engine.support.descriptor.MethodSource
 import org.junit.platform.launcher.PostDiscoveryFilter
 import kotlin.jvm.optionals.getOrNull
@@ -19,43 +18,29 @@ import kotlin.math.absoluteValue
 
 internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
     override fun apply(descriptor: TestDescriptor): FilterResult {
-        val source = descriptor.source.getOrNull() as? MethodSource
-            ?: return included("Not a method-based test")
+        val source = descriptor.source.getOrNull() as? MethodSource ?: return included("Not a method-based test")
         val subsets = testFederationSubsets
 
-        val isSmokeTest = isAutoSmokeTest(descriptor, source) || isMustRunAlways(descriptor)
-
-        if (TestSubset.SmokeTests in subsets && isSmokeTest) {
-            return included("Auto smoke test selected or @${MustRunAlways::class.java.simpleName}")
+        if (AllTests in subsets) {
+            return included("Selected by AllTests")
         }
-
-        val matchedContracts = subsets.mapNotNull(::contractTagOf).filter { tag -> descriptor.tags.any { it.name == tag } }
-        if (matchedContracts.isNotEmpty()) {
-            return included("Contracts: ${matchedContracts.joinToString(", ") { it.removePrefix("contract:") }}")
+        if (isSmokeTest(descriptor, source)) {
+            return if (SmokeTests in subsets) included("Selected by SmokeTests")
+            else excluded("Not selected smoke test")
         }
-
-        if (TestSubset.PlainTests in subsets) {
-            val isContractTest = descriptor.tags.any { it.name.startsWith("contract:") }
-            if (!isSmokeTest && !isContractTest) return included("'${TestSubset.PlainTests}' is requested")
-            if (isExhaustiveCapable(source)) {
-                return included("'${TestSubset.PlainTests}' is requested (exhaustive-capable test, also selected for full variant coverage)")
-            }
+        if (isContractTest(descriptor)) {
+            return findMatchingContracts(subsets, descriptor)
+                .takeIf { it.isNotEmpty() }
+                ?.let { matchingContracts -> included("Selected by " + matchingContracts.joinToString(", ")) }
+                ?: excluded("Not selected contract test")
         }
-
-        return excluded("Not selected automatically / Not @MustRunAlways / Not a contract test")
+        return if (PlainTests in subsets) included("Selected by PlainTests")
+        else excluded("Not selected plain test")
     }
 }
 
-/**
- * Returns true for test methods that produce multiple execution variants — i.e., methods annotated
- * (directly or via meta-annotation) with `@TestTemplate` (which covers `@ParameterizedTest` and
- * `@RepeatedTest`) or `@TestFactory`. These are the methods controlled by [testFederationExhaustive].
- */
-private fun isExhaustiveCapable(source: MethodSource): Boolean {
-    val method = source.javaMethod
-    return AnnotationSupport.isAnnotated(method, TestTemplate::class.java) ||
-            AnnotationSupport.isAnnotated(method, TestFactory::class.java)
-}
+private fun isSmokeTest(descriptor: TestDescriptor, source: MethodSource): Boolean =
+    descriptor.tags.any { it.name == "smoke" } || isAutoSmokeTest(descriptor, source)
 
 /**
  * Selects an approximate percentage of tests using a hash of each test's identity.
@@ -71,5 +56,17 @@ private fun isAutoSmokeTest(descriptor: TestDescriptor, source: MethodSource): B
     return (hashCode % 100).absoluteValue < autoSmokeTestPercentage
 }
 
-private fun isMustRunAlways(descriptor: TestDescriptor): Boolean =
-    descriptor.tags.any { it.name == "smoke" }
+private fun isContractTest(descriptor: TestDescriptor): Boolean {
+    val selfDomains = testFederationDomains
+    if (descriptor.tags.any { tag -> selfDomains.any { domain -> tag.name == "contract:$domain" } }) {
+        return false
+    }
+    return descriptor.tags.any { it.name.startsWith("contract:") }
+}
+
+private fun findMatchingContracts(subsets: Set<TestSubset>, descriptor: TestDescriptor): Set<TestSubset> {
+    val requestedContracts = subsets.filter(TestSubset::isContract).toSet()
+    val declaredContracts = descriptor.tags.map(TestTag::getName).mapNotNull(::contractSubsetFromTag).toSet()
+    return requestedContracts.intersect(declaredContracts)
+}
+

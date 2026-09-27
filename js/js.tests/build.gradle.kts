@@ -150,11 +150,13 @@ projectTests {
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsTest", tag = "!es6", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsTest", tag = "!es6", skipInLocalBuild = false) {
+        extensions.extraProperties["idea.internal.test"] = "true"
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsES6Test", tag = "es6", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsES6Test", tag = "es6", skipInLocalBuild = false) {
+        extensions.extraProperties["idea.internal.test"] = "true"
         setUpJsBoxTests()
     }
 

@@ -95,6 +95,7 @@ private object DomainSourcesGenerator {
                 this += "|package org.jetbrains.kotlin.testFederation"
                 this += "|"
                 this += "|enum class TestSubset {"
+                this += "|    AllTests,"
                 this += "|    PlainTests,"
                 this += "|    SmokeTests,"
                 for (domain in domains) {

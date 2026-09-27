@@ -176,7 +176,7 @@ open class PseudoLifecycleTest {
 class PseudoInheritedTest : PseudoLifecycleTest()
 
 /**
- * A smoke-tagged parameterized test whose variant set depends on [testFederationExhaustive]:
+ * A smoke-tagged parameterized test whose variant set depends on [testFederationAllTestsRequested]:
  * - `SmokeTests` requested: `testFederationExhaustive = false` → only the minimal variant runs
  * - `PlainTests` requested: `testFederationExhaustive = true` → all variants run
  *
@@ -196,7 +196,7 @@ class ExhaustiveAwareArgumentsProvider : ArgumentsProvider {
 
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         val variants =
-            if (testFederationExhaustive) allVariants
+            if (testFederationAllTestsRequested) allVariants
             else listOf(allVariants.first())
 
         return variants.stream().map { Arguments.of(it) }

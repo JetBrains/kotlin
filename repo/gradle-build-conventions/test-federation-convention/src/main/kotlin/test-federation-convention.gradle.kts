@@ -4,11 +4,12 @@ import com.gradle.develocity.agent.gradle.DevelocityConfiguration
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.jetbrains.kotlin.test.federation.buildFrame
 import org.jetbrains.kotlin.testFederation.*
-import org.jetbrains.kotlin.testFederation.TestSubset.SmokeTests
+import org.jetbrains.kotlin.testFederation.TestSubset.*
 
 tasks.withType<Test>().configureEach {
     val testFederationExtension = testFederationExtension
-    val currentDomain = testFederationDomains
+    val domains = testFederationDomains
+    val formattedDomains = domains.map { it.toArgumentString() }
     val areNightlyTestsEnabled = project.areNightlyTestsEnabled
 
     val testSubsets = testFederationSubsets
@@ -29,11 +30,11 @@ tasks.withType<Test>().configureEach {
         val notCompatibleWithTestFederation = smokeTests.skip.get() || contractTests.skip.get()
 
         logger.quiet(buildFrame(
-            "Current domain: ${currentDomain.get()}",
+            "Current domain: ${domains.get()}",
             "Test subsets: [${formattedSubsets.get().replace(",", ", ")}]",
         ))
 
-        scan.value("$projectPath:${this.name} domain", currentDomain.get().toString())
+        scan.value("$projectPath:${this.name} domain", domains.get().toString())
         scan.value("$projectPath:${this.name} test subsets", formattedSubsets.get())
 
         if (!notCompatibleWithTestFederation && !isJUnitPlatform) {
@@ -63,6 +64,9 @@ tasks.withType<Test>().configureEach {
         if (!isJUnitPlatform) {
             return@doFirst
         }
+
+        systemProperty(TEST_FEDERATION_DOMAINS_KEY, formattedDomains.get())
+        environment(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY, formattedDomains.get())
 
         systemProperty(TEST_FEDERATION_SUBSETS_KEY, formattedSubsets.get())
         environment(TEST_FEDERATION_SUBSETS_ENV_KEY, formattedSubsets.get())
@@ -103,13 +107,13 @@ afterEvaluate {
         */
         val defaultFailOnNoDiscoveredTests = failOnNoDiscoveredTests.get()
         failOnNoDiscoveredTests.value(testFederationSubsets.map { subsets ->
-            if (!subsets.toSet().containsAll(TestSubset.entries)) false
+            if (!subsets.contains(AllTests)) false
             else defaultFailOnNoDiscoveredTests
         }).disallowChanges()
 
         val subsets = testFederationSubsets
         doFirst {
-            if (!subsets.get().toSet().containsAll(TestSubset.entries)) {
+            if (!subsets.get().contains(AllTests)) {
                 filter.isFailOnNoMatchingTests = false
             }
         }
