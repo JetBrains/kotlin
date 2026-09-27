@@ -1,0 +1,28 @@
+================ Step #1 =================
+
+Compiling files:
+  src/Selected.kt
+End of files
+Exit code: OK
+
+================ Step #2 =================
+
+Compiling files:
+  src/Unrelated.kt
+End of files
+Exit code: OK
+
+================ Step #3 =================
+
+Compiling files:
+  src/Selected.kt
+End of files
+Exit code: OK
+
+================ Step #4 =================
+
+Compiling files:
+  src/Selected.kt
+  src/Unrelated.kt
+End of files
+Exit code: OK
