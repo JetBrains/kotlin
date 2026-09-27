@@ -102,7 +102,7 @@ public:
     }
 
     void popStackMapAnchor() noexcept {
-        RuntimeLogInfo({logging::Tag::kLogging}, "Poping last anchor: fp=%p pc=%p", frameAnchors_.end()->fp, frameAnchors_.end()->pc);
+        RuntimeLogInfo({logging::Tag::kLogging}, "Poping last anchor: fp=%p pc=%p", frameAnchors_.back().fp, frameAnchors_.back().pc);
         frameAnchors_.pop_back();
     }
 

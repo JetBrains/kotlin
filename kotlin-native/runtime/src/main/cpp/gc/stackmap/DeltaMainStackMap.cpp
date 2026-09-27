@@ -76,9 +76,6 @@ void DeltaMainStackMapBuilder::Reader::getRootsInfo(
 
 void DeltaMainStackMapBuilder::verifyMagic(uint8_t magic) {
     uint8_t expected = (DELTA_MAIN_VERSION << 4) | REGISTER_IN_STACKMAP_MAGIC | LAZY_ENABLED_MAGIC;
-    if (magic != expected) {
-        RuntimeLogDebug({kTagGC}, "MAGIC IS WRONG ASSERT WOULD FAIL");
-    }
 
     RuntimeAssert(magic == expected,
                  "Delta-main stack map magic mismatch: section was built with incompatible "
