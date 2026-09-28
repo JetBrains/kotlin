@@ -184,7 +184,6 @@ class ClassCodegen private constructor(
 
         visitor.visitSMAP(
             smap,
-            !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax),
             parentFunction != null && parentFunction.isInline,
             config.shouldValidateBytecode
         )
