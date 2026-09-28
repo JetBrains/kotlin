@@ -69,6 +69,7 @@ fun main(args: Array<String>) {
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
                 model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
                 model("testsWithAnyBackend", excludedPattern = excludedCustomTestdataPattern)
+                model("irInliner", excludedPattern = excludedCustomTestdataPattern)
             }
         }
 
