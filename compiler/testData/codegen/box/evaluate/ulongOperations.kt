@@ -139,6 +139,11 @@ const val equals2 = twoVal == twoVal
 const val equals3 = threeVal == twoVal
 const val equals4 = fourVal == twoVal
 
+const val notEquals1 = oneVal != twoVal
+const val notEquals2 = twoVal != twoVal
+const val notEquals3 = threeVal != twoVal
+const val notEquals4 = fourVal != twoVal
+
 const val toString1 = oneVal.toString()
 const val toString2 = twoVal.toString()
 
@@ -266,6 +271,11 @@ fun box(): String {
     if (equals2.id() != true)    return "Fail equals2"
     if (equals3.id() != false)   return "Fail equals3"
     if (equals4.id() != false)   return "Fail equals4"
+
+    if (notEquals1.id() != true)    return "Fail notEquals1"
+    if (notEquals2.id() != false)   return "Fail notEquals2"
+    if (notEquals3.id() != true)    return "Fail notEquals3"
+    if (notEquals4.id() != true)    return "Fail notEquals4"
 
     if (toString1.id() != "1")   return "Fail toString1"
     if (toString2.id() != "2")   return "Fail toString2"

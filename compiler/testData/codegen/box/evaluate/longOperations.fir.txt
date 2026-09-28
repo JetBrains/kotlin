@@ -120,6 +120,60 @@ FILE: longOperations.kt
         public get(): R|kotlin/Float|
     public final const [EvaluatedValue=Double(0.0)] val rem8: R|kotlin/Double| = R|/twoVal|.R|kotlin/Long.rem|(R|/doubleVal|)
         public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Long(0)] val floorDiv1: R|kotlin/Long| = R|/oneVal|.R|kotlin/floorDiv|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(1)] val floorDiv2: R|kotlin/Long| = R|/twoVal|.R|kotlin/floorDiv|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(1)] val floorDiv3: R|kotlin/Long| = R|/threeVal|.R|kotlin/floorDiv|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(-1)] val floorDiv4: R|kotlin/Long| = R|/minusOneVal|.R|kotlin/floorDiv|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(2)] val and1: R|kotlin/Long| = R|/threeVal|.R|kotlin/Long.and|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(2)] val and2: R|kotlin/Long| = R|/twoVal|.R|kotlin/Long.and|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(0)] val and3: R|kotlin/Long| = R|/fourVal|.R|kotlin/Long.and|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(0)] val and4: R|kotlin/Long| = R|/oneVal|.R|kotlin/Long.and|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(3)] val or1: R|kotlin/Long| = R|/oneVal|.R|kotlin/Long.or|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(2)] val or2: R|kotlin/Long| = R|/twoVal|.R|kotlin/Long.or|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(6)] val or3: R|kotlin/Long| = R|/fourVal|.R|kotlin/Long.or|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(3)] val or4: R|kotlin/Long| = R|/oneVal|.R|kotlin/Long.or|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(3)] val xor1: R|kotlin/Long| = R|/oneVal|.R|kotlin/Long.xor|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(0)] val xor2: R|kotlin/Long| = R|/twoVal|.R|kotlin/Long.xor|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(1)] val xor3: R|kotlin/Long| = R|/threeVal|.R|kotlin/Long.xor|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(3)] val xor4: R|kotlin/Long| = R|/oneVal|.R|kotlin/Long.xor|(R|/twoVal|)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(2)] val shl1: R|kotlin/Long| = R|/oneVal|.R|kotlin/Long.shl|(Int(1))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(8)] val shl2: R|kotlin/Long| = R|/twoVal|.R|kotlin/Long.shl|(Int(2))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(2)] val shl3: R|kotlin/Long| = R|/oneVal|.R|kotlin/Long.shl|(Int(1))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(2)] val shr1: R|kotlin/Long| = R|/fourVal|.R|kotlin/Long.shr|(Int(1))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(-1)] val shr2: R|kotlin/Long| = R|/minusOneVal|.R|kotlin/Long.shr|(Int(1))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(2)] val shr3: R|kotlin/Long| = R|/fourVal|.R|kotlin/Long.shr|(Int(1))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(2)] val ushr1: R|kotlin/Long| = R|/fourVal|.R|kotlin/Long.ushr|(Int(1))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(15)] val ushr2: R|kotlin/Long| = R|/minusOneVal|.R|kotlin/Long.ushr|(Int(60))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(2)] val ushr3: R|kotlin/Long| = R|/fourVal|.R|kotlin/Long.ushr|(Int(1))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(-2)] val inv1: R|kotlin/Long| = R|/oneVal|.R|kotlin/Long.inv|()
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(0)] val inv2: R|kotlin/Long| = R|/minusOneVal|.R|kotlin/Long.inv|()
+        public get(): R|kotlin/Long|
     public final const [EvaluatedValue=Long(1)] val unaryPlus1: R|kotlin/Long| = R|/oneVal|.R|kotlin/Long.unaryPlus|()
         public get(): R|kotlin/Long|
     public final const [EvaluatedValue=Long(-1)] val unaryPlus2: R|kotlin/Long| = R|/minusOneVal|.R|kotlin/Long.unaryPlus|()
@@ -149,6 +203,14 @@ FILE: longOperations.kt
     public final const [EvaluatedValue=Boolean(false)] val equals3: R|kotlin/Boolean| = ==(R|/threeVal|, R|/twoVal|)
         public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=Boolean(false)] val equals4: R|kotlin/Boolean| = ==(R|/fourVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals1: R|kotlin/Boolean| = !=(R|/oneVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val notEquals2: R|kotlin/Boolean| = !=(R|/twoVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals3: R|kotlin/Boolean| = !=(R|/threeVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals4: R|kotlin/Boolean| = !=(R|/fourVal|, R|/twoVal|)
         public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=String(1)] val toString1: R|kotlin/String| = R|/oneVal|.R|kotlin/Long.toString|()
         public get(): R|kotlin/String|
@@ -444,6 +506,168 @@ FILE: longOperations.kt
         }
 
         when () {
+            !=(R|/floorDiv1|.R|/id|<R|kotlin/Long|>(), Long(0)) ->  {
+                ^box String(Fail 6b.1)
+            }
+        }
+
+        when () {
+            !=(R|/floorDiv2|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
+                ^box String(Fail 6b.2)
+            }
+        }
+
+        when () {
+            !=(R|/floorDiv3|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
+                ^box String(Fail 6b.3)
+            }
+        }
+
+        when () {
+            !=(R|/floorDiv4|.R|/id|<R|kotlin/Long|>(), Long(1).R|kotlin/Long.unaryMinus|()) ->  {
+                ^box String(Fail 6b.4)
+            }
+        }
+
+        when () {
+            !=(R|/and1|.R|/id|<R|kotlin/Long|>(), Long(2)) ->  {
+                ^box String(Fail 6c.1)
+            }
+        }
+
+        when () {
+            !=(R|/and2|.R|/id|<R|kotlin/Long|>(), Long(2)) ->  {
+                ^box String(Fail 6c.2)
+            }
+        }
+
+        when () {
+            !=(R|/and3|.R|/id|<R|kotlin/Long|>(), Long(0)) ->  {
+                ^box String(Fail 6c.3)
+            }
+        }
+
+        when () {
+            !=(R|/and4|.R|/id|<R|kotlin/Long|>(), Long(0)) ->  {
+                ^box String(Fail 6c.4)
+            }
+        }
+
+        when () {
+            !=(R|/or1|.R|/id|<R|kotlin/Long|>(), Long(3)) ->  {
+                ^box String(Fail 6d.1)
+            }
+        }
+
+        when () {
+            !=(R|/or2|.R|/id|<R|kotlin/Long|>(), Long(2)) ->  {
+                ^box String(Fail 6d.2)
+            }
+        }
+
+        when () {
+            !=(R|/or3|.R|/id|<R|kotlin/Long|>(), Long(6)) ->  {
+                ^box String(Fail 6d.3)
+            }
+        }
+
+        when () {
+            !=(R|/or4|.R|/id|<R|kotlin/Long|>(), Long(3)) ->  {
+                ^box String(Fail 6d.4)
+            }
+        }
+
+        when () {
+            !=(R|/xor1|.R|/id|<R|kotlin/Long|>(), Long(3)) ->  {
+                ^box String(Fail 6e.1)
+            }
+        }
+
+        when () {
+            !=(R|/xor2|.R|/id|<R|kotlin/Long|>(), Long(0)) ->  {
+                ^box String(Fail 6e.2)
+            }
+        }
+
+        when () {
+            !=(R|/xor3|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
+                ^box String(Fail 6e.3)
+            }
+        }
+
+        when () {
+            !=(R|/xor4|.R|/id|<R|kotlin/Long|>(), Long(3)) ->  {
+                ^box String(Fail 6e.4)
+            }
+        }
+
+        when () {
+            !=(R|/shl1|.R|/id|<R|kotlin/Long|>(), Long(2)) ->  {
+                ^box String(Fail 6f.1)
+            }
+        }
+
+        when () {
+            !=(R|/shl2|.R|/id|<R|kotlin/Long|>(), Long(8)) ->  {
+                ^box String(Fail 6f.2)
+            }
+        }
+
+        when () {
+            !=(R|/shl3|.R|/id|<R|kotlin/Long|>(), Long(2)) ->  {
+                ^box String(Fail 6f.3)
+            }
+        }
+
+        when () {
+            !=(R|/shr1|.R|/id|<R|kotlin/Long|>(), Long(2)) ->  {
+                ^box String(Fail 6g.1)
+            }
+        }
+
+        when () {
+            !=(R|/shr2|.R|/id|<R|kotlin/Long|>(), Long(1).R|kotlin/Long.unaryMinus|()) ->  {
+                ^box String(Fail 6g.2)
+            }
+        }
+
+        when () {
+            !=(R|/shr3|.R|/id|<R|kotlin/Long|>(), Long(2)) ->  {
+                ^box String(Fail 6g.3)
+            }
+        }
+
+        when () {
+            !=(R|/ushr1|.R|/id|<R|kotlin/Long|>(), Long(2)) ->  {
+                ^box String(Fail 6h.1)
+            }
+        }
+
+        when () {
+            !=(R|/ushr2|.R|/id|<R|kotlin/Long|>(), Long(15)) ->  {
+                ^box String(Fail 6h.2)
+            }
+        }
+
+        when () {
+            !=(R|/ushr3|.R|/id|<R|kotlin/Long|>(), Long(2)) ->  {
+                ^box String(Fail 6h.3)
+            }
+        }
+
+        when () {
+            !=(R|/inv1|.R|/id|<R|kotlin/Long|>(), Long(2).R|kotlin/Long.unaryMinus|()) ->  {
+                ^box String(Fail 6i.1)
+            }
+        }
+
+        when () {
+            !=(R|/inv2|.R|/id|<R|kotlin/Long|>(), Long(0)) ->  {
+                ^box String(Fail 6i.2)
+            }
+        }
+
+        when () {
             !=(R|/unaryPlus1|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
                 ^box String(Fail 7.1)
             }
@@ -530,6 +754,30 @@ FILE: longOperations.kt
         when () {
             !=(R|/equals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
                 ^box String(Fail 9.4)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals1|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 9.5)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals2|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 9.6)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals3|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 9.7)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 9.8)
             }
         }
 

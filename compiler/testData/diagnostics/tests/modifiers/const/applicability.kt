@@ -85,6 +85,9 @@ const val nonConstInitializer11 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 % 0<
 const val nonConstInitializer12 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0 % 0<!>
 const val nonConstInitializer14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.rem(0)<!>
 const val nonConstInitializer15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.div(0)<!>
+const val nonConstInitializer16 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"a" <!USELESS_ELVIS!>?: "b"<!><!>
+const val nonConstInitializer17 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!><!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> "b"<!>
+const val nonConstInitializer18 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"a"<!UNNECESSARY_SAFE_CALL!>?.<!>length ?: 1<!>
 
 const val constInitializer1 = 1.0/0
 const val constInitializer2 = 1/0.0

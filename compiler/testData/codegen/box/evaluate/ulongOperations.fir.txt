@@ -240,6 +240,14 @@ FILE: ulongOperations.kt
         public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=Boolean(false)] val equals4: R|kotlin/Boolean| = ==(R|/fourVal|, R|/twoVal|)
         public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals1: R|kotlin/Boolean| = !=(R|/oneVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val notEquals2: R|kotlin/Boolean| = !=(R|/twoVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals3: R|kotlin/Boolean| = !=(R|/threeVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals4: R|kotlin/Boolean| = !=(R|/fourVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=String(1)] val toString1: R|kotlin/String| = R|/oneVal|.R|kotlin/ULong.toString|()
         public get(): R|kotlin/String|
     public final const [EvaluatedValue=String(2)] val toString2: R|kotlin/String| = R|/twoVal|.R|kotlin/ULong.toString|()
@@ -872,6 +880,30 @@ FILE: ulongOperations.kt
         when () {
             !=(R|/equals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
                 ^box String(Fail equals4)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals1|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail notEquals1)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals2|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail notEquals2)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals3|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail notEquals3)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail notEquals4)
             }
         }
 

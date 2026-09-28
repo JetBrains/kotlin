@@ -36,6 +36,12 @@ FILE: stringOperations.kt
         public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=Boolean(false)] val equals3: R|kotlin/Boolean| = ==(R|/otherStr|, R|/someStr|)
         public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val notEquals1: R|kotlin/Boolean| = !=(R|/someStr|, String(123))
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals2: R|kotlin/Boolean| = !=(R|/someStr|, R|/otherStr|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals3: R|kotlin/Boolean| = !=(R|/otherStr|, R|/someStr|)
+        public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=String(123)] val toString1: R|kotlin/String| = R|/someStr|.R|kotlin/String.toString|()
         public get(): R|kotlin/String|
     public final fun box(): R|kotlin/String| {
@@ -114,6 +120,24 @@ FILE: stringOperations.kt
         when () {
             !=(R|/equals3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
                 ^box String(Fail 5.3)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 5.4)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 5.5)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals3|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 5.6)
             }
         }
 

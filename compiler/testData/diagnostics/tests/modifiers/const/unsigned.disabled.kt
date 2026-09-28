@@ -73,4 +73,9 @@ const val equals2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>byteVal.equals(short
 const val equals3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>byteVal.equals(intVal)<!>
 const val equals4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>byteVal.equals(longVal)<!>
 
+const val notEquals1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>byteVal<!> != byteVal
+const val notEquals2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>shortVal<!> != shortVal
+const val notEquals3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>intVal<!> != intVal
+const val notEquals4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>longVal<!> != longVal
+
 /* GENERATED_FIR_TAGS: const, propertyDeclaration, unsignedLiteral */
