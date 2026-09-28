@@ -34,6 +34,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("continues_after_erroneous_snippets.repl.kts")
+  public void testContinues_after_erroneous_snippets_repl() {
+    run("continues_after_erroneous_snippets.repl.kts");
+  }
+
+  @Test
   @TestMetadata("delegated_extension_property.repl.kts")
   public void testDelegated_extension_property_repl() {
     run("delegated_extension_property.repl.kts");
