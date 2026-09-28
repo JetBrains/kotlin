@@ -1,5 +1,4 @@
 library {
-  // module name: <main>
 
   library fragment {
     // package name: test

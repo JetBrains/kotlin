@@ -1,5 +1,4 @@
 library {
-  // module name: <pod1.def>
 
   library fragment {
     // package name: objcinterop

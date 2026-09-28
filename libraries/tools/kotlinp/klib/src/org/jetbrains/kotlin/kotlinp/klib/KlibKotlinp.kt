@@ -16,10 +16,9 @@ class KlibKotlinp(
     settings: Settings,
     private val signatureComputer: ExternalSignatureComputer?,
 ) : Kotlinp(settings) {
-    fun renderModule(moduleName: String, module: KlibModuleMetadata, printer: Printer): Unit = with(printer) {
+    fun renderModule(module: KlibModuleMetadata, printer: Printer): Unit = with(printer) {
         appendLine("library {")
         withIndent {
-            appendCommentedLine("module name: ", "<$moduleName>")
             module.fragments.forEach { renderModuleFragment(it, printer) }
         }
         appendLine("}")

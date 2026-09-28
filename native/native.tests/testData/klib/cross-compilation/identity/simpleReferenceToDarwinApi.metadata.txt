@@ -1,5 +1,4 @@
 library {
-  // module name: <simpleReferenceToDarwinApi>
 
   library fragment {
     // package name: simple

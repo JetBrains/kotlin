@@ -1,5 +1,4 @@
 library {
-  // module name: <stdlibReferences>
 
   library fragment {
     // package name: test
