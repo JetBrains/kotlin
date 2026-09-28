@@ -7,7 +7,7 @@
 @file:JsModule("moduleFile")
 package moduleFile
 
-<!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_WARNING!>external var moduleVar: Int<!>
+external <!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_WARNING!>var<!> moduleVar: Int
 
 external val moduleVal: Int
 

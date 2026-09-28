@@ -6,7 +6,7 @@
 @file:JsModule("moduleFile")
 package moduleFile
 
-<!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>external var moduleVar: Int<!>
+external <!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>var<!> moduleVar: Int
 
 external val moduleVal: Int
 
@@ -25,14 +25,14 @@ external var annotatedVar: Int<!>
 @file:JsNonModule
 package nonModuleFile
 
-<!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>external var nonModuleVar: Int<!>
+external <!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>var<!> nonModuleVar: Int
 
 // FILE: bothFile.kt
 @file:JsModule("bothFile")
 @file:JsNonModule
 package bothFile
 
-<!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>external var bothVar: Int<!>
+external <!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>var<!> bothVar: Int
 
 // FILE: qualifierFile.kt
 @file:JsQualifier("qualifierFile")
