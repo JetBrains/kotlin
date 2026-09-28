@@ -175,7 +175,7 @@ class ExtensionConfigurationTest {
 
     @Test
     fun disableNonSkippingGroupOptimization() {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         testComposeFeatureFlags(listOf("-OptimizeNonSkippingGroups")) { extension ->
             extension.featureFlags.value(setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups.disabled()))
         }
@@ -183,7 +183,7 @@ class ExtensionConfigurationTest {
 
     @Test
     fun disablePausableComposition() {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         testComposeFeatureFlags(listOf("-PausableComposition")) { extension ->
             extension.featureFlags.value(setOf(ComposeFeatureFlag.PausableComposition.disabled()))
         }
