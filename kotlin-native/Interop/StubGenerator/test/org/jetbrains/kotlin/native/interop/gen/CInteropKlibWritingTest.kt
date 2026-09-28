@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.library.AbstractNativeKlibWriterTest
@@ -69,6 +70,7 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
                 shortName = parameters.shortName,
                 staticLibraries = parameters.nativeIncludedBinaryFiles.map { it.file },
                 klibAbiCompatibilityLevel = parameters.abiLevel,
+                topLevelSignatures = IdSignaturesExtractor.ExtractedSignatures(emptySet(), emptySet()), // TODO(KT-89482): test writing of signature indices
         )
 
         return klibLocation

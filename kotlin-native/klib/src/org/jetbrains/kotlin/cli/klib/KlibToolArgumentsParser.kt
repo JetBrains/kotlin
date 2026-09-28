@@ -59,10 +59,17 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
             }
         }
 
+        val dumpSignaturesMode = parsedOptions[CliOption.DUMP_SIGNATURES_MODE]?.last()?.let { modeName ->
+            SignaturesDumpMode.parseOrNull(modeName) ?: run {
+                output.logError("Invalid signatures dump mode: $modeName")
+                return KlibToolArgumentsParserResult.Error
+            }
+        }
+
         return KlibToolArgumentsParserResult.ParsedArguments(
                 command = command,
                 library = library,
-                onlyTopLevelSignatures = parsedOptions[CliOption.ONLY_TOP_LEVEL_SIGNATURES]?.last()?.toBoolean() == true,
+                dumpSignaturesMode = dumpSignaturesMode,
                 signatureVersion,
                 dumpMetadataTestMode = dumpMetadataTestMode,
                 relativePathBases = parsedOptions[CliOption.RELATIVE_PATH_BASE] ?: emptyList(),
@@ -141,7 +148,7 @@ internal sealed interface KlibToolArgumentsParserResult {
     class ParsedArguments(
             val command: CliCommand,
             val library: KotlinLibrary,
-            val onlyTopLevelSignatures: Boolean,
+            val dumpSignaturesMode: SignaturesDumpMode?,
             val signatureVersion: KotlinIrSignatureVersion?,
             val dumpMetadataTestMode: MetadataDumpMode?,
             val relativePathBases: List<String>,
@@ -212,9 +219,10 @@ private enum class CliOption(val isPrivate: Boolean = false) {
         override val applicableTo get() = setOf(CliCommand.DUMP_ABI, CliCommand.DUMP_SIGNATURES)
     },
 
-    ONLY_TOP_LEVEL_SIGNATURES {
-        override val hintOnValues = "{true|false}"
-        override val description = "Dump IR signatures of only top-level declarations."
+    DUMP_SIGNATURES_MODE {
+        override val hintOnValues
+            get() = SignaturesDumpMode.entries.joinToString(prefix = "{", postfix = "}", separator = "|") { it.modeName }
+        override val description = "Dump IR signatures using the specified mode."
         override val applicableTo get() = setOf(CliCommand.DUMP_SIGNATURES)
     },
 
@@ -255,6 +263,16 @@ private enum class CliOption(val isPrivate: Boolean = false) {
 
     companion object {
         fun parseOrNull(optionName: String): CliOption? = entries.firstOrNull { it.optionName == optionName }
+    }
+}
+
+internal enum class SignaturesDumpMode(val modeName: String) {
+    ALL_SIGNATURES("all"),
+    TOP_LEVEL_SIGNATURES("top-level"),
+    TOP_LEVEL_SIGNATURES_NO_INDICES("top-level-no-indices");
+
+    companion object {
+        fun parseOrNull(modeName: String?): SignaturesDumpMode? = SignaturesDumpMode.entries.firstOrNull { it.modeName == modeName }
     }
 }
 
