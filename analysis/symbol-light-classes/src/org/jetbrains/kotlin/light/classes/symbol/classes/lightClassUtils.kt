@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -22,8 +23,7 @@ import org.jetbrains.kotlin.psi.*
 
 
 context(_: KaSession)
-internal fun KaClassSymbol.shouldNotBeVisibleAsLightClass(): Boolean {
-    val containingModule = containingModule
+internal fun KaClassSymbol.shouldNotBeVisibleAsLightClass(containingModule: KaModule): Boolean {
     if ((containingModule as? KaDanglingFileModule)?.isCodeFragment == true) {
         // Avoid building light classes for code fragments
         return true
