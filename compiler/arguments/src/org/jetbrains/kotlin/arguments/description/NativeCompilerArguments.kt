@@ -980,7 +980,7 @@ The default value is 1.""".asReleaseDependent()
 - 'default' lets the compiler pick the selector configured for the target in konan.properties, or the LLVM default if none is configured;
 - 'selection-dag' lowers the code through a target-independent Selection DAG, producing high-quality machine code;
 - 'global' uses GlobalISel, which is faster when optimizations are disabled and falls back to SelectionDAG for constructs it does not support.
--Omitting the argument is equivalent to 'default'.""".asReleaseDependent()
+Omitting the argument is equivalent to 'default'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{default|selection-dag|global}".asReleaseDependent()
 
@@ -990,6 +990,17 @@ The default value is 1.""".asReleaseDependent()
     }
 
     compilerArgument {
+        name = "Xin-process-obj-emission"
+        description = """Emit object files from LLVM bitcode in-process, without invoking an external clang process.
+This is an experimental mode and is expected to be faster than the default one.""".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+    }
+
+     compilerArgument {
         name = "Xmanifest-native-targets"
         description =
             "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.".asReleaseDependent()
