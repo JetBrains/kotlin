@@ -66,7 +66,6 @@ tasks.register<JavaExec>("runK2ExampleRepl") {
 
 projectTests {
     testTask(
-        javaLauncher = JdkMajorVersion.JDK_17_0,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0,
