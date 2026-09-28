@@ -200,6 +200,9 @@ We define the following test subsets:
 
 - `AllTests`:
   - runs every test in the task
+- `PlainTests`:
+  - runs tests not tagged as smoke or contract tests (`@MustRunAlways` / `@MustRunOnChangesIn<Domain>`)
+  - useful for running only the "plain" tests without smoke or contract tests on CI
 - `SmokeTests`:
   - runs tests annotated with `@MustRunAlways`
   - runs tests selected via `testFederation { smokeTests { ... } }` DSL
@@ -207,8 +210,6 @@ We define the following test subsets:
   - runs tests annotated with `@MustRunOnChangesIn<Domain>`
 
 Other test filters, such as `@NightlyTest`, still apply regardless of the requested subsets.
-Test Federation requests `AllTests` when all tests in the task's domain must run, and `SmokeTests` plus the
-relevant `ContractTestsFor<Domain>` subsets otherwise.
 
 Use `smokeTests` to configure additional auto-sampling when the task's test framework supports it.
 The `includeAutoSamples` selects an approximate percentage of tests using a hash of each test's identity, and requires a JUnit 5 task:

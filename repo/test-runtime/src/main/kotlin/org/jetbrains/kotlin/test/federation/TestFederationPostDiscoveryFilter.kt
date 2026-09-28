@@ -34,7 +34,8 @@ internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
                 ?.let { matchingContracts -> included("Selected by " + matchingContracts.joinToString(", ")) }
                 ?: excluded("Not selected contract test")
         }
-        return excluded("Not selected plain test")
+        return if (PlainTests in subsets) included("Selected by PlainTests")
+        else excluded("Not selected plain test")
     }
 }
 

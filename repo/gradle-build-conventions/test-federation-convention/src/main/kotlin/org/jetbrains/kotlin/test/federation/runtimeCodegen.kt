@@ -9,6 +9,23 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForAnalysisApi
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForBuildInfrastructure
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForBuildToolsApi
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForCommonBackend
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForCompilerPlugins
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForCoreLibs
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForFrontend
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForGradle
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForIntelliJ
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForJs
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForJvm
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForMaven
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForNative
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForSwiftExport
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForUnknown
+import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForWasm
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.writeText
 
@@ -88,6 +105,7 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 this += "|"
                 this += "|enum class TestSubset {"
                 this += "|    AllTests,"
+                this += "|    PlainTests,"
                 this += "|    SmokeTests,"
                 for (domain in domains) {
                     this += "|    ContractTestsFor${domain.name},"
@@ -103,6 +121,7 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 this += "|"
                 this += "|fun contractTagOf(subset: TestSubset): String? = when (subset) {"
                 this += "|    TestSubset.AllTests -> null"
+                this += "|    TestSubset.PlainTests -> null"
                 this += "|    TestSubset.SmokeTests -> null"
                 for (domain in domains) {
                     this += "|    TestSubset.ContractTestsFor${domain.name} -> \"contract:${domain.name}\""
