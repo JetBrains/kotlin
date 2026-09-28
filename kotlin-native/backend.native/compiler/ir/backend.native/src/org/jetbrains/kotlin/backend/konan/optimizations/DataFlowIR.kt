@@ -532,7 +532,7 @@ internal object DataFlowIR {
             require(!sealed) { "The symbol table has been sealed. irClass = ${irClass.render()}" }
             val placeToClassTable = true
             val symbolTableIndex = if (placeToClassTable) module.numberOfClasses++ else -1
-            val type = if (irClass.isExported())
+            val type = if (irClass.isExported)
                 Type.Public(localHash(name.toByteArray()), privateTypeIndex++, isFinal, isAbstract,
                         module, symbolTableIndex, irClass, takeName { name })
             else
@@ -651,7 +651,7 @@ internal object DataFlowIR {
             }
             val symbol = when {
                 it.isExternal || it.isBuiltInOperator -> {
-                    FunctionSymbol.External(localHash(name.toByteArray()), attributes, it, takeName { name }, it.isExported()).apply {
+                    FunctionSymbol.External(localHash(name.toByteArray()), attributes, it, takeName { name }, it.isExported).apply {
                         escapes  = it.escapes
                         pointsTo = it.pointsTo
                     }
@@ -668,7 +668,7 @@ internal object DataFlowIR {
                     val placeToFunctionsTable = !isAbstract && irClass != null
                             && (it.isOverridableOrOverrides || bridgeTarget != null || function.isSpecial || !irClass.isFinalClass)
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
-                    val functionSymbol = if (it.isExported())
+                    val functionSymbol = if (it.isExported)
                         FunctionSymbol.Public(localHash(name.toByteArray()), module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
                     else
                         FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })

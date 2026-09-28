@@ -104,13 +104,13 @@ object KonanBinaryInterface {
 
 internal val IrClass.writableTypeInfoSymbolName: String
     get() {
-        assert (this.isExported())
+        assert (this.isExported)
         return "ktypew:" + this.fqNameForIrSerialization.toString()
     }
 
 internal val IrClass.globalObjectStorageSymbolName: String
     get() {
-        assert (this.isExported())
+        assert (this.isExported)
         assert (this.kind.isSingleton)
         assert (!this.isUnit())
 
@@ -119,7 +119,7 @@ internal val IrClass.globalObjectStorageSymbolName: String
 
 internal val IrClass.threadLocalObjectStorageGetterSymbolName: String
     get() {
-        assert (this.isExported())
+        assert (this.isExported)
         assert (this.kind.isSingleton)
         assert (!this.isUnit())
 
@@ -128,7 +128,7 @@ internal val IrClass.threadLocalObjectStorageGetterSymbolName: String
 
 internal val IrClass.kotlinObjCClassInfoSymbolName: String
     get() {
-        assert (this.isExported())
+        assert (this.isExported)
         assert (this.isKotlinObjCClass())
 
         return "kobjcclassinfo:$fqNameForIrSerialization"
@@ -179,7 +179,8 @@ private fun String.replaceSpecialSymbols() =
         // '@' is used for symbol versioning in GCC: https://gcc.gnu.org/wiki/SymbolVersioning.
         this.replace("@", "__at__")
 
-fun IrDeclaration.isExported() = KonanBinaryInterface.isExported(this)
+val IrDeclaration.isExported: Boolean
+    get() = KonanBinaryInterface.isExported(this)
 
 internal val IrClass.typeInfoHasVtableAttached: Boolean
     get() = !this.isAbstract() && !this.isExternalObjCClass()
