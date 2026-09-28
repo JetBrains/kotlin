@@ -56,6 +56,7 @@ internal class MetadataDumper(private val output: KlibToolOutput) {
             }
     )
 
+    @Suppress("DEPRECATION") // The name is copied as is until the header is dropped in MV=2.6.0 (KT-87197).
     private fun preprocessMetadataForTests(module: KlibModuleMetadata) = KlibModuleMetadata(
         name = module.name,
         fragments = module.fragments.groupBy { it.fqName }.mapNotNull { [packageFqName, fragments] ->
