@@ -37,6 +37,10 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         contextExtensions.firstIsInstanceOrNull<KlibMetadataVersionWriteExtension>()?.version
             ?: error("No KlibMetadataVersionWriteExtension found")
 
+    private fun WriteContext.processTypeBeforeWriting(type: KmType) {
+        contextExtensions.firstIsInstanceOrNull<KlibTypeWriteExtension>()?.processType(type)
+    }
+
     private fun readAnnotations(
         commonMetadataSource: List<ProtoBuf.Annotation>,
         klibMetadataSource: List<ProtoBuf.Annotation>,
@@ -62,6 +66,12 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         writeToKlibMetadata: (List<ProtoBuf.Annotation>) -> Unit,
     ) {
         if (annotations.isEmpty()) return
+
+        c.contextExtensions.firstIsInstanceOrNull<KlibAnnotationWriteExtension>()?.let { annotationExt ->
+            for (annotation in annotations) {
+                annotationExt.processAnnotation(annotation)
+            }
+        }
 
         val serializedAnnotations = annotations.map { it.writeAnnotation(c.strings).build() }
         if (c.shouldWriteKlibAnnotationsToCommonMetadata()) {
@@ -289,6 +299,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext) {
+        c.processTypeBeforeWriting(type)
         writeAnnotations(type.annotations, c, proto::addAllAnnotation) {
             proto.setExtension(KlibMetadataProtoBuf.typeAnnotation, it)
         }
