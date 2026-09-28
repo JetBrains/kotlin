@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -238,9 +239,9 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
                 "The decompiled PSI of '$classId' is expected to belong to a library module, but '${declaration.kaModule}' was found"
             }
 
-            val lightClass = classSymbol.asPsiClass()
-            testServices.assertions.assertTrue(lightClass == null) {
-                "Expected `null` as `SymbolKotlinAsJavaSuport` doesn't create LCs for symbols from `KaLibraryFallbackDependenciesModule`"
+            val lightClass = classSymbol.asPsiClass() ?: error("Light class for '$classId' was not found")
+            testServices.assertions.assertTrue(lightClass is KtLightClassForDecompiledDeclaration) {
+                "A light class for decompiled declaration is expected, but '${lightClass::class.simpleName}' was found"
             }
         }
     }
