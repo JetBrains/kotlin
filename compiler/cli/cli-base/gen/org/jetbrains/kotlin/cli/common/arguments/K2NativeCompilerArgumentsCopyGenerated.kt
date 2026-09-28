@@ -40,6 +40,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     @Suppress("DEPRECATION")
     to.generateWorkerTestRunner = from.generateWorkerTestRunner
     to.headerKlibPath = from.headerKlibPath
+    to.inProcessObjEmission = from.inProcessObjEmission
     to.includeBinaries = from.includeBinaries.copyOf()
     to.includes = from.includes.copyOf()
     to.incrementalCacheDir = from.incrementalCacheDir

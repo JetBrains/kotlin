@@ -631,6 +631,16 @@ class NativeSecondStageCompilationConfig(
     internal val producePerFileCache
         get() = configuration.makePerFileCache
 
+    /**
+     * Emit object files from the in-memory LLVM module with the in-process code generator,
+     * instead of serializing bitcode and compiling it with an external clang process.
+     *
+     * Inherited by the cache compilations spawned from this one (see [setupCommonOptionsForCaches]),
+     * so that dependency caches are emitted the same way as the final binary.
+     */
+    internal val inProcessObjEmission: Boolean
+        get() = configuration.inProcessObjEmission
+
     private val implicitModuleName: String
         get() = cacheSupport.librariesToCache.values.singleOrNull()?.let {
             if (producePerFileCache)
