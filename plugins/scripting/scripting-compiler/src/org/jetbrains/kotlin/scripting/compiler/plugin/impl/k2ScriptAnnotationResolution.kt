@@ -69,9 +69,10 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     val messageCollector = ScriptDiagnosticsMessageCollector(null)
     val acceptedAnnotations = loadAcceptedAnnotationClasses(compilationConfiguration, hostConfiguration) { ann, e ->
         messageCollector.report(e.asDiagnostics(customMessage = "Failed to load annotation class ${ann.typeName}"))
-    }.toList().takeIf { it.isNotEmpty() } ?: return ScriptCollectedData(emptyMap()).asSuccess()
+    }.toList()
 
     if (messageCollector.hasErrors()) return failure(messageCollector)
+    if (acceptedAnnotations.isEmpty()) return ScriptCollectedData(emptyMap()).asSuccess()
 
     val sessionForAnnotationResolution = getSessionForAnnotationResolution(script, compilationConfiguration)
     // without the refined configurations cache, the base configuration is used for the script, so no recursive refinement happens

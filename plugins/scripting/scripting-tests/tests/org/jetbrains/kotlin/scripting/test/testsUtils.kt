@@ -9,8 +9,10 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
-import org.jetbrains.kotlin.scripting.compiler.plugin.report
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import java.io.ByteArrayOutputStream
@@ -70,8 +72,10 @@ fun compileScript(
             ?: return null to ExitCode.COMPILATION_ERROR
 
     val compileResult = scriptCompiler.compile(script, scriptDefinition.compilationConfiguration)
+    @OptIn(MessageCollectorAccess::class)
+    val messageCollector = environment.configuration.messageCollector
     for (report in compileResult.reports) {
-        environment.configuration.report(report.severity, report.render(withSeverity = false), null)
+        messageCollector.reporter(report.severity, report.render(withSeverity = false))
     }
 
     val compiledScript = compileResult.onSuccess {
@@ -98,5 +102,9 @@ fun compileAndExecuteScript(
 
     if (compiled == null || code != ExitCode.OK) return code
 
-    return if (tryConstructClassFromStringArgs(compiled.java, scriptArgs) != null) ExitCode.OK else ExitCode.INTERNAL_ERROR
+    val instance = tryConstructClassFromStringArgs(compiled.java, scriptArgs) ?: when {
+        scriptArgs.isEmpty() -> compiled.java.constructors.singleOrNull { it.parameterCount == 0 }?.newInstance()
+        else -> null
+    }
+    return if (instance != null) ExitCode.OK else ExitCode.INTERNAL_ERROR
 }
