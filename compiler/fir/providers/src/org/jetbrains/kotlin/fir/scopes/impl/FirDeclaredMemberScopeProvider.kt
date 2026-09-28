@@ -177,8 +177,7 @@ fun lazyNestedClassifierScope(
     session: FirSession,
     classId: ClassId,
     existingNames: List<Name>,
-): FirLazyNestedClassifierScope? {
-    if (existingNames.isEmpty()) return null
+): FirLazyNestedClassifierScope {
     return FirLazyNestedClassifierScope(session, classId, existingNames)
 }
 

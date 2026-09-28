@@ -218,7 +218,7 @@ object JavaScopeProvider : FirScopeProvider() {
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): FirContainingNamesAwareScope? {
+    ): FirContainingNamesAwareScope {
         return lazyNestedClassifierScope(
             useSiteSession,
             klass.classId,
