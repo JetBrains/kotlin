@@ -1,0 +1,2 @@
+headers = staticLibraryPaths.h
+staticLibraries = staticLibraryPaths.a

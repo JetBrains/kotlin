@@ -74,23 +74,38 @@ private fun llvmArStaticLibraryCommands(
     })
 }
 
-// Writes [paths] (one double-quoted entry per line) into a response file and returns the `@file` argument for it.
-// Both llvm-ar and clang are invoked with `--rsp-quoting=windows`, so this single quoting (backslashes kept literally,
-// spaces grouped by the quotes) is parsed identically by both tools and on every host.
-private fun responseFileArg(tempFiles: TempFiles, responseFilePrefix: String, paths: List<String>): String {
+// Writes [paths] (one entry per line, quoted by [quote]) into a response file and returns the `@file` argument for it.
+// By default, entries are just double-quoted. This suits llvm-ar and clang when invoked with `--rsp-quoting=windows`:
+// backslashes are kept literally, and spaces are grouped by the quotes, identically on every host.
+// Tools that parse response files with GNU rules need [gnuResponseFileQuoted] instead.
+private fun responseFileArg(
+    tempFiles: TempFiles,
+    responseFilePrefix: String,
+    paths: List<String>,
+    quote: (String) -> String = { "\"$it\"" },
+): String {
     val responseFile = tempFiles.create(responseFilePrefix, ".rsp")
-    responseFile.writeLines(paths.map { "\"$it\"" })
+    responseFile.writeLines(paths.map(quote))
     return "@${responseFile.absolutePathString()}"
 }
 
 /**
- * Passes [this] to GCC/lld via a quoted `@response` file.
- * Quoting is required so paths with spaces are not split when lld expands the file.
- * Using `@file` also avoids ld.lld error=7 (Argument list too long).
+ * Quotes [path] as a response file entry for tools that expand `@file` with GNU rules:
+ * libiberty's `buildargv` (GNU ld, gold) and LLVM's GNU tokenizer.
+ * These rules treat a backslash as an escape even inside double quotes, so backslashes (present in every Windows path)
+ * and double quotes are escaped, while the surrounding quotes keep paths with spaces together. See KT-89637.
  */
-private fun List<String>.asGccSpreadArgument(filePrefixName: String, tempFiles: TempFiles): List<String> {
+internal fun gnuResponseFileQuoted(path: String): String =
+    path.replace("\\", "\\\\").replace("\"", "\\\"").let { "\"$it\"" }
+
+/**
+ * Passes [this] to the linker of [GccBasedLinker] (ld.lld, GNU ld, or gold) via an `@response` file,
+ * which avoids execution errors like "Argument list too long".
+ * GNU ld and ld.gold don't support `--rsp-quoting=windows`, so the entries are quoted with [gnuResponseFileQuoted].
+ */
+internal fun List<String>.asGccSpreadArgument(filePrefixName: String, tempFiles: TempFiles): List<String> {
     if (isEmpty()) return emptyList()
-    return listOf(responseFileArg(tempFiles, filePrefixName, this))
+    return listOf(responseFileArg(tempFiles, filePrefixName, this, ::gnuResponseFileQuoted))
 }
 
 class LinkerArguments(
