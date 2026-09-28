@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -127,9 +126,7 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
                 origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
                 name = oldFunction.name
                 visibility = oldFunction.visibility
-                modality =
-                    if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) Modality.FINAL
-                    else oldFunction.modality
+                modality = Modality.FINAL
                 returnType = oldFunction.returnType
                 isInline = false
                 isSuspend = oldFunction.isSuspend
