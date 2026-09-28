@@ -178,6 +178,7 @@ open class JsSuspendFunctionsLowering<C : JsCommonBackendContext>(
             stateMachineFunction,
             "suspendResult",
             true,
+            origin = IrDeclarationOrigin.STATE_MACHINE_SUSPEND_RESULT,
             initializer = JsIrBuilder.buildCall(coroutineImplResultSymbolGetter.symbol).apply {
                 dispatchReceiver = JsIrBuilder.buildGetValue(stateMachineFunction.dispatchReceiverParameter!!.symbol)
             }

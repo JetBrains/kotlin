@@ -95,6 +95,8 @@ interface IrDeclarationOrigin {
         val CONTINUATION by IrDeclarationOriginImpl.Synthetic
         val LOWERED_SUSPEND_FUNCTION by IrDeclarationOriginImpl.Synthetic
 
+        val STATE_MACHINE_SUSPEND_RESULT by IrDeclarationOriginImpl.Regular
+
         val SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT by IrDeclarationOriginImpl.Synthetic
 
         /**
