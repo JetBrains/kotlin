@@ -370,16 +370,11 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
     }
 }
 
-val kgpTestingUtilities = configurations.detachedConfiguration(
-    dependencies.create(dependencies.testFixtures(dependencies.project(":kotlin-gradle-plugin")))
-).also {
-    // We don't want to influence target build script's classpath; only take the test fixtures jar
-    it.isTransitive = false
-}
-
 val buildScriptInjectionTestDependencies = configurations.detachedConfiguration(
+    dependencies.create(dependencies.testFixtures(dependencies.project(":kotlin-gradle-plugin"))),
     dependencies.create(dependencies.project(":kotlin-test")),
 ).apply {
+    // Don't influence the target build script's classpath with transitive dependencies.
     isTransitive = false
 }
 
@@ -482,12 +477,13 @@ tasks.withType<Test>().configureEach {
 
     // This is a classpath that the injections will see
     val buildScriptInjectionsClasspath = files(
-        kgpTestingUtilities,
         buildScriptInjectionTestDependencies,
         kotlin.target.compilations.getByName("test").output.classesDirs,
     )
     doFirst {
         systemProperty("buildScriptInjectionsClasspath", buildScriptInjectionsClasspath.joinToString(":"))
+        // Injected kotlin-test is built with this repository's compiler, which can be newer than Gradle's embedded Kotlin.
+        // Allow its metadata in integration test build scripts only.
         systemProperty("org.gradle.kotlin.dsl.skipMetadataVersionCheck", "true")
     }
 
