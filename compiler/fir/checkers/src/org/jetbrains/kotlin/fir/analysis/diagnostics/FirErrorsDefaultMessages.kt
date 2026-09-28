@@ -2560,7 +2560,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(WILL_BECOME_VALUE_NOT_APPLICABLE, "''@WillBecomeValue'' is not applicable to {0}.", STRING)
         map.put(
             IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS,
-            "Declaration annotated with ''@WillBecomeValue'' must override ''{0}'': the identity-based implementation inherited from ''Any'' changes behavior once the declaration gets the ''value'' modifier.",
+            "Class annotated with ''@WillBecomeValue'' must override ''{0}''. The identity-based implementation inherited from ''Any'' will not be used once the class becomes a 'value' class.",
             STRING,
         )
         map.put(
@@ -2580,7 +2580,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY,
-            "Expect final class annotated with '@WillBecomeValue' without primary constructor cannot have secondary constructors."
+            "Final 'expect class' annotated with '@WillBecomeValue' without primary constructor cannot have secondary constructors."
         )
         map.put(
             WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR,
@@ -2588,7 +2588,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-            "Primary constructor of a final class annotated with '@WillBecomeValue' must only have final read-only ('val') property parameters."
+            "Primary constructor of a final class annotated with '@WillBecomeValue' must only have final 'val' property parameters."
         )
         map.put(
             ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
