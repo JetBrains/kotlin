@@ -27,7 +27,7 @@ sealed class FirDeclarationOrigin(
     ) : FirDeclarationOrigin(displayName, fromSource = fromSource, generated = generated) {
         object Source : Java("Java(Source)", fromSource = true)
         object Library : Java("Java(Library)")
-        class Plugin(val key: GeneratedDeclarationKey) : Java(displayName = "Plugin[$key]", generated = true) {
+        class Plugin(val key: GeneratedDeclarationKey) : Java(displayName = "Java(Plugin[$key])", generated = true) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Plugin) return false
