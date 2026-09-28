@@ -799,21 +799,31 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         Table,
     }
 
-    /** Returns a type of mutable collection a `@Singular` builder field is backed by, for Kotlin-origin builders. */
+    /**
+     * Returns a type of mutable collection a `@Singular` builder field is backed by, for Kotlin-origin builders.
+     *
+     * A sorted `java.util` collection is backed by a `TreeSet`/`TreeMap`, as in Lombok, so that `build()` can hand
+     * out a sorted result.
+     */
     private fun ConeKotlinType.toBackingMutableCollectionType(): ConeKotlinType {
         val mutableCollectionClassId =
             when (classId) {
                 StandardClassIds.List, StandardClassIds.MutableList,
                 StandardClassIds.Collection, StandardClassIds.MutableCollection,
                 StandardClassIds.Iterable, StandardClassIds.MutableIterable,
+                LombokNames.JAVA_LIST_ID, LombokNames.JAVA_COLLECTION_ID, LombokNames.JAVA_ITERABLE_ID,
                 LombokNames.IMMUTABLE_LIST_ID, LombokNames.IMMUTABLE_COLLECTION_ID,
                     -> StandardClassIds.MutableList
                 StandardClassIds.Set, StandardClassIds.MutableSet,
+                LombokNames.JAVA_SET_ID,
                 LombokNames.IMMUTABLE_SET_ID, LombokNames.IMMUTABLE_SORTED_SET_ID,
                     -> StandardClassIds.MutableSet
+                LombokNames.JAVA_SORTED_SET_ID, LombokNames.JAVA_NAVIGABLE_SET_ID -> LombokNames.JAVA_TREE_SET_ID
                 StandardClassIds.Map, StandardClassIds.MutableMap,
+                LombokNames.JAVA_MAP_ID,
                 LombokNames.IMMUTABLE_MAP_ID, LombokNames.IMMUTABLE_BI_MAP_ID, LombokNames.IMMUTABLE_SORTED_MAP_ID,
                     -> StandardClassIds.MutableMap
+                LombokNames.JAVA_SORTED_MAP_ID, LombokNames.JAVA_NAVIGABLE_MAP_ID -> LombokNames.JAVA_TREE_MAP_ID
                 LombokNames.IMMUTABLE_TABLE_ID -> TABLE_ID
                 else -> null
             }

@@ -57,6 +57,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  * instance method, so the builder captures the instance `build()` has to invoke the function on.
  */
 object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
+    private val JAVA_COLLECTIONS_ID = ClassId(FqName("java.util"), Name.identifier("Collections"))
+
     override fun IrBlockBodyBuilder.build(
         key: BuilderGeneratorKey,
         declaration: IrSimpleFunction,
@@ -265,7 +267,8 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
 
     private enum class SingularKind { COLLECTION, SET, ITERABLE, MAP, TABLE }
 
-    private class SingularCollectionInfo(val kind: SingularKind, val typeArguments: List<IrType>)
+    /** [sorted] is for a sorted `java.util` set or map, backed by a `TreeSet`/`TreeMap` (see `toBackingMutableCollectionType`). */
+    private class SingularCollectionInfo(val kind: SingularKind, val typeArguments: List<IrType>, val sorted: Boolean = false)
 
     /** The Guava immutable class to construct for a `@Singular` field whose *entity-declared* type is Guava. */
     private enum class GuavaCollectionKind(val classId: ClassId) {
@@ -428,7 +431,12 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             builtIns.iterableClass, builtIns.mutableIterableClass -> SingularKind.ITERABLE
             builtIns.listClass, builtIns.mutableListClass, builtIns.collectionClass, builtIns.mutableCollectionClass ->
                 SingularKind.COLLECTION
-            else -> if (classifier.owner.classId == LombokNames.TABLE_ID) SingularKind.TABLE else return null
+            else -> when (classifier.owner.classId) {
+                LombokNames.TABLE_ID -> SingularKind.TABLE
+                LombokNames.JAVA_TREE_SET_ID -> return SingularCollectionInfo(SingularKind.SET, typeArguments, sorted = true)
+                LombokNames.JAVA_TREE_MAP_ID -> return SingularCollectionInfo(SingularKind.MAP, typeArguments, sorted = true)
+                else -> return null
+            }
         }
         return SingularCollectionInfo(kind, typeArguments)
     }
@@ -466,6 +474,9 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         if (info.kind == SingularKind.TABLE) {
             return buildTableSingularResult(field, thisParameter, info)
         }
+        if (info.sorted) {
+            return buildSortedSingularResult(field, thisParameter, info, entityParameterType)
+        }
         entityParameterType.guavaCollectionKindOrNull()?.let { guavaKind ->
             return buildGuavaSingularResult(field, thisParameter, info, guavaKind)
         }
@@ -496,6 +507,39 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         branches += irElseBranch(unmodifiableDefensiveCopy(info, field.file, nonNullField()))
 
         return irWhen(resultType, branches)
+    }
+
+    /**
+     * `build()`'s per-field result for a sorted `java.util` field, the way Lombok builds it: a fresh `TreeSet`/`TreeMap`
+     * filled from the field, wrapped by the `Collections.unmodifiable*` function matching the entity's declared type.
+     */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.buildSortedSingularResult(
+        field: IrField,
+        thisParameter: IrValueParameter,
+        info: SingularCollectionInfo,
+        entityParameterType: IrType,
+    ): IrExpression {
+        val builtIns = pluginContext.irBuiltIns
+        val unmodifiableName = when (entityParameterType.classOrNull?.owner?.classId) {
+            LombokNames.JAVA_NAVIGABLE_SET_ID -> "unmodifiableNavigableSet"
+            LombokNames.JAVA_NAVIGABLE_MAP_ID -> "unmodifiableNavigableMap"
+            else -> if (info.kind == SingularKind.MAP) "unmodifiableSortedMap" else "unmodifiableSortedSet"
+        }
+        val unmodifiable = pluginContext.finderForSource(field.file).findClass(JAVA_COLLECTIONS_ID)!!.owner
+            .getSimpleFunction(unmodifiableName)!!
+
+        val copy = irTemporary(newMutableBacking(info, field.file), nameHint = "sorted")
+        val fieldTmp = irTemporary(irGetField(irGet(thisParameter), field), nameHint = "singular")
+        val source = irImplicitCast(irGet(fieldTmp), field.type.makeNotNull())
+        val addAllCall = if (info.kind == SingularKind.MAP) {
+            irCallOp(builtIns.mutableMapClass.owner.getSimpleFunction("putAll")!!, builtIns.unitType, irGet(copy), source)
+        } else {
+            irCallOp(builtIns.mutableCollectionClass.owner.getSimpleFunction("addAll")!!, builtIns.booleanType, irGet(copy), source)
+        }
+        +irIfThen(builtIns.unitType, irNotEquals(irGet(fieldTmp), irNull()), addAllCall)
+
+        return irCallWithSubstitutedType(unmodifiable, info.typeArguments).apply { arguments[0] = irGet(copy) }
     }
 
     /** `build()`'s per-field result for a Guava-declared `@Singular` field: `field == null ? Guava.of() : Guava.copyOf(field)`. */
@@ -629,15 +673,23 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             // Table fields never reach this path: `buildSingularResult` routes them through `buildTableSingularResult` instead.
             SingularKind.TABLE -> shouldNotBeCalled()
         }
-        val collectionsClass = ClassId(FqName("java.util"), Name.identifier("Collections"))
-        val symbol = pluginContext.finderForSource(file).findClass(collectionsClass)?.owner?.getSimpleFunction(name)
+        val symbol = pluginContext.finderForSource(file).findClass(JAVA_COLLECTIONS_ID)?.owner?.getSimpleFunction(name)
             ?: return mutableCopy
         return irCallWithSubstitutedType(symbol, info.typeArguments).apply { arguments[0] = mutableCopy }
     }
 
-    /** A fresh, empty `ArrayList<T>`/`LinkedHashSet<T>`/`LinkedHashMap<K, V>`/`HashBasedTable<R, C, V>` matching [info]'s shape. */
+    /**
+     * A fresh, empty `ArrayList<T>`/`LinkedHashSet<T>`/`LinkedHashMap<K, V>`/`HashBasedTable<R, C, V>` matching [info]'s
+     * shape, or a `TreeSet<T>`/`TreeMap<K, V>` for a sorted one.
+     */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrBlockBodyBuilder.newMutableBacking(info: SingularCollectionInfo, file: IrFile): IrExpression {
+        if (info.sorted) {
+            val treeClassId = if (info.kind == SingularKind.MAP) LombokNames.JAVA_TREE_MAP_ID else LombokNames.JAVA_TREE_SET_ID
+            val treeClass = pluginContext.finderForSource(file).findClass(treeClassId)!!
+            val constructor = treeClass.owner.constructors.first { it.parameters.none { p -> p.kind == IrParameterKind.Regular } }
+            return irCallConstructor(constructor.symbol, info.typeArguments).apply { type = treeClass.typeWith(info.typeArguments) }
+        }
         if (info.kind == SingularKind.TABLE) {
             val hashBasedTableClass = pluginContext.finderForSource(file).findClass(LombokNames.HASH_BASED_TABLE_ID)!!
             val createFunction = hashBasedTableClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
