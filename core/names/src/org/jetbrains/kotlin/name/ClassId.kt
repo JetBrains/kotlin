@@ -148,8 +148,8 @@ data class ClassId(val packageFqName: FqName, val relativeClassName: FqName, @pr
 
 @RequiresOptIn(
     level = RequiresOptIn.Level.WARNING,
-    message = "Usage of ClassId.isLocal is discouraged in K2 as it has unclear semantics for cases like \"nested class of local class\". " +
-            "Please use firClassLike.isLocal or firClassLikeSymbol.isLocal instead, or add OptIn if you are sure the use is proper.",
+    message = "Usage of ClassId.isLocal is discouraged as it has unclear semantics for cases like \"nested class of local class\". " +
+            "Please use `isLocal` on the class itself, or add OptIn if you are sure the use is proper.",
 )
 // See also comment to FirClassLikeSymbol.isLocal
 annotation class ClassIdBasedLocality
