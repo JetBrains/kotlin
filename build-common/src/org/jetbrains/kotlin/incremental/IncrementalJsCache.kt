@@ -146,7 +146,7 @@ open class IncrementalJsCache(
     }
 
     fun nonDirtyPackageParts(): Map<File, TranslationResultValue> =
-        hashMapOf<File, TranslationResultValue>().apply {
+        buildMap {
             for (file in translationResults.keys) {
 
                 if (file !in dirtySources) {
@@ -156,7 +156,7 @@ open class IncrementalJsCache(
         }
 
     fun nonDirtyIrParts(): Map<File, IrTranslationResultValue> =
-        hashMapOf<File, IrTranslationResultValue>().apply {
+        buildMap {
             for (file in irTranslationResults.keys) {
 
                 if (file !in dirtySources) {
@@ -166,7 +166,7 @@ open class IncrementalJsCache(
         }
 
     fun nonDirtyIrInlineParts(): Map<File, IrTranslationResultValue> =
-        hashMapOf<File, IrTranslationResultValue>().apply {
+        buildMap {
             for (file in irInlineTranslationResults.keys) {
 
                 if (file !in dirtySources) {
