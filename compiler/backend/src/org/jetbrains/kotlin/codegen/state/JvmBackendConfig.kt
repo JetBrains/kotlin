@@ -53,11 +53,9 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
         languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
                 !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
 
-    val noSourceCodeInNotNullAssertionExceptions: Boolean =
-        (languageVersionSettings.supportsFeature(LanguageFeature.NoSourceCodeInNotNullAssertionExceptions)
-                // This check is needed because we generate calls to `Intrinsics.checkNotNull` which is only available since 1.4
-                // (when unified null checks were introduced).
-                && unifiedNullChecks)
+    val noSourceCodeInNotNullAssertionExceptions =
+        // We generate `Intrinsics.checkNotNull` calls which are only available since 1.4 (when unified null checks were introduced)
+        unifiedNullChecks
                 // Never generate source code in assertion exceptions in K2 to make behavior of FIR PSI & FIR light-tree equivalent
                 // (obtaining source code is not supported in light tree).
                 || languageVersionSettings.languageVersion.usesK2
