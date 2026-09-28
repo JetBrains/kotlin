@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.backend.konan.Linker
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 
 internal data class LinkerPhaseInput(
         val outputFile: String,
@@ -44,15 +45,15 @@ internal val LinkerPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseCont
 }
 
 internal data class PreLinkCachesInput(
-        val objectFiles: List<File>,
+        val objectFiles: List<Path>,
         val caches: ResolvedCacheBinaries,
-        val outputObjectFile: File,
+        val outputObjectFile: Path,
 )
 
 internal val PreLinkCachesPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, PreLinkCachesInput>(
         name = "PreLinkCaches",
-) { context, input ->
-    val inputFiles = input.objectFiles.map { it.absoluteFile.normalize().path } + input.caches.static
-    val commands = context.config.platform.linker.preLinkCommands(inputFiles, input.outputObjectFile.absoluteFile.normalize().path)
+) { context, (val objectFiles, val caches, val outputObjectFile) ->
+    val inputFiles = objectFiles.map { it.absolutePathString() } + caches.static
+    val commands = context.config.platform.linker.preLinkCommands(inputFiles, outputObjectFile.absolutePathString())
     runLinkerCommands(context, commands, cachingInvolved = true)
 }
