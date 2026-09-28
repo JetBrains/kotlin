@@ -5,24 +5,34 @@
 
 package org.jetbrains.kotlin.android.tests
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
-import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
+import org.jetbrains.kotlin.cli.common.moduleChunk
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
-import org.jetbrains.kotlin.codegen.CodegenTestFiles
-import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
+import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCodegenPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmLoweringsPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -98,6 +108,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private val plannedTests = arrayListOf<AndroidPlannedTest>()
     private val compiledTestNames: MutableSet<String> = ConcurrentHashMap.newKeySet()
     private val flavorOutputLocks = ConcurrentHashMap<String, Any>()
+
+    private val patchedSourcesRoot: File by lazy {
+        FileUtil.createTempDirectory("android-test-sources", "", /* deleteOnExit = */ true).canonicalFile
+    }
 
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
@@ -245,56 +259,85 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
     }
 
+    @OptIn(MessageCollectorAccess::class)
     internal fun compile(test: AndroidPlannedTest) {
-        val disposable = Disposer.newDisposable("Disposable for ${CodegenTestsOnAndroidGenerator::class.qualifiedName}.compile")
+        if (test.testFiles.isEmpty()) {
+            compiledTestNames += test.info.name
+            return
+        }
 
-        @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForParallelTests(
-            disposable,
-            test.configuration.apply {
-                put(CommonConfigurationKeys.MODULE_NAME, test.moduleName)
-                // KT-84021 Use full K/JVM stdlib, not minimal K/JVM stdlib
-                addJvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTests())
-                addJvmClasspathRoot(ForTestCompileRuntime.kotlinTestJarForTests())
-            },
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
+        val outputDir = File(pathManager.getOutputForCompiledFiles(test.flavorName))
 
-        try {
-            writeFiles(
-                test.testFiles.map {
-                    try {
-                        CodegenTestFiles.create(it.name, it.content, environment.project).psiFile
-                    } catch (e: Throwable) {
-                        throw RuntimeException("Error on processing ${it.name}:\n${it.content}", e)
-                    }
-                }, environment, test
+        val messageCollector = MessageCollectorImpl()
+
+        val configuration = test.configuration.apply {
+            put(CommonConfigurationKeys.MODULE_NAME, test.moduleName)
+            // KT-84021 Use full K/JVM stdlib, not minimal K/JVM stdlib
+            addJvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTests())
+            addJvmClasspathRoot(ForTestCompileRuntime.kotlinTestJarForTests())
+
+            // The frontend phase requires a module chunk. The module name ends up in `META-INF/*.kotlin_module`, and all tests of
+            // one flavor share the output directory, so it has to be unique per test, just like `MODULE_NAME` above.
+            moduleChunk = ModuleChunk(
+                listOf(ModuleBuilder(name = test.moduleName, outputDir = outputDir.path, type = "android-test-module"))
             )
+            addKotlinSourceRoots(writePatchedSources(test).map { it.path })
+            parserMode = ParserMode.LightTree
+            // Compile files in the order in which they are declared in the test data.
+            dontSortSourceFiles = true
+            this.messageCollector = messageCollector
+        }
+
+        println("Generating ${test.testFiles.size} from ${test.info.name} (${test.info.fqName}) files into ${outputDir.name}...")
+
+        val disposable = Disposer.newDisposable("Disposable for ${CodegenTestsOnAndroidGenerator::class.qualifiedName}.compile")
+        try {
+            val state = runCompilationPipeline(configuration, disposable, test, messageCollector)
+
+            synchronized(flavorOutputLocks.computeIfAbsent(test.flavorName) { Any() }) {
+                if (!outputDir.exists()) {
+                    outputDir.mkdirs()
+                }
+                assertTrue(outputDir.exists(), "Cannot create directory for compiled files")
+                state.factory.writeAllTo(outputDir)
+            }
+
             compiledTestNames += test.info.name
         } finally {
             disposeRootInWriteAction(disposable)
         }
     }
 
-    private fun writeFiles(
-        filesToCompile: List<KtFile>,
-        environment: KotlinCoreEnvironment,
-        test: AndroidPlannedTest
-    ) {
-        if (filesToCompile.isEmpty()) return
-
-        val outputDir = File(pathManager.getOutputForCompiledFiles(test.flavorName))
-        println("Generating ${filesToCompile.size} from ${test.info.name} (${test.info.fqName}) files into ${outputDir.name}...")
-
-        val state = GenerationUtils.compileFiles(filesToCompile, environment)
-
-        synchronized(flavorOutputLocks.computeIfAbsent(test.flavorName) { Any() }) {
-            if (!outputDir.exists()) {
-                outputDir.mkdirs()
+    private fun writePatchedSources(test: AndroidPlannedTest): List<File> {
+        val testSourcesDir = File(patchedSourcesRoot, test.moduleName)
+        return test.testFiles.map { testFile ->
+            File(testSourcesDir, testFile.name).also { file ->
+                file.parentFile.mkdirs()
+                file.writeText(testFile.content)
             }
-            assertTrue(outputDir.exists(), "Cannot create directory for compiled files")
-            state.factory.writeAllTo(outputDir)
         }
+    }
+
+    private fun runCompilationPipeline(
+        configuration: CompilerConfiguration,
+        disposable: Disposable,
+        test: AndroidPlannedTest,
+        messageCollector: MessageCollectorImpl,
+    ): GenerationState {
+        val input = ConfigurationPipelineArtifact(configuration, disposable)
+            .withNewDiagnosticCollector(DiagnosticsCollectorImpl())
+        val pipelineConfiguration = input.configuration
+
+        fun failed(phase: String): Nothing {
+            CheckDiagnosticCollector.reportToMessageCollector(pipelineConfiguration)
+            throw AssertionError("The $phase phase failed for ${test.info.name} (${test.info.file.path}):\n$messageCollector")
+        }
+
+        val frontendOutput = JvmFrontendPipelinePhase.executePhaseIsolatedWithActions(input) ?: failed("frontend")
+        val fir2IrOutput = JvmFir2IrPipelinePhase.executePhaseIsolatedWithActions(frontendOutput) ?: failed("fir2ir")
+        val loweringsOutput = JvmLoweringsPipelinePhase.executePhaseIsolatedWithActions(fir2IrOutput) ?: failed("lowerings")
+        val codegenOutput = JvmCodegenPipelinePhase.executePhaseIsolatedWithActions(loweringsOutput) ?: failed("codegen")
+        return codegenOutput.outputs.single()
     }
 
     private fun getFlavorUnitTestFolder(flavorName: String): String {
