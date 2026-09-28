@@ -73,6 +73,12 @@ const val rem6 = twoVal.rem(intVal)
 const val rem7 = twoVal.rem(longVal)
 const val rem8 = twoVal.rem(doubleVal)
 
+const val mod1 = oneVal.mod(twoVal)
+const val mod2 = twoVal.mod(twoVal)
+const val mod3 = threeVal.mod(twoVal)
+const val mod4 = minusOneVal.mod(twoVal)
+const val mod5 = twoVal.mod(doubleVal)
+
 const val unaryPlus1 = oneVal.unaryPlus()
 const val unaryPlus2 = minusOneVal.unaryPlus()
 const val unaryMinus1 = oneVal.unaryMinus()
@@ -88,6 +94,11 @@ const val equals1 = oneVal == twoVal
 const val equals2 = twoVal == twoVal
 const val equals3 = threeVal == twoVal
 const val equals4 = fourVal == twoVal
+
+const val notEquals1 = oneVal != twoVal
+const val notEquals2 = twoVal != twoVal
+const val notEquals3 = threeVal != twoVal
+const val notEquals4 = fourVal != twoVal
 
 fun box(): String {
     if (funCompareTo1.id() != -1)   return "Fail 1.1"
@@ -149,6 +160,12 @@ fun box(): String {
     if (rem7.id() != 0.0f)    return "Fail 6.7"
     if (rem8.id() != 0.0)     return "Fail 6.8"
 
+    if (mod1.id() != 1f)        return "Fail 6b.1"
+    if (mod2.id() != 0f)        return "Fail 6b.2"
+    if (mod3.id() != 1f)        return "Fail 6b.3"
+    if (mod4.id() != 1f)        return "Fail 6b.4"
+    if (mod5.id() != 0.0)       return "Fail 6b.5"
+
     if (unaryPlus1.id() != 1f)    return "Fail 7.1"
     if (unaryPlus2.id() != -1f)   return "Fail 7.2"
     if (unaryMinus1.id() != -1f)  return "Fail 7.3"
@@ -164,6 +181,11 @@ fun box(): String {
     if (equals2.id() != true)    return "Fail 9.2"
     if (equals3.id() != false)   return "Fail 9.3"
     if (equals4.id() != false)   return "Fail 9.4"
+
+    if (notEquals1.id() != true)     return "Fail 9.5"
+    if (notEquals2.id() != false)    return "Fail 9.6"
+    if (notEquals3.id() != true)     return "Fail 9.7"
+    if (notEquals4.id() != true)     return "Fail 9.8"
 
     return "OK"
 }
