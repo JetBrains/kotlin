@@ -833,9 +833,13 @@ internal abstract class FunctionGenerationContext(
             verbatim: Boolean = false,
             resultSlot: LLVMValueRef? = null,
     ): LLVMValueRef {
-        val callArgs = if (verbatim || !llvmCallable.returnsObjectType
-                || llvmCallable.numParams == args.size) { // Workaround for imports of runtime function
+        val callArgs = if (verbatim || !llvmCallable.returnsObjectType) {
             args
+        } else if (context.config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
+            // The return-slot out-parameter is unused under delta-main (RS4GC tracks the
+            // returned object via the ordinary SSA return value) - always pass null instead of
+            // allocating a stack/arena slot for it.
+            args + llvm.kNull
         } else {
             // If function returns an object - create slot for the returned value or give local arena.
             // This allows appropriate rootset accounting by just looking at the stack slots,
