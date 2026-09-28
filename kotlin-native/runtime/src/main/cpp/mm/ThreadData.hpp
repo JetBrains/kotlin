@@ -32,6 +32,11 @@ struct KotlinFrameAnchor {
 
     KotlinFrameAnchor() = default;
     KotlinFrameAnchor(uint64_t* fp, uint64_t* pc) : fp(fp), pc(pc) {}
+
+    KotlinFrameAnchor next() {
+        RuntimeAssert(fp != nullptr, "Current fp is null, cannot get next");
+        return KotlinFrameAnchor((uint64_t*)(*fp), (uint64_t*) (*(fp + 1)));
+    }
 };
 
 // Captures the immediate caller's {fp, pc} by reading this function's own

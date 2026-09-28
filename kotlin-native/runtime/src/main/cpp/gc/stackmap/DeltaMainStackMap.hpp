@@ -2,6 +2,7 @@
 
 #include "CompilerConstants.hpp"
 #include "DeltaMath.hpp"
+#include "KAssert.h"
 #include "PrologueInfo.hpp"
 #include "RootsInfo.hpp"
 #include "StackMapConfig.hpp"
@@ -76,6 +77,15 @@ struct DeltaMainStackMapBuilder {
     /// `functionPC`) into `rootsInfo`. See the class comment: not yet
     /// wired up to an emitting side.
     void collectLazy(uintptr_t functionPC, uintptr_t currentPC, uint64_t* funcStackMapAddr, RootsInfo& rootsInfo);
+
+    bool hasMapForPC(uint64_t* pc) {
+        return pc2RootsInfo_.find((uintptr_t) pc) != pc2RootsInfo_.end();
+    }
+
+    const RootsInfo& getRootsInfoForPC(uint64_t* pc) {
+        RuntimeAssert(hasMapForPC(pc), "Trying to get RootsInfo for wrong pc");
+        return pc2RootsInfo_.at((uintptr_t)pc);
+    };
 
     std::unordered_map<uintptr_t, RootsInfo>& pc2RootsInfo() { return pc2RootsInfo_; }
     std::unordered_map<uintptr_t, PrologueInfo>& funcAddr2PrologueInfo() { return funcAddr2PrologueInfo_; }
