@@ -5,41 +5,27 @@
 
 package org.jetbrains.kotlin.build.report.events
 
-import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import java.io.Serializable
 
 // Ideally, the basic interface should be in shared bta api folder, while the concrete implementations should be in kotlin-build-statistics
 
 sealed class IcEventImpl(
-    override val type: String = this::class.simpleName.toString(),
-    override val severity: String,
-) : IcEvent, Serializable {
-    final override val timestamp: Long = System.currentTimeMillis()
-    override var iteration: Int = UNASSIGNED_ITERATION
+    val severity: String,
+) : Serializable {
+    val type: String get() = javaClass.simpleName
+    val timestamp: Long = System.currentTimeMillis()
+    var iteration: Int = UNASSIGNED_ITERATION
+
+    class CompilationStarted(
+        val isIncremental: Boolean,
+        val reason: String?,
+    ) : IcEventImpl("INFO")
 
     class CompileIteration(
-        override val files: List<String>,
-        override val exitCode: String
-    ) : IcEventImpl("CompileIteration", "NONE"),
-        IcEvent.CompileIteration { val serialVersionUID: Long = 0L }
-
-    class SourceChanges(
-        override val changeInfo: String,
-        override val modifiedFiles: List<String>,
-        override val deletedFiles: List<String>,
-    ) : IcEventImpl("SourceChanges", "DEBUG"),
-        IcEvent.SourceChanges { val serialVersionUID: Long = 0L }
-
-    class ConfigInputs(
-        override val icConfiguration: Map<String, String?>,
-        override val compilerArguments: List<String>
-    ) : IcEventImpl("ConfigInputs", "DEBUG"),
-        IcEvent.ConfigInputs { val serialVersionUID: Long = 0L }
-
-    class CleaningOutputDirs(
-        override val outputDirs: List<String>
-    ) : IcEventImpl("CleaningOutputDirs", "DEBUG"),
-        IcEvent.CleaningOutputDirs { val serialVersionUID: Long = 0L }
+        val files: List<String>,
+        val reasons: Map<String, List<String>>,
+        val exitCode: String,
+    ) : IcEventImpl("INFO")
 
     companion object {
         const val serialVersionUID: Long = 0L

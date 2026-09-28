@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.api.trackers
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+
+@ExperimentalBuildToolsApi
 public interface IcEventCollector {
+    @OptIn(ExperimentalBuildToolsApi::class)
     public fun collectEvents(eventsFromBta: List<IcEvent>)
 }

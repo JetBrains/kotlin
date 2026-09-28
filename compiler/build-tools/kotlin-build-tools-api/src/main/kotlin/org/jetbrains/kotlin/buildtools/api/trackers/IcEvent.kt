@@ -5,29 +5,27 @@
 
 package org.jetbrains.kotlin.buildtools.api.trackers
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+
+@ExperimentalBuildToolsApi
 public interface IcEvent {
     public val type: String
     public val severity: String
     public val timestamp: Long
     public val iteration: Int
 
+    public interface CompilationStarted : IcEvent {
+        public val isIncremental: Boolean
+        public val reason: String?
+    }
+
     public interface CompileIteration : IcEvent {
         public val files: List<String>
+        public val reasons: Map<String, List<String>>
         public val exitCode: String
     }
 
-    public interface SourceChanges : IcEvent {
-        public val changeInfo: String
-        public val modifiedFiles: List<String>
-        public val deletedFiles: List<String>
-    }
-
-    public interface ConfigInputs : IcEvent {
-        public val icConfiguration: Map<String, String?>
-        public val compilerArguments: List<String>
-    }
-
-    public interface CleaningOutputDirs : IcEvent {
-        public val outputDirs: List<String>
+    public interface Unknown : IcEvent {
+        public val unknownType: String
     }
 }
