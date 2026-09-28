@@ -272,7 +272,10 @@ fun FirResolvedQualifier.shouldBeResolvedInContextSensitiveMode(): Boolean {
     // A HIDDEN classifier or a class with a HIDDEN companion object has no diagnostic,
     // it's only reported later by FirDeprecatedQualifierChecker
     if (qualifierSymbol.isDeprecationLevelHidden(components.session)) return true
-    if (!resolvedToCompanionObject) return false
+    if (!resolvedToCompanionObject) {
+        // CSR is needed when NO_COMPANION_OBJECT would be reported otherwise
+        return accessedObjectSymbol == null
+    }
     val companionSymbol = accessedObjectSymbol ?: return false
     if (companionSymbol.isDeprecationLevelHidden(components.session)) return true
 
