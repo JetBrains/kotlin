@@ -17,8 +17,8 @@ class X
 fun expectsA(x: A) {}
 
 fun main() {
-    expectsA(A.X)
-    val a: A = A.X
+    expectsA(<!DEBUG_INFO_CSR_MIGHT_BE_USED!>A.X<!>)
+    val a: A = <!DEBUG_INFO_CSR_MIGHT_BE_USED!>A.X<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, localProperty,

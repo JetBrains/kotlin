@@ -24,9 +24,9 @@ fun takesEnum(e: Enum) {}
 fun takesInt(i: Int) {}
 
 fun test() {
-    takesEnum(<!ARGUMENT_TYPE_MISMATCH, NO_COMPANION_OBJECT!>A<!>)
-    takesEnum(<!ARGUMENT_TYPE_MISMATCH, NO_COMPANION_OBJECT!>B<!>)
-    takesEnum(<!ARGUMENT_TYPE_MISMATCH, NO_COMPANION_OBJECT!>C<!>)
+    takesEnum(A)
+    takesEnum(B)
+    takesEnum(C)
 }
 
 fun negative() {

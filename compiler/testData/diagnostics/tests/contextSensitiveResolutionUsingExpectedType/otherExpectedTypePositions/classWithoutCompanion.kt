@@ -13,7 +13,7 @@ class Outer {
     class B
 
     fun test() {
-        val a: E = <!INITIALIZER_TYPE_MISMATCH, NO_COMPANION_OBJECT!>A<!>
+        val a: E = A
         val b1: Int = B
         val b2: E = <!INITIALIZER_TYPE_MISMATCH!>B<!>
     }
