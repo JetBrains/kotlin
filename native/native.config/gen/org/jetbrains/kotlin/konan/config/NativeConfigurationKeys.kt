@@ -91,6 +91,9 @@ object NativeConfigurationKeys {
     // Build the incremental caches of user libraries using the facts tracked by the previous compilation.
     @JvmField
     val FACTS_CACHE_ENABLED = CompilerConfigurationKey.create<Boolean>("FACTS_CACHE_ENABLED")
+    // Emit object files from LLVM bitcode in-process, without invoking an external clang process (experimental).
+    @JvmField
+    val IN_PROCESS_OBJ_EMISSION = CompilerConfigurationKey.create<Boolean>("IN_PROCESS_OBJ_EMISSION")
 
     // Combined fingerprint of external cached dependencies of the library being cached.
     @JvmField
@@ -366,6 +369,9 @@ var CompilerConfiguration.makePerFileCache: Boolean
 var CompilerConfiguration.factsCacheEnabled: Boolean
     get() = getBoolean(NativeConfigurationKeys.FACTS_CACHE_ENABLED)
     set(value) { put(NativeConfigurationKeys.FACTS_CACHE_ENABLED, value) }
+var CompilerConfiguration.inProcessObjEmission: Boolean
+    get() = getBoolean(NativeConfigurationKeys.IN_PROCESS_OBJ_EMISSION)
+    set(value) { put(NativeConfigurationKeys.IN_PROCESS_OBJ_EMISSION, value) }
 
 var CompilerConfiguration.cachedLibraryDependenciesFingerprint: String?
     get() = get(NativeConfigurationKeys.CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT)

@@ -150,6 +150,11 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     if (arguments.factsCacheEnabled && incrementalCacheDir == null)
         report(KONAN_ARGUMENT_WARNING, "${K2NativeCompilerArguments::factsCacheEnabled.cliArgument} has no effect without incremental compilation")
     put(FACTS_CACHE_ENABLED, arguments.factsCacheEnabled && incrementalCacheDir != null)
+    put(IN_PROCESS_OBJ_EMISSION, arguments.inProcessObjEmission)
+    if (arguments.inProcessObjEmission) {
+        report(KONAN_ARGUMENT_WARNING, "${K2NativeCompilerArguments::inProcessObjEmission.cliArgument} is an experimental feature. " +
+                "The clang flags defined in konan.properties will be ignored when emitting object files.")
+    }
     val nThreadsRaw = parseBackendThreads(arguments.backendThreads)
     val availableProcessors = Runtime.getRuntime().availableProcessors()
     val nThreads = if (nThreadsRaw == 0) availableProcessors else nThreadsRaw
@@ -296,6 +301,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     put(BinaryOptions.concurrentWeakSweep, config.concurrentWeakSweep)
     put(BinaryOptions.checkStateAtExternalCalls, config.checkStateAtExternalCalls)
     putIfNotNull(RUNTIME_LOGS, config.configuration.runtimeLogs)
+    put(IN_PROCESS_OBJ_EMISSION, config.inProcessObjEmission)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()

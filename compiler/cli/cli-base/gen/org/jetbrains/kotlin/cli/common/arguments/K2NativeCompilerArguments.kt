@@ -333,6 +333,17 @@ The stdlib and the other libraries are cached as usual. Requires incremental com
         }
 
     @Argument(
+        value = "-Xin-process-obj-emission",
+        description = """Emit object files from LLVM bitcode in-process, without invoking an external clang process.
+This is an experimental mode and is expected to be faster than the default one.""",
+    )
+    var inProcessObjEmission: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xinclude",
         valueDescription = "<path>",
         description = "A path to an intermediate library that should be processed in the same manner as source files.",
