@@ -127,6 +127,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
                 @Suppress("UNCHECKED_CAST")
                 return object : KlibMetadataComponent {
                     override val moduleHeaderData: ByteArray get() = headerBytes
+                    override val packageFqNames: Set<String> get() = emptySet()
                     override fun getPackageFragmentNames(packageFqName: String): Set<String> = emptySet()
                     override fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray = ByteArray(0)
                 } as KC

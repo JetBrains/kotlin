@@ -42,6 +42,9 @@ class KlibIcData(nonDirtyPreviousPackageFragments: Map<File, ByteArray>) : KlibM
     override val moduleHeaderData: Nothing
         get() = error("moduleHeaderData is not implemented")
 
+    override val packageFqNames: Set<String>
+        get() = fragments.keys
+
     override fun getPackageFragmentNames(packageFqName: String): Set<String> {
         return fragments[packageFqName]?.keys ?: emptySet()
     }

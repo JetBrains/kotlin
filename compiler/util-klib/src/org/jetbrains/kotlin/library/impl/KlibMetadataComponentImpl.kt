@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION_WITH_DOT
+import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.readBytes
@@ -21,6 +22,13 @@ internal class KlibMetadataComponentImpl(
 ) : KlibMetadataComponent {
 
     override val moduleHeaderData get() = layoutReader.readInPlace { it.moduleHeaderFile.readBytes() }
+
+    override val packageFqNames
+        get() = layoutReader.readInPlace { layout ->
+            layout.metadataDir.listDirectoryEntries()
+                .filter { it.isDirectory() }
+                .mapNotNullTo(sortedSetOf()) { layout.getPackageFqName(it) }
+        }
 
     override fun getPackageFragmentNames(packageFqName: String) = layoutReader.readInPlace { layout ->
         val fileList: List<String> = layout.getPackageFragmentsDir(packageFqName).listDirectoryEntries().mapNotNull { file ->
