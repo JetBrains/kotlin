@@ -16,6 +16,7 @@ const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
 const val TEST_FEDERATION_DOMAINS_KEY = "test.federation.domains"
 const val TEST_FEDERATION_DOMAINS_ENV_KEY = "TEST_FEDERATION_DOMAINS"
 
+@DelicateTestFederationApi
 val testFederationAllTestsRequested: Boolean
     get() = AllTests in testFederationSubsets
 

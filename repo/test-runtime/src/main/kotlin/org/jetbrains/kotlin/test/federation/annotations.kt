@@ -30,3 +30,9 @@ annotation class MustRunAlways
  */
 @Tag("nightly")
 annotation class NightlyTest
+
+@RequiresOptIn(
+    level = RequiresOptIn.Level.ERROR,
+    message = "This API is delicate: Use only deliberately with consent of the Kotlin Infrastructure Team"
+)
+annotation class DelicateTestFederationApi

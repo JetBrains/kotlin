@@ -13,11 +13,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.jetbrains.kotlin.testFederation.TestBuildResult.TestResult
-import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForGradle
-import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForJs
-import org.jetbrains.kotlin.testFederation.TestSubset.ContractTestsForWasm
-import org.jetbrains.kotlin.testFederation.TestSubset.PlainTests
-import org.jetbrains.kotlin.testFederation.TestSubset.SmokeTests
+import org.jetbrains.kotlin.testFederation.TestSubset.*
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtendWith
@@ -33,7 +29,6 @@ import kotlin.time.Duration.Companion.seconds
  * Runs `:repo:test-runtime:test` with different modes and domain selections, then checks which tests ran.
  * Covers full test runs, selection by annotations and automatic sampling, and nightly filters.
  */
-
 class TestFederationFunctionalTest {
 
     @Test
@@ -137,14 +132,14 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - all subsets (star)`() {
-        val result = runTestBuild(*TestSubset.entries.toTypedArray())
+    fun `test - AllTests`() {
+        val result = runTestBuild(AllTests)
         assertEquals(allTests, result.executedTests)
     }
 
     @Test
-    fun `test - all subsets (star) - nightly disabled`() {
-        val result = runTestBuild(*TestSubset.entries.toTypedArray(), nightly = false)
+    fun `test - AllTests - nightly disabled`() {
+        val result = runTestBuild(AllTests, nightly = false)
         assertEquals(
             setOf(
                 TestResult("PseudoTest", "domain test"),
@@ -158,8 +153,8 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - all subsets (star) - nightly enabled`() {
-        val result = runTestBuild(*TestSubset.entries.toTypedArray(), nightly = true)
+    fun `test - AllTests - nightly enabled`() {
+        val result = runTestBuild(AllTests, nightly = true)
         assertEquals(allTests, result.executedTests)
     }
 
@@ -252,10 +247,10 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - mode=Full - maps to all subsets (star)`() {
+    fun `test - mode=Full - maps to AllTests`() {
         val result = runTestBuild(mode = TestFederationMode.Full)
         assertEquals(allTests, result.executedTests)
-        assertTrue(result.buildResult.output.contains("Test subsets: [*]"))
+        assertTrue(result.buildResult.output.contains("Test subsets: [AllTests]"))
     }
 
     @Test
@@ -502,7 +497,7 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - parameterized tests`() {
         val testClass = "org.jetbrains.kotlin.testFederation.PseudoParameterizedTest"
-        val full = runTestEvents(*TestSubset.entries.toTypedArray(), testFilter = testClass)
+        val all = runTestEvents(AllTests, testFilter = testClass)
         val plain = runTestEvents(PlainTests, testFilter = testClass)
         val smoke = runTestEvents(SmokeTests, testFilter = testClass)
         val contract = runTestEvents(SmokeTests, ContractTestsForJs, testFilter = testClass)
@@ -514,9 +509,9 @@ class TestFederationFunctionalTest {
                 "Executed: domain 1", "Executed: domain 2",
                 "Executed: smoke 1", "Executed: smoke 2",
             ),
-            full
+            all
         )
-        assertEquals(full, plain, "PlainTests selects all variants of exhaustive-capable tests")
+        assertEquals(listOf("Executed: domain 1", "Executed: domain 2"), plain)
         assertEquals(listOf("Executed: smoke 1", "Executed: smoke 2"), smoke)
         assertEquals(listOf("Executed: contract 1", "Executed: contract 2", "Executed: smoke 1", "Executed: smoke 2"), contract)
         assertEquals(emptyList(), noSelectedTests)
@@ -525,7 +520,7 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - repeated tests`() {
         val testClass = "org.jetbrains.kotlin.testFederation.PseudoRepeatedTest"
-        val full = runTestEvents(*TestSubset.entries.toTypedArray(), testFilter = testClass)
+        val all = runTestEvents(AllTests, testFilter = testClass)
         val plain = runTestEvents(PlainTests, testFilter = testClass)
         val smoke = runTestEvents(SmokeTests, testFilter = testClass)
         val contract = runTestEvents(SmokeTests, ContractTestsForJs, testFilter = testClass)
@@ -537,9 +532,9 @@ class TestFederationFunctionalTest {
                 "Executed: domain", "Executed: domain",
                 "Executed: smoke", "Executed: smoke",
             ),
-            full
+            all
         )
-        assertEquals(full, plain, "PlainTests selects all variants of exhaustive-capable tests")
+        assertEquals(listOf("Executed: domain", "Executed: domain"), plain)
         assertEquals(listOf("Executed: smoke", "Executed: smoke"), smoke)
         assertEquals(listOf("Executed: contract", "Executed: contract", "Executed: smoke", "Executed: smoke"), contract)
         assertEquals(emptyList(), noSelectedTests)
@@ -548,7 +543,7 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - custom test templates`() {
         val testClass = "org.jetbrains.kotlin.testFederation.PseudoTemplateTest"
-        val full = runTestEvents(*TestSubset.entries.toTypedArray(), testFilter = testClass)
+        val all = runTestEvents(AllTests, testFilter = testClass)
         val plain = runTestEvents(PlainTests, testFilter = testClass)
         val smoke = runTestEvents(SmokeTests, testFilter = testClass)
         val contract = runTestEvents(SmokeTests, ContractTestsForJs, testFilter = testClass)
@@ -560,9 +555,9 @@ class TestFederationFunctionalTest {
                 "Executed: domain", "Executed: domain",
                 "Executed: smoke", "Executed: smoke",
             ),
-            full
+            all
         )
-        assertEquals(full, plain, "PlainTests selects all variants of exhaustive-capable tests")
+        assertEquals(listOf("Executed: domain", "Executed: domain"), plain)
         assertEquals(listOf("Executed: smoke", "Executed: smoke"), smoke)
         assertEquals(listOf("Executed: contract", "Executed: contract", "Executed: smoke", "Executed: smoke"), contract)
         assertEquals(emptyList(), noSelectedTests)
@@ -571,7 +566,7 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - dynamic tests`() {
         val testClass = "org.jetbrains.kotlin.testFederation.PseudoDynamicTest"
-        val full = runTestEvents(*TestSubset.entries.toTypedArray(), testFilter = testClass)
+        val all = runTestEvents(AllTests, testFilter = testClass)
         val plain = runTestEvents(PlainTests, testFilter = testClass)
         val smoke = runTestEvents(SmokeTests, testFilter = testClass)
         val contract = runTestEvents(SmokeTests, ContractTestsForJs, testFilter = testClass)
@@ -584,9 +579,9 @@ class TestFederationFunctionalTest {
                 "Executed: domain 1", "Executed: domain 2",
                 "Executed: smoke 1", "Executed: smoke 2",
             ),
-            full
+            all
         )
-        assertEquals(full, plain, "PlainTests selects all variants of exhaustive-capable tests")
+        assertEquals(listOf("Created: domain", "Executed: domain 1", "Executed: domain 2"), plain)
         assertEquals(listOf("Created: smoke", "Executed: smoke 1", "Executed: smoke 2"), smoke)
         assertEquals(
             listOf(
@@ -602,7 +597,7 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - dynamic containers`() {
         val testClass = "org.jetbrains.kotlin.testFederation.PseudoDynamicContainerTest"
-        val full = runTestEvents(*TestSubset.entries.toTypedArray(), testFilter = testClass)
+        val all = runTestEvents(AllTests, testFilter = testClass)
         val plain = runTestEvents(PlainTests, testFilter = testClass)
         val smoke = runTestEvents(SmokeTests, testFilter = testClass)
         val contract = runTestEvents(SmokeTests, ContractTestsForJs, testFilter = testClass)
@@ -615,9 +610,9 @@ class TestFederationFunctionalTest {
                 "Executed: domain 1", "Executed: domain 2",
                 "Executed: smoke 1", "Executed: smoke 2",
             ),
-            full
+            all
         )
-        assertEquals(full, plain, "PlainTests selects all variants of exhaustive-capable tests")
+        assertEquals(listOf("Created: domain", "Executed: domain 1", "Executed: domain 2"), plain)
         assertEquals(listOf("Created: smoke", "Executed: smoke 1", "Executed: smoke 2"), smoke)
         assertEquals(
             listOf(
@@ -633,12 +628,12 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - nested tests inherit class tags`() {
         val testClass = "org.jetbrains.kotlin.testFederation.PseudoNestedTest"
-        val full = runTestEvents(*TestSubset.entries.toTypedArray(), testFilter = testClass)
+        val all = runTestEvents(AllTests, testFilter = testClass)
         val smoke = runTestEvents(SmokeTests, testFilter = testClass)
         val contract = runTestEvents(SmokeTests, ContractTestsForJs, testFilter = testClass)
         val noSelectedTests = runTestEvents(SmokeTests, testFilter = "$testClass.*domain*")
 
-        assertEquals(listOf("Executed: contract", "Executed: domain", "Executed: smoke"), full)
+        assertEquals(listOf("Executed: contract", "Executed: domain", "Executed: smoke"), all)
         assertEquals(listOf("Executed: smoke"), smoke)
         assertEquals(listOf("Executed: contract", "Executed: smoke"), contract)
         assertEquals(emptyList(), noSelectedTests)
@@ -647,14 +642,14 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - BeforeAll and AfterAll`() {
         val testClass = "org.jetbrains.kotlin.testFederation.PseudoLifecycleTest"
-        val full = runTestEvents(*TestSubset.entries.toTypedArray(), testFilter = testClass)
+        val all = runTestEvents(AllTests, testFilter = testClass)
         val smoke = runTestEvents(SmokeTests, testFilter = testClass)
         val contract = runTestEvents(SmokeTests, ContractTestsForJs, testFilter = testClass)
         val noSelectedTests = runTestEvents(SmokeTests, testFilter = "$testClass.*domain*")
 
         assertEquals(
             listOf("Executed: contract", "Executed: domain", "Executed: smoke", "Lifecycle: afterAll", "Lifecycle: beforeAll"),
-            full
+            all
         )
         assertEquals(listOf("Executed: smoke", "Lifecycle: afterAll", "Lifecycle: beforeAll"), smoke)
         assertEquals(
@@ -667,14 +662,14 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - inherited tests and lifecycle callbacks`() {
         val testClass = "org.jetbrains.kotlin.testFederation.PseudoInheritedTest"
-        val full = runTestEvents(*TestSubset.entries.toTypedArray(), testFilter = testClass)
+        val all = runTestEvents(AllTests, testFilter = testClass)
         val smoke = runTestEvents(SmokeTests, testFilter = testClass)
         val contract = runTestEvents(SmokeTests, ContractTestsForJs, testFilter = testClass)
         val noSelectedTests = runTestEvents(SmokeTests, testFilter = "$testClass.*domain*")
 
         assertEquals(
             listOf("Executed: contract", "Executed: domain", "Executed: smoke", "Lifecycle: afterAll", "Lifecycle: beforeAll"),
-            full
+            all
         )
         assertEquals(listOf("Executed: smoke", "Lifecycle: afterAll", "Lifecycle: beforeAll"), smoke)
         assertEquals(
@@ -689,7 +684,7 @@ class TestFederationFunctionalTest {
         val testsFilter = "org.jetbrains.kotlin.testFederation.PseudoTest.domain test"
         val lifecycleMarkers = setOf("PseudoTest.beforeAll executed", "PseudoTest.afterAll executed")
 
-        val allTestsResult = runTestBuild(*TestSubset.entries.toTypedArray(), testsFilter = testsFilter)
+        val allTestsResult = runTestBuild(AllTests, testsFilter = testsFilter)
         assertEquals(setOf(TestResult("PseudoTest", "domain test")), allTestsResult.executedTests)
         lifecycleMarkers.forEach { assertContains(allTestsResult.buildResult.output, it) }
 
@@ -740,21 +735,21 @@ class TestFederationFunctionalTest {
      * `testFederationExhaustive` to decide whether to include extra Gradle/JDK/AGP versions.
      */
     @Test
-    fun `test - testFederationExhaustive - parameterized smoke test runs minimal variant in SmokeTests but all variants in PlainTests`() {
+    fun `test - testFederationAllTestsRequested - parameterized test runs minimal variant in SmokeTests but all variants in AllTests`() {
         val testClass = "org.jetbrains.kotlin.testFederation.PseudoExhaustiveAwareTest"
 
         val smokeVariants = runTestEvents(SmokeTests, testFilter = testClass)
         assertEquals(
             listOf("Executed: minimal"),
             smokeVariants,
-            "SmokeTests: testFederationExhaustive=false → only the minimal variant should run"
+            "SmokeTests: testFederationAllTestsRequested=false → only the minimal variant should run"
         )
 
-        val plainVariants = runTestEvents(PlainTests, testFilter = testClass)
+        val plainVariants = runTestEvents(AllTests, testFilter = testClass)
         assertEquals(
             listOf("Executed: extra 1", "Executed: extra 2", "Executed: minimal"),
             plainVariants,
-            "PlainTests: testFederationExhaustive=true → all variants should run"
+            "AllTests: testFederationAllTestsRequested=true → all variants should run"
         )
     }
 
@@ -764,17 +759,17 @@ class TestFederationFunctionalTest {
      * execution time short — only the contracts covered by PseudoTest annotations are used.
      */
     @Test
-    fun `test - invariant - star equals union of separate subset runs`() {
-        val starResult = runTestBuild(*TestSubset.entries.toTypedArray())
+    fun `test - invariant - AllTests equals union of separate subset runs`() {
+        val allTests = runTestBuild(AllTests)
 
         val plainResult = runTestBuild(PlainTests)
         val smokeResult = runTestBuild(SmokeTests)
         val contractResult = runTestBuild(ContractTestsForJs, ContractTestsForWasm, ContractTestsForGradle)
 
         assertEquals(
-            starResult.executedTests,
+            allTests.executedTests,
             plainResult.executedTests + smokeResult.executedTests + contractResult.executedTests,
-            "Executing '*' must select the same tests as executing PlainTests + SmokeTests + contracts separately"
+            "Executing AllTests must select the same tests as executing PlainTests + SmokeTests + contracts separately"
         )
     }
 }

@@ -195,6 +195,7 @@ class ExhaustiveAwareArgumentsProvider : ArgumentsProvider {
     private val allVariants = listOf("minimal", "extra 1", "extra 2")
 
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+        @OptIn(DelicateTestFederationApi::class)
         val variants =
             if (testFederationAllTestsRequested) allVariants
             else listOf(allVariants.first())
