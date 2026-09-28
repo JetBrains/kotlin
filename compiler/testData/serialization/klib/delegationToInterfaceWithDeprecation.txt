@@ -1,6 +1,5 @@
 Module: lib
 library {
-  // module name: <lib>
 
   library fragment {
     // package name: test
@@ -20,7 +19,6 @@ library {
 
 Module: main
 library {
-  // module name: <main>
 
   library fragment {
     // package name: test

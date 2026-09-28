@@ -1,6 +1,5 @@
 // MODULE: lib
 library {
-  // module name: <lib>
 
   library fragment {
     // package name: lib
@@ -14,7 +13,6 @@ library {
 
 // MODULE: app
 library {
-  // module name: <app>
 
   library fragment {
     // package name: app
