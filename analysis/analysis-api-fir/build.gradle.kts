@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -73,7 +72,11 @@ projectTests {
     ) {
         useJUnitPlatform()
 
-        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 3)
+        testFederation {
+            smokeTests {
+                includeAutoSamples(percentage = 3)
+            }
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")

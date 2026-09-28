@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -77,7 +76,11 @@ projectTests {
             mustRunAfter(":analysis:analysis-api-fir:test")
         }
 
-        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
+        testFederation {
+            smokeTests {
+                includeAutoSamples(percentage = 1)
+            }
+        }
     }
 
     testCodebaseTask(dumpDirs = listOf("api", "api-unstable"))

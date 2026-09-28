@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -91,7 +90,9 @@ projectTests {
 
         // One of the tests traverses all files in the repo. And the tests are fairly quick.
         // It is therefore reasonable to make it always rerun instead of defining its inputs:
-        smokeTestConfig = SmokeTestConfig.RunAllTests
+        testFederation {
+            smokeTests { includeAll() }
+        }
         outputs.upToDateWhen { false }
     }
 }

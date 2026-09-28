@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -48,7 +47,11 @@ projectTests {
     testTask(
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
     ) {
-        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
+        testFederation {
+            smokeTests {
+                includeAutoSamples(percentage = 1)
+            }
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.light.classes.symbol.TestGeneratorKt")
