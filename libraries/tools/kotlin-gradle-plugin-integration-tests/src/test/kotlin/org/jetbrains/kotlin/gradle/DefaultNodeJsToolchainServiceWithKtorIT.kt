@@ -23,6 +23,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -55,13 +56,6 @@ import kotlin.test.assertTrue
 @DisplayName("Node.js toolchain provisioning")
 @JsGradlePluginTests
 class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
-    companion object {
-        private const val REQUEST_DEFAULT_NODE_JS_TOOLCHAIN = "-Pkotlin.js.nodejs.toolchain=DOWNLOAD"
-        private const val REQUEST_NODE_JS_INSTALLATION_DIR = "-Pkotlin.js.nodejs.toolchain.default.install.path"
-
-        private const val REQUEST_NODE_JS_DOWNLOAD_URL = "-Pkotlin.js.nodejs.toolchain.default.download.url"
-    }
-
     @DisplayName("Each requested Node.js distribution is downloaded only once")
     @GradleTest
     fun testEachDistributionIsDownloadedOnce(gradleVersion: GradleVersion) {
@@ -246,6 +240,7 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
      */
     private val TestProject.defaultInstallationsDir: Path get() = projectPath.resolve("nodejs-toolchain")
 
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
     private fun nodeJsToolchainProject(
         gradleVersion: GradleVersion,
         server: NodeJsDistributionServer,
@@ -263,10 +258,31 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
         buildOptions = buildOptions
     ) {
         addKgpToBuildScriptCompilationClasspath()
+        addEcosystemPluginToBuildScriptCompilationClasspath()
+
+        val installationsPath = installationsDir ?: defaultInstallationsDir
+        val nodeJsInstallationDir = installationsPath.toFile()
+        val nodeJsDownloadBaseUrl = server.downloadBaseUrl
+
+        // The Node.js toolchain service used by the build is selected and configured in settings, the same way
+        // a user does it with `kotlin { toolchainManagement { nodeJs { ... } } }` in settings.gradle.kts.
+        // Settings are evaluated before the Node.js plugin is applied to a project, and the plugin registers
+        // the toolchain service as soon as it is applied, where only the first registration wins.
+        settingsBuildScriptInjection {
+            settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+            settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                nodeJs {
+                    toolchainService {
+                        installationDir.fileValue(nodeJsInstallationDir)
+                        downloadBaseUrl.set(nodeJsDownloadBaseUrl)
+                    }
+                }
+            }
+        }
 
         buildScriptInjection {
-            // The Node.js toolchain service is registered, and wired into every task that uses it, by the
-            // Node.js plugin. It is the only plugin applied, so that nothing but the toolchain is under test.
+            // The Node.js toolchain service is wired into every task that uses it by the Node.js plugin.
+            // It is the only plugin applied, so that nothing but the toolchain is under test.
             project.plugins.apply(NodeJsPlugin::class.java)
 
             abstract class ProvisionNodeJsTask @Inject constructor(
@@ -302,18 +318,10 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
             }
         }
 
-        val installationsPath = installationsDir ?: defaultInstallationsDir
-
         buildAction(
             buildTask?.let { arrayOf(it) }
                 ?: requestedVersions.mapIndexed(::provisionTaskName).toTypedArray(),
-            buildOptions.copy(
-                freeArgs = buildOptions.freeArgs + listOf(
-                    REQUEST_DEFAULT_NODE_JS_TOOLCHAIN,
-                    "$REQUEST_NODE_JS_INSTALLATION_DIR=${installationsPath.absolutePathString()}",
-                    "$REQUEST_NODE_JS_DOWNLOAD_URL=${server.downloadBaseUrl}",
-                )
-            ),
+            buildOptions,
             buildAssertions
         )
 

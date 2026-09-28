@@ -25,7 +25,6 @@ import javax.inject.Inject
  */
 abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
     private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
     private val execOperations: ExecOperations,
 ) : NodeJsToolchainService<PreInstalledNodeJsToolchainService.Parameters> {
 
