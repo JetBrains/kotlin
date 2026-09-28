@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.maven
 
 import org.jetbrains.kotlin.maven.test.*
 import org.junit.jupiter.api.DisplayName
-import org.w3c.dom.Element
 
 @DisplayName("KAPT annotation processing")
 class KaptIT : KotlinMavenTestBase() {
@@ -56,16 +55,8 @@ class KaptIT : KotlinMavenTestBase() {
         val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
         testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
             modifyPomXml("app/pom.xml") {
-                val kotlinPluginConfig = findKotlinPlugin()
-                val executions = kotlinPluginConfig.getElementsByTagName("executions")
-                val kaptConfiguration = sequence {
-                    for (i in 0 until executions.length) {
-                        yield(executions.item(i) as Element)
-                    }
-                }.first {
-                    it.getElementsByTagName("id").item(0)?.textContent == "kapt"
-                }.getElementsByTagName("configuration").item(0) as Element
-                kaptConfiguration.setAttribute("stubGenerationScheme", "direct")
+                val kaptConfiguration = findKotlinPlugin().findExecution("kapt").getOrCreateChild("configuration")
+                kaptConfiguration.getOrCreateChild("stubGenerationScheme").textContent = "direct"
             }
 
             build(
@@ -74,6 +65,39 @@ class KaptIT : KotlinMavenTestBase() {
             ) {
                 assertBuildLogContains(
                     "[INFO] [kapt] Kapt is enabled.",
+                    // the scheme reached the compiler rather than being dropped silently, which would leave
+                    // this test running the default 'jtree' scheme and testing nothing
+                    "plugin:org.jetbrains.kotlin.kapt3:stubGenerationScheme=direct",
+                    "[INFO] [kapt] Annotation processors: example.ExampleAnnotationProcessor"
+                )
+                assertJarExistsAndNotEmpty("app/target/app-1.0-SNAPSHOT.jar")
+                assertFileExists(
+                    "app/target/generated-sources/kaptKotlin/compile/MyClass.kt"
+                ) { "KAPT-generated Kotlin extension file was not found" }
+            }
+        }
+    }
+
+    @MavenTest
+    @DisplayName("KAPT writes stubs in parallel in direct stub generation mode")
+    fun testKaptParallelStubWritesInDirectStubMode(mavenVersion: TestVersions.Maven) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
+            modifyPomXml("app/pom.xml") {
+                val kaptConfiguration = findKotlinPlugin().findExecution("kapt").getOrCreateChild("configuration")
+                kaptConfiguration.getOrCreateChild("stubGenerationScheme").textContent = "direct"
+                kaptConfiguration.getOrCreateChild("stubWriterThreads").textContent = "4"
+            }
+
+            build(
+                "package", "-X",
+                expectedToFail = false
+            ) {
+                assertBuildLogContains(
+                    "[INFO] [kapt] Kapt is enabled.",
+                    // the option reached the compiler rather than being dropped silently; only the first line of
+                    // kapt's options dump carries the "[INFO] [kapt]" prefix, the rest are printed raw
+                    "Stub writer threads: 4",
                     "[INFO] [kapt] Annotation processors: example.ExampleAnnotationProcessor"
                 )
                 assertJarExistsAndNotEmpty("app/target/app-1.0-SNAPSHOT.jar")
