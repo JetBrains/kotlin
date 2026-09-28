@@ -363,13 +363,18 @@ internal object StaticInitializersOptimization {
                 override fun visitWhen(expression: IrWhen, data: BitSet): BitSet {
                     val firstBranch = expression.branches.first()
                     val firstConditionResult = firstBranch.condition.accept(this, data)
-                    val bodiesResult = firstBranch.result.accept(this, firstConditionResult)
+                    var bodiesResult = firstBranch.result.accept(this, firstConditionResult)
                     var conditionsResult = firstConditionResult
                     for (i in 1 until expression.branches.size) {
                         val branch = expression.branches[i]
                         conditionsResult = branch.condition.accept(this, conditionsResult)
                         val branchResult = branch.result.accept(this, conditionsResult)
-                        bodiesResult.and(branchResult)
+                        // Branches that leave the initialization state unchanged can return the same set.
+                        if (bodiesResult !== branchResult) {
+                            if (bodiesResult === firstConditionResult)
+                                bodiesResult = bodiesResult.copy() // Copy only when needed.
+                            bodiesResult.and(branchResult)
+                        }
                     }
                     val isExhaustive = expression.branches.last().isUnconditional()
                     return if (isExhaustive) {
