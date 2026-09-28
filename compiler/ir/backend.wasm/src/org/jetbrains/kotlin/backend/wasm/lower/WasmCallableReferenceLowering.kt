@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSi
 import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.BRIDGED_CALLABLE_REFERENCE_FUNCTION
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.FUNCTION_REFERENCE_IMPL
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -579,7 +582,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         val anyNType = backendContext.irBuiltIns.anyNType
         return context.irFactory.addFunction(irFile) {
             setSourceRange(if (isLambda) invokeFunction else functionReference)
-            origin = IrDeclarationOrigin.DEFINED
+            origin = BRIDGED_CALLABLE_REFERENCE_FUNCTION
             name = getBridgedFunctionName(functionReference)
             returnType = anyNType
             isOperator = false
