@@ -128,6 +128,27 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
 
   @MustRunAlways
   @Test
+  @TestMetadata("evaluation_errors.repl.kts")
+  public void testEvaluation_errors_repl() {
+    run("evaluation_errors.repl.kts");
+  }
+
+  @MustRunAlways
+  @Test
+  @TestMetadata("exception_in_value_to_string.repl.kts")
+  public void testException_in_value_to_string_repl() {
+    run("exception_in_value_to_string.repl.kts");
+  }
+
+  @MustRunAlways
+  @Test
+  @TestMetadata("exception_in_variable_initializer.repl.kts")
+  public void testException_in_variable_initializer_repl() {
+    run("exception_in_variable_initializer.repl.kts");
+  }
+
+  @MustRunAlways
+  @Test
   @TestMetadata("extension_function.repl.kts")
   public void testExtension_function_repl() {
     run("extension_function.repl.kts");
