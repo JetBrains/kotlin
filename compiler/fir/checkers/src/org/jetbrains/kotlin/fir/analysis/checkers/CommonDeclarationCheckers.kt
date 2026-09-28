@@ -189,6 +189,10 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirScriptPropertiesChecker,
     )
 
+    override val replSnippetCheckers: Set<FirReplSnippetChecker> = setOf(
+        FirReplSnippetPropertiesChecker,
+    )
+
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
         FirCallsEffectAnalyzer,
     )

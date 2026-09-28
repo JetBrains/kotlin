@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
 import org.jetbrains.kotlin.fir.scopes.impl.FirScriptDeclarationsScope
 import org.jetbrains.kotlin.fir.scopes.processAllCallables
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -60,6 +62,28 @@ object FirScriptPropertiesChecker : FirScriptChecker(MppCheckerKind.Common) {
             }
         }
         checkFileLikeDeclaration(declaration, topLevelPropertySymbols)
+    }
+}
+
+object FirReplSnippetPropertiesChecker : FirReplSnippetChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirReplSnippet) {
+        @OptIn(SymbolInternals::class)
+        val graph = declaration.evalFunctionSymbol.fir.controlFlowGraphReference?.controlFlowGraph ?: return
+        val propertySymbols = mutableSetOf<FirVariableSymbol<*>>()
+        declaration.snippetClass.symbol.processAllDeclaredCallables(context.session) { symbol ->
+            if (symbol is FirPropertySymbol && (symbol.hasInitializer || symbol.hasDelegate)) {
+                propertySymbols += symbol
+            }
+        }
+        if (propertySymbols.isEmpty()) return
+        val data = PropertyInitializationInfoData(
+            propertySymbols,
+            conditionallyInitializedProperties = emptySet(),
+            declaration.snippetClass.symbol,
+            graph,
+        )
+        PropertyInitializationCheckProcessor.check(data, isForInitialization = true)
     }
 }
 

@@ -94,6 +94,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("property_initialization_within_snippet.repl.kts")
+  public void testProperty_initialization_within_snippet_repl() {
+    run("property_initialization_within_snippet.repl.kts");
+  }
+
+  @Test
   @TestMetadata("property_type_anonymous_object.repl.kts")
   public void testProperty_type_anonymous_object_repl() {
     run("property_type_anonymous_object.repl.kts");
