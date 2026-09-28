@@ -1,8 +1,7 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.internal.os.OperatingSystem
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 import java.util.*
 
 plugins {
@@ -428,7 +427,11 @@ projectTests {
 
     // Test everything, intended to use locally
     wasmProjectTest("test", skipInLocalBuild = false) {
-        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
+        testFederation {
+            smokeTests {
+                includeAutoSamples(percentage = 1)
+            }
+        }
     }
 
     // The nine tasks below split the content of the `test` task into disjoint groups.

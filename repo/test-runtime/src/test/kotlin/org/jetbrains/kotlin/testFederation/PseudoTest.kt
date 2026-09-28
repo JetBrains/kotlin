@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.testFederation
 
+import org.jetbrains.kotlin.testFederation.TestSubset.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -34,7 +35,7 @@ class PseudoTest {
         if (autoSmokeTestPercentage == 0) {
             val subsets = testFederationSubsets
             assertTrue(
-                TestSubset.AllTests in subsets,
+                AllTests in subsets,
                 "Expected 'AllTests' in requested subsets, but was: $subsets"
             )
         }
@@ -49,27 +50,24 @@ class PseudoTest {
     @MustRunOnChangesInJs
     @Test
     fun `js contract test`() {
-        val subsets = testFederationSubsets
-        if (TestSubset.ContractTestsForJs !in subsets && autoSmokeTestPercentage == 0 && TestSubset.AllTests !in subsets) {
-            error("Expected 'ContractTestsForJs' or 'AllTests' in requested subsets, but was: $subsets")
+        if (testFederationSubsets.containsNone(ContractTestsForJs, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected ContractTestsForJs or AllTests in requested subsets, but was: $testFederationSubsets")
         }
     }
 
     @MustRunOnChangesInWasm
     @Test
     fun `wasm contract test`() {
-        val subsets = testFederationSubsets
-        if (TestSubset.ContractTestsForWasm !in subsets && autoSmokeTestPercentage == 0 && TestSubset.AllTests !in subsets) {
-            error("Expected 'ContractTestsForWasm' or 'AllTests' in requested subsets, but was: $subsets")
+        if (testFederationSubsets.containsNone(ContractTestsForWasm, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected ContractTestsForWasm or AllTests in requested subsets, but was: $testFederationSubsets")
         }
     }
 
     @MustRunOnChangesInGradle
     @Test
     fun `gradle contract test`() {
-        val subsets = testFederationSubsets
-        if (TestSubset.ContractTestsForGradle !in subsets && autoSmokeTestPercentage == 0 && TestSubset.AllTests !in subsets) {
-            error("Expected 'ContractTestsForGradle' or 'AllTests' in requested subsets, but was: $subsets")
+        if (testFederationSubsets.containsNone(ContractTestsForGradle, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected ContractTestsForGradle or AllTests in requested subsets, but was: $testFederationSubsets")
         }
     }
 
@@ -78,4 +76,22 @@ class PseudoTest {
     fun `nightly test`() {
         assertTrue(testFederationNightly)
     }
+
+    @MustRunAlways
+    @MustRunOnChangesInJs
+    @Test
+    fun `smoke js contract test`() {
+        if (testFederationSubsets.containsNone(SmokeTests, ContractTestsForJs, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected SmokeTests or ContractTestsForJs or AllTests in requested subsets, but was: $testFederationSubsets")
+        }
+    }
+
+    @Suppress("JUnitMixedFramework")
+    @org.junit.Test
+    fun `junit4 test`() {
+        println("Executed: junit4 test")
+    }
 }
+
+private fun Set<TestSubset>.containsNone(vararg subset: TestSubset): Boolean =
+    subset.toSet().intersect(this).isEmpty()

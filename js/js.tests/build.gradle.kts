@@ -3,8 +3,7 @@ import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 import java.util.*
 
 plugins {
@@ -125,7 +124,11 @@ fun Test.setUpJsBoxTests() {
 
     forwardProperties()
 
-    smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
+    testFederation {
+        smokeTests {
+            includeAutoSamples(percentage = 1)
+        }
+    }
 }
 
 fun Test.forwardProperties() {

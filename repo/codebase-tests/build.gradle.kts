@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -89,7 +88,9 @@ projectTests {
             qualityGateNightlyTasks.set(providers.gradleProperty("quality.gate.nightly.tasks"))
         })
 
-        smokeTestConfig = SmokeTestConfig.RunAllTests
+        testFederation {
+            smokeTests { includeAll() }
+        }
         forkEvery = 1
     }
 

@@ -1,4 +1,3 @@
-
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")

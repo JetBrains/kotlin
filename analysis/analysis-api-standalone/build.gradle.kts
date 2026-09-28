@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -79,7 +78,11 @@ if (!kotlinBuildProperties.isTeamcityBuild.get()) {
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_21_0)) {
-        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
+        testFederation {
+            smokeTests {
+                includeAutoSamples(percentage = 1)
+            }
+        }
     }
 
     testCodebaseTask(dumpDirs = listOf("api", "api-unstable"))

@@ -41,7 +41,7 @@ The following tests must run and pass before a commit can be merged to master:
 - Individual tests annotated with `@MustRunOnChangesInXYZ` when domain `XYZ` is changed.
 - Tests annotated with `@MustRunAlways`, regardless of which domains are changed.
 - All tests in domains listed in the `^test:` commit command.
-- Any additional tests selected by the test task's `smokeTestConfig`.
+- Tests selected by `testFederation { smokeTests { includeAutoSamples(percentage = ...) } }`
 
 Other test filters still apply. In particular, `@NightlyTest` tests are not required for merging to master.
 
@@ -65,7 +65,7 @@ Entries under `include` and `exclude` can be directory paths or glob patterns. A
 descendants. When entries overlap, the most specific matching entry takes precedence.
 A domain is changed when any file belonging to it is changed.
 
-### Running all tests on changes in another domain
+## Running all tests on changes in another domain
 
 Use `mustRunAllTestsOnChangesIn` to require all tests in this domain to run and pass when a listed domain is changed.
 In the example above, all `Js` tests are required for merging to master when `CoreLibs` is changed.
@@ -193,39 +193,84 @@ Long-running tests or tests that have not yet proven stable can be marked with `
 
 ## Running a subset of a test task
 
-A test task runs in one of two modes:
+Test Federation allows a Gradle test task to run one or more **test subsets**. 
 
-- `Full`: run all tests in the task.
-- `Smoke`: run tests annotated with `@MustRunAlways`, tests annotated with `@MustRunOnChangesInXYZ` for a changed domain `XYZ`,
-  and any additional tests selected by `smokeTestConfig`.
+Each test subset is composed based on the `@MustRun...` annotations + the `testFederation { }` extension in Gradle.
 
-Other test filters, such as `@NightlyTest`, still apply in both modes.
-Test Federation uses `Full` when all tests in the task's domain must run, and `Smoke` otherwise.
-Setting `smokeTestConfig = SmokeTestConfig.Disabled` skips the task in `Smoke` mode, including its annotated tests.
+We define the following test subsets:
 
-Use `smokeTestConfig` to select additional tests when the task runs in `Smoke` mode. By default, no additional tests are selected.
-For example, this configuration selects roughly 5% of the tests in addition to the annotated tests:
+- `AllTests`:
+  - selects every test in the task
+- `SmokeTests`:
+  - selects tests annotated with `@MustRunAlways`
+  - selects tests included in `testFederation { smokeTests { ... } }` DSL
+- `ContractTestsFor<Domain>`
+  - selects tests annotated with `@MustRunOnChangesIn<Domain>`
+
+Test Federation requests `AllTests` when all tests in the task's domain must run, and `SmokeTests` plus the
+relevant `ContractTestsFor<Domain>` subsets otherwise.
+
+Test subsets may overlap. For example, the same test may declare both `@MustRunOnChangesInJs` and `@MustRunOnChagesInWasm`, so it would be
+selected by both `ContractTestsForJs` and `ContractTestsForWasm`.
+
+Other test filters, such as `@NightlyTest`, still apply regardless of the requested subsets.
+
+### Customizing test subsets
+
+The `testFederation { }` extension allows customizing the subsets' content, as well as their behavior.
+
+Use `includeAutoSamples()` to configure additional auto-sampling when the task's test framework supports it.
+It selects an approximate percentage of tests using a hash of each test's identity, and requires a JUnit 5 task:
 
 ```kotlin
-tasks.withType<Test>().configureEach {
-    smokeTestConfig = SmokeTestConfig.Enabled(
-        autoSmokeTestPercentage = 5
-    )
+testTask {
+    testFederation {
+        smokeTests {
+            // Sample 5% of all tests and add them to the SmokeTest subset
+            includeAutoSamples(percentage = 5)
+
+            // Execute all tests when SmokeTests subset is requested
+            includeAll()
+
+            // If only SmokeTests subset was requested, skip the task
+            skip()
+        }
+
+        contractTests {
+            // If only ContractTests* subsets were requested, skip the task
+            skip()
+        }
+    }
 }
 ```
 
-The selection is stable: it uses the fully qualified name and unique ID of each test.
-Choose fast and stable tests, because the selected tests are required for merging to master even for unrelated changes.
+The auto-sampling selection is stable: it uses the fully qualified name and unique ID of each test.
+Choose fast and stable tests because the selected tests are required for merging to master even for unrelated changes.
 
-To require all tests in a task regardless of which domains are changed:
+To require all tests in a task regardless of which subsets are requested:
 
 ```kotlin
 tasks.withType<Test>().configureEach {
-    smokeTestConfig = SmokeTestConfig.RunAllTests
+    testFederation {
+        smokeTests { includeAll() }
+    }
 }
 ```
 
 Other test filters still apply.
+
+You can also skip the task completely when only smoke or contract tests are requested:
+
+```kotlin
+tasks.withType<Test>().configureEach {
+    testFederation {
+        smokeTests { skip() }
+        contractTests { skip() }
+    }
+}
+```
+
+This may be useful if your task does not support partial execution
 
 ## Local testing
 
@@ -260,7 +305,7 @@ To run a test task in `Smoke` mode as if `Js` were changed:
   -Ptest.federation.changed.domains="Js"
 ```
 
-This runs `@MustRunAlways` tests, `@MustRunOnChangesInJs` tests, and any additional tests selected by `smokeTestConfig`.
+This runs `@MustRunAlways` tests, `@MustRunOnChangesInJs` tests, and tests selected by `testFederation { smokeTests { includeAutoSamples() } }`.
 Use `-Ptest.federation.mode=Full` to run all tests in the task. Other test filters still apply.
 
 `test.federation.changed.domains` accepts:
@@ -290,5 +335,5 @@ merging to master. Both teams must approve changes to these tests because the te
 ## Extra: Smoke tests
 
 A smoke test is a quick check of core functionality. `@MustRunAlways` can be used for smoke tests that should run for every change,
-but not every smoke test needs to run for unrelated changes. Selecting a percentage of fast, stable tests through `smokeTestConfig` is
+but not every smoke test needs to run for unrelated changes. Selecting a percentage of fast, stable tests through `testFederation { smokeTests { includeAutoSamples(...) } }` is
 another way to check core functionality for unrelated changes.

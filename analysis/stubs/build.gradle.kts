@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -54,7 +53,11 @@ tasks.compileTestKotlin {
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
-        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 5)
+        testFederation {
+            smokeTests {
+                includeAutoSamples(percentage = 5)
+            }
+        }
 
         addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
     }
