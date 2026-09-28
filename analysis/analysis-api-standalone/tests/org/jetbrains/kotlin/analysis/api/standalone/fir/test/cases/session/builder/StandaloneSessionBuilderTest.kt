@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.buil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiPrimitiveType
 import com.intellij.psi.PsiTypes
 import com.intellij.psi.impl.source.PsiClassReferenceType
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProject
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.session.analyze
@@ -619,6 +621,53 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             val callExpression = dummyFile.findDescendantOfType<KtCallExpression>()!!
             val call = callExpression.resolveToCall()?.successfulFunctionCallOrNull() ?: error("Call inside a dummy file is unresolved")
             assert(call.symbol is KaNamedFunctionSymbol)
+        }
+    }
+
+    /**
+     * [org.jetbrains.kotlin.analysis.project.structure.impl.KotlinStandaloneProjectStructureProvider.getModule] creates a fresh
+     * [KaNotUnderContentRootModule] on each call for a file outside all registered content roots. These instances must be equal, otherwise
+     * [org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSimpleResolutionStrategyProvider] returns the wrong resolution strategy.
+     */
+    @Test
+    fun testFileNotUnderContentRoot() {
+        val root = "notUnderContentRoot"
+
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("src"))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+
+        val project = session.project
+        val outsidePath = testDataPath(root).resolve("outside").resolve("outside.kt").toAbsolutePath()
+        val outsideVirtualFile = session.coreApplicationEnvironment.localFileSystem.findFileByPath(outsidePath.toString())
+            ?: error("Cannot find a virtual file for $outsidePath")
+        val outsideFile = PsiManager.getInstance(project).findFile(outsideVirtualFile) as KtFile
+
+        val module1 = KotlinProjectStructureProvider.getModule(project, outsideFile, useSiteModule = null)
+        val module2 = KotlinProjectStructureProvider.getModule(project, outsideFile, useSiteModule = null)
+        requireIsInstance<KaNotUnderContentRootModule>(module1)
+        requireIsInstance<KaNotUnderContentRootModule>(module2)
+        assertEquals(module1, module2)
+        assertEquals(module1.hashCode(), module2.hashCode())
+
+        analyze(outsideFile) {
+            val function = outsideFile.findDescendantOfType<KtNamedFunction> { it.name == "outsideFunction" }!!
+            val functionSymbol = function.symbol
+            Assertions.assertEquals(KaSymbolOrigin.SOURCE, functionSymbol.origin)
+
+            val callExpression = outsideFile.findDescendantOfType<KtCallExpression>()!!
+            val call = callExpression.resolveToCall()?.successfulFunctionCallOrNull()
+                ?: error("Call inside a file outside content roots is unresolved")
+            Assertions.assertEquals(functionSymbol, call.symbol)
         }
     }
 
