@@ -342,9 +342,10 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
 
     context(_: KaSession)
     private fun createLightClass(classSymbol: KaClassSymbol, module: KaModule): KtLightClass? {
-        if (classSymbol.shouldNotBeVisibleAsLightClass()) return null
+        val containingModule = classSymbol.realPsi?.kaModule ?: classSymbol.containingModule
+        if (classSymbol.shouldNotBeVisibleAsLightClass(containingModule)) return null
 
-        when (declarationLocation(classSymbol.containingModule)) {
+        when (declarationLocation(containingModule)) {
             DeclarationLocation.ProjectSources -> {
                 return createSymbolLightClassNoCache(classSymbol, module)
             }
