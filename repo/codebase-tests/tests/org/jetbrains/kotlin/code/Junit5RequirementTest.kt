@@ -28,7 +28,8 @@ class Junit5RequirementTest {
     Packages listed here are not checked, as they have a valid reason for still using junit5
      */
     private val packageWhitelist = listOf(
-        "kotlin/test" // We still ship a junit4 variant
+        "kotlin/test", // We still ship a junit4 variant
+        "org/jetbrains/kotlin/testFederation",
     )
 
     @Test
