@@ -1,0 +1,15 @@
+STEP 0:
+    dependencies: base
+    modifications:
+        U : lib.kt -> lib.kt
+    added cache: lib.kt
+
+// `lib` is not recompiled here, but its cache follows the change of `base`.
+STEP 1:
+    modified cache: lib.kt
+
+STEP 2:
+    dependencies: base
+    modifications:
+        U : lib.1.kt -> lib.kt
+    modified cache: lib.kt

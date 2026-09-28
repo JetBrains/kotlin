@@ -1,0 +1,14 @@
+STEP 0:
+    modifications:
+        U : base.kt -> base.kt
+    added cache: base.kt
+
+STEP 1:
+    modifications:
+        U : base.1.kt -> base.kt
+    modified cache: base.kt
+
+STEP 2:
+    modifications:
+        U : base.kt -> base.kt
+    modified cache: base.kt
