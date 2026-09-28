@@ -215,6 +215,7 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
             "platform/macosArm64/<klib content>",
             "platform/wasmJs/<klib content>",
             "resources/",
+            "swift-export/",
         )
 
         /**
@@ -230,6 +231,7 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
             "platform/",
             "platform/js/<klib content>",
             "resources/",
+            "swift-export/",
         )
 
         val producerWithCommonizedCinteropsArchiveEntries = listOf(
@@ -258,6 +260,7 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
             "platform/linuxArm64/<klib content>",
             "platform/linuxX64/<klib content>",
             "resources/",
+            "swift-export/",
         )
 
         const val KLIB_MANIFEST_PATH = "default/manifest"

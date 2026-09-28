@@ -192,6 +192,7 @@ class PackKotlinArchiveTaskTest {
                 "metadata/",
                 "platform/",
                 "resources/",
+                "swift-export/",
             ).prettyPrinted,
             packTask.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
         )
@@ -213,6 +214,7 @@ class PackKotlinArchiveTaskTest {
             addResources("macosArm64", project.singleFileTree("resources/macosArm64", "resources.txt"))
 
             projectStructureMetadataFile.set(project.textFile("project-structure-metadata.json"))
+            swiftExportMetadataFile.set(project.textFile("swift-export-metadata.json"))
             outputDirectory.set(project.layout.buildDirectory.dir("kotlin-archive-test/assemble"))
         }
         val task = project.tasks.register("testPackKotlinArchive", PackKotlinArchiveTask::class.java).get().apply {
@@ -252,6 +254,8 @@ class PackKotlinArchiveTaskTest {
                 "resources/js/resources.txt",
                 "resources/macosArm64/",
                 "resources/macosArm64/resources.txt",
+                "swift-export/",
+                "swift-export/metadata.json",
             ).prettyPrinted,
             task.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
         )
@@ -324,6 +328,7 @@ class PackKotlinArchiveTaskTest {
                 "metadata/",
                 "platform/",
                 "resources/",
+                "swift-export/",
             ).prettyPrinted,
             packTask.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
         )
