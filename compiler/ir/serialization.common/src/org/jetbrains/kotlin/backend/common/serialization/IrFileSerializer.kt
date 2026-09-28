@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.library.SerializedDeclaration
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.IrArrayWriter
 import org.jetbrains.kotlin.library.impl.IrDeclarationWriter
-import org.jetbrains.kotlin.library.impl.IrStringWriter
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -35,7 +33,6 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 import org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon as ProtoFieldAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
@@ -158,16 +155,7 @@ open class IrFileSerializer(
     private val protoIrFileEntryMap = hashMapOf<ProtoFileEntryDeduplicationKey, Int>()
     protected val protoIrFileEntryArray = arrayListOf<ProtoFileEntry>()
 
-    // The same signature could be used multiple times in a file
-    // so use this index to store signature only once.
-    private val protoIdSignatureMap = mutableMapOf<IdSignature, Int>()
-    protected val protoIdSignatureArray = arrayListOf<ProtoIdSignature>()
-    private val idSignatureSerializer = IdSignatureSerializer(
-        stringSerializer,
-        debugInfoSerializer,
-        protoIdSignatureMap,
-        protoIdSignatureArray,
-    )
+    private val signatureSerializer = IdSignatureSerializer(stringSerializer, debugInfoSerializer)
 
     protected val protoBodyArray = mutableListOf<XStatementOrExpression>()
 
@@ -326,7 +314,7 @@ open class IrFileSerializer(
             }
         }
 
-        val signatureId = idSignatureSerializer.protoIdSignature(signature)
+        val signatureId = signatureSerializer.protoIdSignature(signature)
         val symbolKind = protoSymbolKind(symbol)
 
         return BinarySymbolData.encode(symbolKind, signatureId)
@@ -1563,7 +1551,7 @@ open class IrFileSerializer(
             fqName = file.packageFqName.asString(),
             path = file.path,
             types = IrArrayWriter(protoTypeArray.byteArrays, useVarIntInDataArrays).writeIntoMemory(),
-            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
+            signatures = signatureSerializer.toIrArrayWriter(useVarIntInDataArrays).writeIntoMemory(),
             strings = stringSerializer.toIrStringWriter(useVarIntInDataArrays).writeIntoMemory(),
             bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
@@ -1595,7 +1583,7 @@ open class IrFileSerializer(
                     compatibleMode = false,
                     recordInSignatureClashDetector = false
                 )
-                val sigIndex = idSignatureSerializer.protoIdSignature(idSig)
+                val sigIndex = signatureSerializer.protoIdSignature(idSig)
 
                 SerializedDeclaration(sigIndex, byteArray)
             }
@@ -1612,7 +1600,7 @@ open class IrFileSerializer(
             fqName = file.packageFqName.asString(),
             path = file.path,
             types = IrArrayWriter(protoTypeArray.byteArrays, useVarIntInDataArrays).writeIntoMemory(),
-            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
+            signatures = signatureSerializer.toIrArrayWriter(useVarIntInDataArrays).writeIntoMemory(),
             strings = stringSerializer.toIrStringWriter(useVarIntInDataArrays).writeIntoMemory(),
             bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
@@ -1632,7 +1620,7 @@ open class IrFileSerializer(
         require(!idSig.isPackageSignature()) { "IsSig: $idSig\nDeclaration: ${topLevelDeclaration.render()}" }
 
         // TODO: keep order similar
-        val sigIndex = protoIdSignatureMap[idSig] ?: error("Not found ID for $idSig (${topLevelDeclaration.render()})")
+        val sigIndex = signatureSerializer[idSig] ?: error("Not found ID for $idSig (${topLevelDeclaration.render()})")
         return SerializedDeclaration(sigIndex, byteArray)
     }
 
