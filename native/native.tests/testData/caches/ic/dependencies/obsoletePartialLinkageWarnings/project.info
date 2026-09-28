@@ -1,0 +1,20 @@
+// KT-78253: a partial linkage diagnostic stored in an incremental cache must not outlive the problem it reports.
+//
+// The diagnostic below is reported for an inline function of `lib` whose body is deserialized lazily
+// from the cache of `lib`, so it is attributed to no file of `user` at all. `user` consists of two
+// independent files: `a.kt` uses `lib`, `b.kt` uses `other`.
+
+MODULES: base, lib, other, user, main
+
+STEP 0:
+    libs: base, lib, other, user, main
+
+// `base` drops the function that the inline function of `lib` calls, while neither `lib` nor `user`
+// is recompiled. `other` changes as well, so that the caches of BOTH files of `user` are rebuilt here.
+STEP 1:
+    libs: base, other, main
+
+// The function is back, and both `lib` and `a.kt` are edited and recompiled, so the problem is gone
+// for good. The cache of `b.kt` is merely reused, and must not resurrect the diagnostic.
+STEP 2:
+    libs: base, lib, user, main
