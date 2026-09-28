@@ -328,6 +328,7 @@ open class ReturnTypeCalculatorWithJump(
             val provider = session.firProvider
             val file = provider.getFirCallableContainerFile(symbol)
             val script = file?.declarations?.firstIsInstanceOrNull<FirScript>()
+            val replSnippet = file?.declarations?.firstIsInstanceOrNull<FirReplSnippet>()
 
             val containingClassLookupTag = symbol.containingClassLookupTag()
             val outerClasses = generateSequence(containingClassLookupTag) { lookupTag ->
@@ -342,7 +343,9 @@ open class ReturnTypeCalculatorWithJump(
                     )
                 }
             }
-            (listOfNotNull(file, script) + outerClasses.filterNotNull().asReversed()) to null
+            // The snippet class is transformed by `transformReplSnippet` itself, within the snippet's tower data context.
+            val designationClasses = outerClasses.filterNotNull().asReversed().filter { it != replSnippet?.snippetClass }
+            (listOfNotNull(file, script, replSnippet) + designationClasses) to null
         }
 
         val previousTowerDataContexts = outerBodyResolveContext?.regularTowerDataContexts

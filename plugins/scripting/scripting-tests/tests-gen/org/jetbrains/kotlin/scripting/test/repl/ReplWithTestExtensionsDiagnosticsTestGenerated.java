@@ -58,6 +58,12 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
+  @TestMetadata("implicit_return_type_resolved_from_use.repl.kts")
+  public void testImplicit_return_type_resolved_from_use_repl() {
+    run("implicit_return_type_resolved_from_use.repl.kts");
+  }
+
+  @Test
   @TestMetadata("import_visible_in_next_snippet.repl.kts")
   public void testImport_visible_in_next_snippet_repl() {
     run("import_visible_in_next_snippet.repl.kts");
