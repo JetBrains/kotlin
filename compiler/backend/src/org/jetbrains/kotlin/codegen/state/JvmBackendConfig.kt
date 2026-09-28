@@ -62,9 +62,6 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val generateSmapCopyToAnnotation: Boolean = !configuration.getBoolean(JVMConfigurationKeys.NO_SOURCE_DEBUG_EXTENSION)
 
-    val functionsWithInlineClassReturnTypesMangled: Boolean =
-        languageVersionSettings.supportsFeature(LanguageFeature.MangleClassMembersReturningInlineClasses)
-
     val shouldValidateBytecode: Boolean = configuration.getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)
 
     val classFileVersion: Int = run {
