@@ -25,11 +25,7 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
         else JvmStringConcat.INLINE
 
     val samConversionsScheme: JvmClosureGenerationScheme =
-        configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS)
-            ?: if (languageVersionSettings.supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic))
-                JvmClosureGenerationScheme.INDY
-            else
-                JvmClosureGenerationScheme.CLASS
+        configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS) ?: JvmClosureGenerationScheme.INDY
 
     val lambdasScheme: JvmClosureGenerationScheme =
         configuration.get(JVMConfigurationKeys.LAMBDAS)
