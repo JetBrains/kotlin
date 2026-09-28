@@ -132,6 +132,43 @@ internal fun KotlinTarget.configureTransformActionFromKarToResources() {
     }
 }
 
+/**
+ * Extracts [KarLayout.SWIFT_EXPORT_METADATA_FILE_PATH] from a decompressed Kotlin Archive.
+ * An archive without the entry produces no output, like a library that never published the metadata.
+ */
+@DisableCachingByDefault(because = "Extracting Swift Export metadata from a .kar is not worth caching")
+internal abstract class KarToSwiftExportMetadataTransformation : TransformAction<TransformParameters.None> {
+
+    @get:Inject
+    abstract val archiveOperations: ArchiveOperations
+
+    @get:Inject
+    abstract val fileSystemOperations: FileSystemOperations
+
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputArtifact
+    abstract val inputArtifact: Provider<FileSystemLocation>
+
+    override fun transform(outputs: TransformOutputs) {
+        val karFile = inputArtifact.get().asFile
+        val metadata = archiveOperations.zipTree(karFile)
+            .matching { it.include(KarLayout.SWIFT_EXPORT_METADATA_FILE_PATH) }
+            .singleOrNull() ?: return
+        val outputFile = outputs.file("${karFile.nameWithoutExtension}-swift-export-metadata.json")
+        fileSystemOperations.copy {
+            it.from(metadata)
+            it.into(outputFile.parentFile)
+            it.rename { outputFile.name }
+        }
+    }
+}
+
+internal fun Project.configureTransformActionFromKarToSwiftExportMetadata() {
+    dependencies.registerTransform(KarToSwiftExportMetadataTransformation::class.java) { spec ->
+        spec.changesState(KarState.DECOMPRESSED, KarState.SWIFT_EXPORT_METADATA_EXTRACTED)
+    }
+}
+
 
 /**
  * This transformation unpacks:

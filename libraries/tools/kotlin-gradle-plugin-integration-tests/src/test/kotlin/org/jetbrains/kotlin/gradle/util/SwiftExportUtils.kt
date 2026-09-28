@@ -87,13 +87,12 @@ internal fun KGPBaseTest.publishMultiplatformLibrary(
 }.publish(publisherConfiguration = PublisherConfiguration(version = libraryVersion))
 
 /**
- * A library named `producer` with an iosArm64 target, published in [publicationFormat], optionally with the Swift
- * Export DSL configured.
+ * A library named `producer` with an iosArm64 target, published as a Kotlin Archive, optionally with the
+ * Swift Export DSL configured.
  */
 @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
 internal fun KGPBaseTest.swiftExportKotlinArchiveProducer(
     gradleVersion: GradleVersion,
-    publicationFormat: KotlinPublicationFormat = KotlinPublicationFormat.KOTLIN_ARCHIVE,
     withSwiftExport: Boolean = true,
 ): TestProject = project("empty", gradleVersion) {
     plugins { kotlin("multiplatform") }
@@ -105,7 +104,7 @@ internal fun KGPBaseTest.swiftExportKotlinArchiveProducer(
             iosArm64()
             sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
             publishing {
-                this.publicationFormat.set(publicationFormat)
+                publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
             }
         }
         if (withSwiftExport) {

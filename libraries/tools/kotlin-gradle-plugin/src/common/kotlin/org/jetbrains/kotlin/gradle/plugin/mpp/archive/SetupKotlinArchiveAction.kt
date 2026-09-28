@@ -65,6 +65,7 @@ internal val SetupKotlinArchiveAction = KotlinProjectSetupCoroutine {
 
     configureTransformActionFromKarXzToKar()
     configureTransformActionFromKarToPsm()
+    configureTransformActionFromKarToSwiftExportMetadata()
 }
 
 
