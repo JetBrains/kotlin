@@ -7,6 +7,7 @@ package kotlinx.metadata.klib
 
 import kotlinx.metadata.klib.impl.*
 import kotlinx.metadata.klib.impl.KlibMetadataVersionWriteExtension
+import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.*
@@ -93,6 +94,7 @@ class KlibModuleMetadata(
      */
     interface MetadataLibraryProvider {
         val moduleHeaderData: ByteArray
+        val packageNames: Set<String>
         val metadataVersion: KlibMetadataVersion
         fun packageMetadataParts(fqName: String): Set<String>
         fun packageMetadata(fqName: String, partName: String): ByteArray
@@ -144,7 +146,7 @@ class KlibModuleMetadata(
             checkMetadataVersionForRead(library.metadataVersion, lenient)
 
             val moduleHeader = parseModuleHeader(library.moduleHeaderData)
-            val moduleFragments = moduleHeader.packageFragmentNameList.flatMap { packageFqName ->
+            val moduleFragments = library.packageNames.flatMap { packageFqName ->
                 library.packageMetadataParts(packageFqName).map { part ->
                     val packageFragment = parsePackageFragment(library.packageMetadata(packageFqName, part))
                     val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
