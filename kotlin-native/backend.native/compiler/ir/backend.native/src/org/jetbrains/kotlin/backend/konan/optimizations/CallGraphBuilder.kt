@@ -164,6 +164,15 @@ internal class CallGraphBuilder(
             functionStack.push(caller, function)
     }
 
+    private fun unfoldCallees(caller: DataFlowIR.FunctionSymbol.Declared, call: DataFlowIR.Node.Call, node: DataFlowIR.Node, callees: List<DataFlowIR.FunctionSymbol>) {
+        callees.distinct().forEach { callee -> callGraph.addEdge(caller, CallGraphNode.CallSite(call, node, false, callee)) }
+        callees.asReversed().distinct().asReversed().forEach { callee ->
+            val function = moduleDFG.functions[callee]
+            if (function != null)
+                functionStack.push(caller, function)
+        }
+    }
+
     private fun handleRoot(symbol: DataFlowIR.FunctionSymbol) {
         val function = moduleDFG.functions[symbol]
         if (function == null)
@@ -221,7 +230,7 @@ internal class CallGraphBuilder(
                         allPossibleCallees.add(actualCallee)
                     }
                     if (allPossibleCallees.size <= nonDevirtualizedCallSitesUnfoldFactor)
-                        allPossibleCallees.forEach { staticCall(symbol, call, node, it) }
+                        unfoldCallees(symbol, call, node, allPossibleCallees)
                     else {
                         val callSite = CallGraphNode.CallSite(call, node, true, call.callee)
                         callGraph.addEdge(symbol, callSite)
