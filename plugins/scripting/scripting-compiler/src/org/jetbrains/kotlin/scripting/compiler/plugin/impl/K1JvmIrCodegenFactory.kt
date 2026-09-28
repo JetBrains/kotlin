@@ -342,7 +342,6 @@ private class JvmSerializerExtension(
     private val languageVersionSettings = state.config.languageVersionSettings
     private val isParamAssertionsDisabled = state.config.isParamAssertionsDisabled
     private val unifiedNullChecks = state.config.unifiedNullChecks
-    private val functionsWithInlineClassReturnTypesMangled = state.config.functionsWithInlineClassReturnTypesMangled
     override val metadataVersion = state.config.metadataVersion
     private val jvmDefaultMode = state.config.jvmDefaultMode
     private val useOldManglingScheme = state.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
@@ -507,13 +506,11 @@ private class JvmSerializerExtension(
     }
 
     private fun MutableVersionRequirementTable.writeFunctionNameManglingForReturnTypeRequirement(add: (Int) -> Unit) {
-        if (functionsWithInlineClassReturnTypesMangled) {
-            add(
-                VersionRequirementUtils.writeVersionRequirement(
-                    1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, this
-                )
+        add(
+            VersionRequirementUtils.writeVersionRequirement(
+                1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, this
             )
-        }
+        )
     }
 
     private fun MutableVersionRequirementTable.writeNewFunctionNameManglingRequirement(add: (Int) -> Unit) {

@@ -41,7 +41,6 @@ private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(co
  * Keeps track of replacement functions and inline class box/unbox functions.
  */
 class MemoizedInlineClassReplacements(
-    private val mangleReturnTypes: Boolean,
     private val irFactory: IrFactory,
     private val context: JvmBackendContext,
 ) {
@@ -186,7 +185,7 @@ class MemoizedInlineClassReplacements(
 
     private val IrSimpleFunction.needsReplacement: Boolean
         get() = when {
-            !(shouldBeExposedByAnnotationOrFlag(context) || hasMangledParameters() || mangleReturnTypes && hasMangledReturnType) -> false
+            !(shouldBeExposedByAnnotationOrFlag(context) || hasMangledParameters() || hasMangledReturnType) -> false
             isFromJava() -> mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()
             else -> true
         }
@@ -264,7 +263,7 @@ class MemoizedInlineClassReplacements(
                     defaultValue = null,
                     name = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
                         // The function's name will be mangled, so preserve the old receiver name.
-                        Name.identifier(function.extensionReceiverName(context.config))
+                        Name.identifier(function.extensionReceiverName())
                     } else parameter.name
                 ).also {
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
@@ -300,7 +299,7 @@ class MemoizedInlineClassReplacements(
                     IrParameterKind.ExtensionReceiver -> {
                         parameter.copyTo(
                             this,
-                            name = Name.identifier(function.extensionReceiverName(context.config)),
+                            name = Name.identifier(function.extensionReceiverName()),
                             origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
@@ -355,7 +354,7 @@ class MemoizedInlineClassReplacements(
             else ->
                 replacementOrigin
         }
-        name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
+        name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes = true, useOldMangleRules = useOldManglingScheme)
     }
 }
 
