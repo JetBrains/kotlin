@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.archive
 
-import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -22,9 +21,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
-import java.util.zip.ZipInputStream
 import kotlin.io.path.appendText
-import kotlin.io.path.inputStream
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
@@ -266,17 +263,6 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
         const val KLIB_MANIFEST_PATH = "default/manifest"
         const val KLIB_CONTENT_PLACEHOLDER = "<klib content>"
     }
-
-    private fun Path.zipXzArchiveEntries(): List<String> =
-        inputStream().buffered().use { fileInput ->
-            XZCompressorInputStream(fileInput).use { xzInput ->
-                ZipInputStream(xzInput).use { zipInput ->
-                    generateSequence(zipInput::getNextEntry)
-                        .map { entry -> entry.name }
-                        .toList()
-                }
-            }
-        }
 }
 
 private fun KotlinMultiplatformExtension.setupKarTestTargetsAndSourceSets() {

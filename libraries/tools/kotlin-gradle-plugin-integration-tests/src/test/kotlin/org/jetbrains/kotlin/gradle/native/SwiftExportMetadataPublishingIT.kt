@@ -5,18 +5,25 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.archive.readKotlinArchiveEntry
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
+import org.jetbrains.kotlin.gradle.util.assertSwiftExportMetadataKarVariantExistsInRootComponent
 import org.jetbrains.kotlin.gradle.util.assertSwiftExportMetadataVariantExistsInRootComponent
 import org.jetbrains.kotlin.gradle.util.assertSwiftExportMetadataVariantMissingInRootComponent
 import org.jetbrains.kotlin.gradle.util.parseJsonToMap
+import org.jetbrains.kotlin.gradle.util.swiftExportKotlinArchiveProducer
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 /**
@@ -24,7 +31,7 @@ import kotlin.test.assertNull
  */
 @DisplayName("Tests for Swift Export metadata publication with the export DSL")
 @SwiftExportGradlePluginTests
-@OptIn(ExperimentalSwiftExportDsl::class)
+@OptIn(ExperimentalSwiftExportDsl::class, ExperimentalKotlinGradlePluginApi::class)
 class SwiftExportMetadataPublishingIT : KGPBaseTest() {
 
     @DisplayName("swiftExport metadata is published into the root component when module name and root package are defined")
@@ -127,6 +134,48 @@ class SwiftExportMetadataPublishingIT : KGPBaseTest() {
         }.publish()
 
         assertFileNotExists(publishedProject.rootComponent.swiftExportMetadata.toPath())
+        publishedProject.assertSwiftExportMetadataVariantMissingInRootComponent()
+    }
+
+    @DisplayName("swiftExport metadata is stored inside the Kotlin Archive when the KAR publication format is enabled")
+    @GradleTest
+    fun testSwiftExportMetadataIsPublishedInsideKotlinArchive(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = swiftExportKotlinArchiveProducer(gradleVersion)
+        producer.build("packKotlinArchive") {
+            assertTasksExecuted(":serializeSwiftExportMetadata", ":assembleKotlinArchive", ":packKotlinArchive")
+        }
+        val publishedProject = producer.publish()
+
+        assertFileNotExists(publishedProject.rootComponent.swiftExportMetadata.toPath())
+        assertFileExists(publishedProject.rootComponent.kar.toPath())
+
+        val metadataJson = assertNotNull(
+            publishedProject.rootComponent.kar.readKotlinArchiveEntry("swift-export/metadata.json"),
+            "Expected the Kotlin Archive to contain swift-export/metadata.json"
+        )
+        val metadata = Json.parseToJsonElement(metadataJson).jsonObject
+        assertEquals(1, metadata["schemaVersion"]?.jsonPrimitive?.int)
+        assertEquals("Foo", metadata["moduleName"]?.jsonPrimitive?.content)
+        assertEquals("org.bar.foo", metadata["rootPackage"]?.jsonPrimitive?.content)
+
+        publishedProject.assertSwiftExportMetadataKarVariantExistsInRootComponent()
+    }
+
+    @DisplayName("Kotlin Archive has no swift export metadata when the export DSL is not configured")
+    @GradleTest
+    fun testKotlinArchiveWithoutSwiftExportMetadata(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = swiftExportKotlinArchiveProducer(gradleVersion, withSwiftExport = false)
+        producer.build("packKotlinArchive") {
+            assertTasksExecuted(":assembleKotlinArchive", ":packKotlinArchive")
+            assertTasksAreNotInTaskGraph(":serializeSwiftExportMetadata")
+        }
+        val publishedProject = producer.publish()
+
+        assertNull(publishedProject.rootComponent.kar.readKotlinArchiveEntry("swift-export/metadata.json"))
         publishedProject.assertSwiftExportMetadataVariantMissingInRootComponent()
     }
 }

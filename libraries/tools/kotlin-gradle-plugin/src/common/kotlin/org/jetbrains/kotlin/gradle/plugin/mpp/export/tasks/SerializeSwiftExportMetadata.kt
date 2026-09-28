@@ -16,7 +16,6 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.registerSwiftExportMetadataApiElements
@@ -25,8 +24,8 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 
 /**
- * Registers the [SerializeSwiftExportMetadata] task and the consumable configuration that puts its output into the
- * root component of the publication. Returns the existing task if it was already registered.
+ * Registers the [SerializeSwiftExportMetadata] task and the consumable configuration carrying its output.
+ * Returns the existing task if it was already registered.
  */
 internal fun Project.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration(
     swiftExportConfiguration: SwiftExportConfiguration,
@@ -40,10 +39,7 @@ internal fun Project.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfigu
     ) {
         it.configureWith(swiftExportConfiguration)
     }
-    val swiftExportMetadataApiElements = registerSwiftExportMetadataApiElements(swiftExportMetadata)
-    project.multiplatformExtension.publishing.adhocSoftwareComponent.addVariantsFromConfiguration(
-        swiftExportMetadataApiElements
-    ) {}
+    registerSwiftExportMetadataApiElements(swiftExportMetadata)
     return swiftExportMetadata
 }
 

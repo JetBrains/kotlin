@@ -35,6 +35,13 @@ import java.io.Serializable
 internal const val SWIFT_EXPORT_METADATA_USAGE = "swiftExportMetadata"
 
 /**
+ * Consumable configuration carrying the Swift Export metadata artifact.
+ * [org.jetbrains.kotlin.gradle.plugin.mpp.publishing.SetupRootPublicationAction] publishes it next to the metadata
+ * target's variants, so the Kotlin Archive format replaces it like any other root variant.
+ */
+internal const val SWIFT_EXPORT_METADATA_ELEMENTS_NAME = "swiftExportMetadataElements"
+
+/**
  * Version of the [SwiftExportMetadata] serialization format. Bump it whenever the serialized shape changes.
  */
 internal const val SWIFT_EXPORT_METADATA_SCHEMA_VERSION = 1
@@ -55,9 +62,9 @@ internal fun deserializeSwiftExportMetadata(inputStream: InputStream) =
 
 /**
  * Key under which the Swift Export metadata is shared as a Configuration secondary variant between projects of the same
- * build via [KotlinSecondaryVariantsDataSharing]. Published dependencies expose the same information through the
- * `swiftExportMetadataElements` variant instead; same-build subprojects use secondary-variant sharing so the metadata
- * can be read at task execution time (Configuration-Cache/Isolated-Projects safe).
+ * build via [KotlinSecondaryVariantsDataSharing]. Published dependencies expose the same information through the root
+ * publication's Swift Export metadata variant instead; same-build subprojects use secondary-variant sharing so the
+ * metadata can be read at task execution time (Configuration-Cache/Isolated-Projects safe).
  */
 private const val SWIFT_EXPORT_METADATA_SHARING_KEY = "swiftExportMetadata"
 
@@ -100,7 +107,7 @@ internal fun SwiftExportMetadata.serializeSwiftExportMetadata(outputStream: Outp
 internal fun Project.registerSwiftExportMetadataApiElements(
     swiftExportMetadata: TaskProvider<SerializeSwiftExportMetadata>,
 ): Configuration {
-    return project.configurations.createConsumable("swiftExportMetadataElements") {
+    return project.configurations.createConsumable(SWIFT_EXPORT_METADATA_ELEMENTS_NAME) {
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(SWIFT_EXPORT_METADATA_USAGE))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         outgoing.artifact(swiftExportMetadata) {
@@ -109,6 +116,13 @@ internal fun Project.registerSwiftExportMetadataApiElements(
         }
     }.get()
 }
+
+/**
+ * Null when the Swift Export DSL is not configured; see
+ * [org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.swiftExportMetadataTaskOrNull].
+ */
+internal fun Project.swiftExportMetadataElementsOrNull(): Configuration? =
+    configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS_NAME)
 
 /**
  * Configures an [ArtifactView] to select the Swift Export metadata variant of a resolvable configuration (e.g. the
