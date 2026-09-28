@@ -173,6 +173,10 @@ fun <SourceFile> serializeModuleIntoKlib(
         serializedMetadata = serializedMetadata,
         serializedIr = if (serializedIrFromDirtySources == null) null
         else SerializedIrModule(
+            signatureIndex = if (processCompiledFileData != null) {
+                // TODO(KT-89836): We need to start computing indices for IC too.
+                null
+            } else serializedIrFromDirtySources.signatureIndex,
             compiledKotlinFiles.mapNotNull { it.irData },
             compiledKotlinFiles.mapNotNull { it.irInlineData },
         ),
