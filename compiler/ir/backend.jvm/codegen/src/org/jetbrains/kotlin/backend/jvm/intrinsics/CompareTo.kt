@@ -19,12 +19,10 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.*
-import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.NumberComparisonUtils
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.receiverAndArgs
@@ -226,15 +224,6 @@ class PrimitiveComparison(
         val a = left.accept(codegen, data).materializedAt(parameterType, left.type)
         val b = right.accept(codegen, data).materializedAt(parameterType, right.type)
 
-        val useNonIEEE754Comparison =
-            !codegen.context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)
-                    && (parameterType == Type.FLOAT_TYPE || parameterType == Type.DOUBLE_TYPE)
-                    && (left.isSmartcastFromHigherThanNullable(codegen.context) || right.isSmartcastFromHigherThanNullable(codegen.context))
-
-        return if (useNonIEEE754Comparison) {
-            NonIEEE754FloatComparison(expression, operatorToken, a, b)
-        } else {
-            BooleanComparison(expression, operatorToken, a, b)
-        }
+        return BooleanComparison(expression, operatorToken, a, b)
     }
 }
