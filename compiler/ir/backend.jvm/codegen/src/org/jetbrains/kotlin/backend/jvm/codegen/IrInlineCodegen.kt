@@ -71,6 +71,7 @@ class IrInlineCodegen(
             nodeAndSmap = sourceCompiler.compileInlineFunction(jvmSignature).apply {
                 node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
             }
+            dropCopyOfVarargArrayBuiltAtCallSite(nodeAndSmap.node)
             val result = inlineCall(nodeAndSmap, function.isInlineOnly(), expression)
             leaveTemps()
             codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
@@ -90,6 +91,91 @@ class IrInlineCodegen(
                 e, sourceCompiler.callElement as? PsiElement
             )
         }
+    }
+
+    /**
+     * Spreading a vararg parameter (`*values`) is compiled into `Arrays.copyOf(values, values.length)`, so that the
+     * callee cannot modify the array the caller owns. A vararg argument is always a freshly built array at the call
+     * site, so when the parameter array is loaded only for its null check and for that single copy, nobody observes
+     * the array afterwards and the callee may receive the array itself.
+     */
+    private fun dropCopyOfVarargArrayBuiltAtCallSite(node: MethodNode) {
+        val parameter = function.parameters.singleOrNull { it.varargElementType != null } ?: return
+        val parameterSlot = varargParameterSlot(node, parameter) ?: return
+
+        var arrayLoad: VarInsnNode? = null
+        var secondLoad: VarInsnNode? = null
+        var arrayLength: AbstractInsnNode? = null
+        var copyOfCall: AbstractInsnNode? = null
+
+        var insn: AbstractInsnNode? = node.instructions.first
+        while (insn != null) {
+            val current = insn
+            val copyOf = current as? MethodInsnNode
+            if (copyOf != null && copyOf.opcode == Opcodes.INVOKESTATIC &&
+                copyOf.owner == "java/util/Arrays" && copyOf.name == "copyOf"
+            ) {
+                val arrayLengthCandidate = copyOf.previous
+                val secondLoadCandidate = arrayLengthCandidate?.previous as? VarInsnNode
+                val firstLoadCandidate = secondLoadCandidate?.previous as? VarInsnNode
+                val argumentTypes = Type.getArgumentTypes(copyOf.desc)
+                if (arrayLengthCandidate is InsnNode && arrayLengthCandidate.opcode == Opcodes.ARRAYLENGTH &&
+                    secondLoadCandidate != null && secondLoadCandidate.opcode == Opcodes.ALOAD &&
+                    firstLoadCandidate != null && firstLoadCandidate.opcode == Opcodes.ALOAD &&
+                    firstLoadCandidate.`var` == parameterSlot && secondLoadCandidate.`var` == parameterSlot &&
+                    argumentTypes.size == 2 && argumentTypes[0].sort == Type.ARRAY && argumentTypes[1] == Type.INT_TYPE
+                ) {
+                    // More than one candidate: don't guess which one belongs to the parameter.
+                    if (arrayLoad != null) return
+                    arrayLoad = firstLoadCandidate
+                    secondLoad = secondLoadCandidate
+                    arrayLength = arrayLengthCandidate
+                    copyOfCall = copyOf
+                }
+            }
+            insn = current.next
+        }
+
+        val firstLoad = arrayLoad ?: return
+
+        // Any other load of the parameter array would observe what the callee does with it.
+        var otherInsn: AbstractInsnNode? = node.instructions.first
+        while (otherInsn != null) {
+            val current = otherInsn
+            if (current is VarInsnNode && current.opcode == Opcodes.ALOAD && current.`var` == parameterSlot &&
+                current !== firstLoad && current !== secondLoad && !current.isNullCheckOfParameter()
+            ) {
+                return
+            }
+            otherInsn = current.next
+        }
+
+        // Drop 'aload v; arraylength; invokestatic Arrays.copyOf', keeping the array load itself.
+        node.instructions.remove(secondLoad)
+        node.instructions.remove(arrayLength)
+        node.instructions.remove(copyOfCall)
+    }
+
+    private fun VarInsnNode.isNullCheckOfParameter(): Boolean {
+        val name = next as? LdcInsnNode ?: return false
+        val check = name.next as? MethodInsnNode ?: return false
+        return check.opcode == Opcodes.INVOKESTATIC && check.owner == "kotlin/jvm/internal/Intrinsics" &&
+                check.name == "checkNotNullParameter"
+    }
+
+    /** Slot of [parameter] in the inline function's own bytecode, i.e. before it gets remapped to the call site. */
+    private fun varargParameterSlot(node: MethodNode, parameter: IrValueParameter): Int? {
+        val argumentTypes = Type.getArgumentTypes(node.desc)
+        var slot = if (node.access and Opcodes.ACC_STATIC != 0) 0 else 1
+        var argumentIndex = 0
+        for (valueParameter in function.parameters) {
+            // The dispatch receiver is 'this' and does not appear in the method descriptor.
+            if (valueParameter.kind == IrParameterKind.DispatchReceiver) continue
+            if (argumentIndex >= argumentTypes.size) return null
+            if (valueParameter === parameter) return slot
+            slot += argumentTypes[argumentIndex++].size
+        }
+        return null
     }
 
     override fun beforeCallStart() {
