@@ -453,6 +453,18 @@ internal fun buildKaptSubpluginOptions(
         pluginOptions += SubpluginOption("verbose", "true")
     }
 
+    val stubWriterThreads = KaptProperties.getStubWriterThreads(project).get()
+    if (stubWriterThreads < 1) {
+        // Match how the generic property layer already handles a non-integer value: name the property the
+        // user actually set, say what is used instead, and carry on rather than failing later in the compiler.
+        project.logger.warn(
+            "Int option 'kapt.stub.writer.threads' was set to an invalid value: " +
+                    "`$stubWriterThreads`. Using default value '1' instead."
+        )
+    } else if (stubWriterThreads != 1) {
+        pluginOptions += SubpluginOption("stubWriterThreads", "$stubWriterThreads")
+    }
+
     if (KaptProperties.isIsolateProcessorsFromBuildClasspath(project).get()) {
         pluginOptions += SubpluginOption("isolateProcessorsFromBuildClasspath", "true")
     }

@@ -201,6 +201,14 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-strip-metadata", FLAG)
     ),
 
+    STUB_WRITER_THREADS_OPTION(
+        "stubWriterThreads",
+        "<number>",
+        "Number of threads writing generated stub files, 1 (default) means sequential. " +
+                "Only used with the 'direct' stub generation scheme.",
+        cliToolOption = CliToolOption("-Kapt-stub-writer-threads", VALUE)
+    ),
+
     ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH_OPTION(
         "isolateProcessorsFromBuildClasspath",
         "true | false",
