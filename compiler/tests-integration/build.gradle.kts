@@ -87,7 +87,6 @@ projectTests {
             JdkMajorVersion.JDK_17_0,
             JdkMajorVersion.JDK_21_0
         ),
-        javaLauncher = JdkMajorVersion.JDK_17_0,
         maxHeapSize = testMaxHeapSizeLarge,
     ) {
         dependsOn(":dist")

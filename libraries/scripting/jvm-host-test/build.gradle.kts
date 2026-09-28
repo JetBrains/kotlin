@@ -34,9 +34,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 projectTests {
-    testTask(
-        javaLauncher = JdkMajorVersion.JDK_17_0,
-    ) {
+    testTask {
         dependsOn(":dist")
         workingDir = rootDir
     }
