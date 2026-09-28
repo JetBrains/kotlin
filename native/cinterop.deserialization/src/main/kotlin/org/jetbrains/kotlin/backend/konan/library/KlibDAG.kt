@@ -10,6 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.io.ZipFileSystemInPlaceAccessor
@@ -130,6 +131,9 @@ interface KlibDAGNode {
 
 class KlibDAGCyclicDependencyException : Exception("Cyclic dependency detected while computing DAG of KLIB dependencies")
 
+@RequiresOptIn("Direct access to the internal Klib DAG API is discouraged.")
+annotation class InternalKlibDAGApi
+
 /**
  * The component constructs [KlibDAG] by reading [KotlinLibrary] raw data. It works without involvement of IR linker.
  *
@@ -138,8 +142,18 @@ class KlibDAGCyclicDependencyException : Exception("Cyclic dependency detected w
  * of IR linker. This class may not be needed in the future if we decide to move the caches orchestration
  * from the compiler to the BTA.
  */
-class KlibDAGBuilder(libraries: Collection<KotlinLibrary>, isRoot: (KotlinLibrary) -> Boolean) {
-    private val worker = KlibDAGBuilderImpl(libraries, isRoot)
+class KlibDAGBuilder @InternalKlibDAGApi constructor(
+    libraries: Collection<KotlinLibrary>,
+    useSignatureIndices: Boolean,
+    isRoot: (KotlinLibrary) -> Boolean,
+) {
+    @OptIn(InternalKlibDAGApi::class)
+    constructor(
+        libraries: Collection<KotlinLibrary>,
+        isRoot: (KotlinLibrary) -> Boolean,
+    ) : this(libraries, useSignatureIndices = true, isRoot)
+
+    private val worker = KlibDAGBuilderImpl(libraries, useSignatureIndices, isRoot)
 
     /** Cache the result of the DAG computation to now compute it on each [build] invocation. */
     private val result by lazy { worker.build() }
@@ -147,7 +161,11 @@ class KlibDAGBuilder(libraries: Collection<KotlinLibrary>, isRoot: (KotlinLibrar
     fun build(): KlibDAG = result
 }
 
-private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (KotlinLibrary) -> Boolean) {
+private class KlibDAGBuilderImpl(
+    libraries: Collection<KotlinLibrary>,
+    private val useSignatureIndices: Boolean,
+    isRoot: (KotlinLibrary) -> Boolean,
+) {
     private var stdlib: KotlinLibrary? = null
     private val rootsButStdlib: MutableList<KotlinLibrary> = mutableListOf()
     private val others: MutableList<KotlinLibrary> = mutableListOf()
@@ -363,7 +381,7 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
             ir != null -> IdSignaturesExtractorFromRegularKlib(this)
             else -> error("This library does not have IR and is not a C-interop library: $path")
         }
-        return extractor
+        return if (useSignatureIndices) IdSignaturesExtractorFromKlibWithIndices(this, extractor) else extractor
     }
 
     private enum class State {

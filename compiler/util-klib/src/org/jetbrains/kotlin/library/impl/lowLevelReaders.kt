@@ -51,6 +51,9 @@ class IrMultiArrayReader(private val buffer: ReadByteBufferProvider) {
     private val indexToOffset: IndexToOffset = buffer.use { it.readIndexToOffset(0) }
     private val indexToIndexToOffset: IndexToIndexToOffset = mutableMapOf()
 
+    fun rowCount() = indexToOffset.size - 1
+    fun columnCount(rowIndex: Int): Int = buffer.use { it.readColumnIndexToOffset(indexToOffset, indexToIndexToOffset, rowIndex).size - 1 }
+
     fun tableItemBytes(index: Int): ByteArray = buffer.use { it.readTableItemBytes(indexToOffset, index) }
     fun tableItemBytes(rowIndex: Int, columnIndex: Int): ByteArray =
         buffer.use { it.readTableItemBytes(indexToOffset, indexToIndexToOffset, rowIndex, columnIndex) }
@@ -181,13 +184,19 @@ private fun ByteBuffer.readTableItemBytes(
     columnIndex: Int,
 ): ByteArray {
     val rowOffset = indexToOffset[rowIndex]
-    val columnIndexToOffset: IndexToOffset = indexToIndexToOffset.getOrPut(rowIndex) { readIndexToOffset(rowOffset) }
+    val columnIndexToOffset: IndexToOffset = readColumnIndexToOffset(indexToOffset, indexToIndexToOffset, rowIndex)
 
     val offset = columnIndexToOffset[columnIndex]
     val size = columnIndexToOffset[columnIndex + 1] - offset
 
     return readTableItemBytes(rowOffset + offset, size)
 }
+
+private fun ByteBuffer.readColumnIndexToOffset(
+    indexToOffset: IndexToOffset,
+    indexToIndexToOffset: IndexToIndexToOffset,
+    rowIndex: Int,
+): IndexToOffset = indexToIndexToOffset.getOrPut(rowIndex) { readIndexToOffset(indexToOffset[rowIndex]) }
 
 private fun ByteBuffer.readTableItemBytes(
     indexToOffset: IndexToOffset,
