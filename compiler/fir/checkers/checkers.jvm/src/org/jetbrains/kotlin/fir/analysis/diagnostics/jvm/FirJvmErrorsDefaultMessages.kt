@@ -282,7 +282,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION_WARNING,
             "Only named arguments are available for Java annotations."
-                .toDeprecationWarningMessage(LanguageFeature.EnforceNamedArgumentsOnJavaAnnotationInAccessors)
+                .toDeprecationWarningMessage(LanguageFeature.EnforceMissingNamedArgumentsOnJavaAnnotation)
         )
         map.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "'@JvmPackageName' annotation value cannot be empty.")
         map.put(
