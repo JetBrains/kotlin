@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -273,6 +274,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 @FirBuilderDsl
 class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuilder {
     var isFromSource: Boolean by Delegates.notNull()
+    var key: GeneratedDeclarationKey? = null
     var javaPackage: JavaPackage? = null
     lateinit var javaTypeParameterStack: MutableJavaTypeParameterStack
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
@@ -300,7 +302,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             source,
             moduleData,
             name,
-            origin = javaOrigin(isFromSource),
+            origin = javaOrigin(isFromSource, key),
             annotationList,
             status as FirResolvedDeclarationStatusImpl,
             classKind,
