@@ -1,5 +1,4 @@
 // FULL_JDK
-// IGNORE_BACKEND_K2: JVM
 // ISSUE: KT-89045
 
 import lombok.Builder
