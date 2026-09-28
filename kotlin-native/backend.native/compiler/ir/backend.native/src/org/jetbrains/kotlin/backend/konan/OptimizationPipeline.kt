@@ -253,7 +253,6 @@ abstract class LlvmOptimizationPipeline(
     private val targetMachine: LLVMTargetMachineRef by targetMachineDelegate
 
     fun execute(llvmModule: LLVMModuleRef) {
-        LLVMKotlinInitializeTargets() // makes sure that the targets are initialized once
         executeCustomPreprocessing(config, llvmModule)
         val passDescription = passes.joinToString(",")
         logger?.log {
