@@ -39,7 +39,7 @@ class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSource
             CirProvidedClassifiers.of(*classifiers.toTypedArray())
         )
 
-        return defaultCirTreeModuleDeserializer(moduleMetadata, typeResolver)
+        return defaultCirTreeModuleDeserializer(module.name, moduleMetadata, typeResolver)
     }
 
     override fun createMetadata(module: InlineSourceBuilder.Module): NamedMetadata =

@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 internal class CirTreeModuleDeserializer(
     private val packageDeserializer: CirTreePackageDeserializer
 ) {
-    operator fun invoke(metadata: SerializedMetadata, typeResolver: CirTypeResolver): CirTreeModule {
+    operator fun invoke(moduleName: String, metadata: SerializedMetadata, typeResolver: CirTypeResolver): CirTreeModule {
         val module = KlibModuleMetadata.readStrict(SerializedMetadataLibraryProvider(metadata))
 
         val fragmentsByPackage: Map<CirPackageName, Collection<KmModuleFragment>> = module.fragments.foldToMap { fragment ->
             fragment.fqName?.let(CirPackageName.Companion::create)
-                ?: error("A fragment without FQ name in module ${module.name}: $fragment")
+                ?: error("A fragment without FQ name in module $moduleName: $fragment")
         }
 
         val packages = fragmentsByPackage.map { [packageName, fragments] ->
@@ -34,7 +34,7 @@ internal class CirTreeModuleDeserializer(
         }
 
         return CirTreeModule(
-            module = CirModule.create(CirName.create(module.name), KlibMetadataVersion(metadata.metadataVersion)),
+            module = CirModule.create(CirName.create(moduleName), KlibMetadataVersion(metadata.metadataVersion)),
             packages = packages
         )
     }
