@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinDiagnosticsException
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.AssembleKotlinArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.PackKotlinArchiveTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.SerializeSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
@@ -258,6 +259,67 @@ class PackKotlinArchiveTaskTest {
                 "swift-export/metadata.json",
             ).prettyPrinted,
             task.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
+        )
+    }
+
+    @Test
+    fun `assemble task depends on swift export metadata serialization`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosArm64()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        ) {
+            exportExtension.swift {
+                moduleName.set("Foo")
+            }
+        }
+
+        val assembleTaskDependencies = project.tasks.getByName("assembleKotlinArchive").dependencyNames()
+        assertTrue(
+            SerializeSwiftExportMetadata.TASK_NAME in assembleTaskDependencies,
+            "Expected $assembleTaskDependencies to contain ${SerializeSwiftExportMetadata.TASK_NAME}",
+        )
+    }
+
+    @Test
+    fun `assemble task takes swift export metadata from the serialization task`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosArm64()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        ) {
+            exportExtension.swift {
+                moduleName.set("Foo")
+            }
+        }
+
+        val serializeTask = project.tasks.getByName(SerializeSwiftExportMetadata.TASK_NAME) as SerializeSwiftExportMetadata
+        val assembleTask = project.tasks.getByName("assembleKotlinArchive") as AssembleKotlinArchiveTask
+
+        assertEquals(serializeTask.metadataFile.get().asFile, assembleTask.swiftExportMetadataFile.get().asFile)
+    }
+
+    @Test
+    fun `assemble task does not depend on swift export metadata serialization without the export DSL`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosArm64()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        )
+
+        val assembleTaskDependencies = project.tasks.getByName("assembleKotlinArchive").dependencyNames()
+        assertFalse(
+            SerializeSwiftExportMetadata.TASK_NAME in assembleTaskDependencies,
+            "Expected $assembleTaskDependencies not to contain ${SerializeSwiftExportMetadata.TASK_NAME}",
         )
     }
 

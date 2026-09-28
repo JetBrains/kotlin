@@ -49,6 +49,7 @@ internal val SetupKotlinArchiveAction = KotlinProjectSetupCoroutine {
         assembleTask.fillKotlinArchiveMetadataCompilationContent(compilation)
     }
     assembleTask.fillKotlinArchivePsmContent(project)
+    assembleTask.fillKotlinArchiveSwiftExportMetadataContent(project)
 
     karPackTask.configure { task ->
         task.assembledKarDirectory.set(assembleTask.flatMap { it.outputDirectory })
