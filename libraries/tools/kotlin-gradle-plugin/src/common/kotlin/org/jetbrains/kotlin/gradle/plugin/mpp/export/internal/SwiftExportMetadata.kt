@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvid
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinShareableDataAsSecondaryVariant
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.SerializeSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.createConsumable
@@ -137,5 +138,8 @@ internal fun Project.configureSwiftExportMetadataArtifactView(): ArtifactView.Vi
     attributes {
         it.attribute(Usage.USAGE_ATTRIBUTE, usageByName(SWIFT_EXPORT_METADATA_USAGE))
         it.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
+        // A Kotlin Archive needs KarToSwiftExportMetadataTransformation to reach this state.
+        // Legacy json artifacts have no kar.state attribute and match without a transform.
+        it.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.SWIFT_EXPORT_METADATA_EXTRACTED)
     }
 }
