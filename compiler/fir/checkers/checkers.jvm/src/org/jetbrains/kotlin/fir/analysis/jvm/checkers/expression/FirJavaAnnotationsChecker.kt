@@ -72,7 +72,7 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
         if (expression is FirAnnotationCall) {
             val factory = if (
                 context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind &&
-                LanguageFeature.EnforceNamedArgumentsOnJavaAnnotationInAccessors.isDisabled()
+                LanguageFeature.EnforceMissingNamedArgumentsOnJavaAnnotation.isDisabled()
             ) {
                 FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION_WARNING
             } else {
@@ -94,7 +94,7 @@ object FirJavaAnnotationsConstructorCallChecker : FirFunctionCallChecker(MppChec
         if (classSymbol.origin !is FirDeclarationOrigin.Java) return
         if (classSymbol.classKind?.isAnnotationClass != true) return
 
-        val factory = if (LanguageFeature.EnforceNamedArgumentsOnJavaAnnotationInAccessors.isDisabled()) {
+        val factory = if (LanguageFeature.EnforceMissingNamedArgumentsOnJavaAnnotation.isDisabled()) {
             FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION_WARNING
         } else {
             FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION

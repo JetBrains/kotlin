@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-88667
-// LANGUAGE_FEATURE_TOGGLED: EnforceNamedArgumentsOnJavaAnnotationInAccessors
+// LANGUAGE_FEATURE_TOGGLED: EnforceMissingNamedArgumentsOnJavaAnnotation
 // FILE: TestAnn.java
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
