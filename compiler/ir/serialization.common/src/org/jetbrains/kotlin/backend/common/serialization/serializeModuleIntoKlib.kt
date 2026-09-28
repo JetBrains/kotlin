@@ -173,6 +173,7 @@ fun <SourceFile> serializeModuleIntoKlib(
         serializedMetadata = serializedMetadata,
         serializedIr = if (serializedIrFromDirtySources == null) null
         else SerializedIrModule(
+            signatureIndex = serializedIrFromDirtySources.signatureIndex,
             compiledKotlinFiles.mapNotNull { it.irData },
             compiledKotlinFiles.mapNotNull { it.irInlineData },
         ),

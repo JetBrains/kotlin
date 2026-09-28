@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibLayoutReader
-import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.SerializedSignatureIndex
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.library.impl.IrArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMultiArrayReader
@@ -28,6 +28,7 @@ import java.nio.file.Path
 import kotlin.collections.joinToString
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
+import kotlin.io.path.outputStream
 import kotlin.io.path.readBytes
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 
@@ -69,28 +70,33 @@ inline val Klib.signatureIndex: KlibSignatureIndexComponent?
  * A special component writer that allows writing the IR signature index to the file system.
  */
 class KlibSignatureIndexComponentWriterImpl(
-    private val exportedTopLevelSignatures: Set<IdSignature>,
-    private val importedTopLevelSignatures: Set<IdSignature>,
+    val serializedSignatureIndex: SerializedSignatureIndex?,
 ) : KlibComponentWriter {
-    override fun writeTo(root: Path) {
-        val layout = KlibSignatureIndexComponentLayout(root)
-        layout.indicesDir.createDirectories()
-
+    constructor(
+        exportedTopLevelSignatures: Set<IdSignature>,
+        importedTopLevelSignatures: Set<IdSignature>,
+    ) : this(
         serializeSignatures(
-            signatureIndexFile = layout.signatureIndexFile,
             exportedSignatures = exportedTopLevelSignatures,
             importedSignatures = importedTopLevelSignatures,
-        )
+        )?.writeIntoMemory()?.let(::SerializedSignatureIndex)
+    )
+
+    override fun writeTo(root: Path) {
+        serializedSignatureIndex ?: return
+
+        val layout = KlibSignatureIndexComponentLayout(root)
+        layout.indicesDir.createDirectories()
+        layout.signatureIndexFile.outputStream().use { it.write(serializedSignatureIndex.signatureIndex) }
     }
 
     companion object {
         private fun serializeSignatures(
-            signatureIndexFile: Path,
             exportedSignatures: Set<IdSignature>,
             importedSignatures: Set<IdSignature>,
-        ) {
+        ): IrArrayWriter? {
             if (exportedSignatures.isEmpty() && importedSignatures.isEmpty())
-                return
+                return null
 
             val stringSerializer = IrStringSerializer()
             val signatureSerializer = CommonSignatureSerializer(stringSerializer, debugInfoSerializer = null)
@@ -106,14 +112,14 @@ class KlibSignatureIndexComponentWriterImpl(
             val serializedExportedSignatures = serializeSignatures(exportedSignatures)
             val serializedImportedSignatures = serializeSignatures(importedSignatures)
 
-            IrArrayWriter(
+            return IrArrayWriter(
                 listOf(
                     stringSerializer.toIrStringWriter(useVarIntInDataArrays = true).writeIntoMemory(),
                     IrArrayWriter(serializedExportedSignatures, useVarInt = true).writeIntoMemory(),
                     IrArrayWriter(serializedImportedSignatures, useVarInt = true).writeIntoMemory(),
                 ),
                 useVarInt = true,
-            ).writeIntoFile(signatureIndexFile)
+            )
         }
     }
 }
@@ -127,6 +133,15 @@ fun KlibWriterSpec.includeSignatureIndex(topLevelSignatures: ExtractedSignatures
             exportedTopLevelSignatures = topLevelSignatures.declaredSignatures,
             importedTopLevelSignatures = topLevelSignatures.importedSignatures,
         )
+    )
+}
+
+/**
+ * A [KlibWriter] DSL extension to include [KlibSignatureIndexComponent] to the created library.
+ */
+fun KlibWriterSpec.includeSignatureIndex(serializedSignatureIndex: SerializedSignatureIndex?) {
+    include(
+        KlibSignatureIndexComponentWriterImpl(serializedSignatureIndex ?: return)
     )
 }
 
@@ -160,7 +175,7 @@ private class KlibSignatureIndexComponentImpl(
         get() = signatures?.second.orEmpty()
 
     companion object {
-        private fun deserializeSignatures(signatureIndexFile: Path): Pair<Set<IdSignature>, Set<IdSignature>>? {
+        private fun deserializeSignatures(signatureIndexFile: Path): Pair<Set<IdSignature>, Set<IdSignature>> {
             val multiReader = IrMultiArrayReader(signatureIndexFile.readBytes())
 
             when (val rowCount = multiReader.rowCount()) {

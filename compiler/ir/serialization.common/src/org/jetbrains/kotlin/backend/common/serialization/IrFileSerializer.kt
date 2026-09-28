@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
+import org.jetbrains.kotlin.ir.util.IdSignature.CompositeSignature
+import org.jetbrains.kotlin.ir.util.IdSignature.FileSignature
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -157,6 +160,19 @@ open class IrFileSerializer(
 
     private val signatureSerializer = IdSignatureSerializer(stringSerializer, debugInfoSerializer)
 
+    internal val signaturesOfPublicTopLevelDeclarations: Set<CommonSignature>
+        field = hashSetOf<CommonSignature>()
+
+    private val innerSignaturesOfPrivateSymbols = hashSetOf<CommonSignature>()
+
+    internal val signaturesOfTopLevelReferencedDeclarations: Set<CommonSignature>
+        get() = signatureSerializer.allSerializedSignatures
+            .asSequence()
+            .filterIsInstance<CommonSignature>()
+            .map { it.topLevelSignature() as CommonSignature }
+            .filterNot { it in innerSignaturesOfPrivateSymbols }
+            .toSet()
+
     protected val protoBodyArray = mutableListOf<XStatementOrExpression>()
 
     private var isInsideInline: Boolean = false
@@ -295,7 +311,7 @@ open class IrFileSerializer(
         val signature: IdSignature = when {
             !symbol.isBound -> symbol.signature
                 ?: error("Given symbol is unbound and have no signature: $symbol")
-            symbol is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
+            symbol is IrFileSymbol -> FileSignature(symbol) // TODO: special signature for files?
             else -> {
                 val symbolOwner = symbol.owner
 
@@ -1618,6 +1634,21 @@ open class IrFileSerializer(
         )
         require(idSig == idSig.topLevelSignature()) { "IdSig: $idSig\ntopLevel: ${idSig.topLevelSignature()}" }
         require(!idSig.isPackageSignature()) { "IsSig: $idSig\nDeclaration: ${topLevelDeclaration.render()}" }
+
+        // Track (the signature of) each serialized top-level declaration.
+        if (settings.collectDataForSignatureIndex) {
+            when (idSig) {
+                is CommonSignature -> {
+                    // a public top-level declaration
+                    signaturesOfPublicTopLevelDeclarations += idSig
+                }
+                is CompositeSignature if idSig.container is FileSignature -> {
+                    // a private top-level declaration
+                    innerSignaturesOfPrivateSymbols += (idSig.inner as CommonSignature)
+                }
+                else -> error("Unexpected signature type: ${idSig::class.java}, $idSig")
+            }
+        }
 
         // TODO: keep order similar
         val sigIndex = signatureSerializer[idSig] ?: error("Not found ID for $idSig (${topLevelDeclaration.render()})")

@@ -101,6 +101,9 @@ class IdSignatureSerializer(
 
     operator fun get(idSig: IdSignature): Int? = protoIdSignatureMap[idSig]
 
+    val allSerializedSignatures: Set<IdSignature>
+        get() = protoIdSignatureMap.keys
+
     fun toIrArrayWriter(useVarIntInDataArrays: Boolean): IrArrayWriter =
         IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, useVarIntInDataArrays)
 }

@@ -343,6 +343,7 @@ fun serializeModuleIntoKlib(
             }
             includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
             includeIr(fullSerializedIr)
+            includeSignatureIndex(fullSerializedIr.signatureIndex)
         }.writeTo(klibPath)
     }
 }
