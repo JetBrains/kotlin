@@ -655,7 +655,7 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
     origin.flags or
             getVisibilityAccessFlagForClass() or
             (if (isAnnotatedWithDeprecated) Opcodes.ACC_DEPRECATED else 0) or
-            getSynthAccessFlag(languageVersionSettings) or
+            getSynthAccessFlag() or
             when {
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
@@ -664,12 +664,10 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
                 else -> Opcodes.ACC_SUPER or modality.flags
             }.let { if (isKotlinValhallaValueClass(languageVersionSettings)) it and ACC_IDENTITY.inv() else it }
 
-private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionSettings): Int {
+private fun IrClass.getSynthAccessFlag(): Int {
     if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))
         return Opcodes.ACC_SYNTHETIC
-    if (origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION &&
-        languageVersionSettings.supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic)
-    )
+    if (origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION)
         return Opcodes.ACC_SYNTHETIC
     return 0
 }
