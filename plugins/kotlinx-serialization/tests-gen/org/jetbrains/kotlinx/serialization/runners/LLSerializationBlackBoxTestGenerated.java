@@ -175,6 +175,12 @@ public class LLSerializationBlackBoxTestGenerated extends AbstractLLSerializatio
     }
 
     @Test
+    @TestMetadata("genericWithClassUpperBoundMultiModule.kt")
+    public void testGenericWithClassUpperBoundMultiModule() {
+      run("genericWithClassUpperBoundMultiModule.kt");
+    }
+
+    @Test
     @TestMetadata("generics.kt")
     public void testGenerics() {
       run("generics.kt");
