@@ -68,7 +68,7 @@ class KlibModuleMetadata(
                 "Use the `unique_name` property from the KLIB manifest instead.",
         level = DeprecationLevel.WARNING,
     )
-    val name: String,
+    val name: String?,
     val fragments: List<KmModuleFragment>,
     val metadataVersion: KlibMetadataVersion,
     internal val isAllowedToWrite: Boolean = true,
@@ -87,8 +87,11 @@ class KlibModuleMetadata(
      * Specifies access to library's metadata.
      */
     interface MetadataLibraryProvider {
-        val moduleHeaderData: ByteArray
+        val moduleHeaderData: ByteArray?
         val metadataVersion: KlibMetadataVersion
+
+        val packageFqNames: Set<String>
+
         fun packageMetadataParts(fqName: String): Set<String>
         fun packageMetadata(fqName: String, partName: String): ByteArray
     }
@@ -138,8 +141,9 @@ class KlibModuleMetadata(
         ): KlibModuleMetadata {
             checkMetadataVersionForRead(library.metadataVersion, lenient)
 
-            val moduleHeader = parseModuleHeader(library.moduleHeaderData)
-            val moduleFragments = moduleHeader.packageFragmentNameList.flatMap { packageFqName ->
+            val moduleHeader = library.moduleHeaderData?.let(::parseModuleHeader)
+            val packageFqNames = moduleHeader?.packageFragmentNameList ?: library.packageFqNames
+            val moduleFragments = packageFqNames.flatMap { packageFqName ->
                 library.packageMetadataParts(packageFqName).map { part ->
                     val packageFragment = parsePackageFragment(library.packageMetadata(packageFqName, part))
                     val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
@@ -153,8 +157,7 @@ class KlibModuleMetadata(
                 }.let(readStrategy::processModuleParts)
             }
             return KlibModuleMetadata(
-                // TODO(KT-87197): Stop reading the module name once the metadata header is dropped.
-                moduleHeader.moduleName,
+                moduleHeader?.moduleName,
                 moduleFragments,
                 library.metadataVersion,
                 isAllowedToWrite = !lenient,
@@ -196,7 +199,7 @@ class KlibModuleMetadata(
         }
 
         @Suppress("DEPRECATION") // The name keeps being written to the header until it is dropped (KT-87197).
-        val moduleName = name
+        val moduleName = name ?: error("The module name is required to write the metadata header (KT-87197)")
         return SerializedKlibMetadata(
             KlibMetadataProtoBuf.Header.newBuilder().also { proto ->
                 proto.moduleName = wrapModuleName(moduleName)

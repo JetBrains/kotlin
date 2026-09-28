@@ -48,6 +48,9 @@ class SerializedMetadataLibraryProvider(
         KlibMetadataVersion(serializedMetadata.metadataVersion),
     )
 
+    override val packageFqNames: Set<String>
+        get() = fragmentMap.keys
+
     override fun packageMetadataParts(fqName: String): Set<String> {
         return fragmentMap.getValue(fqName).keys
     }

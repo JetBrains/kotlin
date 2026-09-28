@@ -180,6 +180,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
         )
 
         override val moduleHeaderData get() = metadata.moduleHeaderData
+        override val packageFqNames get() = metadata.packageFqNames
         override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
         override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
     }
