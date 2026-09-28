@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.generators.kotlin.ir
 
 import org.jetbrains.kotlin.builtins.StandardNames.EQUALS_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -319,24 +320,27 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
     /**
      * `receiver.canEqual(argument)`, virtually dispatched: [receiver] is statically typed as [irClass] but may be
      * an instance of a stricter subtype whose own generated `canEqual` overrides this one.
+     *
+     * Calls the generated `canEqual`, or else the user-declared one that kept it from being generated, matched the
+     * way the FIR generator matches it: other overloads merely share the name and must never be called here.
      */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrBlockBodyBuilder.buildCanEqualCall(irClass: IrClass, receiver: IrExpression, argument: IrExpression): IrExpression {
-        // Matched by parameter shape first, not name alone: an unrelated same-named overload (e.g.
-        // `canEqual(x: Int)`) must never be picked, or the call below throws a ClassCastException passing it an
-        // `Any?` argument. Falls back to matching by name alone when no `Any?`-shaped candidate is found: the
-        // user's own `canEqual` can have a parameter type that erases to `Object` on the JVM without literally
-        // being `Any?` (`Any`, or an unbounded type parameter) - the FIR generator recognizes that as the same
-        // shape and skips generating one of its own on top, leaving this the sole, unambiguous candidate.
-        val canEqualFunction = irClass.findDeclaration<IrSimpleFunction> {
-            it.name == LombokNames.CAN_EQUAL &&
-                    it.parameters.singleOrNull { p -> p.kind == IrParameterKind.Regular }?.type?.isNullableAny() == true
-        } ?: irClass.findDeclaration<IrSimpleFunction> { it.name == LombokNames.CAN_EQUAL }!!
+        val canEqualFunction = irClass.functions.firstOrNull {
+            it.name == LombokNames.CAN_EQUAL && (it.origin as? IrDeclarationOrigin.GeneratedByPlugin)?.pluginKey is EqualsAndHashCodeGeneratorKey
+        } ?: irClass.functions.first { it.name == LombokNames.CAN_EQUAL && it.hasCanEqualJvmSignature(context.irBuiltIns) }
         return irCall(canEqualFunction.symbol).apply {
+            // A generic `canEqual<T>(other: T)` qualifies too, `T` erasing to `Object`.
+            canEqualFunction.typeParameters.forEach { typeArguments[it.index] = context.irBuiltIns.anyNType }
             arguments[0] = receiver
             arguments[1] = argument
         }
     }
+
+    private fun IrSimpleFunction.hasCanEqualJvmSignature(irBuiltIns: IrBuiltIns): Boolean =
+        !isFakeOverride &&
+                parameters.none { it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.Context } &&
+                parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.erasedUpperBound?.symbol == irBuiltIns.anyClass
 
     /**
      * The superclass a generated `equals`/`hashCode` chains to, interfaces skipped - `Any` when there is no other.
