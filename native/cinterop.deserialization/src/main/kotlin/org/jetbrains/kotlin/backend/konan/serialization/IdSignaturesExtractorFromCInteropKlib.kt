@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleFragmentReadStrategy
+import kotlinx.metadata.klib.KlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
@@ -116,7 +117,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
     }
 
     private fun readMetadataModule(loadOnlyTopLevelReferencedClassIds: Boolean): Pair<Set<ClassId>, KlibModuleMetadata> {
-        val strategy = KlibModuleFragmentReadStrategyImpl(loadOnlyTopLevelReferencedClassIds)
+        val strategy = KlibModuleFragmentReadWriteStrategyImpl(loadOnlyTopLevelReferencedClassIds)
 
         val metadataModule = KlibModuleMetadata.readLenient(
             library = MetadataLibraryProviderImpl(library = library),
@@ -211,9 +212,9 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
         override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
     }
 
-    private class KlibModuleFragmentReadStrategyImpl(
+    class KlibModuleFragmentReadWriteStrategyImpl(
         private val loadOnlyTopLevelReferencedClassIds: Boolean
-    ) : KlibModuleFragmentReadStrategy {
+    ) : KlibModuleFragmentReadStrategy, KlibModuleFragmentWriteStrategy {
 
         val referencedClassIds: Set<ClassId>
             field = hashSetOf()
