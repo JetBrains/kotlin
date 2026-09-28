@@ -28,4 +28,16 @@ internal class KaNotUnderContentRootModuleImpl(
 ) : KaNotUnderContentRootModule, KtModuleWithPlatform, KaModuleBase() {
     override val baseContentScope: GlobalSearchScope =
         if (file != null) GlobalSearchScope.fileScope(file) else GlobalSearchScope.EMPTY_SCOPE
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is KaNotUnderContentRootModuleImpl) return false
+        return file == other.file && project == other.project
+    }
+
+    override fun hashCode(): Int {
+        var result = file.hashCode()
+        result = 31 * result + project.hashCode()
+        return result
+    }
 }
