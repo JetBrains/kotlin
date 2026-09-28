@@ -402,7 +402,7 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, co
         val name = when (parameter.kind) {
             IrParameterKind.DispatchReceiver -> continue
             IrParameterKind.Regular, IrParameterKind.Context -> parameter.name.asString()
-            IrParameterKind.ExtensionReceiver -> irFunction.extensionReceiverName(config)
+            IrParameterKind.ExtensionReceiver -> irFunction.extensionReceiverName()
         }
         val origin = parameter.origin
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
